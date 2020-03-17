@@ -22,6 +22,10 @@ ApplicationWindow {
     property var userModel: ({})
     property string tempTorrentPath: ""
 
+    onClosing: {
+        analyticsService.sendEvent("Session", "End");
+    }
+
     Material.accent: Material.Red
 
     function showPage(pageId) {
@@ -50,6 +54,8 @@ ApplicationWindow {
         newPage.navigateTo();
         currentPageId = pageId;
 
+        analyticsService.sendView("Pages", "ChangePage", "%2F" + pageId);
+
         drawer.close();
     }
 
@@ -59,6 +65,8 @@ ApplicationWindow {
             if (!applicationSettings.userToken) return;
 
             synchronizationService.getUserData(applicationSettings.userToken);
+
+            analyticsService.sendEvent("Session", "Start");
         }
     }
 
@@ -74,6 +82,10 @@ ApplicationWindow {
             window.synchronizationEnabled = false;
         }
 
+    }
+
+    AnalyticsService {
+        id: analyticsService
     }
 
     WorkerScript {
@@ -406,7 +418,7 @@ ApplicationWindow {
                     Text {
                         color: "white"
                         font.pixelSize: 14
-                        text: qsTr("версия 0.0.5")
+                        text: qsTr("версия " + ApplicationVersion)
                     }
                 }
             }

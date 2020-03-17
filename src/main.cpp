@@ -2,9 +2,12 @@
 #include <QQmlApplicationEngine>
 #include <QtWebView>
 #include <QtSvg>
+#include <QQmlContext>
 #include "Classes/Services/synchronizationservice.h"
 #include "Classes/Services/localstorageservice.h"
 #include "Classes/Services/applicationsettings.h"
+#include "Classes/Services/analyticsservice.h"
+#include "globalconstants.h"
 
 int main(int argc, char *argv[])
 {
@@ -15,9 +18,12 @@ int main(int argc, char *argv[])
 
     qmlRegisterType<SynchronizationService>("Anilibria.Services", 1, 0, "SynchronizationService");
     qmlRegisterType<LocalStorageService>("Anilibria.Services", 1, 0, "LocalStorage");
-    qmlRegisterType<ApplicationSettings>("Anilibria.Services", 1, 0, "ApplicationSettings");
+    qmlRegisterType<ApplicationSettings>("Anilibria.Services", 1, 0, "ApplicationSettings");    
+    qmlRegisterType<AnalyticsService>("Anilibria.Services", 1, 0, "AnalyticsService");
 
     QQmlApplicationEngine engine;
+    engine.rootContext()->setContextProperty("ApplicationVersion", ApplicationVersion);
+
     const QUrl url(QStringLiteral("qrc:/main.qml"));
     QObject::connect(
         &engine,
