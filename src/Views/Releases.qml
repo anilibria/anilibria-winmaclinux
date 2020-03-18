@@ -1523,8 +1523,10 @@ Page {
 
         page.openedRelease = release;
         localStorage.setToReleaseHistory(release.id, 0);
-        //TODO: reset notification!!!
         analyticsService.sendView("releasecard", "show", "%2Freleases");
+
+        localStorage.resetReleaseChanges(release.id);
+        page.changesCounts = localStorage.getChangesCounts();
     }
 
     function copyToClipboard(text) {

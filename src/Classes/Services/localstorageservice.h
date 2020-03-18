@@ -80,6 +80,7 @@ public:
     Q_INVOKABLE void updateReleasesInnerCache();
     Q_INVOKABLE QList<int> getChangesCounts();
     Q_INVOKABLE void resetAllChanges();
+    Q_INVOKABLE void resetReleaseChanges(int releaseId);
     Q_INVOKABLE QString getVideoSeens();
     Q_INVOKABLE QString getVideoSeen(int id);
     Q_INVOKABLE QString getLastVideoSeen();

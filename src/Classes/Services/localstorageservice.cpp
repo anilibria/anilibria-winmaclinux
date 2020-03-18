@@ -977,6 +977,16 @@ void LocalStorageService::resetAllChanges()
     saveChanges();
 }
 
+void LocalStorageService::resetReleaseChanges(int releaseId)
+{
+    if (m_ChangesModel->newReleases()->contains(releaseId)) m_ChangesModel->newReleases()->removeOne(releaseId);
+    if (m_ChangesModel->newOnlineSeries()->contains(releaseId)) m_ChangesModel->newOnlineSeries()->removeOne(releaseId);
+    if (m_ChangesModel->newTorrents()->contains(releaseId)) m_ChangesModel->newTorrents()->removeOne(releaseId);
+    if (m_ChangesModel->newTorrentSeries()->contains(releaseId)) m_ChangesModel->newTorrentSeries()->removeOne(releaseId);
+
+    saveChanges();
+}
+
 QString LocalStorageService::getVideoSeens()
 {
     QJsonArray array;
