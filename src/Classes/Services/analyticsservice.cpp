@@ -4,6 +4,11 @@ const QString AnalyticsService::googleAnalyticsAddress = "https://www.google-ana
 
 void AnalyticsService::sendPostEvent(QString type, QString category, QString message, QString page)
 {
+#ifdef QT_DEBUG
+    if (type.isEmpty() || category.isEmpty() || message.isEmpty() || page.isEmpty()) {
+
+    }
+#else
     auto networkManager = new QNetworkAccessManager(this);
     auto url = QUrl(AnalyticsService::googleAnalyticsAddress);
     QNetworkRequest request(url);
@@ -24,6 +29,7 @@ void AnalyticsService::sendPostEvent(QString type, QString category, QString mes
 
 
     networkManager->post(request, postData);
+#endif
 }
 
 AnalyticsService::AnalyticsService(QObject *parent) : QObject(parent)

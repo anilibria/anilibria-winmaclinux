@@ -62,7 +62,6 @@ Page {
 
             const seenObject = JSON.parse(lastSeenObject);
             const release = JSON.parse(localStorage.getRelease(seenObject.id));
-            console.log(release);
             _page.setReleaseParameters = {
                 releaseId: seenObject.id,
                 videos: release.videos,
@@ -72,10 +71,10 @@ Page {
             _page.setReleaseVideo();
         }
         const userSettings = JSON.parse(localStorage.getUserSettings());
-        console.log(userSettings.autoNextVideo);
         player.volume = userSettings.volume;
         autoNextVideo.checked = userSettings.autoNextVideo;
         autoTopMost.checked = userSettings.autoTopMost;
+        if (autoTopMost.checked && player.playbackState === MediaPlayer.PlayingState) windowSettings.setStayOnTop();
         _page.prefferedQuality = userSettings.quality;
         switch (userSettings.quality) {
             case 0:
@@ -180,11 +179,14 @@ Page {
         source: _page.videoSource
         autoPlay: true
         playbackRate: _page.videoSpeed
-        onPlaying: {
-            console.log("playing changed");
+        onPlaying: {            
+            if (autoTopMost.checked) windowSettings.setStayOnTop();
         }
         onStopped: {
-            console.log("stopped changed");
+            if (autoTopMost.checked) windowSettings.unsetStayOnTop();
+        }
+        onPaused: {
+            if (autoTopMost.checked) windowSettings.unsetStayOnTop();
         }
         onPlaybackStateChanged: {
             playButton.visible = playbackState === MediaPlayer.PausedState || playbackState === MediaPlayer.StoppedState;
@@ -202,7 +204,7 @@ Page {
         onStatusChanged: {
             if (status === MediaPlayer.Loading) _page.isBuffering = true;
 
-            if (status === MediaPlayer.EndOfMedia) _page.nextVideo();
+            if (status === MediaPlayer.EndOfMedia && autoNextVideo.checked) _page.nextVideo();
 
             if (status === MediaPlayer.InvalidMedia) {
                 console.log("InvalidMedia")
@@ -238,7 +240,6 @@ Page {
             if (!(_page.selectedVideo in _page.seenMarks)) {
                 if (duration > 0 && position > 0) {
                     const positionPercent = position / duration * 100;
-                    console.log("percent", positionPercent);
                     if (positionPercent >= 90) {
                         const obj = _page.seenMarks;
                         obj[_page.selectedVideo] = true;

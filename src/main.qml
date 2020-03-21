@@ -59,6 +59,21 @@ ApplicationWindow {
         drawer.close();
     }
 
+    Item {
+        id: windowSettings
+
+        signal setStayOnTop();
+        signal unsetStayOnTop();
+
+        onSetStayOnTop: {
+            window.flags = Qt.WindowStaysOnTopHint;
+        }
+
+        onUnsetStayOnTop: {
+            window.flags = 1;
+        }
+    }
+
     ApplicationSettings {
         id: applicationSettings
         Component.onCompleted: {
