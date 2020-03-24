@@ -88,6 +88,7 @@ public:
     Q_INVOKABLE void saveVideoSeens();
     Q_INVOKABLE void setSeenMark(int id, int seriaId, bool marked);    
     Q_INVOKABLE QList<int> getReleseSeenMarks(int id, int count);
+    Q_INVOKABLE QString getSeenMarks();
     Q_INVOKABLE void setToReleaseHistory(int id, int type);
     Q_INVOKABLE void setVolume(double volume);
     Q_INVOKABLE void setVideoQuality(int quality);

@@ -1468,9 +1468,14 @@ Page {
         );
     }
 
+    function setSeensCounts(releases) {
+
+    }
+
     function fillNextReleases() {
         page.pageIndex += 1;
         const nextPageReleases = getReleasesByFilter();
+        setSeensCounts(nextPageReleases);
         for (const displayRelease of nextPageReleases) releasesModel.append({ model: displayRelease });
     }
 
@@ -1478,6 +1483,7 @@ Page {
         page.pageIndex = 1;
         releasesModel.clear();
         const displayReleases = getReleasesByFilter();
+        setSeensCounts(displayReleases);
         for (const displayRelease of displayReleases) releasesModel.append({ model: displayRelease });
         scrollview.contentY = 0;
     }

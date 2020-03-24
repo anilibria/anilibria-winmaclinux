@@ -1110,6 +1110,36 @@ QList<int> LocalStorageService::getReleseSeenMarks(int id, int count)
     return result;
 }
 
+QString LocalStorageService::getSeenMarks()
+{
+    QHash<int, int> counts;
+    QHashIterator<QString, bool> iterator(*m_SeenMarkModels);
+    while (iterator.hasNext()) {
+        iterator.next();
+
+        auto item = iterator.key();
+        auto parts = item.split(".");
+        int id = parts[0].toInt();
+        if (counts.contains(id)) {
+            counts[id] += 1;
+        } else {
+            counts.insert(id, 1);
+        }
+    }
+
+    QJsonObject object;
+    QHashIterator<int, int> countIterator(counts);
+    while (countIterator.hasNext()) {
+        countIterator.next();
+
+        auto key = QString::number(countIterator.key());
+        object[key] = countIterator.value();
+    }
+
+    QJsonDocument document(object);
+    return document.toJson();
+}
+
 void LocalStorageService::setToReleaseHistory(int id, int type)
 {
     HistoryModel* item;
