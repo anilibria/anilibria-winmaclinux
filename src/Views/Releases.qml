@@ -21,6 +21,7 @@ Page {
     property bool runRefreshFavorties: false
     property bool synchronizeEnabled: false
     property int selectedSection: 0
+    property var seenMarks: ({})
     property var sections: [
         "Все релизы",
         "Избранное",
@@ -79,6 +80,11 @@ Page {
             page.runRefreshFavorties = false;
             page.selectedReleases = [];
         }
+    }
+
+    onNavigateTo: {
+        refreshSeenMarks();
+        refreshAllReleases();
     }
 
     background: Rectangle {
@@ -1049,9 +1055,9 @@ Page {
                                                 }
                                                 Text {
                                                     leftPadding: 4
-                                                    rightPadding: 4
+                                                    rightPadding: 8
                                                     font.pixelSize: 18
-                                                    text: '' + modelData.countVideos
+                                                    text: '' + modelData.countVideos + (modelData.countSeensSeries > 0 ? " <font color=\"green\">(" + modelData.countSeensSeries + ")</font>  " : "")
                                                 }
                                                 Image {
                                                     mipmap: true
@@ -1468,8 +1474,17 @@ Page {
         );
     }
 
-    function setSeensCounts(releases) {
+    function refreshSeenMarks() {
+        page.seenMarks = JSON.parse(localStorage.getSeenMarks());
+    }
 
+    function setSeensCounts(releases) {
+        for (const release of releases) {
+            release.countSeensSeries = 0;
+            if (release.id in page.seenMarks) {
+                release.countSeensSeries = page.seenMarks[release.id];
+            }
+        }
     }
 
     function fillNextReleases() {
@@ -1480,6 +1495,7 @@ Page {
     }
 
     function refreshAllReleases() {
+        if (Object.keys(page.seenMarks).length === 0) refreshSeenMarks();
         page.pageIndex = 1;
         releasesModel.clear();
         const displayReleases = getReleasesByFilter();
