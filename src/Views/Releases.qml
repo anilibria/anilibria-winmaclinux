@@ -66,7 +66,7 @@ Page {
     }
 
     onRefreshReleases: {
-        refreshAllReleases();
+        refreshAllReleases(false);
     }
 
     onRefreshReleaseSchedules: {
@@ -84,7 +84,7 @@ Page {
 
     onNavigateTo: {
         refreshSeenMarks();
-        refreshAllReleases();
+        refreshAllReleases(true);
     }
 
     background: Rectangle {
@@ -262,7 +262,7 @@ Page {
                                 anchors.left: parent.left
                                 text: "Фильтровать"
                                 onClicked: {
-                                    page.refreshAllReleases();
+                                    page.refreshAllReleases(false);
                                 }
                             }
                             Button {
@@ -273,7 +273,7 @@ Page {
                                     descriptionSearchField.text = "";
                                     typeSearchField.text = "";
 
-                                    page.refreshAllReleases();
+                                    page.refreshAllReleases(false);
                                 }
                             }
                             Text {
@@ -434,7 +434,7 @@ Page {
                                 anchors.right: parent.right
                                 text: "Сортировать"
                                 onClicked: {
-                                    page.refreshAllReleases();
+                                    page.refreshAllReleases(false);
                                 }
                             }
 
@@ -741,7 +741,7 @@ Page {
                         fontSize: 12
                         placeholder: "Введите название релиза"
                         onCompleteEditing: {
-                            refreshAllReleases();
+                            refreshAllReleases(false);
                         }
                     }
                     IconButton {
@@ -1228,6 +1228,14 @@ Page {
                             text: qsTr("<b>Озвучка:</b> ") + qsTr(page.openedRelease ? page.openedRelease.voices : '')
                         }
                         Text {
+                            font.pointSize: 10
+                            leftPadding: 8
+                            topPadding: 4
+                            visible: page.openedRelease ? page.openedRelease.countSeensSeries === page.openedRelease.countVideos : false
+                            width: parent.width
+                            text: qsTr("<b>Все серии просмотрены</b>")
+                        }
+                        Text {
                             textFormat: Text.RichText
                             font.pointSize: 10
                             leftPadding: 8
@@ -1337,6 +1345,38 @@ Page {
                                 }
                             }
                         }
+                        IconButton {
+                            height: 40
+                            width: 40
+                            iconColor: "black"
+                            iconPath: "../Assets/Icons/seenmark.svg"
+                            iconWidth: 26
+                            iconHeight: 26
+                            onButtonPressed: {
+                                seenMarkMenu.open();
+                            }
+                            Menu {
+                                id: seenMarkMenu
+                                width: 300
+
+                                MenuItem {
+                                    width: parent.width
+                                    font.pixelSize: 14
+                                    text: "Отметить как просмотренное"
+                                    onPressed: {
+                                        setSeenStateForOpenedRelease(true);
+                                    }
+                                }
+                                MenuItem {
+                                    width: parent.width
+                                    font.pixelSize: 14
+                                    text: "Отметить как не просмотренное"
+                                    onPressed: {
+                                        setSeenStateForOpenedRelease(false);
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
                 Rectangle {
@@ -1397,6 +1437,8 @@ Page {
                         anchors.rightMargin: 10
                         onClicked: {
                             watchRelease(page.openedRelease.id, page.openedRelease.videos);
+
+                            page.openedRelease = null;
                         }
                     }
 
@@ -1429,6 +1471,16 @@ Page {
         id: notImplementedDialog
         title: "Не реализовано"
         text: "Пока указанная функция не реализована"
+    }
+
+    function setSeenStateForOpenedRelease(newState) {
+        localStorage.setSeenMarkAllSeries(page.openedRelease.id, page.openedRelease.countVideos, newState);
+        page.openedRelease.countSeensSeries = newState ? page.openedRelease.countVideos : 0;
+        const oldRelease = page.openedRelease;
+        page.openedRelease = null;
+        page.openedRelease = oldRelease;
+        refreshSeenMarks();
+        refreshAllReleases(true);
     }
 
     function getVkontakteCommentPage() {
@@ -1494,14 +1546,14 @@ Page {
         for (const displayRelease of nextPageReleases) releasesModel.append({ model: displayRelease });
     }
 
-    function refreshAllReleases() {
+    function refreshAllReleases(notResetScroll) {
         if (Object.keys(page.seenMarks).length === 0) refreshSeenMarks();
         page.pageIndex = 1;
         releasesModel.clear();
         const displayReleases = getReleasesByFilter();
         setSeensCounts(displayReleases);
         for (const displayRelease of displayReleases) releasesModel.append({ model: displayRelease });
-        scrollview.contentY = 0;
+        if (!notResetScroll) scrollview.contentY = 0;
     }
 
     function changeSection(section) {
@@ -1512,7 +1564,7 @@ Page {
             sortingDirectionComboBox.currentIndex = defaultSorting.direction;
         }
 
-        refreshAllReleases();
+        refreshAllReleases(false);
     }
 
     function refreshSchedule() {
@@ -1558,7 +1610,7 @@ Page {
     }
 
     Component.onCompleted: {
-        refreshAllReleases();
+        refreshAllReleases(false);
         refreshSchedule();
 
         const userSettings = JSON.parse(localStorage.getUserSettings());

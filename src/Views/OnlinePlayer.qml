@@ -274,7 +274,7 @@ Page {
     Rectangle {
         id: seriesPopup
         anchors.top: parent.top
-        width: 140
+        width: 160
         height: _page.height - controlPanel.height - 20
         color: "transparent"
 
@@ -317,6 +317,7 @@ Page {
 
                             IconButton {
                                 anchors.right: parent.right
+                                anchors.rightMargin: 20
                                 anchors.verticalCenter: parent.verticalCenter
                                 height: 36
                                 width: 36

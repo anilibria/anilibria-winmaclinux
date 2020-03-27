@@ -1098,6 +1098,20 @@ void LocalStorageService::setSeenMark(int id, int seriaId, bool marked)
     saveSeenMarks();
 }
 
+void LocalStorageService::setSeenMarkAllSeries(int id, int countSeries, bool marked)
+{
+    for (int i = 0; i < countSeries; i++) {
+        auto key = QString::number(id) + "." + QString::number(i);
+        if (marked) {
+            if (!m_SeenMarkModels->contains(key)) m_SeenMarkModels->insert(key, true);
+        } else {
+            if (m_SeenMarkModels->contains(key)) m_SeenMarkModels->remove(key);
+        }
+    }
+
+    saveSeenMarks();
+}
+
 QList<int> LocalStorageService::getReleseSeenMarks(int id, int count)
 {
     QList<int> result;
