@@ -975,7 +975,7 @@ Page {
                                     topPadding: 4
                                     rightPadding: 4
                                     Image {
-                                        source: modelData.poster
+                                        source: localStorage.getReleasePosterPath(modelData.id, modelData.poster)
                                         fillMode: Image.PreserveAspectCrop
                                         width: 180
                                         height: 252
@@ -1139,7 +1139,7 @@ Page {
                     rightPadding: 4
                     Image {
                         id: cardPoster
-                        source: page.openedRelease ? page.openedRelease.poster : '../Assets/Icons/donate.jpg'
+                        source: page.openedRelease ? localStorage.getReleasePosterPath(page.openedRelease.id, page.openedRelease.poster) : '../Assets/Icons/donate.jpg'
                         fillMode: Image.PreserveAspectCrop
                         width: 280
                         height: 390
@@ -1599,7 +1599,7 @@ Page {
         localStorage.setToReleaseHistory(release.id, 0);
         analyticsService.sendView("releasecard", "show", "%2Freleases");
 
-        localStorage.resetReleaseChanges(release.id);
+        localStorage.resetReleaseChanges(release.id);        
         page.changesCounts = localStorage.getChangesCounts();
     }
 

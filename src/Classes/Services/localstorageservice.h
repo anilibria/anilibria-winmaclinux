@@ -12,6 +12,7 @@
 #include "../Models/historymodel.h"
 #include "../Models/usersettingsmodel.h"
 #include "../../globalconstants.h"
+#include "../Services/offlineimagecacheservice.h"
 
 class LocalStorageService : public QObject
 {
@@ -25,8 +26,9 @@ private:
     QHash<int, SeenModel*>* m_SeenModels;
     QHash<QString,bool>* m_SeenMarkModels;
     QHash<int, HistoryModel*>* m_HistoryModels;
-    UserSettingsModel* m_UserSettingsModel;
+    UserSettingsModel* m_UserSettingsModel;    
     bool m_IsChangesExists;
+    OfflineImageCacheService* m_OfflineImageCacheService;
 
     QString videosToJson(QList<OnlineVideoModel>& videos);
     QString torrentsToJson(QList<ReleaseTorrentModel>& torrents);
@@ -100,6 +102,7 @@ public:
     Q_INVOKABLE QString getUserSettings();
     Q_INVOKABLE QString getYoutubeItems();
     Q_INVOKABLE void copyTorrentToFile(QString source, QString target);
+    Q_INVOKABLE QString getReleasePosterPath(int id, QString url);
 
 signals:
     void allReleasesFinished();

@@ -45,6 +45,7 @@ LocalStorageService::LocalStorageService(QObject *parent) : QObject(parent),
 
     QDir cacheDicrectory(QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation));
     QDir().mkpath(QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation));
+    QDir().mkpath(QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation) + "/imagecache");
     qDebug() << "Cache location: " << QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation);
 
     createIfNotExistsFile(getReleasesCachePath(), "[]");
@@ -68,7 +69,9 @@ LocalStorageService::LocalStorageService(QObject *parent) : QObject(parent),
     loadHistory();
     loadSettings();
 
-    resetChanges();    
+    resetChanges();
+
+    m_OfflineImageCacheService = new OfflineImageCacheService(this);
 
     connect(m_AllReleaseUpdatedWatcher, SIGNAL(finished()), this, SLOT(allReleasesUpdated()));
 }
@@ -1247,6 +1250,11 @@ void LocalStorageService::copyTorrentToFile(QString source, QString target)
 #else
     QFile::copy(source, target.replace("file://", ""));
 #endif
+}
+
+QString LocalStorageService::getReleasePosterPath(int id, QString url)
+{
+    return m_OfflineImageCacheService->getReleasePath(id, url);
 }
 
 void LocalStorageService::allReleasesUpdated()

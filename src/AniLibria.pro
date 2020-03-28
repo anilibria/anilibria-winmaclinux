@@ -26,7 +26,9 @@ SOURCES += \
     Classes/Services/analyticsservice.cpp \
     Classes/Services/anilibriaapiservice.cpp \
     Classes/Services/applicationsettings.cpp \
+    Classes/Services/imageloader.cpp \
     Classes/Services/localstorageservice.cpp \
+    Classes/Services/offlineimagecacheservice.cpp \
     Classes/Services/synchronizationservice.cpp \
     main.cpp
 
@@ -59,6 +61,8 @@ HEADERS += \
     Classes/Services/analyticsservice.h \
     Classes/Services/anilibriaapiservice.h \
     Classes/Services/applicationsettings.h \
+    Classes/Services/imageloader.h \
     Classes/Services/localstorageservice.h \
+    Classes/Services/offlineimagecacheservice.h \
     Classes/Services/synchronizationservice.h \
     globalconstants.h
