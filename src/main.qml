@@ -16,6 +16,7 @@ ApplicationWindow {
     minimumHeight: 600
     height: 600
     title: qsTr("AniLibria")
+    font.capitalization: Font.MixedCase
     property string currentPageId: "release"
     property bool synchronizationEnabled: false
     property bool notVisibleSignin: false
@@ -64,13 +65,24 @@ ApplicationWindow {
 
         signal setStayOnTop();
         signal unsetStayOnTop();
+        signal toggleStayOnTopMode();
 
         onSetStayOnTop: {
             window.flags = Qt.WindowStaysOnTopHint;
         }
 
         onUnsetStayOnTop: {
+            if (window.flags === 1) return;
+
             window.flags = 1;
+        }
+
+        onToggleStayOnTopMode: {
+            if (window.flags === 1) {
+                window.flags = Qt.WindowStaysOnTopHint;
+            } else {
+                window.flags = 1;
+            }
         }
     }
 

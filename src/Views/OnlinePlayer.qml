@@ -24,6 +24,8 @@ Page {
     property var seenVideo: ({})
     property var seenMarks: ({})
     property int prefferedQuality: 0 // 0 - 480, 1 - 720p, 2 - 1080p
+    property var jumpMinutes: [0, 1, 2]
+    property var jumpSeconds: [0, 5, 10, 15, 20, 25, 30]
 
     signal navigateFrom()
     signal setReleaseVideo()
@@ -49,9 +51,32 @@ Page {
             _page.previousVideo();
             event.accepted = true;
         }
+        if (event.key === Qt.Key_Escape) {
+            //changepage to releases
+        }
+        if (event.key === Qt.Key_F11 || event.key === Qt.Key_F) {
+            toggleFullScreen();
+        }
+        if (event.key === Qt.Key_Up) {
+            if (player.volume < 1) player.volume += .1;
+            if (player.volume > 1) player.volume = 1;
+
+            volumeSlider.value = player.volume * 100;
+        }
+        if (event.key === Qt.Key_Down) {
+            if (player.volume > 0) player.volume -= .1;
+            if (player.volume < 0) player.volume = 0;
+
+            volumeSlider.value = player.volume * 100;
+        }
+        if (event.key === Qt.Key_M) player.muted = !player.muted;
+        if (event.key === Qt.Key_P && !autoTopMost.checked) windowSettings.toggleStayOnTopMode();
+        if (event.key === Qt.Key_Left) jumpInPlayer(true);
+        if (event.key === Qt.Key_Right) jumpInPlayer(false);
     }
 
     onNavigateFrom: {
+        windowSettings.unsetStayOnTop();
         player.pause();
     }
 
@@ -74,6 +99,9 @@ Page {
         player.volume = userSettings.volume;
         autoNextVideo.checked = userSettings.autoNextVideo;
         autoTopMost.checked = userSettings.autoTopMost;
+        jumpMinuteComboBox.currentIndex = jumpMinutes.indexOf(userSettings.jumpMinute);
+        jumpSecondComboBox.currentIndex = jumpSeconds.indexOf(userSettings.jumpSecond);
+
         if (autoTopMost.checked && player.playbackState === MediaPlayer.PlayingState) windowSettings.setStayOnTop();
         _page.prefferedQuality = userSettings.quality;
         switch (userSettings.quality) {
@@ -179,7 +207,7 @@ Page {
         source: _page.videoSource
         autoPlay: true
         playbackRate: _page.videoSpeed
-        onPlaying: {            
+        onPlaying: {
             if (autoTopMost.checked) windowSettings.setStayOnTop();
         }
         onStopped: {
@@ -259,8 +287,14 @@ Page {
             toggleFullScreen();
         }
         onPositionChanged: {
-            if (player.playbackState === MediaPlayer.PlayingState) {
-                _page.setControlVisible(true);
+            if (!(player.playbackState === MediaPlayer.PlayingState)) return;
+
+            _page.setControlVisible(true);
+            const x = mouse.x;
+            const y = mouse.y;
+            if (y > _page.height - controlPanel.height) {
+                playerTimer.stop();
+            } else {
                 playerTimer.restart();
             }
         }
@@ -376,6 +410,7 @@ Page {
                         player.seek(_page.lastMovedPosition);
                         _page.lastMovedPosition = 0;
                     }
+                    controlPanel.forceActiveFocus();
                 }
 
                 onMoved: {
@@ -620,9 +655,9 @@ Page {
                         Popup {
                             id: optionsPopup
                             x: optionsButton.width - 300
-                            y: optionsButton.height - 200
+                            y: optionsButton.height - 250
                             width: 300
-                            height: 180
+                            height: 250
 
                             modal: true
                             focus: true
@@ -631,6 +666,60 @@ Page {
                             Column {
                                 width: parent.width
                                 spacing: 10
+                                Text {
+                                    width: optionsPopup.width - 20
+                                    font.pixelSize: 12
+                                    text: "Время прыжка"
+                                }
+
+                                Grid {
+                                    columns: 2
+                                    spacing: 2
+
+                                    ComboBox {
+                                        id: jumpMinuteComboBox
+                                        Layout.column: 0
+                                        model: ListModel {
+                                            ListElement {
+                                                text: "0"
+                                            }
+                                            ListElement {
+                                                text: "1"
+                                            }
+                                            ListElement {
+                                                text: "2"
+                                            }
+                                        }
+                                    }
+                                    ComboBox {
+                                        id: jumpSecondComboBox
+                                        Layout.column: 1
+                                        model: ListModel {
+                                            ListElement {
+                                                text: "0"
+                                            }
+                                            ListElement {
+                                                text: "5"
+                                            }
+                                            ListElement {
+                                                text: "10"
+                                            }
+                                            ListElement {
+                                                text: "15"
+                                            }
+                                            ListElement {
+                                                text: "20"
+                                            }
+                                            ListElement {
+                                                text: "25"
+                                            }
+                                            ListElement {
+                                                text: "30"
+                                            }
+                                        }
+                                    }
+                                }
+
                                 Text {
                                     width: optionsPopup.width - 20
                                     font.pixelSize: 12
@@ -654,6 +743,7 @@ Page {
                                     id: autoTopMost
                                     onCheckedChanged: {
                                         localStorage.setAutoTopMost(checked);
+                                        if (!checked) windowSettings.unsetStayOnTop()
                                     }
                                 }
                             }
@@ -770,6 +860,16 @@ Page {
             releaseSeenMarks[key] = true;
         }
         _page.seenMarks = releaseSeenMarks;
+    }
+
+    function jumpInPlayer(direction){
+        const minutes = _page.jumpMinutes[jumpMinuteComboBox.currentIndex];
+        const seconds = _page.jumpSeconds[jumpSecondComboBox.currentIndex];
+        const jumpvalue = (minutes * 60 + seconds) * 1000;
+        let seekPosition = player.position + (direction ? -jumpvalue : jumpvalue);
+        if (seekPosition < 0) seekPosition = 80;
+        if (seekPosition > player.duration) seekPosition = player.duration - 100;
+        player.seek(seekPosition);
     }
 
     Component.onCompleted: {

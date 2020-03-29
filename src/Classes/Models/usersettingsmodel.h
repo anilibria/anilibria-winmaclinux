@@ -15,6 +15,8 @@ private:
     bool m_AutoTopMost;
     int m_TorrentDownloadMode;
     bool m_NotificationForFavorites;
+    int m_JumpMinute;
+    int m_JumpSecond;
 
 public:
     UserSettingsModel();
@@ -25,6 +27,8 @@ public:
     bool autoTopMost();
     int torrentDownloadMode();
     bool notificationForFavorites();
+    int jumpMinute() const;
+    int jumpSecond() const;
 
     void setQuality(int quality);
     void setVolume(double volume);
@@ -32,6 +36,8 @@ public:
     void setAutoTopMost(bool autoTopMost);
     void setTorrentDownloadMode(int torrentDownloadMode);
     void setNotificationForFavorites(bool notificationForFavorites);
+    void setJumpMinute(int jumpMinute);
+    void setJumpSecond(int jumpSecond);
 
     void fromJson(QString json);
     QString toJson();

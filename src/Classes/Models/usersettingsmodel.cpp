@@ -5,7 +5,9 @@ UserSettingsModel::UserSettingsModel(): m_Quality(1),
     m_AutoNextVideo(true),
     m_AutoTopMost(false),
     m_TorrentDownloadMode(0),
-    m_NotificationForFavorites(false)
+    m_NotificationForFavorites(false),
+    m_JumpMinute(1),
+    m_JumpSecond(15)
 {
 
 }
@@ -40,6 +42,16 @@ bool UserSettingsModel::notificationForFavorites()
     return m_NotificationForFavorites;
 }
 
+int UserSettingsModel::jumpMinute() const
+{
+    return m_JumpMinute;
+}
+
+int UserSettingsModel::jumpSecond() const
+{
+    return m_JumpSecond;
+}
+
 void UserSettingsModel::setQuality(int quality)
 {
     m_Quality = quality;
@@ -70,6 +82,16 @@ void UserSettingsModel::setNotificationForFavorites(bool notificationForFavorite
     m_NotificationForFavorites = notificationForFavorites;
 }
 
+void UserSettingsModel::setJumpMinute(int jumpMinute)
+{
+    m_JumpMinute = jumpMinute;
+}
+
+void UserSettingsModel::setJumpSecond(int jumpSecond)
+{
+    m_JumpSecond = jumpSecond;
+}
+
 void UserSettingsModel::fromJson(QString json)
 {
     if (json.isEmpty()) return;
@@ -82,7 +104,8 @@ void UserSettingsModel::fromJson(QString json)
     if (jsonSettings.contains("autoNextVideo")) setAutoNextVideos(jsonSettings.value("autoNextVideo").toBool());
     if (jsonSettings.contains("autoTopMost")) setAutoTopMost(jsonSettings.value("autoTopMost").toBool());
     if (jsonSettings.contains("torrentDownloadMode")) setTorrentDownloadMode(jsonSettings.value("torrentDownloadMode").toInt());
-    if (jsonSettings.contains("notificationForFavorites")) setNotificationForFavorites(jsonSettings.value("notificationForFavorites").toBool());
+    if (jsonSettings.contains("jumpMinute")) setJumpMinute(jsonSettings.value("jumpMinute").toInt());
+    if (jsonSettings.contains("jumpSecond")) setJumpSecond(jsonSettings.value("jumpSecond").toInt());
 }
 
 QString UserSettingsModel::toJson()
@@ -95,6 +118,8 @@ QString UserSettingsModel::toJson()
     object["autoTopMost"] = autoTopMost();
     object["torrentDownloadMode"] = torrentDownloadMode();
     object["notificationForFavorites"] = notificationForFavorites();
+    object["jumpMinute"] = jumpMinute();
+    object["jumpSecond"] = jumpSecond();
 
     QJsonDocument saveDoc(object);
     return saveDoc.toJson();

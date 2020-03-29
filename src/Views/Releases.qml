@@ -938,7 +938,7 @@ Page {
                             model: releasesModel
                             Rectangle {
                                 width: 480
-                                height: 260
+                                height: 280
                                 radius: 10
                                 border.color: "red"
                                 border.width: page.selectedReleases.filter(a => a === modelData.id).length ? 3 : 0
@@ -954,7 +954,7 @@ Page {
                                 }
                                 MouseArea {
                                     width: 480
-                                    height: 260
+                                    height: 280
                                     acceptedButtons: Qt.LeftButton | Qt.RightButton
                                     onClicked: {
                                         if(mouse.button & Qt.RightButton) {
@@ -974,18 +974,26 @@ Page {
                                     leftPadding: 4
                                     topPadding: 4
                                     rightPadding: 4
-                                    Image {
-                                        source: localStorage.getReleasePosterPath(modelData.id, modelData.poster)
-                                        fillMode: Image.PreserveAspectCrop
-                                        width: 180
-                                        height: 252
-                                        layer.enabled: true
-                                        layer.effect: OpacityMask {
-                                            maskSource: mask
+                                    Rectangle {
+                                        width: 182
+                                        height: 272
+                                        border.color: "#808080"
+                                        border.width: 1
+                                        radius: 12
+                                        Image {
+                                            anchors.centerIn: parent
+                                            source: localStorage.getReleasePosterPath(modelData.id, modelData.poster)
+                                            fillMode: Image.PreserveAspectCrop
+                                            width: 180
+                                            height: 270
+                                            layer.enabled: true
+                                            layer.effect: OpacityMask {
+                                                maskSource: mask
+                                            }
                                         }
                                     }
                                     Grid {
-                                        height: 260
+                                        height: 280
                                         Layout.row: 1
                                         Layout.column: 1
                                         rows: 2
@@ -1075,8 +1083,54 @@ Page {
                                         }
                                         Rectangle {
                                             color: "transparent"
-                                            height: 252 - gridItemtextContainer.height
+                                            height: 272 - gridItemtextContainer.height
                                             width: 280
+                                            RoundedActionButton {
+                                                anchors.horizontalCenter: parent.horizontalCenter
+                                                anchors.bottom: parent.bottom
+                                                anchors.bottomMargin: 20
+                                                text: "Быстрые действия"
+                                                onPressed: {
+                                                    quickActions.open();
+                                                }
+                                                Menu {
+                                                    id: quickActions
+                                                    width: 300
+                                                    modal: true
+                                                    focus: true
+                                                    closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
+
+                                                    MenuItem {
+                                                        width: parent.width
+                                                        font.pixelSize: 14
+                                                        enabled: !page.favoriteReleases.filter(a => a === modelData.id).length
+                                                        text: "Добавить в избранное"
+                                                        onPressed: {
+                                                            page.runRefreshFavorties = true;
+                                                            synchronizationService.addUserFavorites(applicationSettings.userToken, modelData.id.toString());
+                                                        }
+                                                    }
+                                                    MenuItem {
+                                                        width: parent.width
+                                                        font.pixelSize: 14
+                                                        enabled: page.favoriteReleases.filter(a => a === modelData.id).length
+                                                        text: "Удалить из избранного"
+                                                        onPressed: {
+                                                            page.runRefreshFavorties = true;
+                                                            synchronizationService.removeUserFavorites(applicationSettings.userToken, modelData.id.toString());
+                                                        }
+                                                    }
+                                                    MenuItem {
+                                                        width: parent.width
+                                                        font.pixelSize: 14
+                                                        text: "Смотреть"
+                                                        onPressed: {
+                                                            watchRelease(modelData.id, modelData.videos);
+                                                            quickActions.close();
+                                                        }
+                                                    }
+                                                }
+                                            }
                                             Row {
                                                 anchors.bottom: parent.bottom
                                                 leftPadding: 8
