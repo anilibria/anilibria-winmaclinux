@@ -31,6 +31,7 @@ Page {
     signal setReleaseVideo()
     signal changeFullScreenMode(bool fullScreen)
     signal navigateTo()
+    signal returnToReleasesPage()
 
     Keys.onSpacePressed: {
         if (player.playbackState === MediaPlayer.PlayingState) {
@@ -73,6 +74,7 @@ Page {
         if (event.key === Qt.Key_P && !autoTopMost.checked) windowSettings.toggleStayOnTopMode();
         if (event.key === Qt.Key_Left) jumpInPlayer(true);
         if (event.key === Qt.Key_Right) jumpInPlayer(false);
+        if (event.key === Qt.Key_Escape) returnToReleasesPage();
     }
 
     onNavigateFrom: {
@@ -207,6 +209,9 @@ Page {
         source: _page.videoSource
         autoPlay: true
         playbackRate: _page.videoSpeed
+        onBufferProgressChanged: {
+            console.log("bufferProgress" + bufferProgress);
+        }
         onPlaying: {
             if (autoTopMost.checked) windowSettings.setStayOnTop();
         }

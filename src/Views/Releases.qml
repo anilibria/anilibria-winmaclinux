@@ -257,7 +257,7 @@ Page {
 
                         Rectangle {
                             width: parent.width
-                            Button {
+                            RoundedActionButton {
                                 id: startFilterButton
                                 anchors.left: parent.left
                                 text: "Фильтровать"
@@ -265,13 +265,20 @@ Page {
                                     page.refreshAllReleases(false);
                                 }
                             }
-                            Button {
+                            RoundedActionButton {
                                 id: clearFiltersButton
                                 anchors.right: parent.right
                                 text: "Очистить фильтры"
                                 onClicked: {
                                     descriptionSearchField.text = "";
                                     typeSearchField.text = "";
+                                    genresSearchField.text = "";
+                                    orAndGenresSearchField.checked = false;
+                                    voicesSearchField.text = "";
+                                    orAndVoicesSearchField.checked = false;
+                                    yearsSearchField.text = "";
+                                    seasonesSearchField.text = "";
+                                    statusesSearchField.text = "";
 
                                     page.refreshAllReleases(false);
                                 }
@@ -429,7 +436,7 @@ Page {
 
                         Rectangle {
                             width: parent.width
-                            Button {
+                            RoundedActionButton {
                                 id: startSortingButton
                                 anchors.right: parent.right
                                 text: "Сортировать"
@@ -552,7 +559,7 @@ Page {
                         Rectangle {
                             visible: localStorage.isChangesExists
                             width: parent.width
-                            Button {
+                            RoundedActionButton {
                                 id: resetNotificationButton
                                 anchors.right: parent.right
                                 text: "Отметить все как прочитанное"
@@ -1438,7 +1445,7 @@ Page {
                     width: cardContainer.width
                     height: 60
 
-                    Button {
+                    RoundedActionButton {
                         anchors.verticalCenter: parent.verticalCenter
                         anchors.leftMargin: 10
                         anchors.left: parent.left
@@ -1483,7 +1490,7 @@ Page {
                         text: "Доступно "+ (page.openedRelease ? page.openedRelease.countVideos : "0" ) + " серий онлайн"
                     }
 
-                    Button {
+                    RoundedActionButton {
                         id: watchButton
                         text: qsTr("Смотреть")
                         anchors.verticalCenter: parent.verticalCenter

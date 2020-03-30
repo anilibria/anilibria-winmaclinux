@@ -463,6 +463,9 @@ ApplicationWindow {
                 window.showNormal();
             }
         }
+        onReturnToReleasesPage: {
+            window.showPage("release");
+        }
     }
 
     Releases {

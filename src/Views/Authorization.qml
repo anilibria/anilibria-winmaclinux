@@ -97,7 +97,7 @@ Page {
                             wrapMode: Text.WordWrap
                         }
 
-                        Button {
+                        RoundedActionButton {
                             anchors.right: parent.right
                             anchors.rightMargin: 10
                             text: qsTr("Войти")
