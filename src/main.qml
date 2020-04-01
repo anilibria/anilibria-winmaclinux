@@ -40,7 +40,8 @@ ApplicationWindow {
             "authorization": authorization,
             "release": releases,
             "donate": donate,
-            "youtube": youtube
+            "youtube": youtube,
+            "about": about
         };
 
         const currentPage = pages[currentPageId];
@@ -418,9 +419,16 @@ ApplicationWindow {
 
         Row {
             anchors.bottom: parent.bottom
+
             Item {
                 width: 60
                 height: 60
+                MouseArea {
+                    anchors.fill: parent
+                    onPressed: {
+                        showPage("about");
+                    }
+                }
                 Image {
                     anchors.verticalCenter: parent.verticalCenter
                     anchors.horizontalCenter: parent.horizontalCenter
@@ -434,7 +442,12 @@ ApplicationWindow {
                 width: drawer.width - 60
                 height: 60
                 anchors.leftMargin: 10
-
+                MouseArea {
+                    anchors.fill: parent
+                    onPressed: {
+                        showPage("about");
+                    }
+                }
                 Column {
                     anchors.verticalCenter: parent.verticalCenter
                     Text {
@@ -447,7 +460,7 @@ ApplicationWindow {
                         font.pixelSize: 14
                         text: qsTr("версия " + ApplicationVersion)
                     }
-                }
+                }                
             }
 
         }
@@ -500,6 +513,11 @@ ApplicationWindow {
 
     Youtube {
         id: youtube
+        visible: false
+    }
+
+    About {
+        id: about
         visible: false
     }
 

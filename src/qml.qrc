@@ -61,5 +61,6 @@
         <file>Assets/Icons/copy.svg</file>
         <file>Assets/Icons/vk.svg</file>
         <file>Controls/RoundedActionButton.qml</file>
+        <file>Views/About.qml</file>
     </qresource>
 </RCC>
