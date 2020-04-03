@@ -543,6 +543,15 @@ QHash<int, int> LocalStorageService::getAllSeenMarkCount()
     return result;
 }
 
+int LocalStorageService::countOnlyFavorites(QList<int>* changes, QSet<int>* favorites)
+{
+    int count = 0;
+    foreach (auto changeId, *changes) {
+        if (favorites->contains(changeId)) count++;
+    }
+    return count;
+}
+
 QString LocalStorageService::getRelease(int id)
 {
     QListIterator<FullReleaseModel> i(*m_CachedReleases);
@@ -664,6 +673,9 @@ QString LocalStorageService::getReleasesByFilter(int page, QString title, int se
     int startIndex = (page - 1) * pageSize;
 
     QStringList userFavorites = getAllFavorites();
+    QSet<int> favoriteIds;
+    foreach (auto favorite, userFavorites) favoriteIds.insert(favorite.toInt());
+
     QMap<int, int> scheduled = getScheduleAsMap();
     auto seenMarks = getAllSeenMarkCount();
 
@@ -871,6 +883,14 @@ QString LocalStorageService::getReleasesByFilter(int page, QString title, int se
 
         if (section == NewTorrentSeriesSection && !m_ChangesModel->newTorrentSeries()->contains(releaseItem.id())) continue;
 
+        auto notificationForFavorites = m_UserSettingsModel->notificationForFavorites();
+        bool isInFavorites = favoriteIds.contains(releaseItem.id());
+
+        if ((section == NewReleasesSection ||
+           section == NewOnlineSeriesSection ||
+           section == NewTorrentsSection ||
+           section == NewTorrentSeriesSection) && notificationForFavorites && !isInFavorites) continue;
+
         if (section == HistorySection && !(m_HistoryModels->contains(releaseItem.id()) && m_HistoryModels->value(releaseItem.id())->timestamp() > 0)) continue;
 
         if (section == WatchHistorySection && !(m_HistoryModels->contains(releaseItem.id()) && m_HistoryModels->value(releaseItem.id())->watchTimestamp() > 0)) continue;
@@ -962,10 +982,21 @@ QList<int> LocalStorageService::getChangesCounts()
 {
     QList<int> result;
 
-    result.append(m_ChangesModel->newReleases()->count());
-    result.append(m_ChangesModel->newOnlineSeries()->count());
-    result.append(m_ChangesModel->newTorrents()->count());
-    result.append(m_ChangesModel->newTorrentSeries()->count());
+    if (m_UserSettingsModel->notificationForFavorites()) {
+        auto favorites = getAllFavorites();
+        QSet<int> favoriteIds;
+        foreach (auto favorite, favorites) favoriteIds.insert(favorite.toInt());
+
+        result.append(countOnlyFavorites(m_ChangesModel->newReleases(), &favoriteIds));
+        result.append(countOnlyFavorites(m_ChangesModel->newOnlineSeries(), &favoriteIds));
+        result.append(countOnlyFavorites(m_ChangesModel->newTorrents(), &favoriteIds));
+        result.append(countOnlyFavorites(m_ChangesModel->newTorrentSeries(), &favoriteIds));
+    } else {
+        result.append(m_ChangesModel->newReleases()->count());
+        result.append(m_ChangesModel->newOnlineSeries()->count());
+        result.append(m_ChangesModel->newTorrents()->count());
+        result.append(m_ChangesModel->newTorrentSeries()->count());
+    }
 
     return result;
 }

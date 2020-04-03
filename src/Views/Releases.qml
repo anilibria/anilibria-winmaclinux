@@ -677,7 +677,7 @@ Page {
                             anchors.top: downloadTorrentMode.bottom
                             anchors.topMargin: 4
                             font.pixelSize: 14
-                            text: "Уведомления по избранным (пока не работает)"
+                            text: "Уведомления по избранным"
                         }
 
                         Switch {

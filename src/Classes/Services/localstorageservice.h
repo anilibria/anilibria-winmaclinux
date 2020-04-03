@@ -61,6 +61,7 @@ private:
     void loadSettings();
     void saveSettings();
     QHash<int, int> getAllSeenMarkCount();
+    int countOnlyFavorites(QList<int>* changes, QSet<int>* favorites);
 
 public:
     explicit LocalStorageService(QObject *parent = nullptr);
