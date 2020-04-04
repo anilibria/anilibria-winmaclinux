@@ -492,8 +492,8 @@ ApplicationWindow {
                 customPlaylistPosition: -1,
                 videos
             };
-            videoplayer.setReleaseVideo();
             window.showPage("videoplayer");
+            videoplayer.setReleaseVideo();
         }
         onRequestSynchronizeReleases: {
             window.synchronizationEnabled = true;
