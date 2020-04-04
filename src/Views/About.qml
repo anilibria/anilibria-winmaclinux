@@ -292,7 +292,7 @@ Page {
                     }
 
                     Rectangle {
-                        color: "red"
+                        color: "transparent"
                         Layout.fillWidth: true
                         Layout.fillHeight: true
                     }

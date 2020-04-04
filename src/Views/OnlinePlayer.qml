@@ -80,6 +80,7 @@ Page {
     onNavigateFrom: {
         windowSettings.unsetStayOnTop();
         player.pause();
+        disableFullScreen();
     }
 
     onNavigateTo: {
@@ -854,6 +855,12 @@ Page {
 
     function toggleFullScreen() {
         isFullScreen = !isFullScreen;
+        changeFullScreenMode(isFullScreen);
+    }
+
+    function disableFullScreen() {
+        if (!isFullScreen) return;
+        isFullScreen = false;
         changeFullScreenMode(isFullScreen);
     }
 
