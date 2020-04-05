@@ -570,6 +570,24 @@ QString LocalStorageService::getRelease(int id)
     return "{}";
 }
 
+QString LocalStorageService::getReleaseByCode(const QString& code)
+{
+    QListIterator<FullReleaseModel> i(*m_CachedReleases);
+
+    while(i.hasNext()) {
+        auto release = i.next();
+        if (release.code() == code) {
+            QJsonObject jsonValue;
+            release.writeToJson(jsonValue);
+
+            QJsonDocument saveDoc(jsonValue);
+            return saveDoc.toJson();
+        }
+    }
+
+    return "{}";
+}
+
 QString LocalStorageService::getRandomRelease()
 {
     auto count = m_CachedReleases->count() - 1;

@@ -72,6 +72,7 @@ public:
     Q_INVOKABLE void updateAllReleases(const QString& releases);
     Q_INVOKABLE void updateYoutubeItems(const QString& youtubeItems);
     Q_INVOKABLE QString getRelease(int id);
+    Q_INVOKABLE QString getReleaseByCode(const QString& code);
     Q_INVOKABLE QString getRandomRelease();
     Q_INVOKABLE QString getChanges();    
     Q_INVOKABLE QString getReleasesByFilter(int page, QString title, int section, QString description, QString type, QString genres, bool genresOr, QString voices, bool voicesOr, QString years, QString seasones, QString statuses, int sortingField, bool soringDescending);

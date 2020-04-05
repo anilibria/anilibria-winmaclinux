@@ -64,7 +64,7 @@ Rectangle {
         id: completeTimer
         repeat: false
         running: false
-        interval: 2000
+        interval: 1000
         onTriggered: {
             completeEditing();
             completeTimer.stop();

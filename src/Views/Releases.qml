@@ -1110,7 +1110,7 @@ Page {
                                                     MenuItem {
                                                         width: parent.width
                                                         font.pixelSize: 14
-                                                        enabled: !page.favoriteReleases.filter(a => a === modelData.id).length
+                                                        enabled: applicationSettings.userToken && !page.favoriteReleases.filter(a => a === modelData.id).length
                                                         text: "Добавить в избранное"
                                                         onPressed: {
                                                             page.runRefreshFavorties = true;
@@ -1120,7 +1120,7 @@ Page {
                                                     MenuItem {
                                                         width: parent.width
                                                         font.pixelSize: 14
-                                                        enabled: page.favoriteReleases.filter(a => a === modelData.id).length
+                                                        enabled: applicationSettings.userToken && page.favoriteReleases.filter(a => a === modelData.id).length
                                                         text: "Удалить из избранного"
                                                         onPressed: {
                                                             page.runRefreshFavorties = true;
@@ -1304,6 +1304,17 @@ Page {
                             width: parent.width
                             wrapMode: Text.WordWrap
                             text: qsTr("<b>Описание:</b> ") + qsTr(page.openedRelease ? page.openedRelease.description : '')
+                            linkColor: "#b32121"
+                            onLinkActivated: {
+                                if (link.indexOf("https://www.anilibria.tv/release/") === 0 || link.indexOf("http://www.anilibria.tv/release/") === 0) {
+                                    let code = link.replace("https://www.anilibria.tv/release/", "").replace("http://www.anilibria.tv/release/", "").replace(".html", "")
+                                    if (code.indexOf(`?`) > -1) code = code.substring( 0, code.indexOf(`?`));
+                                    const release = JSON.parse(localStorage.getReleaseByCode(code));
+                                    showReleaseCard(release);
+                                } else {
+                                    Qt.openUrlExternally(link);
+                                }
+                            }
                         }
                     }
                     Column {
