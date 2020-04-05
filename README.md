@@ -12,6 +12,14 @@
 
 **Windows** - для полноценной работы видеоплеера необходимо установить [LAV filters](https://github.com/Nevcairiel/LAVFilters/releases).
 
+## Установка (Arch linux)
+
+Установите пакет из aur [anilibria-winmaclinux-git](https://aur.archlinux.org/packages/anilibria-winmaclinux-git) своим любимым aur helper'ом. Например `yay`:
+
+```console
+$ yay -S anilibria-winmaclinux-git
+```
+
 ## Сборка из исходников:
 
 ### Для сборки необходимо:
