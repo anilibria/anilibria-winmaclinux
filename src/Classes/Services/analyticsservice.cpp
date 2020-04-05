@@ -4,6 +4,20 @@ const QString AnalyticsService::googleAnalyticsAddress = "https://www.google-ana
 
 void AnalyticsService::sendPostEvent(QString type, QString category, QString message, QString page)
 {
+    QString userAgent = "Mozilla/5.0 ";
+
+#ifdef Q_OS_WIN
+    userAgent += "(Windows NT 10.0; Win64; x64)";
+#endif
+
+#ifdef Q_OS_MACOS
+    userAgent += "(Macintosh; Intel Mac OS X 10_10_5)";
+#endif
+
+#ifdef Q_OS_LINUX
+    userAgent += "(X11; Linux x86_64)";
+#endif
+
 #ifdef QT_DEBUG
     if (type.isEmpty() || category.isEmpty() || message.isEmpty() || page.isEmpty()) {
 
@@ -12,7 +26,7 @@ void AnalyticsService::sendPostEvent(QString type, QString category, QString mes
     auto networkManager = new QNetworkAccessManager(this);
     auto url = QUrl(AnalyticsService::googleAnalyticsAddress);
     QNetworkRequest request(url);
-    request.setRawHeader("User-Agent", "Anilibria CP Client");
+    request.setRawHeader("User-Agent", userAgent.toUtf8());
     request.setHeader(QNetworkRequest::ContentTypeHeader, QVariant("plain/text"));
 
     QByteArray postData;
