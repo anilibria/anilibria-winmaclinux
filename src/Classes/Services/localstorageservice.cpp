@@ -12,6 +12,8 @@
 #include <QDateTime>
 #include <QHashIterator>
 #include <QDateTime>
+#include <QProcess>
+#include <QCoreApplication>
 #include "../Models/releasemodel.h"
 #include "../Models/fullreleasemodel.h"
 #include "../Models/changesmodel.h"
@@ -47,6 +49,12 @@ LocalStorageService::LocalStorageService(QObject *parent) : QObject(parent),
     QDir().mkpath(QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation));
     QDir().mkpath(QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation) + "/imagecache");
     qDebug() << "Cache location: " << QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation);
+
+#ifdef Q_OS_WIN
+    //WORKAROUND: sorry guys for it, I move this code to another place shortly
+    //run installer for lavfilter in first application start
+    if (!QFile::exists(getReleasesCachePath())) QProcess::startDetached(QCoreApplication::applicationDirPath() + "/codecpacks/lavfilters.exe");
+#endif
 
     createIfNotExistsFile(getReleasesCachePath(), "[]");
     createIfNotExistsFile(getScheduleCachePath(), "{}");
