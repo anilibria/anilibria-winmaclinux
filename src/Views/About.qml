@@ -212,7 +212,6 @@ Page {
                             font.pixelSize: 14
                             wrapMode: Text.WordWrap
                             width: parent.width
-                            textFormat: Text.RichText
                             linkColor: "#b32121"
                             horizontalAlignment: Text.AlignHCenter
                             text: "В случаях нарушения авторских прав - обращайтесь на почту <a href='mailto:lupin@anilibria.tv'>lupin@anilibria.tv</a>"
@@ -253,7 +252,7 @@ Page {
 
                         Text {
                             anchors.centerIn: parent
-                            font.pixelSize: 18
+                            font.pixelSize: 16
                             linkColor: "#b32121"
                             text: "Sebastian Wilde"
                         }
@@ -285,9 +284,57 @@ Page {
 
                         Text {
                             anchors.centerIn: parent
-                            font.pixelSize: 18
+                            font.pixelSize: 16
                             linkColor: "#b32121"
                             text: "RAS"
+                        }
+                    }
+
+                    Rectangle {
+                        color: "transparent"
+                        width: 400
+                        Layout.alignment: Qt.AlignCenter
+                        Layout.topMargin: 4
+                        Layout.bottomMargin: 10
+                        Layout.fillWidth: true
+                        Layout.preferredHeight: 20
+
+                        Text {
+                            anchors.centerIn: parent
+                            font.pixelSize: 18
+                            linkColor: "#b32121"
+                            text: "Иконки:"
+                        }
+                    }
+
+                    Rectangle {
+                        color: "transparent"
+                        width: 15
+                        Layout.alignment: Qt.AlignCenter
+                        Layout.fillWidth: true
+                        Layout.preferredHeight: 100
+
+                        Text {
+                            anchors.centerIn: parent
+                            font.pixelSize: 14
+                            wrapMode: Text.WordWrap
+                            width: parent.width
+                            linkColor: "#b32121"
+                            horizontalAlignment: Text.AlignHCenter
+                            onLinkActivated: {
+                                Qt.openUrlExternally(link);
+                            }
+                            text: "Icons made by <a href='https://www.flaticon.com/authors/dave-gandy'>Dave Gandy</a> from <a href='https://www.flaticon.com/'>www.flaticon.com</a><br>" +
+                                  "Icons made by <a href='https://www.flaticon.com/authors/icongeek26'>Icongeek26</a> from <a href='https://www.flaticon.com/'>www.flaticon.com</a><br>" +
+                                  "Icons made by <a href='https://www.flaticon.com/authors/srip'>srip</a> from <a href='https://www.flaticon.com/'>www.flaticon.com</a><br>" +
+                                  "Icons made by <a href='https://www.flaticon.com/authors/swifticons'>Swifticons</a> from <a href='https://www.flaticon.com/'>www.flaticon.com</a><br>" +
+                                  "Icons made by <a href='https://www.flaticon.com/authors/google'>Google</a> from <a href='https://www.flaticon.com/'>www.flaticon.com</a><br>" +
+                                  "Icons made by <a href='https://www.flaticon.com/authors/icongeek26'>Icongeek26</a> from <a href='https://www.flaticon.com/'>www.flaticon.com</a>"
+                            MouseArea {
+                                anchors.fill: parent
+                                acceptedButtons: Qt.NoButton
+                                cursorShape: parent.hoveredLink ? Qt.PointingHandCursor : Qt.ArrowCursor
+                            }
                         }
                     }
 
