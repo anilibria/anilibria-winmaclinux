@@ -89,18 +89,18 @@ void SynchronizationService::saveYoutubeToCache(QString data)
     emit synchronizedYoutube(data);
 }
 
-void SynchronizationService::handleSignin(QString data)
+void SynchronizationService::handleSignin(QString token, QString data)
 {
+    if (!token.isEmpty()) {
+        emit userCompleteAuthentificated(token);
+        return;
+    }
     QJsonParseError jsonError;
     QJsonDocument jsonDocument = QJsonDocument::fromJson(data.toUtf8(), &jsonError);
     auto object = jsonDocument.object();
-    auto token = object.value("token").toString();
     auto errorMessage = object.value("errorMessage").toString();
-    if (errorMessage.isEmpty()) {
-        emit userCompleteAuthentificated(token);
-    } else {
-        emit userFailedAuthentificated(errorMessage);
-    }
+
+    emit userFailedAuthentificated(errorMessage);
 }
 
 void SynchronizationService::handleSignout()
@@ -114,12 +114,11 @@ void SynchronizationService::handleUserData(QString data)
     QJsonDocument jsonDocument = QJsonDocument::fromJson(data.toUtf8(), &jsonError);
     auto object = jsonDocument.object();
 
-    if (object.contains("message")) {
-        auto errorMessage = object.value("message").toString();
-    } else {
-        auto avatar = object.value("avatar").toString();
-        object["avatar"] = AnilibriaApiService::apiAddress + avatar;
-        QJsonDocument resultJson(object);
+    if (object.contains("status") && object.value("status").toBool()) {
+        auto dataObject = object.value("data").toObject();
+        auto avatar = dataObject.value("avatar").toString();
+        dataObject["avatar"] = AnilibriaImagesPath + avatar;
+        QJsonDocument resultJson(dataObject);
         emit userDataReceived(resultJson.toJson(QJsonDocument::Compact));
     }
 }

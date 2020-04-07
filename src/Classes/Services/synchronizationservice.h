@@ -44,7 +44,7 @@ public slots:
     void saveReleasesToCache(QString data);
     void saveScheduleToCache(QString data);
     void saveYoutubeToCache(QString data);
-    void handleSignin(QString data);
+    void handleSignin(QString token, QString data);
     void handleSignout();
     void handleUserData(QString data);
     void handleUserFavorites(QString data);

@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QtNetwork>
+#include <QSet>
 
 class AnilibriaApiService : public QObject
 {
@@ -11,8 +12,11 @@ class AnilibriaApiService : public QObject
 public:
     explicit AnilibriaApiService(QObject *parent = nullptr);
 
-    const static QString apiAddress;
     const static QString newApiAddress;
+
+    QQueue<int>* m_QueuedAddedFavorites;
+    QQueue<int>* m_QueuedDeletedFavorites;
+    QString m_FavoriteToken;
 
     void getAllReleases();
     void getYoutubeVideos();
@@ -22,6 +26,8 @@ public:
     void getUserData(QString token);
     void getFavorites(QString token);
     void addMultiFavorites(QString token, QString ids);
+    void performAddFavorite(QString token, int id);
+    void performRemoveFavorite(QString token, int id);
     void removeMultiFavorites(QString token, QString ids);
     void downloadTorrent(QString path);
 
@@ -29,7 +35,7 @@ signals:
     void allReleasesReceived(QString data);
     void allYoutubeItemReceived(QString data);
     void scheduleReceived(QString data);
-    void signinReceived(QString data);
+    void signinReceived(QString token, QString payload);
     void signoutReceived();
     void userDataReceived(QString data);
     void userFavoritesReceived(QString data);
@@ -45,6 +51,7 @@ public slots:
     void getUserDataResponse(QNetworkReply* reply);
     void getUserFavoritesResponse(QNetworkReply* reply);
     void editFavoritesResponse(QNetworkReply* reply);
+    void deleteFavoritesResponse(QNetworkReply* reply);
     void downloadTorrentResponse(QNetworkReply* reply);
 };
 

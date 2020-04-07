@@ -39,7 +39,6 @@ ApplicationWindow {
             "videoplayer": videoplayer,
             "authorization": authorization,
             "release": releases,
-            "donate": donate,
             "youtube": youtube,
             "about": about
         };
@@ -184,10 +183,18 @@ ApplicationWindow {
         }
 
         onUserDataReceived: {
-            const userData = JSON.parse(data);
-            window.userModel = userData;
-            if (window.userModel) synchronizationService.synchronizeUserFavorites(applicationSettings.userToken); // releases.refreshFavorites();
-            window.notVisibleSignin = true;
+            try {
+                console.log("onUserDataReceived", data);
+                const userData = JSON.parse(data);
+                window.userModel = userData;
+            } catch(e) {
+                window.userModel = {};
+            }
+
+            if (window.userModel.avatar) {
+                synchronizationService.synchronizeUserFavorites(applicationSettings.userToken);
+                window.notVisibleSignin = true;
+            }
         }
 
         onUserSignouted: {
@@ -200,7 +207,13 @@ ApplicationWindow {
         }
 
         onUserFavoritesReceived:  {
-            localStorage.updateFavorites(data);
+            const favoritesObject = JSON.parse(data);
+            const favorites = [];
+            for (const favorite of favoritesObject.data.items) {
+                favorites.push(favorite.id);
+            }
+
+            localStorage.updateFavorites(JSON.stringify(favorites));
             releases.refreshFavorites();
         }
 
@@ -503,11 +516,6 @@ ApplicationWindow {
 
     Authorization {
         id: authorization
-        visible: false
-    }
-
-    Donate {
-        id: donate
         visible: false
     }
 

@@ -13,7 +13,6 @@
         <file>Assets/Icons/youtube.svg</file>
         <file>Assets/Icons/donate.svg</file>
         <file>Assets/Icons/user.svg</file>
-        <file>Views/Donate.qml</file>
         <file>Views/Youtube.qml</file>
         <file>Assets/Icons/back.svg</file>
         <file>Assets/Icons/fast-forward.svg</file>

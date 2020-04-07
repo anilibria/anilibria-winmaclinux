@@ -4,10 +4,12 @@
 #include <QFile>
 #include <QUuid>
 
-const QString AnilibriaApiService::apiAddress = "https://anilibriasmartservice.azurewebsites.net/";
 const QString AnilibriaApiService::newApiAddress = "https://wwnd.space/";
 
-AnilibriaApiService::AnilibriaApiService(QObject *parent) : QObject(parent)
+AnilibriaApiService::AnilibriaApiService(QObject *parent) : QObject(parent),
+    m_QueuedAddedFavorites(new QQueue<int>()),
+    m_QueuedDeletedFavorites(new QQueue<int>()),
+    m_FavoriteToken("")
 {
 }
 
@@ -63,7 +65,7 @@ void AnilibriaApiService::getSchedule()
 void AnilibriaApiService::signin(QString email, QString password, QString fa2code)
 {
     auto networkManager = new QNetworkAccessManager(this);
-    QNetworkRequest request(QUrl(AnilibriaApiService::apiAddress + "api/auth/signin" ));
+    QNetworkRequest request(QUrl(AnilibriaApiService::newApiAddress + "public/login.php"));
 
     connect(networkManager,SIGNAL(finished(QNetworkReply*)),this,SLOT(signinResponse(QNetworkReply*)));
 
@@ -71,7 +73,7 @@ void AnilibriaApiService::signin(QString email, QString password, QString fa2cod
 
     QUrlQuery params;
     params.addQueryItem("mail", email);
-    params.addQueryItem("password", password);
+    params.addQueryItem("passwd", password);
     params.addQueryItem("fa2code", fa2code);
 
     networkManager->post(request, params.query().toUtf8());
@@ -80,52 +82,118 @@ void AnilibriaApiService::signin(QString email, QString password, QString fa2cod
 void AnilibriaApiService::signout(QString token)
 {
     auto networkManager = new QNetworkAccessManager(this);
-    QNetworkRequest request(QUrl(AnilibriaApiService::apiAddress + "api/auth/signout?token=" + token ));
+    QNetworkRequest request(QUrl(AnilibriaApiService::newApiAddress + "public/logout.php"));
 
     connect(networkManager,SIGNAL(finished(QNetworkReply*)),this,SLOT(signoutResponse(QNetworkReply*)));
 
-    networkManager->get(request);
+    request.setHeader(QNetworkRequest::ContentTypeHeader, "application/x-www-form-urlencoded");
+    auto cookie = "PHPSESSID=" + token;
+    request.setRawHeader("Cookie", cookie.toUtf8());
+
+    QUrlQuery params;
+    params.addQueryItem("query", "-");
+
+    networkManager->post(request, params.query().toUtf8());
+
 }
 
 void AnilibriaApiService::getUserData(QString token)
 {
     auto networkManager = new QNetworkAccessManager(this);
-    QNetworkRequest request(QUrl(AnilibriaApiService::apiAddress + "api/auth/getuserdata?token=" + token ));
+    QNetworkRequest request(QUrl(AnilibriaApiService::newApiAddress + "public/api/index.php"));
 
     connect(networkManager,SIGNAL(finished(QNetworkReply*)),this,SLOT(getUserDataResponse(QNetworkReply*)));
 
-    networkManager->get(request);
+    request.setHeader(QNetworkRequest::ContentTypeHeader, "application/x-www-form-urlencoded");
+    auto cookie = "PHPSESSID=" + token;
+    request.setRawHeader("Cookie", cookie.toUtf8());
+
+    QUrlQuery params;
+    params.addQueryItem("query", "user");
+
+    networkManager->post(request, params.query().toUtf8());
 }
 
 void AnilibriaApiService::getFavorites(QString token)
 {
     auto networkManager = new QNetworkAccessManager(this);
-    QNetworkRequest request(QUrl(AnilibriaApiService::apiAddress + "api/auth/getuserfavorites?token=" + token ));
+    QNetworkRequest request(QUrl(AnilibriaApiService::newApiAddress + "public/api/index.php"));
 
     connect(networkManager,SIGNAL(finished(QNetworkReply*)),this,SLOT(getUserFavoritesResponse(QNetworkReply*)));
 
-    networkManager->get(request);
+    request.setHeader(QNetworkRequest::ContentTypeHeader, "application/x-www-form-urlencoded");
+    auto cookie = "PHPSESSID=" + token;
+    request.setRawHeader("Cookie", cookie.toUtf8());
+
+    QUrlQuery params;
+    params.addQueryItem("query", "favorites");
+    params.addQueryItem("filter", "id");
+    params.addQueryItem("page", "1");
+    params.addQueryItem("perPage", "1000");
+
+    networkManager->post(request, params.query().toUtf8());
 }
 
 void AnilibriaApiService::addMultiFavorites(QString token, QString ids)
 {
+    auto idsArray = ids.split(",");
+    foreach (auto idAsString, idsArray) {
+        int id = idAsString.toInt();
+        if (!m_QueuedAddedFavorites->contains(id)) m_QueuedAddedFavorites->enqueue(id);
+    }
+
+    auto firstFavoriteId = m_QueuedAddedFavorites->dequeue();
+    performAddFavorite(token, firstFavoriteId);
+}
+
+void AnilibriaApiService::performAddFavorite(QString token, int id)
+{
+    m_FavoriteToken = token;
     auto networkManager = new QNetworkAccessManager(this);
-    QNetworkRequest request(QUrl(AnilibriaApiService::apiAddress + "api/auth/addmultifavorites?token=" + token + "&ids=" + ids ));
+    QNetworkRequest request(QUrl(AnilibriaApiService::newApiAddress + "public/api/index.php"));
 
     connect(networkManager,SIGNAL(finished(QNetworkReply*)),this,SLOT(editFavoritesResponse(QNetworkReply*)));
 
-    networkManager->get(request);
+    auto cookie = "PHPSESSID=" + token;
+    request.setRawHeader("Cookie", cookie.toUtf8());
 
+    QUrlQuery params;
+    params.addQueryItem("query", "favorites");
+    params.addQueryItem("action", "add");
+    params.addQueryItem("id", QString::number(id));
+
+    networkManager->post(request, params.query().toUtf8());
+}
+
+void AnilibriaApiService::performRemoveFavorite(QString token, int id)
+{
+    m_FavoriteToken = token;
+    auto networkManager = new QNetworkAccessManager(this);
+    QNetworkRequest request(QUrl(AnilibriaApiService::newApiAddress + "public/api/index.php"));
+
+    connect(networkManager,SIGNAL(finished(QNetworkReply*)),this,SLOT(deleteFavoritesResponse(QNetworkReply*)));
+
+    auto cookie = "PHPSESSID=" + token;
+    request.setRawHeader("Cookie", cookie.toUtf8());
+
+    QUrlQuery params;
+    params.addQueryItem("query", "favorites");
+    params.addQueryItem("action", "delete");
+    params.addQueryItem("id", QString::number(id));
+
+    networkManager->post(request, params.query().toUtf8());
 }
 
 void AnilibriaApiService::removeMultiFavorites(QString token, QString ids)
 {
-    auto networkManager = new QNetworkAccessManager(this);
-    QNetworkRequest request(QUrl(AnilibriaApiService::apiAddress + "api/auth/removemultifavorites?token=" + token + "&ids=" + ids ));
+    auto idsArray = ids.split(",");
+    foreach (auto idAsString, idsArray) {
+        int id = idAsString.toInt();
+        if (!m_QueuedDeletedFavorites->contains(id)) m_QueuedDeletedFavorites->enqueue(id);
+    }
 
-    connect(networkManager,SIGNAL(finished(QNetworkReply*)),this,SLOT(editFavoritesResponse(QNetworkReply*)));
-
-    networkManager->get(request);
+    auto firstFavoriteId = m_QueuedDeletedFavorites->dequeue();
+    performRemoveFavorite(token, firstFavoriteId);
 }
 
 void AnilibriaApiService::downloadTorrent(QString path)
@@ -179,7 +247,24 @@ void AnilibriaApiService::signinResponse(QNetworkReply *reply)
     if (reply->error() == QNetworkReply::ProtocolFailure) return;
     if (reply->error() == QNetworkReply::HostNotFoundError) return;
 
-    emit signinReceived(reply->readAll());
+    QList<QByteArray> headerList = reply->rawHeaderList();
+    QString cookie;
+    foreach(QByteArray head, headerList) {
+        if (head == "Set-Cookie") {
+            cookie = reply->rawHeader(head);
+            break;
+        }
+    }
+
+    if (!cookie.isEmpty()) {
+        auto indexKey = cookie.indexOf("PHPSESSID=");
+        auto endIndex = cookie.indexOf(";", indexKey);
+
+        auto cookieValue = cookie.mid(indexKey, endIndex).replace("PHPSESSID=", "");
+        emit signinReceived(cookieValue, reply->readAll());
+    } else {
+        emit signinReceived("", reply->readAll());
+    }
 }
 
 void AnilibriaApiService::signoutResponse(QNetworkReply *reply)
@@ -215,7 +300,28 @@ void AnilibriaApiService::editFavoritesResponse(QNetworkReply *reply)
     if (reply->error() == QNetworkReply::ProtocolFailure) return;
     if (reply->error() == QNetworkReply::HostNotFoundError) return;
 
-    emit userFavoritesUpdated();
+    if (m_QueuedAddedFavorites->isEmpty()) {
+        emit userFavoritesUpdated();
+        return;
+    }
+
+    auto id = m_QueuedAddedFavorites->dequeue();
+    performAddFavorite(m_FavoriteToken, id);
+}
+
+void AnilibriaApiService::deleteFavoritesResponse(QNetworkReply *reply)
+{
+    if (reply->error() == QNetworkReply::TimeoutError) return;
+    if (reply->error() == QNetworkReply::ProtocolFailure) return;
+    if (reply->error() == QNetworkReply::HostNotFoundError) return;
+
+    if (m_QueuedDeletedFavorites->isEmpty()) {
+        emit userFavoritesUpdated();
+        return;
+    }
+
+    auto id = m_QueuedDeletedFavorites->dequeue();
+    performRemoveFavorite(m_FavoriteToken, id);
 }
 
 void AnilibriaApiService::downloadTorrentResponse(QNetworkReply *reply)
