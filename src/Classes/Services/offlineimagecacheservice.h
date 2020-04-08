@@ -23,6 +23,8 @@ private:
 public:
     explicit OfflineImageCacheService(QObject *parent = nullptr);
 
+    void invalidateReleasePoster(int id);
+
     Q_INVOKABLE QString getReleasePath(int id, QString posterPath);
 
 signals:

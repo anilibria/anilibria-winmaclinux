@@ -133,6 +133,8 @@ void LocalStorageService::updateAllReleases(const QString &releases)
                     if (currentReleaseCacheModel.torrents() != newReleaseModel.torrents()) {
                         if (!newTorrentSeries->contains(currentReleaseCacheModel.id())) newTorrentSeries->append(currentReleaseCacheModel.id());
                     }
+                    if (currentReleaseCacheModel.poster() != newReleaseModel.poster()) m_OfflineImageCacheService->invalidateReleasePoster(currentReleaseCacheModel.id());
+
                     m_CachedReleases->removeOne(currentReleaseCacheModel);
 
                 } else {

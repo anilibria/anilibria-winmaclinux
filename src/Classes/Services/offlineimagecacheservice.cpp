@@ -38,6 +38,15 @@ OfflineImageCacheService::OfflineImageCacheService(QObject *parent) : QObject(pa
     loadCache();
 }
 
+void OfflineImageCacheService::invalidateReleasePoster(int id)
+{
+    if (m_Images->contains(id)) {
+        QFile file (m_Images->value(id));
+        file.remove();
+        m_Images->remove(id);
+    }
+}
+
 QString OfflineImageCacheService::getReleasePath(int id, QString posterPath)
 {
     if (!m_Images->contains(id)) {
