@@ -84,20 +84,6 @@ Page {
     }
 
     onNavigateTo: {
-        if (!_page.setReleaseParameters.releaseId) {
-            const lastSeenObject = localStorage.getLastVideoSeen();
-            if (lastSeenObject === ``) return;
-
-            const seenObject = JSON.parse(lastSeenObject);
-            const release = JSON.parse(localStorage.getRelease(seenObject.id));
-            _page.setReleaseParameters = {
-                releaseId: seenObject.id,
-                videos: release.videos,
-                customPlaylistPosition: -1
-            };
-
-            _page.setReleaseVideo();
-        }
         const userSettings = JSON.parse(localStorage.getUserSettings());
         player.volume = userSettings.volume;
         autoNextVideo.checked = userSettings.autoNextVideo;
@@ -117,6 +103,21 @@ Page {
             case 2:
                 _page.videoQuality = "fullhd";
                 break;
+        }
+
+        if (!_page.setReleaseParameters.releaseId) {
+            const lastSeenObject = localStorage.getLastVideoSeen();
+            if (lastSeenObject === ``) return;
+
+            const seenObject = JSON.parse(lastSeenObject);
+            const release = JSON.parse(localStorage.getRelease(seenObject.id));
+            _page.setReleaseParameters = {
+                releaseId: seenObject.id,
+                videos: release.videos,
+                customPlaylistPosition: -1
+            };
+
+            _page.setReleaseVideo();
         }
     }
 

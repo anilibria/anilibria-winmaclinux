@@ -75,11 +75,6 @@ Page {
 
     onRefreshFavorites: {
         page.favoriteReleases = localStorage.getFavorites().map(a => a);
-
-        if (page.runRefreshFavorties && page.selectedReleases.length) {
-            page.runRefreshFavorties = false;
-            page.selectedReleases = [];
-        }
     }
 
     onNavigateTo: {
@@ -184,16 +179,16 @@ Page {
                             font.pixelSize: 14
                             text: "Добавить в избранное"
                             onPressed: {
-                                page.runRefreshFavorties = true;
                                 synchronizationService.addUserFavorites(applicationSettings.userToken, page.selectedReleases.join(','));
+                                page.selectedReleases = [];
                             }
                         }
                         MenuItem {
                             font.pixelSize: 14
                             text: "Удалить из избранного"
                             onPressed: {
-                                page.runRefreshFavorties = true;
                                 synchronizationService.removeUserFavorites(applicationSettings.userToken, page.selectedReleases.join(','));
+                                page.selectedReleases = [];
                             }
                         }
                     }
@@ -1113,8 +1108,8 @@ Page {
                                                         enabled: applicationSettings.userToken && !page.favoriteReleases.filter(a => a === modelData.id).length
                                                         text: "Добавить в избранное"
                                                         onPressed: {
-                                                            page.runRefreshFavorties = true;
                                                             synchronizationService.addUserFavorites(applicationSettings.userToken, modelData.id.toString());
+                                                            page.selectedReleases = [];
                                                         }
                                                     }
                                                     MenuItem {
@@ -1123,8 +1118,8 @@ Page {
                                                         enabled: applicationSettings.userToken && page.favoriteReleases.filter(a => a === modelData.id).length
                                                         text: "Удалить из избранного"
                                                         onPressed: {
-                                                            page.runRefreshFavorties = true;
                                                             synchronizationService.removeUserFavorites(applicationSettings.userToken, modelData.id.toString());
+                                                            page.selectedReleases = [];
                                                         }
                                                     }
                                                     MenuItem {
