@@ -60,6 +60,40 @@ ApplicationWindow {
         drawer.close();
     }
 
+    ListModel {
+        id: applicationNotificationModel
+    }
+
+    Item {
+        id: applicationNotification
+
+        signal sendNotification(var settings);
+
+        onSendNotification: {
+            settings.timestamp = new Date().getTime();
+            applicationNotificationModel.append({model: settings});
+            removeNotificationTimer.start();
+            notificationOverlay.visible = true;
+        }
+
+        Timer {
+            id: removeNotificationTimer
+            interval: 1000
+            running: false
+            onTriggered: {
+                const now = new Date().getTime();
+                const firstElement = applicationNotificationModel.get(0);
+                if (now - firstElement.model.timestamp > 1000) {
+                    applicationNotificationModel.remove(firstElement);
+                    if (applicationNotificationModel.count === 0) {
+                        removeNotificationTimer.stop();
+                        notificationOverlay.visible = false;
+                    }
+                }
+            }
+        }
+    }
+
     Item {
         id: windowSettings
 
@@ -107,6 +141,13 @@ ApplicationWindow {
             if (applicationSettings.userToken) synchronizationService.synchronizeUserFavorites(applicationSettings.userToken);
 
             window.synchronizationEnabled = false;
+
+            applicationNotification.sendNotification(
+                {
+                    type: "info",
+                    message: "Синхронизация релизов успешно завершена."
+                }
+            );
         }
 
     }
@@ -527,6 +568,45 @@ ApplicationWindow {
     About {
         id: about
         visible: false
+    }
+
+    Rectangle {
+        id: notificationOverlay
+        width: 240
+        height: window.height
+        anchors.right: parent.right
+        color: "transparent"
+        visible: false
+        Flickable {
+            anchors.fill: parent
+            contentWidth: parent.width
+            contentHeight: notificationRepeater.height
+            clip: true
+
+            Column {
+                id: notificationRepeater
+                Repeater {
+                    model: applicationNotificationModel
+                    Rectangle {
+                        width: 240
+                        height: 70
+                        radius: 8
+                        border.color: "#d41515"
+                        border.width: 2
+                        color: "white"
+                        Text {
+                            padding: 10
+                            maximumLineCount: 3
+                            width: parent.width
+                            wrapMode: Text.WordWrap
+                            elide: Text.ElideRight
+                            text: modelData.message
+                            anchors.verticalCenter: parent.verticalCenter
+                        }
+                    }
+                }
+            }
+        }
     }
 
 }
