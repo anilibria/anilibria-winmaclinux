@@ -697,7 +697,7 @@ Page {
                 Layout.fillWidth: true
                 Layout.preferredHeight: 45
                 height: 45
-                color: "#808080"
+                color: "#a6a6a6"
                 Row {
                     Switch {
                         id: multupleMode
@@ -979,7 +979,7 @@ Page {
                                     Rectangle {
                                         width: 182
                                         height: 272
-                                        border.color: "#808080"
+                                        border.color: "#adadad"
                                         border.width: 1
                                         radius: 12
                                         Image {

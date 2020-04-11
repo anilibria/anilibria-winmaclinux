@@ -47,7 +47,7 @@ Page {
                 Layout.fillWidth: true
                 Layout.preferredHeight: 45
                 height: 45
-                color: "#808080"
+                color: "#a6a6a6"
             }
 
             Flickable {

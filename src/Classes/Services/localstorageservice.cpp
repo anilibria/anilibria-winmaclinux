@@ -915,8 +915,7 @@ QString LocalStorageService::getReleasesByFilter(int page, QString title, int se
         auto notificationForFavorites = m_UserSettingsModel->notificationForFavorites();
         bool isInFavorites = favoriteIds.contains(releaseItem.id());
 
-        if ((section == NewReleasesSection ||
-           section == NewOnlineSeriesSection ||
+        if ((section == NewOnlineSeriesSection ||
            section == NewTorrentsSection ||
            section == NewTorrentSeriesSection) && notificationForFavorites && !isInFavorites) continue;
 
@@ -1011,17 +1010,17 @@ QList<int> LocalStorageService::getChangesCounts()
 {
     QList<int> result;
 
+    result.append(m_ChangesModel->newReleases()->count());
+
     if (m_UserSettingsModel->notificationForFavorites()) {
         auto favorites = getAllFavorites();
         QSet<int> favoriteIds;
         foreach (auto favorite, favorites) favoriteIds.insert(favorite.toInt());
 
-        result.append(countOnlyFavorites(m_ChangesModel->newReleases(), &favoriteIds));
         result.append(countOnlyFavorites(m_ChangesModel->newOnlineSeries(), &favoriteIds));
         result.append(countOnlyFavorites(m_ChangesModel->newTorrents(), &favoriteIds));
         result.append(countOnlyFavorites(m_ChangesModel->newTorrentSeries(), &favoriteIds));
     } else {
-        result.append(m_ChangesModel->newReleases()->count());
         result.append(m_ChangesModel->newOnlineSeries()->count());
         result.append(m_ChangesModel->newTorrents()->count());
         result.append(m_ChangesModel->newTorrentSeries()->count());
