@@ -1494,7 +1494,7 @@ Page {
                         IconButton {
                             height: 40
                             width: 40
-                            iconColor: page.favoriteReleases.filter(a => a === page.openedRelease.id).length ? "red" : "black"
+                            iconColor: "black"
                             iconPath: "../Assets/Icons/external.svg"
                             iconWidth: 26
                             iconHeight: 26

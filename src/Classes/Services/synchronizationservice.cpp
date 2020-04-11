@@ -91,16 +91,18 @@ void SynchronizationService::saveYoutubeToCache(QString data)
 
 void SynchronizationService::handleSignin(QString token, QString data)
 {
-    if (!token.isEmpty()) {
-        emit userCompleteAuthentificated(token);
-        return;
-    }
     QJsonParseError jsonError;
     QJsonDocument jsonDocument = QJsonDocument::fromJson(data.toUtf8(), &jsonError);
     auto object = jsonDocument.object();
-    auto errorMessage = object.value("errorMessage").toString();
+    auto errorReply = object.value("err").toString();
+    auto errorMessage = object.value("mes").toString();
 
-    emit userFailedAuthentificated(errorMessage);
+    if (errorReply == "ok") {
+        emit userCompleteAuthentificated(token);
+        return;
+    } else {
+        emit userFailedAuthentificated(errorMessage);
+    }
 }
 
 void SynchronizationService::handleSignout()
