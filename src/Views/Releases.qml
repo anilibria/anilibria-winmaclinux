@@ -1444,6 +1444,125 @@ Page {
                                 }
                             }
                         }
+                        IconButton {
+                            height: 40
+                            width: 40
+                            iconColor: page.favoriteReleases.filter(a => a === page.openedRelease.id).length ? "red" : "black"
+                            iconPath: "../Assets/Icons/favorite.svg"
+                            iconWidth: 26
+                            iconHeight: 26
+                            onButtonPressed: {
+                                if (!window.userModel.login) {
+                                    favoritePopupHeader.text = "Избранное не доступно";
+                                    favoritePopupMessage.text = "Чтобы добавлять в избранное нужно вначале авторизоваться. Для этого перейдите на страницу Войти в меню и войдите под данными своего аккаунта. Если вы не зарегистрированы то необходимо сделать это на сайте, ссылка на сайт будет на странице Войти.";
+                                    messagePopup.open();
+                                    return;
+                                }
+
+                                cardFavoritesMenu.open();
+                            }
+
+                            Menu {
+                                id: cardFavoritesMenu
+                                width: 300
+                                modal: true
+                                focus: true
+                                closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
+
+                                MenuItem {
+                                    width: parent.width
+                                    font.pixelSize: 14
+                                    enabled: !page.favoriteReleases.filter(a => a === page.openedRelease.id).length
+                                    text: "Добавить в избранное"
+                                    onPressed: {
+                                        synchronizationService.addUserFavorites(applicationSettings.userToken, page.openedRelease.id.toString());
+                                        page.selectedReleases = [];
+                                    }
+                                }
+                                MenuItem {
+                                    width: parent.width
+                                    font.pixelSize: 14
+                                    enabled: page.favoriteReleases.filter(a => a === page.openedRelease.id).length
+                                    text: "Удалить из избранного"
+                                    onPressed: {
+                                        synchronizationService.removeUserFavorites(applicationSettings.userToken, page.openedRelease.id.toString());
+                                        page.selectedReleases = [];
+                                    }
+                                }
+                            }
+                        }
+                        IconButton {
+                            height: 40
+                            width: 40
+                            iconColor: page.favoriteReleases.filter(a => a === page.openedRelease.id).length ? "red" : "black"
+                            iconPath: "../Assets/Icons/external.svg"
+                            iconWidth: 26
+                            iconHeight: 26
+                            onButtonPressed: {
+                                externalPlayerMenu.open();
+                            }
+
+                            Menu {
+                                id: externalPlayerMenu
+                                width: 340
+                                modal: true
+                                focus: true
+                                closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
+
+                                MenuItem {
+                                    width: parent.width
+                                    font.pixelSize: 14
+                                    text: "Открыть во внешнем плеере в HD качестве"
+                                    onPressed: {
+                                        openInExternalPlayer(localStorage.packAsM3UAndOpen(page.openedRelease.id, "hd"))
+                                    }
+                                }
+                                MenuItem {
+                                    width: parent.width
+                                    font.pixelSize: 14
+                                    text: "Открыть во внешнем плеере в SD качестве"
+                                    onPressed: {
+                                        openInExternalPlayer(localStorage.packAsM3UAndOpen(page.openedRelease.id, "sd"))
+                                    }
+                                }
+                                MenuItem {
+                                    width: parent.width
+                                    font.pixelSize: 14
+                                    text: "Открыть во внешнем плеере в FullHD качестве"
+                                    onPressed: {
+                                        openInExternalPlayer(localStorage.packAsM3UAndOpen(page.openedRelease.id, "fullhd"))
+                                    }
+                                }
+
+                                MenuItem {
+                                    visible: Qt.platform.os === "windows"
+                                    width: parent.width
+                                    font.pixelSize: 14
+                                    text: "Открыть в плеере MPC в HD качестве"
+                                    onPressed: {
+                                        openInExternalPlayer(localStorage.packAsMPCPLAndOpen(page.openedRelease.id, "hd"))
+                                    }
+                                }
+                                MenuItem {
+                                    visible: Qt.platform.os === "windows"
+                                    width: parent.width
+                                    font.pixelSize: 14
+                                    text: "Открыть в плеере MPC в SD качестве"
+                                    onPressed: {
+                                        openInExternalPlayer(localStorage.packAsMPCPLAndOpen(page.openedRelease.id, "sd"))
+                                    }
+                                }
+                                MenuItem {
+                                    visible: Qt.platform.os === "windows"
+                                    width: parent.width
+                                    font.pixelSize: 14
+                                    text: "Открыть в плеере MPC в FullHD качестве"
+                                    onPressed: {
+                                        openInExternalPlayer(localStorage.packAsMPCPLAndOpen(page.openedRelease.id, "fullhd"))
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
                 Rectangle {
@@ -1674,6 +1793,12 @@ Page {
         hiddenTextField.text = text;
         hiddenTextField.selectAll();
         hiddenTextField.copy();
+    }
+
+    function openInExternalPlayer(url) {
+        if (!url) return;
+
+        Qt.openUrlExternally(url);
     }
 
     Component.onCompleted: {

@@ -14,6 +14,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
     Classes/Models/changesmodel.cpp \
+    Classes/Models/externalplaylistvideo.cpp \
     Classes/Models/fullreleasemodel.cpp \
     Classes/Models/historymodel.cpp \
     Classes/Models/onlinevideomodel.cpp \
@@ -51,6 +52,7 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 
 HEADERS += \
     Classes/Models/changesmodel.h \
+    Classes/Models/externalplaylistvideo.h \
     Classes/Models/fullreleasemodel.h \
     Classes/Models/historymodel.h \
     Classes/Models/onlinevideomodel.h \

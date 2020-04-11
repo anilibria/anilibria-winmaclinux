@@ -19,6 +19,7 @@
 #include "../Models/changesmodel.h"
 #include "../Models/seenmodel.h"
 #include "../Models/seenmarkmodel.h"
+#include "../Models/externalplaylistvideo.h"
 
 using namespace std;
 
@@ -1314,6 +1315,77 @@ void LocalStorageService::copyTorrentToFile(QString source, QString target)
 QString LocalStorageService::getReleasePosterPath(int id, QString url)
 {
     return m_OfflineImageCacheService->getReleasePath(id, url);
+}
+
+static bool compareExternalPlaylistVideo(const ExternalPlaylistVideo& first, const ExternalPlaylistVideo& second)
+{
+    return first.order() < second.order();
+}
+
+QString LocalStorageService::packAsM3UAndOpen(int id, QString quality)
+{
+    auto release = getReleaseFromCache(id);
+    if (release.id() == -1) return "";
+
+    auto jsonDocument = QJsonDocument::fromJson(release.videos().toUtf8());
+    auto videosArray = jsonDocument.array();
+    QList<ExternalPlaylistVideo> videos;
+    foreach (auto jsonVideo, videosArray) {
+        ExternalPlaylistVideo video;
+        video.setAddress(jsonVideo[quality].toString());
+        video.setOrder(jsonVideo["id"].toInt());
+        video.setName("Серия " + QString::number(video.order()));
+        videos.append(video);
+    }
+
+    std::sort(videos.begin(), videos.end(), compareExternalPlaylistVideo);
+
+    QString content = "# EXTM3U\n\n";
+    foreach (auto video, videos) {
+        content += video.exportToM3U();
+    }
+
+    QString fileName = QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation) + "/" + QString::number(id) + ".m3u";
+    QFile m3uFile(fileName);
+    if (!m3uFile.open(QFile::WriteOnly | QFile::Text)) return "";
+
+    m3uFile.write(content.toUtf8());
+    m3uFile.close();
+
+    return fileName;
+}
+
+QString LocalStorageService::packAsMPCPLAndOpen(int id, QString quality)
+{
+    auto release = getReleaseFromCache(id);
+    if (release.id() == -1) return "";
+
+    auto jsonDocument = QJsonDocument::fromJson(release.videos().toUtf8());
+    auto videosArray = jsonDocument.array();
+    QList<ExternalPlaylistVideo> videos;
+    foreach (auto jsonVideo, videosArray) {
+        ExternalPlaylistVideo video;
+        video.setAddress(jsonVideo[quality].toString());
+        video.setOrder(jsonVideo["id"].toInt());
+        video.setName("Серия " + QString::number(video.order()));
+        videos.append(video);
+    }
+
+    std::sort(videos.begin(), videos.end(), compareExternalPlaylistVideo);
+
+    QString content = "MPCPLAYLIST\n";
+    foreach (auto video, videos) {
+        content += video.exportToMPCPL();
+    }
+
+    QString fileName = QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation) + "/" + QString::number(id) + ".mpcpl";
+    QFile mpcplFile(fileName);
+    if (!mpcplFile.open(QFile::WriteOnly | QFile::Text)) return "";
+
+    mpcplFile.write(content.toUtf8());
+    mpcplFile.close();
+
+    return fileName;
 }
 
 void LocalStorageService::allReleasesUpdated()

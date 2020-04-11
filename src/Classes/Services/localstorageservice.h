@@ -104,7 +104,9 @@ public:
     Q_INVOKABLE QString getUserSettings();
     Q_INVOKABLE QString getYoutubeItems();
     Q_INVOKABLE void copyTorrentToFile(QString source, QString target);
-    Q_INVOKABLE QString getReleasePosterPath(int id, QString url);
+    Q_INVOKABLE QString getReleasePosterPath(int id, QString url);   
+    Q_INVOKABLE QString packAsM3UAndOpen(int id, QString quality);
+    Q_INVOKABLE QString packAsMPCPLAndOpen(int id, QString quality);
 
 signals:
     void allReleasesFinished();
