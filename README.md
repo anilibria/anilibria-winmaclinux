@@ -25,7 +25,7 @@ $ yay -S anilibria-winmaclinux-git
 ### Для сборки необходимо:
 - Минимальная поддерживаемая версия Qt 5.12.3
 - Поддержка C++11 (минимальные версии компиляторов MSVC15, GCC 4.8 или CLANG 3.3)
-- Модули Qt - multimedia, webview
+- Модули Qt - multimedia, webview, graphicaleffects
 - Для сборки проекта используется qmake
 
 ### Linux
