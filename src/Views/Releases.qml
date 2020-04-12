@@ -1447,7 +1447,7 @@ Page {
                         IconButton {
                             height: 40
                             width: 40
-                            iconColor: page.favoriteReleases.filter(a => a === page.openedRelease.id).length ? "red" : "black"
+                            iconColor: page.openedRelease && page.favoriteReleases.filter(a => a === page.openedRelease.id).length ? "red" : "black"
                             iconPath: "../Assets/Icons/favorite.svg"
                             iconWidth: 26
                             iconHeight: 26
@@ -1472,7 +1472,7 @@ Page {
                                 MenuItem {
                                     width: parent.width
                                     font.pixelSize: 14
-                                    enabled: !page.favoriteReleases.filter(a => a === page.openedRelease.id).length
+                                    enabled: page.openedRelease && !page.favoriteReleases.filter(a => a === page.openedRelease.id).length
                                     text: "Добавить в избранное"
                                     onPressed: {
                                         synchronizationService.addUserFavorites(applicationSettings.userToken, page.openedRelease.id.toString());
@@ -1482,7 +1482,7 @@ Page {
                                 MenuItem {
                                     width: parent.width
                                     font.pixelSize: 14
-                                    enabled: page.favoriteReleases.filter(a => a === page.openedRelease.id).length
+                                    enabled: page.openedRelease && page.favoriteReleases.filter(a => a === page.openedRelease.id).length
                                     text: "Удалить из избранного"
                                     onPressed: {
                                         synchronizationService.removeUserFavorites(applicationSettings.userToken, page.openedRelease.id.toString());

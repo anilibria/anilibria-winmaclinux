@@ -11,16 +11,20 @@ Item {
     property var hoverColor: "lightgray"
 
     signal buttonPressed()
+    signal buttonHoverEnter()
+    signal buttonHoverExit()
 
     MouseArea {
         id: mouseArea
         hoverEnabled: true
         anchors.fill: parent
         onEntered: {
-            imageRectangle.color = _button.hoverColor;//"lightgray";
+            imageRectangle.color = _button.hoverColor;
+            buttonHoverEnter();
         }
         onExited: {
             imageRectangle.color = "transparent";
+            buttonHoverExit();
         }
         onClicked: {
             _button.buttonPressed();

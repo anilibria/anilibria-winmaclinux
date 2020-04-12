@@ -131,7 +131,7 @@ Page {
 
         for (let i = 0; i < jsonVideos.length; i++) {
             const video = jsonVideos[i];
-            releaseVideos.push({ title: video.title, sd: video.sd, id: video.id, hd: video.hd, fullhd: video.fullhd });
+            releaseVideos.push({ title: video.title, sd: video.sd, id: video.id, hd: video.hd, fullhd: video.fullhd, sdfile: video.srcSd, hdfile: video.srcHd });
         }
         releaseVideos.sort(
             (left, right) => {
@@ -315,7 +315,7 @@ Page {
     Rectangle {
         id: seriesPopup
         anchors.top: parent.top
-        width: 160
+        width: 200
         height: _page.height - controlPanel.height - 20
         color: "transparent"
 
@@ -341,6 +341,10 @@ Page {
                             color: _page.selectedVideo === modelData.order ? "#64c25656" : "#C8ffffff"
                             MouseArea {
                                 anchors.fill: parent
+                                hoverEnabled: true
+                                onEntered: {
+                                    if (playerTimer.running) playerTimer.stop();
+                                }
                                 onClicked: {
                                     _page.selectedVideo = modelData.order;
                                     _page.isFullHdAllowed = "fullhd" in modelData;
@@ -356,32 +360,63 @@ Page {
                                 text: modelData.title
                             }
 
-                            IconButton {
+                            Row {
+                                width: 72
+                                spacing: 0
                                 anchors.right: parent.right
-                                anchors.rightMargin: 20
-                                anchors.verticalCenter: parent.verticalCenter
-                                height: 36
-                                width: 36
-                                iconColor: "black"
-                                hoverColor: "white"
-                                iconPath: modelData.order in _page.seenMarks ? "../Assets/Icons/seenmarkselected.svg" : "../Assets/Icons/seenmark.svg"
-                                iconWidth: 22
-                                iconHeight: 22
-                                onButtonPressed: {
-                                    let newState = false;
-                                    if (_page.seenMarks[modelData.order]) {
-                                        const obj = _page.seenMarks;
-                                        delete obj[modelData.order];
-                                        _page.seenMarks = obj;
-                                        newState = false;
-                                    } else {
-                                        const obj = _page.seenMarks;
-                                        obj[modelData.order] = true;
-                                        _page.seenMarks = obj;
-                                        newState = true;
+                                anchors.rightMargin: 18
 
+                                IconButton {
+                                    height: 36
+                                    width: 36
+                                    iconColor: "black"
+                                    hoverColor: "white"
+                                    iconPath: modelData.order in _page.seenMarks ? "../Assets/Icons/seenmarkselected.svg" : "../Assets/Icons/seenmark.svg"
+                                    iconWidth: 22
+                                    iconHeight: 22
+                                    onButtonHoverEnter: {
+                                        if (playerTimer.running) playerTimer.stop();
                                     }
-                                    localStorage.setSeenMark(_page.setReleaseParameters.releaseId, modelData.order, newState);
+                                    onButtonPressed: {
+                                        let newState = false;
+                                        if (_page.seenMarks[modelData.order]) {
+                                            const obj = _page.seenMarks;
+                                            delete obj[modelData.order];
+                                            _page.seenMarks = obj;
+                                            newState = false;
+                                        } else {
+                                            const obj = _page.seenMarks;
+                                            obj[modelData.order] = true;
+                                            _page.seenMarks = obj;
+                                            newState = true;
+
+                                        }
+                                        localStorage.setSeenMark(_page.setReleaseParameters.releaseId, modelData.order, newState);
+                                    }
+                                }
+
+                                IconButton {
+                                    height: 36
+                                    width: 36
+                                    iconColor: "black"
+                                    hoverColor: "white"
+                                    iconPath: "../Assets/Icons/download.svg"
+                                    iconWidth: 22
+                                    iconHeight: 22
+                                    onButtonHoverEnter: {
+                                        if (playerTimer.running) playerTimer.stop();
+                                    }
+                                    onButtonPressed: {
+                                        switch (_page.videoQuality) {
+                                            case "fullhd":
+                                            case "hd":
+                                                Qt.openUrlExternally(modelData.hdfile);
+                                                break;
+                                            case "sd":
+                                                Qt.openUrlExternally(modelData.sdfile);
+                                                break;
+                                        }
+                                    }
                                 }
                             }
                         }
