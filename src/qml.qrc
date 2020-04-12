@@ -63,5 +63,6 @@
         <file>Views/About.qml</file>
         <file>Assets/Icons/external.svg</file>
         <file>Assets/Icons/download.svg</file>
+        <file>Assets/Icons/information.svg</file>
     </qresource>
 </RCC>

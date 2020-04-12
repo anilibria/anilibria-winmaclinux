@@ -685,6 +685,75 @@ Page {
 
                     }
                 }
+
+                IconButton {
+                    height: 45
+                    width: 40
+                    iconColor: "white"
+                    iconPath: "../Assets/Icons/information.svg"
+                    iconWidth: 29
+                    iconHeight: 29
+                    onButtonPressed: {
+                        informationPopup.open();
+                    }
+
+                    Popup {
+                        id: informationPopup
+                        x: 40
+                        y: sortingPopupButton.height - 100
+                        width: 300
+                        height: 80
+                        modal: true
+                        focus: true
+                        closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
+
+                        Column {
+                            Text {
+                                font.pixelSize: 14
+                                linkColor: "#b32121"
+                                text: "<a href='https://t.me/Libria911Bot'>Техподдержка Анилибрии</a>"
+                                onLinkActivated: {
+                                    Qt.openUrlExternally(link);
+                                }
+
+                                MouseArea {
+                                    anchors.fill: parent
+                                    acceptedButtons: Qt.NoButton
+                                    cursorShape: parent.hoveredLink ? Qt.PointingHandCursor : Qt.ArrowCursor
+                                }
+                            }
+                            Text {
+                                font.pixelSize: 14
+                                linkColor: "#b32121"
+                                text: "<a href='https://www.anilibria.tv'>Сайт анилибрии</a>"
+                                onLinkActivated: {
+                                    Qt.openUrlExternally(link);
+                                }
+
+                                MouseArea {
+                                    anchors.fill: parent
+                                    acceptedButtons: Qt.NoButton
+                                    cursorShape: parent.hoveredLink ? Qt.PointingHandCursor : Qt.ArrowCursor
+                                }
+                            }
+                            Text {
+                                font.pixelSize: 14
+                                linkColor: "#b32121"
+                                text: "<a href='https://t.me/desktopclientanilibria'>Канал о приложении</a>"
+                                onLinkActivated: {
+                                    Qt.openUrlExternally(link);
+                                }
+
+                                MouseArea {
+                                    anchors.fill: parent
+                                    acceptedButtons: Qt.NoButton
+                                    cursorShape: parent.hoveredLink ? Qt.PointingHandCursor : Qt.ArrowCursor
+                                }
+                            }
+                        }
+                    }
+                }
+
             }
         }
 
