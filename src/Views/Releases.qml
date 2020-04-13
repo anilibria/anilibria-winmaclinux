@@ -1538,9 +1538,7 @@ Page {
                                 focus: true
                                 closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
 
-                                MenuItem {
-                                    width: parent.width
-                                    font.pixelSize: 14
+                                CommonMenuItem {
                                     enabled: page.openedRelease && !page.favoriteReleases.filter(a => a === page.openedRelease.id).length
                                     text: "Добавить в избранное"
                                     onPressed: {
@@ -1548,9 +1546,7 @@ Page {
                                         page.selectedReleases = [];
                                     }
                                 }
-                                MenuItem {
-                                    width: parent.width
-                                    font.pixelSize: 14
+                                CommonMenuItem {
                                     enabled: page.openedRelease && page.favoriteReleases.filter(a => a === page.openedRelease.id).length
                                     text: "Удалить из избранного"
                                     onPressed: {
@@ -1578,53 +1574,41 @@ Page {
                                 focus: true
                                 closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
 
-                                MenuItem {
-                                    width: parent.width
-                                    font.pixelSize: 14
+                                CommonMenuItem {
                                     text: "Открыть во внешнем плеере в HD качестве"
                                     onPressed: {
                                         openInExternalPlayer(localStorage.packAsM3UAndOpen(page.openedRelease.id, "hd"))
                                     }
                                 }
-                                MenuItem {
-                                    width: parent.width
-                                    font.pixelSize: 14
+                                CommonMenuItem {
                                     text: "Открыть во внешнем плеере в SD качестве"
                                     onPressed: {
                                         openInExternalPlayer(localStorage.packAsM3UAndOpen(page.openedRelease.id, "sd"))
                                     }
                                 }
-                                MenuItem {
-                                    width: parent.width
-                                    font.pixelSize: 14
+                                CommonMenuItem {
                                     text: "Открыть во внешнем плеере в FullHD качестве"
                                     onPressed: {
                                         openInExternalPlayer(localStorage.packAsM3UAndOpen(page.openedRelease.id, "fullhd"))
                                     }
                                 }
 
-                                MenuItem {
-                                    visible: Qt.platform.os === "windows"
-                                    width: parent.width
-                                    font.pixelSize: 14
+                                CommonMenuItem {
+                                    notVisible: Qt.platform.os !== "windows"
                                     text: "Открыть в плеере MPC в HD качестве"
                                     onPressed: {
                                         openInExternalPlayer(localStorage.packAsMPCPLAndOpen(page.openedRelease.id, "hd"))
-                                    }
+                                    }                                    
                                 }
-                                MenuItem {
-                                    visible: Qt.platform.os === "windows"
-                                    width: parent.width
-                                    font.pixelSize: 14
+                                CommonMenuItem {
+                                    notVisible: Qt.platform.os !== "windows"
                                     text: "Открыть в плеере MPC в SD качестве"
                                     onPressed: {
                                         openInExternalPlayer(localStorage.packAsMPCPLAndOpen(page.openedRelease.id, "sd"))
                                     }
                                 }
-                                MenuItem {
-                                    visible: Qt.platform.os === "windows"
-                                    width: parent.width
-                                    font.pixelSize: 14
+                                CommonMenuItem {
+                                    notVisible: Qt.platform.os !== "windows"
                                     text: "Открыть в плеере MPC в FullHD качестве"
                                     onPressed: {
                                         openInExternalPlayer(localStorage.packAsMPCPLAndOpen(page.openedRelease.id, "fullhd"))

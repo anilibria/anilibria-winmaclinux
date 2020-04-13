@@ -64,5 +64,6 @@
         <file>Assets/Icons/external.svg</file>
         <file>Assets/Icons/download.svg</file>
         <file>Assets/Icons/information.svg</file>
+        <file>Controls/CommonMenuItem.qml</file>
     </qresource>
 </RCC>
