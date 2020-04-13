@@ -563,6 +563,18 @@ int LocalStorageService::countOnlyFavorites(QList<int>* changes, QSet<int>* favo
     return count;
 }
 
+void LocalStorageService::setSeenMarkForRelease(int id, int countSeries, bool marked)
+{
+    for (int i = 0; i < countSeries; i++) {
+        auto key = QString::number(id) + "." + QString::number(i);
+        if (marked) {
+            if (!m_SeenMarkModels->contains(key)) m_SeenMarkModels->insert(key, true);
+        } else {
+            if (m_SeenMarkModels->contains(key)) m_SeenMarkModels->remove(key);
+        }
+    }
+}
+
 QString LocalStorageService::getRelease(int id)
 {
     QListIterator<FullReleaseModel> i(*m_CachedReleases);
@@ -1162,12 +1174,17 @@ void LocalStorageService::setSeenMark(int id, int seriaId, bool marked)
 
 void LocalStorageService::setSeenMarkAllSeries(int id, int countSeries, bool marked)
 {
-    for (int i = 0; i < countSeries; i++) {
-        auto key = QString::number(id) + "." + QString::number(i);
-        if (marked) {
-            if (!m_SeenMarkModels->contains(key)) m_SeenMarkModels->insert(key, true);
-        } else {
-            if (m_SeenMarkModels->contains(key)) m_SeenMarkModels->remove(key);
+    setSeenMarkForRelease(id, countSeries, marked);
+
+    saveSeenMarks();
+}
+
+void LocalStorageService::setMultipleSeenMarkAllSeries(QList<int> ids, bool marked)
+{
+    auto idsSet = ids.toSet();
+    foreach (auto release, *m_CachedReleases) {
+        if (idsSet.contains(release.id())) {
+            setSeenMarkForRelease(release.id(), release.countOnlineVideos(), marked);
         }
     }
 

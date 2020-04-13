@@ -65,5 +65,7 @@
         <file>Assets/Icons/download.svg</file>
         <file>Assets/Icons/information.svg</file>
         <file>Controls/CommonMenuItem.qml</file>
+        <file>Controls/MessageModal.qml</file>
+        <file>Assets/Icons/seenmarkpanel.svg</file>
     </qresource>
 </RCC>

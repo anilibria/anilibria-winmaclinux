@@ -229,6 +229,44 @@ Page {
                     }
                 }
                 IconButton {
+                    id: seenMarkMenuPanelButton
+                    height: 45
+                    width: 40
+                    iconColor: "white"
+                    iconPath: "../Assets/Icons/seenmarkpanel.svg"
+                    iconWidth: 29
+                    iconHeight: 29
+                    onButtonPressed: {
+                        seenMarkMenuPanel.open();
+                    }
+
+                    Menu {
+                        id: seenMarkMenuPanel
+                        y: seenMarkMenuPanelButton.height
+                        width: 300
+
+                        CommonMenuItem {
+                            text: "Отметить как просмотренное"
+                            enabled: page.selectedReleases.length
+                            onPressed: {
+                                setSeenStateForRelease(true, page.selectedReleases);
+                            }
+                        }
+                        CommonMenuItem {
+                            text: "Отметить как не просмотренное"
+                            enabled: page.selectedReleases.length
+                            onPressed: {
+                                setSeenStateForRelease(false, page.selectedReleases);
+                            }
+                        }
+                        CommonMenuItem {
+                            text: "Удалить все отметки о просмотре"
+                            onPressed: {
+                            }
+                        }
+                    }
+                }
+                IconButton {
                     id: searchPopupButton
                     height: 45
                     width: 40
@@ -1718,6 +1756,13 @@ Page {
         const oldRelease = page.openedRelease;
         page.openedRelease = null;
         page.openedRelease = oldRelease;
+        refreshSeenMarks();
+        refreshAllReleases(true);
+    }
+
+    function setSeenStateForRelease(newState, releases) {
+        localStorage.setMultipleSeenMarkAllSeries(releases, newState);
+        page.selectedReleases = [];
         refreshSeenMarks();
         refreshAllReleases(true);
     }
