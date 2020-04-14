@@ -619,6 +619,7 @@ Page {
                             if (!pressed) {
                                 localStorage.setVolume(player.volume);
                             }
+                            controlPanel.forceActiveFocus();
                         }
                         onMoved: {
                             player.volume = value / 100;
