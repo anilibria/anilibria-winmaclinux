@@ -5,9 +5,10 @@ Popup {
     id: messagePopup
     property alias header: popupHeader.text
     property alias message: popupMessage.text
+    property alias content: innerSlotContainer.children
 
     x: window.width / 2 - 225
-    y: window.height / 2 - 100
+    y: window.height / 2 - 200
     width: 450
     height: 150
     modal: true
@@ -27,13 +28,20 @@ Popup {
 
         Rectangle {
             width: messagePopup.width - 20
-            height: messagePopup.height - 50
+            height: messagePopup.height - 40
             Text {
                 id: popupMessage
-                anchors.verticalCenter: parent.verticalCenter
                 width: parent.width
+                height: 60
                 font.pixelSize: 12
                 wrapMode: Text.WordWrap
+            }
+
+            Rectangle {
+                id: innerSlotContainer
+                anchors.top: popupMessage.bottom
+                width: parent.width
+                height: 30
             }
         }
     }

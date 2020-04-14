@@ -57,6 +57,7 @@ Page {
             Layout.fillWidth: true
 
             Rectangle {
+                id: fieldsContainer
                 radius: 8
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.horizontalCenter: parent.horizontalCenter
@@ -120,6 +121,24 @@ Page {
                     }
 
                 }
+            }
+
+            Text {
+                anchors.top: fieldsContainer.bottom
+                anchors.right: fieldsContainer.right
+                linkColor: "#b32121"
+                font.pixelSize: 14
+                text: "<a href='https://www.anilibria.tv/pages/login.php'>Регистрация</a>"
+                onLinkActivated: {
+                    Qt.openUrlExternally(link);
+                }
+
+                MouseArea {
+                    anchors.fill: parent
+                    acceptedButtons: Qt.NoButton
+                    cursorShape: parent.hoveredLink ? Qt.PointingHandCursor : Qt.ArrowCursor
+                }
+
             }
         }
     }

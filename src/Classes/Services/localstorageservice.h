@@ -93,6 +93,7 @@ public:
     Q_INVOKABLE void saveVideoSeens();
     Q_INVOKABLE void setSeenMark(int id, int seriaId, bool marked);    
     Q_INVOKABLE void setSeenMarkAllSeries(int id, int countSeries, bool marked);
+    Q_INVOKABLE void removeAllSeenMark();
     Q_INVOKABLE void setMultipleSeenMarkAllSeries(QList<int> ids, bool marked);
     Q_INVOKABLE QList<int> getReleseSeenMarks(int id, int count);
     Q_INVOKABLE QString getSeenMarks();

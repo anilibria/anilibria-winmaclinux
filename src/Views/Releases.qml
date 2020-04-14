@@ -262,6 +262,36 @@ Page {
                         CommonMenuItem {
                             text: "Удалить все отметки о просмотре"
                             onPressed: {
+                                seenMarkMenuPanel.close();
+                                removeAllSeenMark.open();
+                            }
+                        }
+                    }
+
+                    MessageModal {
+                        id: removeAllSeenMark
+                        header: "Удаление признаков просмотра"
+                        message: "Вы уверены что хотите удалить все признаки просмотра у всех релизов?"
+                        content: Row {
+                            spacing: 6
+                            anchors.right: parent.right
+
+                            RoundedActionButton {
+                                text: "Ок"
+                                width: 100
+                                onClicked: {
+                                    localStorage.removeAllSeenMark();
+                                    refreshSeenMarks();
+                                    refreshAllReleases(true);
+                                    removeAllSeenMark.close();
+                                }
+                            }
+                            RoundedActionButton {
+                                text: "Отмена"
+                                width: 100
+                                onClicked: {
+                                    removeAllSeenMark.close();
+                                }
                             }
                         }
                     }
@@ -1742,12 +1772,6 @@ Page {
             }
         }
 
-    }
-
-    MessageDialog {
-        id: notImplementedDialog
-        title: "Не реализовано"
-        text: "Пока указанная функция не реализована"
     }
 
     function setSeenStateForOpenedRelease(newState) {

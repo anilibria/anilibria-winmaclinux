@@ -1179,6 +1179,13 @@ void LocalStorageService::setSeenMarkAllSeries(int id, int countSeries, bool mar
     saveSeenMarks();
 }
 
+void LocalStorageService::removeAllSeenMark()
+{
+    m_SeenMarkModels->clear();
+
+    saveSeenMarks();
+}
+
 void LocalStorageService::setMultipleSeenMarkAllSeries(QList<int> ids, bool marked)
 {
     auto idsSet = ids.toSet();
