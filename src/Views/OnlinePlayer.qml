@@ -209,10 +209,14 @@ Page {
     MediaPlayer {
         id: player
         source: _page.videoSource
+        autoLoad: true
         autoPlay: true
         playbackRate: _page.videoSpeed
         onBufferProgressChanged: {
             console.log("bufferProgress" + bufferProgress);
+        }
+        onAvailabilityChanged: {
+            console.debug("availability", availability);
         }
         onPlaying: {
             if (autoTopMost.checked) windowSettings.setStayOnTop();
@@ -634,6 +638,17 @@ Page {
                         width: 40
                         height: 40
                         iconColor: "black"
+                        iconPath: "../Assets/Icons/previous10.svg"
+                        iconWidth: 24
+                        iconHeight: 24
+                        onButtonPressed: {
+                            player.seek(player.position - 10 * 1000);
+                        }
+                    }
+                    IconButton {
+                        width: 40
+                        height: 40
+                        iconColor: "black"
                         iconPath: "../Assets/Icons/step-backward.svg"
                         iconWidth: 24
                         iconHeight: 24
@@ -674,6 +689,17 @@ Page {
                         iconHeight: 24
                         onButtonPressed: {
                             _page.nextVideo();
+                        }
+                    }
+                    IconButton {
+                        width: 40
+                        height: 40
+                        iconColor: "black"
+                        iconPath: "../Assets/Icons/next30.svg"
+                        iconWidth: 24
+                        iconHeight: 24
+                        onButtonPressed: {
+                            player.seek(player.position + 30 * 1000);
                         }
                     }
                 }

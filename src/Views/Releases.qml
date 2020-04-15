@@ -1763,10 +1763,7 @@ Page {
                     height: cardContainer.height - releaseInfo.height - 60
                     url: page.openedRelease ? getVkontakteCommentPage() : "https://vk.com/";
                     onLoadingChanged: {
-                        if (loadRequest.errorString) console.error(loadRequest.errorString);
-                    }
-                    onUrlChanged: {
-                        console.log("changed url" + url);
+                        //if (loadRequest.errorString) console.error(loadRequest.errorString);
                     }
                 }
             }

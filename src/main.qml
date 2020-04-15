@@ -225,7 +225,6 @@ ApplicationWindow {
 
         onUserDataReceived: {
             try {
-                console.log("onUserDataReceived", data);
                 const userData = JSON.parse(data);
                 window.userModel = userData;
             } catch(e) {

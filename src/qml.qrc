@@ -67,5 +67,8 @@
         <file>Controls/CommonMenuItem.qml</file>
         <file>Controls/MessageModal.qml</file>
         <file>Assets/Icons/seenmarkpanel.svg</file>
+        <file>Assets/Icons/rewind10.svg</file>
+        <file>Assets/Icons/next30.svg</file>
+        <file>Assets/Icons/previous10.svg</file>
     </qresource>
 </RCC>
