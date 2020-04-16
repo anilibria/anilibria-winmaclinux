@@ -162,6 +162,8 @@ Page {
         player.play();
 
         localStorage.setToReleaseHistory(_page.setReleaseParameters.releaseId, 1);
+
+        setSerieScrollPosition();
     }
 
     function getZeroBasedDigit(digit) {
@@ -324,6 +326,7 @@ Page {
         color: "transparent"
 
         Flickable {
+            id: serieScrollContainer
             width: seriesPopup.width
             height: seriesPopup.height
             contentWidth: seriesPopup.width
@@ -443,9 +446,11 @@ Page {
 
         Column {
             width: controlPanel.width
+            height: 100
 
             Slider {
                 id: playerLocation
+                visible: player.duration > 0
                 height: 20
                 width: controlPanel.width
                 from: 1
@@ -464,6 +469,13 @@ Page {
                 }
             }
 
+            Rectangle {
+                width: 2
+                height: 20
+                color: "transparent"
+                visible: player.duration === 0
+            }
+
             Item {
                 height: 20
                 width: controlPanel.width
@@ -479,7 +491,7 @@ Page {
                         height: 20
                         width: 60
                         text: "1080p"
-                        visible: _page.isFullHdAllowed
+                        visible: player.duration > 0 && _page.isFullHdAllowed
                         isChecked: _page.videoQuality === `fullhd`
                         onButtonClicked: {
                             _page.videoQuality = `fullhd`;
@@ -496,6 +508,7 @@ Page {
                     ToggleButton {
                         height: 20
                         width: 60
+                        visible: player.duration > 0
                         text: "720p"
                         isChecked: _page.videoQuality === `hd`
                         onButtonClicked: {
@@ -513,6 +526,7 @@ Page {
                     ToggleButton {
                         height: 20
                         width: 60
+                        visible: player.duration > 0
                         text: "480p"
                         isChecked: _page.videoQuality === `sd`
                         onButtonClicked: {
@@ -530,6 +544,7 @@ Page {
                     Rectangle {
                         width: 20
                         height: 20
+                        visible: player.duration > 0
                         color: "transparent"
                         Text {
                             anchors.centerIn: parent
@@ -539,6 +554,7 @@ Page {
                     ToggleButton {
                         height: 20
                         width: 40
+                        visible: player.duration > 0
                         text: "x1"
                         isChecked: _page.videoSpeed === 1
                         onButtonClicked: {
@@ -548,6 +564,7 @@ Page {
                     ToggleButton {
                         height: 20
                         width: 40
+                        visible: player.duration > 0
                         text: "x2"
                         isChecked: _page.videoSpeed === 1.5
                         onButtonClicked: {
@@ -557,6 +574,7 @@ Page {
                     ToggleButton {
                         height: 20
                         width: 40
+                        visible: player.duration > 0
                         text: "x3"
                         isChecked: _page.videoSpeed === 2
                         onButtonClicked: {
@@ -566,6 +584,7 @@ Page {
                     ToggleButton {
                         height: 20
                         width: 40
+                        visible: player.duration > 0
                         text: "x4"
                         isChecked: _page.videoSpeed === 3
                         onButtonClicked: {
@@ -637,6 +656,7 @@ Page {
                     IconButton {
                         width: 40
                         height: 40
+                        visible: player.duration > 0
                         iconColor: "black"
                         iconPath: "../Assets/Icons/previous10.svg"
                         iconWidth: 24
@@ -694,6 +714,7 @@ Page {
                     IconButton {
                         width: 40
                         height: 40
+                        visible: player.duration > 0
                         iconColor: "black"
                         iconPath: "../Assets/Icons/next30.svg"
                         iconWidth: 24
@@ -891,7 +912,7 @@ Page {
             }
 
             return null;
-        }
+        }        
     }
 
     function previousVideo() {
@@ -903,6 +924,8 @@ Page {
         _page.isFullHdAllowed = "fullhd" in video;
 
         _page.videoSource = checkExistingVideoQuality();
+
+        setSerieScrollPosition();
     }
 
     function nextVideo() {
@@ -914,6 +937,12 @@ Page {
         _page.isFullHdAllowed = "fullhd" in video;
 
         _page.videoSource = checkExistingVideoQuality();
+
+        setSerieScrollPosition();
+    }
+
+    function setSerieScrollPosition() {
+        serieScrollContainer.contentY = _page.selectedVideo * 40;
     }
 
     function toggleFullScreen() {
