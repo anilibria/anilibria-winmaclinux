@@ -538,12 +538,12 @@ ApplicationWindow {
                     anchors.verticalCenter: parent.verticalCenter
                     Text {
                         color: "white"
-                        font.pixelSize: 14
+                        font.pointSize: 11
                         text: qsTr("Клиент для сайта AniLibria")
                     }
                     Text {
                         color: "white"
-                        font.pixelSize: 14
+                        font.pointSize: 11
                         text: qsTr("версия " + ApplicationVersion)
                     }
                 }                

@@ -96,7 +96,7 @@ Page {
 
                         Text {
                             anchors.centerIn: parent
-                            font.pixelSize: 24
+                            font.pointSize: 15
                             text: "Клиент для сайта AniLibria.TV"
                         }
                     }
@@ -111,7 +111,7 @@ Page {
 
                         Text {
                             anchors.centerIn: parent
-                            font.pixelSize: 18
+                            font.pointSize: 14
                             linkColor: "#b32121"
                             text: "<a href='https://www.anilibria.tv/'>https://www.anilibria.tv/</a>"
                             onLinkActivated: {
@@ -135,7 +135,7 @@ Page {
 
                         Text {
                             anchors.centerIn: parent
-                            font.pixelSize: 16
+                            font.pointSize: 12
                             text: "версия " + ApplicationVersion
                         }
                     }
@@ -150,7 +150,7 @@ Page {
 
                         Text {
                             anchors.centerIn: parent
-                            font.pixelSize: 18
+                            font.pointSize: 14
                             color: "#b32121"
                             text: "Спасибо что выбираете нас!"
                         }
@@ -166,7 +166,7 @@ Page {
 
                         Text {
                             anchors.centerIn: parent
-                            font.pixelSize: 14
+                            font.pointSize: 10
                             wrapMode: Text.WordWrap
                             width: parent.width
                             horizontalAlignment: Text.AlignHCenter
@@ -192,7 +192,7 @@ Page {
 
                         Text {
                             anchors.centerIn: parent
-                            font.pixelSize: 14
+                            font.pointSize: 10
                             wrapMode: Text.WordWrap
                             width: parent.width
                             horizontalAlignment: Text.AlignHCenter
@@ -209,7 +209,7 @@ Page {
 
                         Text {
                             anchors.centerIn: parent
-                            font.pixelSize: 14
+                            font.pointSize: 10
                             wrapMode: Text.WordWrap
                             width: parent.width
                             linkColor: "#b32121"
@@ -236,7 +236,7 @@ Page {
 
                         Text {
                             anchors.centerIn: parent
-                            font.pixelSize: 18
+                            font.pointSize: 12
                             linkColor: "#b32121"
                             text: "Дизайн:"
                         }
@@ -252,7 +252,7 @@ Page {
 
                         Text {
                             anchors.centerIn: parent
-                            font.pixelSize: 16
+                            font.pointSize: 11
                             linkColor: "#b32121"
                             text: "Sebastian Wilde"
                         }
@@ -268,7 +268,7 @@ Page {
 
                         Text {
                             anchors.centerIn: parent
-                            font.pixelSize: 18
+                            font.pointSize: 12
                             linkColor: "#b32121"
                             text: "Разработка:"
                         }
@@ -284,7 +284,7 @@ Page {
 
                         Text {
                             anchors.centerIn: parent
-                            font.pixelSize: 16
+                            font.pointSize: 11
                             linkColor: "#b32121"
                             text: "RAS"
                         }
@@ -301,7 +301,7 @@ Page {
 
                         Text {
                             anchors.centerIn: parent
-                            font.pixelSize: 18
+                            font.pointSize: 12
                             linkColor: "#b32121"
                             text: "Иконки:"
                         }
@@ -316,7 +316,7 @@ Page {
 
                         Text {
                             anchors.centerIn: parent
-                            font.pixelSize: 14
+                            font.pointSize: 10
                             wrapMode: Text.WordWrap
                             width: parent.width
                             linkColor: "#b32121"
