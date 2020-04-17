@@ -6,6 +6,7 @@ import QtGraphicalEffects 1.12
 import QtQuick.Dialogs 1.2
 import Anilibria.Services 1.0
 import "Views"
+import "Controls"
 import "./anilibriaService.js" as AnilibriaService
 
 ApplicationWindow {
@@ -25,6 +26,41 @@ ApplicationWindow {
 
     onClosing: {
         analyticsService.sendEvent("Session", "End");
+    }
+
+    footer: Rectangle {
+        id: windowFooter
+        visible: true
+        width: window.width
+        height: 16
+        color: "#a6a6a6"
+
+        Row {
+            anchors.right: parent.right
+            IconButton {
+                id: notificationPopupButton
+                height: 16
+                width: 16
+                iconColor: applicationNotificationModel.count > 0 ? "#9e2323" : "black"
+                iconPath: "../Assets/Icons/notification.svg"
+                iconWidth: 14
+                iconHeight: 14
+                onButtonPressed: {
+                    notificationOverlay.visible = !notificationOverlay.visible;
+                }
+            }
+            Text {
+                id: countNotifications
+                font.pointSize: 10
+                text: applicationNotificationModel.count
+            }
+            Rectangle {
+                width: 6
+                height: 16
+                color: "transparent"
+            }
+        }
+
     }
 
     Material.accent: Material.Red
@@ -55,6 +91,8 @@ ApplicationWindow {
         newPage.navigateTo();
         currentPageId = pageId;
 
+        windowFooter.visible = pageId !== "videoplayer";
+
         analyticsService.sendView("Pages", "ChangePage", "%2F" + pageId);
 
         drawer.close();
@@ -72,25 +110,6 @@ ApplicationWindow {
         onSendNotification: {
             settings.timestamp = new Date().getTime();
             applicationNotificationModel.append({model: settings});
-            removeNotificationTimer.start();
-            notificationOverlay.visible = true;
-        }
-
-        Timer {
-            id: removeNotificationTimer
-            interval: 1000
-            running: false
-            onTriggered: {
-                const now = new Date().getTime();
-                const firstElement = applicationNotificationModel.get(0);
-                if (now - firstElement.model.timestamp > 1000) {
-                    applicationNotificationModel.remove(firstElement);
-                    if (applicationNotificationModel.count === 0) {
-                        removeNotificationTimer.stop();
-                        notificationOverlay.visible = false;
-                    }
-                }
-            }
         }
     }
 
@@ -145,7 +164,7 @@ ApplicationWindow {
             applicationNotification.sendNotification(
                 {
                     type: "info",
-                    message: "Синхронизация релизов успешно завершена."
+                    message: "Синхронизация релизов успешно завершена в " + new Date().toLocaleTimeString()
                 }
             );
         }
@@ -213,6 +232,13 @@ ApplicationWindow {
             if (window.currentPageId === "authorization") {
                 showPage("release");
                 synchronizationService.getUserData(applicationSettings.userToken);
+
+                applicationNotification.sendNotification(
+                    {
+                        type: "info",
+                        message: "Вы успешно вошли в аккаунт. Ваше избранное будет синхронизовано автоматически."
+                    }
+                );
             }
         }
 
@@ -244,6 +270,13 @@ ApplicationWindow {
 
             localStorage.clearFavorites();
             releases.refreshFavorites();
+
+            applicationNotification.sendNotification(
+                {
+                    type: "info",
+                    message: "Вы успешно вышли из аккаунта. Чтобы войти обратно перейдите на страницу Войти."
+                }
+            );
         }
 
         onUserFavoritesReceived:  {
@@ -574,33 +607,114 @@ ApplicationWindow {
         width: 240
         height: window.height
         anchors.right: parent.right
-        color: "transparent"
+        anchors.topMargin: -2
+        anchors.rightMargin: -1
+        color: "white"
+        border.color: "#d41515"
+        border.width: 1
         visible: false
-        Flickable {
+        ColumnLayout {
             anchors.fill: parent
-            contentWidth: parent.width
-            contentHeight: notificationRepeater.height
-            clip: true
 
-            Column {
-                id: notificationRepeater
-                Repeater {
-                    model: applicationNotificationModel
-                    Rectangle {
-                        width: 240
-                        height: 70
-                        radius: 8
-                        border.color: "#d41515"
-                        border.width: 2
-                        color: "white"
-                        Text {
-                            padding: 10
-                            maximumLineCount: 3
-                            width: parent.width
-                            wrapMode: Text.WordWrap
-                            elide: Text.ElideRight
-                            text: modelData.message
-                            anchors.verticalCenter: parent.verticalCenter
+            Rectangle {
+                Layout.fillWidth: true
+                Layout.preferredHeight: 20
+                color: "transparent"
+
+                IconButton {
+                    height: 16
+                    width: 16
+                    anchors.right: parent.right
+                    anchors.top: parent.top
+                    anchors.rightMargin: 4
+                    anchors.topMargin: 4
+                    iconColor: "black"
+                    iconPath: "../Assets/Icons/close.svg"
+                    iconWidth: 14
+                    iconHeight: 14
+                    onButtonPressed: {
+                        notificationOverlay.visible = false;
+                    }
+                }
+            }
+            Rectangle {
+                Layout.fillWidth: true
+                Layout.preferredHeight: 40
+                color: "transparent"
+
+                RoundedActionButton {
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    anchors.left: parent.left
+                    anchors.leftMargin: 10
+                    anchors.rightMargin: 10
+                    text: "Очистить все"
+                    onClicked: {
+                        applicationNotificationModel.clear();
+                    }
+                }
+            }
+            Flickable {
+                Layout.fillWidth: true
+                Layout.fillHeight: true
+                Layout.leftMargin: 2
+                Layout.rightMargin: 2
+                contentWidth: parent.width
+                contentHeight: notificationRepeater.height
+                clip: true
+                maximumFlickVelocity: 10
+
+                Column {
+                    id: notificationRepeater
+                    spacing: 3
+                    Repeater {
+                        model: applicationNotificationModel
+                        Rectangle {
+                            width: 239
+                            height: 70
+
+                            Rectangle {
+                                width: 230
+                                anchors.horizontalCenter: parent.horizontalCenter
+                                height: 70
+                                radius: 8
+                                border.color: "#d41515"
+                                border.width: 2
+                                color: "white"
+
+                                Text {
+                                    padding: 10
+                                    maximumLineCount: 3
+                                    font.pointSize: 8
+                                    width: parent.width
+                                    wrapMode: Text.WordWrap
+                                    elide: Text.ElideRight
+                                    text: modelData.message
+                                    anchors.verticalCenter: parent.verticalCenter
+                                }
+                                IconButton {
+                                    height: 16
+                                    width: 16
+                                    anchors.right: parent.right
+                                    anchors.top: parent.top
+                                    anchors.rightMargin: 4
+                                    anchors.topMargin: 4
+                                    iconColor: "#9e2323"
+                                    iconPath: "../Assets/Icons/close.svg"
+                                    iconWidth: 14
+                                    iconHeight: 14
+                                    onButtonPressed: {
+                                        let iterator = -1;
+                                        const count = applicationNotificationModel.count;
+                                        for (var i = 0; i < count; i++) {
+                                            let item = applicationNotificationModel.get(i);
+                                            if (item.model.timestamp === modelData.timestamp) {
+                                                applicationNotificationModel.remove(i);
+                                                break;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
                         }
                     }
                 }
