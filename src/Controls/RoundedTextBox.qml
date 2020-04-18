@@ -10,7 +10,7 @@ Rectangle {
 
     property alias textContent: edit.text
     property string placeholder: ""
-    property alias fontSize: edit.font.pixelSize
+    property alias fontSize: edit.font.pointSize
 
     signal completeEditing()
 
@@ -54,7 +54,7 @@ Rectangle {
             Text {
                 text: placeholder
                 color: "#aaa"
-                font.pixelSize: fontSize
+                font.pointSize: fontSize
                 visible: placeholder && !edit.text
             }
         }

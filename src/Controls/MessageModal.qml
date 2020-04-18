@@ -21,7 +21,7 @@ Popup {
         Text {
             id: popupHeader
             width: messagePopup.width - 20
-            font.pixelSize: 14
+            font.pointSize: 11
             font.bold: true
             elide: Text.ElideRight
         }
@@ -33,7 +33,7 @@ Popup {
                 id: popupMessage
                 width: parent.width
                 height: 60
-                font.pixelSize: 12
+                font.pointSize: 9
                 wrapMode: Text.WordWrap
             }
 

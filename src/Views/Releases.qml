@@ -175,16 +175,14 @@ Page {
                         id: favoriteMenu
                         y: favoriteMenuButton.height
 
-                        MenuItem {
-                            font.pixelSize: 14
+                        CommonMenuItem {
                             text: "Добавить в избранное"
                             onPressed: {
                                 synchronizationService.addUserFavorites(applicationSettings.userToken, page.selectedReleases.join(','));
                                 page.selectedReleases = [];
                             }
                         }
-                        MenuItem {
-                            font.pixelSize: 14
+                        CommonMenuItem {
                             text: "Удалить из избранного"
                             onPressed: {
                                 synchronizationService.removeUserFavorites(applicationSettings.userToken, page.selectedReleases.join(','));
@@ -209,7 +207,7 @@ Page {
                             Text {
                                 id: favoritePopupHeader
                                 width: messagePopup.width - 20
-                                font.pixelSize: 14
+                                font.pointSize: 12
                                 font.bold: true
                                 elide: Text.ElideRight
                             }
@@ -221,7 +219,7 @@ Page {
                                     id: favoritePopupMessage
                                     anchors.verticalCenter: parent.verticalCenter
                                     width: parent.width
-                                    font.pixelSize: 12
+                                    font.pointSize: 10
                                     wrapMode: Text.WordWrap
                                 }
                             }
@@ -349,14 +347,14 @@ Page {
                             Text {
                                 id: labelDescriptionSearchField
                                 anchors.top: clearFiltersButton.bottom
-                                font.pixelSize: 14
+                                font.pointSize: 11
                                 text: qsTr("Описание")
                             }
                             Text {
                                 id: labelTypeSearchField
                                 anchors.top: clearFiltersButton.bottom
                                 anchors.left: typeSearchField.left
-                                font.pixelSize: 14
+                                font.pointSize: 11
                                 text: qsTr("Тип")
                             }
                             TextField {
@@ -378,7 +376,7 @@ Page {
                                 id: labelGenresSearchField
                                 anchors.top: descriptionSearchField.bottom
                                 anchors.rightMargin: 10
-                                font.pixelSize: 14
+                                font.pointSize: 11
                                 text: qsTr("Жанры")
                             }
                             TextField {
@@ -393,7 +391,7 @@ Page {
                                 anchors.left: genresSearchField.right
                                 topPadding: 16
                                 leftPadding: 4
-                                font.pixelSize: 14
+                                font.pointSize: 11
                                 text: qsTr("ИЛИ/И")
                             }
                             Switch {
@@ -406,7 +404,7 @@ Page {
                                 id: labelVoicesSearchField
                                 anchors.top: genresSearchField.bottom
                                 anchors.rightMargin: 10
-                                font.pixelSize: 14
+                                font.pointSize: 11
                                 text: qsTr("Озвучка")
                             }
                             TextField {
@@ -421,7 +419,7 @@ Page {
                                 anchors.left: voicesSearchField.right
                                 topPadding: 16
                                 leftPadding: 4
-                                font.pixelSize: 14
+                                font.pointSize: 11
                                 text: qsTr("ИЛИ/И")
                             }
                             Switch {
@@ -433,14 +431,14 @@ Page {
                             Text {
                                 id: labelYearsSearchField
                                 anchors.top: voicesSearchField.bottom
-                                font.pixelSize: 14
+                                font.pointSize: 11
                                 text: qsTr("Года")
                             }
                             Text {
                                 id: labelSeasonsSearchField
                                 anchors.top: voicesSearchField.bottom
                                 anchors.left: typeSearchField.left
-                                font.pixelSize: 14
+                                font.pointSize: 11
                                 text: qsTr("Сезоны")
                             }
                             TextField {
@@ -461,7 +459,7 @@ Page {
                                 id: labelStatusesSearchField
                                 anchors.top: yearsSearchField.bottom
                                 anchors.rightMargin: 10
-                                font.pixelSize: 14
+                                font.pointSize: 11
                                 text: qsTr("Статусы")
                             }
                             TextField {
@@ -511,7 +509,7 @@ Page {
                             Text {
                                 id: labelSortingField
                                 anchors.top: startSortingButton.bottom
-                                font.pixelSize: 14
+                                font.pointSize: 11
                                 text: qsTr("Сортировать по")
                             }
                             ComboBox {
@@ -556,7 +554,7 @@ Page {
                             Text {
                                 id: labelSortingDirection
                                 anchors.top: sortingComboBox.bottom
-                                font.pixelSize: 14
+                                font.pointSize: 11
                                 text: qsTr("В порядке")
                             }
                             ComboBox {
@@ -615,7 +613,7 @@ Page {
                             Text {
                                 anchors.centerIn: parent
                                 text: "У Вас нет новых уведомлений"
-                                font.pixelSize: 20
+                                font.pointSize: 16
                             }
                         }
 
@@ -642,7 +640,7 @@ Page {
                                     height: 40
                                     Text {
                                         anchors.centerIn: parent
-                                        font.pixelSize: 14
+                                        font.pointSize: 11
                                         text: "Новых релизов: " + page.changesCounts[0]
                                     }
                                 }
@@ -654,7 +652,7 @@ Page {
                                     height: 40
                                     Text {
                                         anchors.centerIn: parent
-                                        font.pixelSize: 14
+                                        font.pointSize: 11
                                         text: "Релизов с новыми сериями: " + page.changesCounts[1]
                                     }
                                 }
@@ -666,7 +664,7 @@ Page {
                                     height: 40
                                     Text {
                                         anchors.centerIn: parent
-                                        font.pixelSize: 14
+                                        font.pointSize: 11
                                         text: "Новые торренты: " + page.changesCounts[2]
                                     }
                                 }
@@ -678,7 +676,7 @@ Page {
                                     height: 40
                                     Text {
                                         anchors.centerIn: parent
-                                        font.pixelSize: 14
+                                        font.pointSize: 11
                                         text: "Релизы с обновленными торрентами: " + page.changesCounts[3]
                                     }
                                 }
@@ -721,7 +719,7 @@ Page {
 
                         Text {
                             id: downloadTorrentModeLabel
-                            font.pixelSize: 14
+                            font.pointSize: 11
                             text: "Торрент"
                         }
                         ComboBox {
@@ -739,7 +737,7 @@ Page {
                             id: notificationForFavoritesLabel
                             anchors.top: downloadTorrentMode.bottom
                             anchors.topMargin: 4
-                            font.pixelSize: 14
+                            font.pointSize: 11
                             text: "Уведомления по избранным"
                         }
 
@@ -777,7 +775,7 @@ Page {
 
                         Column {
                             Text {
-                                font.pixelSize: 14
+                                font.pointSize: 11
                                 linkColor: "#b32121"
                                 text: "<a href='https://t.me/Libria911Bot'>Техподдержка Анилибрии</a>"
                                 onLinkActivated: {
@@ -791,7 +789,7 @@ Page {
                                 }
                             }
                             Text {
-                                font.pixelSize: 14
+                                font.pointSize: 11
                                 linkColor: "#b32121"
                                 text: "<a href='https://www.anilibria.tv'>Сайт анилибрии</a>"
                                 onLinkActivated: {
@@ -805,7 +803,7 @@ Page {
                                 }
                             }
                             Text {
-                                font.pixelSize: 14
+                                font.pointSize: 11
                                 linkColor: "#b32121"
                                 text: "<a href='https://t.me/desktopclientanilibria'>Канал о приложении</a>"
                                 onLinkActivated: {
@@ -877,7 +875,7 @@ Page {
                         id: filterByTitle
                         width: 200
                         height: 30
-                        fontSize: 12
+                        fontSize: 10
                         placeholder: "Введите название релиза"
                         onCompleteEditing: {
                             refreshAllReleases(false);
@@ -925,29 +923,25 @@ Page {
                             width: 300
                             y: notificationMenuButton.height
 
-                            MenuItem {
-                                font.pixelSize: 14
+                            CommonMenuItem {
                                 text: page.sections[2]
                                 onPressed: {
                                     page.changeSection(2);
                                 }
                             }
-                            MenuItem {
-                                font.pixelSize: 14
+                            CommonMenuItem {
                                 text: page.sections[3]
                                 onPressed: {
                                     page.changeSection(3);
                                 }
                             }
-                            MenuItem {
-                                font.pixelSize: 14
+                            CommonMenuItem {
                                 text: page.sections[4]
                                 onPressed: {
                                     page.changeSection(4);
                                 }
                             }
-                            MenuItem {
-                                font.pixelSize: 14
+                            CommonMenuItem {
                                 text: page.sections[6]
                                 onPressed: {
                                     page.changeSection(6);
@@ -986,15 +980,13 @@ Page {
                             width: 300
                             y: historyMenuButton.height
 
-                            MenuItem {
-                                font.pixelSize: 14
+                            CommonMenuItem {
                                 text: page.sections[7]
                                 onPressed: {
                                     page.changeSection(7);
                                 }
                             }
-                            MenuItem {
-                                font.pixelSize: 14
+                            CommonMenuItem {
                                 text: page.sections[8]
                                 onPressed: {
                                     page.changeSection(8);
@@ -1020,22 +1012,19 @@ Page {
                             width: 300
                             y: seenMenuButton.height
 
-                            MenuItem {
-                                font.pixelSize: 14
+                            CommonMenuItem {
                                 text: page.sections[9]
                                 onPressed: {
                                     page.changeSection(9);
                                 }
                             }
-                            MenuItem {
-                                font.pixelSize: 14
+                            CommonMenuItem {
                                 text: page.sections[10]
                                 onPressed: {
                                     page.changeSection(10);
                                 }
                             }
-                            MenuItem {
-                                font.pixelSize: 14
+                            CommonMenuItem {
                                 text: page.sections[11]
                                 onPressed: {
                                     page.changeSection(11);
@@ -1203,7 +1192,7 @@ Page {
                                                 Text {
                                                     leftPadding: 4
                                                     rightPadding: 8
-                                                    font.pixelSize: 18
+                                                    font.pointSize: 12
                                                     text: '' + modelData.countVideos + (modelData.countSeensSeries > 0 ? " <font color=\"green\">(" + modelData.countSeensSeries + ")</font>  " : "")
                                                 }
                                                 Image {
@@ -1215,7 +1204,7 @@ Page {
                                                 Text {
                                                     leftPadding: 4
                                                     rightPadding: 4
-                                                    font.pixelSize: 18
+                                                    font.pointSize: 12
                                                     text: '' + modelData.countTorrents
                                                 }
                                             }
@@ -1239,9 +1228,7 @@ Page {
                                                     focus: true
                                                     closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
 
-                                                    MenuItem {
-                                                        width: parent.width
-                                                        font.pixelSize: 14
+                                                    CommonMenuItem {
                                                         enabled: applicationSettings.userToken && !page.favoriteReleases.filter(a => a === modelData.id).length
                                                         text: "Добавить в избранное"
                                                         onPressed: {
@@ -1249,9 +1236,7 @@ Page {
                                                             page.selectedReleases = [];
                                                         }
                                                     }
-                                                    MenuItem {
-                                                        width: parent.width
-                                                        font.pixelSize: 14
+                                                    CommonMenuItem {
                                                         enabled: applicationSettings.userToken && page.favoriteReleases.filter(a => a === modelData.id).length
                                                         text: "Удалить из избранного"
                                                         onPressed: {
@@ -1259,9 +1244,7 @@ Page {
                                                             page.selectedReleases = [];
                                                         }
                                                     }
-                                                    MenuItem {
-                                                        width: parent.width
-                                                        font.pixelSize: 14
+                                                    CommonMenuItem {
                                                         text: "Смотреть"
                                                         onPressed: {
                                                             watchRelease(modelData.id, modelData.videos);
@@ -1283,7 +1266,7 @@ Page {
                                                 Text {
                                                     leftPadding: 4
                                                     rightPadding: 4
-                                                    font.pixelSize: 18
+                                                    font.pointSize: 12
                                                     text: modelData.rating
                                                 }
                                                 ColoredIcon {
@@ -1297,7 +1280,7 @@ Page {
                                                     visible: page.favoriteReleases.filter(a => a === modelData.id).length
                                                     leftPadding: 4
                                                     color: "#a32727"
-                                                    font.pixelSize: 18
+                                                    font.pointSize: 12
                                                     text: "В избранном"
                                                 }
                                             }
@@ -1483,33 +1466,25 @@ Page {
                                 id: cardCopyMenu
                                 width: 300
 
-                                MenuItem {
-                                    width: parent.width
-                                    font.pixelSize: 14
+                                CommonMenuItem {
                                     text: "Копировать название"
                                     onPressed: {
                                         copyToClipboard(page.openedRelease.title);
                                     }
                                 }
-                                MenuItem {
-                                    width: parent.width
-                                    font.pixelSize: 14
+                                CommonMenuItem {
                                     text: "Копировать оригинальное название"
                                     onPressed: {
                                         copyToClipboard(page.openedRelease.originalName);
                                     }
                                 }
-                                MenuItem {
-                                    width: parent.width
-                                    font.pixelSize: 14
+                                CommonMenuItem {
                                     text: "Копировать оба названия"
                                     onPressed: {
                                         copyToClipboard(page.openedRelease.title + ", " + page.openedRelease.originalName);
                                     }
                                 }
-                                MenuItem {
-                                    width: parent.width
-                                    font.pixelSize: 14
+                                CommonMenuItem {
                                     text: "Копировать описание"
                                     onPressed: {
                                         copyToClipboard(page.openedRelease.description);
@@ -1531,17 +1506,13 @@ Page {
                                 id: vkontakteMenu
                                 width: 300
 
-                                MenuItem {
-                                    width: parent.width
-                                    font.pixelSize: 14
+                                CommonMenuItem {
                                     text: "Авторизоваться для комментариев"
                                     onPressed: {
                                         webView.url = "https://oauth.vk.com/authorize?client_id=-1&display=widget&widget=4&redirect_uri=https://vk.com/";
                                     }
                                 }
-                                MenuItem {
-                                    width: parent.width
-                                    font.pixelSize: 14
+                                CommonMenuItem {
                                     text: "Переоткрыть комментарии"
                                     onPressed: {
                                         webView.url = getVkontakteCommentPage();
@@ -1563,17 +1534,13 @@ Page {
                                 id: seenMarkMenu
                                 width: 300
 
-                                MenuItem {
-                                    width: parent.width
-                                    font.pixelSize: 14
+                                CommonMenuItem {
                                     text: "Отметить как просмотренное"
                                     onPressed: {
                                         setSeenStateForOpenedRelease(true);
                                     }
                                 }
-                                MenuItem {
-                                    width: parent.width
-                                    font.pixelSize: 14
+                                CommonMenuItem {
                                     text: "Отметить как не просмотренное"
                                     onPressed: {
                                         setSeenStateForOpenedRelease(false);
@@ -1707,9 +1674,7 @@ Page {
 
                             Repeater {
                                 model: torrentsModel
-                                MenuItem {
-                                    width: parent.width
-                                    font.pixelSize: 14
+                                CommonMenuItem {
                                     text: "Скачать " + modelData.quality + " [" + modelData.series + "]"
                                     onPressed: {
                                         const torrentUri = synchronizationService.combineWithWebSiteUrl(modelData.url);
@@ -1724,7 +1689,7 @@ Page {
                         anchors.verticalCenter: parent.verticalCenter
                         anchors.left: parent.left
                         anchors.leftMargin: 100
-                        font.pixelSize: 14
+                        font.pointSize: 11
                         text: "Доступно "+ (page.openedRelease ? page.openedRelease.countTorrents : "0" ) + " торрентов"
                     }
 
@@ -1732,7 +1697,7 @@ Page {
                         anchors.verticalCenter: parent.verticalCenter
                         anchors.right: watchButton.left
                         anchors.rightMargin: 10
-                        font.pixelSize: 14
+                        font.pointSize: 11
                         text: "Доступно "+ (page.openedRelease ? page.openedRelease.countVideos : "0" ) + " серий онлайн"
                     }
 

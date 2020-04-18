@@ -7,5 +7,5 @@ MenuItem {
     width: parent.width
     height: notVisible ? 0 : undefined
     visible: !notVisible
-    font.pixelSize: 14
+    font.pointSize: 11
 }

@@ -758,7 +758,7 @@ Page {
                                 spacing: 10
                                 Text {
                                     width: optionsPopup.width - 20
-                                    font.pixelSize: 12
+                                    font.pointSize: 10
                                     text: "Время прыжка"
                                 }
 
@@ -812,7 +812,7 @@ Page {
 
                                 Text {
                                     width: optionsPopup.width - 20
-                                    font.pixelSize: 12
+                                    font.pointSize: 10
                                     text: "Автопереход между сериями"
                                 }
 
@@ -825,7 +825,7 @@ Page {
 
                                 Text {
                                     width: optionsPopup.width - 20
-                                    font.pixelSize: 12
+                                    font.pointSize: 10
                                     text: "Автопереход в режим поверх всех окон"
                                 }
 
