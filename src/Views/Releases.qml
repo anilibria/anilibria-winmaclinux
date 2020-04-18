@@ -767,13 +767,27 @@ Page {
                         id: informationPopup
                         x: 40
                         y: sortingPopupButton.height - 100
-                        width: 300
-                        height: 80
+                        width: 310
+                        height: 96
                         modal: true
                         focus: true
                         closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
 
                         Column {
+                            Text {
+                                font.pointSize: 11
+                                linkColor: "#b32121"
+                                text: "<a href='http://anilibriadesktop.reformal.ru/'>Сообщить идею, ошибку. Задать вопрос?</a>"
+                                onLinkActivated: {
+                                    Qt.openUrlExternally(link);
+                                }
+
+                                MouseArea {
+                                    anchors.fill: parent
+                                    acceptedButtons: Qt.NoButton
+                                    cursorShape: parent.hoveredLink ? Qt.PointingHandCursor : Qt.ArrowCursor
+                                }
+                            }
                             Text {
                                 font.pointSize: 11
                                 linkColor: "#b32121"
@@ -816,6 +830,7 @@ Page {
                                     cursorShape: parent.hoveredLink ? Qt.PointingHandCursor : Qt.ArrowCursor
                                 }
                             }
+
                         }
                     }
                 }
@@ -1349,17 +1364,28 @@ Page {
                             text: qsTr(page.openedRelease ? page.openedRelease.originalName : '')
                         }
                         Text {
-                            textFormat: Text.RichText
                             font.pointSize: 10
                             leftPadding: 8
                             topPadding: 4
-                            text: qsTr("<b>Статус:</b> ") + qsTr(page.openedRelease ? page.openedRelease.status : '')
+                            text: qsTr("<b>Статус:</b> ") + qsTr(page.openedRelease ? `<a href="http://years">${page.openedRelease.status}</a>` : '')
+                            linkColor: "#b32121"
+                            onLinkActivated: {
+                                statusesSearchField.text = page.openedRelease.status;
+                                page.openedRelease = null;
+                                page.refreshAllReleases(false);
+                            }
                         }
                         Text {
                             font.pointSize: 10
                             leftPadding: 8
                             topPadding: 4
-                            text: qsTr("<b>Год:</b> ") + qsTr(page.openedRelease ? page.openedRelease.year : '')
+                            text: qsTr("<b>Год:</b> ") + qsTr(page.openedRelease ?  `<a href="http://years">${page.openedRelease.year}</a>` : '')
+                            linkColor: "#b32121"
+                            onLinkActivated: {
+                                yearsSearchField.text = page.openedRelease.year;
+                                page.openedRelease = null;
+                                page.refreshAllReleases(false);
+                            }
                         }
                         Text {
                             visible: page.openedRelease && page.openedRelease.id && !!page.scheduledReleases[page.openedRelease.id]
@@ -1373,7 +1399,13 @@ Page {
                             font.pointSize: 10
                             leftPadding: 8
                             topPadding: 4
-                            text: qsTr("<b>Сезон:</b> ") + qsTr(page.openedRelease ? page.openedRelease.season : '')
+                            text: qsTr("<b>Сезон:</b> ") + qsTr(page.openedRelease ? `<a href="http://seasons">${page.openedRelease.season}</a>` : '')
+                            linkColor: "#b32121"
+                            onLinkActivated: {
+                                seasonesSearchField.text = page.openedRelease.season;
+                                page.openedRelease = null;
+                                page.refreshAllReleases(false);
+                            }
                         }
                         Text {
                             textFormat: Text.RichText
@@ -1392,7 +1424,17 @@ Page {
                             width: parent.width
                             wrapMode: Text.WordWrap
                             maximumLineCount: 2
-                            text: qsTr("<b>Жанры:</b> ") + qsTr(page.openedRelease ? page.openedRelease.genres : '')
+                            text: qsTr("<b>Жанры:</b> ") + qsTr(page.openedRelease ? getMultipleLinks(page.openedRelease.genres) : '')
+                            linkColor: "#b32121"
+                            onLinkActivated: {
+                                if (genresSearchField.text.length) {
+                                    genresSearchField.text += ", " + link;
+                                } else {
+                                    genresSearchField.text = link;
+                                }
+                                page.openedRelease = null;
+                                page.refreshAllReleases(false);
+                            }
                         }
                         Text {
                             font.pointSize: 10
@@ -1401,7 +1443,17 @@ Page {
                             width: parent.width
                             wrapMode: Text.WordWrap
                             maximumLineCount: 2
-                            text: qsTr("<b>Озвучка:</b> ") + qsTr(page.openedRelease ? page.openedRelease.voices : '')
+                            text: qsTr("<b>Озвучка:</b> ") + qsTr(page.openedRelease ? getMultipleLinks(page.openedRelease.voices) : '')
+                            linkColor: "#b32121"
+                            onLinkActivated: {
+                                if (voicesSearchField.text.length) {
+                                    voicesSearchField.text += ", " + link;
+                                } else {
+                                    voicesSearchField.text = link;
+                                }
+                                page.openedRelease = null;
+                                page.refreshAllReleases(false);
+                            }
                         }
                         Text {
                             font.pointSize: 10
@@ -1883,6 +1935,21 @@ Page {
         if (!url) return;
 
         Qt.openUrlExternally(url);
+    }
+
+    function getMultipleLinks(text) {
+        if (!text) return "";
+        let result = "";
+
+        const parts = text.split(",");
+        let isFirst = true;
+        for (const part of parts) {
+            const partData = part.trim();
+            result += (!isFirst ? ", " : "") + `<a href="${partData}">${partData}</a>`;
+            isFirst = false;
+        }
+
+        return result;
     }
 
     Component.onCompleted: {
