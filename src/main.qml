@@ -575,7 +575,7 @@ ApplicationWindow {
         onWatchRelease: {
             videoplayer.setReleaseParameters = {
                 releaseId,
-                customPlaylistPosition: -1,
+                customPlaylistPosition: startSeria,
                 videos
             };
             window.showPage("videoplayer");

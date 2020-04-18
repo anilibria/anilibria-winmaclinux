@@ -151,6 +151,10 @@ Page {
         if (_page.seenVideo.id) {
             firstVideo = releaseVideos[_page.seenVideo.videoId];
         }
+        if (_page.setReleaseParameters.customPlaylistPosition > -1) {
+            _page.seenVideo = {};
+            firstVideo = releaseVideos[_page.setReleaseParameters.customPlaylistPosition];
+        }
 
         refreshSeenMarks();
 

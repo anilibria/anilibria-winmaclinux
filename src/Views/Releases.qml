@@ -53,7 +53,7 @@ Page {
     property var changesCounts: []
 
     signal navigateFrom()
-    signal watchRelease(int releaseId, string videos)
+    signal watchRelease(int releaseId, string videos, int startSeria)
     signal refreshReleases()
     signal refreshFavorites()
     signal refreshReleaseSchedules()
@@ -1262,7 +1262,7 @@ Page {
                                                     CommonMenuItem {
                                                         text: "Смотреть"
                                                         onPressed: {
-                                                            watchRelease(modelData.id, modelData.videos);
+                                                            watchRelease(modelData.id, modelData.videos, -1);
                                                             quickActions.close();
                                                         }
                                                     }
@@ -1703,6 +1703,37 @@ Page {
                                 }
                             }
                         }
+
+                        IconButton {
+                            height: 40
+                            width: 40
+                            iconColor: "black"
+                            iconPath: "../Assets/Icons/online.svg"
+                            iconWidth: 26
+                            iconHeight: 26
+                            onButtonPressed: {
+                                setSeriesMenu.open();
+                            }
+
+                            Menu {
+                                id: setSeriesMenu
+                                width: 320
+                                modal: true
+                                focus: true
+                                closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
+
+                                Repeater {
+                                    model: page.openedRelease ? page.openedRelease.countVideos : 0
+
+                                    CommonMenuItem {
+                                        text: "Серия " + (index + 1)
+                                        onPressed: {
+                                            watchRelease(page.openedRelease.id, page.openedRelease.videos, index);
+                                        }
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
                 Rectangle {
@@ -1760,7 +1791,7 @@ Page {
                         anchors.right: parent.right
                         anchors.rightMargin: 10
                         onClicked: {
-                            watchRelease(page.openedRelease.id, page.openedRelease.videos);
+                            watchRelease(page.openedRelease.id, page.openedRelease.videos, -1);
 
                             page.openedRelease = null;
                         }
