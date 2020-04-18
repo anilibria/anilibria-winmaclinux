@@ -946,7 +946,10 @@ Page {
     }
 
     function setSerieScrollPosition() {
-        serieScrollContainer.contentY = _page.selectedVideo * 40;
+        let newPosition = _page.selectedVideo * 40 - serieScrollContainer.height;
+        newPosition += 40;
+        if (newPosition < 0) newPosition = 0;
+        serieScrollContainer.contentY = newPosition;
     }
 
     function toggleFullScreen() {

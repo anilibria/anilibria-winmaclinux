@@ -7,7 +7,7 @@ const QString AnilibriaApiPath = "https://anilibriasmartservice.azurewebsites.ne
 
 const QString AnilibriaImagesPath = "https://static.wwnd.space";
 
-const QString ApplicationVersion = "0.0.7";
+const QString ApplicationVersion = "0.1.0";
 
 const int HistoryReleaseCardMode = 0;
 
