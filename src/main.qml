@@ -1,4 +1,5 @@
 import QtQuick 2.12
+import QtQuick.Window 2.12
 import QtQuick.Controls 2.5
 import QtQuick.Layouts 1.3
 import QtQuick.Controls.Material 2.0
@@ -116,6 +117,8 @@ ApplicationWindow {
     Item {
         id: windowSettings
 
+        property real dpiSeparation: 0
+
         signal setStayOnTop();
         signal unsetStayOnTop();
         signal toggleStayOnTopMode();
@@ -136,6 +139,10 @@ ApplicationWindow {
             } else {
                 window.flags = 1;
             }
+        }
+
+        Component.onCompleted: {
+            windowSettings.dpiSeparation = Screen.pixelDensity - 3.2;
         }
     }
 
@@ -202,6 +209,16 @@ ApplicationWindow {
         }
 
         onSynchronizedReleases: {
+            if (!data || !data.length) {
+                window.synchronizationEnabled = false;
+                applicationNotification.sendNotification(
+                    {
+                        type: "info",
+                        message: "Не удалось синхронизовать релизы. Попробуйте повторить синхронизацию через некоторое время."
+                    }
+                );
+            }
+
             parseReleasesWorker.sendMessage({ releasesJson: data });
         }
 

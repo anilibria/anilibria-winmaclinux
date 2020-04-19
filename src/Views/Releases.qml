@@ -776,7 +776,7 @@ Page {
 
                         Column {
                             Text {
-                                font.pointSize: 11
+                                font.pointSize: 11 + windowSettings.dpiSeparation
                                 linkColor: "#b32121"
                                 text: "<a href='http://anilibriadesktop.reformal.ru/'>Написать идею, ошибку, вопрос?</a>"
                                 onLinkActivated: {
@@ -790,7 +790,7 @@ Page {
                                 }
                             }
                             Text {
-                                font.pointSize: 11
+                                font.pointSize: 11 + windowSettings.dpiSeparation
                                 linkColor: "#b32121"
                                 text: "<a href='https://t.me/Libria911Bot'>Техподдержка Анилибрии</a>"
                                 onLinkActivated: {
@@ -804,7 +804,7 @@ Page {
                                 }
                             }
                             Text {
-                                font.pointSize: 11
+                                font.pointSize: 11 + windowSettings.dpiSeparation
                                 linkColor: "#b32121"
                                 text: "<a href='https://www.anilibria.tv'>Сайт анилибрии</a>"
                                 onLinkActivated: {
@@ -818,7 +818,7 @@ Page {
                                 }
                             }
                             Text {
-                                font.pointSize: 11
+                                font.pointSize: 11 + windowSettings.dpiSeparation
                                 linkColor: "#b32121"
                                 text: "<a href='https://t.me/desktopclientanilibria'>Канал о приложении</a>"
                                 onLinkActivated: {
@@ -864,7 +864,7 @@ Page {
                     Text {
                         anchors.verticalCenter: parent.verticalCenter
                         visible: page.synchronizeEnabled
-                        font.pointSize: 12
+                        font.pointSize: 12 + windowSettings.dpiSeparation
                         text: "Выполняется синхронизация..."
                     }
                 }
@@ -873,7 +873,7 @@ Page {
                     anchors.verticalCenter: parent.verticalCenter
                     anchors.right: parent.right
                     anchors.rightMargin: 8
-                    font.pointSize: 12
+                    font.pointSize: 12 + windowSettings.dpiSeparation
                 }
             }
 
@@ -1208,7 +1208,7 @@ Page {
                                                 Text {
                                                     leftPadding: 4
                                                     rightPadding: 8
-                                                    font.pointSize: 12
+                                                    font.pointSize: 12 + windowSettings.dpiSeparation
                                                     text: '' + modelData.countVideos + (modelData.countSeensSeries > 0 ? " <font color=\"green\">(" + modelData.countSeensSeries + ")</font>  " : "")
                                                 }
                                                 Image {
@@ -1220,7 +1220,7 @@ Page {
                                                 Text {
                                                     leftPadding: 4
                                                     rightPadding: 4
-                                                    font.pointSize: 12
+                                                    font.pointSize: 12 + windowSettings.dpiSeparation
                                                     text: '' + modelData.countTorrents
                                                 }
                                             }
@@ -1282,7 +1282,7 @@ Page {
                                                 Text {
                                                     leftPadding: 4
                                                     rightPadding: 4
-                                                    font.pointSize: 12
+                                                    font.pointSize: 12 + windowSettings.dpiSeparation
                                                     text: modelData.rating
                                                 }
                                                 ColoredIcon {
@@ -1296,7 +1296,7 @@ Page {
                                                     visible: page.favoriteReleases.filter(a => a === modelData.id).length
                                                     leftPadding: 4
                                                     color: "#a32727"
-                                                    font.pointSize: 12
+                                                    font.pointSize: 12 + windowSettings.dpiSeparation
                                                     text: "В избранном"
                                                 }
                                             }
