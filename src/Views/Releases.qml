@@ -174,6 +174,7 @@ Page {
                     Menu {
                         id: favoriteMenu
                         y: favoriteMenuButton.height
+                        width: 350
 
                         CommonMenuItem {
                             text: "Добавить в избранное"
@@ -935,7 +936,7 @@ Page {
 
                         Menu {
                             id: notificationsMenuSections
-                            width: 300
+                            width: 350
                             y: notificationMenuButton.height
 
                             CommonMenuItem {
@@ -1656,7 +1657,7 @@ Page {
 
                             Menu {
                                 id: externalPlayerMenu
-                                width: 360
+                                width: 380
                                 modal: true
                                 focus: true
                                 closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
