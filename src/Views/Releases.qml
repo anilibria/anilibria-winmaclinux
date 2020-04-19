@@ -767,7 +767,7 @@ Page {
                         id: informationPopup
                         x: 40
                         y: sortingPopupButton.height - 100
-                        width: 310
+                        width: 320
                         height: 96
                         modal: true
                         focus: true
@@ -777,7 +777,7 @@ Page {
                             Text {
                                 font.pointSize: 11
                                 linkColor: "#b32121"
-                                text: "<a href='http://anilibriadesktop.reformal.ru/'>Сообщить идею, ошибку. Задать вопрос?</a>"
+                                text: "<a href='http://anilibriadesktop.reformal.ru/'>Написать идею, ошибку, вопрос?</a>"
                                 onLinkActivated: {
                                     Qt.openUrlExternally(link);
                                 }
@@ -1238,7 +1238,7 @@ Page {
                                                 }
                                                 Menu {
                                                     id: quickActions
-                                                    width: 300
+                                                    width: 320
                                                     modal: true
                                                     focus: true
                                                     closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
@@ -1516,7 +1516,7 @@ Page {
 
                             Menu {
                                 id: cardCopyMenu
-                                width: 300
+                                width: 350
 
                                 CommonMenuItem {
                                     text: "Копировать название"
@@ -1556,7 +1556,7 @@ Page {
                             }
                             Menu {
                                 id: vkontakteMenu
-                                width: 300
+                                width: 350
 
                                 CommonMenuItem {
                                     text: "Авторизоваться для комментариев"
@@ -1584,7 +1584,7 @@ Page {
                             }
                             Menu {
                                 id: seenMarkMenu
-                                width: 300
+                                width: 350
 
                                 CommonMenuItem {
                                     text: "Отметить как просмотренное"
@@ -1620,7 +1620,7 @@ Page {
 
                             Menu {
                                 id: cardFavoritesMenu
-                                width: 300
+                                width: 350
                                 modal: true
                                 focus: true
                                 closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
@@ -1656,7 +1656,7 @@ Page {
 
                             Menu {
                                 id: externalPlayerMenu
-                                width: 340
+                                width: 360
                                 modal: true
                                 focus: true
                                 closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
@@ -1712,15 +1712,19 @@ Page {
                             iconWidth: 26
                             iconHeight: 26
                             onButtonPressed: {
+                                if (Qt.platform.os !== "windows") webView.visible = false;
                                 setSeriesMenu.open();
                             }
 
                             Menu {
                                 id: setSeriesMenu
-                                width: 320
+                                width: 330
                                 modal: true
                                 focus: true
                                 closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
+                                onClosed: {
+                                    if (Qt.platform.os !== "windows") webView.visible = true;
+                                }
 
                                 Repeater {
                                     model: page.openedRelease ? page.openedRelease.countVideos : 0
@@ -1753,7 +1757,7 @@ Page {
                         Menu {
                             id: dowloadTorrent
                             y: parent.height - parent.height - (torrentsModel.count * 40)
-                            width: 300
+                            width: 320
 
                             Repeater {
                                 model: torrentsModel
