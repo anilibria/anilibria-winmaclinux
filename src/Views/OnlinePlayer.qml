@@ -784,6 +784,9 @@ Page {
                                                 text: "2"
                                             }
                                         }
+                                        onActivated: {
+                                            localStorage.setJumpMinute(_page.jumpMinutes[index]);
+                                        }
                                     }
                                     ComboBox {
                                         id: jumpSecondComboBox
@@ -810,6 +813,10 @@ Page {
                                             ListElement {
                                                 text: "30"
                                             }
+                                        }
+
+                                        onActivated: {
+                                            localStorage.setJumpSecond(_page.jumpSeconds[index]);
                                         }
                                     }
                                 }

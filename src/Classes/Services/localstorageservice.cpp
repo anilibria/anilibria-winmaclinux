@@ -1308,6 +1308,20 @@ void LocalStorageService::setNotificationForFavorites(bool notificationForFavori
     saveSettings();
 }
 
+void LocalStorageService::setJumpMinute(int jumpMinute)
+{
+    m_UserSettingsModel->setJumpMinute(jumpMinute);
+
+    saveSettings();
+}
+
+void LocalStorageService::setJumpSecond(int jumpSecond)
+{
+    m_UserSettingsModel->setJumpSecond(jumpSecond);
+
+    saveSettings();
+}
+
 QString LocalStorageService::getUserSettings()
 {
     return m_UserSettingsModel->toJson();
