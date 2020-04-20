@@ -55,7 +55,7 @@ Page {
         if (event.key === Qt.Key_Escape) {
             //changepage to releases
         }
-        if (event.key === Qt.Key_F11 || event.key === Qt.Key_F) {
+        if (event.key === Qt.Key_F11 || event.key === Qt.Key_F || event.key === 1040) {
             toggleFullScreen();
         }
         if (event.key === Qt.Key_Up) {
@@ -70,8 +70,8 @@ Page {
 
             volumeSlider.value = player.volume * 100;
         }
-        if (event.key === Qt.Key_M) player.muted = !player.muted;
-        if (event.key === Qt.Key_P && !autoTopMost.checked) windowSettings.toggleStayOnTopMode();
+        if (event.key === Qt.Key_M || event.key === 1068) player.muted = !player.muted;
+        if ((event.key === Qt.Key_P || event.key === 1047) && !autoTopMost.checked) windowSettings.toggleStayOnTopMode();
         if (event.key === Qt.Key_Left) jumpInPlayer(true);
         if (event.key === Qt.Key_Right) jumpInPlayer(false);
         if (event.key === Qt.Key_Escape) returnToReleasesPage();
