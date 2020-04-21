@@ -29,6 +29,10 @@ ApplicationWindow {
         analyticsService.sendEvent("Session", "End");
     }
 
+    onActiveChanged: {
+        if (!active) videoplayer.windowNotActived();
+    }
+
     footer: Rectangle {
         id: windowFooter
         visible: true

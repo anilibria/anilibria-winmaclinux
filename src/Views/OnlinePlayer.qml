@@ -26,12 +26,14 @@ Page {
     property int prefferedQuality: 0 // 0 - 480, 1 - 720p, 2 - 1080p
     property var jumpMinutes: [0, 1, 2]
     property var jumpSeconds: [0, 5, 10, 15, 20, 25, 30]
+    property real lastMouseYPosition: 0
 
     signal navigateFrom()
     signal setReleaseVideo()
     signal changeFullScreenMode(bool fullScreen)
     signal navigateTo()
     signal returnToReleasesPage()
+    signal windowNotActived()
 
     Keys.onSpacePressed: {
         if (player.playbackState === MediaPlayer.PlayingState) {
@@ -75,6 +77,10 @@ Page {
         if (event.key === Qt.Key_Left) jumpInPlayer(true);
         if (event.key === Qt.Key_Right) jumpInPlayer(false);
         if (event.key === Qt.Key_Escape) returnToReleasesPage();
+    }
+
+    onWindowNotActived: {
+        if (!playerTimer.running) playerTimer.restart();
     }
 
     onNavigateFrom: {
@@ -219,7 +225,7 @@ Page {
         autoPlay: true
         playbackRate: _page.videoSpeed
         onBufferProgressChanged: {
-            console.log("bufferProgress" + bufferProgress);
+            _page.isBuffering = bufferProgress < 1;
         }
         onAvailabilityChanged: {
             console.debug("availability", availability);
@@ -309,11 +315,15 @@ Page {
             _page.setControlVisible(true);
             const x = mouse.x;
             const y = mouse.y;
+            _page.lastMouseYPosition = y;
             if (y > _page.height - controlPanel.height) {
                 playerTimer.stop();
             } else {
                 playerTimer.restart();
             }
+        }
+        onExited: {
+            if (_page.height - _page.lastMouseYPosition < 10) if (!playerTimer.running) playerTimer.restart();
         }
     }
     VideoOutput {

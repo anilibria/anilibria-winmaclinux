@@ -27,6 +27,8 @@ void ImageLoader::imageDownloaded(QNetworkReply *reply)
 
     QByteArray data = reply->readAll();
 
+    if (data.length() == 0) return;
+
     auto fullPath = m_Path + "/" + QString::number(m_Id) + ".image";
     if (QFileInfo::exists(fullPath)) {
         QFile removedFile (fullPath);
