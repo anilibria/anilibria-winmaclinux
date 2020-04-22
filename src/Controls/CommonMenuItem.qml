@@ -7,5 +7,5 @@ MenuItem {
     width: parent.width
     height: notVisible ? 0 : undefined
     visible: !notVisible
-    font.pointSize: 11
+    font.pointSize: 11 + windowSettings.dpiSeparation
 }
