@@ -218,8 +218,6 @@ Page {
         onTriggered: _page.setControlVisible(false)
     }
 
-
-
     MouseArea {
         id: mainPlayerMouseArea
         anchors.fill: parent
@@ -228,7 +226,10 @@ Page {
             toggleFullScreen();
         }
         onPositionChanged: {
-            if (!(player.playbackState === MediaPlayer.PlayingState)) return;
+            if (!(player.playbackState === MediaPlayer.PlayingState)) {
+                if (controlPanel.opacity === 0) _page.setControlVisible(true);
+                return;
+            }
 
             _page.setControlVisible(true);
             const x = mouse.x;
@@ -245,7 +246,7 @@ Page {
         }
     }
 
-    QtPlayer {
+    QtAvPlayer {
         id: player
         anchors.fill: parent
         source: _page.videoSource

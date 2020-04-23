@@ -14,6 +14,7 @@
 #include <QDateTime>
 #include <QProcess>
 #include <QCoreApplication>
+#include <QOperatingSystemVersion>
 #include "../Models/releasemodel.h"
 #include "../Models/fullreleasemodel.h"
 #include "../Models/changesmodel.h"
@@ -53,8 +54,9 @@ LocalStorageService::LocalStorageService(QObject *parent) : QObject(parent),
 
 #ifdef Q_OS_WIN
     //WORKAROUND: sorry guys for it, I move this code to another place shortly
-    //run installer for lavfilter in first application start
-    if (!QFile::exists(getReleasesCachePath())) QProcess::startDetached(QCoreApplication::applicationDirPath() + "/codecpacks/lavfilters.exe");
+    //run installer for xaudio in first application start for windows 7
+    auto osVersion = QOperatingSystemVersion::current();
+    if (!QFile::exists(getReleasesCachePath()) && osVersion < QOperatingSystemVersion(QOperatingSystemVersion::Windows8)) QProcess::startDetached(QCoreApplication::applicationDirPath() + "/codecpacks/DXSETUP.exe");
 #endif
 
     createIfNotExistsFile(getReleasesCachePath(), "[]");
