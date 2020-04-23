@@ -218,28 +218,48 @@ Page {
         onTriggered: _page.setControlVisible(false)
     }
 
-    MediaPlayer {
+
+
+    MouseArea {
+        id: mainPlayerMouseArea
+        anchors.fill: parent
+        hoverEnabled: true
+        onDoubleClicked: {
+            toggleFullScreen();
+        }
+        onPositionChanged: {
+            if (!(player.playbackState === MediaPlayer.PlayingState)) return;
+
+            _page.setControlVisible(true);
+            const x = mouse.x;
+            const y = mouse.y;
+            _page.lastMouseYPosition = y;
+            if (y > _page.height - controlPanel.height) {
+                playerTimer.stop();
+            } else {
+                playerTimer.restart();
+            }
+        }
+        onExited: {
+            if (_page.height - _page.lastMouseYPosition < 10) if (!playerTimer.running) playerTimer.restart();
+        }
+    }
+
+    QtPlayer {
         id: player
+        anchors.fill: parent
         source: _page.videoSource
-        autoLoad: true
-        autoPlay: true
         playbackRate: _page.videoSpeed
         onBufferProgressChanged: {
-            _page.isBuffering = bufferProgress < 1;
-        }
-        onAvailabilityChanged: {
-            console.debug("availability", availability);
-        }
-        onPlaying: {
-            if (autoTopMost.checked) windowSettings.setStayOnTop();
-        }
-        onStopped: {
-            if (autoTopMost.checked) windowSettings.unsetStayOnTop();
-        }
-        onPaused: {
-            if (autoTopMost.checked) windowSettings.unsetStayOnTop();
+            //_page.isBuffering = bufferProgress < 1;
         }
         onPlaybackStateChanged: {
+            if (playbackState === MediaPlayer.PlayingState && autoTopMost.checked) {
+                windowSettings.setStayOnTop();
+            } else {
+                if (autoTopMost.checked) windowSettings.unsetStayOnTop();
+            }
+
             playButton.visible = playbackState === MediaPlayer.PausedState || playbackState === MediaPlayer.StoppedState;
             pauseButton.visible = playbackState === MediaPlayer.PlayingState;
             if (playbackState === MediaPlayer.PlayingState) {
@@ -300,36 +320,6 @@ Page {
                 }
             }
         }
-    }
-
-    MouseArea {
-        id: mainPlayerMouseArea
-        anchors.fill: parent
-        hoverEnabled: true
-        onDoubleClicked: {
-            toggleFullScreen();
-        }
-        onPositionChanged: {
-            if (!(player.playbackState === MediaPlayer.PlayingState)) return;
-
-            _page.setControlVisible(true);
-            const x = mouse.x;
-            const y = mouse.y;
-            _page.lastMouseYPosition = y;
-            if (y > _page.height - controlPanel.height) {
-                playerTimer.stop();
-            } else {
-                playerTimer.restart();
-            }
-        }
-        onExited: {
-            if (_page.height - _page.lastMouseYPosition < 10) if (!playerTimer.running) playerTimer.restart();
-        }
-    }
-    VideoOutput {
-        id: videoOutput
-        source: player
-        anchors.fill: parent
     }
 
     Rectangle {
@@ -869,12 +859,12 @@ Page {
                         iconWidth: 29
                         iconHeight: 29
                         onButtonPressed: {
-                            switch (videoOutput.fillMode) {
+                            switch (player.fillMode) {
                                 case VideoOutput.PreserveAspectFit:
-                                    videoOutput.fillMode = VideoOutput.PreserveAspectCrop;
+                                    player.fillMode = VideoOutput.PreserveAspectCrop;
                                     break;
                                 case VideoOutput.PreserveAspectCrop:
-                                    videoOutput.fillMode = VideoOutput.PreserveAspectFit;
+                                    player.fillMode = VideoOutput.PreserveAspectFit;
                                     break;
                             }
                         }

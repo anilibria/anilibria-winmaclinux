@@ -1,0 +1,73 @@
+import QtQuick 2.12
+import QtMultimedia 5.12
+
+Item {
+    property alias muted: videoPlayer.muted
+    property alias volume: videoPlayer.volume
+    property alias position: videoPlayer.position
+    property alias duration: videoPlayer.duration
+    property alias playbackState: videoPlayer.playbackState
+    property alias status: videoPlayer.status
+    property alias bufferProgress: videoPlayer.bufferProgress
+    property alias source: videoPlayer.source
+    property alias playbackRate: videoPlayer.playbackRate
+    property alias fillMode: videoOutput.fillMode
+
+    signal play();
+    signal pause();
+    signal stop();
+    signal seek(real position);
+    signal playerVolumeChanged();
+    signal playerPlaybackStateChanged();
+    signal playerStatusChanged();
+    signal playerPositionChanged();
+    signal playerBufferProgressChanged();
+    signal playerDurationChanged();
+
+    onPlay: {
+        videoPlayer.play();
+    }
+
+    onPause: {
+        videoPlayer.pause();
+    }
+
+    onStop: {
+        videoPlayer.stop();
+    }
+
+    onSeek: {
+        videoPlayer.seek(position);
+    }
+
+    VideoOutput {
+        id: videoOutput
+        source: videoPlayer
+        anchors.fill: parent
+
+    }
+
+    MediaPlayer {
+        id: videoPlayer
+        autoPlay: true
+        onBufferProgressChanged: {
+            playerBufferProgressChanged();
+        }
+        onPlaybackStateChanged: {
+            playerPlaybackStateChanged();
+        }
+        onVolumeChanged: {
+            playerVolumeChanged();
+        }
+        onStatusChanged: {
+            playerStatusChanged();
+        }
+        onPositionChanged: {
+            playerPositionChanged();
+        }
+        onDurationChanged: {
+            playerDurationChanged();
+        }
+    }
+}
+
