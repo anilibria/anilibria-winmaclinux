@@ -3,6 +3,7 @@
 #include <QtWebView>
 #include <QtSvg>
 #include <QQmlContext>
+#include <QString>
 #include "Classes/Services/synchronizationservice.h"
 #include "Classes/Services/localstorageservice.h"
 #include "Classes/Services/applicationsettings.h"
@@ -13,6 +14,19 @@ int main(int argc, char *argv[])
 {
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     QCoreApplication::setAttribute(Qt::AA_ShareOpenGLContexts);
+
+#ifdef Q_OS_WIN
+    if (argc == 2 && QString(argv[1]) == "outputlog") {
+        FreeConsole();
+        AllocConsole();
+        AttachConsole(GetCurrentProcessId());
+
+        // reopen the std I/O streams to redirect I/O to the new console
+        freopen("CON", "w", stdout);
+        freopen("CON", "w", stderr);
+        freopen("CON", "r", stdin);
+    }
+#endif
 
     QGuiApplication app(argc, argv);
     QtWebView::initialize();
