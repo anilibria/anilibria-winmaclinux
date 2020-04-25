@@ -8,7 +8,6 @@ import QtQuick.Dialogs 1.2
 import Anilibria.Services 1.0
 import "Views"
 import "Controls"
-import "./anilibriaService.js" as AnilibriaService
 
 ApplicationWindow {
     id: window

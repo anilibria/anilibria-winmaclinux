@@ -307,6 +307,18 @@ Page {
                         filtersPopup.open();
                     }
 
+                    Rectangle {
+                        visible: descriptionSearchField.text || typeSearchField.text || genresSearchField.text || voicesSearchField.text || yearsSearchField.text || seasonesSearchField.text || statusesSearchField.text
+                        anchors.top: parent.top
+                        anchors.right: parent.right
+                        anchors.rightMargin: 6
+                        anchors.topMargin: 10
+                        color: "#4ca2c2"
+                        width: 16
+                        height: 16
+                        radius: 12
+                    }
+
                     Popup {
                         id: filtersPopup
                         x: 40
