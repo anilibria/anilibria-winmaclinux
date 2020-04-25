@@ -683,6 +683,7 @@ Page {
                     }
                     IconButton {
                         id: playButton
+                        visible: false
                         width: 40
                         height: 40
                         iconColor: "black"
@@ -695,6 +696,7 @@ Page {
                     }
                     IconButton {
                         id: pauseButton
+                        visible: false
                         width: 40
                         height: 40
                         iconColor: "black"

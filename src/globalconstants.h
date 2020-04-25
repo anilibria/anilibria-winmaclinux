@@ -5,7 +5,7 @@
 
 const QString AnilibriaImagesPath = "https://static.wwnd.space";
 
-const QString ApplicationVersion = "0.1.0";
+const QString ApplicationVersion = "0.1.1";
 
 const int HistoryReleaseCardMode = 0;
 
