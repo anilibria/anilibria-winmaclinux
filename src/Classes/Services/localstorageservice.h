@@ -21,7 +21,7 @@ class LocalStorageService : public QObject
     Q_PROPERTY(bool isChangesExists READ isChangesExists WRITE setIsChangesExists NOTIFY isChangesExistsChanged)
 private:
     QFutureWatcher<void>* m_AllReleaseUpdatedWatcher;
-    QList<FullReleaseModel>* m_CachedReleases;
+    QList<FullReleaseModel*>* m_CachedReleases;
     ChangesModel* m_ChangesModel;
     QHash<int, SeenModel*>* m_SeenModels;
     QHash<QString,bool>* m_SeenMarkModels;
@@ -32,8 +32,8 @@ private:
 
     QString videosToJson(QList<OnlineVideoModel>& videos);
     QString torrentsToJson(QList<ReleaseTorrentModel>& torrents);
-    FullReleaseModel getReleaseFromCache(int id);
-    FullReleaseModel mapToFullReleaseModel(ReleaseModel& releaseModel);
+    FullReleaseModel* getReleaseFromCache(int id);
+    FullReleaseModel* mapToFullReleaseModel(ReleaseModel& releaseModel);
     void saveCachedReleasesToFile();
     QStringList getAllFavorites();
     QMap<int, int> getScheduleAsMap();

@@ -37,7 +37,7 @@ const int SeeningHistorySection = 10;
 const int NotSeeningHistorySection = 11;
 
 LocalStorageService::LocalStorageService(QObject *parent) : QObject(parent),
-    m_CachedReleases(new QList<FullReleaseModel>()),
+    m_CachedReleases(new QList<FullReleaseModel*>()),
     m_ChangesModel(new ChangesModel()),
     m_SeenModels(new QHash<int, SeenModel*>()),
     m_SeenMarkModels(new QHash<QString, bool>()),
@@ -120,29 +120,29 @@ void LocalStorageService::updateAllReleases(const QString &releases)
                 ReleaseModel releaseModel;
                 releaseModel.readFromApiModel(jsonRelease.toObject());
 
-                FullReleaseModel currentReleaseCacheModel = getReleaseFromCache(releaseModel.id());
+                FullReleaseModel* currentReleaseCacheModel = getReleaseFromCache(releaseModel.id());
 
-                FullReleaseModel newReleaseModel = mapToFullReleaseModel(releaseModel);
+                FullReleaseModel* newReleaseModel = mapToFullReleaseModel(releaseModel);
 
-                if (currentReleaseCacheModel.id() > -1) {
-                    auto releaseId = currentReleaseCacheModel.id();
-                    if (currentReleaseCacheModel.countOnlineVideos() != newReleaseModel.countOnlineVideos()) {
+                if (currentReleaseCacheModel->id() > -1) {
+                    auto releaseId = currentReleaseCacheModel->id();
+                    if (currentReleaseCacheModel->countOnlineVideos() != newReleaseModel->countOnlineVideos()) {
                         auto isExists = newOnlineSeries->contains(releaseId);
                         if (!isExists) newOnlineSeries->append(releaseId);
                     }
-                    if (currentReleaseCacheModel.countTorrents() != newReleaseModel.countTorrents()) {
-                        if (!newTorrents->contains(currentReleaseCacheModel.id())) newTorrents->append(currentReleaseCacheModel.id());
+                    if (currentReleaseCacheModel->countTorrents() != newReleaseModel->countTorrents()) {
+                        if (!newTorrents->contains(currentReleaseCacheModel->id())) newTorrents->append(currentReleaseCacheModel->id());
                     }
-                    if (currentReleaseCacheModel.torrents() != newReleaseModel.torrents()) {
-                        if (!newTorrentSeries->contains(currentReleaseCacheModel.id())) newTorrentSeries->append(currentReleaseCacheModel.id());
+                    if (currentReleaseCacheModel->torrents() != newReleaseModel->torrents()) {
+                        if (!newTorrentSeries->contains(currentReleaseCacheModel->id())) newTorrentSeries->append(currentReleaseCacheModel->id());
                     }
-                    if (currentReleaseCacheModel.poster() != newReleaseModel.poster()) m_OfflineImageCacheService->invalidateReleasePoster(currentReleaseCacheModel.id());
+                    if (currentReleaseCacheModel->poster() != newReleaseModel->poster()) m_OfflineImageCacheService->invalidateReleasePoster(currentReleaseCacheModel->id());
 
                     m_CachedReleases->removeOne(currentReleaseCacheModel);
 
                 } else {
                     if (!isEmptyReleases) {
-                        int newReleaseId = newReleaseModel.id();
+                        int newReleaseId = newReleaseModel->id();
                         if (!newReleases->contains(newReleaseId)) newReleases->append(newReleaseId);
                     }
                 }
@@ -195,18 +195,18 @@ QString LocalStorageService::torrentsToJson(QList<ReleaseTorrentModel> &torrents
     return torrentJson;
 }
 
-FullReleaseModel LocalStorageService::getReleaseFromCache(int id)
+FullReleaseModel* LocalStorageService::getReleaseFromCache(int id)
 {
-    foreach (auto cacheRelease, *m_CachedReleases) if (cacheRelease.id() == id) return cacheRelease;
+    foreach (auto cacheRelease, *m_CachedReleases) if (cacheRelease->id() == id) return cacheRelease;
 
-    FullReleaseModel nullObject;
-    nullObject.setId(-1);
+    FullReleaseModel* nullObject = new FullReleaseModel();
+    nullObject->setId(-1);
     return nullObject;
 }
 
-FullReleaseModel LocalStorageService::mapToFullReleaseModel(ReleaseModel &releaseModel)
+FullReleaseModel* LocalStorageService::mapToFullReleaseModel(ReleaseModel &releaseModel)
 {
-    FullReleaseModel model;
+    FullReleaseModel* model = new FullReleaseModel();
 
     auto torrents = releaseModel.torrents();
     auto torrentJson = torrentsToJson(torrents);
@@ -220,26 +220,26 @@ FullReleaseModel LocalStorageService::mapToFullReleaseModel(ReleaseModel &releas
     auto genres = releaseModel.genres().join(", ");
     if (genres.length() == 0) genres = "Не указано";
 
-    model.setId(releaseModel.id());
-    model.setTitle(releaseModel.title());
-    model.setCode(releaseModel.code());
-    model.setOriginalName(releaseModel.names().last());
-    model.setRating(releaseModel.rating());
-    model.setSeries(releaseModel.series());
-    model.setStatus(releaseModel.status());
-    model.setType(releaseModel.type());
-    model.setTimestamp(releaseModel.timestamp().toInt());
-    model.setYear(releaseModel.year());
-    model.setSeason(releaseModel.season());
-    model.setCountTorrents(torrents.count());
-    model.setCountOnlineVideos(videos.count());
-    model.setDescription(releaseModel.description());
-    model.setAnnounce(releaseModel.announce());
-    model.setVoicers(voices);
-    model.setGenres(genres);
-    model.setVideos(videosJson);
-    model.setTorrents(torrentJson);
-    model.setPoster(releaseModel.poster());
+    model->setId(releaseModel.id());
+    model->setTitle(releaseModel.title());
+    model->setCode(releaseModel.code());
+    model->setOriginalName(releaseModel.names().last());
+    model->setRating(releaseModel.rating());
+    model->setSeries(releaseModel.series());
+    model->setStatus(releaseModel.status());
+    model->setType(releaseModel.type());
+    model->setTimestamp(releaseModel.timestamp().toInt());
+    model->setYear(releaseModel.year());
+    model->setSeason(releaseModel.season());
+    model->setCountTorrents(torrents.count());
+    model->setCountOnlineVideos(videos.count());
+    model->setDescription(releaseModel.description());
+    model->setAnnounce(releaseModel.announce());
+    model->setVoicers(voices);
+    model->setGenres(genres);
+    model->setVideos(videosJson);
+    model->setTorrents(torrentJson);
+    model->setPoster(releaseModel.poster());
 
     return model;
 }
@@ -249,7 +249,7 @@ void LocalStorageService::saveCachedReleasesToFile()
     QJsonArray releasesArray;
     foreach (auto release, *m_CachedReleases) {
         QJsonObject jsonObject;
-        release.writeToJson(jsonObject);
+        release->writeToJson(jsonObject);
         releasesArray.append(jsonObject);
     }
     QJsonDocument document(releasesArray);
@@ -579,13 +579,13 @@ void LocalStorageService::setSeenMarkForRelease(int id, int countSeries, bool ma
 
 QString LocalStorageService::getRelease(int id)
 {
-    QListIterator<FullReleaseModel> i(*m_CachedReleases);
+    QListIterator<FullReleaseModel*> i(*m_CachedReleases);
 
     while(i.hasNext()) {
         auto release = i.next();
-        if (release.id() == id) {
+        if (release->id() == id) {
             QJsonObject jsonValue;
-            release.writeToJson(jsonValue);
+            release->writeToJson(jsonValue);
 
             QJsonDocument saveDoc(jsonValue);
             return saveDoc.toJson();
@@ -597,13 +597,13 @@ QString LocalStorageService::getRelease(int id)
 
 QString LocalStorageService::getReleaseByCode(const QString& code)
 {
-    QListIterator<FullReleaseModel> i(*m_CachedReleases);
+    QListIterator<FullReleaseModel*> i(*m_CachedReleases);
 
     while(i.hasNext()) {
         auto release = i.next();
-        if (release.code() == code) {
+        if (release->code() == code) {
             QJsonObject jsonValue;
-            release.writeToJson(jsonValue);
+            release->writeToJson(jsonValue);
 
             QJsonDocument saveDoc(jsonValue);
             return saveDoc.toJson();
@@ -622,7 +622,7 @@ QString LocalStorageService::getRandomRelease()
     auto release = m_CachedReleases->at(position);
 
     QJsonObject jsonValue;
-    release.writeToJson(jsonValue);
+    release->writeToJson(jsonValue);
 
     QJsonDocument saveDoc(jsonValue);
     return saveDoc.toJson();
@@ -640,74 +640,74 @@ QString LocalStorageService::getChanges()
     return changes;
 }
 
-static bool compareTimeStamp(const FullReleaseModel& first, const FullReleaseModel& second)
+static bool compareTimeStamp(const FullReleaseModel* first, const FullReleaseModel* second)
 {
-    return first.timestamp() < second.timestamp();
+    return first->timestamp() < second->timestamp();
 }
 
-static bool compareTimeStampDescending(const FullReleaseModel& first, const FullReleaseModel& second)
+static bool compareTimeStampDescending(const FullReleaseModel* first, const FullReleaseModel* second)
 {
-    return first.timestamp() > second.timestamp();
+    return first->timestamp() > second->timestamp();
 }
 
-static bool compareName(const FullReleaseModel& first, const FullReleaseModel& second)
+static bool compareName(const FullReleaseModel* first, const FullReleaseModel* second)
 {
-    return first.title() < second.title();
+    return first->title() < second->title();
 }
 
-static bool compareNameDescending(const FullReleaseModel& first, const FullReleaseModel& second)
+static bool compareNameDescending(const FullReleaseModel* first, const FullReleaseModel* second)
 {
-    return first.title() > second.title();
+    return first->title() > second->title();
 }
 
-static bool compareYear(const FullReleaseModel& first, const FullReleaseModel& second)
+static bool compareYear(const FullReleaseModel* first, const FullReleaseModel* second)
 {
-    return first.year() < second.year();
+    return first->year() < second->year();
 }
 
-static bool compareYearDescending(const FullReleaseModel& first, const FullReleaseModel& second)
+static bool compareYearDescending(const FullReleaseModel* first, const FullReleaseModel* second)
 {
-    return first.year() > second.year();
+    return first->year() > second->year();
 }
 
-static bool compareRating(const FullReleaseModel& first, const FullReleaseModel& second)
+static bool compareRating(const FullReleaseModel* first, const FullReleaseModel* second)
 {
-    return first.rating() < second.rating();
+    return first->rating() < second->rating();
 }
 
-static bool compareRatingDescending(const FullReleaseModel& first, const FullReleaseModel& second)
+static bool compareRatingDescending(const FullReleaseModel* first, const FullReleaseModel* second)
 {
-    return first.rating() > second.rating();
+    return first->rating() > second->rating();
 }
 
-static bool compareStatus(const FullReleaseModel& first, const FullReleaseModel& second)
+static bool compareStatus(const FullReleaseModel* first, const FullReleaseModel* second)
 {
-    return first.status() < second.status();
+    return first->status() < second->status();
 }
 
-static bool compareStatusDescending(const FullReleaseModel& first, const FullReleaseModel& second)
+static bool compareStatusDescending(const FullReleaseModel* first, const FullReleaseModel* second)
 {
-    return first.status() > second.status();
+    return first->status() > second->status();
 }
 
-static bool compareOriginalName(const FullReleaseModel& first, const FullReleaseModel& second)
+static bool compareOriginalName(const FullReleaseModel* first, const FullReleaseModel* second)
 {
-    return first.originalName() < second.originalName();
+    return first->originalName() < second->originalName();
 }
 
-static bool compareOriginalNameDescending(const FullReleaseModel& first, const FullReleaseModel& second)
+static bool compareOriginalNameDescending(const FullReleaseModel* first, const FullReleaseModel* second)
 {
-    return first.originalName() > second.originalName();
+    return first->originalName() > second->originalName();
 }
 
-static bool compareSeason(const FullReleaseModel& first, const FullReleaseModel& second)
+static bool compareSeason(const FullReleaseModel* first, const FullReleaseModel* second)
 {
-    return first.season() < second.season();
+    return first->season() < second->season();
 }
 
-static bool compareSeasonDescending(const FullReleaseModel& first, const FullReleaseModel& second)
+static bool compareSeasonDescending(const FullReleaseModel* first, const FullReleaseModel* second)
 {
-    return first.season() > second.season();
+    return first->season() > second->season();
 }
 
 QString LocalStorageService::getReleasesByFilter(int page, QString title, int section, QString description, QString type, QString genres, bool genresOr, QString voices, bool voicesOr, QString years, QString seasones, QString statuses, int sortingField, bool sortingDescending)
@@ -722,37 +722,37 @@ QString LocalStorageService::getReleasesByFilter(int page, QString title, int se
     QMap<int, int> scheduled = getScheduleAsMap();
     auto seenMarks = getAllSeenMarkCount();
 
-    std::function<bool (const FullReleaseModel&, const FullReleaseModel&)> scheduleComparer = [scheduled](const FullReleaseModel& first, const FullReleaseModel& second) {
-        auto firstId = first.id();
+    std::function<bool (const FullReleaseModel*, const FullReleaseModel*)> scheduleComparer = [scheduled](const FullReleaseModel* first, const FullReleaseModel* second) {
+        auto firstId = first->id();
         auto firstScheduled = scheduled.contains(firstId) ? scheduled[firstId] : 9;
 
-        auto secondId = second.id();
+        auto secondId = second->id();
         auto secondScheduled = scheduled.contains(secondId) ? scheduled[secondId] : 9;
 
         return firstScheduled < secondScheduled;
     };
 
-    std::function<bool (const FullReleaseModel&, const FullReleaseModel&)> scheduleDescendingComparer = [scheduled](const FullReleaseModel& first, const FullReleaseModel& second) {
-        auto firstId = first.id();
+    std::function<bool (const FullReleaseModel*, const FullReleaseModel*)> scheduleDescendingComparer = [scheduled](const FullReleaseModel* first, const FullReleaseModel* second) {
+        auto firstId = first->id();
         auto firstScheduled = scheduled.contains(firstId) ? scheduled[firstId] : 9;
 
-        auto secondId = second.id();
+        auto secondId = second->id();
         auto secondScheduled = scheduled.contains(secondId) ? scheduled[secondId] : 9;
 
         return firstScheduled > secondScheduled;
     };
 
-    std::function<bool (const FullReleaseModel&, const FullReleaseModel&)> historyComparer = [this](const FullReleaseModel& first, const FullReleaseModel& second) {
+    std::function<bool (const FullReleaseModel*, const FullReleaseModel*)> historyComparer = [this](const FullReleaseModel* first, const FullReleaseModel* second) {
         int leftTimestamp = 0;
-        int firstId = first.id();
-        if (m_HistoryModels->contains(first.id())) {
+        int firstId = first->id();
+        if (m_HistoryModels->contains(first->id())) {
             auto historyItem = m_HistoryModels->value(firstId);
             leftTimestamp = historyItem->timestamp();
         }
 
         int rightTimestamp = 0;
-        int secondId = second.id();
-        if (m_HistoryModels->contains(second.id())) {
+        int secondId = second->id();
+        if (m_HistoryModels->contains(second->id())) {
             auto historyItem = m_HistoryModels->value(secondId);
             rightTimestamp = historyItem->timestamp();
         }
@@ -760,16 +760,16 @@ QString LocalStorageService::getReleasesByFilter(int page, QString title, int se
         return leftTimestamp < rightTimestamp;
     };
 
-    std::function<bool (const FullReleaseModel&, const FullReleaseModel&)> historyDescendingComparer = [this](const FullReleaseModel& first, const FullReleaseModel& second) {
+    std::function<bool (const FullReleaseModel*, const FullReleaseModel*)> historyDescendingComparer = [this](const FullReleaseModel* first, const FullReleaseModel* second) {
         int leftTimestamp = 0;
-        int firstId = first.id();
+        int firstId = first->id();
         if (m_HistoryModels->contains(firstId)) {
            auto historyItem = m_HistoryModels->value(firstId);
            leftTimestamp = historyItem->timestamp();
         }
 
         int rightTimestamp = 0;
-        int secondId = second.id();
+        int secondId = second->id();
         if (m_HistoryModels->contains(secondId)) {
             auto historyItem = m_HistoryModels->value(secondId);
             rightTimestamp = historyItem->timestamp();
@@ -778,17 +778,17 @@ QString LocalStorageService::getReleasesByFilter(int page, QString title, int se
         return leftTimestamp > rightTimestamp;
     };
 
-    std::function<bool (const FullReleaseModel&, const FullReleaseModel&)> watchHistoryComparer = [this](const FullReleaseModel& first, const FullReleaseModel& second) {
+    std::function<bool (const FullReleaseModel*, const FullReleaseModel*)> watchHistoryComparer = [this](const FullReleaseModel* first, const FullReleaseModel* second) {
         int leftTimestamp = 0;
-        int firstId = first.id();
-        if (m_HistoryModels->contains(first.id())) {
+        int firstId = first->id();
+        if (m_HistoryModels->contains(first->id())) {
            auto historyItem = m_HistoryModels->value(firstId);
            leftTimestamp = historyItem->watchTimestamp();
         }
 
         int rightTimestamp = 0;
-        int secondId = second.id();
-        if (m_HistoryModels->contains(second.id())) {
+        int secondId = second->id();
+        if (m_HistoryModels->contains(second->id())) {
            auto historyItem = m_HistoryModels->value(secondId);
            rightTimestamp = historyItem->watchTimestamp();
         }
@@ -796,17 +796,17 @@ QString LocalStorageService::getReleasesByFilter(int page, QString title, int se
         return leftTimestamp < rightTimestamp;
     };
 
-    std::function<bool (const FullReleaseModel&, const FullReleaseModel&)> watchHistoryDescendingComparer = [this](const FullReleaseModel& first, const FullReleaseModel& second) {
+    std::function<bool (const FullReleaseModel*, const FullReleaseModel*)> watchHistoryDescendingComparer = [this](const FullReleaseModel* first, const FullReleaseModel* second) {
         int leftTimestamp = 0;
-        int firstId = first.id();
-        if (m_HistoryModels->contains(first.id())) {
+        int firstId = first->id();
+        if (m_HistoryModels->contains(first->id())) {
             auto historyItem = m_HistoryModels->value(firstId);
            leftTimestamp = historyItem->watchTimestamp();
         }
 
         int rightTimestamp = 0;
-        int secondId = second.id();
-        if (m_HistoryModels->contains(second.id())) {
+        int secondId = second->id();
+        if (m_HistoryModels->contains(second->id())) {
             auto historyItem = m_HistoryModels->value(secondId);
            rightTimestamp = historyItem->watchTimestamp();
         }
@@ -851,15 +851,15 @@ QString LocalStorageService::getReleasesByFilter(int page, QString title, int se
 
     foreach (auto releaseItem, *m_CachedReleases) {
 
-        if (!title.isEmpty() && !releaseItem.title().toLower().contains(title.toLower())) continue;
-        if (!description.isEmpty() && !releaseItem.description().toLower().contains(description.toLower())) continue;
-        if (!type.isEmpty() && !releaseItem.type().toLower().contains(type.toLower())) continue;
+        if (!title.isEmpty() && !releaseItem->title().toLower().contains(title.toLower())) continue;
+        if (!description.isEmpty() && !releaseItem->description().toLower().contains(description.toLower())) continue;
+        if (!type.isEmpty() && !releaseItem->type().toLower().contains(type.toLower())) continue;
 
         //years
         if (!years.isEmpty()) {
             QStringList yearsList = years.split(",");
             removeTrimsInStringCollection(yearsList);
-            int year = releaseItem.year().toInt();
+            int year = releaseItem->year().toInt();
             QStringList singleYear;
             singleYear.append(QString::number(year));
 
@@ -871,7 +871,7 @@ QString LocalStorageService::getReleasesByFilter(int page, QString title, int se
             QStringList statusesList = statuses.split(",");
             removeTrimsInStringCollection(statusesList);
             QStringList singleStatus;
-            singleStatus.append(releaseItem.status());
+            singleStatus.append(releaseItem->status());
 
             if (!checkOrCondition(statusesList, singleStatus)) continue;
         }
@@ -880,7 +880,7 @@ QString LocalStorageService::getReleasesByFilter(int page, QString title, int se
         if (!seasones.isEmpty()) {
             QStringList seasonesList = seasones.split(",");
             removeTrimsInStringCollection(seasonesList);
-            auto season = releaseItem.season();
+            auto season = releaseItem->season();
             QStringList singleSeason;
             singleSeason.append(season);
 
@@ -891,7 +891,7 @@ QString LocalStorageService::getReleasesByFilter(int page, QString title, int se
         if (!genres.isEmpty()) {
             QStringList genresList = genres.split(",");
             removeTrimsInStringCollection(genresList);
-            QStringList releaseGenresList = releaseItem.genres().split(",");
+            QStringList releaseGenresList = releaseItem->genres().split(",");
             if (genresOr) {
                 if (!checkAllCondition(genresList, releaseGenresList)) continue;
             } else {
@@ -902,7 +902,7 @@ QString LocalStorageService::getReleasesByFilter(int page, QString title, int se
         //voices
         if (!voices.isEmpty()) {
             QStringList voicesList = voices.split(",");
-            QStringList releaseVoicesList = releaseItem.voicers().split(",");
+            QStringList releaseVoicesList = releaseItem->voicers().split(",");
             if (voicesOr) {
                 if (!checkAllCondition(voicesList, releaseVoicesList)) continue;
             } else {
@@ -912,33 +912,33 @@ QString LocalStorageService::getReleasesByFilter(int page, QString title, int se
 
         //favorites section
         if (section == FavoriteSection) {
-            auto releaseId = releaseItem.id();
+            auto releaseId = releaseItem->id();
             if (!userFavorites.contains(QString::number(releaseId))) continue;
         }
 
-        if (section == ScheduleSection && !scheduled.contains(releaseItem.id())) continue;
+        if (section == ScheduleSection && !scheduled.contains(releaseItem->id())) continue;
 
-        if (section == NewReleasesSection && !m_ChangesModel->newReleases()->contains(releaseItem.id())) continue;
+        if (section == NewReleasesSection && !m_ChangesModel->newReleases()->contains(releaseItem->id())) continue;
 
-        if (section == NewOnlineSeriesSection && !m_ChangesModel->newOnlineSeries()->contains(releaseItem.id())) continue;
+        if (section == NewOnlineSeriesSection && !m_ChangesModel->newOnlineSeries()->contains(releaseItem->id())) continue;
 
-        if (section == NewTorrentsSection && !m_ChangesModel->newTorrents()->contains(releaseItem.id())) continue;
+        if (section == NewTorrentsSection && !m_ChangesModel->newTorrents()->contains(releaseItem->id())) continue;
 
-        if (section == NewTorrentSeriesSection && !m_ChangesModel->newTorrentSeries()->contains(releaseItem.id())) continue;
+        if (section == NewTorrentSeriesSection && !m_ChangesModel->newTorrentSeries()->contains(releaseItem->id())) continue;
 
         auto notificationForFavorites = m_UserSettingsModel->notificationForFavorites();
-        bool isInFavorites = favoriteIds.contains(releaseItem.id());
+        bool isInFavorites = favoriteIds.contains(releaseItem->id());
 
         if ((section == NewOnlineSeriesSection ||
            section == NewTorrentsSection ||
            section == NewTorrentSeriesSection) && notificationForFavorites && !isInFavorites) continue;
 
-        if (section == HistorySection && !(m_HistoryModels->contains(releaseItem.id()) && m_HistoryModels->value(releaseItem.id())->timestamp() > 0)) continue;
+        if (section == HistorySection && !(m_HistoryModels->contains(releaseItem->id()) && m_HistoryModels->value(releaseItem->id())->timestamp() > 0)) continue;
 
-        if (section == WatchHistorySection && !(m_HistoryModels->contains(releaseItem.id()) && m_HistoryModels->value(releaseItem.id())->watchTimestamp() > 0)) continue;
+        if (section == WatchHistorySection && !(m_HistoryModels->contains(releaseItem->id()) && m_HistoryModels->value(releaseItem->id())->watchTimestamp() > 0)) continue;
 
-        auto countReleaseSeenVideos = seenMarks.contains(releaseItem.id()) ? seenMarks.value(releaseItem.id()) : 0;
-        auto isAllSeens = countReleaseSeenVideos == releaseItem.countOnlineVideos() && releaseItem.countOnlineVideos() > 0;
+        auto countReleaseSeenVideos = seenMarks.contains(releaseItem->id()) ? seenMarks.value(releaseItem->id()) : 0;
+        auto isAllSeens = countReleaseSeenVideos == releaseItem->countOnlineVideos() && releaseItem->countOnlineVideos() > 0;
         if (section == SeenHistorySection && !isAllSeens) continue;
 
         if (section == SeeningHistorySection && !(countReleaseSeenVideos > 0 && !isAllSeens)) continue;
@@ -951,7 +951,7 @@ QString LocalStorageService::getReleasesByFilter(int page, QString title, int se
         }
 
         QJsonObject jsonValue;
-        releaseItem.writeToJson(jsonValue);
+        releaseItem->writeToJson(jsonValue);
         releases.append(jsonValue);
 
         if (releases.count() >= pageSize) break;
@@ -1013,8 +1013,8 @@ void LocalStorageService::updateReleasesInnerCache()
     auto releasesArray = QJsonDocument::fromJson(releasesJson.toUtf8()).array();
 
     foreach (auto release, releasesArray) {
-        FullReleaseModel jsonRelease;
-        jsonRelease.readFromJson(release);
+        FullReleaseModel* jsonRelease = new FullReleaseModel();
+        jsonRelease->readFromJson(release);
 
         m_CachedReleases->append(jsonRelease);
     }
@@ -1192,8 +1192,8 @@ void LocalStorageService::setMultipleSeenMarkAllSeries(QList<int> ids, bool mark
 {
     auto idsSet = ids.toSet();
     foreach (auto release, *m_CachedReleases) {
-        if (idsSet.contains(release.id())) {
-            setSeenMarkForRelease(release.id(), release.countOnlineVideos(), marked);
+        if (idsSet.contains(release->id())) {
+            setSeenMarkForRelease(release->id(), release->countOnlineVideos(), marked);
         }
     }
 
@@ -1364,9 +1364,9 @@ static bool compareExternalPlaylistVideo(const ExternalPlaylistVideo& first, con
 QString LocalStorageService::packAsM3UAndOpen(int id, QString quality)
 {
     auto release = getReleaseFromCache(id);
-    if (release.id() == -1) return "";
+    if (release->id() == -1) return "";
 
-    auto jsonDocument = QJsonDocument::fromJson(release.videos().toUtf8());
+    auto jsonDocument = QJsonDocument::fromJson(release->videos().toUtf8());
     auto videosArray = jsonDocument.array();
     QList<ExternalPlaylistVideo> videos;
     foreach (auto jsonVideo, videosArray) {
@@ -1397,9 +1397,9 @@ QString LocalStorageService::packAsM3UAndOpen(int id, QString quality)
 QString LocalStorageService::packAsMPCPLAndOpen(int id, QString quality)
 {
     auto release = getReleaseFromCache(id);
-    if (release.id() == -1) return "";
+    if (release->id() == -1) return "";
 
-    auto jsonDocument = QJsonDocument::fromJson(release.videos().toUtf8());
+    auto jsonDocument = QJsonDocument::fromJson(release->videos().toUtf8());
     auto videosArray = jsonDocument.array();
     QList<ExternalPlaylistVideo> videos;
     foreach (auto jsonVideo, videosArray) {
