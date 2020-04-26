@@ -11,6 +11,9 @@ windows {
 # deprecated API to know how to port your code away from it.
 DEFINES += QT_DEPRECATED_WARNINGS
 
+# If you need not check version remove or comment this line
+DEFINES += USE_VERSION_CHECK
+
 # You can also make your code fail to compile if it uses deprecated APIs.
 # In order to do so, uncomment the following line.
 # You can also select to disable deprecated APIs only up to a certain version of Qt.
@@ -31,10 +34,12 @@ SOURCES += \
     Classes/Services/analyticsservice.cpp \
     Classes/Services/anilibriaapiservice.cpp \
     Classes/Services/applicationsettings.cpp \
+    Classes/Services/downloadmanager.cpp \
     Classes/Services/imageloader.cpp \
     Classes/Services/localstorageservice.cpp \
     Classes/Services/offlineimagecacheservice.cpp \
     Classes/Services/synchronizationservice.cpp \
+    Classes/Services/versionchecker.cpp \
     main.cpp
 
 RESOURCES += qml.qrc
@@ -69,10 +74,12 @@ HEADERS += \
     Classes/Services/analyticsservice.h \
     Classes/Services/anilibriaapiservice.h \
     Classes/Services/applicationsettings.h \
+    Classes/Services/downloadmanager.h \
     Classes/Services/imageloader.h \
     Classes/Services/localstorageservice.h \
     Classes/Services/offlineimagecacheservice.h \
     Classes/Services/synchronizationservice.h \
+    Classes/Services/versionchecker.h \
     globalconstants.h
 
 

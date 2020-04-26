@@ -149,6 +149,18 @@ ApplicationWindow {
         }
     }
 
+    VersionChecker {
+        id: versionChecker
+        onNewVersionAvailable: {
+            applicationNotification.sendNotification(
+                {
+                    type: "info",
+                    message: `Доступна новая версия ${version}. Перейдите для скачивания по <a href='${url}'>этой ссылке</a>`
+                }
+            );
+        }
+    }
+
     ApplicationSettings {
         id: applicationSettings
         Component.onCompleted: {
@@ -709,7 +721,15 @@ ApplicationWindow {
                                     wrapMode: Text.WordWrap
                                     elide: Text.ElideRight
                                     text: modelData.message
+                                    linkColor: "#b32121"
+                                    onLinkActivated: Qt.openUrlExternally(link)
                                     anchors.verticalCenter: parent.verticalCenter
+
+                                    MouseArea {
+                                        anchors.fill: parent
+                                        acceptedButtons: Qt.NoButton
+                                        cursorShape: parent.hoveredLink ? Qt.PointingHandCursor : Qt.ArrowCursor
+                                    }
                                 }
                                 IconButton {
                                     height: 16
