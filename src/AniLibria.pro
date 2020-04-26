@@ -1,9 +1,9 @@
 QT += quick multimedia network webview concurrent svg
 CONFIG += c++11
 
-windows {
-    QT += av
-}
+#windows {
+#    QT += av
+#}
 
 # The following define makes your compiler emit warnings if you use
 # any Qt feature that has been marked deprecated (the exact warnings
@@ -74,3 +74,5 @@ HEADERS += \
     Classes/Services/offlineimagecacheservice.h \
     Classes/Services/synchronizationservice.h \
     globalconstants.h
+
+
