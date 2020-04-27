@@ -40,6 +40,7 @@ SOURCES += \
     Classes/Services/offlineimagecacheservice.cpp \
     Classes/Services/synchronizationservice.cpp \
     Classes/Services/versionchecker.cpp \
+    Classes/globalconstant.cpp \
     main.cpp
 
 RESOURCES += qml.qrc

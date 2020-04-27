@@ -3,20 +3,34 @@
 #include <QtDebug>
 #include <QFile>
 #include <QUuid>
-
-const QString AnilibriaApiService::newApiAddress = "https://wwnd.space/";
+#include <QJsonDocument>
 
 AnilibriaApiService::AnilibriaApiService(QObject *parent) : QObject(parent),
     m_QueuedAddedFavorites(new QQueue<int>()),
     m_QueuedDeletedFavorites(new QQueue<int>()),
     m_FavoriteToken("")
 {
+    QDir dir(QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation));
+    if (dir.exists()) {
+        QFile settingsFile(QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation) + "/api.settings");
+        if (settingsFile.exists()) {
+            if (settingsFile.open(QFile::ReadOnly | QFile::Text)) {
+                auto settingsJson = settingsFile.readAll();
+                settingsFile.close();
+                auto settingsObject = QJsonDocument::fromJson(settingsJson).object();
+                auto apiPath = settingsObject.value("apiPath").toString();
+                if (!apiPath.isEmpty()) AnilibriaApiPath = apiPath;
+                auto staticPath = settingsObject.value("staticPath").toString();
+                if (!staticPath.isEmpty()) AnilibriaImagesPath = staticPath;
+            }
+        }
+    }
 }
 
 void AnilibriaApiService::getAllReleases()
 {
     auto networkManager = new QNetworkAccessManager(this);
-    QNetworkRequest request(QUrl(AnilibriaApiService::newApiAddress + "public/api/index.php"));
+    QNetworkRequest request(QUrl(AnilibriaApiPath + "public/api/index.php"));
     request.setRawHeader("User-Agent", "Anilibria CP Client");
     request.setHeader(QNetworkRequest::ContentTypeHeader, QVariant("application/x-www-form-urlencoded"));
 
@@ -33,7 +47,7 @@ void AnilibriaApiService::getAllReleases()
 void AnilibriaApiService::getYoutubeVideos()
 {
     auto networkManager = new QNetworkAccessManager(this);
-    QNetworkRequest request(QUrl(AnilibriaApiService::newApiAddress + "public/api/index.php"));
+    QNetworkRequest request(QUrl(AnilibriaApiPath + "public/api/index.php"));
     request.setRawHeader("User-Agent", "Anilibria CP Client");
     request.setHeader(QNetworkRequest::ContentTypeHeader, QVariant("application/x-www-form-urlencoded"));
 
@@ -50,7 +64,7 @@ void AnilibriaApiService::getYoutubeVideos()
 void AnilibriaApiService::getSchedule()
 {
     auto networkManager = new QNetworkAccessManager(this);
-    QNetworkRequest request(QUrl(AnilibriaApiService::newApiAddress + "public/api/index.php"));
+    QNetworkRequest request(QUrl(AnilibriaApiPath + "public/api/index.php"));
     request.setRawHeader("User-Agent", "Anilibria CP Client");
     request.setHeader(QNetworkRequest::ContentTypeHeader, QVariant("application/x-www-form-urlencoded"));
     QUrlQuery params;
@@ -65,7 +79,7 @@ void AnilibriaApiService::getSchedule()
 void AnilibriaApiService::signin(QString email, QString password, QString fa2code)
 {
     auto networkManager = new QNetworkAccessManager(this);
-    QNetworkRequest request(QUrl(AnilibriaApiService::newApiAddress + "public/login.php"));
+    QNetworkRequest request(QUrl(AnilibriaApiPath + "public/login.php"));
 
     connect(networkManager,SIGNAL(finished(QNetworkReply*)),this,SLOT(signinResponse(QNetworkReply*)));
 
@@ -82,7 +96,7 @@ void AnilibriaApiService::signin(QString email, QString password, QString fa2cod
 void AnilibriaApiService::signout(QString token)
 {
     auto networkManager = new QNetworkAccessManager(this);
-    QNetworkRequest request(QUrl(AnilibriaApiService::newApiAddress + "public/logout.php"));
+    QNetworkRequest request(QUrl(AnilibriaApiPath + "public/logout.php"));
 
     connect(networkManager,SIGNAL(finished(QNetworkReply*)),this,SLOT(signoutResponse(QNetworkReply*)));
 
@@ -100,7 +114,7 @@ void AnilibriaApiService::signout(QString token)
 void AnilibriaApiService::getUserData(QString token)
 {
     auto networkManager = new QNetworkAccessManager(this);
-    QNetworkRequest request(QUrl(AnilibriaApiService::newApiAddress + "public/api/index.php"));
+    QNetworkRequest request(QUrl(AnilibriaApiPath + "public/api/index.php"));
 
     connect(networkManager,SIGNAL(finished(QNetworkReply*)),this,SLOT(getUserDataResponse(QNetworkReply*)));
 
@@ -117,7 +131,7 @@ void AnilibriaApiService::getUserData(QString token)
 void AnilibriaApiService::getFavorites(QString token)
 {
     auto networkManager = new QNetworkAccessManager(this);
-    QNetworkRequest request(QUrl(AnilibriaApiService::newApiAddress + "public/api/index.php"));
+    QNetworkRequest request(QUrl(AnilibriaApiPath + "public/api/index.php"));
 
     connect(networkManager,SIGNAL(finished(QNetworkReply*)),this,SLOT(getUserFavoritesResponse(QNetworkReply*)));
 
@@ -150,7 +164,7 @@ void AnilibriaApiService::performAddFavorite(QString token, int id)
 {
     m_FavoriteToken = token;
     auto networkManager = new QNetworkAccessManager(this);
-    QNetworkRequest request(QUrl(AnilibriaApiService::newApiAddress + "public/api/index.php"));
+    QNetworkRequest request(QUrl(AnilibriaApiPath + "public/api/index.php"));
 
     connect(networkManager,SIGNAL(finished(QNetworkReply*)),this,SLOT(editFavoritesResponse(QNetworkReply*)));
 
@@ -169,7 +183,7 @@ void AnilibriaApiService::performRemoveFavorite(QString token, int id)
 {
     m_FavoriteToken = token;
     auto networkManager = new QNetworkAccessManager(this);
-    QNetworkRequest request(QUrl(AnilibriaApiService::newApiAddress + "public/api/index.php"));
+    QNetworkRequest request(QUrl(AnilibriaApiPath + "public/api/index.php"));
 
     connect(networkManager,SIGNAL(finished(QNetworkReply*)),this,SLOT(deleteFavoritesResponse(QNetworkReply*)));
 

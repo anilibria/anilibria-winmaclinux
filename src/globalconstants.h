@@ -3,7 +3,9 @@
 
 #include <QString>
 
-const QString AnilibriaImagesPath = "https://static.wwnd.space";
+extern QString AnilibriaImagesPath;
+
+extern QString AnilibriaApiPath;
 
 const QString ApplicationVersion = "0.1.1";
 

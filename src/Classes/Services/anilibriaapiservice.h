@@ -4,6 +4,7 @@
 #include <QObject>
 #include <QtNetwork>
 #include <QSet>
+#include "globalconstants.h"
 
 class AnilibriaApiService : public QObject
 {
@@ -11,8 +12,6 @@ class AnilibriaApiService : public QObject
 
 public:
     explicit AnilibriaApiService(QObject *parent = nullptr);
-
-    const static QString newApiAddress;
 
     QQueue<int>* m_QueuedAddedFavorites;
     QQueue<int>* m_QueuedDeletedFavorites;
