@@ -208,7 +208,7 @@ Page {
                             Text {
                                 id: favoritePopupHeader
                                 width: messagePopup.width - 20
-                                font.pointSize: 12
+                                font.pointSize: 12 + windowSettings.dpiSeparation
                                 font.bold: true
                                 elide: Text.ElideRight
                             }
@@ -220,7 +220,7 @@ Page {
                                     id: favoritePopupMessage
                                     anchors.verticalCenter: parent.verticalCenter
                                     width: parent.width
-                                    font.pointSize: 10
+                                    font.pointSize: 10 + windowSettings.dpiSeparation
                                     wrapMode: Text.WordWrap
                                 }
                             }
@@ -360,14 +360,14 @@ Page {
                             Text {
                                 id: labelDescriptionSearchField
                                 anchors.top: clearFiltersButton.bottom
-                                font.pointSize: 11
+                                font.pointSize: 11 + windowSettings.dpiSeparation
                                 text: qsTr("Описание")
                             }
                             Text {
                                 id: labelTypeSearchField
                                 anchors.top: clearFiltersButton.bottom
                                 anchors.left: typeSearchField.left
-                                font.pointSize: 11
+                                font.pointSize: 11 + windowSettings.dpiSeparation
                                 text: qsTr("Тип")
                             }
                             TextField {
@@ -389,7 +389,7 @@ Page {
                                 id: labelGenresSearchField
                                 anchors.top: descriptionSearchField.bottom
                                 anchors.rightMargin: 10
-                                font.pointSize: 11
+                                font.pointSize: 11 + windowSettings.dpiSeparation
                                 text: qsTr("Жанры")
                             }
                             TextField {
@@ -404,7 +404,7 @@ Page {
                                 anchors.left: genresSearchField.right
                                 topPadding: 16
                                 leftPadding: 4
-                                font.pointSize: 11
+                                font.pointSize: 11 + windowSettings.dpiSeparation
                                 text: qsTr("ИЛИ/И")
                             }
                             Switch {
@@ -417,7 +417,7 @@ Page {
                                 id: labelVoicesSearchField
                                 anchors.top: genresSearchField.bottom
                                 anchors.rightMargin: 10
-                                font.pointSize: 11
+                                font.pointSize: 11 + windowSettings.dpiSeparation
                                 text: qsTr("Озвучка")
                             }
                             TextField {
@@ -432,7 +432,7 @@ Page {
                                 anchors.left: voicesSearchField.right
                                 topPadding: 16
                                 leftPadding: 4
-                                font.pointSize: 11
+                                font.pointSize: 11 + windowSettings.dpiSeparation
                                 text: qsTr("ИЛИ/И")
                             }
                             Switch {
@@ -444,14 +444,14 @@ Page {
                             Text {
                                 id: labelYearsSearchField
                                 anchors.top: voicesSearchField.bottom
-                                font.pointSize: 11
+                                font.pointSize: 11 + windowSettings.dpiSeparation
                                 text: qsTr("Года")
                             }
                             Text {
                                 id: labelSeasonsSearchField
                                 anchors.top: voicesSearchField.bottom
                                 anchors.left: typeSearchField.left
-                                font.pointSize: 11
+                                font.pointSize: 11 + windowSettings.dpiSeparation
                                 text: qsTr("Сезоны")
                             }
                             TextField {
@@ -472,7 +472,7 @@ Page {
                                 id: labelStatusesSearchField
                                 anchors.top: yearsSearchField.bottom
                                 anchors.rightMargin: 10
-                                font.pointSize: 11
+                                font.pointSize: 11 + windowSettings.dpiSeparation
                                 text: qsTr("Статусы")
                             }
                             TextField {
@@ -522,7 +522,7 @@ Page {
                             Text {
                                 id: labelSortingField
                                 anchors.top: startSortingButton.bottom
-                                font.pointSize: 11
+                                font.pointSize: 11 + windowSettings.dpiSeparation
                                 text: qsTr("Сортировать по")
                             }
                             ComboBox {
@@ -567,7 +567,7 @@ Page {
                             Text {
                                 id: labelSortingDirection
                                 anchors.top: sortingComboBox.bottom
-                                font.pointSize: 11
+                                font.pointSize: 11 + windowSettings.dpiSeparation
                                 text: qsTr("В порядке")
                             }
                             ComboBox {
@@ -626,7 +626,7 @@ Page {
                             Text {
                                 anchors.centerIn: parent
                                 text: "У Вас нет новых уведомлений"
-                                font.pointSize: 16
+                                font.pointSize: 16 + windowSettings.dpiSeparation
                             }
                         }
 
@@ -653,7 +653,7 @@ Page {
                                     height: 40
                                     Text {
                                         anchors.centerIn: parent
-                                        font.pointSize: 11
+                                        font.pointSize: 11 + windowSettings.dpiSeparation
                                         text: "Новых релизов: " + page.changesCounts[0]
                                     }
                                 }
@@ -665,7 +665,7 @@ Page {
                                     height: 40
                                     Text {
                                         anchors.centerIn: parent
-                                        font.pointSize: 11
+                                        font.pointSize: 11 + windowSettings.dpiSeparation
                                         text: "Релизов с новыми сериями: " + page.changesCounts[1]
                                     }
                                 }
@@ -677,7 +677,7 @@ Page {
                                     height: 40
                                     Text {
                                         anchors.centerIn: parent
-                                        font.pointSize: 11
+                                        font.pointSize: 11 + windowSettings.dpiSeparation
                                         text: "Новые торренты: " + page.changesCounts[2]
                                     }
                                 }
@@ -689,7 +689,7 @@ Page {
                                     height: 40
                                     Text {
                                         anchors.centerIn: parent
-                                        font.pointSize: 11
+                                        font.pointSize: 11 + windowSettings.dpiSeparation
                                         text: "Релизы с обновленными торрентами: " + page.changesCounts[3]
                                     }
                                 }
@@ -732,7 +732,7 @@ Page {
 
                         Text {
                             id: downloadTorrentModeLabel
-                            font.pointSize: 11
+                            font.pointSize: 11 + windowSettings.dpiSeparation
                             text: "Торрент"
                         }
                         ComboBox {
@@ -750,7 +750,7 @@ Page {
                             id: notificationForFavoritesLabel
                             anchors.top: downloadTorrentMode.bottom
                             anchors.topMargin: 4
-                            font.pointSize: 11
+                            font.pointSize: 11 + windowSettings.dpiSeparation
                             text: "Уведомления по избранным"
                         }
 
@@ -1159,7 +1159,7 @@ Page {
                                             Text {
                                                 textFormat: Text.RichText
                                                 color: "#a32727"
-                                                font.pointSize: 12
+                                                font.pointSize: 12 + windowSettings.dpiSeparation
                                                 width: 280
                                                 leftPadding: 8
                                                 topPadding: 6
@@ -1169,20 +1169,20 @@ Page {
                                             }
                                             Text {
                                                 textFormat: Text.RichText
-                                                font.pointSize: 10
+                                                font.pointSize: 10 + windowSettings.dpiSeparation
                                                 leftPadding: 8
                                                 topPadding: 4
                                                 text: qsTr("<b>Статус:</b> ") + qsTr(modelData.status)
                                             }
                                             Text {
-                                                font.pointSize: 10
+                                                font.pointSize: 10 + windowSettings.dpiSeparation
                                                 leftPadding: 8
                                                 topPadding: 4
                                                 text: qsTr("<b>" + modelData.season + " " + modelData.year + "</b>")
                                             }
                                             Text {
                                                 textFormat: Text.RichText
-                                                font.pointSize: 10
+                                                font.pointSize: 10 + windowSettings.dpiSeparation
                                                 leftPadding: 8
                                                 topPadding: 4
                                                 width: 280
@@ -1191,7 +1191,7 @@ Page {
                                                 text: qsTr("<b>Тип:</b> ") + qsTr(modelData.type)
                                             }
                                             Text {
-                                                font.pointSize: 10
+                                                font.pointSize: 10 + windowSettings.dpiSeparation
                                                 leftPadding: 8
                                                 topPadding: 4
                                                 width: 280
@@ -1200,7 +1200,7 @@ Page {
                                                 text: qsTr("<b>Жанры:</b> ") + qsTr(modelData.genres)
                                             }
                                             Text {
-                                                font.pointSize: 10
+                                                font.pointSize: 10 + windowSettings.dpiSeparation
                                                 leftPadding: 8
                                                 topPadding: 4
                                                 width: 280
@@ -1358,7 +1358,7 @@ Page {
                         Text {
                             textFormat: Text.RichText
                             color: "#a32727"
-                            font.pointSize: 12
+                            font.pointSize: 12 + windowSettings.dpiSeparation
                             width: parent.width
                             leftPadding: 8
                             topPadding: 6
@@ -1368,7 +1368,7 @@ Page {
                         }
                         Text {
                             textFormat: Text.RichText
-                            font.pointSize: 10
+                            font.pointSize: 10 + windowSettings.dpiSeparation
                             leftPadding: 8
                             topPadding: 4
                             wrapMode: Text.WordWrap
@@ -1377,7 +1377,7 @@ Page {
                             text: qsTr(page.openedRelease ? page.openedRelease.originalName : '')
                         }
                         Text {
-                            font.pointSize: 10
+                            font.pointSize: 10 + windowSettings.dpiSeparation
                             leftPadding: 8
                             topPadding: 4
                             text: qsTr("<b>Статус:</b> ") + qsTr(page.openedRelease ? `<a href="http://years">${page.openedRelease.status}</a>` : '')
@@ -1389,7 +1389,7 @@ Page {
                             }
                         }
                         Text {
-                            font.pointSize: 10
+                            font.pointSize: 10 + windowSettings.dpiSeparation
                             leftPadding: 8
                             topPadding: 4
                             text: qsTr("<b>Год:</b> ") + qsTr(page.openedRelease ?  `<a href="http://years">${page.openedRelease.year}</a>` : '')
@@ -1402,14 +1402,14 @@ Page {
                         }
                         Text {
                             visible: page.openedRelease && page.openedRelease.id && !!page.scheduledReleases[page.openedRelease.id]
-                            font.pointSize: 10
+                            font.pointSize: 10 + windowSettings.dpiSeparation
                             leftPadding: 8
                             topPadding: 4
                             text: qsTr("<b>В расписании:</b> ") + (page.openedRelease && page.scheduledReleases[page.openedRelease.id] ? getScheduleDay(page.scheduledReleases[page.openedRelease.id]) : '')
                         }
 
                         Text {
-                            font.pointSize: 10
+                            font.pointSize: 10 + windowSettings.dpiSeparation
                             leftPadding: 8
                             topPadding: 4
                             text: qsTr("<b>Сезон:</b> ") + qsTr(page.openedRelease ? `<a href="http://seasons">${page.openedRelease.season}</a>` : '')
@@ -1422,7 +1422,7 @@ Page {
                         }
                         Text {
                             textFormat: Text.RichText
-                            font.pointSize: 10
+                            font.pointSize: 10 + windowSettings.dpiSeparation
                             leftPadding: 8
                             topPadding: 4
                             width: parent.width
@@ -1431,7 +1431,7 @@ Page {
                             text: qsTr("<b>Тип:</b> ") + qsTr(page.openedRelease ? page.openedRelease.type : '')
                         }
                         Text {
-                            font.pointSize: 10
+                            font.pointSize: 10 + windowSettings.dpiSeparation
                             leftPadding: 8
                             topPadding: 4
                             width: parent.width
@@ -1450,7 +1450,7 @@ Page {
                             }
                         }
                         Text {
-                            font.pointSize: 10
+                            font.pointSize: 10 + windowSettings.dpiSeparation
                             leftPadding: 8
                             topPadding: 4
                             width: parent.width
@@ -1469,7 +1469,7 @@ Page {
                             }
                         }
                         Text {
-                            font.pointSize: 10
+                            font.pointSize: 10 + windowSettings.dpiSeparation
                             leftPadding: 8
                             topPadding: 4
                             visible: page.openedRelease ? page.openedRelease.countSeensSeries === page.openedRelease.countVideos : false
@@ -1478,7 +1478,7 @@ Page {
                         }
                         Text {
                             textFormat: Text.RichText
-                            font.pointSize: 10
+                            font.pointSize: 10 + windowSettings.dpiSeparation
                             leftPadding: 8
                             topPadding: 4
                             width: parent.width
@@ -1789,7 +1789,7 @@ Page {
                         anchors.verticalCenter: parent.verticalCenter
                         anchors.left: parent.left
                         anchors.leftMargin: 100
-                        font.pointSize: 11
+                        font.pointSize: 11 + windowSettings.dpiSeparation
                         text: "Доступно "+ (page.openedRelease ? page.openedRelease.countTorrents : "0" ) + " торрентов"
                     }
 
@@ -1797,7 +1797,7 @@ Page {
                         anchors.verticalCenter: parent.verticalCenter
                         anchors.right: watchButton.left
                         anchors.rightMargin: 10
-                        font.pointSize: 11
+                        font.pointSize: 11 + windowSettings.dpiSeparation
                         text: "Доступно "+ (page.openedRelease ? page.openedRelease.countVideos : "0" ) + " серий онлайн"
                     }
 

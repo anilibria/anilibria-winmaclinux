@@ -90,7 +90,7 @@ Page {
                         Text {
                             id: errorMessage
                             text: ""
-                            font.pointSize: 10
+                            font.pointSize: 10 + windowSettings.dpiSeparation
                             anchors.left: parent.left
                             anchors.leftMargin: 10                            
                             anchors.verticalCenter: parent.verticalCenter
@@ -127,7 +127,7 @@ Page {
                 anchors.top: fieldsContainer.bottom
                 anchors.right: fieldsContainer.right
                 linkColor: "#b32121"
-                font.pointSize: 10
+                font.pointSize: 10 + windowSettings.dpiSeparation
                 text: "<a href='https://www.anilibria.tv/pages/login.php'>Регистрация</a>"
                 onLinkActivated: {
                     Qt.openUrlExternally(link);

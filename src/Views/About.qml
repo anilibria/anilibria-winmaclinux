@@ -96,7 +96,7 @@ Page {
 
                         Text {
                             anchors.centerIn: parent
-                            font.pointSize: 15
+                            font.pointSize: 15 + windowSettings.dpiSeparation
                             text: "Клиент для сайта AniLibria.TV"
                         }
                     }
@@ -111,7 +111,7 @@ Page {
 
                         Text {
                             anchors.centerIn: parent
-                            font.pointSize: 14
+                            font.pointSize: 14 + windowSettings.dpiSeparation
                             linkColor: "#b32121"
                             text: "<a href='https://www.anilibria.tv/'>https://www.anilibria.tv/</a>"
                             onLinkActivated: {
@@ -135,7 +135,7 @@ Page {
 
                         Text {
                             anchors.centerIn: parent
-                            font.pointSize: 12
+                            font.pointSize: 12 + windowSettings.dpiSeparation
                             text: "версия " + ApplicationVersion
                         }
                     }
@@ -150,7 +150,7 @@ Page {
 
                         Text {
                             anchors.centerIn: parent
-                            font.pointSize: 14
+                            font.pointSize: 14 + windowSettings.dpiSeparation
                             color: "#b32121"
                             text: "Спасибо что выбираете нас!"
                         }
@@ -166,7 +166,7 @@ Page {
 
                         Text {
                             anchors.centerIn: parent
-                            font.pointSize: 10
+                            font.pointSize: 10 + windowSettings.dpiSeparation
                             wrapMode: Text.WordWrap
                             width: parent.width
                             horizontalAlignment: Text.AlignHCenter
@@ -192,7 +192,7 @@ Page {
 
                         Text {
                             anchors.centerIn: parent
-                            font.pointSize: 10
+                            font.pointSize: 10 + windowSettings.dpiSeparation
                             wrapMode: Text.WordWrap
                             width: parent.width
                             horizontalAlignment: Text.AlignHCenter
@@ -209,7 +209,7 @@ Page {
 
                         Text {
                             anchors.centerIn: parent
-                            font.pointSize: 10
+                            font.pointSize: 10 + windowSettings.dpiSeparation
                             wrapMode: Text.WordWrap
                             width: parent.width
                             linkColor: "#b32121"
@@ -236,7 +236,7 @@ Page {
 
                         Text {
                             anchors.centerIn: parent
-                            font.pointSize: 12
+                            font.pointSize: 12 + windowSettings.dpiSeparation
                             linkColor: "#b32121"
                             text: "Дизайн:"
                         }
@@ -252,7 +252,7 @@ Page {
 
                         Text {
                             anchors.centerIn: parent
-                            font.pointSize: 11
+                            font.pointSize: 11 + windowSettings.dpiSeparation
                             linkColor: "#b32121"
                             text: "Sebastian Wilde"
                         }
@@ -268,7 +268,7 @@ Page {
 
                         Text {
                             anchors.centerIn: parent
-                            font.pointSize: 12
+                            font.pointSize: 12 + windowSettings.dpiSeparation
                             linkColor: "#b32121"
                             text: "Разработка:"
                         }
@@ -284,7 +284,7 @@ Page {
 
                         Text {
                             anchors.centerIn: parent
-                            font.pointSize: 11
+                            font.pointSize: 11 + windowSettings.dpiSeparation
                             linkColor: "#b32121"
                             text: "RAS"
                         }
@@ -301,7 +301,7 @@ Page {
 
                         Text {
                             anchors.centerIn: parent
-                            font.pointSize: 12
+                            font.pointSize: 12 + windowSettings.dpiSeparation
                             linkColor: "#b32121"
                             text: "Иконки:"
                         }
@@ -316,7 +316,7 @@ Page {
 
                         Text {
                             anchors.centerIn: parent
-                            font.pointSize: 10
+                            font.pointSize: 10 + windowSettings.dpiSeparation
                             wrapMode: Text.WordWrap
                             width: parent.width
                             linkColor: "#b32121"
@@ -337,6 +337,51 @@ Page {
                             }
                         }
                     }
+
+                    Rectangle {
+                        color: "transparent"
+                        width: 100
+                        Layout.alignment: Qt.AlignCenter
+                        Layout.topMargin: 4
+                        Layout.bottomMargin: 10
+                        Layout.fillWidth: true
+                        Layout.preferredHeight: 20
+
+                        Text {
+                            anchors.centerIn: parent
+                            font.pointSize: 12 + windowSettings.dpiSeparation
+                            linkColor: "#b32121"
+                            text: "Используемые компоненты:"
+                        }
+                    }
+
+                    Rectangle {
+                        color: "transparent"
+                        width: 15
+                        Layout.alignment: Qt.AlignCenter
+                        Layout.fillWidth: true
+                        Layout.preferredHeight: 50
+
+                        Text {
+                            anchors.centerIn: parent
+                            font.pointSize: 10 + windowSettings.dpiSeparation
+                            wrapMode: Text.WordWrap
+                            width: parent.width
+                            linkColor: "#b32121"
+                            horizontalAlignment: Text.AlignHCenter
+                            onLinkActivated: {
+                                Qt.openUrlExternally(link);
+                            }
+                            text: "Qt <a href='https://github.com/qt/qt5/blob/dev/LICENSE.FDL'>license</a><br>" +
+                                "QtAV <a href='https://github.com/wang-bin/QtAV/blob/master/lgpl-2.1.txt'>license</a><br>"
+                            MouseArea {
+                                anchors.fill: parent
+                                acceptedButtons: Qt.NoButton
+                                cursorShape: parent.hoveredLink ? Qt.PointingHandCursor : Qt.ArrowCursor
+                            }
+                        }
+                    }
+
 
                     Rectangle {
                         color: "transparent"
