@@ -116,6 +116,7 @@ Page {
         id: panelContainer
         anchors.fill: parent
         spacing: 0
+        enabled: !page.openedRelease
         Rectangle {
             color: "#9e2323"
             width: 40
@@ -1318,6 +1319,10 @@ Page {
                             }
                         }
                     }
+                }
+
+                Component.onCompleted: {
+                    scrollview.maximumFlickVelocity = scrollview.maximumFlickVelocity - 1000;
                 }
             }
         }
