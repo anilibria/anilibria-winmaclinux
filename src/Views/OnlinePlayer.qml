@@ -284,11 +284,11 @@ Page {
 
             if (status === MediaPlayer.Buffering) _page.isBuffering = true;
 
-            if (status === MediaPlayer.Buffered) {
-                _page.isBuffering = false;
+            if (status === MediaPlayer.Buffered) {                
+                _page.isBuffering = false;                
                 if (_page.restorePosition > 0){
                     player.seek(_page.restorePosition);
-                    _page.restorePosition = 0;
+                    if (player.position >= _page.restorePosition) _page.restorePosition = 0;
                 } else if (_page.seenVideo.id && _page.seenVideo.videoPosition) {
                     player.seek(_page.seenVideo.videoPosition);
                     _page.seenVideo.videoPosition = 0;
