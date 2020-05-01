@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=AniLibria
+Comment=AniLibria desktop client
+Exec=/opt/AniLibria/bin/AniLibria
+Icon=anilibria
+Type=Application
+Version=0.1.1
+Terminal=false
+Categories=Application;Multimedia;
+Keywords=anime;
