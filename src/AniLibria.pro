@@ -7,7 +7,7 @@ windows {
 
 unix {
 #Setup desktop entry file. https://specifications.freedesktop.org/desktop-entry-spec/latest
-    desktop.files += anilibria.desktop
+    desktop.files += ../data/anilibria.desktop
     desktop.path = /usr/share/applications
 
 #Setup icons for following resolutions: 16x16; 32x32; 128x128; 256x256 and 512x512.
