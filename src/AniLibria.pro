@@ -15,15 +15,15 @@ unix {
 
 #16x16
     icon_16.path = /usr/share/icons/hicolor/16x16/apps
-    icon_16.commands = mkdir -p icons/16 && cp ../anilibria.iconset/icon_16x16@2x.png icons/16/anilibria.png
+    icon_16.commands = mkdir -p icons/16 && cp ../anilibria.iconset/icon_16x16.png icons/16/anilibria.png
     icon_16.files += icons/16/anilibria.png
 #32x32
     icon_32.path = /usr/share/icons/hicolor/32x32/apps
-    icon_32.commands = mkdir -p icons/32 && cp ../anilibria.iconset/icon_32x32@2x.png icons/32/anilibria.png
+    icon_32.commands = mkdir -p icons/32 && cp ../anilibria.iconset/icon_32x32.png icons/32/anilibria.png
     icon_32.files += icons/32/anilibria.png
 #48x48 #TODO: create png icon in 48x48 resolution.
     icon_48.path = /usr/share/icons/hicolor/48x48/apps
-    icon_48.commands = mkdir -p icons/48 && cp ../anilibria.iconset/icon_32x32@2x.png icons/48/anilibria.png
+    icon_48.commands = mkdir -p icons/48 && cp icon48.png icons/48/anilibria.png
     icon_48.files += icons/48/anilibria.png
 #128x128
     icon_128.path = /usr/share/icons/hicolor/128x128/apps
