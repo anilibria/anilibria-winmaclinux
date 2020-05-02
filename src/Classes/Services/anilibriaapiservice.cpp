@@ -39,7 +39,7 @@ void AnilibriaApiService::getAllReleases()
     params.addQueryItem("page", "1");
     params.addQueryItem("perPage", "1000");
 
-    connect(networkManager,SIGNAL(finished(QNetworkReply*)),this,SLOT(getAllReleasesResponse(QNetworkReply*)));
+    connect(networkManager,&QNetworkAccessManager::finished,this,&AnilibriaApiService::getAllReleasesResponse);
 
     networkManager->post(request, params.query(QUrl::FullyEncoded).toUtf8());
 }
@@ -56,7 +56,7 @@ void AnilibriaApiService::getYoutubeVideos()
     params.addQueryItem("page", "1");
     params.addQueryItem("perPage", "1000");
 
-    connect(networkManager,SIGNAL(finished(QNetworkReply*)),this,SLOT(getAllYoutubeItemsResponse(QNetworkReply*)));
+    connect(networkManager,&QNetworkAccessManager::finished,this,&AnilibriaApiService::getAllYoutubeItemsResponse);
 
     networkManager->post(request, params.query(QUrl::FullyEncoded).toUtf8());
 }
@@ -71,7 +71,7 @@ void AnilibriaApiService::getSchedule()
     params.addQueryItem("query", "schedule");
     params.addQueryItem("filter", "id");
 
-    connect(networkManager,SIGNAL(finished(QNetworkReply*)),this,SLOT(getScheduleResponse(QNetworkReply*)));
+    connect(networkManager,&QNetworkAccessManager::finished,this,&AnilibriaApiService::getScheduleResponse);
 
     networkManager->post(request, params.query(QUrl::FullyEncoded).toUtf8());
 }
@@ -98,7 +98,7 @@ void AnilibriaApiService::signout(QString token)
     auto networkManager = new QNetworkAccessManager(this);
     QNetworkRequest request(QUrl(AnilibriaApiPath + "public/logout.php"));
 
-    connect(networkManager,SIGNAL(finished(QNetworkReply*)),this,SLOT(signoutResponse(QNetworkReply*)));
+    connect(networkManager,&QNetworkAccessManager::finished,this,&AnilibriaApiService::signoutResponse);
 
     request.setHeader(QNetworkRequest::ContentTypeHeader, "application/x-www-form-urlencoded");
     auto cookie = "PHPSESSID=" + token;
@@ -116,7 +116,7 @@ void AnilibriaApiService::getUserData(QString token)
     auto networkManager = new QNetworkAccessManager(this);
     QNetworkRequest request(QUrl(AnilibriaApiPath + "public/api/index.php"));
 
-    connect(networkManager,SIGNAL(finished(QNetworkReply*)),this,SLOT(getUserDataResponse(QNetworkReply*)));
+    connect(networkManager,&QNetworkAccessManager::finished,this,&AnilibriaApiService::getUserDataResponse);
 
     request.setHeader(QNetworkRequest::ContentTypeHeader, "application/x-www-form-urlencoded");
     auto cookie = "PHPSESSID=" + token;
@@ -133,7 +133,7 @@ void AnilibriaApiService::getFavorites(QString token)
     auto networkManager = new QNetworkAccessManager(this);
     QNetworkRequest request(QUrl(AnilibriaApiPath + "public/api/index.php"));
 
-    connect(networkManager,SIGNAL(finished(QNetworkReply*)),this,SLOT(getUserFavoritesResponse(QNetworkReply*)));
+    connect(networkManager,&QNetworkAccessManager::finished,this,&AnilibriaApiService::getUserFavoritesResponse);
 
     request.setHeader(QNetworkRequest::ContentTypeHeader, "application/x-www-form-urlencoded");
     auto cookie = "PHPSESSID=" + token;
@@ -166,7 +166,7 @@ void AnilibriaApiService::performAddFavorite(QString token, int id)
     auto networkManager = new QNetworkAccessManager(this);
     QNetworkRequest request(QUrl(AnilibriaApiPath + "public/api/index.php"));
 
-    connect(networkManager,SIGNAL(finished(QNetworkReply*)),this,SLOT(editFavoritesResponse(QNetworkReply*)));
+    connect(networkManager,&QNetworkAccessManager::finished,this,&AnilibriaApiService::editFavoritesResponse);
 
     auto cookie = "PHPSESSID=" + token;
     request.setRawHeader("Cookie", cookie.toUtf8());
@@ -185,7 +185,7 @@ void AnilibriaApiService::performRemoveFavorite(QString token, int id)
     auto networkManager = new QNetworkAccessManager(this);
     QNetworkRequest request(QUrl(AnilibriaApiPath + "public/api/index.php"));
 
-    connect(networkManager,SIGNAL(finished(QNetworkReply*)),this,SLOT(deleteFavoritesResponse(QNetworkReply*)));
+    connect(networkManager,&QNetworkAccessManager::finished,this,&AnilibriaApiService::deleteFavoritesResponse);
 
     auto cookie = "PHPSESSID=" + token;
     request.setRawHeader("Cookie", cookie.toUtf8());
@@ -216,7 +216,7 @@ void AnilibriaApiService::downloadTorrent(QString path)
     auto url = QUrl(path);
     QNetworkRequest request(url);
 
-    connect(networkManager,SIGNAL(finished(QNetworkReply*)),this,SLOT(downloadTorrentResponse(QNetworkReply*)));
+    connect(networkManager,&QNetworkAccessManager::finished,this,&AnilibriaApiService::downloadTorrentResponse);
 
     networkManager->get(request);
 
