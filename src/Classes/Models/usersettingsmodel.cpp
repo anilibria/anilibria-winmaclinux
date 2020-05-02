@@ -12,82 +12,42 @@ UserSettingsModel::UserSettingsModel(): m_Quality(1),
 
 }
 
-int UserSettingsModel::quality()
-{
-    return m_Quality;
-}
-
-double UserSettingsModel::volume()
-{
-    return m_Volume;
-}
-
-bool UserSettingsModel::autoNextVideo()
-{
-    return m_AutoNextVideo;
-}
-
-bool UserSettingsModel::autoTopMost()
-{
-    return m_AutoTopMost;
-}
-
-int UserSettingsModel::torrentDownloadMode()
-{
-    return m_TorrentDownloadMode;
-}
-
-bool UserSettingsModel::notificationForFavorites()
-{
-    return m_NotificationForFavorites;
-}
-
-int UserSettingsModel::jumpMinute() const
-{
-    return m_JumpMinute;
-}
-
-int UserSettingsModel::jumpSecond() const
-{
-    return m_JumpSecond;
-}
-
-void UserSettingsModel::setQuality(int quality)
+void UserSettingsModel::setQuality(const int quality) noexcept
 {
     m_Quality = quality;
 }
 
-void UserSettingsModel::setVolume(double volume)
+void UserSettingsModel::setVolume(const double volume) noexcept
 {
     m_Volume = volume;
 }
 
-void UserSettingsModel::setAutoNextVideos(bool autoNextVideo)
+void UserSettingsModel::setAutoNextVideos(const bool autoNextVideo) noexcept
 {
     m_AutoNextVideo = autoNextVideo;
 }
 
-void UserSettingsModel::setAutoTopMost(bool autoTopMost)
+void UserSettingsModel::setAutoTopMost(const bool autoTopMost) noexcept
 {
     m_AutoTopMost = autoTopMost;
 }
 
-void UserSettingsModel::setTorrentDownloadMode(int torrentDownloadMode)
+void UserSettingsModel::setTorrentDownloadMode(const int torrentDownloadMode) noexcept
 {
     m_TorrentDownloadMode = torrentDownloadMode;
 }
 
-void UserSettingsModel::setNotificationForFavorites(bool notificationForFavorites)
+void UserSettingsModel::setNotificationForFavorites(const bool notificationForFavorites) noexcept
 {
     m_NotificationForFavorites = notificationForFavorites;
 }
 
-void UserSettingsModel::setJumpMinute(int jumpMinute)
+void UserSettingsModel::setJumpMinute(const int jumpMinute) noexcept
 {
     m_JumpMinute = jumpMinute;
 }
 
-void UserSettingsModel::setJumpSecond(int jumpSecond)
+void UserSettingsModel::setJumpSecond(const int jumpSecond) noexcept
 {
     m_JumpSecond = jumpSecond;
 }
@@ -109,7 +69,7 @@ void UserSettingsModel::fromJson(QString json)
     if (jsonSettings.contains("notificationForFavorites")) setNotificationForFavorites(jsonSettings.value("notificationForFavorites").toBool());
 }
 
-QString UserSettingsModel::toJson()
+QString UserSettingsModel::toJson() noexcept
 {
     QJsonObject object;
 

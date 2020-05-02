@@ -16,7 +16,7 @@ void OnlineVideoModel::readFromApiModel(const QJsonObject &jsonObject)
     m_SourceHD = jsonObject.value("srcHd").toString();
 }
 
-void OnlineVideoModel::writeToJson(QJsonObject &json) const
+void OnlineVideoModel::writeToJson(QJsonObject &json) const noexcept
 {
     json["id"] = m_Id;
     json["title"] = m_Title;
@@ -27,72 +27,37 @@ void OnlineVideoModel::writeToJson(QJsonObject &json) const
     json["srcHd"] = m_SourceHD;
 }
 
-int OnlineVideoModel::id() const
-{
-    return m_Id;
-}
-
-QString OnlineVideoModel::title() const
-{
-    return m_Title;
-}
-
-QString OnlineVideoModel::sd() const
-{
-    return m_SD;
-}
-
-QString OnlineVideoModel::hd() const
-{
-    return m_HD;
-}
-
-QString OnlineVideoModel::fullhd() const
-{
-    return m_FullHD;
-}
-
-QString OnlineVideoModel::sourcesd() const
-{
-    return m_SourceSD;
-}
-
-QString OnlineVideoModel::sourcehd() const
-{
-    return m_SourceHD;
-}
-
-void OnlineVideoModel::setId(const int id)
+void OnlineVideoModel::setId(const int id) noexcept
 {
     m_Id = id;
 }
 
-void OnlineVideoModel::setTitle(const QString &title)
+void OnlineVideoModel::setTitle(const QString &title) noexcept
 {
     m_Title = title;
 }
 
-void OnlineVideoModel::setSd(const QString &sd)
+void OnlineVideoModel::setSd(const QString &sd) noexcept
 {
     m_SD = sd;
 }
 
-void OnlineVideoModel::setHd(const QString &hd)
+void OnlineVideoModel::setHd(const QString &hd) noexcept
 {
     m_HD = hd;
 }
 
-void OnlineVideoModel::setFullHd(const QString &fullhd)
+void OnlineVideoModel::setFullHd(const QString &fullhd) noexcept
 {
     m_FullHD = fullhd;
 }
 
-void OnlineVideoModel::setSourceSd(const QString &sourcesd)
+void OnlineVideoModel::setSourceSd(const QString &sourcesd) noexcept
 {
     m_SourceSD = sourcesd;
 }
 
-void OnlineVideoModel::setSourceHd(const QString &sourcehd)
+void OnlineVideoModel::setSourceHd(const QString &sourcehd) noexcept
 {
     m_SourceHD = sourcehd;
 }

@@ -21,26 +21,26 @@ private:
 public:
     UserSettingsModel();
 
-    int quality();
-    double volume();
-    bool autoNextVideo();
-    bool autoTopMost();
-    int torrentDownloadMode();
-    bool notificationForFavorites();
-    int jumpMinute() const;
-    int jumpSecond() const;
+    int quality() const {return m_Quality;}
+    double volume() const {return m_Volume;}
+    bool autoNextVideo() const {return m_AutoNextVideo;}
+    bool autoTopMost() const {return  m_AutoTopMost;}
+    int torrentDownloadMode() const {return  m_TorrentDownloadMode;}
+    bool notificationForFavorites() const {return  m_NotificationForFavorites;}
+    int jumpMinute() const {return m_JumpMinute;}
+    int jumpSecond() const {return m_JumpSecond;}
 
-    void setQuality(int quality);
-    void setVolume(double volume);
-    void setAutoNextVideos(bool autoNextVideo);
-    void setAutoTopMost(bool autoTopMost);
-    void setTorrentDownloadMode(int torrentDownloadMode);
-    void setNotificationForFavorites(bool notificationForFavorites);
-    void setJumpMinute(int jumpMinute);
-    void setJumpSecond(int jumpSecond);
+    void setQuality(const int quality) noexcept;
+    void setVolume(const double volume) noexcept;
+    void setAutoNextVideos(const bool autoNextVideo) noexcept;
+    void setAutoTopMost(const bool autoTopMost) noexcept;
+    void setTorrentDownloadMode(const int torrentDownloadMode) noexcept;
+    void setNotificationForFavorites(const bool notificationForFavorites) noexcept;
+    void setJumpMinute(const int jumpMinute) noexcept;
+    void setJumpSecond(const int jumpSecond) noexcept;
 
     void fromJson(QString json);
-    QString toJson();
+    QString toJson() noexcept;
 
 };
 

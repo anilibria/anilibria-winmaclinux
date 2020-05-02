@@ -1,41 +1,28 @@
 #include "historymodel.h"
 
-HistoryModel::HistoryModel() : m_Id(0), m_Timestamp(0), m_WatchTimestamp(0)
+HistoryModel::HistoryModel()
+    : m_Id(0)
+    , m_Timestamp(0)
+    , m_WatchTimestamp(0)
 {
-
 }
 
-int HistoryModel::id() const
-{
-    return m_Id;
-}
-
-int HistoryModel::timestamp() const
-{
-    return m_Timestamp;
-}
-
-int HistoryModel::watchTimestamp() const
-{
-    return m_WatchTimestamp;
-}
-
-void HistoryModel::setId(int id)
+void HistoryModel::setId(const int id) noexcept
 {
     m_Id = id;
 }
 
-void HistoryModel::setTimestamp(int timestamp)
+void HistoryModel::setTimestamp(const int timestamp) noexcept
 {
     m_Timestamp = timestamp;
 }
 
-void HistoryModel::setWatchTimestamp(int watchTimestamp)
+void HistoryModel::setWatchTimestamp(const int watchTimestamp) noexcept
 {
     m_WatchTimestamp = watchTimestamp;
 }
 
-void HistoryModel::writeToJson(QJsonObject &json) const
+void HistoryModel::writeToJson(QJsonObject &json) const noexcept
 {
     json["id"] = m_Id;
     json["timestamp"] = m_Timestamp;

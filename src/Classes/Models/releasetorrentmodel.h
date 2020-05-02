@@ -18,25 +18,25 @@ public:
 
     void readFromApiModel(const QJsonObject &jsonObject);
 
-    void writeToJson(QJsonObject &json) const;
+    void writeToJson(QJsonObject &json) const noexcept;
 
-    int id() const;
-    void setId(const int id);
+    int id() const {return m_Id;}
+    void setId(const int id) noexcept;
 
-    QString hash() const;
-    void setHash(const QString &hash);
+    QString hash() const {return m_Hash;}
+    void setHash(const QString &hash) noexcept;
 
-    QString quality() const;
-    void setQuality(const QString &quality);
+    QString quality() const {return m_Quality;}
+    void setQuality(const QString &quality) noexcept;
 
-    QString series() const;
-    void setSeries(const QString &series);
+    QString series() const {return m_Series;}
+    void setSeries(const QString &series) noexcept;
 
-    long size() const;
-    void setSize(const long size);
+    long size() const {return m_Size;}
+    void setSize(const long size) noexcept;
 
-    QString url() const;
-    void setUrl(const QString &url);
+    QString url() const {return m_Url;}
+    void setUrl(const QString &url) noexcept;
 };
 
 #endif // RELEASETORRENTMODEL_H

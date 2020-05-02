@@ -1,26 +1,16 @@
 #include "seenmarkmodel.h"
 
-int SeenMarkModel::id() const
-{
-    return m_Id;
-}
-
-int SeenMarkModel::seriaId() const
-{
-    return m_SeriaId;
-}
-
-void SeenMarkModel::setId(int id)
+void SeenMarkModel::setId(int id) noexcept
 {
     m_Id = id;
 }
 
-void SeenMarkModel::setSeriaId(int seriaId)
+void SeenMarkModel::setSeriaId(int seriaId) noexcept
 {
     m_SeriaId = seriaId;
 }
 
-void SeenMarkModel::writeToJson(QJsonObject &json) const
+void SeenMarkModel::writeToJson(QJsonObject &json) const noexcept
 {
     json["id"] = m_Id;
     json["seriaId"] = m_SeriaId;
