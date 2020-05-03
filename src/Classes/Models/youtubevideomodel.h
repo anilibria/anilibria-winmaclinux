@@ -18,11 +18,11 @@ private:
 public:
     YoutubeVideoModel();
 
-    int id() const {return m_Id;}
-    QString title() const {return m_Title;}
-    QString image() const {return m_Image;}
-    QString videoIdentifier() const {return  m_VideoIdentifier;}
-    int timestamp() const {return m_Timestamp;}
+    int id() const { return m_Id; }
+    QString title() const { return m_Title; }
+    QString image() const { return m_Image; }
+    QString videoIdentifier() const { return  m_VideoIdentifier; }
+    int timestamp() const { return m_Timestamp; }
 
     void setId(const int id) noexcept;
     void setTitle(const QString& title) noexcept;

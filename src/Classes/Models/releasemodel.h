@@ -36,41 +36,41 @@ public:
 
     void readFromJson(const QJsonObject &json);
 
-    int id() const {return m_Id;}
+    int id() const { return m_Id; }
 
-    QString code() const {return m_Code;};
+    QString code() const { return m_Code; }
 
-    QString series() const {return m_Series;}
+    QString series() const { return m_Series; }
 
-    QString poster() const {return m_Poster;}
+    QString poster() const { return m_Poster; }
 
-    QString timestamp() const {return m_Timestamp;}
+    QString timestamp() const { return m_Timestamp; }
 
-    QString status() const {return m_Status;}
+    QString status() const { return m_Status; }
 
-    QString type() const {return m_Type;}
+    QString type() const { return m_Type; }
 
-    QString year() const {return m_Year;};
+    QString year() const { return m_Year; }
 
-    QString description() const {return m_Description;}
+    QString description() const { return m_Description; }
 
-    QString season() const {return m_Season;}
+    QString season() const { return m_Season; }
 
-    QString announce() const {return m_Announce;}
+    QString announce() const { return m_Announce; }
 
-    QStringList genres() const {return m_Genres;}
+    QStringList genres() const { return m_Genres; }
 
-    QStringList voices() const {return m_Voices;}
+    QStringList voices() const { return m_Voices; }
 
-    QStringList names() const {return m_Names;}
+    QStringList names() const { return m_Names; }
 
-    int rating() const {return m_Rating;}
+    int rating() const { return m_Rating; }
 
-    QString title() const {return m_Title;}
+    QString title() const { return m_Title; }
 
-    QList<OnlineVideoModel> videos() const {return  m_Videos;}
+    QList<OnlineVideoModel> videos() const { return m_Videos; }
 
-    QList<ReleaseTorrentModel> torrents() const {return m_Torrents;}
+    QList<ReleaseTorrentModel> torrents() const { return m_Torrents; }
 
 };
 

@@ -21,14 +21,14 @@ private:
 public:
     UserSettingsModel();
 
-    int quality() const {return m_Quality;}
-    double volume() const {return m_Volume;}
-    bool autoNextVideo() const {return m_AutoNextVideo;}
-    bool autoTopMost() const {return  m_AutoTopMost;}
-    int torrentDownloadMode() const {return  m_TorrentDownloadMode;}
-    bool notificationForFavorites() const {return  m_NotificationForFavorites;}
-    int jumpMinute() const {return m_JumpMinute;}
-    int jumpSecond() const {return m_JumpSecond;}
+    int quality() const { return m_Quality; }
+    double volume() const { return m_Volume; }
+    bool autoNextVideo() const { return m_AutoNextVideo; }
+    bool autoTopMost() const { return  m_AutoTopMost; }
+    int torrentDownloadMode() const { return  m_TorrentDownloadMode; }
+    bool notificationForFavorites() const { return m_NotificationForFavorites; }
+    int jumpMinute() const { return m_JumpMinute; }
+    int jumpSecond() const { return m_JumpSecond; }
 
     void setQuality(const int quality) noexcept;
     void setVolume(const double volume) noexcept;

@@ -17,13 +17,13 @@ private:
     QList<int>* m_NewTorrentSeries;
 
 public:
-    QList<int>* newReleases() const {return m_NewReleases;}
+    QList<int>* newReleases() const { return m_NewReleases; }
 
-    QList<int>* newOnlineSeries() const {return m_NewOnlineSeries;}
+    QList<int>* newOnlineSeries() const { return m_NewOnlineSeries; }
 
-    QList<int>* newTorrents() const {return m_NewTorrents;}
+    QList<int>* newTorrents() const { return m_NewTorrents; }
 
-    QList<int>* newTorrentSeries() const {return m_NewTorrentSeries;}
+    QList<int>* newTorrentSeries() const { return m_NewTorrentSeries; }
 
     void fromJson(const QString &json);
 

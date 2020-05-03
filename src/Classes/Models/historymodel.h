@@ -15,9 +15,9 @@ private:
 public:
     HistoryModel();
 
-    int id() const {return m_Id;}
-    int timestamp() const {return m_Timestamp;}
-    int watchTimestamp() const {return m_WatchTimestamp;}
+    int id() const { return m_Id; }
+    int timestamp() const { return m_Timestamp; }
+    int watchTimestamp() const { return m_WatchTimestamp; }
 
     void setId(const int id) noexcept;
     void setTimestamp(const int timestamp) noexcept;

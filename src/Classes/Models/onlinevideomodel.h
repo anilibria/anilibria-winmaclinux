@@ -21,13 +21,13 @@ public:
 
     void writeToJson(QJsonObject &json) const noexcept;
 
-    int id() const {return m_Id;}
-    QString title() const {return m_Title;}
-    QString sd() const {return m_SD;}
-    QString hd() const noexcept {return m_HD;}
-    QString fullhd() const {return m_FullHD;}
-    QString sourcesd() const {return m_SourceSD;}
-    QString sourcehd() const {return m_SourceHD;}
+    int id() const { return m_Id; }
+    QString title() const { return m_Title; }
+    QString sd() const { return m_SD; }
+    QString hd() const noexcept { return m_HD; }
+    QString fullhd() const { return m_FullHD; }
+    QString sourcesd() const { return m_SourceSD; }
+    QString sourcehd() const { return m_SourceHD; }
 
     void setId(const int id) noexcept;
     void setTitle(const QString &title) noexcept;

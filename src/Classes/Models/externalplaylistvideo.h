@@ -14,9 +14,9 @@ private:
 public:
     ExternalPlaylistVideo();
 
-    int order() const {return m_Order;}
-    QString address() const {return m_Address;}
-    QString name() const {return m_Name;}
+    int order() const { return m_Order; }
+    QString address() const { return m_Address; }
+    QString name() const { return m_Name; }
 
     void setOrder(const int order) noexcept;
     void setAddress(const QString& address) noexcept;

@@ -12,8 +12,8 @@ private:
     int m_SeriaId;
 
 public:
-    int id() const {return m_Id;}
-    int seriaId() const {return m_SeriaId;}
+    int id() const { return m_Id; }
+    int seriaId() const { return m_SeriaId; }
 
     void setId(const int id) noexcept;
     void setSeriaId(const int seriaId) noexcept;

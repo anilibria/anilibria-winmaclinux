@@ -20,22 +20,22 @@ public:
 
     void writeToJson(QJsonObject &json) const noexcept;
 
-    int id() const {return m_Id;}
+    int id() const { return m_Id; }
     void setId(const int id) noexcept;
 
-    QString hash() const {return m_Hash;}
+    QString hash() const { return m_Hash; }
     void setHash(const QString &hash) noexcept;
 
-    QString quality() const {return m_Quality;}
+    QString quality() const { return m_Quality; }
     void setQuality(const QString &quality) noexcept;
 
-    QString series() const {return m_Series;}
+    QString series() const { return m_Series; }
     void setSeries(const QString &series) noexcept;
 
-    long size() const {return m_Size;}
+    long size() const { return m_Size; }
     void setSize(const long size) noexcept;
 
-    QString url() const {return m_Url;}
+    QString url() const { return m_Url; }
     void setUrl(const QString &url) noexcept;
 };
 
