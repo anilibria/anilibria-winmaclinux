@@ -30,74 +30,74 @@ private:
     int m_Rating;
 
 public:
-    QString title() const;
-    void setTitle(const QString &title);
+    QString title() const {return m_Title;}
+    void setTitle(const QString &title) noexcept;
 
-    QString status() const;
-    void setStatus(const QString &status);
+    QString status() const {return m_Status;}
+    void setStatus(const QString &status) noexcept;
 
-    QString year() const;
-    void setYear(const QString &year);
+    QString year() const {return m_Year;}
+    void setYear(const QString &year) noexcept;
 
-    QString poster() const;
-    void setPoster(const QString &poster);
+    QString poster() const {return m_Poster;}
+    void setPoster(const QString &poster) noexcept;
 
-    QString description() const;
-    void setDescription(const QString &description);
+    QString description() const {return m_Description;}
+    void setDescription(const QString &description) noexcept;
 
-    QString releaseType() const;
-    void setReleaseType(const QString &releaseType);
+    QString releaseType() const {return m_Type;}
+    void setReleaseType(const QString &releaseType) noexcept;
 
-    QString genres() const;
-    void setGenres(const QString &genres);
+    QString genres() const {return m_Genres;}
+    void setGenres(const QString &genres) noexcept;
 
-    QString voicers() const;
-    void setVoicers(const QString &voicers);
+    QString voicers() const {return m_Voices;}
+    void setVoicers(const QString &voicers) noexcept;
 
-    QString season() const;
-    void setSeason(const QString &season);
+    QString season() const {return m_Season;}
+    void setSeason(const QString &season) noexcept;
 
-    QString series() const;
-    void setSeries(const QString &series);
+    QString series() const {return m_Series;}
+    void setSeries(const QString &series) noexcept;
 
-    QString code() const;
-    void setCode(const QString &code);
+    QString code() const {return m_Code;}
+    void setCode(const QString &code) noexcept;
 
-    int id() const;
-    void setId(const int id);
+    int id() const {return m_Id;}
+    void setId(const int id) noexcept;
 
-    int countOnlineVideos() const;
-    void setCountOnlineVideos(const int countOnlineVideos);
+    int countOnlineVideos() const {return m_CountVideos;}
+    void setCountOnlineVideos(const int countOnlineVideos) noexcept;
 
-    int countTorrents() const;
-    void setCountTorrents(const int countTorrents);
+    int countTorrents() const {return m_CountTorrents;}
+    void setCountTorrents(const int countTorrents) noexcept;
 
-    QString announce() const;
-    void setAnnounce(const QString& announce);
+    QString announce() const {return m_Announce;}
+    void setAnnounce(const QString& announce) noexcept;
 
-    QString originalName() const;
-    void setOriginalName(const QString& originalName);
+    QString originalName() const {return m_OriginalName;}
+    void setOriginalName(const QString& originalName) noexcept;
 
-    int rating() const;
-    void setRating(const int rating);
+    int rating() const {return m_Rating;}
+    void setRating(const int rating) noexcept;
 
-    QString torrents() const;
-    void setTorrents(const QString& torrents);
+    QString torrents() const {return m_Torrents;}
+    void setTorrents(const QString& torrents) noexcept;
 
-    QString videos() const;
-    void setVideos(const QString& videos);
+    QString videos() const {return m_Videos;}
+    void setVideos(const QString& videos) noexcept;
 
-    int timestamp() const;
-    void setTimestamp(const int timestamp);
+    int timestamp() const noexcept{return m_Timestamp;}
+    void setTimestamp(const int timestamp) noexcept;
 
-    QString type() const;
-    void setType(const QString& type);
+    QString type() const {return m_Type;}
+    void setType(const QString& type) noexcept;
 
-    void writeToJson(QJsonObject &json) const;
+    void writeToJson(QJsonObject &json) const noexcept;
 
     void readFromJson(QJsonValue &json);
 
-    bool operator== (const FullReleaseModel &comparedModel);
+    bool operator== (const FullReleaseModel &comparedModel) noexcept;
 
 };
 

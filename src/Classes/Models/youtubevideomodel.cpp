@@ -10,57 +10,32 @@ YoutubeVideoModel::YoutubeVideoModel() :
 
 }
 
-int YoutubeVideoModel::id()
-{
-    return m_Id;
-}
-
-QString YoutubeVideoModel::title()
-{
-    return m_Title;
-}
-
-QString YoutubeVideoModel::image()
-{
-    return m_Image;
-}
-
-QString YoutubeVideoModel::videoIdentifier()
-{
-    return m_VideoIdentifier;
-}
-
-int YoutubeVideoModel::timestamp()
-{
-    return m_Timestamp;
-}
-
-void YoutubeVideoModel::setId(int id)
+void YoutubeVideoModel::setId(const int id) noexcept
 {
     m_Id = id;
 }
 
-void YoutubeVideoModel::setTitle(QString title)
+void YoutubeVideoModel::setTitle(const QString& title) noexcept
 {
     m_Title = title;
 }
 
-void YoutubeVideoModel::setImage(QString image)
+void YoutubeVideoModel::setImage(const QString& image) noexcept
 {
     m_Image = image;
 }
 
-void YoutubeVideoModel::setVideoIdentifier(QString videoIdentifier)
+void YoutubeVideoModel::setVideoIdentifier(const QString& videoIdentifier) noexcept
 {
     m_VideoIdentifier = videoIdentifier;
 }
 
-void YoutubeVideoModel::setTimestamp(int timestamp)
+void YoutubeVideoModel::setTimestamp(const int timestamp) noexcept
 {
     m_Timestamp = timestamp;
 }
 
-void YoutubeVideoModel::writeToJson(QJsonObject &json) const
+void YoutubeVideoModel::writeToJson(QJsonObject &json) const noexcept
 {
     json["id"] = m_Id;
     json["title"] = m_Title;

@@ -12,13 +12,13 @@ private:
     int m_SeriaId;
 
 public:
-    int id() const;
-    int seriaId() const;
+    int id() const {return m_Id;}
+    int seriaId() const {return m_SeriaId;}
 
-    void setId(int id);
-    void setSeriaId(int seriaId);
+    void setId(const int id) noexcept;
+    void setSeriaId(const int seriaId) noexcept;
 
-    void writeToJson(QJsonObject &json) const;
+    void writeToJson(QJsonObject &json) const noexcept;
     void readFromJson(QJsonValue &json);
 
 };

@@ -32,45 +32,45 @@ public:
 
     void readFromApiModel(const QJsonObject &jsonObject);
 
-    void writeToJson(QJsonObject &json) const;
+    void writeToJson(QJsonObject &json) const noexcept;
 
     void readFromJson(const QJsonObject &json);
 
-    int id();
+    int id() const {return m_Id;}
 
-    QString code();
+    QString code() const {return m_Code;};
 
-    QString series();
+    QString series() const {return m_Series;}
 
-    QString poster();
+    QString poster() const {return m_Poster;}
 
-    QString timestamp();
+    QString timestamp() const {return m_Timestamp;}
 
-    QString status();
+    QString status() const {return m_Status;}
 
-    QString type();
+    QString type() const {return m_Type;}
 
-    QString year();
+    QString year() const {return m_Year;};
 
-    QString description();
+    QString description() const {return m_Description;}
 
-    QString season();
+    QString season() const {return m_Season;}
 
-    QString announce();
+    QString announce() const {return m_Announce;}
 
-    QStringList genres();
+    QStringList genres() const {return m_Genres;}
 
-    QStringList voices();
+    QStringList voices() const {return m_Voices;}
 
-    QStringList names();
+    QStringList names() const {return m_Names;}
 
-    int rating();
+    int rating() const {return m_Rating;}
 
-    QString title();
+    QString title() const {return m_Title;}
 
-    QList<OnlineVideoModel> videos();
+    QList<OnlineVideoModel> videos() const {return  m_Videos;}
 
-    QList<ReleaseTorrentModel> torrents();
+    QList<ReleaseTorrentModel> torrents() const {return m_Torrents;}
 
 };
 

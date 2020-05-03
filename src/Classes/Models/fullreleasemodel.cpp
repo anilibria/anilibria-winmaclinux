@@ -4,42 +4,22 @@
 #include "fullreleasemodel.h"
 #include "globalconstants.h"
 
-QString FullReleaseModel::title() const
-{
-    return m_Title;
-}
-
-void FullReleaseModel::setTitle(const QString &title)
+void FullReleaseModel::setTitle(const QString &title) noexcept
 {
     m_Title = title;
 }
 
-QString FullReleaseModel::status() const
-{
-    return m_Status;
-}
-
-void FullReleaseModel::setStatus(const QString &status)
+void FullReleaseModel::setStatus(const QString &status) noexcept
 {
     m_Status = status;
 }
 
-QString FullReleaseModel::year() const
-{
-    return m_Year;
-}
-
-void FullReleaseModel::setYear(const QString &year)
+void FullReleaseModel::setYear(const QString &year) noexcept
 {
     m_Year = year;
 }
 
-QString FullReleaseModel::poster() const
-{
-    return m_Poster;
-}
-
-void FullReleaseModel::setPoster(const QString &poster)
+void FullReleaseModel::setPoster(const QString &poster) noexcept
 {
     if (poster.contains("https://")) {
         m_Poster = poster;
@@ -48,177 +28,92 @@ void FullReleaseModel::setPoster(const QString &poster)
     }
 }
 
-QString FullReleaseModel::description() const
-{
-    return m_Description;
-}
-
-void FullReleaseModel::setDescription(const QString &description)
+void FullReleaseModel::setDescription(const QString &description) noexcept
 {
     m_Description = description;
 }
 
-QString FullReleaseModel::releaseType() const
-{
-    return m_Type;
-}
-
-void FullReleaseModel::setReleaseType(const QString &releaseType)
+void FullReleaseModel::setReleaseType(const QString &releaseType) noexcept
 {
     m_Type = releaseType;
 }
 
-QString FullReleaseModel::genres() const
-{
-    return m_Genres;
-}
-
-void FullReleaseModel::setGenres(const QString &genres)
+void FullReleaseModel::setGenres(const QString &genres) noexcept
 {
     m_Genres = genres;
 }
 
-QString FullReleaseModel::voicers() const
-{
-    return m_Voices;
-}
-
-void FullReleaseModel::setVoicers(const QString &voicers)
+void FullReleaseModel::setVoicers(const QString &voicers) noexcept
 {
     m_Voices = voicers;
 }
 
-QString FullReleaseModel::season() const
-{
-    return m_Season;
-}
-
-void FullReleaseModel::setSeason(const QString &season)
+void FullReleaseModel::setSeason(const QString &season) noexcept
 {
     m_Season = season;
 }
 
-QString FullReleaseModel::series() const
-{
-    return m_Series;
-}
-
-void FullReleaseModel::setSeries(const QString &series)
+void FullReleaseModel::setSeries(const QString &series) noexcept
 {
     m_Series = series;
 }
 
-QString FullReleaseModel::code() const
-{
-    return m_Code;
-}
-
-void FullReleaseModel::setCode(const QString &code)
+void FullReleaseModel::setCode(const QString &code) noexcept
 {
     m_Code = code;
 }
 
-int FullReleaseModel::id() const
-{
-    return m_Id;
-}
-
-void FullReleaseModel::setId(const int id)
+void FullReleaseModel::setId(const int id) noexcept
 {
     m_Id = id;
 }
 
-int FullReleaseModel::countOnlineVideos() const
-{
-    return m_CountVideos;
-}
-
-void FullReleaseModel::setCountOnlineVideos(const int countOnlineVideos)
+void FullReleaseModel::setCountOnlineVideos(const int countOnlineVideos) noexcept
 {
     m_CountVideos = countOnlineVideos;
 }
 
-int FullReleaseModel::countTorrents() const
-{
-    return m_CountTorrents;
-}
-
-void FullReleaseModel::setCountTorrents(const int countTorrents)
+void FullReleaseModel::setCountTorrents(const int countTorrents) noexcept
 {
     m_CountTorrents = countTorrents;
 }
 
-QString FullReleaseModel::announce() const
-{
-    return m_Announce;
-}
-
-void FullReleaseModel::setAnnounce(const QString &announce)
+void FullReleaseModel::setAnnounce(const QString &announce) noexcept
 {
     m_Announce = announce;
 }
 
-QString FullReleaseModel::originalName() const
-{
-    return m_OriginalName;
-}
-
-void FullReleaseModel::setOriginalName(const QString &originalName)
+void FullReleaseModel::setOriginalName(const QString &originalName) noexcept
 {
     m_OriginalName = originalName;
 }
 
-int FullReleaseModel::rating() const
-{
-    return m_Rating;
-}
-
-void FullReleaseModel::setRating(const int rating)
+void FullReleaseModel::setRating(const int rating) noexcept
 {
     m_Rating = rating;
 }
 
-QString FullReleaseModel::torrents() const
-{
-    return m_Torrents;
-}
-
-void FullReleaseModel::setTorrents(const QString &torrents)
+void FullReleaseModel::setTorrents(const QString &torrents) noexcept
 {
     m_Torrents = torrents;
 }
 
-QString FullReleaseModel::videos() const
-{
-    return m_Videos;
-}
-
-void FullReleaseModel::setVideos(const QString &videos)
+void FullReleaseModel::setVideos(const QString &videos) noexcept
 {
     m_Videos = videos;
 }
 
-int FullReleaseModel::timestamp() const
-{
-    return m_Timestamp;
-}
-
-void FullReleaseModel::setTimestamp(const int timestamp)
+void FullReleaseModel::setTimestamp(const int timestamp) noexcept
 {
     m_Timestamp = timestamp;
 }
 
-QString FullReleaseModel::type() const
-{
-    return m_Type;
-}
-
-void FullReleaseModel::setType(const QString &type)
+void FullReleaseModel::setType(const QString &type) noexcept
 {
     m_Type = type;
 }
 
-void FullReleaseModel::writeToJson(QJsonObject &json) const
+void FullReleaseModel::writeToJson(QJsonObject &json) const noexcept
 {
     json["id"] = m_Id;
     json["title"] = m_Title;
@@ -265,8 +160,7 @@ void FullReleaseModel::readFromJson(QJsonValue &json)
     setTorrents(json["torrents"].toString());
     setVideos(json["videos"].toString());
 }
-
-bool FullReleaseModel::operator==(const FullReleaseModel &comparedModel)
+bool FullReleaseModel::operator== (const FullReleaseModel &comparedModel) noexcept
 {
     return m_Id == comparedModel.id();
 }

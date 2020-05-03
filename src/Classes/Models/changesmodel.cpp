@@ -4,7 +4,7 @@
 #include <QJsonValue>
 #include "changesmodel.h"
 
-ChangesModel::ChangesModel() :
+ChangesModel::ChangesModel() noexcept :
     m_NewReleases(new QList<int>()),
     m_NewOnlineSeries(new QList<int>()),
     m_NewTorrents(new QList<int>()),
@@ -13,27 +13,7 @@ ChangesModel::ChangesModel() :
 
 }
 
-QList<int>* ChangesModel::newReleases()
-{
-    return m_NewReleases;
-}
-
-QList<int>* ChangesModel::newTorrentSeries()
-{
-    return m_NewTorrentSeries;
-}
-
-QList<int>* ChangesModel::newOnlineSeries()
-{
-    return m_NewOnlineSeries;
-}
-
-QList<int>* ChangesModel::newTorrents()
-{
-    return m_NewTorrents;
-}
-
-void ChangesModel::fromJson(QString json)
+void ChangesModel::fromJson(const QString& json)
 {
     if (json.isEmpty()) return;
 
@@ -53,7 +33,7 @@ void ChangesModel::fromJson(QString json)
     foreach (auto newTorrentSeria, newTorrentSeries) m_NewTorrentSeries->append(newTorrentSeria.toInt());
 }
 
-QString ChangesModel::toJson()
+QString ChangesModel::toJson() noexcept
 {
     QJsonObject object;
 

@@ -87,7 +87,7 @@ void ReleaseModel::readFromJson(const QJsonObject &json)
     }
 }
 
-void ReleaseModel::writeToJson(QJsonObject &json) const
+void ReleaseModel::writeToJson(QJsonObject &json) const noexcept
 {
     json["id"] = m_Id;
     json["code"] = m_Code;
@@ -128,94 +128,4 @@ void ReleaseModel::writeToJson(QJsonObject &json) const
         torrentsArray.append(jsonObject);
     }
     json["torrents"] = torrentsArray;
-}
-
-int ReleaseModel::id()
-{
-    return m_Id;
-}
-
-QString ReleaseModel::code()
-{
-    return m_Code;
-}
-
-QString ReleaseModel::series()
-{
-    return m_Series;
-}
-
-QString ReleaseModel::poster()
-{
-    return m_Poster;
-}
-
-QString ReleaseModel::timestamp()
-{
-    return m_Timestamp;
-}
-
-QString ReleaseModel::status()
-{
-    return m_Status;
-}
-
-QString ReleaseModel::type()
-{
-    return m_Type;
-}
-
-QString ReleaseModel::year()
-{
-    return m_Year;
-}
-
-QString ReleaseModel::description()
-{
-    return m_Description;
-}
-
-QString ReleaseModel::season()
-{
-    return m_Season;
-}
-
-QString ReleaseModel::announce()
-{
-    return m_Announce;
-}
-
-QStringList ReleaseModel::genres()
-{
-    return m_Genres;
-}
-
-QStringList ReleaseModel::voices()
-{
-    return m_Voices;
-}
-
-QStringList ReleaseModel::names()
-{
-    return m_Names;
-}
-
-int ReleaseModel::rating()
-{
-    return m_Rating;
-}
-
-QString ReleaseModel::title()
-{
-    return m_Title;
-}
-
-QList<OnlineVideoModel> ReleaseModel::videos()
-{
-    return m_Videos;
-}
-
-QList<ReleaseTorrentModel> ReleaseModel::torrents()
-{
-    return m_Torrents;
 }

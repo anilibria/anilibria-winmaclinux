@@ -15,15 +15,15 @@ private:
 public:
     HistoryModel();
 
-    int id() const;
-    int timestamp() const;
-    int watchTimestamp() const;
+    int id() const {return m_Id;}
+    int timestamp() const {return m_Timestamp;}
+    int watchTimestamp() const {return m_WatchTimestamp;}
 
-    void setId(int id);
-    void setTimestamp(int timestamp);
-    void setWatchTimestamp(int watchTimestamp);
+    void setId(const int id) noexcept;
+    void setTimestamp(const int timestamp) noexcept;
+    void setWatchTimestamp(const int watchTimestamp) noexcept;
 
-    void writeToJson(QJsonObject &json) const;
+    void writeToJson(QJsonObject &json) const noexcept;
     void readFromJson(QJsonValue &json);
 
 };

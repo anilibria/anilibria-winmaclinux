@@ -18,19 +18,19 @@ private:
 public:
     YoutubeVideoModel();
 
-    int id();
-    QString title();
-    QString image();
-    QString videoIdentifier();
-    int timestamp();
+    int id() const {return m_Id;}
+    QString title() const {return m_Title;}
+    QString image() const {return m_Image;}
+    QString videoIdentifier() const {return  m_VideoIdentifier;}
+    int timestamp() const {return m_Timestamp;}
 
-    void setId(int id);
-    void setTitle(QString title);
-    void setImage(QString image);
-    void setVideoIdentifier(QString videoIdentifier);
-    void setTimestamp(int timestamp);
+    void setId(const int id) noexcept;
+    void setTitle(const QString& title) noexcept;
+    void setImage(const QString& image) noexcept;
+    void setVideoIdentifier(const QString& videoIdentifier) noexcept;
+    void setTimestamp(const int timestamp) noexcept;
 
-    void writeToJson(QJsonObject &json) const;
+    void writeToJson(QJsonObject &json) const noexcept;
     void readFromJson(QJsonValue &json);
 
 };

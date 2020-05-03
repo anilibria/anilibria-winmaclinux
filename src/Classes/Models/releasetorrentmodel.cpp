@@ -15,7 +15,7 @@ void ReleaseTorrentModel::readFromApiModel(const QJsonObject &jsonObject)
     m_Size = jsonObject.value("size").toInt();
 }
 
-void ReleaseTorrentModel::writeToJson(QJsonObject &json) const
+void ReleaseTorrentModel::writeToJson(QJsonObject &json) const noexcept
 {
     json["id"] = m_Id;
     json["hash"] = m_Hash;
@@ -25,62 +25,32 @@ void ReleaseTorrentModel::writeToJson(QJsonObject &json) const
     json["size"] = static_cast<int>(m_Size);
 }
 
-int ReleaseTorrentModel::id() const
-{
-    return m_Id;
-}
-
-void ReleaseTorrentModel::setId(const int id)
+void ReleaseTorrentModel::setId(const int id) noexcept
 {
     m_Id = id;
 }
 
-QString ReleaseTorrentModel::hash() const
-{
-    return m_Hash;
-}
-
-void ReleaseTorrentModel::setHash(const QString &hash)
+void ReleaseTorrentModel::setHash(const QString &hash) noexcept
 {
     m_Hash = hash;
 }
 
-QString ReleaseTorrentModel::quality() const
-{
-    return m_Quality;
-}
-
-void ReleaseTorrentModel::setQuality(const QString &quality)
+void ReleaseTorrentModel::setQuality(const QString &quality) noexcept
 {
     m_Quality = quality;
 }
 
-QString ReleaseTorrentModel::series() const
-{
-    return m_Series;
-}
-
-void ReleaseTorrentModel::setSeries(const QString &series)
+void ReleaseTorrentModel::setSeries(const QString &series) noexcept
 {
     m_Series = series;
 }
 
-long ReleaseTorrentModel::size() const
-{
-    return m_Size;
-}
-
-void ReleaseTorrentModel::setSize(const long size)
+void ReleaseTorrentModel::setSize(const long size) noexcept
 {
     m_Size = size;
 }
 
-QString ReleaseTorrentModel::url() const
-{
-    return m_Url;
-}
-
-void ReleaseTorrentModel::setUrl(const QString &url)
+void ReleaseTorrentModel::setUrl(const QString &url) noexcept
 {
     m_Url = url;
 }
