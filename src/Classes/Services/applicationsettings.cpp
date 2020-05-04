@@ -39,3 +39,51 @@ void ApplicationSettings::setUserToken(QString &token)
 
     emit userTokenChanged(token);
 }
+
+int ApplicationSettings::windowWidth()
+{
+    return m_Settings->value("windowwidth", 0).toInt();
+}
+
+void ApplicationSettings::setWindowWidth(int windowWidth)
+{
+    m_Settings->setValue("windowwidth", windowWidth);
+
+    emit windowWidthChanged(windowWidth);
+}
+
+int ApplicationSettings::windowHeight()
+{
+    return m_Settings->value("windowheight", 0).toInt();
+}
+
+void ApplicationSettings::setWindowHeight(int windowHeight)
+{
+    m_Settings->setValue("windowheight", windowHeight);
+
+    emit windowHeightChanged(windowHeight);
+}
+
+int ApplicationSettings::windowX()
+{
+    return m_Settings->value("windowx", 0).toInt();
+}
+
+void ApplicationSettings::setWindowX(int windowX)
+{
+    m_Settings->setValue("windowx", windowX);
+
+    emit windowXChanged(windowX);
+}
+
+int ApplicationSettings::windowY()
+{
+    return m_Settings->value("windowy", 0).toInt();
+}
+
+void ApplicationSettings::setWindowY(int windowY)
+{
+    m_Settings->setValue("windowy", windowY);
+
+    emit windowYChanged(windowY);
+}

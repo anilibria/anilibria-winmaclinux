@@ -26,8 +26,11 @@ class ApplicationSettings : public QObject
 {
     Q_OBJECT
 
-
     Q_PROPERTY(QString userToken READ userToken WRITE setUserToken NOTIFY userTokenChanged)
+    Q_PROPERTY(int windowWidth READ windowWidth WRITE setWindowWidth NOTIFY windowWidthChanged)
+    Q_PROPERTY(int windowHeight READ windowHeight WRITE setWindowHeight NOTIFY windowHeightChanged)
+    Q_PROPERTY(int windowX READ windowX WRITE setWindowX NOTIFY windowXChanged)
+    Q_PROPERTY(int windowY READ windowY WRITE setWindowY NOTIFY windowYChanged)
 
 private:
     QSettings* m_Settings;
@@ -38,8 +41,24 @@ public:
     QString userToken();
     void setUserToken(QString& token);
 
+    int windowWidth();
+    void setWindowWidth(int windowWidth);
+
+    int windowHeight();
+    void setWindowHeight(int windowHeight);
+
+    int windowX();
+    void setWindowX(int windowX);
+
+    int windowY();
+    void setWindowY(int windowY);
+
 signals:
     void userTokenChanged(QString& token);
+    void windowHeightChanged(int windowHeight);
+    void windowWidthChanged(int windowWidth);
+    void windowXChanged(int windowX);
+    void windowYChanged(int windowY);
 
 };
 

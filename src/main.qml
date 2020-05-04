@@ -50,6 +50,26 @@ ApplicationWindow {
         if (!active) videoplayer.windowNotActived();
     }
 
+    Component.onCompleted: {
+        const savedWidth = applicationSettings.windowWidth;
+        const savedHeight = applicationSettings.windowHeight;
+        const savedX = applicationSettings.windowX;
+        const savedY = applicationSettings.windowY;
+        if (savedWidth > 0 && savedHeight > 0 && savedX !== 0 && savedY !== 0) {
+            window.x = savedX;
+            window.y = savedY;
+            window.width = savedWidth;
+            window.height = savedHeight;
+        }
+    }
+
+    Component.onDestruction: {
+        applicationSettings.windowWidth = window.width;
+        applicationSettings.windowHeight = window.height;
+        applicationSettings.windowX = window.x;
+        applicationSettings.windowY = window.y;
+    }
+
     footer: Rectangle {
         id: windowFooter
         visible: true
