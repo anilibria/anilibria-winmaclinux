@@ -77,6 +77,18 @@ ApplicationWindow {
         height: 16
         color: "#a6a6a6"
 
+        Rectangle {
+            anchors.left: parent.left
+            anchors.leftMargin: 4
+            width: 100
+            Text {
+                id: authentificationUser
+                font.pointSize: 10
+                text: window.userModel.login ? "Вы авторизованы как " + window.userModel.login : "Вы не авторизованы"
+            }
+        }
+
+
         Row {
             anchors.right: parent.right
             IconButton {
