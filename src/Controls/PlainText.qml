@@ -17,17 +17,12 @@
 */
 
 import QtQuick 2.12
-import QtQuick.Controls 2.12
-import QtQuick.Controls.Material 2.0
 import "../Theme"
 
-Button {
-    id: _button
-    Material.foreground: ApplicationTheme.roundedButtonForeground // "white"
-    background: Rectangle {
-        color: _button.hovered || _button.down ? ApplicationTheme.roundedButtonHovered /*"#881919"*/ : ApplicationTheme.roundedButtonBackground //"#b32121"
-        border.color: "transparent"
-        border.width: 1
-        radius: 18
-    }
+Text {
+    property real fontPointSize: 0
+
+    font.pointSize: fontPointSize + windowSettings.dpiSeparation
+    color: ApplicationTheme.plainTextColor
+    linkColor: ApplicationTheme.linkTextColor
 }

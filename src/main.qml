@@ -26,6 +26,7 @@ import QtQuick.Dialogs 1.2
 import Anilibria.Services 1.0
 import "Views"
 import "Controls"
+import "Theme"
 
 ApplicationWindow {
     id: window
@@ -41,6 +42,9 @@ ApplicationWindow {
     property bool notVisibleSignin: false
     property var userModel: ({})
     property string tempTorrentPath: ""
+
+    Material.accent: Material.Red
+    Material.theme: ApplicationTheme.isDarkTheme ? Material.Dark : Material.Light
 
     onClosing: {
         analyticsService.sendEvent("Session", "End");
@@ -116,8 +120,6 @@ ApplicationWindow {
         }
 
     }
-
-    Material.accent: Material.Red
 
     function showPage(pageId) {
         if (currentPageId === pageId){
@@ -215,6 +217,7 @@ ApplicationWindow {
     ApplicationSettings {
         id: applicationSettings
         Component.onCompleted: {
+            ApplicationTheme.isDarkTheme = applicationSettings.isDarkTheme;
             if (!applicationSettings.userToken) return;
 
             synchronizationService.getUserData(applicationSettings.userToken);
@@ -407,11 +410,11 @@ ApplicationWindow {
             start: Qt.point(0, 0)
             end: Qt.point(0, 300)
             gradient: Gradient {
-                GradientStop { position: 0.0; color: "#6b0200" }
-                GradientStop { position: 0.3; color: "#ab0909" }
-                GradientStop { position: 0.5; color: "#d41515" }
-                GradientStop { position: 0.7; color: "#fc2626" }
-                GradientStop { position: 1.0; color: "#f52c39" }
+                GradientStop { position: 0.0; color: ApplicationTheme.drawerGradiendStep0 }
+                GradientStop { position: 0.3; color: ApplicationTheme.drawerGradiendStep1 }
+                GradientStop { position: 0.5; color: ApplicationTheme.drawerGradiendStep2 }
+                GradientStop { position: 0.7; color: ApplicationTheme.drawerGradiendStep3 }
+                GradientStop { position: 1.0; color: ApplicationTheme.drawerGradiendStep4 }
             }
         }
 

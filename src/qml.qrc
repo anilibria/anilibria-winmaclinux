@@ -67,5 +67,10 @@
         <file>Assets/Icons/previous10.svg</file>
         <file>Views/QtAvPlayer.qml</file>
         <file>Views/QtPlayer.qml</file>
+        <file>Theme/ApplicationTheme.qml</file>
+        <file>Theme/qmldir</file>
+        <file>Controls/LinkedText.qml</file>
+        <file>Controls/PlainText.qml</file>
+        <file>Controls/AccentText.qml</file>
     </qresource>
 </RCC>

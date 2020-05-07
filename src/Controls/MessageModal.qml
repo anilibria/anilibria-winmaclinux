@@ -36,27 +36,29 @@ Popup {
     Column {
         width: parent.width
         spacing: 10
-        Text {
+        AccentText {
             id: popupHeader
             width: messagePopup.width - 20
-            font.pointSize: 11
+            fontPointSize: 11
             font.bold: true
             elide: Text.ElideRight
         }
 
         Rectangle {
+            color: "transparent"
             width: messagePopup.width - 20
             height: messagePopup.height - 40
-            Text {
+            PlainText {
                 id: popupMessage
                 width: parent.width
                 height: 60
-                font.pointSize: 9
+                fontPointSize: 9
                 wrapMode: Text.WordWrap
             }
 
             Rectangle {
                 id: innerSlotContainer
+                color: "transparent"
                 anchors.top: popupMessage.bottom
                 width: parent.width
                 height: 30

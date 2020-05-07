@@ -21,6 +21,7 @@ import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.3
 import QtGraphicalEffects 1.0
 import "../Controls"
+import "../Theme"
 
 Page {
     id: aboutPage
@@ -30,7 +31,7 @@ Page {
     signal navigateTo()
 
     background: Rectangle {
-        color: "#D3D3D3"
+        color: ApplicationTheme.pageBackground
     }
 
     RowLayout {
@@ -38,7 +39,7 @@ Page {
         anchors.fill: parent
         spacing: 0
         Rectangle {
-            color: "#9e2323"
+            color: ApplicationTheme.pageVerticalPanel
             width: 40
             Layout.fillHeight: true
             Column {
@@ -65,7 +66,7 @@ Page {
                 Layout.fillWidth: true
                 Layout.preferredHeight: 45
                 height: 45
-                color: "#a6a6a6"
+                color: ApplicationTheme.pageUpperPanel
             }
 
             Flickable {
@@ -112,9 +113,9 @@ Page {
                         Layout.fillWidth: true
                         Layout.preferredHeight: 40
 
-                        Text {
+                        PlainText {
                             anchors.centerIn: parent
-                            font.pointSize: 15 + windowSettings.dpiSeparation
+                            fontPointSize: 15
                             text: "Клиент для сайта AniLibria.TV"
                         }
                     }
@@ -127,19 +128,10 @@ Page {
                         Layout.fillWidth: true
                         Layout.preferredHeight: 40
 
-                        Text {
+                        LinkedText {
                             anchors.centerIn: parent
-                            font.pointSize: 14 + windowSettings.dpiSeparation
-                            linkColor: "#b32121"
+                            fontPointSize: 14
                             text: "<a href='https://www.anilibria.tv/'>https://www.anilibria.tv/</a>"
-                            onLinkActivated: {
-                                Qt.openUrlExternally(link);
-                            }
-                            MouseArea {
-                                anchors.fill: parent
-                                acceptedButtons: Qt.NoButton
-                                cursorShape: parent.hoveredLink ? Qt.PointingHandCursor : Qt.ArrowCursor
-                            }
                         }
                     }
 
@@ -151,9 +143,9 @@ Page {
                         Layout.fillWidth: true
                         Layout.preferredHeight: 40
 
-                        Text {
+                        PlainText {
                             anchors.centerIn: parent
-                            font.pointSize: 12 + windowSettings.dpiSeparation
+                            fontPointSize: 12
                             text: "версия " + ApplicationVersion
                         }
                     }
@@ -166,10 +158,9 @@ Page {
                         Layout.fillWidth: true
                         Layout.preferredHeight: 30
 
-                        Text {
+                        AccentText {
                             anchors.centerIn: parent
-                            font.pointSize: 14 + windowSettings.dpiSeparation
-                            color: "#b32121"
+                            fontPointSize: 14
                             text: "Спасибо что выбираете нас!"
                         }
                     }
@@ -182,22 +173,12 @@ Page {
                         Layout.fillWidth: true
                         Layout.preferredHeight: 15
 
-                        Text {
+                        LinkedText {
                             anchors.centerIn: parent
-                            font.pointSize: 10 + windowSettings.dpiSeparation
+                            fontPointSize: 10
                             wrapMode: Text.WordWrap
-                            width: parent.width
                             horizontalAlignment: Text.AlignHCenter
-                            linkColor: "#b32121"
-                            text: "В случае если у Вас есть проблемы с приложением Вы можете <a href='tg://resolve?domain=AniLibriaTP'>написать в техподдержку в telegram</a>"
-                            onLinkActivated: {
-                                Qt.openUrlExternally(link);
-                            }
-                            MouseArea {
-                                anchors.fill: parent
-                                acceptedButtons: Qt.NoButton
-                                cursorShape: parent.hoveredLink ? Qt.PointingHandCursor : Qt.ArrowCursor
-                            }
+                            text: "В случае если у Вас есть проблемы с приложением Вы можете <a href='https://t.me/Libria911Bot'>написать в техподдержку в telegram</a>"
                         }
                     }
 
@@ -208,9 +189,9 @@ Page {
                         Layout.fillWidth: true
                         Layout.preferredHeight: 15
 
-                        Text {
+                        PlainText {
                             anchors.centerIn: parent
-                            font.pointSize: 10 + windowSettings.dpiSeparation
+                            fontPointSize: 10
                             wrapMode: Text.WordWrap
                             width: parent.width
                             horizontalAlignment: Text.AlignHCenter
@@ -225,22 +206,12 @@ Page {
                         Layout.fillWidth: true
                         Layout.preferredHeight: 15
 
-                        Text {
+                        LinkedText {
                             anchors.centerIn: parent
-                            font.pointSize: 10 + windowSettings.dpiSeparation
+                            fontPointSize: 10
                             wrapMode: Text.WordWrap
-                            width: parent.width
-                            linkColor: "#b32121"
                             horizontalAlignment: Text.AlignHCenter
                             text: "В случаях нарушения авторских прав - обращайтесь на почту <a href='mailto:lupin@anilibria.tv'>lupin@anilibria.tv</a>"
-                            onLinkActivated: {
-                                Qt.openUrlExternally(link);
-                            }
-                            MouseArea {
-                                anchors.fill: parent
-                                acceptedButtons: Qt.NoButton
-                                cursorShape: parent.hoveredLink ? Qt.PointingHandCursor : Qt.ArrowCursor
-                            }
                         }
                     }
 
@@ -252,10 +223,9 @@ Page {
                         Layout.fillWidth: true
                         Layout.preferredHeight: 20
 
-                        Text {
+                        PlainText {
                             anchors.centerIn: parent
-                            font.pointSize: 12 + windowSettings.dpiSeparation
-                            linkColor: "#b32121"
+                            fontPointSize: 12
                             text: "Дизайн:"
                         }
                     }
@@ -268,10 +238,9 @@ Page {
                         Layout.topMargin: 8
                         Layout.preferredHeight: 19
 
-                        Text {
+                        PlainText {
                             anchors.centerIn: parent
-                            font.pointSize: 11 + windowSettings.dpiSeparation
-                            linkColor: "#b32121"
+                            fontPointSize: 11
                             text: "Sebastian Wilde"
                         }
                     }
@@ -283,11 +252,9 @@ Page {
                         Layout.topMargin: 10
                         Layout.fillWidth: true
                         Layout.preferredHeight: 20
-
-                        Text {
+                        PlainText {
                             anchors.centerIn: parent
-                            font.pointSize: 12 + windowSettings.dpiSeparation
-                            linkColor: "#b32121"
+                            fontPointSize: 12
                             text: "Разработка:"
                         }
                     }
@@ -300,11 +267,10 @@ Page {
                         Layout.preferredHeight: 19
                         Layout.topMargin: 8
 
-                        Text {
+                        LinkedText {
                             anchors.centerIn: parent
-                            font.pointSize: 11 + windowSettings.dpiSeparation
-                            linkColor: "#b32121"
-                            text: "RAS"
+                            fontPointSize: 11
+                            text: "<a href='https://github.com/anilibria/anilibria-winmaclinux/graphs/contributors'>Контрибьюторы проекта</a>"
                         }
                     }
 
@@ -317,10 +283,9 @@ Page {
                         Layout.fillWidth: true
                         Layout.preferredHeight: 20
 
-                        Text {
+                        LinkedText {
                             anchors.centerIn: parent
-                            font.pointSize: 12 + windowSettings.dpiSeparation
-                            linkColor: "#b32121"
+                            fontPointSize: 12
                             text: "Иконки:"
                         }
                     }
@@ -332,27 +297,17 @@ Page {
                         Layout.fillWidth: true
                         Layout.preferredHeight: 100
 
-                        Text {
+                        LinkedText {
                             anchors.centerIn: parent
-                            font.pointSize: 10 + windowSettings.dpiSeparation
+                            fontPointSize: 10
                             wrapMode: Text.WordWrap
-                            width: parent.width
-                            linkColor: "#b32121"
                             horizontalAlignment: Text.AlignHCenter
-                            onLinkActivated: {
-                                Qt.openUrlExternally(link);
-                            }
                             text: "Icons made by <a href='https://www.flaticon.com/authors/dave-gandy'>Dave Gandy</a> from <a href='https://www.flaticon.com/'>www.flaticon.com</a><br>" +
                                   "Icons made by <a href='https://www.flaticon.com/authors/icongeek26'>Icongeek26</a> from <a href='https://www.flaticon.com/'>www.flaticon.com</a><br>" +
                                   "Icons made by <a href='https://www.flaticon.com/authors/srip'>srip</a> from <a href='https://www.flaticon.com/'>www.flaticon.com</a><br>" +
                                   "Icons made by <a href='https://www.flaticon.com/authors/swifticons'>Swifticons</a> from <a href='https://www.flaticon.com/'>www.flaticon.com</a><br>" +
                                   "Icons made by <a href='https://www.flaticon.com/authors/google'>Google</a> from <a href='https://www.flaticon.com/'>www.flaticon.com</a><br>" +
                                   "Icons made by <a href='https://www.flaticon.com/authors/icongeek26'>Icongeek26</a> from <a href='https://www.flaticon.com/'>www.flaticon.com</a>"
-                            MouseArea {
-                                anchors.fill: parent
-                                acceptedButtons: Qt.NoButton
-                                cursorShape: parent.hoveredLink ? Qt.PointingHandCursor : Qt.ArrowCursor
-                            }
                         }
                     }
 
@@ -365,10 +320,9 @@ Page {
                         Layout.fillWidth: true
                         Layout.preferredHeight: 20
 
-                        Text {
+                        LinkedText {
                             anchors.centerIn: parent
-                            font.pointSize: 12 + windowSettings.dpiSeparation
-                            linkColor: "#b32121"
+                            fontPointSize: 12
                             text: "Используемые компоненты:"
                         }
                     }
@@ -380,23 +334,13 @@ Page {
                         Layout.fillWidth: true
                         Layout.preferredHeight: 50
 
-                        Text {
+                        LinkedText {
                             anchors.centerIn: parent
-                            font.pointSize: 10 + windowSettings.dpiSeparation
+                            fontPointSize: 10
                             wrapMode: Text.WordWrap
-                            width: parent.width
-                            linkColor: "#b32121"
                             horizontalAlignment: Text.AlignHCenter
-                            onLinkActivated: {
-                                Qt.openUrlExternally(link);
-                            }
                             text: "Qt <a href='https://github.com/qt/qt5/blob/dev/LICENSE.FDL'>license</a><br>" +
                                 "QtAV <a href='https://github.com/wang-bin/QtAV/blob/master/lgpl-2.1.txt'>license</a><br>"
-                            MouseArea {
-                                anchors.fill: parent
-                                acceptedButtons: Qt.NoButton
-                                cursorShape: parent.hoveredLink ? Qt.PointingHandCursor : Qt.ArrowCursor
-                            }
                         }
                     }
 

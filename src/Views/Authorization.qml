@@ -21,12 +21,13 @@ import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.3
 import QtQuick.Controls.Material 2.0
 import "../Controls"
+import "../Theme"
 
 Page {
     id: authorizePage
     anchors.fill: parent
     background: Rectangle {
-        color: "#D3D3D3"
+        color: ApplicationTheme.pageBackground
     }
 
     property alias email: emailTextBox.text
@@ -52,7 +53,7 @@ Page {
         anchors.fill: parent
         spacing: 0
         Rectangle {
-            color: "#9e2323"
+            color: ApplicationTheme.pageVerticalPanel
             width: 40
             Layout.fillHeight: true
             Column {
@@ -70,13 +71,14 @@ Page {
             }
         }
         Rectangle {
-            color: "#D3D3D3"
+            color: "transparent"
             Layout.fillHeight: true
             Layout.fillWidth: true
 
             Rectangle {
                 id: fieldsContainer
                 radius: 8
+                color: ApplicationTheme.panelBackground
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.horizontalCenter: parent.horizontalCenter
                 width: 400
@@ -105,14 +107,13 @@ Page {
                     Item {
                         Layout.fillWidth: true
                         height: 40
-                        Text {
+                        AccentText {
                             id: errorMessage
                             text: ""
-                            font.pointSize: 10 + windowSettings.dpiSeparation
+                            fontPointSize: 10
                             anchors.left: parent.left
                             anchors.leftMargin: 10                            
                             anchors.verticalCenter: parent.verticalCenter
-                            color: "#a32727"
                             wrapMode: Text.WordWrap
                         }
 
@@ -141,22 +142,11 @@ Page {
                 }
             }
 
-            Text {
+            LinkedText {
                 anchors.top: fieldsContainer.bottom
                 anchors.right: fieldsContainer.right
-                linkColor: "#b32121"
-                font.pointSize: 10 + windowSettings.dpiSeparation
+                fontPointSize: 10
                 text: "<a href='https://www.anilibria.tv/pages/login.php'>Регистрация</a>"
-                onLinkActivated: {
-                    Qt.openUrlExternally(link);
-                }
-
-                MouseArea {
-                    anchors.fill: parent
-                    acceptedButtons: Qt.NoButton
-                    cursorShape: parent.hoveredLink ? Qt.PointingHandCursor : Qt.ArrowCursor
-                }
-
             }
         }
     }

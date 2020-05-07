@@ -21,6 +21,7 @@ import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.3
 import QtGraphicalEffects 1.0
 import "../Controls"
+import "../Theme"
 
 Page {
     id: youtubePage
@@ -46,7 +47,7 @@ Page {
     }
 
     background: Rectangle {
-        color: "#D3D3D3"
+        color: ApplicationTheme.pageBackground
     }
 
     Rectangle {
@@ -66,7 +67,7 @@ Page {
         anchors.fill: parent
         spacing: 0
         Rectangle {
-            color: "#9e2323"
+            color: ApplicationTheme.pageVerticalPanel
             width: 40
             Layout.fillHeight: true
             Column {
@@ -93,7 +94,7 @@ Page {
                 Layout.fillWidth: true
                 Layout.preferredHeight: 45
                 height: 45
-                color: "#a6a6a6"
+                color: ApplicationTheme.pageUpperPanel
             }
 
             Flickable {
@@ -125,7 +126,7 @@ Page {
                                 width: 480
                                 height: 290
                                 radius: 10
-                                color: "#f2f2f2"
+                                color: ApplicationTheme.panelBackground
                                 layer.enabled: true
                                 layer.effect: DropShadow {
                                     transparentBorder: true
@@ -133,7 +134,7 @@ Page {
                                     verticalOffset: 2
                                     radius: 1
                                     samples: 3
-                                    color: "gray"
+                                    color: ApplicationTheme.panelBackgroundShadow
                                 }
                                 MouseArea {
                                     width: 480
@@ -161,11 +162,11 @@ Page {
                                         }
                                     }
 
-                                    Text {
+                                    PlainText {
                                         Layout.row: 1
                                         width: 460
                                         textFormat: Text.RichText
-                                        font.pointSize: 10
+                                        fontPointSize: 10
                                         leftPadding: 8
                                         topPadding: 4
                                         wrapMode: Text.WordWrap

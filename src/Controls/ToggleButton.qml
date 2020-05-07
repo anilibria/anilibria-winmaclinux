@@ -17,10 +17,11 @@
 */
 
 import QtQuick 2.12
+import "../Theme"
 
 Rectangle {
     id: _container
-    color: isPressed ? "gray" : (isChecked ? "#9e2323" :"lightgray")
+    color: isPressed ? "gray" : (isChecked ? "#9e2323" : (ApplicationTheme.isDarkTheme ? "darkgrey" : "lightgray"))
 
     property alias text: buttonText.text
     property bool isChecked: false
@@ -34,7 +35,7 @@ Rectangle {
         id: buttonText
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter: parent.verticalCenter
-        color: "black"
+        color: ApplicationTheme.plainTextColor
     }
     MouseArea {
         anchors.fill: parent

@@ -31,6 +31,7 @@ class ApplicationSettings : public QObject
     Q_PROPERTY(int windowHeight READ windowHeight WRITE setWindowHeight NOTIFY windowHeightChanged)
     Q_PROPERTY(int windowX READ windowX WRITE setWindowX NOTIFY windowXChanged)
     Q_PROPERTY(int windowY READ windowY WRITE setWindowY NOTIFY windowYChanged)
+    Q_PROPERTY(bool isDarkTheme READ isDarkTheme WRITE setIsDarkTheme NOTIFY isDarkThemeChanged)
 
 private:
     QSettings* m_Settings;
@@ -53,12 +54,16 @@ public:
     int windowY();
     void setWindowY(int windowY);
 
+    bool isDarkTheme();
+    void setIsDarkTheme(bool isDarkTheme);
+
 signals:
     void userTokenChanged(QString& token);
     void windowHeightChanged(int windowHeight);
     void windowWidthChanged(int windowWidth);
     void windowXChanged(int windowX);
     void windowYChanged(int windowY);
+    void isDarkThemeChanged(bool isDarkTheme);
 
 };
 

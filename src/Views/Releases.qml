@@ -25,6 +25,7 @@ import QtQuick.Dialogs 1.2
 import QtGraphicalEffects 1.0
 import Anilibria.Services 1.0
 import "../Controls"
+import "../Theme"
 
 Page {
     id: page
@@ -101,7 +102,7 @@ Page {
     }
 
     background: Rectangle {
-        color: "#D3D3D3"
+        color: ApplicationTheme.pageBackground
     }
 
     anchors.fill: parent
@@ -136,7 +137,7 @@ Page {
         spacing: 0
         enabled: !page.openedRelease
         Rectangle {
-            color: "#9e2323"
+            color: ApplicationTheme.pageVerticalPanel
             width: 40
             Layout.fillHeight: true
             Column {
@@ -224,22 +225,23 @@ Page {
                         Column {
                             width: parent.width
                             spacing: 10
-                            Text {
+                            AccentText {
                                 id: favoritePopupHeader
                                 width: messagePopup.width - 20
-                                font.pointSize: 12 + windowSettings.dpiSeparation
+                                fontPointSize: 12
                                 font.bold: true
                                 elide: Text.ElideRight
                             }
 
                             Rectangle {
+                                color: "transparent"
                                 width: messagePopup.width - 20
                                 height: messagePopup.height - 50
-                                Text {
+                                PlainText {
                                     id: favoritePopupMessage
                                     anchors.verticalCenter: parent.verticalCenter
                                     width: parent.width
-                                    font.pointSize: 10 + windowSettings.dpiSeparation
+                                    fontPointSize: 10
                                     wrapMode: Text.WordWrap
                                 }
                             }
@@ -376,17 +378,17 @@ Page {
                                     page.refreshAllReleases(false);
                                 }
                             }
-                            Text {
+                            PlainText {
                                 id: labelDescriptionSearchField
                                 anchors.top: clearFiltersButton.bottom
-                                font.pointSize: 11 + windowSettings.dpiSeparation
+                                fontPointSize: 11
                                 text: qsTr("Описание")
                             }
-                            Text {
+                            PlainText {
                                 id: labelTypeSearchField
                                 anchors.top: clearFiltersButton.bottom
                                 anchors.left: typeSearchField.left
-                                font.pointSize: 11 + windowSettings.dpiSeparation
+                                fontPointSize: 11
                                 text: qsTr("Тип")
                             }
                             TextField {
@@ -404,11 +406,11 @@ Page {
                                 placeholderText: "Тип"
                             }
 
-                            Text {
+                            PlainText {
                                 id: labelGenresSearchField
                                 anchors.top: descriptionSearchField.bottom
                                 anchors.rightMargin: 10
-                                font.pointSize: 11 + windowSettings.dpiSeparation
+                                fontPointSize: 11
                                 text: qsTr("Жанры")
                             }
                             TextField {
@@ -417,13 +419,13 @@ Page {
                                 anchors.top: labelGenresSearchField.bottom
                                 placeholderText: "Вводите жанры через запятую"
                             }
-                            Text {
+                            PlainText {
                                 id: labelOrAndGenresSearchField
                                 anchors.top: labelGenresSearchField.bottom
                                 anchors.left: genresSearchField.right
                                 topPadding: 16
                                 leftPadding: 4
-                                font.pointSize: 11 + windowSettings.dpiSeparation
+                                fontPointSize: 11
                                 text: qsTr("ИЛИ/И")
                             }
                             Switch {
@@ -432,11 +434,11 @@ Page {
                                 anchors.left: labelOrAndGenresSearchField.right
                             }
 
-                            Text {
+                            PlainText {
                                 id: labelVoicesSearchField
                                 anchors.top: genresSearchField.bottom
                                 anchors.rightMargin: 10
-                                font.pointSize: 11 + windowSettings.dpiSeparation
+                                fontPointSize: 11
                                 text: qsTr("Озвучка")
                             }
                             TextField {
@@ -445,13 +447,13 @@ Page {
                                 anchors.top: labelVoicesSearchField.bottom
                                 placeholderText: "Вводите войсеров через запятую"
                             }
-                            Text {
+                            PlainText {
                                 id: labelOrAndVoicesSearchField
                                 anchors.top: labelVoicesSearchField.bottom
                                 anchors.left: voicesSearchField.right
                                 topPadding: 16
                                 leftPadding: 4
-                                font.pointSize: 11 + windowSettings.dpiSeparation
+                                fontPointSize: 11
                                 text: qsTr("ИЛИ/И")
                             }
                             Switch {
@@ -460,17 +462,17 @@ Page {
                                 anchors.left: labelOrAndVoicesSearchField.right
                             }
 
-                            Text {
+                            PlainText {
                                 id: labelYearsSearchField
                                 anchors.top: voicesSearchField.bottom
-                                font.pointSize: 11 + windowSettings.dpiSeparation
+                                fontPointSize: 11
                                 text: qsTr("Года")
                             }
-                            Text {
+                            PlainText {
                                 id: labelSeasonsSearchField
                                 anchors.top: voicesSearchField.bottom
                                 anchors.left: typeSearchField.left
-                                font.pointSize: 11 + windowSettings.dpiSeparation
+                                fontPointSize: 11
                                 text: qsTr("Сезоны")
                             }
                             TextField {
@@ -487,11 +489,11 @@ Page {
                                 anchors.right: parent.right
                                 placeholderText: "Вводите через запятую"
                             }
-                            Text {
+                            PlainText {
                                 id: labelStatusesSearchField
                                 anchors.top: yearsSearchField.bottom
                                 anchors.rightMargin: 10
-                                font.pointSize: 11 + windowSettings.dpiSeparation
+                                fontPointSize: 11
                                 text: qsTr("Статусы")
                             }
                             TextField {
@@ -538,10 +540,10 @@ Page {
                                 }
                             }
 
-                            Text {
+                            PlainText {
                                 id: labelSortingField
                                 anchors.top: startSortingButton.bottom
-                                font.pointSize: 11 + windowSettings.dpiSeparation
+                                fontPointSize: 11
                                 text: qsTr("Сортировать по")
                             }
                             ComboBox {
@@ -583,10 +585,10 @@ Page {
                                 }
                             }
 
-                            Text {
+                            PlainText {
                                 id: labelSortingDirection
                                 anchors.top: sortingComboBox.bottom
-                                font.pointSize: 11 + windowSettings.dpiSeparation
+                                fontPointSize: 11
                                 text: qsTr("В порядке")
                             }
                             ComboBox {
@@ -642,10 +644,10 @@ Page {
                             visible: !localStorage.isChangesExists
                             width: parent.width
                             height: parent.height
-                            Text {
+                            PlainText {
                                 anchors.centerIn: parent
                                 text: "У Вас нет новых уведомлений"
-                                font.pointSize: 16 + windowSettings.dpiSeparation
+                                fontPointSize: 16
                             }
                         }
 
@@ -666,49 +668,53 @@ Page {
                                 anchors.top: resetNotificationButton.bottom
                                 Rectangle {
                                     visible: page.changesCounts[0] > 0
+                                    color: ApplicationTheme.panelBackground
                                     border.width: 3
-                                    border.color: "red"
+                                    border.color: ApplicationTheme.selectedItem
                                     width: 340
                                     height: 40
-                                    Text {
+                                    PlainText {
                                         anchors.centerIn: parent
-                                        font.pointSize: 11 + windowSettings.dpiSeparation
+                                        fontPointSize: 11
                                         text: "Новых релизов: " + page.changesCounts[0]
                                     }
                                 }
                                 Rectangle {
                                     visible: page.changesCounts[1] > 0
+                                    color: ApplicationTheme.panelBackground
                                     border.width: 3
-                                    border.color: "red"
+                                    border.color: ApplicationTheme.selectedItem
                                     width: 340
                                     height: 40
-                                    Text {
+                                    PlainText {
                                         anchors.centerIn: parent
-                                        font.pointSize: 11 + windowSettings.dpiSeparation
+                                        fontPointSize: 11
                                         text: "Релизов с новыми сериями: " + page.changesCounts[1]
                                     }
                                 }
                                 Rectangle {
                                     visible: page.changesCounts[2] > 0
+                                    color: ApplicationTheme.panelBackground
                                     border.width: 3
-                                    border.color: "red"
+                                    border.color: ApplicationTheme.selectedItem
                                     width: 340
                                     height: 40
-                                    Text {
+                                    PlainText {
                                         anchors.centerIn: parent
-                                        font.pointSize: 11 + windowSettings.dpiSeparation
+                                        fontPointSize: 11
                                         text: "Новые торренты: " + page.changesCounts[2]
                                     }
                                 }
                                 Rectangle {
                                     visible: page.changesCounts[3] > 0
+                                    color: ApplicationTheme.panelBackground
                                     border.width: 3
-                                    border.color: "red"
+                                    border.color: ApplicationTheme.selectedItem
                                     width: 340
                                     height: 40
-                                    Text {
+                                    PlainText {
                                         anchors.centerIn: parent
-                                        font.pointSize: 11 + windowSettings.dpiSeparation
+                                        fontPointSize: 11
                                         text: "Релизы с обновленными торрентами: " + page.changesCounts[3]
                                     }
                                 }
@@ -744,14 +750,14 @@ Page {
                         x: 40
                         y: sortingPopupButton.height - 100
                         width: 370
-                        height: 160
+                        height: 230
                         modal: true
                         focus: true
                         closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
 
-                        Text {
+                        PlainText {
                             id: downloadTorrentModeLabel
-                            font.pointSize: 11 + windowSettings.dpiSeparation
+                            fontPointSize: 11
                             text: "Торрент"
                         }
                         ComboBox {
@@ -765,14 +771,13 @@ Page {
                             }
                         }
 
-                        Text {
+                        PlainText {
                             id: notificationForFavoritesLabel
                             anchors.top: downloadTorrentMode.bottom
                             anchors.topMargin: 4
-                            font.pointSize: 11 + windowSettings.dpiSeparation
+                            fontPointSize: 11
                             text: "Уведомления по избранным"
                         }
-
                         Switch {
                             id: notificationForFavorites
                             anchors.top: notificationForFavoritesLabel.bottom
@@ -781,6 +786,21 @@ Page {
                             }
                         }
 
+                        PlainText {
+                            id: darkModeLabel
+                            anchors.top: notificationForFavorites.bottom
+                            anchors.topMargin: 4
+                            fontPointSize: 11
+                            text: "Темная тема"
+                        }
+                        Switch {
+                            id: darkModeSwitch
+                            anchors.top: darkModeLabel.bottom
+                            onCheckedChanged: {
+                                applicationSettings.isDarkTheme = checked;
+                                ApplicationTheme.isDarkTheme = checked;
+                            }
+                        }
                     }
                 }
 
@@ -806,61 +826,21 @@ Page {
                         closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
 
                         Column {
-                            Text {
-                                font.pointSize: 11 + windowSettings.dpiSeparation
-                                linkColor: "#b32121"
+                            LinkedText {
+                                fontPointSize: 11
                                 text: "<a href='http://anilibriadesktop.reformal.ru/'>Написать идею, ошибку, вопрос?</a>"
-                                onLinkActivated: {
-                                    Qt.openUrlExternally(link);
-                                }
-
-                                MouseArea {
-                                    anchors.fill: parent
-                                    acceptedButtons: Qt.NoButton
-                                    cursorShape: parent.hoveredLink ? Qt.PointingHandCursor : Qt.ArrowCursor
-                                }
                             }
-                            Text {
-                                font.pointSize: 11 + windowSettings.dpiSeparation
-                                linkColor: "#b32121"
+                            LinkedText {
+                                fontPointSize: 11
                                 text: "<a href='https://t.me/Libria911Bot'>Техподдержка Анилибрии</a>"
-                                onLinkActivated: {
-                                    Qt.openUrlExternally(link);
-                                }
-
-                                MouseArea {
-                                    anchors.fill: parent
-                                    acceptedButtons: Qt.NoButton
-                                    cursorShape: parent.hoveredLink ? Qt.PointingHandCursor : Qt.ArrowCursor
-                                }
                             }
-                            Text {
-                                font.pointSize: 11 + windowSettings.dpiSeparation
-                                linkColor: "#b32121"
+                            LinkedText {
+                                fontPointSize: 11
                                 text: "<a href='https://www.anilibria.tv'>Сайт анилибрии</a>"
-                                onLinkActivated: {
-                                    Qt.openUrlExternally(link);
-                                }
-
-                                MouseArea {
-                                    anchors.fill: parent
-                                    acceptedButtons: Qt.NoButton
-                                    cursorShape: parent.hoveredLink ? Qt.PointingHandCursor : Qt.ArrowCursor
-                                }
                             }
-                            Text {
-                                font.pointSize: 11 + windowSettings.dpiSeparation
-                                linkColor: "#b32121"
+                            LinkedText {
+                                fontPointSize: 11
                                 text: "<a href='https://t.me/desktopclientanilibria'>Канал о приложении</a>"
-                                onLinkActivated: {
-                                    Qt.openUrlExternally(link);
-                                }
-
-                                MouseArea {
-                                    anchors.fill: parent
-                                    acceptedButtons: Qt.NoButton
-                                    cursorShape: parent.hoveredLink ? Qt.PointingHandCursor : Qt.ArrowCursor
-                                }
                             }
 
                         }
@@ -879,7 +859,7 @@ Page {
                 Layout.fillWidth: true
                 Layout.preferredHeight: 45
                 height: 45
-                color: "#a6a6a6"
+                color: ApplicationTheme.pageUpperPanel
                 Row {
                     Switch {
                         id: multupleMode
@@ -892,19 +872,19 @@ Page {
                             }
                         }
                     }
-                    Text {
+                    PlainText {
                         anchors.verticalCenter: parent.verticalCenter
                         visible: page.synchronizeEnabled
-                        font.pointSize: 12 + windowSettings.dpiSeparation
+                        fontPointSize: 12
                         text: "Выполняется синхронизация..."
                     }
                 }
-                Text {
+                PlainText {
                     text: page.sections[page.selectedSection]
                     anchors.verticalCenter: parent.verticalCenter
                     anchors.right: parent.right
                     anchors.rightMargin: 8
-                    font.pointSize: 12 + windowSettings.dpiSeparation
+                    fontPointSize: 12
                 }
             }
 
@@ -931,8 +911,8 @@ Page {
                     IconButton {
                         height: 30
                         width: 30
-                        iconColor: "black"
-                        hoverColor: "white"
+                        iconColor: ApplicationTheme.filterIconButtonColor
+                        hoverColor: ApplicationTheme.filterIconButtonHoverColor
                         iconPath: "../Assets/Icons/allreleases.svg"
                         iconWidth: 24
                         iconHeight: 24
@@ -943,8 +923,8 @@ Page {
                     IconButton {
                         height: 30
                         width: 30
-                        iconColor: "black"
-                        hoverColor: "white"
+                        iconColor: ApplicationTheme.filterIconButtonColor
+                        hoverColor: ApplicationTheme.filterIconButtonHoverColor
                         iconPath: "../Assets/Icons/favorite.svg"
                         iconWidth: 24
                         iconHeight: 24
@@ -956,8 +936,8 @@ Page {
                         id: notificationMenuButton
                         height: 30
                         width: 30
-                        iconColor: "black"
-                        hoverColor: "white"
+                        iconColor: ApplicationTheme.filterIconButtonColor
+                        hoverColor: ApplicationTheme.filterIconButtonHoverColor
                         iconPath: "../Assets/Icons/notification.svg"
                         iconWidth: 24
                         iconHeight: 24
@@ -999,11 +979,11 @@ Page {
                     IconButton {
                         height: 30
                         width: 30
-                        iconColor: "black"
-                        hoverColor: "white"
+                        iconColor: ApplicationTheme.filterIconButtonColor
+                        hoverColor: ApplicationTheme.filterIconButtonHoverColor
                         iconPath: "../Assets/Icons/calendar.svg"
-                        iconWidth: 24
-                        iconHeight: 24
+                        iconWidth: 26
+                        iconHeight: 26
                         onButtonPressed: {
                             changeSection(5);
                         }
@@ -1013,8 +993,8 @@ Page {
                         id: historyMenuButton
                         height: 30
                         width: 30
-                        iconColor: "black"
-                        hoverColor: "white"
+                        iconColor: ApplicationTheme.filterIconButtonColor
+                        hoverColor: ApplicationTheme.filterIconButtonHoverColor
                         iconPath: "../Assets/Icons/history.svg"
                         iconWidth: 24
                         iconHeight: 24
@@ -1045,8 +1025,8 @@ Page {
                         id: seenMenuButton
                         height: 30
                         width: 30
-                        iconColor: "black"
-                        hoverColor: "white"
+                        iconColor: ApplicationTheme.filterIconButtonColor
+                        hoverColor: ApplicationTheme.filterIconButtonHoverColor
                         iconPath: "../Assets/Icons/seenmark.svg"
                         iconWidth: 24
                         iconHeight: 24
@@ -1115,9 +1095,9 @@ Page {
                                 width: 480
                                 height: 280
                                 radius: 10
-                                border.color: "red"
+                                border.color: ApplicationTheme.selectedItem
                                 border.width: page.selectedReleases.filter(a => a === modelData.id).length ? 3 : 0
-                                color: "#f2f2f2"
+                                color: ApplicationTheme.panelBackground
                                 layer.enabled: true
                                 layer.effect: DropShadow {
                                     transparentBorder: true
@@ -1125,7 +1105,7 @@ Page {
                                     verticalOffset: 2
                                     radius: 1
                                     samples: 3
-                                    color: "gray"
+                                    color: ApplicationTheme.panelBackgroundShadow
                                 }
                                 MouseArea {
                                     width: 480
@@ -1175,10 +1155,9 @@ Page {
                                         columns: 1
                                         Column {
                                             id: gridItemtextContainer
-                                            Text {
+                                            AccentText {
                                                 textFormat: Text.RichText
-                                                color: "#a32727"
-                                                font.pointSize: 12 + windowSettings.dpiSeparation
+                                                fontPointSize: 12
                                                 width: 280
                                                 leftPadding: 8
                                                 topPadding: 6
@@ -1186,22 +1165,22 @@ Page {
                                                 maximumLineCount: 3
                                                 text: qsTr(modelData.title)
                                             }
-                                            Text {
+                                            PlainText {
                                                 textFormat: Text.RichText
-                                                font.pointSize: 10 + windowSettings.dpiSeparation
+                                                fontPointSize: 10
                                                 leftPadding: 8
                                                 topPadding: 4
                                                 text: qsTr("<b>Статус:</b> ") + qsTr(modelData.status)
                                             }
-                                            Text {
-                                                font.pointSize: 10 + windowSettings.dpiSeparation
+                                            PlainText {
+                                                fontPointSize: 10
                                                 leftPadding: 8
                                                 topPadding: 4
                                                 text: qsTr("<b>" + modelData.season + " " + modelData.year + "</b>")
                                             }
-                                            Text {
+                                            PlainText {
                                                 textFormat: Text.RichText
-                                                font.pointSize: 10 + windowSettings.dpiSeparation
+                                                fontPointSize: 10
                                                 leftPadding: 8
                                                 topPadding: 4
                                                 width: 280
@@ -1209,8 +1188,8 @@ Page {
                                                 maximumLineCount: 2
                                                 text: qsTr("<b>Тип:</b> ") + qsTr(modelData.type)
                                             }
-                                            Text {
-                                                font.pointSize: 10 + windowSettings.dpiSeparation
+                                            PlainText {
+                                                fontPointSize: 10
                                                 leftPadding: 8
                                                 topPadding: 4
                                                 width: 280
@@ -1218,8 +1197,8 @@ Page {
                                                 maximumLineCount: 2
                                                 text: qsTr("<b>Жанры:</b> ") + qsTr(modelData.genres)
                                             }
-                                            Text {
-                                                font.pointSize: 10 + windowSettings.dpiSeparation
+                                            PlainText {
+                                                fontPointSize: 10
                                                 leftPadding: 8
                                                 topPadding: 4
                                                 width: 280
@@ -1230,28 +1209,28 @@ Page {
                                             Row {
                                                 leftPadding: 8
                                                 topPadding: 4
-                                                Image {
-                                                    mipmap: true
-                                                    source: '../Assets/Icons/online.svg'
-                                                    width: 22
-                                                    height: 22
+                                                ColoredIcon {
+                                                    iconSource: '../Assets/Icons/online.svg'
+                                                    iconWidth: 22
+                                                    iconHeight: 22
+                                                    iconColor: ApplicationTheme.plainTextColor
                                                 }
-                                                Text {
+                                                PlainText {
                                                     leftPadding: 4
                                                     rightPadding: 8
-                                                    font.pointSize: 12 + windowSettings.dpiSeparation
-                                                    text: '' + modelData.countVideos + (modelData.countSeensSeries > 0 ? " <font color=\"green\">(" + modelData.countSeensSeries + ")</font>  " : "")
+                                                    fontPointSize: 12
+                                                    text: '' + modelData.countVideos + (modelData.countSeensSeries > 0 ? " <font color='" + (ApplicationTheme.isDarkTheme ? "white" : "green") + "'>(" + modelData.countSeensSeries + ")</font>  " : "")
                                                 }
-                                                Image {
-                                                    mipmap: true
-                                                    source: '../Assets/Icons/utorrent.svg'
-                                                    width: 22
-                                                    height: 22
+                                                ColoredIcon {
+                                                    iconSource: '../Assets/Icons/utorrent.svg'
+                                                    iconWidth: 22
+                                                    iconHeight: 22
+                                                    iconColor: ApplicationTheme.plainTextColor
                                                 }
-                                                Text {
+                                                PlainText {
                                                     leftPadding: 4
                                                     rightPadding: 4
-                                                    font.pointSize: 12 + windowSettings.dpiSeparation
+                                                    fontPointSize: 12
                                                     text: '' + modelData.countTorrents
                                                 }
                                             }
@@ -1304,16 +1283,16 @@ Page {
                                                 anchors.bottom: parent.bottom
                                                 leftPadding: 8
                                                 topPadding: 8
-                                                Image {
-                                                    mipmap: true
-                                                    source: '../Assets/Icons/rating.svg'
-                                                    width: 20
-                                                    height: 20
+                                                ColoredIcon {
+                                                    iconSource: '../Assets/Icons/rating.svg'
+                                                    iconWidth: 20
+                                                    iconHeight: 20
+                                                    iconColor: ApplicationTheme.plainTextColor
                                                 }
-                                                Text {
+                                                PlainText {
                                                     leftPadding: 4
                                                     rightPadding: 4
-                                                    font.pointSize: 12 + windowSettings.dpiSeparation
+                                                    fontPointSize: 12
                                                     text: modelData.rating
                                                 }
                                                 ColoredIcon {
@@ -1321,13 +1300,13 @@ Page {
                                                     iconSource: '../Assets/Icons/star.svg'
                                                     iconWidth: 20
                                                     iconHeight: 20
-                                                    iconColor: "#a32727"
+                                                    iconColor: ApplicationTheme.headerTextColor
                                                 }
-                                                Text {
+                                                PlainText {
                                                     visible: page.favoriteReleases.filter(a => a === modelData.id).length
                                                     leftPadding: 4
-                                                    color: "#a32727"
-                                                    font.pointSize: 12 + windowSettings.dpiSeparation
+                                                    color: ApplicationTheme.headerTextColor
+                                                    fontPointSize: 12
                                                     text: "В избранном"
                                                 }
                                             }
@@ -1352,7 +1331,7 @@ Page {
         anchors.fill: parent
         spacing: 0
         Rectangle {
-            color: "#D3D3D3"
+            color: ApplicationTheme.pageBackground
             Layout.fillWidth: true
             Layout.fillHeight: true
             Column {
@@ -1378,10 +1357,9 @@ Page {
                     Column {
                         width: page.width - cardButtons.width - cardPoster.width
                         enabled: !!page.openedRelease
-                        Text {
+                        AccentText {
                             textFormat: Text.RichText
-                            color: "#a32727"
-                            font.pointSize: 12 + windowSettings.dpiSeparation
+                            fontPointSize: 12
                             width: parent.width
                             leftPadding: 8
                             topPadding: 6
@@ -1389,9 +1367,9 @@ Page {
                             maximumLineCount: 3
                             text: qsTr(page.openedRelease ? page.openedRelease.title : '')
                         }
-                        Text {
+                        PlainText {
                             textFormat: Text.RichText
-                            font.pointSize: 10 + windowSettings.dpiSeparation
+                            fontPointSize: 10
                             leftPadding: 8
                             topPadding: 4
                             wrapMode: Text.WordWrap
@@ -1399,53 +1377,68 @@ Page {
                             maximumLineCount: 2
                             text: qsTr(page.openedRelease ? page.openedRelease.originalName : '')
                         }
-                        Text {
-                            font.pointSize: 10 + windowSettings.dpiSeparation
+                        PlainText {
+                            fontPointSize: 10
                             leftPadding: 8
                             topPadding: 4
                             text: qsTr("<b>Статус:</b> ") + qsTr(page.openedRelease ? `<a href="http://years">${page.openedRelease.status}</a>` : '')
-                            linkColor: "#b32121"
                             onLinkActivated: {
                                 statusesSearchField.text = page.openedRelease.status;
                                 page.openedRelease = null;
                                 page.refreshAllReleases(false);
                             }
+
+                            MouseArea {
+                                anchors.fill: parent
+                                acceptedButtons: Qt.NoButton
+                                cursorShape: parent.hoveredLink ? Qt.PointingHandCursor : Qt.ArrowCursor
+                            }
                         }
-                        Text {
-                            font.pointSize: 10 + windowSettings.dpiSeparation
+                        PlainText {
+                            fontPointSize: 10
                             leftPadding: 8
                             topPadding: 4
                             text: qsTr("<b>Год:</b> ") + qsTr(page.openedRelease ?  `<a href="http://years">${page.openedRelease.year}</a>` : '')
-                            linkColor: "#b32121"
                             onLinkActivated: {
                                 yearsSearchField.text = page.openedRelease.year;
                                 page.openedRelease = null;
                                 page.refreshAllReleases(false);
                             }
+
+                            MouseArea {
+                                anchors.fill: parent
+                                acceptedButtons: Qt.NoButton
+                                cursorShape: parent.hoveredLink ? Qt.PointingHandCursor : Qt.ArrowCursor
+                            }
                         }
-                        Text {
+                        PlainText {
                             visible: page.openedRelease && page.openedRelease.id && !!page.scheduledReleases[page.openedRelease.id]
-                            font.pointSize: 10 + windowSettings.dpiSeparation
+                            fontPointSize: 10
                             leftPadding: 8
                             topPadding: 4
                             text: qsTr("<b>В расписании:</b> ") + (page.openedRelease && page.scheduledReleases[page.openedRelease.id] ? getScheduleDay(page.scheduledReleases[page.openedRelease.id]) : '')
                         }
 
-                        Text {
-                            font.pointSize: 10 + windowSettings.dpiSeparation
+                        PlainText {
+                            fontPointSize: 10
                             leftPadding: 8
                             topPadding: 4
                             text: qsTr("<b>Сезон:</b> ") + qsTr(page.openedRelease ? `<a href="http://seasons">${page.openedRelease.season}</a>` : '')
-                            linkColor: "#b32121"
                             onLinkActivated: {
                                 seasonesSearchField.text = page.openedRelease.season;
                                 page.openedRelease = null;
                                 page.refreshAllReleases(false);
                             }
+
+                            MouseArea {
+                                anchors.fill: parent
+                                acceptedButtons: Qt.NoButton
+                                cursorShape: parent.hoveredLink ? Qt.PointingHandCursor : Qt.ArrowCursor
+                            }
                         }
-                        Text {
+                        PlainText {
                             textFormat: Text.RichText
-                            font.pointSize: 10 + windowSettings.dpiSeparation
+                            fontPointSize: 10
                             leftPadding: 8
                             topPadding: 4
                             width: parent.width
@@ -1453,15 +1446,14 @@ Page {
                             maximumLineCount: 2
                             text: qsTr("<b>Тип:</b> ") + qsTr(page.openedRelease ? page.openedRelease.type : '')
                         }
-                        Text {
-                            font.pointSize: 10 + windowSettings.dpiSeparation
+                        PlainText {
+                            fontPointSize: 10
                             leftPadding: 8
                             topPadding: 4
                             width: parent.width
                             wrapMode: Text.WordWrap
                             maximumLineCount: 2
                             text: qsTr("<b>Жанры:</b> ") + qsTr(page.openedRelease ? getMultipleLinks(page.openedRelease.genres) : '')
-                            linkColor: "#b32121"
                             onLinkActivated: {
                                 if (genresSearchField.text.length) {
                                     genresSearchField.text += ", " + link;
@@ -1471,16 +1463,21 @@ Page {
                                 page.openedRelease = null;
                                 page.refreshAllReleases(false);
                             }
+
+                            MouseArea {
+                                anchors.fill: parent
+                                acceptedButtons: Qt.NoButton
+                                cursorShape: parent.hoveredLink ? Qt.PointingHandCursor : Qt.ArrowCursor
+                            }
                         }
-                        Text {
-                            font.pointSize: 10 + windowSettings.dpiSeparation
+                        PlainText {
+                            fontPointSize: 10
                             leftPadding: 8
                             topPadding: 4
                             width: parent.width
                             wrapMode: Text.WordWrap
                             maximumLineCount: 2
                             text: qsTr("<b>Озвучка:</b> ") + qsTr(page.openedRelease ? getMultipleLinks(page.openedRelease.voices) : '')
-                            linkColor: "#b32121"
                             onLinkActivated: {
                                 if (voicesSearchField.text.length) {
                                     voicesSearchField.text += ", " + link;
@@ -1490,24 +1487,28 @@ Page {
                                 page.openedRelease = null;
                                 page.refreshAllReleases(false);
                             }
+
+                            MouseArea {
+                                anchors.fill: parent
+                                acceptedButtons: Qt.NoButton
+                                cursorShape: parent.hoveredLink ? Qt.PointingHandCursor : Qt.ArrowCursor
+                            }
                         }
-                        Text {
-                            font.pointSize: 10 + windowSettings.dpiSeparation
+                        PlainText {
+                            fontPointSize: 10
                             leftPadding: 8
                             topPadding: 4
                             visible: page.openedRelease ? page.openedRelease.countSeensSeries === page.openedRelease.countVideos : false
                             width: parent.width
                             text: qsTr("<b>Все серии просмотрены</b>")
                         }
-                        Text {
-                            textFormat: Text.RichText
-                            font.pointSize: 10 + windowSettings.dpiSeparation
+                        PlainText {
+                            fontPointSize: 10
                             leftPadding: 8
                             topPadding: 4
                             width: parent.width
                             wrapMode: Text.WordWrap
                             text: qsTr("<b>Описание:</b> ") + qsTr(page.openedRelease ? page.openedRelease.description : '')
-                            linkColor: "#b32121"
                             onLinkActivated: {
                                 if (link.indexOf("https://www.anilibria.tv/release/") === 0 || link.indexOf("http://www.anilibria.tv/release/") === 0) {
                                     let code = link.replace("https://www.anilibria.tv/release/", "").replace("http://www.anilibria.tv/release/", "").replace(".html", "")
@@ -1518,6 +1519,12 @@ Page {
                                     Qt.openUrlExternally(link);
                                 }
                             }
+
+                            MouseArea {
+                                anchors.fill: parent
+                                acceptedButtons: Qt.NoButton
+                                cursorShape: parent.hoveredLink ? Qt.PointingHandCursor : Qt.ArrowCursor
+                            }
                         }
                     }
                     Column {
@@ -1526,7 +1533,8 @@ Page {
                         IconButton {
                             height: 40
                             width: 40
-                            iconColor: "black"
+                            iconColor: ApplicationTheme.filterIconButtonColor
+                            hoverColor: ApplicationTheme.filterIconButtonHoverColor
                             iconPath: "../Assets/Icons/close.svg"
                             iconWidth: 28
                             iconHeight: 28
@@ -1537,7 +1545,8 @@ Page {
                         IconButton {
                             height: 40
                             width: 40
-                            iconColor: "black"
+                            iconColor: ApplicationTheme.filterIconButtonColor
+                            hoverColor: ApplicationTheme.filterIconButtonHoverColor
                             iconPath: "../Assets/Icons/copy.svg"
                             iconWidth: 26
                             iconHeight: 26
@@ -1583,7 +1592,8 @@ Page {
                         IconButton {
                             height: 40
                             width: 40
-                            iconColor: "black"
+                            iconColor: ApplicationTheme.filterIconButtonColor
+                            hoverColor: ApplicationTheme.filterIconButtonHoverColor
                             iconPath: "../Assets/Icons/vk.svg"
                             iconWidth: 26
                             iconHeight: 26
@@ -1611,7 +1621,8 @@ Page {
                         IconButton {
                             height: 40
                             width: 40
-                            iconColor: "black"
+                            iconColor: ApplicationTheme.filterIconButtonColor
+                            hoverColor: ApplicationTheme.filterIconButtonHoverColor
                             iconPath: "../Assets/Icons/seenmark.svg"
                             iconWidth: 26
                             iconHeight: 26
@@ -1639,7 +1650,8 @@ Page {
                         IconButton {
                             height: 40
                             width: 40
-                            iconColor: page.openedRelease && page.favoriteReleases.filter(a => a === page.openedRelease.id).length ? "red" : "black"
+                            iconColor: page.openedRelease && page.favoriteReleases.filter(a => a === page.openedRelease.id).length ? ApplicationTheme.selectedFavorite : ApplicationTheme.filterIconButtonColor
+                            hoverColor: ApplicationTheme.filterIconButtonHoverColor
                             iconPath: "../Assets/Icons/favorite.svg"
                             iconWidth: 26
                             iconHeight: 26
@@ -1682,7 +1694,8 @@ Page {
                         IconButton {
                             height: 40
                             width: 40
-                            iconColor: "black"
+                            iconColor: ApplicationTheme.filterIconButtonColor
+                            hoverColor: ApplicationTheme.filterIconButtonHoverColor
                             iconPath: "../Assets/Icons/external.svg"
                             iconWidth: 26
                             iconHeight: 26
@@ -1743,7 +1756,8 @@ Page {
                         IconButton {
                             height: 40
                             width: 40
-                            iconColor: "black"
+                            iconColor: ApplicationTheme.filterIconButtonColor
+                            hoverColor: ApplicationTheme.filterIconButtonHoverColor
                             iconPath: "../Assets/Icons/online.svg"
                             iconWidth: 26
                             iconHeight: 26
@@ -1808,19 +1822,19 @@ Page {
                         }
                     }
 
-                    Text {
+                    PlainText {
                         anchors.verticalCenter: parent.verticalCenter
                         anchors.left: parent.left
                         anchors.leftMargin: 100
-                        font.pointSize: 11 + windowSettings.dpiSeparation
+                        fontPointSize: 11
                         text: "Доступно "+ (page.openedRelease ? page.openedRelease.countTorrents : "0" ) + " торрентов"
                     }
 
-                    Text {
+                    PlainText {
                         anchors.verticalCenter: parent.verticalCenter
                         anchors.right: watchButton.left
                         anchors.rightMargin: 10
-                        font.pointSize: 11 + windowSettings.dpiSeparation
+                        fontPointSize: 11
                         text: "Доступно "+ (page.openedRelease ? page.openedRelease.countVideos : "0" ) + " серий онлайн"
                     }
 
@@ -2030,5 +2044,6 @@ Page {
         const userSettings = JSON.parse(localStorage.getUserSettings());
         downloadTorrentMode.currentIndex = userSettings.torrentDownloadMode;
         notificationForFavorites.checked = userSettings.notificationForFavorites;
+        darkModeSwitch.checked = applicationSettings.isDarkTheme;
     }
 }

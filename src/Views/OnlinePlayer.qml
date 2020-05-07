@@ -21,6 +21,7 @@ import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.3
 import QtMultimedia 5.12
 import "../Controls"
+import "../Theme"
 
 Page {
     id: _page
@@ -462,7 +463,7 @@ Page {
 
     Rectangle {
         id: controlPanel
-        color: "#82ffffff"
+        color: ApplicationTheme.playerControlBackground
         anchors.bottom: parent.bottom
         width: _page.width
         height: 100
@@ -503,8 +504,9 @@ Page {
                 height: 20
                 width: controlPanel.width
 
-                Text {
+                PlainText {
                     text: _page.displayVideoPosition
+                    fontPointSize: 10
                 }
 
                 Row {
@@ -569,9 +571,10 @@ Page {
                         height: 20
                         visible: player.duration > 0
                         color: "transparent"
-                        Text {
+                        PlainText {
                             anchors.centerIn: parent
                             text: "|"
+                            fontPointSize: 10
                         }
                     }
                     ToggleButton {
@@ -616,11 +619,12 @@ Page {
                     }
                 }
 
-                Text {
+                PlainText {
                     height: 20
                     anchors.right: parent.right
                     anchors.rightMargin: 4
                     text: _page.displayEndVideoPosition
+                    fontPointSize: 10
                 }
             }
 
@@ -635,7 +639,8 @@ Page {
                     IconButton {
                         width: 40
                         height: 40
-                        iconColor: "black"
+                        iconColor: ApplicationTheme.filterIconButtonColor
+                        hoverColor: ApplicationTheme.filterIconButtonHoverColor
                         iconPath: "../Assets/Icons/menu.svg"
                         iconWidth: 29
                         iconHeight: 29
@@ -646,7 +651,8 @@ Page {
                     IconButton {
                         width: 40
                         height: 40
-                        iconColor: "black"
+                        iconColor: ApplicationTheme.filterIconButtonColor
+                        hoverColor: ApplicationTheme.filterIconButtonHoverColor
                         iconPath: "../Assets/Icons/speaker.svg"
                         iconWidth: 24
                         iconHeight: 24
@@ -680,7 +686,8 @@ Page {
                         width: 40
                         height: 40
                         visible: player.duration > 0
-                        iconColor: "black"
+                        iconColor: ApplicationTheme.filterIconButtonColor
+                        hoverColor: ApplicationTheme.filterIconButtonHoverColor
                         iconPath: "../Assets/Icons/previous10.svg"
                         iconWidth: 24
                         iconHeight: 24
@@ -691,7 +698,8 @@ Page {
                     IconButton {
                         width: 40
                         height: 40
-                        iconColor: "black"
+                        iconColor: ApplicationTheme.filterIconButtonColor
+                        hoverColor: ApplicationTheme.filterIconButtonHoverColor
                         iconPath: "../Assets/Icons/step-backward.svg"
                         iconWidth: 24
                         iconHeight: 24
@@ -704,7 +712,8 @@ Page {
                         visible: false
                         width: 40
                         height: 40
-                        iconColor: "black"
+                        iconColor: ApplicationTheme.filterIconButtonColor
+                        hoverColor: ApplicationTheme.filterIconButtonHoverColor
                         iconPath: "../Assets/Icons/play-button.svg"
                         iconWidth: 24
                         iconHeight: 24
@@ -717,7 +726,8 @@ Page {
                         visible: false
                         width: 40
                         height: 40
-                        iconColor: "black"
+                        iconColor: ApplicationTheme.filterIconButtonColor
+                        hoverColor: ApplicationTheme.filterIconButtonHoverColor
                         iconPath: "../Assets/Icons/pause.svg"
                         iconWidth: 24
                         iconHeight: 24
@@ -728,7 +738,8 @@ Page {
                     IconButton {
                         width: 40
                         height: 40
-                        iconColor: "black"
+                        iconColor: ApplicationTheme.filterIconButtonColor
+                        hoverColor: ApplicationTheme.filterIconButtonHoverColor
                         iconPath: "../Assets/Icons/step-forward.svg"
                         iconWidth: 24
                         iconHeight: 24
@@ -740,7 +751,8 @@ Page {
                         width: 40
                         height: 40
                         visible: player.duration > 0
-                        iconColor: "black"
+                        iconColor: ApplicationTheme.filterIconButtonColor
+                        hoverColor: ApplicationTheme.filterIconButtonHoverColor
                         iconPath: "../Assets/Icons/next30.svg"
                         iconWidth: 24
                         iconHeight: 24
@@ -759,7 +771,8 @@ Page {
                         id: optionsButton
                         width: 40
                         height: 40
-                        iconColor: "black"
+                        iconColor: ApplicationTheme.filterIconButtonColor
+                        hoverColor: ApplicationTheme.filterIconButtonHoverColor
                         iconPath: "../Assets/Icons/options.svg"
                         iconWidth: 24
                         iconHeight: 24
@@ -781,9 +794,9 @@ Page {
                             Column {
                                 width: parent.width
                                 spacing: 10
-                                Text {
+                                PlainText {
                                     width: optionsPopup.width - 20
-                                    font.pointSize: 10
+                                    fontPointSize: 10
                                     text: "Время прыжка"
                                 }
 
@@ -842,9 +855,9 @@ Page {
                                     }
                                 }
 
-                                Text {
+                                PlainText {
                                     width: optionsPopup.width - 20
-                                    font.pointSize: 10
+                                    fontPointSize: 10
                                     text: "Автопереход между сериями"
                                 }
 
@@ -855,9 +868,9 @@ Page {
                                     }
                                 }
 
-                                Text {
+                                PlainText {
                                     width: optionsPopup.width - 20
-                                    font.pointSize: 10
+                                    fontPointSize: 10
                                     text: "Автопереход в режим поверх всех окон"
                                 }
 
@@ -875,7 +888,8 @@ Page {
                     IconButton {
                         width: 40
                         height: 40
-                        iconColor: "black"
+                        iconColor: ApplicationTheme.filterIconButtonColor
+                        hoverColor: ApplicationTheme.filterIconButtonHoverColor
                         iconPath: "../Assets/Icons/resize.svg"
                         iconWidth: 29
                         iconHeight: 29
@@ -893,7 +907,8 @@ Page {
                     IconButton {
                         width: 40
                         height: 40
-                        iconColor: "black"
+                        iconColor: ApplicationTheme.filterIconButtonColor
+                        hoverColor: ApplicationTheme.filterIconButtonHoverColor
                         iconPath: "../Assets/Icons/fullscreen.svg"
                         iconWidth: 29
                         iconHeight: 29
