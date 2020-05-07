@@ -1319,7 +1319,7 @@ Page {
                 }
 
                 Component.onCompleted: {
-                    scrollview.maximumFlickVelocity = scrollview.maximumFlickVelocity - 1000;
+                    scrollview.maximumFlickVelocity = scrollview.maximumFlickVelocity - 1050;
                 }
             }
         }
