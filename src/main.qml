@@ -79,15 +79,16 @@ ApplicationWindow {
         visible: true
         width: window.width
         height: 16
-        color: "#a6a6a6"
+        color: ApplicationTheme.notificationCenterBackground
 
         Rectangle {
+            color: "transparent"
             anchors.left: parent.left
             anchors.leftMargin: 4
             width: 100
-            Text {
+            PlainText {
                 id: authentificationUser
-                font.pointSize: 10
+                fontPointSize: 10
                 text: window.userModel.login ? "Вы авторизованы как " + window.userModel.login : "Вы не авторизованы"
             }
         }
@@ -99,7 +100,8 @@ ApplicationWindow {
                 id: notificationPopupButton
                 height: 16
                 width: 16
-                iconColor: applicationNotificationModel.count > 0 ? "#9e2323" : "black"
+                iconColor: applicationNotificationModel.count > 0 ? "#9e2323" : ApplicationTheme.filterIconButtonColor
+                hoverColor: ApplicationTheme.filterIconButtonColor
                 iconPath: "../Assets/Icons/notification.svg"
                 iconWidth: 14
                 iconHeight: 14
@@ -107,9 +109,9 @@ ApplicationWindow {
                     notificationOverlay.visible = !notificationOverlay.visible;
                 }
             }
-            Text {
+            PlainText {
                 id: countNotifications
-                font.pointSize: 10
+                fontPointSize: 10
                 text: applicationNotificationModel.count
             }
             Rectangle {
@@ -695,8 +697,8 @@ ApplicationWindow {
         anchors.right: parent.right
         anchors.topMargin: -2
         anchors.rightMargin: -1
-        color: "white"
-        border.color: "#d41515"
+        color: ApplicationTheme.notificationCenterPanelBackground
+        border.color: ApplicationTheme.selectedItem
         border.width: 1
         visible: false
         ColumnLayout {
@@ -714,7 +716,8 @@ ApplicationWindow {
                     anchors.top: parent.top
                     anchors.rightMargin: 4
                     anchors.topMargin: 4
-                    iconColor: "black"
+                    iconColor: ApplicationTheme.filterIconButtonColor
+                    hoverColor: ApplicationTheme.filterIconButtonHoverColor
                     iconPath: "../Assets/Icons/close.svg"
                     iconWidth: 14
                     iconHeight: 14
@@ -755,6 +758,7 @@ ApplicationWindow {
                     Repeater {
                         model: applicationNotificationModel
                         Rectangle {
+                            color: "transparent"
                             width: 239
                             height: 70
 
@@ -763,27 +767,19 @@ ApplicationWindow {
                                 anchors.horizontalCenter: parent.horizontalCenter
                                 height: 70
                                 radius: 8
-                                border.color: "#d41515"
+                                border.color: ApplicationTheme.selectedItem
                                 border.width: 2
-                                color: "white"
+                                color: ApplicationTheme.notificationCenterItemBackground
 
-                                Text {
+                                LinkedText {
                                     padding: 10
                                     maximumLineCount: 3
-                                    font.pointSize: 8
+                                    fontPointSize: 8
                                     width: parent.width
                                     wrapMode: Text.WordWrap
                                     elide: Text.ElideRight
                                     text: modelData.message
-                                    linkColor: "#b32121"
-                                    onLinkActivated: Qt.openUrlExternally(link)
                                     anchors.verticalCenter: parent.verticalCenter
-
-                                    MouseArea {
-                                        anchors.fill: parent
-                                        acceptedButtons: Qt.NoButton
-                                        cursorShape: parent.hoveredLink ? Qt.PointingHandCursor : Qt.ArrowCursor
-                                    }
                                 }
                                 IconButton {
                                     height: 16
@@ -792,7 +788,8 @@ ApplicationWindow {
                                     anchors.top: parent.top
                                     anchors.rightMargin: 4
                                     anchors.topMargin: 4
-                                    iconColor: "#9e2323"
+                                    iconColor: ApplicationTheme.selectedItem
+                                    hoverColor: ApplicationTheme.filterIconButtonHoverColor
                                     iconPath: "../Assets/Icons/close.svg"
                                     iconWidth: 14
                                     iconHeight: 14

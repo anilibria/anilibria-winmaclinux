@@ -1027,7 +1027,7 @@ Page {
                         width: 30
                         iconColor: ApplicationTheme.filterIconButtonColor
                         hoverColor: ApplicationTheme.filterIconButtonHoverColor
-                        iconPath: "../Assets/Icons/seenmark.svg"
+                        iconPath: "../Assets/Icons/seenmarkpanel.svg"
                         iconWidth: 24
                         iconHeight: 24
                         onButtonPressed: {

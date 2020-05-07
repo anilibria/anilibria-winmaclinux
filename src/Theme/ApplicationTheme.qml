@@ -42,4 +42,7 @@ Item {
     readonly property color selectedItem: isDarkTheme ? "white" : "red"
     readonly property color selectedFavorite: isDarkTheme ? "#b30000" : "red"
     readonly property color playerControlBackground: isDarkTheme ? "#82000000" : "#82ffffff"
+    readonly property color notificationCenterBackground: isDarkTheme ? "#1a1a1a" : "#a6a6a6"
+    readonly property color notificationCenterPanelBackground: isDarkTheme ? "#1a1a1a" : "white"
+    readonly property color notificationCenterItemBackground: isDarkTheme ? "#1a1a1a" : "white"
 }
