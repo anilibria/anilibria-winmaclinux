@@ -18,7 +18,37 @@
 
 #include "downloadmanager.h"
 
-DownloadManager::DownloadManager(QObject *parent) : QObject(parent)
+DownloadManager::DownloadManager(QObject *parent) : QObject(parent),
+    m_CurrentAccessManager(nullptr),
+    m_CurrentDownloadingItem(nullptr),
+    m_QueuedItems(new QQueue<DownloadQueueItemModel*>())
 {
+}
 
+void DownloadManager::startDownload()
+{
+    takeNextDownload();
+}
+
+void DownloadManager::takeNextDownload()
+{
+    if (m_QueuedItems->isEmpty()) return;
+
+    auto item = m_QueuedItems->dequeue();
+
+    m_CurrentDownloadingItem = item;
+
+    auto networkManager = new QNetworkAccessManager(this);
+    m_CurrentAccessManager = networkManager;
+    auto requestUrl = QUrl(item->url());
+    QNetworkRequest request(requestUrl);
+
+    connect(networkManager, &QNetworkAccessManager::finished, this, &DownloadManager::seriaFinished);
+
+    networkManager->get(request);
+}
+
+void DownloadManager::seriaFinished(QNetworkReply *reply)
+{
+    auto data = reply->readAll();
 }

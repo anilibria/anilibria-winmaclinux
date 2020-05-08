@@ -20,14 +20,33 @@
 #define DOWNLOADMANAGER_H
 
 #include <QObject>
+#include <QNetworkAccessManager>
+#include <QNetworkReply>
+#include <QQueue>
+#include "../Models/downloadqueueitemmodel.h"
 
 class DownloadManager : public QObject
 {
     Q_OBJECT
+
+private:
+    QNetworkAccessManager* m_CurrentAccessManager;
+    DownloadQueueItemModel* m_CurrentDownloadingItem;
+    QQueue<DownloadQueueItemModel*>* m_QueuedItems;
+
 public:
     explicit DownloadManager(QObject *parent = nullptr);
 
+    void startDownload();
+
+private:
+    void takeNextDownload();
+
 signals:
+    void seriaDownloaded(int id, int seriaId);
+
+public slots:
+    void seriaFinished(QNetworkReply* reply);
 
 };
 
