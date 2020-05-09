@@ -20,6 +20,7 @@ import QtQuick 2.12
 import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.3
 import QtMultimedia 5.12
+import QtGraphicalEffects 1.0
 import "../Controls"
 import "../Theme"
 
@@ -46,6 +47,7 @@ Page {
     property var jumpMinutes: [0, 1, 2]
     property var jumpSeconds: [0, 5, 10, 15, 20, 25, 30]
     property real lastMouseYPosition: 0
+    property string releasePoster: ""
 
     signal navigateFrom()
     signal setReleaseVideo()
@@ -115,6 +117,7 @@ Page {
         autoTopMost.checked = userSettings.autoTopMost;
         jumpMinuteComboBox.currentIndex = jumpMinutes.indexOf(userSettings.jumpMinute);
         jumpSecondComboBox.currentIndex = jumpSeconds.indexOf(userSettings.jumpSecond);
+        showReleaseInfo.checked = userSettings.showReleaseInfo;
 
         if (autoTopMost.checked && player.playbackState === MediaPlayer.PlayingState) windowSettings.setStayOnTop();
         _page.prefferedQuality = userSettings.quality;
@@ -136,6 +139,7 @@ Page {
 
             const seenObject = JSON.parse(lastSeenObject);
             const release = JSON.parse(localStorage.getRelease(seenObject.id));
+            _page.releasePoster = release.poster;
             _page.setReleaseParameters = {
                 releaseId: seenObject.id,
                 videos: release.videos,
@@ -151,6 +155,9 @@ Page {
         const seenJson = localStorage.getVideoSeen(_page.setReleaseParameters.releaseId);
         _page.seenVideo = {};
         if (seenJson) _page.seenVideo = JSON.parse(seenJson);
+
+        const release = JSON.parse(localStorage.getRelease(_page.setReleaseParameters.releaseId));
+        _page.releasePoster = release.poster;
 
         const releaseVideos = [];
 
@@ -280,6 +287,7 @@ Page {
                 if (autoTopMost.checked) windowSettings.unsetStayOnTop();
             }
 
+            releasePosterArea.visible = showReleaseInfo.checked && playbackState !== MediaPlayer.PlayingState;
             playButton.visible = playbackState === MediaPlayer.PausedState || playbackState === MediaPlayer.StoppedState;
             pauseButton.visible = playbackState === MediaPlayer.PlayingState;
             if (playbackState === MediaPlayer.PlayingState) {
@@ -783,9 +791,9 @@ Page {
                         Popup {
                             id: optionsPopup
                             x: optionsButton.width - 300
-                            y: optionsButton.height - 250
+                            y: optionsButton.height - 340
                             width: 300
-                            height: 250
+                            height: 340
 
                             modal: true
                             focus: true
@@ -881,6 +889,20 @@ Page {
                                         if (!checked) windowSettings.unsetStayOnTop()
                                     }
                                 }
+
+                                PlainText {
+                                    width: optionsPopup.width - 20
+                                    fontPointSize: 10
+                                    text: "Информация о релизе"
+                                }
+
+                                Switch {
+                                    id: showReleaseInfo
+                                    onCheckedChanged: {
+                                        localStorage.setShowReleaseInfo(checked);
+                                        if (!checked) releasePosterArea.visible = false;
+                                    }
+                                }
                             }
                         }
 
@@ -922,6 +944,36 @@ Page {
 
         Behavior on opacity {
             NumberAnimation { duration: 200 }
+        }
+    }
+
+    Rectangle {
+        id: mask
+        width: 180
+        height: 260
+        radius: 10
+        visible: false
+    }
+
+    Rectangle {
+        id: releasePosterArea
+        anchors.right: parent.right
+        anchors.top: parent.top
+        width: 182
+        height: 272
+        border.color: "#adadad"
+        border.width: 1
+        radius: 12
+        Image {
+            anchors.centerIn: parent
+            source: _page.releasePoster ? localStorage.getReleasePosterPath(!_page.setReleaseParameters.releaseId, _page.releasePoster) : '../Assets/Icons/donate.jpg'
+            fillMode: Image.PreserveAspectCrop
+            width: 180
+            height: 270
+            layer.enabled: true
+            layer.effect: OpacityMask {
+                maskSource: mask
+            }
         }
     }
 

@@ -7,7 +7,8 @@ UserSettingsModel::UserSettingsModel(): m_Quality(1),
     m_TorrentDownloadMode(0),
     m_NotificationForFavorites(false),
     m_JumpMinute(1),
-    m_JumpSecond(15)
+    m_JumpSecond(15),
+    m_ShowReleaseInfo(false)
 {
 
 }
@@ -52,6 +53,11 @@ void UserSettingsModel::setJumpSecond(const int jumpSecond) noexcept
     m_JumpSecond = jumpSecond;
 }
 
+void UserSettingsModel::setShowReleaseInfo(const bool showReleaseInfo) noexcept
+{
+    m_ShowReleaseInfo = showReleaseInfo;
+}
+
 void UserSettingsModel::fromJson(QString json)
 {
     if (json.isEmpty()) return;
@@ -67,6 +73,7 @@ void UserSettingsModel::fromJson(QString json)
     if (jsonSettings.contains("jumpMinute")) setJumpMinute(jsonSettings.value("jumpMinute").toInt());
     if (jsonSettings.contains("jumpSecond")) setJumpSecond(jsonSettings.value("jumpSecond").toInt());
     if (jsonSettings.contains("notificationForFavorites")) setNotificationForFavorites(jsonSettings.value("notificationForFavorites").toBool());
+    if (jsonSettings.contains("showReleaseInfo")) setShowReleaseInfo(jsonSettings.value("showReleaseInfo").toBool());
 }
 
 QString UserSettingsModel::toJson() noexcept
@@ -81,6 +88,7 @@ QString UserSettingsModel::toJson() noexcept
     object["notificationForFavorites"] = notificationForFavorites();
     object["jumpMinute"] = jumpMinute();
     object["jumpSecond"] = jumpSecond();
+    object["showReleaseInfo"] = showReleaseInfo();
 
     QJsonDocument saveDoc(object);
     return saveDoc.toJson();

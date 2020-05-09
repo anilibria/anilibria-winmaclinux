@@ -17,6 +17,7 @@ private:
     bool m_NotificationForFavorites;
     int m_JumpMinute;
     int m_JumpSecond;
+    bool m_ShowReleaseInfo;
 
 public:
     UserSettingsModel();
@@ -29,6 +30,7 @@ public:
     bool notificationForFavorites() const { return m_NotificationForFavorites; }
     int jumpMinute() const { return m_JumpMinute; }
     int jumpSecond() const { return m_JumpSecond; }
+    bool showReleaseInfo() const { return m_ShowReleaseInfo; }
 
     void setQuality(const int quality) noexcept;
     void setVolume(const double volume) noexcept;
@@ -38,6 +40,7 @@ public:
     void setNotificationForFavorites(const bool notificationForFavorites) noexcept;
     void setJumpMinute(const int jumpMinute) noexcept;
     void setJumpSecond(const int jumpSecond) noexcept;
+    void setShowReleaseInfo(const bool showReleaseInfo) noexcept;
 
     void fromJson(QString json);
     QString toJson() noexcept;

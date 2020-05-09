@@ -1342,6 +1342,13 @@ void LocalStorageService::setJumpSecond(int jumpSecond)
     saveSettings();
 }
 
+void LocalStorageService::setShowReleaseInfo(bool showReleaseInfo)
+{
+    m_UserSettingsModel->setShowReleaseInfo(showReleaseInfo);
+
+    saveSettings();
+}
+
 QString LocalStorageService::getUserSettings()
 {
     return m_UserSettingsModel->toJson();
