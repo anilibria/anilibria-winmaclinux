@@ -377,7 +377,7 @@ Page {
                         Rectangle {
                             height: 40
                             width: seriesPopup.width
-                            color: _page.selectedVideo === modelData.order ? "#64c25656" : "#C8ffffff"
+                            color: _page.selectedVideo === modelData.order ? ApplicationTheme.playlistSelectedBackground : ApplicationTheme.playlistBackground
                             MouseArea {
                                 anchors.fill: parent
                                 hoverEnabled: true
@@ -392,7 +392,7 @@ Page {
                                 }
                             }
                             Text {
-                                color: _page.selectedVideo === modelData.order ? "white" : "black"
+                                color: _page.selectedVideo === modelData.order ? ApplicationTheme.playlistSelectedText : ApplicationTheme.playlistText
                                 anchors.verticalCenter: parent.verticalCenter
                                 anchors.left: parent.left
                                 anchors.leftMargin: 10
@@ -408,8 +408,8 @@ Page {
                                 IconButton {
                                     height: 36
                                     width: 36
-                                    iconColor: "black"
-                                    hoverColor: "white"
+                                    iconColor: ApplicationTheme.filterIconButtonColor
+                                    hoverColor: ApplicationTheme.filterIconButtonHoverColor
                                     iconPath: modelData.order in _page.seenMarks ? "../Assets/Icons/seenmarkselected.svg" : "../Assets/Icons/seenmark.svg"
                                     iconWidth: 22
                                     iconHeight: 22
@@ -437,8 +437,8 @@ Page {
                                 IconButton {
                                     height: 36
                                     width: 36
-                                    iconColor: "black"
-                                    hoverColor: "white"
+                                    iconColor: ApplicationTheme.filterIconButtonColor
+                                    hoverColor: ApplicationTheme.filterIconButtonHoverColor
                                     iconPath: "../Assets/Icons/download.svg"
                                     iconWidth: 22
                                     iconHeight: 22

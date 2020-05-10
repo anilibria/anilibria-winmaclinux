@@ -45,4 +45,8 @@ Item {
     readonly property color notificationCenterBackground: isDarkTheme ? "#1a1a1a" : "#a6a6a6"
     readonly property color notificationCenterPanelBackground: isDarkTheme ? "#1a1a1a" : "white"
     readonly property color notificationCenterItemBackground: isDarkTheme ? "#1a1a1a" : "white"
+    readonly property color playlistSelectedBackground: isDarkTheme ? "#C8ffffff" : "#64c25656"
+    readonly property color playlistBackground: isDarkTheme ? "#C8000000" : "#C8ffffff"
+    readonly property color playlistSelectedText: isDarkTheme ? "black" : "white"
+    readonly property color playlistText: isDarkTheme ? "white" : "black"
 }
