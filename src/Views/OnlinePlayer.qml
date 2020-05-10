@@ -966,7 +966,7 @@ Page {
         radius: 12
         Image {
             anchors.centerIn: parent
-            source: _page.releasePoster ? localStorage.getReleasePosterPath(!_page.setReleaseParameters.releaseId, _page.releasePoster) : '../Assets/Icons/donate.jpg'
+            source: _page.releasePoster ? localStorage.getReleasePosterPath(_page.setReleaseParameters.releaseId, _page.releasePoster) : '../Assets/Icons/donate.jpg'
             fillMode: Image.PreserveAspectCrop
             width: 180
             height: 270
