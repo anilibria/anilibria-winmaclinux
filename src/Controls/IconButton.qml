@@ -27,6 +27,7 @@ Item {
     property alias iconWidth: iconImage.width
     property alias iconHeight: iconImage.height
     property var hoverColor: "lightgray"
+    property bool hovered: false
 
     signal buttonPressed()
     signal buttonHoverEnter()
@@ -39,10 +40,12 @@ Item {
         onEntered: {
             imageRectangle.color = _button.hoverColor;
             buttonHoverEnter();
+            hovered = true;
         }
         onExited: {
             imageRectangle.color = "transparent";
             buttonHoverExit();
+            hovered = false;
         }
         onClicked: {
             _button.buttonPressed();

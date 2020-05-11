@@ -153,6 +153,7 @@ Page {
                     }
                 }
                 IconButton {
+                    id: refreshMenuButton
                     height: 45
                     width: 40
                     iconColor: "white"
@@ -164,6 +165,10 @@ Page {
 
                         page.requestSynchronizeReleases();
                     }
+
+                    ToolTip.delay: 1000
+                    ToolTip.visible: refreshMenuButton.hovered
+                    ToolTip.text: "Выполнить синхронизацию релизов"
                 }
                 IconButton {
                     id: favoriteMenuButton
@@ -247,6 +252,10 @@ Page {
                             }
                         }
                     }
+
+                    ToolTip.delay: 1000
+                    ToolTip.visible: favoriteMenuButton.hovered
+                    ToolTip.text: "Добавить или удалить релизы из избранного"
                 }
                 IconButton {
                     id: seenMarkMenuPanelButton
@@ -315,6 +324,10 @@ Page {
                             }
                         }
                     }
+
+                    ToolTip.delay: 1000
+                    ToolTip.visible: seenMarkMenuPanelButton.hovered
+                    ToolTip.text: "Отметить релизы как просмотренные или не просмотренные"
                 }
                 IconButton {
                     id: searchPopupButton
@@ -506,6 +519,10 @@ Page {
 
                         }
                     }
+
+                    ToolTip.delay: 1000
+                    ToolTip.visible: searchPopupButton.hovered
+                    ToolTip.text: "Добавить фильтры по дополнительным полям релиза таким как жанры озвучка и т.п."
                 }
                 IconButton {
                     id: sortingPopupButton
@@ -604,6 +621,10 @@ Page {
                             }
                         }
                     }
+
+                    ToolTip.delay: 1000
+                    ToolTip.visible: sortingPopupButton.hovered
+                    ToolTip.text: "Указать сортировку списка по одному из полей а также направление сортировки"
                 }
                 IconButton {
                     id: notificationPopupButton
@@ -721,8 +742,13 @@ Page {
                             }
                         }
                     }
+
+                    ToolTip.delay: 1000
+                    ToolTip.visible: notificationPopupButton.hovered
+                    ToolTip.text: "Посмотреть уведомления о непросмотренных изменениях в релизах"
                 }
                 IconButton {
+                    id: randomReleaseMenuButton
                     height: 45
                     width: 40
                     iconColor: "white"
@@ -733,8 +759,13 @@ Page {
                         const randomRelease = JSON.parse(localStorage.getRandomRelease());
                         showReleaseCard(randomRelease);
                     }
+
+                    ToolTip.delay: 1000
+                    ToolTip.visible: randomReleaseMenuButton.hovered
+                    ToolTip.text: "Открыть карточку релиза выбранного случайным образом"
                 }
                 IconButton {
+                    id: settingsMenuButton
                     height: 45
                     width: 40
                     iconColor: "white"
@@ -802,9 +833,14 @@ Page {
                             }
                         }
                     }
+
+                    ToolTip.delay: 1000
+                    ToolTip.visible: settingsMenuButton.hovered
+                    ToolTip.text: "Настройки страницы Каталог релизов"
                 }
 
                 IconButton {
+                    id: informationMenuButton
                     height: 45
                     width: 40
                     iconColor: "white"
@@ -845,6 +881,10 @@ Page {
 
                         }
                     }
+
+                    ToolTip.delay: 1000
+                    ToolTip.visible: informationMenuButton.hovered
+                    ToolTip.text: "Просмотреть полезные ссылки связанные с приложением"
                 }
 
             }
