@@ -35,7 +35,6 @@ Page {
     property var favoriteReleases: []
     property var scheduledReleases: ({})
     property int pageIndex: 1
-    property bool isBusy: false
     property var openedRelease: null
     property bool runRefreshFavorties: false
     property bool synchronizeEnabled: false
@@ -1111,11 +1110,7 @@ Page {
                 contentWidth: parent.width
                 contentHeight: itemGrid.height
                 onContentYChanged: {
-                    if (scrollview.atYEnd && !page.isBusy) {
-                        page.isBusy = true;
-                        fillNextReleases();
-                        page.isBusy = false;
-                    }
+                    if (scrollview.atYEnd) fillNextReleases();
                 }
                 ScrollBar.vertical: ScrollBar {
                     active: true
@@ -1128,7 +1123,7 @@ Page {
                         id: itemGrid
                         Layout.alignment: Qt.AlignHCenter
                         columns: 2
-                        spacing: 4
+                        spacing: 10
                         Repeater {
                             model: releasesModel
                             Rectangle {
@@ -1178,6 +1173,7 @@ Page {
                                         Image {
                                             anchors.centerIn: parent
                                             source: localStorage.getReleasePosterPath(modelData.id, modelData.poster)
+                                            sourceSize: Qt.size(180, 270)
                                             fillMode: Image.PreserveAspectCrop
                                             width: 180
                                             height: 270
@@ -1903,10 +1899,6 @@ Page {
                     visible: page.openedRelease ? true : false
                     width: cardContainer.width
                     height: cardContainer.height - releaseInfo.height - 60
-                    url: page.openedRelease ? getVkontakteCommentPage() : "https://vk.com/";
-                    onLoadingChanged: {
-                        //if (loadRequest.errorString) console.error(loadRequest.errorString);
-                    }
                 }
             }
         }
@@ -1986,10 +1978,17 @@ Page {
         }
     }
 
+    function setCounters(releases, start) {
+        for (const release of releases) {
+            release.index = ++start;
+        }
+    }
+
     function fillNextReleases() {
         page.pageIndex += 1;
         const nextPageReleases = getReleasesByFilter();
         setSeensCounts(nextPageReleases);
+        setCounters(nextPageReleases, releasesModel.count);
         for (const displayRelease of nextPageReleases) releasesModel.append({ model: displayRelease });
     }
 
@@ -1999,6 +1998,7 @@ Page {
         releasesModel.clear();
         const displayReleases = getReleasesByFilter();
         setSeensCounts(displayReleases);
+        setCounters(displayReleases, 0);
         for (const displayRelease of displayReleases) releasesModel.append({ model: displayRelease });
         if (!notResetScroll) scrollview.contentY = 0;
     }
@@ -2048,6 +2048,8 @@ Page {
 
         localStorage.resetReleaseChanges(release.id);        
         page.changesCounts = localStorage.getChangesCounts();
+
+        webView.url = getVkontakteCommentPage();
     }
 
     function copyToClipboard(text) {
