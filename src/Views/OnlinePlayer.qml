@@ -988,7 +988,9 @@ Page {
         AnimatedImage {
             id: spinner
             anchors.centerIn: parent
-            source: "../Assets/Icons/spinner.gif"
+            paused: !_page.visible
+            playing: _page.visible
+            source: _page.visible ? "../Assets/Icons/spinner.gif" : ""
         }
     }
 
