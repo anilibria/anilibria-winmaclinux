@@ -57,7 +57,6 @@ Rectangle {
         TextEdit {
             id: edit
             width: flick.width
-            focus: true
             text: textContent
             onCursorRectangleChanged: flick.ensureVisible(cursorRectangle)
             onTextChanged: {
@@ -86,6 +85,7 @@ Rectangle {
         onTriggered: {
             completeEditing();
             completeTimer.stop();
+            edit.focus = false;
         }
     }
 }
