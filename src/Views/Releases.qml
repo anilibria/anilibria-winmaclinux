@@ -40,6 +40,7 @@ Page {
     property bool synchronizeEnabled: false
     property int selectedSection: 0
     property var seenMarks: ({})
+    property bool fillingReleases: false
     property var sections: [
         "Все релизы",
         "Избранное",
@@ -108,6 +109,7 @@ Page {
 
     ListModel {
         id: releasesModel
+        property int updateCounter: 0
     }
 
     ListModel {
@@ -1110,7 +1112,14 @@ Page {
                 contentWidth: parent.width
                 contentHeight: itemGrid.height
                 onContentYChanged: {
-                    if (scrollview.atYEnd) fillNextReleases();
+                    if (page.fillingReleases) return;
+
+                    if (scrollview.atYEnd) {
+                        page.fillingReleases = true;
+                        fillNextReleases();
+                        page.fillingReleases = false;
+                    }
+
                 }
                 ScrollBar.vertical: ScrollBar {
                     active: true
@@ -1165,12 +1174,13 @@ Page {
                                     topPadding: 4
                                     rightPadding: 4
                                     Rectangle {
+                                        visible: modelData.id > -1
                                         width: 182
                                         height: 272
                                         border.color: "#adadad"
                                         border.width: 1
                                         radius: 12
-                                        Image {
+                                        Image {                                            
                                             anchors.centerIn: parent
                                             source: localStorage.getReleasePosterPath(modelData.id, modelData.poster)
                                             sourceSize: Qt.size(180, 270)
@@ -1202,6 +1212,7 @@ Page {
                                                 text: qsTr(modelData.title)
                                             }
                                             PlainText {
+                                                visible: modelData.id > -1
                                                 textFormat: Text.RichText
                                                 fontPointSize: 10
                                                 leftPadding: 8
@@ -1209,12 +1220,14 @@ Page {
                                                 text: qsTr("<b>Статус:</b> ") + qsTr(modelData.status)
                                             }
                                             PlainText {
+                                                visible: modelData.id > -1
                                                 fontPointSize: 10
                                                 leftPadding: 8
                                                 topPadding: 4
                                                 text: qsTr("<b>" + modelData.season + " " + modelData.year + "</b>")
                                             }
                                             PlainText {
+                                                visible: modelData.id > -1
                                                 textFormat: Text.RichText
                                                 fontPointSize: 10
                                                 leftPadding: 8
@@ -1225,6 +1238,7 @@ Page {
                                                 text: qsTr("<b>Тип:</b> ") + qsTr(modelData.type)
                                             }
                                             PlainText {
+                                                visible: modelData.id > -1
                                                 fontPointSize: 10
                                                 leftPadding: 8
                                                 topPadding: 4
@@ -1234,6 +1248,7 @@ Page {
                                                 text: qsTr("<b>Жанры:</b> ") + qsTr(modelData.genres)
                                             }
                                             PlainText {
+                                                visible: modelData.id > -1
                                                 fontPointSize: 10
                                                 leftPadding: 8
                                                 topPadding: 4
@@ -1243,6 +1258,7 @@ Page {
                                                 text: qsTr("<b>Озвучка:</b> ") + qsTr(modelData.voices)
                                             }
                                             Row {
+                                                visible: modelData.id > -1
                                                 leftPadding: 8
                                                 topPadding: 4
                                                 ColoredIcon {
@@ -1272,6 +1288,7 @@ Page {
                                             }
                                         }
                                         Rectangle {
+                                            visible: modelData.id > -1
                                             color: "transparent"
                                             height: 272 - gridItemtextContainer.height
                                             width: 280
@@ -1978,17 +1995,31 @@ Page {
         }
     }
 
-    function setCounters(releases, start) {
-        for (const release of releases) {
-            release.index = ++start;
-        }
-    }
-
     function fillNextReleases() {
+        if (page.pageIndex === -1) return;
+        if (page.pageIndex == 7) {
+            releasesModel.append(
+                {
+                    model: {
+                        id: -1,
+                        title: "Загружено слишком много релизов, для показа остальных воспользуйтесь фильтрами",
+                        status: "",
+                        year: "",
+                        season: "",
+                        type: "",
+                        genres: "",
+                        voices: "",
+                        rating: 0
+                    }
+                }
+            );
+            page.pageIndex = -1;
+            return;
+        }
         page.pageIndex += 1;
+
         const nextPageReleases = getReleasesByFilter();
         setSeensCounts(nextPageReleases);
-        setCounters(nextPageReleases, releasesModel.count);
         for (const displayRelease of nextPageReleases) releasesModel.append({ model: displayRelease });
     }
 
@@ -1998,7 +2029,6 @@ Page {
         releasesModel.clear();
         const displayReleases = getReleasesByFilter();
         setSeensCounts(displayReleases);
-        setCounters(displayReleases, 0);
         for (const displayRelease of displayReleases) releasesModel.append({ model: displayRelease });
         if (!notResetScroll) scrollview.contentY = 0;
     }
@@ -2034,6 +2064,8 @@ Page {
     }
 
     function showReleaseCard(release) {
+        if (release.id === -1) return;
+
         torrentsModel.clear();
 
         const torrents = JSON.parse(release.torrents);
