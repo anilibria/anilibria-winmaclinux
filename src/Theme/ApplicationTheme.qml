@@ -26,7 +26,7 @@ Item {
     readonly property color linkTextColor: isDarkTheme ? "white" : "#b32121"
     readonly property color pageVerticalPanel: isDarkTheme ? "#262626" : "#9e2323"
     readonly property color pageBackground: isDarkTheme ? "#1f1f1f" : "#D3D3D3"
-    readonly property color pageUpperPanel: isDarkTheme ? "#3d3d3d" : "#a6a6a6"
+    readonly property color pageUpperPanel: isDarkTheme ? "#3d3d3d" : "#e6e6e6"
     readonly property color panelBackground: isDarkTheme ? "#474747" : "#f2f2f2"
     readonly property color panelBackgroundShadow: isDarkTheme ? "#595959" : "grey"
     readonly property color roundedButtonBackground: isDarkTheme ? "white" : "#b32121"
