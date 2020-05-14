@@ -1996,8 +1996,10 @@ Page {
     }
 
     function fillNextReleases() {
+        if (releasesModel.count < 12) return;
         if (page.pageIndex === -1) return;
-        if (page.pageIndex == 7) {
+
+        if (page.pageIndex === 7) {
             releasesModel.append(
                 {
                     model: {
@@ -2021,6 +2023,8 @@ Page {
         const nextPageReleases = getReleasesByFilter();
         setSeensCounts(nextPageReleases);
         for (const displayRelease of nextPageReleases) releasesModel.append({ model: displayRelease });
+
+        if (nextPageReleases.length < 12) page.pageIndex = -1;
     }
 
     function refreshAllReleases(notResetScroll) {
