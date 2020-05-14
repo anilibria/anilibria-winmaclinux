@@ -695,10 +695,17 @@ Page {
                                     border.color: ApplicationTheme.selectedItem
                                     width: 340
                                     height: 40
+
                                     PlainText {
                                         anchors.centerIn: parent
                                         fontPointSize: 11
                                         text: "Новых релизов: " + page.changesCounts[0]
+                                    }                                    
+                                    MouseArea {
+                                        anchors.fill: parent
+                                        onPressed: {
+                                            page.changeSection(2);
+                                        }
                                     }
                                 }
                                 Rectangle {
@@ -708,10 +715,17 @@ Page {
                                     border.color: ApplicationTheme.selectedItem
                                     width: 340
                                     height: 40
+
                                     PlainText {
                                         anchors.centerIn: parent
                                         fontPointSize: 11
                                         text: "Релизов с новыми сериями: " + page.changesCounts[1]
+                                    }
+                                    MouseArea {
+                                        anchors.fill: parent
+                                        onPressed: {
+                                            page.changeSection(3);
+                                        }
                                     }
                                 }
                                 Rectangle {
@@ -721,10 +735,17 @@ Page {
                                     border.color: ApplicationTheme.selectedItem
                                     width: 340
                                     height: 40
+
                                     PlainText {
                                         anchors.centerIn: parent
                                         fontPointSize: 11
                                         text: "Новые торренты: " + page.changesCounts[2]
+                                    }
+                                    MouseArea {
+                                        anchors.fill: parent
+                                        onPressed: {
+                                            page.changeSection(4);
+                                        }
                                     }
                                 }
                                 Rectangle {
@@ -734,10 +755,17 @@ Page {
                                     border.color: ApplicationTheme.selectedItem
                                     width: 340
                                     height: 40
+
                                     PlainText {
                                         anchors.centerIn: parent
                                         fontPointSize: 11
                                         text: "Релизы с обновленными торрентами: " + page.changesCounts[3]
+                                    }
+                                    MouseArea {
+                                        anchors.fill: parent
+                                        onPressed: {
+                                            page.changeSection(6);
+                                        }
                                     }
                                 }
                             }
