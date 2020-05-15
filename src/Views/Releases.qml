@@ -929,24 +929,35 @@ Page {
                 Layout.preferredHeight: 45
                 height: 45
                 color: ApplicationTheme.pageUpperPanel
-                Row {
-                    Switch {
-                        id: multupleMode
-                        onCheckedChanged: {
-                            page.selectMode = checked;
-                            if (!checked) {
-                                page.selectedReleases = [];
-                            } else {
-                                page.openedRelease = null;
-                            }
+
+                Switch {
+                    id: multupleMode
+                    anchors.left: parent.left
+                    onCheckedChanged: {
+                        page.selectMode = checked;
+                        if (!checked) {
+                            page.selectedReleases = [];
+                        } else {
+                            page.openedRelease = null;
                         }
                     }
-                    PlainText {
-                        anchors.verticalCenter: parent.verticalCenter
-                        visible: page.synchronizeEnabled
-                        fontPointSize: 12
-                        text: "Выполняется синхронизация..."
-                    }
+                    ToolTip.delay: 1000
+                    ToolTip.visible: multupleMode.hovered
+                    ToolTip.text: "Данный переключатель влияет на поведение при клике ЛКМ на релизах в списке\nОдиночный выбор позволяет открывать карточку с подробной информацией\nМножественный выбор позволяет выбрать несколько релизов и выполнять действия (добавить в избранное и т.п.)\nЧтобы переключать его можно использовать клик ПКМ в области списка релизов"
+                }
+                PlainText {
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.leftMargin: 4
+                    anchors.left: multupleMode.right
+                    fontPointSize: 12
+                    text: multupleMode.checked ? "Множественный выбор" : "Одиночный выбор"
+                }
+                PlainText {
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    visible: page.synchronizeEnabled
+                    fontPointSize: 12
+                    text: "Выполняется синхронизация..."
                 }
                 PlainText {
                     text: page.sections[page.selectedSection]
@@ -985,6 +996,9 @@ Page {
                         iconPath: "../Assets/Icons/allreleases.svg"
                         iconWidth: 24
                         iconHeight: 24
+                        ToolTip.delay: 1000
+                        ToolTip.visible: hovered
+                        ToolTip.text: "Все релизы"
                         onButtonPressed: {
                             changeSection(0);
                         }
@@ -997,6 +1011,9 @@ Page {
                         iconPath: "../Assets/Icons/favorite.svg"
                         iconWidth: 24
                         iconHeight: 24
+                        ToolTip.delay: 1000
+                        ToolTip.visible: hovered
+                        ToolTip.text: "Избранное"
                         onButtonPressed: {
                             changeSection(1);
                         }
@@ -1010,6 +1027,9 @@ Page {
                         iconPath: "../Assets/Icons/notification.svg"
                         iconWidth: 24
                         iconHeight: 24
+                        ToolTip.delay: 1000
+                        ToolTip.visible: hovered
+                        ToolTip.text: "Показать меню с фильтрами по уведомлениям"
                         onButtonPressed: {
                             notificationsMenuSections.open();
                         }
@@ -1053,6 +1073,9 @@ Page {
                         iconPath: "../Assets/Icons/calendar.svg"
                         iconWidth: 26
                         iconHeight: 26
+                        ToolTip.delay: 1000
+                        ToolTip.visible: hovered
+                        ToolTip.text: "Расписание релизов"
                         onButtonPressed: {
                             changeSection(5);
                         }
@@ -1067,6 +1090,9 @@ Page {
                         iconPath: "../Assets/Icons/history.svg"
                         iconWidth: 24
                         iconHeight: 24
+                        ToolTip.delay: 1000
+                        ToolTip.visible: hovered
+                        ToolTip.text: "Показать меню с фильтрами по истории и истории просмотра"
                         onButtonPressed: {
                             historyMenuSections.open();
                         }
@@ -1099,6 +1125,9 @@ Page {
                         iconPath: "../Assets/Icons/seenmarkpanel.svg"
                         iconWidth: 24
                         iconHeight: 24
+                        ToolTip.delay: 1000
+                        ToolTip.visible: hovered
+                        ToolTip.text: "Показать меню с фильтрами по состоянию просмотра"
                         onButtonPressed: {
                             seenMenuSections.open();
                         }
@@ -1151,6 +1180,15 @@ Page {
                 }
                 ScrollBar.vertical: ScrollBar {
                     active: true
+                }
+
+                MouseArea {
+                    width: scrollview.width
+                    height: itemGrid.height
+                    acceptedButtons: Qt.RightButton
+                    onPressed: {
+                        multupleMode.checked = !multupleMode.checked;
+                    }
                 }
 
                 ColumnLayout {
@@ -1366,7 +1404,7 @@ Page {
                                                 topPadding: 8
                                                 ColoredIcon {
                                                     iconSource: '../Assets/Icons/rating.svg'
-                                                    iconWidth: 20
+                                                    iconWidth: 18
                                                     iconHeight: 20
                                                     iconColor: ApplicationTheme.plainTextColor
                                                 }
@@ -1378,7 +1416,7 @@ Page {
                                                 }
                                                 ColoredIcon {
                                                     visible: page.favoriteReleases.filter(a => a === modelData.id).length
-                                                    iconSource: '../Assets/Icons/star.svg'
+                                                    iconSource: '../Assets/Icons/favorite.svg'
                                                     iconWidth: 20
                                                     iconHeight: 20
                                                     iconColor: ApplicationTheme.headerTextColor
@@ -1704,7 +1742,7 @@ Page {
                             width: 40
                             iconColor: ApplicationTheme.filterIconButtonColor
                             hoverColor: ApplicationTheme.filterIconButtonHoverColor
-                            iconPath: "../Assets/Icons/seenmark.svg"
+                            iconPath: "../Assets/Icons/seenmarkpanel.svg"
                             iconWidth: 26
                             iconHeight: 26
                             onButtonPressed: {
@@ -1781,6 +1819,7 @@ Page {
                             iconWidth: 26
                             iconHeight: 26
                             onButtonPressed: {
+                                if (Qt.platform.os !== "windows") webView.visible = false;
                                 externalPlayerMenu.open();
                             }
 
@@ -1790,23 +1829,29 @@ Page {
                                 modal: true
                                 focus: true
                                 closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
+                                onClosed: {
+                                    if (Qt.platform.os !== "windows") webView.visible = true;
+                                }
 
                                 CommonMenuItem {
                                     text: "Открыть во внешнем плеере в HD качестве"
                                     onPressed: {
-                                        openInExternalPlayer(localStorage.packAsM3UAndOpen(page.openedRelease.id, "hd"))
+                                        openInExternalPlayer(localStorage.packAsM3UAndOpen(page.openedRelease.id, "hd"));
+                                        externalPlayerMenu.close();
                                     }
                                 }
                                 CommonMenuItem {
                                     text: "Открыть во внешнем плеере в SD качестве"
                                     onPressed: {
-                                        openInExternalPlayer(localStorage.packAsM3UAndOpen(page.openedRelease.id, "sd"))
+                                        openInExternalPlayer(localStorage.packAsM3UAndOpen(page.openedRelease.id, "sd"));
+                                        externalPlayerMenu.close();
                                     }
                                 }
                                 CommonMenuItem {
                                     text: "Открыть во внешнем плеере в FullHD качестве"
                                     onPressed: {
-                                        openInExternalPlayer(localStorage.packAsM3UAndOpen(page.openedRelease.id, "fullhd"))
+                                        openInExternalPlayer(localStorage.packAsM3UAndOpen(page.openedRelease.id, "fullhd"));
+                                        externalPlayerMenu.close();
                                     }
                                 }
 
@@ -1814,21 +1859,24 @@ Page {
                                     notVisible: Qt.platform.os !== "windows"
                                     text: "Открыть в плеере MPC в HD качестве"
                                     onPressed: {
-                                        openInExternalPlayer(localStorage.packAsMPCPLAndOpen(page.openedRelease.id, "hd"))
+                                        openInExternalPlayer(localStorage.packAsMPCPLAndOpen(page.openedRelease.id, "hd"));
+                                        externalPlayerMenu.close();
                                     }                                    
                                 }
                                 CommonMenuItem {
                                     notVisible: Qt.platform.os !== "windows"
                                     text: "Открыть в плеере MPC в SD качестве"
                                     onPressed: {
-                                        openInExternalPlayer(localStorage.packAsMPCPLAndOpen(page.openedRelease.id, "sd"))
+                                        openInExternalPlayer(localStorage.packAsMPCPLAndOpen(page.openedRelease.id, "sd"));
+                                        externalPlayerMenu.close();
                                     }
                                 }
                                 CommonMenuItem {
                                     notVisible: Qt.platform.os !== "windows"
                                     text: "Открыть в плеере MPC в FullHD качестве"
                                     onPressed: {
-                                        openInExternalPlayer(localStorage.packAsMPCPLAndOpen(page.openedRelease.id, "fullhd"))
+                                        openInExternalPlayer(localStorage.packAsMPCPLAndOpen(page.openedRelease.id, "fullhd"));
+                                        externalPlayerMenu.close();
                                     }
                                 }
                             }
