@@ -951,6 +951,13 @@ Page {
                     anchors.left: multupleMode.right
                     fontPointSize: 12
                     text: multupleMode.checked ? "Множественный выбор" : "Одиночный выбор"
+
+                    MouseArea {
+                        anchors.fill: parent
+                        onPressed: {
+                            multupleMode.checked = !multupleMode.checked;
+                        }
+                    }
                 }
                 PlainText {
                     anchors.verticalCenter: parent.verticalCenter
