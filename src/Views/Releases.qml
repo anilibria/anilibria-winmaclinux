@@ -1946,7 +1946,7 @@ Page {
                             dowloadTorrent.open();
                         }
 
-                        Menu {
+                        CommonMenu {
                             id: dowloadTorrent
                             y: parent.height - parent.height - (torrentsModel.count * 40)
                             width: 320
