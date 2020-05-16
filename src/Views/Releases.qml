@@ -1943,6 +1943,7 @@ Page {
                         anchors.left: parent.left
                         text: qsTr("Скачать")
                         onClicked: {
+                            if (Qt.platform.os !== "windows") webView.visible = false;
                             dowloadTorrent.open();
                         }
 
@@ -1950,12 +1951,15 @@ Page {
                             id: dowloadTorrent
                             y: parent.height - parent.height - (torrentsModel.count * 40)
                             width: 320
+                            onClosed: {
+                                if (Qt.platform.os !== "windows") webView.visible = true;
+                            }
 
                             Repeater {
                                 model: torrentsModel
                                 CommonMenuItem {
                                     text: "Скачать " + modelData.quality + " [" + modelData.series + "]"
-                                    onPressed: {
+                                    onPressed: {                                        
                                         const torrentUri = synchronizationService.combineWithWebSiteUrl(modelData.url);
                                         synchronizationService.downloadTorrent(torrentUri);
                                     }
