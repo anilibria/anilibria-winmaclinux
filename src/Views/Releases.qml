@@ -197,7 +197,7 @@ Page {
                         favoriteMenu.open();
                     }
 
-                    Menu {
+                    CommonMenu {
                         id: favoriteMenu
                         y: favoriteMenuButton.height
                         width: 350
@@ -270,7 +270,7 @@ Page {
                         seenMarkMenuPanel.open();
                     }
 
-                    Menu {
+                    CommonMenu {
                         id: seenMarkMenuPanel
                         y: seenMarkMenuPanelButton.height
                         width: 300
@@ -1034,7 +1034,7 @@ Page {
                             notificationsMenuSections.open();
                         }
 
-                        Menu {
+                        CommonMenu {
                             id: notificationsMenuSections
                             width: 350
                             y: notificationMenuButton.height
@@ -1097,7 +1097,7 @@ Page {
                             historyMenuSections.open();
                         }
 
-                        Menu {
+                        CommonMenu {
                             id: historyMenuSections
                             width: 300
                             y: historyMenuButton.height
@@ -1132,7 +1132,7 @@ Page {
                             seenMenuSections.open();
                         }
 
-                        Menu {
+                        CommonMenu {
                             id: seenMenuSections
                             width: 300
                             y: seenMenuButton.height
@@ -1366,12 +1366,9 @@ Page {
                                                 onPressed: {
                                                     quickActions.open();
                                                 }
-                                                Menu {
+                                                CommonMenu {
                                                     id: quickActions
                                                     width: 320
-                                                    modal: true
-                                                    focus: true
-                                                    closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
 
                                                     CommonMenuItem {
                                                         enabled: applicationSettings.userToken && !page.favoriteReleases.filter(a => a === modelData.id).length
@@ -1670,6 +1667,7 @@ Page {
                             iconWidth: 26
                             iconHeight: 26
                             onButtonPressed: {
+                                if (Qt.platform.os !== "windows") webView.visible = false;
                                 cardCopyMenu.open();
                             }
 
@@ -1678,9 +1676,12 @@ Page {
                                 visible: false
                             }
 
-                            Menu {
+                            CommonMenu {
                                 id: cardCopyMenu
                                 width: 350
+                                onClosed: {
+                                    if (Qt.platform.os !== "windows") webView.visible = true;
+                                }
 
                                 CommonMenuItem {
                                     text: "Копировать название"
@@ -1717,11 +1718,16 @@ Page {
                             iconWidth: 26
                             iconHeight: 26
                             onButtonPressed: {
+                                if (Qt.platform.os !== "windows") webView.visible = false;
                                 vkontakteMenu.open();
                             }
-                            Menu {
+
+                            CommonMenu {
                                 id: vkontakteMenu
                                 width: 350
+                                onClosed: {
+                                    if (Qt.platform.os !== "windows") webView.visible = true;
+                                }
 
                                 CommonMenuItem {
                                     text: "Авторизоваться для комментариев"
@@ -1746,11 +1752,16 @@ Page {
                             iconWidth: 26
                             iconHeight: 26
                             onButtonPressed: {
+                                if (Qt.platform.os !== "windows") webView.visible = false;
                                 seenMarkMenu.open();
                             }
-                            Menu {
+
+                            CommonMenu {
                                 id: seenMarkMenu
                                 width: 350
+                                onClosed: {
+                                    if (Qt.platform.os !== "windows") webView.visible = true;
+                                }
 
                                 CommonMenuItem {
                                     text: "Отметить как просмотренное"
@@ -1782,15 +1793,16 @@ Page {
                                     return;
                                 }
 
+                                if (Qt.platform.os !== "windows") webView.visible = false;
                                 cardFavoritesMenu.open();
                             }
 
-                            Menu {
+                            CommonMenu {
                                 id: cardFavoritesMenu
                                 width: 350
-                                modal: true
-                                focus: true
-                                closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
+                                onClosed: {
+                                    if (Qt.platform.os !== "windows") webView.visible = true;
+                                }
 
                                 CommonMenuItem {
                                     enabled: page.openedRelease && !page.favoriteReleases.filter(a => a === page.openedRelease.id).length
@@ -1823,12 +1835,9 @@ Page {
                                 externalPlayerMenu.open();
                             }
 
-                            Menu {
+                            CommonMenu {
                                 id: externalPlayerMenu
                                 width: 380
-                                modal: true
-                                focus: true
-                                closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
                                 onClosed: {
                                     if (Qt.platform.os !== "windows") webView.visible = true;
                                 }
@@ -1895,12 +1904,9 @@ Page {
                                 setSeriesMenu.open();
                             }
 
-                            Menu {
+                            CommonMenu {
                                 id: setSeriesMenu
-                                width: 330
-                                modal: true
-                                focus: true
-                                closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
+                                width: 330                                
                                 onClosed: {
                                     if (Qt.platform.os !== "windows") webView.visible = true;
                                 }

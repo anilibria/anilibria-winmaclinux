@@ -72,5 +72,6 @@
         <file>Controls/LinkedText.qml</file>
         <file>Controls/PlainText.qml</file>
         <file>Controls/AccentText.qml</file>
+        <file>Controls/CommonMenu.qml</file>
     </qresource>
 </RCC>
