@@ -200,7 +200,7 @@ ApplicationWindow {
 
         Component.onCompleted: {
             if (Qt.platform.os === "linux") windowSettings.dpiSeparation = -0.8;
-            if (Qt.platform.os === "osx") windowSettings.dpiSeparation = Screen.pixelDensity - 3.2;
+            if (Qt.platform.os === "osx") windowSettings.dpiSeparation = 1.87;
         }
     }
 
