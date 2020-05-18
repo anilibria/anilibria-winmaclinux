@@ -343,6 +343,7 @@ Page {
                     }
 
                     Rectangle {
+                        id: filtersExistsMark
                         visible: descriptionSearchField.text || typeSearchField.text || genresSearchField.text || voicesSearchField.text || yearsSearchField.text || seasonesSearchField.text || statusesSearchField.text
                         anchors.top: parent.top
                         anchors.right: parent.right
@@ -1198,7 +1199,22 @@ Page {
                     }
                 }
 
+                Rectangle {
+                    color: "transparent"
+                    width: scrollview.width
+                    height: scrollview.height
+                    visible: releasesModel.count === 0
+
+                    PlainText {
+                        anchors.centerIn: parent
+                        fontPointSize: 14
+                        horizontalAlignment: Text.AlignHCenter
+                        text: filtersExistsMark.visible || filterByTitle.textContent !== "" ? "По текущему фильтру ничего не найдено\nПопробуйте указать другие фильтры и повторить поиск" : "Релизы еще не загружены\nПожалуйста подождите пока они загрузятся"
+                    }
+                }
+
                 ColumnLayout {
+                    visible: releasesModel.count > 0
                     width: page.width
                     height: page.height
                     Grid {
