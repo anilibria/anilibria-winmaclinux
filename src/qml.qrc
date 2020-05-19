@@ -73,5 +73,6 @@
         <file>Controls/PlainText.qml</file>
         <file>Controls/AccentText.qml</file>
         <file>Controls/CommonMenu.qml</file>
+        <file>Views/ReleaseItem.qml</file>
     </qresource>
 </RCC>
