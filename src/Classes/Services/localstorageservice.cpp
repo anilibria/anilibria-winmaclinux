@@ -832,6 +832,23 @@ QString LocalStorageService::getReleasesByFilter(int page, QString title, int se
         return leftTimestamp > rightTimestamp;
     };
 
+    std::function<bool (const FullReleaseModel*, const FullReleaseModel*)> favoriteComparer = [userFavorites](const FullReleaseModel* first, const FullReleaseModel* second) {
+
+        bool left = userFavorites.contains(QString::number(first->id()));
+
+        bool right = userFavorites.contains(QString::number(second->id()));
+
+        return left < right;
+    };
+
+    std::function<bool (const FullReleaseModel*, const FullReleaseModel*)> favoriteDescendingComparer = [userFavorites](const FullReleaseModel* first, const FullReleaseModel* second) {
+        bool left = userFavorites.contains(QString::number(first->id()));
+
+        bool right = userFavorites.contains(QString::number(second->id()));
+
+        return left > right;
+    };
+
     QJsonArray releases;
 
     switch (sortingField) {
@@ -864,6 +881,9 @@ QString LocalStorageService::getReleasesByFilter(int page, QString title, int se
             break;
         case 9: //Сезону
             std::sort(m_CachedReleases->begin(), m_CachedReleases->end(), sortingDescending ? compareSeasonDescending : compareSeason);
+            break;
+        case 10: //Признак избранности
+            std::sort(m_CachedReleases->begin(), m_CachedReleases->end(), sortingDescending ? favoriteComparer : favoriteDescendingComparer);
             break;
     }
 

@@ -601,6 +601,9 @@ Page {
                                     ListElement {
                                         text: "Сезону"
                                     }
+                                    ListElement {
+                                        text: "Признак избранности"
+                                    }
                                 }
                             }
 
