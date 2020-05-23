@@ -18,6 +18,7 @@ private:
     int m_JumpMinute;
     int m_JumpSecond;
     bool m_ShowReleaseInfo;
+    bool m_ClearFiltersAfterChangeSection;
 
 public:
     UserSettingsModel();
@@ -31,6 +32,7 @@ public:
     int jumpMinute() const { return m_JumpMinute; }
     int jumpSecond() const { return m_JumpSecond; }
     bool showReleaseInfo() const { return m_ShowReleaseInfo; }
+    bool clearFiltersAfterChangeSection() const { return m_ClearFiltersAfterChangeSection; }
 
     void setQuality(const int quality) noexcept;
     void setVolume(const double volume) noexcept;
@@ -41,6 +43,7 @@ public:
     void setJumpMinute(const int jumpMinute) noexcept;
     void setJumpSecond(const int jumpSecond) noexcept;
     void setShowReleaseInfo(const bool showReleaseInfo) noexcept;
+    void setClearFiltersAfterChangeSection(const bool clearFiltersAfterChangeSection) noexcept;
 
     void fromJson(QString json);
     QString toJson() noexcept;

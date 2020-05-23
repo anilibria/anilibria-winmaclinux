@@ -1369,6 +1369,13 @@ void LocalStorageService::setShowReleaseInfo(bool showReleaseInfo)
     saveSettings();
 }
 
+void LocalStorageService::setClearFiltersAfterChangeSection(bool clearFiltersAfterChangeSection)
+{
+    m_UserSettingsModel->setClearFiltersAfterChangeSection(clearFiltersAfterChangeSection);
+
+    saveSettings();
+}
+
 QString LocalStorageService::getUserSettings()
 {
     return m_UserSettingsModel->toJson();

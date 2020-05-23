@@ -8,7 +8,8 @@ UserSettingsModel::UserSettingsModel(): m_Quality(1),
     m_NotificationForFavorites(false),
     m_JumpMinute(1),
     m_JumpSecond(15),
-    m_ShowReleaseInfo(false)
+    m_ShowReleaseInfo(false),
+    m_ClearFiltersAfterChangeSection(true)
 {
 
 }
@@ -58,6 +59,11 @@ void UserSettingsModel::setShowReleaseInfo(const bool showReleaseInfo) noexcept
     m_ShowReleaseInfo = showReleaseInfo;
 }
 
+void UserSettingsModel::setClearFiltersAfterChangeSection(const bool clearFiltersAfterChangeSection) noexcept
+{
+    m_ClearFiltersAfterChangeSection = clearFiltersAfterChangeSection;
+}
+
 void UserSettingsModel::fromJson(QString json)
 {
     if (json.isEmpty()) return;
@@ -74,6 +80,7 @@ void UserSettingsModel::fromJson(QString json)
     if (jsonSettings.contains("jumpSecond")) setJumpSecond(jsonSettings.value("jumpSecond").toInt());
     if (jsonSettings.contains("notificationForFavorites")) setNotificationForFavorites(jsonSettings.value("notificationForFavorites").toBool());
     if (jsonSettings.contains("showReleaseInfo")) setShowReleaseInfo(jsonSettings.value("showReleaseInfo").toBool());
+    if (jsonSettings.contains("clearFiltersAfterChangeSection")) setClearFiltersAfterChangeSection(jsonSettings.value("clearFiltersAfterChangeSection").toBool());
 }
 
 QString UserSettingsModel::toJson() noexcept
@@ -89,6 +96,7 @@ QString UserSettingsModel::toJson() noexcept
     object["jumpMinute"] = jumpMinute();
     object["jumpSecond"] = jumpSecond();
     object["showReleaseInfo"] = showReleaseInfo();
+    object["clearFiltersAfterChangeSection"] = clearFiltersAfterChangeSection();
 
     QJsonDocument saveDoc(object);
     return saveDoc.toJson();

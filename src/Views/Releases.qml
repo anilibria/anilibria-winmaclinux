@@ -380,16 +380,7 @@ Page {
                                 anchors.right: parent.right
                                 text: "Очистить фильтры"
                                 onClicked: {
-                                    descriptionSearchField.text = "";
-                                    typeSearchField.text = "";
-                                    genresSearchField.text = "";
-                                    orAndGenresSearchField.checked = false;
-                                    voicesSearchField.text = "";
-                                    orAndVoicesSearchField.checked = false;
-                                    yearsSearchField.text = "";
-                                    seasonesSearchField.text = "";
-                                    statusesSearchField.text = "";
-
+                                    page.clearAdditionalFilters();
                                     page.refreshAllReleases(false);
                                 }
                             }
@@ -814,7 +805,7 @@ Page {
                         x: 40
                         y: sortingPopupButton.height - 100
                         width: 370
-                        height: 230
+                        height: 310
                         modal: true
                         focus: true
                         closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
@@ -864,6 +855,25 @@ Page {
                                 applicationSettings.isDarkTheme = checked;
                                 ApplicationTheme.isDarkTheme = checked;
                             }
+                        }
+
+                        PlainText {
+                            id: clearFilterAfterChangeSectionLabel
+                            anchors.top: darkModeSwitch.bottom
+                            anchors.topMargin: 4
+                            fontPointSize: 11
+                            text: "Сбрасывать все фильтры после\nсмены раздела"
+                        }
+                        Switch {
+                            id: clearFilterAfterChangeSectionSwitch
+                            anchors.top: clearFilterAfterChangeSectionLabel.bottom
+                            onCheckedChanged: {
+                                localStorage.setClearFiltersAfterChangeSection(checked);
+                            }
+
+                            ToolTip.delay: 1000
+                            ToolTip.visible: hovered
+                            ToolTip.text: "Разделы это кнопки находящиеся по центру выше списка релизов\nДанная настройка влияет на то будут ли сброшены все фильтры при смене раздела или нет"
                         }
                     }
 
@@ -1946,7 +1956,26 @@ Page {
         if (!notResetScroll) scrollview.contentY = 0;
     }
 
+    function clearAdditionalFilters() {
+        descriptionSearchField.text = "";
+        typeSearchField.text = "";
+        genresSearchField.text = "";
+        orAndGenresSearchField.checked = false;
+        voicesSearchField.text = "";
+        orAndVoicesSearchField.checked = false;
+        yearsSearchField.text = "";
+        seasonesSearchField.text = "";
+        statusesSearchField.text = "";
+    }
+
     function changeSection(section) {
+        if (section === page.selectedSection) return;
+
+        if (clearFilterAfterChangeSectionSwitch.checked) {
+            filterByTitle.textContent = "";
+            page.clearAdditionalFilters();
+        }
+
         page.selectedSection = section;
         if (section in page.sectionSortings) {
             const defaultSorting = page.sectionSortings[section];
@@ -2032,5 +2061,6 @@ Page {
         downloadTorrentMode.currentIndex = userSettings.torrentDownloadMode;
         notificationForFavorites.checked = userSettings.notificationForFavorites;
         darkModeSwitch.checked = applicationSettings.isDarkTheme;
+        clearFilterAfterChangeSectionSwitch.checked = userSettings.clearFiltersAfterChangeSection;
     }
 }

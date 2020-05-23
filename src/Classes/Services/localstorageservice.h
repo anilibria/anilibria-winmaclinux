@@ -125,6 +125,7 @@ public:
     Q_INVOKABLE void setJumpMinute(int jumpMinute);
     Q_INVOKABLE void setJumpSecond(int jumpSecond);
     Q_INVOKABLE void setShowReleaseInfo(bool showReleaseInfo);
+    Q_INVOKABLE void setClearFiltersAfterChangeSection(bool clearFiltersAfterChangeSection);
     Q_INVOKABLE QString getUserSettings();
     Q_INVOKABLE QString getYoutubeItems();
     Q_INVOKABLE void copyTorrentToFile(QString source, QString target);
