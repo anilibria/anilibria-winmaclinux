@@ -81,7 +81,6 @@ Page {
 
     onWidthChanged: {
         const columnCount = parseInt(page.width / 520);
-        itemGrid.columns = columnCount < 1 ? 1 : columnCount;
     }
 
     onRefreshReleases: {
@@ -1181,32 +1180,18 @@ Page {
                 }
             }
 
-            Flickable {
-                id: scrollview
+            Rectangle {
+                color: "transparent"
                 Layout.fillHeight: true
                 Layout.fillWidth: true
-                Layout.alignment: Qt.AlignJustify
-                clip: true
-                contentWidth: parent.width
-                contentHeight: itemGrid.height
-                onContentYChanged: {
-                    if (page.fillingReleases) return;
-
-                    if (scrollview.atYEnd) {
-                        page.fillingReleases = true;
-                        fillNextReleases();
-                        page.fillingReleases = false;
-                    }
-
-                }
-                ScrollBar.vertical: ScrollBar {
-                    active: true
-                }
 
                 MouseArea {
-                    width: scrollview.width
-                    height: itemGrid.height
-                    acceptedButtons: Qt.RightButton
+                    anchors.fill: parent
+                    acceptedButtons: Qt.RightButton | Qt.MiddleButton
+                    onWheel: {
+                        if (wheel.angleDelta.y < 0) scrollview.flick(0, -800);
+                        if (wheel.angleDelta.y > 0) scrollview.flick(0, 800);
+                    }
                     onPressed: {
                         multupleMode.checked = !multupleMode.checked;
                     }
@@ -1214,8 +1199,7 @@ Page {
 
                 Rectangle {
                     color: "transparent"
-                    width: scrollview.width
-                    height: scrollview.height
+                    anchors.fill: parent
                     visible: releasesModel.count === 0
 
                     PlainText {
@@ -1226,51 +1210,98 @@ Page {
                     }
                 }
 
-                ColumnLayout {
+                GridView {
+                    id: scrollview
                     visible: releasesModel.count > 0
-                    width: page.width
-                    height: page.height
-                    Grid {
-                        id: itemGrid
-                        Layout.alignment: Qt.AlignHCenter
-                        columns: 2
-                        spacing: 10
-                        Repeater {
-                            model: releasesModel
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    height: parent.height
+                    width: Math.floor(window.width / 490) * 490
+                    cellWidth: 490
+                    cellHeight: 290
+                    delegate: releaseDelegate
+                    model: releasesModel
+                    clip: true
+                    onContentYChanged: {
+                        if (page.fillingReleases) return;
 
-                            ReleaseItem {
-                                releaseModel: modelData
-                                favoriteReleases: page.favoriteReleases
-                                isSelected: page.selectedReleases.filter(a => a === releaseModel.id).length
+                        if (scrollview.atYEnd) {
+                            page.fillingReleases = true;
+                            fillNextReleases();
+                            page.fillingReleases = false;
+                        }
 
-                                onLeftClicked: {
-                                    if (page.openedRelease) return;
+                    }
 
-                                    page.selectItem(modelData);
-                                }
-                                onRightClicked: {
-                                    multupleMode.checked = !multupleMode.checked;
-                                }
-                                onAddToFavorite: {
-                                    synchronizationService.addUserFavorites(applicationSettings.userToken, modelData.id.toString());
-                                    page.selectedReleases = [];
-                                }
-                                onRemoveFromFavorite: {
-                                    synchronizationService.removeUserFavorites(applicationSettings.userToken, modelData.id.toString());
-                                    page.selectedReleases = [];
-                                }
-                                onWatchRelease: {
-                                    page.watchRelease(id, videos, -1);
-                                }
+                    Component {
+                        id: testDelegate
+                        Rectangle {
+                            width: 480
+                            height: 280
+                            color: "red"
+
+                        }
+                    }
+
+                    Component {
+                        id: releaseDelegate
+                        ReleaseItem {
+                            releaseModel: modelData
+                            favoriteReleases: page.favoriteReleases
+                            isSelected: page.selectedReleases.filter(a => a === releaseModel.id).length
+
+                            onLeftClicked: {
+                                if (page.openedRelease) return;
+
+                                page.selectItem(modelData);
+                            }
+                            onRightClicked: {
+                                multupleMode.checked = !multupleMode.checked;
+                            }
+                            onAddToFavorite: {
+                                synchronizationService.addUserFavorites(applicationSettings.userToken, modelData.id.toString());
+                                page.selectedReleases = [];
+                            }
+                            onRemoveFromFavorite: {
+                                synchronizationService.removeUserFavorites(applicationSettings.userToken, modelData.id.toString());
+                                page.selectedReleases = [];
+                            }
+                            onWatchRelease: {
+                                page.watchRelease(id, videos, -1);
                             }
                         }
                     }
-                }
 
-                Component.onCompleted: {
-                    scrollview.maximumFlickVelocity = scrollview.maximumFlickVelocity - 1050;
+                    Component.onCompleted: {
+                        scrollview.maximumFlickVelocity = scrollview.maximumFlickVelocity - 1050;
+                    }
                 }
             }
+        }
+    }
+
+    Rectangle {
+        color: "transparent"
+        width: 50
+        height: 50
+        anchors.right: parent.right
+        anchors.bottom: parent.bottom
+        IconButton {
+            anchors.centerIn: parent
+            visible: scrollview.contentY > 100
+            height: 30
+            width: 30
+            iconColor: ApplicationTheme.filterIconButtonColor
+            hoverColor: ApplicationTheme.filterIconButtonHoverColor
+            iconPath: "../Assets/Icons/arrowup.svg"
+            iconWidth: 24
+            iconHeight: 24
+            ToolTip.delay: 1000
+            ToolTip.visible: hovered
+            ToolTip.text: "Вернуться в начало списка релизов"
+            onButtonPressed: {
+                scrollview.contentY = 0;
+            }
+
         }
     }
 
@@ -1918,7 +1949,7 @@ Page {
         if (releasesModel.count < 12) return;
         if (page.pageIndex === -1) return;
 
-        if (page.pageIndex === 7) {
+        if (page.pageIndex === 17) {
             releasesModel.append(
                 {
                     model: {

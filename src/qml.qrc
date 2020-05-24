@@ -74,5 +74,6 @@
         <file>Controls/AccentText.qml</file>
         <file>Controls/CommonMenu.qml</file>
         <file>Views/ReleaseItem.qml</file>
+        <file>Assets/Icons/arrowup.svg</file>
     </qresource>
 </RCC>
