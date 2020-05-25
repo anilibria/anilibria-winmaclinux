@@ -21,32 +21,66 @@
 
 #include <QObject>
 #include <QNetworkAccessManager>
+#include <QNetworkRequest>
 #include <QNetworkReply>
-#include <QQueue>
-#include "../Models/downloadqueueitemmodel.h"
+#include <QUrl>
+#include <QTimer>
 
 class DownloadManager : public QObject
 {
     Q_OBJECT
+    Q_PROPERTY(QUrl url READ url WRITE setUrl NOTIFY urlChanged)
+    Q_PROPERTY(bool running READ running WRITE setRunning NOTIFY runningChanged)
+    Q_PROPERTY(qreal progress READ progress NOTIFY progressChanged)
+    Q_PROPERTY(int displayBytesInSeconds READ displayBytesInSeconds NOTIFY displayBytesInSecondsChanged)
+    Q_PROPERTY(QUrl destination READ destination WRITE setDestination NOTIFY destinationChanged)
 
 private:
     QNetworkAccessManager* m_CurrentAccessManager;
-    DownloadQueueItemModel* m_CurrentDownloadingItem;
-    QQueue<DownloadQueueItemModel*>* m_QueuedItems;
+    QNetworkReply* m_CurrentNetworkReply;
+    QTimer* m_DownloadSpeedTimer;
+    qint64 m_DownloadedBytesInSecond;
+
+    QUrl m_Url;
+    bool m_Running;
+    qreal m_Progress;
+    QUrl m_Destination;
+    int m_DisplayBytesInSeconds;
 
 public:
     explicit DownloadManager(QObject *parent = nullptr);
 
-    void startDownload();
+    QUrl url() const { return m_Url; }
+    bool running() const { return m_Running; }
+    qreal progress() const { return m_Progress; }
+    QUrl destination() const { return m_Destination; }
+    int displayBytesInSeconds() const { return m_DisplayBytesInSeconds; }
 
-private:
-    void takeNextDownload();
+    void setUrl(QUrl url) noexcept;
+    void setRunning(bool running) noexcept;
+    void setDestination(QUrl destination) noexcept;
 
 signals:
+    void urlChanged(QUrl url);
     void seriaDownloaded(int id, int seriaId);
+    void runningChanged(bool running);
+    void progressChanged(qreal progress);
+    void destinationChanged(QUrl destination);
+    void displayBytesInSecondsChanged(int bytesInSeconds);
+
+    void started();
+    void finished();
+    void update(int kiloBytesReceived, int kiloBytesTotal);
+    void error(int errorCode, QString errorString);
 
 public slots:
-    void seriaFinished(QNetworkReply* reply);
+    void start();
+    void stop();
+
+private slots:
+    void onFinished();
+    void onDownloadProgress(qint64 bytesReceived, qint64 bytesTotal);
+    void onTimerTimeout();
 
 };
 
