@@ -22,11 +22,12 @@ DownloadManager::DownloadManager(QObject *parent) : QObject(parent),
     m_CurrentAccessManager(nullptr),
     m_CurrentNetworkReply(nullptr),
     m_DownloadSpeedTimer(new QTimer(this)),
-    m_DownloadedBytesInSecond(0),
     m_Url(""),
     m_Running(false),
     m_Progress(0),
-    m_Destination("")
+    m_Destination(""),
+    m_DisplayBytesInSeconds(""),
+    m_BytesInSeconds(0)
 {
     connect(m_DownloadSpeedTimer, &QTimer::timeout, this, &DownloadManager::onTimerTimeout);
 }
@@ -36,15 +37,7 @@ void DownloadManager::setUrl(QUrl url) noexcept
     if (url == m_Url) return;
 
     m_Url = url;
-    emit
-}
-
-void DownloadManager::setRunning(bool running) noexcept
-{
-    if (running == m_Running) return;
-
-    m_Running = running;
-    emit runningChanged(m_Running);
+    emit urlChanged(m_Url);
 }
 
 void DownloadManager::setDestination(QUrl destination) noexcept
@@ -55,13 +48,25 @@ void DownloadManager::setDestination(QUrl destination) noexcept
     emit destinationChanged(m_Destination);
 }
 
+void DownloadManager::setDisplayBytesInSeconds(QString displayBytesInSeconds)
+{
+    m_DisplayBytesInSeconds = displayBytesInSeconds;
+    emit displayBytesInSecondsChanged(m_DisplayBytesInSeconds);
+}
+
+void DownloadManager::setRunning(bool running)
+{
+    m_Running = running;
+    emit runningChanged(m_Running);
+}
+
 void DownloadManager::start()
 {
     if (m_Running) return;
 
     if (m_CurrentAccessManager == nullptr) m_CurrentAccessManager = new QNetworkAccessManager(this);
 
-    m_Running = true;
+    setRunning(true);
 
     m_CurrentNetworkReply = m_CurrentAccessManager->get(QNetworkRequest(m_Url));
     connect(m_CurrentNetworkReply,&QNetworkReply::finished,this,&DownloadManager::onFinished);
@@ -89,20 +94,29 @@ void DownloadManager::onFinished()
     }
 
     m_DownloadSpeedTimer->stop();
+    setRunning(false);
+    setDisplayBytesInSeconds("");
 }
 
 void DownloadManager::onDownloadProgress(qint64 bytesReceived, qint64 bytesTotal)
 {
-    if (bytesTotal > 0) {
-
-    }
-    m_DownloadedBytesInSecond += (int)bytesReceived;
+    m_BytesInSeconds = m_BytesInSeconds + (bytesTotal - bytesReceived);
 }
 
 void DownloadManager::onTimerTimeout()
 {
-    auto downloadedBytesInSecond = (int)m_DownloadedBytesInSecond;
-    m_DownloadedBytesInSecond = 0;
-    displayBytesInSecondsChanged(downloadedBytesInSecond);
-
+    QVector<QString> sizes(5);
+    sizes[0] = "B";
+    sizes[1] = "KB";
+    sizes[2] = "MB";
+    sizes[3] = "GB";
+    sizes[4] = "TB";
+    double len = m_BytesInSeconds;
+    int order = 0;
+    while (len >= 1024 && order < 4) {
+        order++;
+        len = len / 1024;
+    }
+    setDisplayBytesInSeconds(QString::number(len) + " " + sizes[order] + "/s");
+    m_BytesInSeconds = 0;
 }
