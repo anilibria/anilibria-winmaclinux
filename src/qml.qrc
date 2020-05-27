@@ -75,5 +75,6 @@
         <file>Controls/CommonMenu.qml</file>
         <file>Views/ReleaseItem.qml</file>
         <file>Assets/Icons/arrowup.svg</file>
+        <file>Views/Downloads.qml</file>
     </qresource>
 </RCC>

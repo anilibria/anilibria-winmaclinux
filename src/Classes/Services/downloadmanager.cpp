@@ -60,6 +60,14 @@ void DownloadManager::setRunning(bool running)
     emit runningChanged(m_Running);
 }
 
+void DownloadManager::setProgress(qreal progress)
+{
+    if (progress == m_Progress) return;
+
+    m_Progress = progress;
+    emit progressChanged(progress);
+}
+
 void DownloadManager::start()
 {
     if (m_Running) return;
@@ -88,19 +96,23 @@ void DownloadManager::stop()
 
 void DownloadManager::onFinished()
 {
+    m_DownloadSpeedTimer->stop();
+    setRunning(false);
+    setDisplayBytesInSeconds("");
+
     if (m_CurrentNetworkReply->error()) {
         emit error((int)m_CurrentNetworkReply->error(), m_CurrentNetworkReply->errorString());
         return;
     }
 
-    m_DownloadSpeedTimer->stop();
-    setRunning(false);
-    setDisplayBytesInSeconds("");
+    //TODO: save bytes to file
 }
 
 void DownloadManager::onDownloadProgress(qint64 bytesReceived, qint64 bytesTotal)
 {
     m_BytesInSeconds = m_BytesInSeconds + (bytesTotal - bytesReceived);
+    double percent = (double)bytesReceived / (double)bytesTotal;
+    setProgress(std::round(percent * 100));
 }
 
 void DownloadManager::onTimerTimeout()
@@ -117,6 +129,6 @@ void DownloadManager::onTimerTimeout()
         order++;
         len = len / 1024;
     }
-    setDisplayBytesInSeconds(QString::number(len) + " " + sizes[order] + "/s");
+    setDisplayBytesInSeconds(QString::number((int)std::round(len)) + " " + sizes[order] + "/s");
     m_BytesInSeconds = 0;
 }
