@@ -594,6 +594,9 @@ Page {
                                     ListElement {
                                         text: "Признак избранности"
                                     }
+                                    ListElement {
+                                        text: "Признак просмотра"
+                                    }
                                 }
                             }
 

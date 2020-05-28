@@ -849,6 +849,26 @@ QString LocalStorageService::getReleasesByFilter(int page, QString title, int se
         return left > right;
     };
 
+    std::function<bool (const FullReleaseModel*, const FullReleaseModel*)> seenComparer = [seenMarks](const FullReleaseModel* first, const FullReleaseModel* second) {
+        auto leftCountSeenVideos = seenMarks.contains(first->id()) ? seenMarks.value(first->id()) : 0;
+        int leftIndex = leftCountSeenVideos == first->countOnlineVideos() ? 0 : (leftCountSeenVideos > 0 ? 1 : 2);
+
+        auto rightCountSeenVideos = seenMarks.contains(second->id()) ? seenMarks.value(second->id()) : 0;
+        int rightIndex = rightCountSeenVideos == second->countOnlineVideos() ? 0 : (rightCountSeenVideos > 0 ? 1 : 2);
+
+        return leftIndex < rightIndex;
+    };
+
+    std::function<bool (const FullReleaseModel*, const FullReleaseModel*)> seenDescendingComparer = [seenMarks](const FullReleaseModel* first, const FullReleaseModel* second) {
+        auto leftCountSeenVideos = seenMarks.contains(first->id()) ? seenMarks.value(first->id()) : 0;
+        int leftIndex = leftCountSeenVideos == first->countOnlineVideos() ? 0 : (leftCountSeenVideos > 0 ? 1 : 2);
+
+        auto rightCountSeenVideos = seenMarks.contains(second->id()) ? seenMarks.value(second->id()) : 0;
+        int rightIndex = rightCountSeenVideos == second->countOnlineVideos() ? 0 : (rightCountSeenVideos > 0 ? 1 : 2);
+
+        return leftIndex > rightIndex;
+    };
+
     QJsonArray releases;
 
     switch (sortingField) {
@@ -884,6 +904,9 @@ QString LocalStorageService::getReleasesByFilter(int page, QString title, int se
             break;
         case 10: //Признак избранности
             std::sort(m_CachedReleases->begin(), m_CachedReleases->end(), sortingDescending ? favoriteComparer : favoriteDescendingComparer);
+            break;
+        case 11: //Признак просмотра
+            std::sort(m_CachedReleases->begin(), m_CachedReleases->end(), sortingDescending ? seenComparer : seenDescendingComparer);
             break;
     }
 
