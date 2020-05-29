@@ -27,6 +27,8 @@
 #include "Classes/Services/applicationsettings.h"
 #include "Classes/Services/analyticsservice.h"
 #include "Classes/Services/versionchecker.h"
+//uncomment it after the release of the download manager
+//#include "Classes/Services/downloadmanager.h"
 #include "globalconstants.h"
 
 int main(int argc, char *argv[])
@@ -55,6 +57,8 @@ int main(int argc, char *argv[])
     qmlRegisterType<ApplicationSettings>("Anilibria.Services", 1, 0, "ApplicationSettings");    
     qmlRegisterType<AnalyticsService>("Anilibria.Services", 1, 0, "AnalyticsService");
     qmlRegisterType<VersionChecker>("Anilibria.Services", 1, 0, "VersionChecker");
+    //uncomment it after the release of the download manager
+    //qmlRegisterType<DownloadManager>("Anilibria.Services", 1, 0, "DownloadManager");
 
     QQmlApplicationEngine engine;
     engine.rootContext()->setContextProperty("ApplicationVersion", ApplicationVersion);

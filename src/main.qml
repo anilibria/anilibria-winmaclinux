@@ -134,7 +134,9 @@ ApplicationWindow {
             "authorization": authorization,
             "release": releases,
             "youtube": youtube,
-            "about": about
+            "about": about//,
+            //uncomment it after the release of the download manager
+            //"download": download
         };
 
         const currentPage = pages[currentPageId];
@@ -565,6 +567,30 @@ ApplicationWindow {
                     drawer.close();
                 }
             }
+            /*ItemDelegate {
+                contentItem: Item {
+                    Row {
+                        spacing: 10
+                        Image {
+                            source: "Assets/Icons/donate.svg"
+                            sourceSize.width: 30
+                            sourceSize.height: 30
+                            mipmap: true
+                        }
+                        Label {
+                            anchors.leftMargin: 10
+                            anchors.verticalCenter: parent.verticalCenter
+                            color: "white"
+                            text: qsTr("Менеджер загрузок")
+                        }
+                    }
+                }
+                width: parent.width
+                onClicked: {
+                    showPage("download");
+                    drawer.close();
+                }
+            }*/
             ItemDelegate {
                 visible: !notVisibleSignin
                 contentItem: Item {
@@ -689,6 +715,11 @@ ApplicationWindow {
         id: about
         visible: false
     }
+    //uncomment it after the release of the download manager
+    /*Downloads {
+        id: download
+        visible: false
+    }*/
 
     Rectangle {
         id: notificationOverlay

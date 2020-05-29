@@ -343,7 +343,9 @@ Page {
 
                     Rectangle {
                         id: filtersExistsMark
-                        visible: descriptionSearchField.text || typeSearchField.text || genresSearchField.text || voicesSearchField.text || yearsSearchField.text || seasonesSearchField.text || statusesSearchField.text
+                        visible: descriptionSearchField.text || typeSearchField.text || genresSearchField.text ||
+                                 voicesSearchField.text || yearsSearchField.text || seasonesSearchField.text ||
+                                 statusesSearchField.text || favoriteMarkSearchField.currentIndex > 0 || seenMarkSearchField.currentIndex > 0
                         anchors.top: parent.top
                         anchors.right: parent.right
                         anchors.rightMargin: 6
@@ -359,7 +361,7 @@ Page {
                         x: 40
                         y: searchPopupButton.height - 45
                         width: 450
-                        height: 380
+                        height: 440
                         modal: true
                         focus: true
                         closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
@@ -509,6 +511,59 @@ Page {
                                 placeholderText: "Вводите статусы через запятую"
                             }
 
+                            PlainText {
+                                id: labelFavoriteMarkSearchField
+                                width: parent.width / 2 - 5
+                                anchors.top: statusesSearchField.bottom
+                                anchors.rightMargin: 10
+                                fontPointSize: 11
+                                text: qsTr("Признак избранности")
+                            }
+                            PlainText {
+                                id: labelSeenMarkSearchField
+                                anchors.top: statusesSearchField.bottom
+                                anchors.left: labelFavoriteMarkSearchField.right
+                                anchors.rightMargin: 10
+                                fontPointSize: 11
+                                text: qsTr("Признак просмотра")
+                            }
+                            ComboBox {
+                                id: favoriteMarkSearchField
+                                width: parent.width / 2 - 5
+                                anchors.top: labelFavoriteMarkSearchField.bottom
+                                anchors.rightMargin: 10
+                                model: ListModel {
+                                    ListElement {
+                                        text: "Не используется"
+                                    }
+                                    ListElement {
+                                        text: "В избранном"
+                                    }
+                                    ListElement {
+                                        text: "Не в избранном"
+                                    }
+                                }
+                            }
+                            ComboBox {
+                                id: seenMarkSearchField
+                                width: parent.width / 2 - 5
+                                anchors.top: labelFavoriteMarkSearchField.bottom
+                                anchors.right: parent.right
+                                model: ListModel {
+                                    ListElement {
+                                        text: "Не используется"
+                                    }
+                                    ListElement {
+                                        text: "Просмотренные"
+                                    }
+                                    ListElement {
+                                        text: "Просматриваемые"
+                                    }
+                                    ListElement {
+                                        text: "Не просмотренные"
+                                    }
+                                }
+                            }
                         }
                     }
 
@@ -1930,7 +1985,9 @@ Page {
                 seasonesSearchField.text,
                 statusesSearchField.text,
                 sortingComboBox.currentIndex,
-                sortingDirectionComboBox.currentIndex == 1 ? true : false
+                sortingDirectionComboBox.currentIndex == 1 ? true : false,
+                favoriteMarkSearchField.currentIndex,
+                seenMarkSearchField.currentIndex
             )
         );
     }
@@ -2000,6 +2057,8 @@ Page {
         yearsSearchField.text = "";
         seasonesSearchField.text = "";
         statusesSearchField.text = "";
+        favoriteMarkSearchField.currentIndex = 0;
+        seenMarkSearchField.currentIndex = 0;
     }
 
     function changeSection(section) {

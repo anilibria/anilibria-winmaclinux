@@ -728,7 +728,7 @@ static bool compareSeasonDescending(const FullReleaseModel* first, const FullRel
     return first->season() > second->season();
 }
 
-QString LocalStorageService::getReleasesByFilter(int page, QString title, int section, QString description, QString type, QString genres, bool genresOr, QString voices, bool voicesOr, QString years, QString seasones, QString statuses, int sortingField, bool sortingDescending)
+QString LocalStorageService::getReleasesByFilter(int page, QString title, int section, QString description, QString type, QString genres, bool genresOr, QString voices, bool voicesOr, QString years, QString seasones, QString statuses, int sortingField, bool sortingDescending, int favoriteMark, int seenMark)
 {
     int pageSize = 12;
     int startIndex = (page - 1) * pageSize;
@@ -970,6 +970,18 @@ QString LocalStorageService::getReleasesByFilter(int page, QString title, int se
                 if (!checkOrCondition(voicesList, releaseVoicesList)) continue;
             }
         }
+
+        //favorite mark
+
+        if (favoriteMark == 1 && !userFavorites.contains(QString::number(releaseItem->id()))) continue;
+        if (favoriteMark == 2 && userFavorites.contains(QString::number(releaseItem->id()))) continue;
+
+        //seen mark
+        auto countVideos = seenMarks.contains(releaseItem->id()) ? seenMarks.value(releaseItem->id()) : 0;
+        int seenState = countVideos == releaseItem->countOnlineVideos() ? 0 : (countVideos > 0 ? 1 : 2);
+        if (seenMark == 1 && !(seenState == 0)) continue;
+        if (seenMark == 2 && !(seenState == 1)) continue;
+        if (seenMark == 3 && !(seenState == 2)) continue;
 
         //favorites section
         if (section == FavoriteSection) {
