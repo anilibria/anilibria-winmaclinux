@@ -64,6 +64,7 @@ private:
     void setDisplayBytesInSeconds(QString displayBytesInSeconds);
     void setRunning(bool running);
     void setProgress(qreal progress);
+    double round(double number);
 
 signals:
     void urlChanged(QUrl url);

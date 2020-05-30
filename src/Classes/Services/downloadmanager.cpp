@@ -68,6 +68,11 @@ void DownloadManager::setProgress(qreal progress)
     emit progressChanged(progress);
 }
 
+double DownloadManager::round(double number)
+{
+    return floor(number + 0.5);
+}
+
 void DownloadManager::start()
 {
     if (m_Running) return;
@@ -112,7 +117,7 @@ void DownloadManager::onDownloadProgress(qint64 bytesReceived, qint64 bytesTotal
 {
     m_BytesInSeconds = m_BytesInSeconds + (bytesTotal - bytesReceived);
     double percent = (double)bytesReceived / (double)bytesTotal;
-    setProgress(std::round(percent * 100));
+    setProgress(round(percent * 100));
 }
 
 void DownloadManager::onTimerTimeout()
@@ -129,6 +134,6 @@ void DownloadManager::onTimerTimeout()
         order++;
         len = len / 1024;
     }
-    setDisplayBytesInSeconds(QString::number((int)std::round(len)) + " " + sizes[order] + "/s");
+    setDisplayBytesInSeconds(QString::number((int)round(len)) + " " + sizes[order] + "/s");
     m_BytesInSeconds = 0;
 }
