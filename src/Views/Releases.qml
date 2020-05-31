@@ -527,7 +527,7 @@ Page {
                                 fontPointSize: 11
                                 text: qsTr("Признак просмотра")
                             }
-                            ComboBox {
+                            CommonComboBox {
                                 id: favoriteMarkSearchField
                                 width: parent.width / 2 - 5
                                 anchors.top: labelFavoriteMarkSearchField.bottom
@@ -544,7 +544,7 @@ Page {
                                     }
                                 }
                             }
-                            ComboBox {
+                            CommonComboBox {
                                 id: seenMarkSearchField
                                 width: parent.width / 2 - 5
                                 anchors.top: labelFavoriteMarkSearchField.bottom
@@ -610,7 +610,7 @@ Page {
                                 fontPointSize: 11
                                 text: qsTr("Сортировать по")
                             }
-                            ComboBox {
+                            CommonComboBox {
                                 id: sortingComboBox
                                 anchors.top: labelSortingField.bottom
                                 anchors.right: parent.right
@@ -661,7 +661,7 @@ Page {
                                 fontPointSize: 11
                                 text: qsTr("В порядке")
                             }
-                            ComboBox {
+                            CommonComboBox {
                                 id: sortingDirectionComboBox
                                 anchors.top: labelSortingDirection.bottom
                                 anchors.right: parent.right
@@ -872,7 +872,7 @@ Page {
                             fontPointSize: 11
                             text: "Торрент"
                         }
-                        ComboBox {
+                        CommonComboBox {
                             id: downloadTorrentMode
                             currentIndex: 0
                             anchors.top: downloadTorrentModeLabel.bottom

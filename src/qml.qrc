@@ -76,5 +76,6 @@
         <file>Views/ReleaseItem.qml</file>
         <file>Assets/Icons/arrowup.svg</file>
         <file>Views/Downloads.qml</file>
+        <file>Controls/CommonComboBox.qml</file>
     </qresource>
 </RCC>
