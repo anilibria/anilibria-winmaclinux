@@ -324,7 +324,7 @@ Page {
         }
 
         onPositionChanged: {
-            if (!playerLocation.pressed) playerLocation.value = position;
+            if (!playerLocation.pressed && _page.lastMovedPosition === 0) playerLocation.value = position;
 
             _page.displayVideoPosition = `${_page.getDisplayTimeFromSeconds(position / 1000)} из ${_page.getDisplayTimeFromSeconds(duration / 1000)}`;
             _page.displayEndVideoPosition = _page.getDisplayTimeFromSeconds((duration - position) / 1000);
@@ -812,7 +812,7 @@ Page {
                                     columns: 2
                                     spacing: 2
 
-                                    ComboBox {
+                                    CommonComboBox {
                                         id: jumpMinuteComboBox
                                         Layout.column: 0
                                         model: ListModel {
@@ -830,7 +830,7 @@ Page {
                                             localStorage.setJumpMinute(_page.jumpMinutes[index]);
                                         }
                                     }
-                                    ComboBox {
+                                    CommonComboBox {
                                         id: jumpSecondComboBox
                                         Layout.column: 1
                                         model: ListModel {
