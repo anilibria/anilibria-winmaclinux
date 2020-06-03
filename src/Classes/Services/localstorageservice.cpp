@@ -61,7 +61,8 @@ LocalStorageService::LocalStorageService(QObject *parent) : QObject(parent),
     m_SeenMarkModels(new QHash<QString, bool>()),
     m_HistoryModels(new QHash<int, HistoryModel*>()),
     m_UserSettingsModel(new UserSettingsModel()),
-    m_IsChangesExists(false)
+    m_IsChangesExists(false),
+    m_CountReleases(0)
 {
     m_AllReleaseUpdatedWatcher = new QFutureWatcher<void>(this);
 
@@ -116,6 +117,14 @@ void LocalStorageService::setIsChangesExists(bool isChangesExists)
 
     m_IsChangesExists = isChangesExists;
     emit isChangesExistsChanged();
+}
+
+void LocalStorageService::setCountReleases(int countReleases) noexcept
+{
+    if (m_CountReleases == countReleases) return;
+
+    m_CountReleases = countReleases;
+    emit countReleasesChanged(countReleases);
 }
 
 void LocalStorageService::updateAllReleases(const QString &releases)
@@ -1091,6 +1100,8 @@ void LocalStorageService::updateReleasesInnerCache()
 
         m_CachedReleases->append(jsonRelease);
     }
+
+    setCountReleases(m_CachedReleases->count());
 }
 
 QList<int> LocalStorageService::getChangesCounts()

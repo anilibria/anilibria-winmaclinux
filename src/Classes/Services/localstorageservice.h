@@ -37,6 +37,8 @@ class LocalStorageService : public QObject
     Q_OBJECT
 
     Q_PROPERTY(bool isChangesExists READ isChangesExists WRITE setIsChangesExists NOTIFY isChangesExistsChanged)
+    Q_PROPERTY(int countReleases READ countReleases WRITE setCountReleases NOTIFY countReleasesChanged)
+
 private:
     QFutureWatcher<void>* m_AllReleaseUpdatedWatcher;
     QList<FullReleaseModel*>* m_CachedReleases;
@@ -47,6 +49,7 @@ private:
     UserSettingsModel* m_UserSettingsModel;    
     bool m_IsChangesExists;
     OfflineImageCacheService* m_OfflineImageCacheService;
+    int m_CountReleases;
 
     QString videosToJson(QList<OnlineVideoModel>& videos);
     QString torrentsToJson(QList<ReleaseTorrentModel>& torrents);
@@ -87,6 +90,9 @@ public:
 
     bool isChangesExists();
     void setIsChangesExists(bool isChangesExists);
+
+    int countReleases() { return m_CountReleases; }
+    void setCountReleases(int countReleases) noexcept;
 
     Q_INVOKABLE void updateAllReleases(const QString& releases);
     Q_INVOKABLE void updateYoutubeItems(const QString& youtubeItems);
@@ -136,6 +142,7 @@ public:
 signals:
     void allReleasesFinished();
     void isChangesExistsChanged();
+    void countReleasesChanged(int countReleases);
 
 public slots:
     void allReleasesUpdated();    
