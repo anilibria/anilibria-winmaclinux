@@ -71,6 +71,7 @@ private:
     QString getYoutubeCachePath() const;
     QString getUserSettingsCachePath() const;
     QString getNotificationCachePath() const;
+    QString getCinemahallCachePath() const;
     void createIfNotExistsFile(QString path, QString defaultContent);
     void saveChanges();
     void resetChanges();

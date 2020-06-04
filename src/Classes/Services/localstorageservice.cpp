@@ -87,6 +87,7 @@ LocalStorageService::LocalStorageService(QObject *parent) : QObject(parent),
     createIfNotExistsFile(getUserSettingsCachePath(), "{}");
     createIfNotExistsFile(getNotificationCachePath(), "{ \"newReleases\": [], \"newOnlineSeries\": [], \"newTorrents\": [], \"newTorrentSeries\": [] }");
     createIfNotExistsFile(getYoutubeCachePath(), "[]");
+    createIfNotExistsFile(getCinemahallCachePath(), "[]");
     QString favoritespath = getFavoritesCachePath();
 
     updateReleasesInnerCache();
@@ -399,6 +400,11 @@ QString LocalStorageService::getUserSettingsCachePath() const
 QString LocalStorageService::getNotificationCachePath() const
 {
     return QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation) + "/notification.cache";
+}
+
+QString LocalStorageService::getCinemahallCachePath() const
+{
+    return QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation) + "/cinemahall.cache";
 }
 
 void LocalStorageService::createIfNotExistsFile(QString path, QString defaultContent)
