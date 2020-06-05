@@ -9,7 +9,8 @@ UserSettingsModel::UserSettingsModel(): m_Quality(1),
     m_JumpMinute(1),
     m_JumpSecond(15),
     m_ShowReleaseInfo(false),
-    m_ClearFiltersAfterChangeSection(true)
+    m_ClearFiltersAfterChangeSection(true),
+    m_CompactMode(false)
 {
 
 }
@@ -64,6 +65,11 @@ void UserSettingsModel::setClearFiltersAfterChangeSection(const bool clearFilter
     m_ClearFiltersAfterChangeSection = clearFiltersAfterChangeSection;
 }
 
+void UserSettingsModel::setCompactMode(const bool compactMode) noexcept
+{
+    m_CompactMode = compactMode;
+}
+
 void UserSettingsModel::fromJson(QString json)
 {
     if (json.isEmpty()) return;
@@ -81,6 +87,7 @@ void UserSettingsModel::fromJson(QString json)
     if (jsonSettings.contains("notificationForFavorites")) setNotificationForFavorites(jsonSettings.value("notificationForFavorites").toBool());
     if (jsonSettings.contains("showReleaseInfo")) setShowReleaseInfo(jsonSettings.value("showReleaseInfo").toBool());
     if (jsonSettings.contains("clearFiltersAfterChangeSection")) setClearFiltersAfterChangeSection(jsonSettings.value("clearFiltersAfterChangeSection").toBool());
+    if (jsonSettings.contains("compactMode")) setCompactMode(jsonSettings.value("compactMode").toBool());
 }
 
 QString UserSettingsModel::toJson() noexcept
@@ -97,6 +104,7 @@ QString UserSettingsModel::toJson() noexcept
     object["jumpSecond"] = jumpSecond();
     object["showReleaseInfo"] = showReleaseInfo();
     object["clearFiltersAfterChangeSection"] = clearFiltersAfterChangeSection();
+    object["compactMode"] = compactMode();
 
     QJsonDocument saveDoc(object);
     return saveDoc.toJson();

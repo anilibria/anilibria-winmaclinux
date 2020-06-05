@@ -860,9 +860,9 @@ Page {
                     Popup {
                         id: releaseSettingsPopup
                         x: 40
-                        y: sortingPopupButton.height - 100
+                        y: sortingPopupButton.height - 180
                         width: 370
-                        height: 310
+                        height: 390
                         modal: true
                         focus: true
                         closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
@@ -931,6 +931,25 @@ Page {
                             ToolTip.delay: 1000
                             ToolTip.visible: hovered
                             ToolTip.text: "Разделы это кнопки находящиеся по центру выше списка релизов\nДанная настройка влияет на то будут ли сброшены все фильтры при смене раздела или нет"
+                        }
+
+                        PlainText {
+                            id: compactModeLabel
+                            anchors.top: clearFilterAfterChangeSectionSwitch.bottom
+                            anchors.topMargin: 4
+                            fontPointSize: 11
+                            text: "Компактный режим"
+                        }
+                        Switch {
+                            id: compactModeSwitch
+                            anchors.top: compactModeLabel.bottom
+                            onCheckedChanged: {
+                                localStorage.setCompactMode(checked);
+                            }
+
+                            ToolTip.delay: 1000
+                            ToolTip.visible: hovered
+                            ToolTip.text: "Компактный режим позволяет уменьшить количество элементов на странице"
                         }
                     }
 
@@ -2155,5 +2174,6 @@ Page {
         notificationForFavorites.checked = userSettings.notificationForFavorites;
         darkModeSwitch.checked = applicationSettings.isDarkTheme;
         clearFilterAfterChangeSectionSwitch.checked = userSettings.clearFiltersAfterChangeSection;
+        compactModeSwitch.checked = userSettings.compactMode;
     }
 }

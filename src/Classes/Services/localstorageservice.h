@@ -44,12 +44,13 @@ private:
     QList<FullReleaseModel*>* m_CachedReleases;
     ChangesModel* m_ChangesModel;
     QHash<int, SeenModel*>* m_SeenModels;
-    QHash<QString,bool>* m_SeenMarkModels;
+    QHash<QString, bool>* m_SeenMarkModels;
     QHash<int, HistoryModel*>* m_HistoryModels;
     UserSettingsModel* m_UserSettingsModel;    
     bool m_IsChangesExists;
     OfflineImageCacheService* m_OfflineImageCacheService;
     int m_CountReleases;
+    QSet<int>* m_CinemaHall;
 
     QString videosToJson(QList<OnlineVideoModel>& videos);
     QString torrentsToJson(QList<ReleaseTorrentModel>& torrents);
@@ -133,6 +134,7 @@ public:
     Q_INVOKABLE void setJumpSecond(int jumpSecond);
     Q_INVOKABLE void setShowReleaseInfo(bool showReleaseInfo);
     Q_INVOKABLE void setClearFiltersAfterChangeSection(bool clearFiltersAfterChangeSection);
+    Q_INVOKABLE void setCompactMode(bool compactMode);
     Q_INVOKABLE QString getUserSettings();
     Q_INVOKABLE QString getYoutubeItems();
     Q_INVOKABLE void copyTorrentToFile(QString source, QString target);

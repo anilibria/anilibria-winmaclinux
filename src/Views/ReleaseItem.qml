@@ -11,8 +11,8 @@ Rectangle {
     radius: 10
     border.color: ApplicationTheme.selectedItem
     border.width: releaseItem.isSelected ? 3 : 0
-    color: ApplicationTheme.panelBackground
-    layer.enabled: true
+    color: !compactModeSwitch.checked ? ApplicationTheme.panelBackground : "transparent"
+    layer.enabled: !compactModeSwitch.checked
     layer.effect: DropShadow {
         transparentBorder: true
         horizontalOffset: 2
@@ -56,18 +56,22 @@ Rectangle {
     Grid {
         anchors.topMargin: 10
         columnSpacing: 3
-        columns: 2
+        rowSpacing: 3
+        columns: !compactModeSwitch.checked ? 2 : 1
+        rows: compactModeSwitch.checked ? 2 : 1
         bottomPadding: 4
         leftPadding: 4
         topPadding: 4
         rightPadding: 4
+
         Rectangle {
-            visible: releaseModel.id > -1
+            visible: releaseModel.id > -1 && !compactModeSwitch.checked
             width: 182
             height: 272
             border.color: "#adadad"
             border.width: 1
             radius: 12
+
             Image {
                 anchors.centerIn: parent
                 source: localStorage.getReleasePosterPath(releaseModel.id, releaseModel.poster)
@@ -81,7 +85,58 @@ Rectangle {
                 }
             }
         }
+
+        Rectangle {
+            visible: compactModeSwitch.checked
+            width: 460
+            height: 236
+            color: "transparent"
+
+            Rectangle {
+                visible: releaseModel.id > -1
+                anchors.horizontalCenter: parent.horizontalCenter
+                width: 152
+                height: 232
+                border.color: "#adadad"
+                border.width: 1
+                radius: 12
+
+                Image {
+                    anchors.centerIn: parent
+                    source: localStorage.getReleasePosterPath(releaseModel.id, releaseModel.poster)
+                    sourceSize: Qt.size(150, 230)
+                    fillMode: Image.PreserveAspectCrop
+                    width: 150
+                    height: 230
+                    layer.enabled: true
+                    layer.effect: OpacityMask {
+                        maskSource: mask
+                    }
+                }
+            }
+        }
+
+        Rectangle {
+            visible: compactModeSwitch.checked
+            width: 460
+            height: 38
+            color: "transparent"
+
+            AccentText {
+                fontPointSize: 10
+                horizontalAlignment: Text.AlignHCenter
+                verticalAlignment: Text.AlignVCenter
+                width: 460
+                leftPadding: 8
+                topPadding: 6
+                wrapMode: Text.WordWrap
+                maximumLineCount: 2
+                text: releaseModel.title
+            }
+        }
+
         Grid {
+            visible: !compactModeSwitch.checked
             height: 280
             Layout.row: 1
             Layout.column: 1

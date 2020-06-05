@@ -19,6 +19,7 @@ private:
     int m_JumpSecond;
     bool m_ShowReleaseInfo;
     bool m_ClearFiltersAfterChangeSection;
+    bool m_CompactMode;
 
 public:
     UserSettingsModel();
@@ -33,6 +34,7 @@ public:
     int jumpSecond() const { return m_JumpSecond; }
     bool showReleaseInfo() const { return m_ShowReleaseInfo; }
     bool clearFiltersAfterChangeSection() const { return m_ClearFiltersAfterChangeSection; }
+    bool compactMode() const { return m_CompactMode; }
 
     void setQuality(const int quality) noexcept;
     void setVolume(const double volume) noexcept;
@@ -44,6 +46,7 @@ public:
     void setJumpSecond(const int jumpSecond) noexcept;
     void setShowReleaseInfo(const bool showReleaseInfo) noexcept;
     void setClearFiltersAfterChangeSection(const bool clearFiltersAfterChangeSection) noexcept;
+    void setCompactMode(const bool compactMode) noexcept;
 
     void fromJson(QString json);
     QString toJson() noexcept;

@@ -62,7 +62,8 @@ LocalStorageService::LocalStorageService(QObject *parent) : QObject(parent),
     m_HistoryModels(new QHash<int, HistoryModel*>()),
     m_UserSettingsModel(new UserSettingsModel()),
     m_IsChangesExists(false),
-    m_CountReleases(0)
+    m_CountReleases(0),
+    m_CinemaHall(new QSet<int>())
 {
     m_AllReleaseUpdatedWatcher = new QFutureWatcher<void>(this);
 
@@ -1424,6 +1425,13 @@ void LocalStorageService::setShowReleaseInfo(bool showReleaseInfo)
 void LocalStorageService::setClearFiltersAfterChangeSection(bool clearFiltersAfterChangeSection)
 {
     m_UserSettingsModel->setClearFiltersAfterChangeSection(clearFiltersAfterChangeSection);
+
+    saveSettings();
+}
+
+void LocalStorageService::setCompactMode(bool compactMode)
+{
+    m_UserSettingsModel->setCompactMode(compactMode);
 
     saveSettings();
 }
