@@ -38,6 +38,7 @@ class LocalStorageService : public QObject
 
     Q_PROPERTY(bool isChangesExists READ isChangesExists WRITE setIsChangesExists NOTIFY isChangesExistsChanged)
     Q_PROPERTY(int countReleases READ countReleases WRITE setCountReleases NOTIFY countReleasesChanged)
+    Q_PROPERTY(int countSeens READ countSeens WRITE setCountSeens NOTIFY countSeensChanged)
 
 private:
     QFutureWatcher<void>* m_AllReleaseUpdatedWatcher;
@@ -51,6 +52,7 @@ private:
     OfflineImageCacheService* m_OfflineImageCacheService;
     int m_CountReleases;
     QSet<int>* m_CinemaHall;
+    int m_CountSeens;
 
     QString videosToJson(QList<OnlineVideoModel>& videos);
     QString torrentsToJson(QList<ReleaseTorrentModel>& torrents);
@@ -86,6 +88,7 @@ private:
     QHash<int, int> getAllSeenMarkCount();
     int countOnlyFavorites(QList<int>* changes, QSet<int>* favorites);
     void setSeenMarkForRelease(int id, int countSeries, bool marked);
+    void recalculateSeenCounts();
 
 public:
     explicit LocalStorageService(QObject *parent = nullptr);
@@ -95,6 +98,9 @@ public:
 
     int countReleases() { return m_CountReleases; }
     void setCountReleases(int countReleases) noexcept;
+
+    int countSeens() { return m_CountSeens; }
+    void setCountSeens(int countSeens) noexcept;
 
     Q_INVOKABLE void updateAllReleases(const QString& releases);
     Q_INVOKABLE void updateYoutubeItems(const QString& youtubeItems);
@@ -146,6 +152,7 @@ signals:
     void allReleasesFinished();
     void isChangesExistsChanged();
     void countReleasesChanged(int countReleases);
+    void countSeensChanged(int countSeens);
 
 public slots:
     void allReleasesUpdated();    

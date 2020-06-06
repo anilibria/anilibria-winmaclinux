@@ -96,7 +96,7 @@ ApplicationWindow {
         PlainText {
             anchors.right: notificationCounter.left
             fontPointSize: 10
-            text: "Релизов " + localStorage.countReleases + " В избранном " + releases.favoriteReleases.length + " "
+            text: "Релизов " + localStorage.countReleases + " В избранном " + releases.favoriteReleases.length + " Просмотрено " + localStorage.countSeens + " "
         }
 
         Row {

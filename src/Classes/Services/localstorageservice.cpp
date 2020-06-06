@@ -63,7 +63,8 @@ LocalStorageService::LocalStorageService(QObject *parent) : QObject(parent),
     m_UserSettingsModel(new UserSettingsModel()),
     m_IsChangesExists(false),
     m_CountReleases(0),
-    m_CinemaHall(new QSet<int>())
+    m_CinemaHall(new QSet<int>()),
+    m_CountSeens(0)
 {
     m_AllReleaseUpdatedWatcher = new QFutureWatcher<void>(this);
 
@@ -127,6 +128,14 @@ void LocalStorageService::setCountReleases(int countReleases) noexcept
 
     m_CountReleases = countReleases;
     emit countReleasesChanged(countReleases);
+}
+
+void LocalStorageService::setCountSeens(int countSeens) noexcept
+{
+    if (m_CountSeens == countSeens) return;
+
+    m_CountSeens = countSeens;
+    emit countSeensChanged(countSeens);
 }
 
 void LocalStorageService::updateAllReleases(const QString &releases)
@@ -477,13 +486,15 @@ void LocalStorageService::loadSeenMarks()
     foreach (auto item, jsonSeenMarks) {
         m_SeenMarkModels->insert(item.toString(), true);
     }
+
+    recalculateSeenCounts();
 }
 
 void LocalStorageService::saveSeenMarks()
 {
     QJsonArray array;
 
-    QHashIterator<QString,bool> iterator(*m_SeenMarkModels);
+    QHashIterator<QString, bool> iterator(*m_SeenMarkModels);
     while (iterator.hasNext()) {
         iterator.next();
 
@@ -500,6 +511,8 @@ void LocalStorageService::saveSeenMarks()
     }
     seenMarkFile.write(seenMarkJson.toUtf8());
     seenMarkFile.close();
+
+    recalculateSeenCounts();
 }
 
 void LocalStorageService::loadHistory()
@@ -609,6 +622,20 @@ void LocalStorageService::setSeenMarkForRelease(int id, int countSeries, bool ma
             if (m_SeenMarkModels->contains(key)) m_SeenMarkModels->remove(key);
         }
     }
+}
+
+void LocalStorageService::recalculateSeenCounts()
+{
+    auto allSeenMarks = getAllSeenMarkCount();
+    QHashIterator<int, int> seenIterator(allSeenMarks);
+    int countSeens = 0;
+    while (seenIterator.hasNext()) {
+        seenIterator.next();
+
+        auto release = getReleaseFromCache(seenIterator.key());
+        if (release->countOnlineVideos() == seenIterator.value()) countSeens++;
+    }
+    setCountSeens(countSeens);
 }
 
 QString LocalStorageService::getRelease(int id)
