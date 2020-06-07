@@ -53,6 +53,7 @@ private:
     int m_CountReleases;
     QSet<int>* m_CinemaHall;
     int m_CountSeens;
+    QSet<int>* m_Downloads;
 
     QString videosToJson(QList<OnlineVideoModel>& videos);
     QString torrentsToJson(QList<ReleaseTorrentModel>& torrents);
@@ -75,6 +76,7 @@ private:
     QString getUserSettingsCachePath() const;
     QString getNotificationCachePath() const;
     QString getCinemahallCachePath() const;
+    QString getDownloadsCachePath() const;
     void createIfNotExistsFile(QString path, QString defaultContent);
     void saveChanges();
     void resetChanges();
