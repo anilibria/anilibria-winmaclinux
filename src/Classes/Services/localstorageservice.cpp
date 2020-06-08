@@ -103,6 +103,8 @@ LocalStorageService::LocalStorageService(QObject *parent) : QObject(parent),
     loadSeenMarks();
     loadHistory();
     loadSettings();
+    loadDownloads();
+    loadCinemahall();
 
     resetChanges();
 
@@ -589,6 +591,38 @@ void LocalStorageService::saveSettings()
     settingsFile.write(m_UserSettingsModel->toJson().toUtf8());
 
     settingsFile.close();
+}
+
+void LocalStorageService::loadDownloads()
+{
+    QFile downloadsFile(getDownloadsCachePath());
+    if (!downloadsFile.open(QFile::ReadOnly | QFile::Text)) {
+        //TODO: handle this situation
+    }
+    auto json = downloadsFile.readAll();
+    downloadsFile.close();
+
+    auto document = QJsonDocument::fromJson(json);
+    auto jsonArray = document.array();
+
+    m_Downloads->clear();
+    foreach (auto item, jsonArray) m_Downloads->insert(item.toInt());
+}
+
+void LocalStorageService::loadCinemahall()
+{
+    QFile cinemahallFile(getCinemahallCachePath());
+    if (!cinemahallFile.open(QFile::ReadOnly | QFile::Text)) {
+        //TODO: handle this situation
+    }
+    auto json = cinemahallFile.readAll();
+    cinemahallFile.close();
+
+    auto document = QJsonDocument::fromJson(json);
+    auto jsonArray = document.array();
+
+    m_CinemaHall->clear();
+    foreach (auto item, jsonArray) m_CinemaHall->insert(item.toInt());
 }
 
 QHash<int, int> LocalStorageService::getAllSeenMarkCount()

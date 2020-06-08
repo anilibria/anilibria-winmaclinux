@@ -87,6 +87,8 @@ private:
     void saveHistory();
     void loadSettings();
     void saveSettings();
+    void loadDownloads();
+    void loadCinemahall();
     QHash<int, int> getAllSeenMarkCount();
     int countOnlyFavorites(QList<int>* changes, QSet<int>* favorites);
     void setSeenMarkForRelease(int id, int countSeries, bool marked);
