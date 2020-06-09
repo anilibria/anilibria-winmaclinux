@@ -89,6 +89,8 @@ private:
     void saveSettings();
     void loadDownloads();
     void loadCinemahall();
+    void saveDownloads();
+    void saveCinemahall();
     QHash<int, int> getAllSeenMarkCount();
     int countOnlyFavorites(QList<int>* changes, QSet<int>* favorites);
     void setSeenMarkForRelease(int id, int countSeries, bool marked);
@@ -151,6 +153,7 @@ public:
     Q_INVOKABLE QString getReleasePosterPath(int id, QString url);   
     Q_INVOKABLE QString packAsM3UAndOpen(int id, QString quality);
     Q_INVOKABLE QString packAsMPCPLAndOpen(int id, QString quality);
+    Q_INVOKABLE void addToCinemahall(const QList<int>& ids);
 
 signals:
     void allReleasesFinished();

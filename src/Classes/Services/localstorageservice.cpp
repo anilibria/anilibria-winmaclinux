@@ -625,6 +625,50 @@ void LocalStorageService::loadCinemahall()
     foreach (auto item, jsonArray) m_CinemaHall->insert(item.toInt());
 }
 
+void LocalStorageService::saveDownloads()
+{
+    QJsonArray downloadsArray;
+
+    QSetIterator<int> iterator(*m_Downloads);
+    while(iterator.hasNext()) {
+
+        QJsonValue value(iterator.next());
+        downloadsArray.append(value);
+    }
+
+    QFile downloadsFile(getDownloadsCachePath());
+    if (!downloadsFile.open(QFile::WriteOnly | QFile::Text)) {
+        //TODO: handle this situation
+    }
+
+    auto document = QJsonDocument(downloadsArray);
+    downloadsFile.write(document.toJson());
+
+    downloadsFile.close();
+}
+
+void LocalStorageService::saveCinemahall()
+{
+    QJsonArray cinemahallArray;
+
+    QSetIterator<int> iterator(*m_CinemaHall);
+    while(iterator.hasNext()) {
+
+        QJsonValue value(iterator.next());
+        cinemahallArray.append(value);
+    }
+
+    QFile cinemahallFile(getCinemahallCachePath());
+    if (!cinemahallFile.open(QFile::WriteOnly | QFile::Text)) {
+        //TODO: handle this situation
+    }
+
+    auto document = QJsonDocument(cinemahallArray);
+    cinemahallFile.write(document.toJson());
+
+    cinemahallFile.close();
+}
+
 QHash<int, int> LocalStorageService::getAllSeenMarkCount()
 {
     QHash<int, int> result;
@@ -1605,6 +1649,15 @@ QString LocalStorageService::packAsMPCPLAndOpen(int id, QString quality)
     mpcplFile.close();
 
     return fileName;
+}
+
+void LocalStorageService::addToCinemahall(const QList<int>& ids)
+{
+    foreach(auto id, ids) {
+        m_CinemaHall->insert(id);
+    }
+
+    saveCinemahall();
 }
 
 void LocalStorageService::allReleasesUpdated()

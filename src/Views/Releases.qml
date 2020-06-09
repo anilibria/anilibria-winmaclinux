@@ -330,6 +330,42 @@ Page {
                     ToolTip.text: "Отметить релизы как просмотренные или не просмотренные"
                 }
                 IconButton {
+                    id: cinemahallMenuButton
+                    height: 45
+                    width: 40
+                    iconColor: "white"
+                    iconPath: "../Assets/Icons/popcorn.svg"
+                    iconWidth: 34
+                    iconHeight: 34
+                    onButtonPressed: {
+                        cinemahallMenuPanel.open();
+                    }
+
+                    CommonMenu {
+                        id: cinemahallMenuPanel
+                        y: cinemahallMenuButton.height
+                        width: 300
+
+                        CommonMenuItem {
+                            text: "Добавить в кинозал"
+                            enabled: page.selectedReleases.length
+                            onPressed: {
+                                localStorage.addToCinemahall(page.selectedReleases);
+                            }
+                        }
+                        CommonMenuItem {
+                            text: "Смотреть кинозал"
+                            onPressed: {
+
+                            }
+                        }
+                    }
+
+                    ToolTip.delay: 1000
+                    ToolTip.visible: hovered
+                    ToolTip.text: "Управление кинозалом"
+                }
+                IconButton {
                     id: searchPopupButton
                     height: 45
                     width: 40

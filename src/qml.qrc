@@ -77,5 +77,6 @@
         <file>Assets/Icons/arrowup.svg</file>
         <file>Views/Downloads.qml</file>
         <file>Controls/CommonComboBox.qml</file>
+        <file>Assets/Icons/popcorn.svg</file>
     </qresource>
 </RCC>
