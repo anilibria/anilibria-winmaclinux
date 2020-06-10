@@ -70,7 +70,9 @@ void DownloadManager::setProgress(qreal progress)
 
 double DownloadManager::round(double number)
 {
-    return floor(number + 0.5);
+    //TODO: fix error "missing floor"
+    return number + 0.5;
+    //return floor(number + 0.5);
 }
 
 void DownloadManager::start()
