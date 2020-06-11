@@ -74,6 +74,9 @@ Rectangle {
                 font.pointSize: fontSize
                 visible: placeholder && !edit.text
             }
+            Keys.onReturnPressed: {
+                //WORKAROUND: prevented an increase in the number of lines in the control
+            }
         }
     }
 
