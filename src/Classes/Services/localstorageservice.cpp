@@ -1660,6 +1660,22 @@ void LocalStorageService::addToCinemahall(const QList<int>& ids)
     saveCinemahall();
 }
 
+QString LocalStorageService::getReleasesByIds(const QList<int> &ids)
+{
+    auto idsSet = ids.toSet();
+    QJsonArray releases;
+    foreach (auto releaseItem, *m_CachedReleases) {
+        if (!idsSet.contains(releaseItem->id())) continue;
+
+        QJsonObject jsonValue;
+        releaseItem->writeToJson(jsonValue);
+        releases.append(jsonValue);
+    }
+
+    QJsonDocument saveDoc(releases);
+    return saveDoc.toJson();
+}
+
 void LocalStorageService::allReleasesUpdated()
 {
     emit allReleasesFinished();

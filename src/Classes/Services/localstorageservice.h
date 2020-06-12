@@ -154,6 +154,7 @@ public:
     Q_INVOKABLE QString packAsM3UAndOpen(int id, QString quality);
     Q_INVOKABLE QString packAsMPCPLAndOpen(int id, QString quality);
     Q_INVOKABLE void addToCinemahall(const QList<int>& ids);
+    Q_INVOKABLE QString getReleasesByIds(const QList<int>& ids);
 
 signals:
     void allReleasesFinished();
