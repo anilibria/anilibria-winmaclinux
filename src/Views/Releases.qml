@@ -1319,7 +1319,7 @@ Page {
                         anchors.centerIn: parent
                         fontPointSize: 14
                         horizontalAlignment: Text.AlignHCenter
-                        text: filtersExistsMark.visible || filterByTitle.textContent !== "" ? "По текущему фильтру ничего не найдено\nПопробуйте указать другие фильтры и повторить поиск" : "Релизы еще не загружены\nПожалуйста подождите пока они загрузятся"
+                        text: localStorage.countReleases > 0 ? "По текущему фильтру ничего не найдено\nПопробуйте указать другие фильтры или раздел и повторить поиск" : "Релизы еще не загружены\nПожалуйста подождите пока они загрузятся"
                     }
                 }
 
