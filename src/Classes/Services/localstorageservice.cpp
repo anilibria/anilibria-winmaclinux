@@ -1415,6 +1415,34 @@ QList<int> LocalStorageService::getReleseSeenMarks(int id, int count)
     return result;
 }
 
+QString LocalStorageService::getReleasesSeenMarks(QList<int> ids)
+{
+    QJsonObject result;
+    QListIterator<FullReleaseModel*> i(*m_CachedReleases);
+
+    while(i.hasNext()) {
+        auto release = i.next();
+        if (!ids.contains(release->id())) continue;
+
+        auto id = release->id();
+
+        QJsonObject releaseSeens;
+        for (auto l = 0; l < release->countOnlineVideos(); l++) {
+            auto key = QString::number(id) + "." + QString::number(l);
+            if (m_SeenMarkModels->contains(key)) {
+                auto objectKey = QString::number(l);
+                releaseSeens.insert(objectKey, QJsonValue(true));
+            }
+        }
+
+        auto stringId = QString::number(id);
+        result[stringId] = releaseSeens;
+    }
+
+    QJsonDocument document(result);
+    return document.toJson();
+}
+
 QString LocalStorageService::getSeenMarks()
 {
     QHash<int, int> counts;
@@ -1666,6 +1694,21 @@ QString LocalStorageService::getReleasesByIds(const QList<int> &ids)
     QJsonArray releases;
     foreach (auto releaseItem, *m_CachedReleases) {
         if (!idsSet.contains(releaseItem->id())) continue;
+
+        QJsonObject jsonValue;
+        releaseItem->writeToJson(jsonValue);
+        releases.append(jsonValue);
+    }
+
+    QJsonDocument saveDoc(releases);
+    return saveDoc.toJson();
+}
+
+QString LocalStorageService::getCinemahallReleases()
+{
+    QJsonArray releases;
+    foreach (auto releaseItem, *m_CachedReleases) {
+        if (!m_CinemaHall->contains(releaseItem->id())) continue;
 
         QJsonObject jsonValue;
         releaseItem->writeToJson(jsonValue);

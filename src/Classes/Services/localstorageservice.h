@@ -134,6 +134,7 @@ public:
     Q_INVOKABLE void removeAllSeenMark();
     Q_INVOKABLE void setMultipleSeenMarkAllSeries(QList<int> ids, bool marked);
     Q_INVOKABLE QList<int> getReleseSeenMarks(int id, int count);
+    Q_INVOKABLE QString getReleasesSeenMarks(QList<int> ids);
     Q_INVOKABLE QString getSeenMarks();
     Q_INVOKABLE void setToReleaseHistory(int id, int type);
     Q_INVOKABLE void setVolume(double volume);
@@ -155,6 +156,7 @@ public:
     Q_INVOKABLE QString packAsMPCPLAndOpen(int id, QString quality);
     Q_INVOKABLE void addToCinemahall(const QList<int>& ids);
     Q_INVOKABLE QString getReleasesByIds(const QList<int>& ids);
+    Q_INVOKABLE QString getCinemahallReleases();
 
 signals:
     void allReleasesFinished();
