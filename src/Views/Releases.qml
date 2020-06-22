@@ -78,6 +78,7 @@ Page {
     signal refreshReleaseSchedules()
     signal requestSynchronizeReleases()
     signal navigateTo()
+    signal watchCinemahall()
 
     onWidthChanged: {
         const columnCount = parseInt(page.width / 520);
@@ -356,7 +357,7 @@ Page {
                         CommonMenuItem {
                             text: "Смотреть кинозал"
                             onPressed: {
-
+                                watchCinemahall();
                             }
                         }
                     }

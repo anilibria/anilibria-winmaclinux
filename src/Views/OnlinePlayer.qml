@@ -27,7 +27,7 @@ import "../Theme"
 Page {
     id: _page
     property bool isFullScreen: false
-    property var selectedRelease: null
+    property int selectedRelease: -1
     property string videoSource: ""
     property var releaseVideos: []
     property var selectedVideo: null
@@ -48,9 +48,12 @@ Page {
     property var jumpSeconds: [0, 5, 10, 15, 20, 25, 30]
     property real lastMouseYPosition: 0
     property string releasePoster: ""
+    property bool isCinemahall: false
+    property var cinemahallReleases: []
 
     signal navigateFrom()
     signal setReleaseVideo()
+    signal setCinemahallVideo()
     signal changeFullScreenMode(bool fullScreen)
     signal navigateTo()
     signal returnToReleasesPage()
@@ -133,7 +136,7 @@ Page {
                 break;
         }
 
-        if (!_page.setReleaseParameters.releaseId) {
+        if (!_page.setReleaseParameters.releaseId && !_page.isCinemahall) {
             const lastSeenObject = localStorage.getLastVideoSeen();
             if (lastSeenObject === ``) return;
 
@@ -151,10 +154,12 @@ Page {
     }
 
     onSetReleaseVideo: {
+        _page.isCinemahall = false;
         const jsonVideos = JSON.parse(_page.setReleaseParameters.videos);
         const seenJson = localStorage.getVideoSeen(_page.setReleaseParameters.releaseId);
         _page.seenVideo = {};
         if (seenJson) _page.seenVideo = JSON.parse(seenJson);
+        _page.selectedRelease = _page.setReleaseParameters.releaseId;
 
         const release = JSON.parse(localStorage.getRelease(_page.setReleaseParameters.releaseId));
         _page.releasePoster = release.poster;
@@ -163,7 +168,20 @@ Page {
 
         for (let i = 0; i < jsonVideos.length; i++) {
             const video = jsonVideos[i];
-            releaseVideos.push({ title: video.title, sd: video.sd, id: video.id, hd: video.hd, fullhd: video.fullhd, sdfile: video.srcSd, hdfile: video.srcHd });
+            releaseVideos.push(
+                {
+                    title: video.title,
+                    sd: video.sd,
+                    id: video.id,
+                    hd: video.hd,
+                    fullhd: video.fullhd,
+                    sdfile: video.srcSd,
+                    hdfile: video.srcHd,
+                    releaseId: _page.setReleaseParameters.releaseId,
+                    releasePoster: release.poster,
+                    isGroup: false
+                }
+            );
         }
         releaseVideos.sort(
             (left, right) => {
@@ -200,6 +218,75 @@ Page {
         localStorage.setToReleaseHistory(_page.setReleaseParameters.releaseId, 1);
 
         setSerieScrollPosition();
+    }
+
+    onSetCinemahallVideo: {
+        _page.isCinemahall = true;
+        _page.cinemahallReleases = JSON.parse(localStorage.getCinemahallReleases());
+
+        const releaseVideos = [];
+
+        for (let i = 0; i < _page.cinemahallReleases.length; i++) {
+            const release = _page.cinemahallReleases[i];
+            const videos = JSON.parse(release.videos);
+            releaseVideos.push({ title: release.title, isGroup: true });
+
+            videos.sort(
+                (left, right) => {
+                    if (left.id === right.id) return 0;
+                    return left.id > right.id ? 1 : -1;
+                }
+            );
+
+            for (var l = 0; l < videos.length; l++) {
+                const video = videos[l];
+                releaseVideos.push(
+                    {
+                        title: video.title,
+                        sd: video.sd,
+                        id: video.id,
+                        hd: video.hd,
+                        fullhd: video.fullhd,
+                        sdfile: video.srcSd,
+                        hdfile: video.srcHd,
+                        releaseId: release.id,
+                        releasePoster: release.poster,
+                        order: l,
+                        isGroup: false
+                    }
+                );
+            }
+        }
+
+        _page.releaseVideos = releaseVideos;
+
+        refreshSeenMarks();
+
+        let firstVideo = releaseVideos.filter(a => !a.isGroup).find(
+            (releaseVideo) => !(releaseVideo.releaseId in _page.seenMarks && releaseVideo.order in _page.seenMarks[releaseVideo.releaseId])
+        );
+
+        if (firstVideo) {
+            _page.selectedRelease = firstVideo.releaseId;
+            console.log("poster", firstVideo.releasePoster);
+            setReleasePoster(firstVideo.releasePoster, firstVideo.releaseId);
+            console.log("final poster", _page.releasePoster);
+
+            _page.selectedVideo = firstVideo.order;
+            _page.isFullHdAllowed = "fullhd" in firstVideo;
+            if (!firstVideo[_page.videoQuality]) _page.videoQuality = "sd";
+
+            _page.videoSource = firstVideo[_page.videoQuality];
+            player.play();
+
+            localStorage.setToReleaseHistory(firstVideo.releaseId, 1);
+
+            setSerieScrollPosition();
+            _page.seenVideo = JSON.parse(localStorage.getVideoSeen(firstVideo.releaseId));
+            if (_page.seenVideo.id && _page.seenVideo.videoId !== firstVideo.order) _page.seenVideo.videoPosition = 0;
+        } else {
+            _page.videoSource = "";
+        }
     }
 
     function getZeroBasedDigit(digit) {
@@ -272,7 +359,7 @@ Page {
         }
     }
 
-    QtPlayer {
+    QtAvPlayer {
         id: player
         anchors.fill: parent
         source: _page.videoSource
@@ -333,17 +420,18 @@ Page {
 
             if (_page.positionIterator >= 20) {
                 _page.positionIterator = 0;
-                localStorage.setVideoSeens(_page.setReleaseParameters.releaseId, _page.selectedVideo, position);
+                localStorage.setVideoSeens(_page.selectedRelease, _page.selectedVideo, position);
             }
 
-            if (!(_page.selectedVideo in _page.seenMarks)) {
+            if (!(_page.selectedRelease in _page.seenMarks && _page.selectedVideo in _page.seenMarks[_page.selectedRelease])) {
                 if (duration > 0 && position > 0) {
                     const positionPercent = position / duration * 100;
                     if (positionPercent >= 90) {
+                        let seenMarks = getReleaseSeens(_page.selectedRelease);
+                        seenMarks[_page.selectedVideo] = true;
                         const obj = _page.seenMarks;
-                        obj[_page.selectedVideo] = true;
                         _page.seenMarks = obj;
-                        localStorage.setSeenMark(_page.setReleaseParameters.releaseId, _page.selectedVideo, true);
+                        localStorage.setSeenMark(_page.selectedRelease, _page.selectedVideo, true);
                     }
                 }
             }
@@ -375,9 +463,9 @@ Page {
                     model: _page.releaseVideos
                     delegate: Row {
                         Rectangle {
-                            height: 40
+                            height:  modelData.isGroup ? 70 : 40
                             width: seriesPopup.width
-                            color: _page.selectedVideo === modelData.order ? ApplicationTheme.playlistSelectedBackground : ApplicationTheme.playlistBackground
+                            color: _page.selectedVideo === modelData.order && _page.selectedRelease === modelData.releaseId ? ApplicationTheme.playlistSelectedBackground : ApplicationTheme.playlistBackground
                             MouseArea {
                                 anchors.fill: parent
                                 hoverEnabled: true
@@ -385,18 +473,42 @@ Page {
                                     if (playerTimer.running) playerTimer.stop();
                                 }
                                 onClicked: {
+                                    if (modelData.isGroup) return;
+
                                     _page.selectedVideo = modelData.order;
                                     _page.isFullHdAllowed = "fullhd" in modelData;
                                     _page.videoSource = modelData[_page.videoQuality];
+                                    _page.selectedRelease = modelData.releaseId;
+                                    setReleasePoster(modelData.releasePoster, modelData.releaseId);
                                     player.play();
                                 }
                             }
                             Text {
-                                color: _page.selectedVideo === modelData.order ? ApplicationTheme.playlistSelectedText : ApplicationTheme.playlistText
+                                visible: !modelData.isGroup
+                                color: _page.selectedVideo === modelData.order && _page.selectedRelease === modelData.releaseId ? ApplicationTheme.playlistSelectedText : ApplicationTheme.playlistText
                                 anchors.verticalCenter: parent.verticalCenter
                                 anchors.left: parent.left
                                 anchors.leftMargin: 10
                                 text: modelData.title
+                            }
+
+                            Rectangle {
+                                color: "transparent"
+                                anchors.fill: parent
+                                anchors.leftMargin: 10
+                                anchors.rightMargin: 10
+
+                                Text {
+                                    visible: modelData.isGroup
+                                    color: _page.selectedVideo === modelData.order && _page.selectedRelease === modelData.releaseId ? ApplicationTheme.playlistSelectedText : ApplicationTheme.playlistText
+                                    text: modelData.title
+                                    width: parent.width
+                                    anchors.verticalCenter: parent.verticalCenter
+                                    maximumLineCount: 3
+                                    font.bold: true
+                                    elide: Text.ElideRight
+                                    wrapMode: Text.WordWrap
+                                }
                             }
 
                             Row {
@@ -408,9 +520,10 @@ Page {
                                 IconButton {
                                     height: 36
                                     width: 36
+                                    visible: !modelData.isGroup
                                     iconColor: ApplicationTheme.filterIconButtonColor
                                     hoverColor: ApplicationTheme.filterIconButtonHoverColor
-                                    iconPath: modelData.order in _page.seenMarks ? "../Assets/Icons/seenmarkselected.svg" : "../Assets/Icons/seenmark.svg"
+                                    iconPath: _page.seenMarks && modelData.releaseId in _page.seenMarks && modelData.order in _page.seenMarks[modelData.releaseId] ? "../Assets/Icons/seenmarkselected.svg" : "../Assets/Icons/seenmark.svg"
                                     iconWidth: 22
                                     iconHeight: 22
                                     onButtonHoverEnter: {
@@ -418,25 +531,29 @@ Page {
                                     }
                                     onButtonPressed: {
                                         let newState = false;
-                                        if (_page.seenMarks[modelData.order]) {
-                                            const obj = _page.seenMarks;
-                                            delete obj[modelData.order];
-                                            _page.seenMarks = obj;
+                                        let seenMarks = getReleaseSeens(modelData.releaseId);
+
+                                        if (seenMarks[modelData.order]) {
+                                            delete seenMarks[modelData.order];
                                             newState = false;
                                         } else {
-                                            const obj = _page.seenMarks;
-                                            obj[modelData.order] = true;
-                                            _page.seenMarks = obj;
+                                            seenMarks[modelData.order] = true;
                                             newState = true;
 
                                         }
-                                        localStorage.setSeenMark(_page.setReleaseParameters.releaseId, modelData.order, newState);
+
+                                        const oldSeenMarks = _page.seenMarks;
+                                        _page.seenMarks = {};
+                                        _page.seenMarks = oldSeenMarks;
+
+                                        localStorage.setSeenMark(modelData.releaseId, modelData.order, newState);
                                     }
                                 }
 
                                 IconButton {
                                     height: 36
                                     width: 36
+                                    visible: !modelData.isGroup
                                     iconColor: ApplicationTheme.filterIconButtonColor
                                     hoverColor: ApplicationTheme.filterIconButtonHoverColor
                                     iconPath: "../Assets/Icons/download.svg"
@@ -966,7 +1083,7 @@ Page {
         radius: 12
         Image {
             anchors.centerIn: parent
-            source: _page.releasePoster ? localStorage.getReleasePosterPath(_page.setReleaseParameters.releaseId, _page.releasePoster) : '../Assets/Icons/donate.jpg'
+            source: _page.releasePoster
             fillMode: Image.PreserveAspectCrop
             width: 180
             height: 270
@@ -994,50 +1111,121 @@ Page {
         }
     }
 
-    function checkExistingVideoQuality() {
-        const video = _page.releaseVideos[_page.selectedVideo];
-        if (video[_page.videoQuality]) {
-            return _page.releaseVideos[_page.selectedVideo][_page.videoQuality];
+    function setReleasePoster(poster, releaseId) {
+        let posterPath = poster ? localStorage.getReleasePosterPath(releaseId, poster) : '../Assets/Icons/donate.jpg';
+        _page.releasePoster = posterPath;
+    }
+
+    function getReleaseSeens(releaseId) {
+        let seenMarks = [];
+        if (releaseId in _page.seenMarks) {
+            seenMarks = _page.seenMarks[releaseId];
         } else {
-            if (`sd` in _page.releaseVideos[_page.selectedVideo]) {
+            _page.seenMarks[releaseId] = seenMarks;
+        }
+
+        return seenMarks;
+    }
+
+    function checkExistingVideoQuality(video) {
+        if (video[_page.videoQuality]) {
+            return video[_page.videoQuality];
+        } else {
+            if (`sd` in video) {
                 _page.videoQuality = `sd`;
-                return _page.releaseVideos[_page.selectedVideo]['sd'];
+                return video['sd'];
             }
-            if (`hd` in _page.releaseVideos[_page.selectedVideo]) {
+            if (`hd` in video) {
                 _page.videoQuality = `hd`;
-                return _page.releaseVideos[_page.selectedVideo]['hd'];
+                return video['hd'];
             }
-            if (`fullhd` in _page.releaseVideos[_page.selectedVideo]) {
+            if (`fullhd` in video) {
                 _page.videoQuality = `fullhd`;
-                return _page.releaseVideos[_page.selectedVideo]['fullhd'];
+                return video['fullhd'];
             }
 
             return null;
         }        
     }
 
+    function previousNotSeenVideo() {
+        let lastNotSeenVideo = null;
+
+        for (const releaseVideo of _page.releaseVideos) {
+            if (releaseVideo.releaseId === _page.selectedRelease && releaseVideo.order === _page.selectedVideo) break;
+
+            if (!(releaseVideo.releaseId in _page.seenMarks && releaseVideo.order in _page.seenMarks[releaseVideo.releaseId])) lastNotSeenVideo = releaseVideo;
+        }
+
+        return lastNotSeenVideo;
+    }
+
     function previousVideo() {
         if (_page.selectedVideo === 0) return;
         _page.restorePosition = 0;
 
-        _page.selectedVideo--;
-        const video = _page.releaseVideos[_page.selectedVideo];
-        _page.isFullHdAllowed = "fullhd" in video;
+        let video;
 
-        _page.videoSource = checkExistingVideoQuality();
+        if (_page.isCinemahall) {
+            const previousVideo = previousNotSeenVideo();
+            if (previousVideo) {
+                _page.selectedVideo = previousVideo.order;
+                video = previousVideo;
+            } else {
+                return;
+            }
+
+        } else {
+            _page.selectedVideo--;
+            video = _page.releaseVideos[_page.selectedVideo];
+        }
+
+        _page.isFullHdAllowed = "fullhd" in video;
+        _page.releasePoster = video.releasePoster;
+        _page.selectedRelease = video.releaseId;
+
+        _page.videoSource = checkExistingVideoQuality(video);
 
         setSerieScrollPosition();
     }
 
+    function nextNotSeenVideo() {
+        for (const releaseVideo of _page.releaseVideos) {
+            if (releaseVideo.releaseId !== _page.selectedRelease) continue;
+            if (releaseVideo.releaseId === _page.selectedRelease && releaseVideo.order <= _page.selectedVideo) continue;
+
+            if (!(releaseVideo.releaseId in _page.seenMarks && releaseVideo.order in _page.seenMarks[releaseVideo.releaseId])) {
+                return releaseVideo;
+            }
+        }
+
+        return null;
+    }
+
     function nextVideo() {
-        if (_page.selectedVideo === _page.releaseVideos.length) return;
         _page.restorePosition = 0;
+        let video;
 
-        _page.selectedVideo++;
-        const video = _page.releaseVideos[_page.selectedVideo];
+        if (_page.isCinemahall) {
+            const nextVideo = nextNotSeenVideo();
+            if (nextVideo) {
+                _page.selectedVideo = nextVideo.order;
+                video = nextVideo;
+            } else {
+                return;
+            }
+        } else {
+            if (_page.selectedVideo === _page.releaseVideos.length) return;
+
+            _page.selectedVideo++;
+            video = _page.releaseVideos[_page.selectedVideo];
+        }
+
         _page.isFullHdAllowed = "fullhd" in video;
+        _page.releasePoster = video.releasePoster;
+        _page.selectedRelease = video.releaseId;
 
-        _page.videoSource = checkExistingVideoQuality();
+        _page.videoSource = checkExistingVideoQuality(video);
 
         setSerieScrollPosition();
     }
@@ -1061,13 +1249,16 @@ Page {
     }
 
     function refreshSeenMarks() {
-        const releaseSeenMarks = {};
-        const seenMarks = localStorage.getReleseSeenMarks(_page.setReleaseParameters.releaseId, _page.releaseVideos.length)
-        for (const seenMark of seenMarks) {
-            const key = seenMark.toString();
-            releaseSeenMarks[key] = true;
+        let releaseIds = [];
+
+        if (_page.isCinemahall) {
+            releaseIds = _page.cinemahallReleases.map(a => a.id);
+            console.log("refreshSeenMarks" + releaseIds);
+        } else {
+            releaseIds.push(_page.setReleaseParameters.releaseId);
         }
-        _page.seenMarks = releaseSeenMarks;
+
+        _page.seenMarks = JSON.parse(localStorage.getReleasesSeenMarks(releaseIds));
     }
 
     function jumpInPlayer(direction){
