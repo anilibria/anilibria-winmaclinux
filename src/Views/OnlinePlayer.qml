@@ -1152,6 +1152,7 @@ Page {
         let lastNotSeenVideo = null;
 
         for (const releaseVideo of _page.releaseVideos) {
+            if (releaseVideo.isGroup) continue;
             if (releaseVideo.releaseId === _page.selectedRelease && releaseVideo.order === _page.selectedVideo) break;
 
             if (!(releaseVideo.releaseId in _page.seenMarks && releaseVideo.order in _page.seenMarks[releaseVideo.releaseId])) lastNotSeenVideo = releaseVideo;
@@ -1190,9 +1191,14 @@ Page {
     }
 
     function nextNotSeenVideo() {
+        var beforeCurrent = true;
         for (const releaseVideo of _page.releaseVideos) {
-            if (releaseVideo.releaseId !== _page.selectedRelease) continue;
-            if (releaseVideo.releaseId === _page.selectedRelease && releaseVideo.order <= _page.selectedVideo) continue;
+            if (releaseVideo.releaseId === _page.selectedRelease && releaseVideo.order <= _page.selectedVideo) {
+                beforeCurrent = false;
+                continue;
+            }
+            if (beforeCurrent) continue;
+            if (releaseVideo.isGroup) continue;
 
             if (!(releaseVideo.releaseId in _page.seenMarks && releaseVideo.order in _page.seenMarks[releaseVideo.releaseId])) {
                 return releaseVideo;
