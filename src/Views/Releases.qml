@@ -352,6 +352,8 @@ Page {
                             enabled: page.selectedReleases.length
                             onPressed: {
                                 localStorage.addToCinemahall(page.selectedReleases);
+                                page.selectedReleases = [];
+                                cinemahallMenuPanel.close();
                             }
                         }
                         CommonMenuItem {

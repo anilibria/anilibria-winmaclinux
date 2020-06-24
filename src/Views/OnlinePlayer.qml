@@ -268,9 +268,7 @@ Page {
 
         if (firstVideo) {
             _page.selectedRelease = firstVideo.releaseId;
-            console.log("poster", firstVideo.releasePoster);
             setReleasePoster(firstVideo.releasePoster, firstVideo.releaseId);
-            console.log("final poster", _page.releasePoster);
 
             _page.selectedVideo = firstVideo.order;
             _page.isFullHdAllowed = "fullhd" in firstVideo;
@@ -1237,9 +1235,23 @@ Page {
     }
 
     function setSerieScrollPosition() {
-        let newPosition = _page.selectedVideo * 40 - serieScrollContainer.height;
-        newPosition += 40;
+        let countGroups = -1;
+        let countVideos = -1;
+        for (const releaseVideo of _page.releaseVideos) {
+            if (releaseVideo.isGroup) {
+                countGroups++;
+            } else {
+                countVideos++;
+            }
+            if (releaseVideo.releaseId === _page.selectedRelease && releaseVideo.order === _page.selectedVideo) break;
+        }
+
+        const groupOffset = countGroups > -1 ? countGroups * 70 : 0;
+        let newPosition = countVideos * 40;
+        newPosition += groupOffset;
+
         if (newPosition < 0) newPosition = 0;
+        if (newPosition > serieScrollContainer.height) newPosition = serieScrollContainer.height;
         serieScrollContainer.contentY = newPosition;
     }
 
@@ -1259,7 +1271,6 @@ Page {
 
         if (_page.isCinemahall) {
             releaseIds = _page.cinemahallReleases.map(a => a.id);
-            console.log("refreshSeenMarks" + releaseIds);
         } else {
             releaseIds.push(_page.setReleaseParameters.releaseId);
         }
