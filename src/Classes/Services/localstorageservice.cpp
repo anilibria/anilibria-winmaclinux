@@ -63,7 +63,7 @@ LocalStorageService::LocalStorageService(QObject *parent) : QObject(parent),
     m_UserSettingsModel(new UserSettingsModel()),
     m_IsChangesExists(false),
     m_CountReleases(0),
-    m_CinemaHall(new QSet<int>()),
+    m_CinemaHall(new QVector<int>()),
     m_CountSeens(0),
     m_Downloads(new QSet<int>())
 {
@@ -622,7 +622,7 @@ void LocalStorageService::loadCinemahall()
     auto jsonArray = document.array();
 
     m_CinemaHall->clear();
-    foreach (auto item, jsonArray) m_CinemaHall->insert(item.toInt());
+    foreach (auto item, jsonArray) m_CinemaHall->append(item.toInt());
 }
 
 void LocalStorageService::saveDownloads()
@@ -651,10 +651,8 @@ void LocalStorageService::saveCinemahall()
 {
     QJsonArray cinemahallArray;
 
-    QSetIterator<int> iterator(*m_CinemaHall);
-    while(iterator.hasNext()) {
-
-        QJsonValue value(iterator.next());
+    foreach (auto releaseId, *m_CinemaHall) {
+        QJsonValue value(releaseId);
         cinemahallArray.append(value);
     }
 
@@ -1682,7 +1680,7 @@ QString LocalStorageService::packAsMPCPLAndOpen(int id, QString quality)
 void LocalStorageService::addToCinemahall(const QList<int>& ids)
 {
     foreach(auto id, ids) {
-        m_CinemaHall->insert(id);
+        m_CinemaHall->append(id);
     }
 
     saveCinemahall();
@@ -1706,12 +1704,18 @@ QString LocalStorageService::getReleasesByIds(const QList<int> &ids)
 
 QString LocalStorageService::getCinemahallReleases()
 {
-    QJsonArray releases;
+    QVector<FullReleaseModel*> cinemahallReleases(m_CinemaHall->count());
+
     foreach (auto releaseItem, *m_CachedReleases) {
         if (!m_CinemaHall->contains(releaseItem->id())) continue;
 
+        cinemahallReleases[m_CinemaHall->indexOf(releaseItem->id())] = releaseItem;
+    }
+
+    QJsonArray releases;
+    foreach (auto cinemahallRelease, cinemahallReleases) {
         QJsonObject jsonValue;
-        releaseItem->writeToJson(jsonValue);
+        cinemahallRelease->writeToJson(jsonValue);
         releases.append(jsonValue);
     }
 

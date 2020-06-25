@@ -78,6 +78,7 @@ Page {
     signal refreshReleaseSchedules()
     signal requestSynchronizeReleases()
     signal navigateTo()
+    signal watchCinemahall()
 
     onWidthChanged: {
         const columnCount = parseInt(page.width / 520);
@@ -351,12 +352,14 @@ Page {
                             enabled: page.selectedReleases.length
                             onPressed: {
                                 localStorage.addToCinemahall(page.selectedReleases);
+                                page.selectedReleases = [];
+                                cinemahallMenuPanel.close();
                             }
                         }
                         CommonMenuItem {
                             text: "Смотреть кинозал"
                             onPressed: {
-
+                                watchCinemahall();
                             }
                         }
                     }

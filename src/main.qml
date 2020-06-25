@@ -726,6 +726,11 @@ ApplicationWindow {
             window.showPage("videoplayer");
             videoplayer.setReleaseVideo();
         }
+        onWatchCinemahall: {
+            videoplayer.isCinemahall = true; //WORKAROUND: for reset state based on single release
+            window.showPage("videoplayer");
+            videoplayer.setCinemahallVideo();
+        }
         onRequestSynchronizeReleases: {
             window.synchronizationEnabled = true;
             synchronizationService.synchronizeReleases();

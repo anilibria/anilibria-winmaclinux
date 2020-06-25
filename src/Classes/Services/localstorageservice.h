@@ -51,7 +51,7 @@ private:
     bool m_IsChangesExists;
     OfflineImageCacheService* m_OfflineImageCacheService;
     int m_CountReleases;
-    QSet<int>* m_CinemaHall;
+    QVector<int>* m_CinemaHall;
     int m_CountSeens;
     QSet<int>* m_Downloads;
 
