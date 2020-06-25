@@ -3,6 +3,7 @@ CONFIG += c++11
 
 windows {
     QT += av
+    Debug:CONFIG += qml_debug
 }
 
 unix {

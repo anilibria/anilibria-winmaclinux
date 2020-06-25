@@ -357,7 +357,7 @@ Page {
         }
     }
 
-    QtAvPlayer {
+    QtPlayer {
         id: player
         anchors.fill: parent
         source: _page.videoSource
@@ -1185,7 +1185,7 @@ Page {
 
         _page.videoSource = checkExistingVideoQuality(video);
 
-        setSerieScrollPosition();
+        if (!_page.isCinemahall) setSerieScrollPosition();
     }
 
     function nextNotSeenVideo() {
@@ -1231,27 +1231,13 @@ Page {
 
         _page.videoSource = checkExistingVideoQuality(video);
 
-        setSerieScrollPosition();
+        if (!_page.isCinemahall) setSerieScrollPosition();
     }
 
     function setSerieScrollPosition() {
-        let countGroups = -1;
-        let countVideos = -1;
-        for (const releaseVideo of _page.releaseVideos) {
-            if (releaseVideo.isGroup) {
-                countGroups++;
-            } else {
-                countVideos++;
-            }
-            if (releaseVideo.releaseId === _page.selectedRelease && releaseVideo.order === _page.selectedVideo) break;
-        }
-
-        const groupOffset = countGroups > -1 ? countGroups * 70 : 0;
-        let newPosition = countVideos * 40;
-        newPosition += groupOffset;
-
+        let newPosition = _page.selectedVideo * 40 - serieScrollContainer.height;
+        newPosition += 40;
         if (newPosition < 0) newPosition = 0;
-        if (newPosition > serieScrollContainer.height) newPosition = serieScrollContainer.height;
         serieScrollContainer.contentY = newPosition;
     }
 
