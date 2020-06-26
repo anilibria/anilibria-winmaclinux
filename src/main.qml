@@ -141,9 +141,11 @@ ApplicationWindow {
             "authorization": authorization,
             "release": releases,
             "youtube": youtube,
-            "about": about//,
+            "about": about,
+            "cinemahall": cinemahall
             //uncomment it after the release of the download manager
             //"download": download
+
         };
 
         const currentPage = pages[currentPageId];
@@ -555,6 +557,29 @@ ApplicationWindow {
                     Row {
                         spacing: 10
                         Image {
+                            source: "../Assets/Icons/popcorn.svg"
+                            sourceSize.width: 30
+                            sourceSize.height: 30
+                            mipmap: true
+                        }
+                        Label {
+                            anchors.leftMargin: 10
+                            anchors.verticalCenter: parent.verticalCenter
+                            color: "white"
+                            text: qsTr("Кинозал")
+                        }
+                    }
+                }
+                width: parent.width
+                onClicked: {
+                    showPage("cinemahall");
+                }
+            }
+            ItemDelegate {
+                contentItem: Item {
+                    Row {
+                        spacing: 10
+                        Image {
                             source: "Assets/Icons/donate.svg"
                             sourceSize.width: 30
                             sourceSize.height: 30
@@ -756,6 +781,11 @@ ApplicationWindow {
         id: download
         visible: false
     }*/
+
+    Cinemahall {
+        id: cinemahall
+        visible: false
+    }
 
     Rectangle {
         id: notificationOverlay

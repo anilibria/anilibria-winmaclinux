@@ -157,6 +157,7 @@ public:
     Q_INVOKABLE void addToCinemahall(const QList<int>& ids);
     Q_INVOKABLE QString getReleasesByIds(const QList<int>& ids);
     Q_INVOKABLE QString getCinemahallReleases();
+    Q_INVOKABLE bool hasCinemahallReleases();
 
 signals:
     void allReleasesFinished();

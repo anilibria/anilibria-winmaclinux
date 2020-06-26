@@ -78,5 +78,6 @@
         <file>Views/Downloads.qml</file>
         <file>Controls/CommonComboBox.qml</file>
         <file>Assets/Icons/popcorn.svg</file>
+        <file>Views/Cinemahall.qml</file>
     </qresource>
 </RCC>

@@ -336,8 +336,8 @@ Page {
                     width: 40
                     iconColor: "white"
                     iconPath: "../Assets/Icons/popcorn.svg"
-                    iconWidth: 34
-                    iconHeight: 34
+                    iconWidth: 30
+                    iconHeight: 30
                     onButtonPressed: {
                         cinemahallMenuPanel.open();
                     }
@@ -359,7 +359,50 @@ Page {
                         CommonMenuItem {
                             text: "Смотреть кинозал"
                             onPressed: {
-                                watchCinemahall();
+                                if (localStorage.hasCinemahallReleases()) {
+                                    watchCinemahall();
+                                } else {
+                                    notHaveCinemahallReleasesMessagePopup.open();
+                                }
+                                cinemahallMenuPanel.close();
+                            }
+                        }
+                    }
+
+                    Popup {
+                        id: notHaveCinemahallReleasesMessagePopup
+                        x: window.width / 2 - 225
+                        y: window.height / 2 - 100
+                        width: 450
+                        height: 150
+                        modal: true
+                        focus: true
+                        closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
+
+                        Column {
+                            width: parent.width
+                            spacing: 10
+                            AccentText {
+                                id: notHaveCinemahallReleasesHeader
+                                width: messagePopup.width - 20
+                                fontPointSize: 12
+                                font.bold: true
+                                elide: Text.ElideRight
+                                text: "Просмотр кинозала"
+                            }
+
+                            Rectangle {
+                                color: "transparent"
+                                width: messagePopup.width - 20
+                                height: messagePopup.height - 50
+                                PlainText {
+                                    id: notHaveCinemahallReleasesMessage
+                                    anchors.verticalCenter: parent.verticalCenter
+                                    width: parent.width
+                                    fontPointSize: 10
+                                    wrapMode: Text.WordWrap
+                                    text: "У Вас нет релизов в кинозале, чтобы добавить их переведите режим выбора в множественный режим,\n выберите релизы и используйте пункт Добавить в кинозал"
+                                }
                             }
                         }
                     }

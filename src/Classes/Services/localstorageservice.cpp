@@ -1723,6 +1723,11 @@ QString LocalStorageService::getCinemahallReleases()
     return saveDoc.toJson();
 }
 
+bool LocalStorageService::hasCinemahallReleases()
+{
+    return m_CinemaHall->count() > 0;
+}
+
 void LocalStorageService::allReleasesUpdated()
 {
     emit allReleasesFinished();
