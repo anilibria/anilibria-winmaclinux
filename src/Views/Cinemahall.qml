@@ -100,25 +100,7 @@ Page {
                 Layout.fillWidth: true
                 orientation: ListView.Horizontal
                 model: releasesModel
-                clip: true
-                addDisplaced: Transition {
-                    NumberAnimation { properties: "x, y"; duration: 100 }
-                }
-                moveDisplaced: Transition {
-                    NumberAnimation { properties: "x, y"; duration: 100 }
-                }
-                remove: Transition {
-                    NumberAnimation { properties: "x, y"; duration: 100 }
-                    NumberAnimation { properties: "opacity"; duration: 100 }
-                }
-
-                removeDisplaced: Transition {
-                    NumberAnimation { properties: "x, y"; duration: 100 }
-                }
-
-                displaced: Transition {
-                    NumberAnimation { properties: "x, y"; duration: 100 }
-                }
+                clip: true                
                 delegate: Rectangle {
                     width: 280
                     height: listViewReleases.height
@@ -153,8 +135,10 @@ Page {
                             drag.onActiveChanged: {
                                 if (itemMouseArea.drag.active) {
                                     root.dragRelease = id;
+                                    itemContainer.parent = listViewReleases;
+                                    itemContainer.opacity = .7;
                                 } else {
-                                    //if (root.dragRelease > -1 && root.dropRelease === -1) itemMouseArea.drag.cancel();
+                                    if (root.dragRelease > -1 && root.dropRelease === -1) refreshReleases();
                                 }
                             }
                             onClicked: {
@@ -234,6 +218,10 @@ Page {
     }
 
     onNavigateTo: {
+        refreshReleases();
+    }
+
+    function refreshReleases() {
         releasesModel.clear();
         var releases = JSON.parse(localStorage.getCinemahallReleases());
         for (const release of releases) releasesModel.append(release);
