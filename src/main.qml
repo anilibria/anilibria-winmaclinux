@@ -785,6 +785,11 @@ ApplicationWindow {
     Cinemahall {
         id: cinemahall
         visible: false
+        onWatchCinemahall: {
+            videoplayer.isCinemahall = true; //WORKAROUND: for reset state based on single release
+            window.showPage("videoplayer");
+            videoplayer.setCinemahallVideo();
+        }
     }
 
     Rectangle {

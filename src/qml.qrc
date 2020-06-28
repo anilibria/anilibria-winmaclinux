@@ -79,5 +79,6 @@
         <file>Controls/CommonComboBox.qml</file>
         <file>Assets/Icons/popcorn.svg</file>
         <file>Views/Cinemahall.qml</file>
+        <file>Assets/Icons/cinemaplay.svg</file>
     </qresource>
 </RCC>

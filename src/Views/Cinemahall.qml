@@ -21,6 +21,7 @@ Page {
 
     signal navigateFrom()
     signal navigateTo()
+    signal watchCinemahall()
 
     RowLayout {
         id: panelContainer
@@ -85,6 +86,21 @@ Page {
                     ToolTip.visible: hovered
                     ToolTip.text: "Управление кинозалом"
                 }
+                IconButton {
+                    height: 45
+                    width: 40
+                    iconColor: "white"
+                    iconPath: "../Assets/Icons/cinemaplay.svg"
+                    iconWidth: 29
+                    iconHeight: 29
+                    onButtonPressed: {
+                        watchCinemahall();
+                    }
+
+                    ToolTip.delay: 1000
+                    ToolTip.visible: hovered
+                    ToolTip.text: "Смотреть кинозал в видеоплеере"
+                }
             }
         }
 
@@ -137,13 +153,32 @@ Page {
                 visible: false
             }
 
+            Rectangle {
+                color: "transparent"
+                anchors.fill: parent
+                visible: releasesModel.count === 0
+                Layout.fillHeight: true
+                Layout.fillWidth: true
+
+                LinkedText {
+                    anchors.centerIn: parent
+                    fontPointSize: 14
+                    horizontalAlignment: Text.AlignHCenter
+                    text: `Ваш кинозал пуст.<br />Релизы добавляются в кинозал на странице Каталог релизов.<br />Подробная справка <a href="https://github.com/anilibria/anilibria-winmaclinux/blob/master/cinemahall.md">о том как пользоваться кинозалом</a>.`
+                }
+            }
+
             ListView {
                 id: listViewReleases
+                visible: releasesModel.count > 0
                 Layout.fillHeight: true
                 Layout.fillWidth: true
                 orientation: ListView.Horizontal
                 model: releasesModel
-                clip: true                
+                clip: true
+                ScrollBar.horizontal: ScrollBar {
+                    active: true
+                }
                 delegate: Rectangle {
                     width: 280
                     height: listViewReleases.height
@@ -165,10 +200,11 @@ Page {
                         radius: 10
                         border.color: ApplicationTheme.selectedItem
                         border.width: root.selectedItems[id] ? 3 : 0
-                        color: "transparent"
+                        color: root.dragRelease !== root.dropRelease && root.dropRelease === id ? "#82000000" : "transparent"
                         Drag.active: itemMouseArea.drag.active
                         Drag.hotSpot.x: width / 2
                         Drag.hotSpot.y: height / 2
+                        property bool showTextHeader: true
 
                         MouseArea {
                             id: itemMouseArea
@@ -180,6 +216,7 @@ Page {
                                     root.dragRelease = id;
                                     itemContainer.parent = listViewReleases;
                                     itemContainer.opacity = .7;
+                                    itemContainer.showTextHeader = false;
                                 } else {
                                     if (root.dragRelease > -1 && root.dropRelease > -1) {
                                         localStorage.reorderReleaseInCinemahall(root.dragRelease, root.dropRelease);
@@ -245,6 +282,7 @@ Page {
                                 color: "transparent"
 
                                 AccentText {
+                                    visible: itemContainer.showTextHeader
                                     fontPointSize: 10
                                     horizontalAlignment: Text.AlignHCenter
                                     verticalAlignment: Text.AlignVCenter
