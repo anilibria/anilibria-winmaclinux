@@ -1728,6 +1728,39 @@ bool LocalStorageService::hasCinemahallReleases()
     return m_CinemaHall->count() > 0;
 }
 
+void LocalStorageService::reorderReleaseInCinemahall(int reorderId, int targetId)
+{
+    auto placeIndex = m_CinemaHall->indexOf(targetId);
+    auto oldIndex = m_CinemaHall->indexOf(reorderId);
+
+    if (placeIndex < 0 || placeIndex > m_CinemaHall->count()) return;
+    if (oldIndex < 0 || oldIndex > m_CinemaHall->count()) return;
+
+    m_CinemaHall->remove(oldIndex);
+    m_CinemaHall->insert(placeIndex, reorderId);
+
+    saveCinemahall();
+}
+
+void LocalStorageService::deleteReleasesFromCinemahall(const QList<int> &ids)
+{
+    foreach (auto id, ids) {
+        auto index = m_CinemaHall->indexOf(id);
+        if (index == -1) continue;
+
+        m_CinemaHall->remove(index);
+    }
+
+    saveCinemahall();
+}
+
+void LocalStorageService::deleteAllReleasesFromCinemahall()
+{
+    m_CinemaHall->clear();
+
+    saveCinemahall();
+}
+
 void LocalStorageService::allReleasesUpdated()
 {
     emit allReleasesFinished();

@@ -42,6 +42,49 @@ Page {
                         drawer.open();
                     }
                 }
+                IconButton {
+                    id: cinemahallMenuButton
+                    height: 45
+                    width: 40
+                    iconColor: "white"
+                    iconPath: "../Assets/Icons/popcorn.svg"
+                    iconWidth: 30
+                    iconHeight: 30
+                    onButtonPressed: {
+                        cinemahallMenuPanel.open();
+                    }
+
+                    CommonMenu {
+                        id: cinemahallMenuPanel
+                        y: cinemahallMenuButton.height
+                        width: 300
+
+                        CommonMenuItem {
+                            text: "Удалить выбранные релизы"
+                            enabled: Object.keys(root.selectedItems).length
+                            onPressed: {
+                                localStorage.deleteReleasesFromCinemahall(Object.keys(root.selectedItems));
+                                root.selectedItems = {};
+                                cinemahallMenuPanel.close();
+
+                                refreshReleases();
+                            }
+                        }
+                        CommonMenuItem {
+                            text: "Удалить все релизы"
+                            onPressed: {
+                                localStorage.deleteAllReleasesFromCinemahall()
+                                cinemahallMenuPanel.close();
+
+                                refreshReleases();
+                            }
+                        }
+                    }
+
+                    ToolTip.delay: 1000
+                    ToolTip.visible: hovered
+                    ToolTip.text: "Управление кинозалом"
+                }
             }
         }
 
@@ -138,7 +181,10 @@ Page {
                                     itemContainer.parent = listViewReleases;
                                     itemContainer.opacity = .7;
                                 } else {
-                                    if (root.dragRelease > -1 && root.dropRelease === -1) refreshReleases();
+                                    if (root.dragRelease > -1 && root.dropRelease > -1) {
+                                        localStorage.reorderReleaseInCinemahall(root.dragRelease, root.dropRelease);
+                                    }
+                                    refreshReleases();
                                 }
                             }
                             onClicked: {
@@ -210,6 +256,16 @@ Page {
                                     text: title
                                 }
                             }
+                        }
+                    }
+
+                    DropArea {
+                        anchors.fill: parent
+                        onEntered: {
+                            root.dropRelease = id;
+                        }
+                        onExited: {
+                            root.dropRelease = -1;
                         }
                     }
                 }

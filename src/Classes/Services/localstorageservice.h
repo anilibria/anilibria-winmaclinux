@@ -158,6 +158,9 @@ public:
     Q_INVOKABLE QString getReleasesByIds(const QList<int>& ids);
     Q_INVOKABLE QString getCinemahallReleases();
     Q_INVOKABLE bool hasCinemahallReleases();
+    Q_INVOKABLE void reorderReleaseInCinemahall(int reorderId, int targetId);
+    Q_INVOKABLE void deleteReleasesFromCinemahall(const QList<int>& ids);
+    Q_INVOKABLE void deleteAllReleasesFromCinemahall();
 
 signals:
     void allReleasesFinished();
