@@ -138,7 +138,10 @@ Page {
                                     itemContainer.parent = listViewReleases;
                                     itemContainer.opacity = .7;
                                 } else {
-                                    if (root.dragRelease > -1 && root.dropRelease === -1) refreshReleases();
+                                    if (root.dragRelease > -1 && root.dropRelease > -1) {
+                                        localStorage.reorderReleaseInCinemahall(root.dragRelease, root.dropRelease);
+                                    }
+                                    refreshReleases();
                                 }
                             }
                             onClicked: {
@@ -210,6 +213,16 @@ Page {
                                     text: title
                                 }
                             }
+                        }
+                    }
+
+                    DropArea {
+                        anchors.fill: parent
+                        onEntered: {
+                            root.dropRelease = id;
+                        }
+                        onExited: {
+                            root.dropRelease = -1;
                         }
                     }
                 }

@@ -1728,6 +1728,20 @@ bool LocalStorageService::hasCinemahallReleases()
     return m_CinemaHall->count() > 0;
 }
 
+void LocalStorageService::reorderReleaseInCinemahall(int reorderId, int targetId)
+{
+    auto placeIndex = m_CinemaHall->indexOf(targetId);
+    auto oldIndex = m_CinemaHall->indexOf(reorderId);
+
+    if (placeIndex < 0 || placeIndex > m_CinemaHall->count()) return;
+    if (oldIndex < 0 || oldIndex > m_CinemaHall->count()) return;
+
+    m_CinemaHall->remove(oldIndex);
+    m_CinemaHall->insert(placeIndex, reorderId);
+
+    saveCinemahall();
+}
+
 void LocalStorageService::allReleasesUpdated()
 {
     emit allReleasesFinished();
