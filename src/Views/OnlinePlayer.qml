@@ -357,7 +357,7 @@ Page {
         }
     }
 
-    QtAvPlayer {
+    QtPlayer {
         id: player
         anchors.fill: parent
         source: _page.videoSource
