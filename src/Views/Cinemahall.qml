@@ -155,7 +155,6 @@ Page {
 
             Rectangle {
                 color: "transparent"
-                anchors.fill: parent
                 visible: releasesModel.count === 0
                 Layout.fillHeight: true
                 Layout.fillWidth: true
