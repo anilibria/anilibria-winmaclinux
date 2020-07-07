@@ -65,7 +65,8 @@ LocalStorageService::LocalStorageService(QObject *parent) : QObject(parent),
     m_CountReleases(0),
     m_CinemaHall(new QVector<int>()),
     m_CountSeens(0),
-    m_Downloads(new QSet<int>())
+    m_Downloads(new QSet<int>()),
+    m_CountCinemahall(0)
 {
     m_AllReleaseUpdatedWatcher = new QFutureWatcher<void>(this);
 
@@ -140,6 +141,14 @@ void LocalStorageService::setCountSeens(int countSeens) noexcept
 
     m_CountSeens = countSeens;
     emit countSeensChanged(countSeens);
+}
+
+void LocalStorageService::setCountCinemahall(int countCinemahall) noexcept
+{
+    if (m_CountCinemahall == countCinemahall) return;
+
+    m_CountCinemahall = countCinemahall;
+    emit countCinemahallChanged();
 }
 
 void LocalStorageService::updateAllReleases(const QString &releases)
@@ -623,6 +632,8 @@ void LocalStorageService::loadCinemahall()
 
     m_CinemaHall->clear();
     foreach (auto item, jsonArray) m_CinemaHall->append(item.toInt());
+
+    setCountCinemahall(m_CinemaHall->count());
 }
 
 void LocalStorageService::saveDownloads()
@@ -665,6 +676,8 @@ void LocalStorageService::saveCinemahall()
     cinemahallFile.write(document.toJson());
 
     cinemahallFile.close();
+
+    setCountCinemahall(m_CinemaHall->count());
 }
 
 QHash<int, int> LocalStorageService::getAllSeenMarkCount()
@@ -1683,7 +1696,7 @@ void LocalStorageService::addToCinemahall(const QList<int>& ids)
         m_CinemaHall->append(id);
     }
 
-    saveCinemahall();
+    saveCinemahall();    
 }
 
 QString LocalStorageService::getReleasesByIds(const QList<int> &ids)
