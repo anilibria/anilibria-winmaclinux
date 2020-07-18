@@ -29,6 +29,7 @@
 #include "../Models/seenmarkmodel.h"
 #include "../Models/historymodel.h"
 #include "../Models/usersettingsmodel.h"
+#include "../Models/downloaditemmodel.h"
 #include "../../globalconstants.h"
 #include "../Services/offlineimagecacheservice.h"
 
@@ -54,7 +55,7 @@ private:
     int m_CountReleases;
     QVector<int>* m_CinemaHall;
     int m_CountSeens;
-    QSet<int>* m_Downloads;
+    QVector<DownloadItemModel*>* m_Downloads;
     int m_CountCinemahall;
 
     QString videosToJson(QList<OnlineVideoModel>& videos);

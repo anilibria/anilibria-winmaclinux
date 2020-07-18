@@ -143,9 +143,8 @@ ApplicationWindow {
             "release": releases,
             "youtube": youtube,
             "about": about,
-            "cinemahall": cinemahall
-            //uncomment it after the release of the download manager
-            //"download": download
+            "cinemahall": cinemahall,
+            "download": download
 
         };
 
@@ -581,6 +580,30 @@ ApplicationWindow {
                     Row {
                         spacing: 10
                         Image {
+                            source: "Assets/Icons/downloadcircle.svg"
+                            sourceSize.width: 30
+                            sourceSize.height: 30
+                            mipmap: true
+                        }
+                        Label {
+                            anchors.leftMargin: 10
+                            anchors.verticalCenter: parent.verticalCenter
+                            color: "white"
+                            text: qsTr("Менеджер загрузок")
+                        }
+                    }
+                }
+                width: parent.width
+                onClicked: {
+                    showPage("download");
+                    drawer.close();
+                }
+            }
+            ItemDelegate {
+                contentItem: Item {
+                    Row {
+                        spacing: 10
+                        Image {
                             source: "Assets/Icons/donate.svg"
                             sourceSize.width: 30
                             sourceSize.height: 30
@@ -600,54 +623,6 @@ ApplicationWindow {
                     drawer.close();
                 }
             }
-            /*ItemDelegate {
-                contentItem: Item {
-                    Row {
-                        spacing: 10
-                        Image {
-                            source: "Assets/Icons/donate.svg"
-                            sourceSize.width: 30
-                            sourceSize.height: 30
-                            mipmap: true
-                        }
-                        Label {
-                            anchors.leftMargin: 10
-                            anchors.verticalCenter: parent.verticalCenter
-                            color: "white"
-                            text: qsTr("Менеджер загрузок")
-                        }
-                    }
-                }
-                width: parent.width
-                onClicked: {
-                    showPage("download");
-                    drawer.close();
-                }
-            }*/
-            /*ItemDelegate {
-                contentItem: Item {
-                    Row {
-                        spacing: 10
-                        Image {
-                            source: "Assets/Icons/donate.svg"
-                            sourceSize.width: 30
-                            sourceSize.height: 30
-                            mipmap: true
-                        }
-                        Label {
-                            anchors.leftMargin: 10
-                            anchors.verticalCenter: parent.verticalCenter
-                            color: "white"
-                            text: qsTr("Кинозал")
-                        }
-                    }
-                }
-                width: parent.width
-                onClicked: {
-                    showPage("download");
-                    drawer.close();
-                }
-            }*/
             ItemDelegate {
                 visible: !notVisibleSignin
                 contentItem: Item {
@@ -777,11 +752,11 @@ ApplicationWindow {
         id: about
         visible: false
     }
-    //uncomment it after the release of the download manager
-    /*Downloads {
+
+    Downloads {
         id: download
         visible: false
-    }*/
+    }
 
     Cinemahall {
         id: cinemahall

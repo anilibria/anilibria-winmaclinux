@@ -65,7 +65,7 @@ LocalStorageService::LocalStorageService(QObject *parent) : QObject(parent),
     m_CountReleases(0),
     m_CinemaHall(new QVector<int>()),
     m_CountSeens(0),
-    m_Downloads(new QSet<int>()),
+    m_Downloads(new QVector<DownloadItemModel*>()),
     m_CountCinemahall(0)
 {
     m_AllReleaseUpdatedWatcher = new QFutureWatcher<void>(this);
@@ -615,7 +615,11 @@ void LocalStorageService::loadDownloads()
     auto jsonArray = document.array();
 
     m_Downloads->clear();
-    foreach (auto item, jsonArray) m_Downloads->insert(item.toInt());
+    foreach (auto item, jsonArray) {
+        auto downloadItem = new DownloadItemModel();
+        downloadItem->readFromJsonObject(item.toObject());
+        m_Downloads->append(downloadItem);
+    }
 }
 
 void LocalStorageService::loadCinemahall()
@@ -640,10 +644,9 @@ void LocalStorageService::saveDownloads()
 {
     QJsonArray downloadsArray;
 
-    QSetIterator<int> iterator(*m_Downloads);
-    while(iterator.hasNext()) {
-
-        QJsonValue value(iterator.next());
+    foreach (auto downloadItem, *m_Downloads) {
+        QJsonObject value;
+        downloadItem->writeToJsonObject(value);
         downloadsArray.append(value);
     }
 

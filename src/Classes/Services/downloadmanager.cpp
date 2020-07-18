@@ -68,13 +68,6 @@ void DownloadManager::setProgress(qreal progress)
     emit progressChanged(progress);
 }
 
-double DownloadManager::round(double number)
-{
-    //TODO: fix error "missing floor"
-    return number + 0.5;
-    //return floor(number + 0.5);
-}
-
 void DownloadManager::start()
 {
     if (m_Running) return;
@@ -119,7 +112,7 @@ void DownloadManager::onDownloadProgress(qint64 bytesReceived, qint64 bytesTotal
 {
     m_BytesInSeconds = m_BytesInSeconds + (bytesTotal - bytesReceived);
     double percent = (double)bytesReceived / (double)bytesTotal;
-    setProgress(round(percent * 100));
+    setProgress(percent * 100);
 }
 
 void DownloadManager::onTimerTimeout()
@@ -136,6 +129,6 @@ void DownloadManager::onTimerTimeout()
         order++;
         len = len / 1024;
     }
-    setDisplayBytesInSeconds(QString::number((int)round(len)) + " " + sizes[order] + "/s");
+    setDisplayBytesInSeconds(QString::number((int)len) + " " + sizes[order] + "/s");
     m_BytesInSeconds = 0;
 }

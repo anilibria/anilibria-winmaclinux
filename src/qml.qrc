@@ -80,5 +80,6 @@
         <file>Assets/Icons/popcorn.svg</file>
         <file>Views/Cinemahall.qml</file>
         <file>Assets/Icons/cinemaplay.svg</file>
+        <file>Assets/Icons/downloadcircle.svg</file>
     </qresource>
 </RCC>

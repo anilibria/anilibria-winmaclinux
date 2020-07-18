@@ -19,8 +19,11 @@ Page {
 
     DownloadManager {
         id: downloadManager
-        url: "https://de8.libria.fun/get/0aixBL0j9zCsrNS3P74q0Q/1590607437/mp4/8619/0008.mp4?download=Shironeko Project: Zero Chronicle-8-hd.mp4"
+        url: "https://de8.libria.fun/get/g28o9Wzv092760bVDE--yw/1595013300/mp4/8671/0001.mp4?download=OreGairu%203-1-hd.mp4"
         destination: ""
+        onError: {
+            console.log(errorString);
+        }
     }
 
     RowLayout {
@@ -77,7 +80,7 @@ Page {
                     anchors.horizontalCenter: parent.horizontalCenter
                     visible: downloadManager.running
                     fontPointSize: 12
-                    text: "Скачивается " + downloadManager.displayBytesInSeconds + " " + downloadManager.progress
+                    text: "Скачивается " + downloadManager.displayBytesInSeconds + " " + Math.floor(downloadManager.progress)
                 }
             }
 

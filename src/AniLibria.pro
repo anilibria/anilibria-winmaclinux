@@ -64,7 +64,7 @@ DEFINES += USE_VERSION_CHECK
 
 SOURCES += \
     Classes/Models/changesmodel.cpp \
-    Classes/Models/downloadqueueitemmodel.cpp \
+    Classes/Models/downloaditemmodel.cpp \
     Classes/Models/externalplaylistvideo.cpp \
     Classes/Models/fullreleasemodel.cpp \
     Classes/Models/historymodel.cpp \
@@ -110,7 +110,7 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 
 HEADERS += \
     Classes/Models/changesmodel.h \
-    Classes/Models/downloadqueueitemmodel.h \
+    Classes/Models/downloaditemmodel.h \
     Classes/Models/externalplaylistvideo.h \
     Classes/Models/fullreleasemodel.h \
     Classes/Models/historymodel.h \
