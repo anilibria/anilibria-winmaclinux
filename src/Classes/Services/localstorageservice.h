@@ -167,6 +167,7 @@ public:
     Q_INVOKABLE void reorderReleaseInCinemahall(int reorderId, int targetId);
     Q_INVOKABLE void deleteReleasesFromCinemahall(const QList<int>& ids);
     Q_INVOKABLE void deleteAllReleasesFromCinemahall();
+    Q_INVOKABLE void addDownloadItem(int releaseId, int videoId, int quality);
 
 signals:
     void allReleasesFinished();

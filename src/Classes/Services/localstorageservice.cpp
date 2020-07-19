@@ -1777,6 +1777,27 @@ void LocalStorageService::deleteAllReleasesFromCinemahall()
     saveCinemahall();
 }
 
+void LocalStorageService::addDownloadItem(int releaseId, int videoId, int quality)
+{
+    auto result = std::find_if(
+        m_Downloads->begin(),
+        m_Downloads->end(),
+        [releaseId, videoId, quality](DownloadItemModel* model) -> bool {
+            return model->quality() == quality && model->releaseId() == releaseId && model->videoId() == videoId;
+        }
+    );
+    if (result != m_Downloads->end()) return;
+
+    auto model = new DownloadItemModel();
+    model->setReleaseId(releaseId);
+    model->setQuality(quality);
+    model->setVideoId(videoId);
+
+    m_Downloads->append(model);
+
+    saveDownloads();
+}
+
 void LocalStorageService::allReleasesUpdated()
 {
     emit allReleasesFinished();

@@ -412,6 +412,59 @@ Page {
                     ToolTip.text: "Управление кинозалом"
                 }
                 IconButton {
+                    id: downloadsMenuButton
+                    height: 45
+                    width: 40
+                    iconColor: "white"
+                    iconPath: "../Assets/Icons/downloadcircle.svg"
+                    iconWidth: 30
+                    iconHeight: 30
+                    onButtonPressed: {
+                        downloadsMenuPanel.open();
+                    }
+
+                    CommonMenu {
+                        id: downloadsMenuPanel
+                        y: downloadsMenuButton.height
+                        width: 300
+
+                        CommonMenuItem {
+                            text: "Скачать все серии в HD"
+                            enabled: page.selectedReleases.length
+                            onPressed: {
+                                for (const releaseId of page.selectedReleases) {
+                                    const release = findReleaseById(releaseId);
+                                    console.log(JSON.stringify(release));
+                                    for (let videoId = 0; videoId < release.countVideos; videoId++) {
+                                        localStorage.addDownloadItem(release.id, videoId, 1);
+                                    }
+                                }
+
+                                page.selectedReleases = [];
+                                downloadsMenuPanel.close();
+                            }
+                        }
+                        CommonMenuItem {
+                            text: "Скачать все серии в SD"
+                            enabled: page.selectedReleases.length
+                            onPressed: {
+                                for (const release of page.selectedReleases) {
+                                    for (let videoId = 0; videoId < release.countVideos; videoId++) {
+                                        localStorage.addDownloadItem(release.id, videoId, 2);
+                                    }
+                                }
+
+                                page.selectedReleases = [];
+                                downloadsMenuPanel.close();
+                            }
+                        }
+                    }
+
+                    ToolTip.delay: 1000
+                    ToolTip.visible: hovered
+                    ToolTip.text: "Скачивание файлов серий в разных качествах локально"
+                }
+                IconButton {
                     id: searchPopupButton
                     height: 45
                     width: 40
@@ -2110,25 +2163,6 @@ Page {
         if (releasesModel.count < 12) return;
         if (page.pageIndex === -1) return;
 
-        if (page.pageIndex === 17) {
-            releasesModel.append(
-                {
-                    model: {
-                        id: -1,
-                        title: "Загружено слишком много релизов, для показа остальных воспользуйтесь фильтрами",
-                        status: "",
-                        year: "",
-                        season: "",
-                        type: "",
-                        genres: "",
-                        voices: "",
-                        rating: 0
-                    }
-                }
-            );
-            page.pageIndex = -1;
-            return;
-        }
         page.pageIndex += 1;
 
         const nextPageReleases = getReleasesByFilter();
@@ -2245,6 +2279,15 @@ Page {
         }
 
         return result;
+    }
+
+    function findReleaseById(id) {
+        for (let i = 0; i < releasesModel.count; i++) {
+            const release = releasesModel.get(i).model;
+            if (release.id === id) return release;
+        }
+
+        return null;
     }
 
     Component.onCompleted: {
