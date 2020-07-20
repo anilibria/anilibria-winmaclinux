@@ -1798,6 +1798,32 @@ void LocalStorageService::addDownloadItem(int releaseId, int videoId, int qualit
     saveDownloads();
 }
 
+QString LocalStorageService::getDownloadsReleases()
+{
+    QVector<int> releaseIds;
+    foreach (auto downloadItem, *m_Downloads) releaseIds.append(downloadItem->releaseId());
+
+    QVector<FullReleaseModel*> downloadReleases(releaseIds.count());
+
+    auto iterator = std::find_if(
+        m_CachedReleases->begin(),
+        m_CachedReleases->end(),
+        [releaseIds](FullReleaseModel* release) -> bool {
+            return releaseIds.contains(release->id());
+        }
+    );
+    QJsonArray releases;
+    while (iterator != m_CachedReleases->end()) {
+        QJsonObject jsonValue;
+        (*iterator)->writeToJson(jsonValue);
+        releases.append(jsonValue);
+
+    }
+
+    QJsonDocument saveDoc(releases);
+    return saveDoc.toJson();
+}
+
 void LocalStorageService::allReleasesUpdated()
 {
     emit allReleasesFinished();
