@@ -169,6 +169,7 @@ public:
     Q_INVOKABLE void deleteAllReleasesFromCinemahall();
     Q_INVOKABLE void addDownloadItem(int releaseId, int videoId, int quality);
     Q_INVOKABLE QString getDownloadsReleases();
+    Q_INVOKABLE QString getDownloads();
 
 signals:
     void allReleasesFinished();

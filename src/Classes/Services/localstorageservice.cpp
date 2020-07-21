@@ -1817,11 +1817,25 @@ QString LocalStorageService::getDownloadsReleases()
         QJsonObject jsonValue;
         (*iterator)->writeToJson(jsonValue);
         releases.append(jsonValue);
-
+        iterator++;
     }
 
     QJsonDocument saveDoc(releases);
     return saveDoc.toJson();
+}
+
+QString LocalStorageService::getDownloads()
+{
+    QJsonArray array;
+    foreach (auto downloadItem, *m_Downloads) {
+        QJsonObject jsonObject;
+        downloadItem->writeToJsonObject(jsonObject);
+        array.append(jsonObject);
+    }
+
+    QJsonDocument jsonDocument(array);
+
+    return jsonDocument.toJson();
 }
 
 void LocalStorageService::allReleasesUpdated()

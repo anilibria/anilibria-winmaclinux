@@ -1,6 +1,7 @@
 import QtQuick 2.12
 import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.3
+import QtGraphicalEffects 1.0
 import Anilibria.Services 1.0
 import "../Theme"
 import "../Controls"
@@ -8,7 +9,6 @@ import "../Controls"
 Page {
     id: root
     anchors.fill: parent
-
     background: Rectangle {
         color: ApplicationTheme.pageBackground
     }
@@ -16,6 +16,15 @@ Page {
     signal navigateFrom()
     signal navigateTo()
 
+    onNavigateTo: {
+        downloadItems.clear();
+        const downloads = JSON.parse(localStorage.getDownloadsReleases());
+        for (const download of downloads) downloadItems.append(download);
+    }
+
+    ListModel {
+        id: downloadItems
+    }
 
     DownloadManager {
         id: downloadManager
@@ -24,6 +33,14 @@ Page {
         onError: {
             console.log(errorString);
         }
+    }
+
+    Rectangle {
+        id: mask
+        width: 180
+        height: 260
+        radius: 10
+        visible: false
     }
 
     RowLayout {
@@ -65,6 +82,7 @@ Page {
         }
 
         ColumnLayout {
+            id: itemContainer
             Layout.fillHeight: true
             Layout.fillWidth: true
             spacing: 2
@@ -88,6 +106,68 @@ Page {
                 id: downloadReleases
                 Layout.fillHeight: true
                 Layout.fillWidth: true
+                model: downloadItems
+                clip: true
+                spacing: 4
+                delegate: Rectangle {
+                    width: itemContainer.width
+                    height: 220
+                    color: "transparent"
+
+                    Rectangle {
+                        anchors.fill: parent
+                        anchors.leftMargin: 4
+                        anchors.rightMargin: 4
+                        radius: 10
+                        color: ApplicationTheme.panelBackground
+
+                        RowLayout {
+                            anchors.fill: parent
+
+                            Rectangle {
+                                color: "transparent"
+                                height: parent.height
+                                Layout.preferredWidth: 130
+                                Layout.leftMargin: 6
+
+                                Image {
+                                    anchors.centerIn: parent
+                                    source: localStorage.getReleasePosterPath(id, poster)
+                                    sourceSize: Qt.size(180, 270)
+                                    fillMode: Image.PreserveAspectCrop
+                                    width: 110
+                                    height: 200
+                                    layer.enabled: true
+                                    layer.effect: OpacityMask {
+                                        maskSource: mask
+                                    }
+                                }
+                            }
+                            Rectangle {
+                                height: parent.height
+                                Layout.fillWidth: true
+                                color: "transparent"
+
+                                AccentText {
+                                    fontPointSize: 10
+                                    horizontalAlignment: Text.AlignHCenter
+                                    verticalAlignment: Text.AlignVCenter
+                                    leftPadding: 8
+                                    topPadding: 6
+                                    wrapMode: Text.WordWrap
+                                    maximumLineCount: 2
+                                    text: title
+                                }
+                            }
+                            Rectangle {
+                                Layout.preferredWidth: 200
+                                Layout.rightMargin: 6
+                                height: parent.height
+                                color: "transparent"
+                            }
+                        }
+                    }
+                }
             }
         }
     }
