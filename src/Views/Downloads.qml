@@ -13,13 +13,26 @@ Page {
         color: ApplicationTheme.pageBackground
     }
 
+    property var downloads: []
+
     signal navigateFrom()
     signal navigateTo()
 
     onNavigateTo: {
         downloadItems.clear();
+        const downloads = JSON.parse(localStorage.getDownloads());
+        root.downloads = downloads;
+
         const releases = localStorage.getDownloadsReleases();
-        for (const release of releases) downloadItems.append(JSON.parse(release));
+        for (const release of releases) {
+            const releaseModel = JSON.parse(release);
+            const releaseDownloads = downloads.filter(a => a.releaseId === releaseModel.id);
+            releaseModel.countHdDownloads = releaseDownloads.filter(a => a.quality === 1).length;
+            releaseModel.countHdDownloadsCompleted = releaseDownloads.filter(a => a.quality === 1 && a.downloaded).length;
+            releaseModel.countSdDownloads = releaseDownloads.filter(a => a.quality === 2).length;
+            releaseModel.countSdDownloadsCompleted = releaseDownloads.filter(a => a.quality === 2 && a.downloaded).length;
+            downloadItems.append(releaseModel);
+        }
     }
 
     ListModel {
@@ -143,20 +156,46 @@ Page {
                                     }
                                 }
                             }
+
                             Rectangle {
                                 height: parent.height
                                 Layout.fillWidth: true
+                                Layout.fillHeight: true
                                 color: "transparent"
 
-                                AccentText {
-                                    fontPointSize: 10
-                                    horizontalAlignment: Text.AlignHCenter
-                                    verticalAlignment: Text.AlignVCenter
-                                    leftPadding: 8
-                                    topPadding: 6
-                                    wrapMode: Text.WordWrap
-                                    maximumLineCount: 2
-                                    text: title
+                                ColumnLayout {
+                                    spacing: 4
+                                    anchors.fill: parent
+
+                                    AccentText {
+                                        id: titleText
+                                        Layout.preferredHeight: 20
+                                        Layout.topMargin: 8
+                                        fontPointSize: 12
+                                        wrapMode: Text.WordWrap
+                                        maximumLineCount: 2
+                                        text: title
+                                    }
+
+                                    PlainText {
+                                        id: hdSeriesDownloadedText
+                                        Layout.preferredHeight: 20
+                                        visible: countHdDownloads > 0
+                                        fontPointSize: 10
+                                        height: 60
+                                        text: countHdDownloads + " cерий в HD качестве, скачано " + countHdDownloadsCompleted
+                                    }
+
+                                    PlainText {
+                                        visible: countSdDownloads > 0
+                                        Layout.preferredHeight: 20
+                                        fontPointSize: 10
+                                        text: "Серий в SD качестве " + countSdDownloads + " скачано " + countSdDownloadsCompleted
+                                    }
+
+                                    Item {
+                                        Layout.fillHeight: true
+                                    }
                                 }
                             }
                             Rectangle {

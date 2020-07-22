@@ -434,7 +434,6 @@ Page {
                             onPressed: {
                                 for (const releaseId of page.selectedReleases) {
                                     const release = findReleaseById(releaseId);
-                                    console.log(JSON.stringify(release));
                                     for (let videoId = 0; videoId < release.countVideos; videoId++) {
                                         localStorage.addDownloadItem(release.id, videoId, 1);
                                     }
@@ -448,7 +447,8 @@ Page {
                             text: "Скачать все серии в SD"
                             enabled: page.selectedReleases.length
                             onPressed: {
-                                for (const release of page.selectedReleases) {
+                                for (const releaseId of page.selectedReleases) {
+                                    const release = findReleaseById(releaseId);
                                     for (let videoId = 0; videoId < release.countVideos; videoId++) {
                                         localStorage.addDownloadItem(release.id, videoId, 2);
                                     }
