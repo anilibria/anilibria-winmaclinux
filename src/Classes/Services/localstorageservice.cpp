@@ -1798,30 +1798,34 @@ void LocalStorageService::addDownloadItem(int releaseId, int videoId, int qualit
     saveDownloads();
 }
 
-QString LocalStorageService::getDownloadsReleases()
+QList<QString> LocalStorageService::getDownloadsReleases()
 {
-    QVector<int> releaseIds;
-    foreach (auto downloadItem, *m_Downloads) releaseIds.append(downloadItem->releaseId());
+    QSet<int> releaseIds;
+    QList<QString> releases;
+    QJsonDocument jsonDocument;
 
-    QVector<FullReleaseModel*> downloadReleases(releaseIds.count());
+    foreach (auto downloadItem, *m_Downloads) {
+        if (releaseIds.contains(downloadItem->releaseId())) continue;
 
-    auto iterator = std::find_if(
-        m_CachedReleases->begin(),
-        m_CachedReleases->end(),
-        [releaseIds](FullReleaseModel* release) -> bool {
-            return releaseIds.contains(release->id());
-        }
-    );
-    QJsonArray releases;
-    while (iterator != m_CachedReleases->end()) {
+        releaseIds.insert(downloadItem->releaseId());
+
+        auto iterator = std::find_if(
+            m_CachedReleases->begin(),
+            m_CachedReleases->end(),
+            [downloadItem](FullReleaseModel* release) -> bool {
+                return release->id() == downloadItem->releaseId();
+            }
+        );
+        if (iterator == m_CachedReleases->end()) continue;
+
         QJsonObject jsonValue;
         (*iterator)->writeToJson(jsonValue);
-        releases.append(jsonValue);
-        iterator++;
+
+        jsonDocument.setObject(jsonValue);
+        releases.append(jsonDocument.toJson());
     }
 
-    QJsonDocument saveDoc(releases);
-    return saveDoc.toJson();
+    return releases;
 }
 
 QString LocalStorageService::getDownloads()

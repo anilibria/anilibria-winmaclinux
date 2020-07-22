@@ -18,8 +18,8 @@ Page {
 
     onNavigateTo: {
         downloadItems.clear();
-        const downloads = JSON.parse(localStorage.getDownloadsReleases());
-        for (const download of downloads) downloadItems.append(download);
+        const releases = localStorage.getDownloadsReleases();
+        for (const release of releases) downloadItems.append(JSON.parse(release));
     }
 
     ListModel {
