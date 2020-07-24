@@ -106,6 +106,7 @@ void DownloadManager::onFinished()
     }
 
     //TODO: save bytes to file
+    emit finished("");
 }
 
 void DownloadManager::onDownloadProgress(qint64 bytesReceived, qint64 bytesTotal)

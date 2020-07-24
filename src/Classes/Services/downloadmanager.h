@@ -74,7 +74,7 @@ signals:
     void displayBytesInSecondsChanged(QString bytesInSeconds);
 
     void started();
-    void finished();
+    void finished(const QString& downloadedPath);
     void update(int kiloBytesReceived, int kiloBytesTotal);
     void error(int errorCode, QString errorString);
 

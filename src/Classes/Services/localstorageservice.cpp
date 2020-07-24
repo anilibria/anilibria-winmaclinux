@@ -1798,6 +1798,24 @@ void LocalStorageService::addDownloadItem(int releaseId, int videoId, int qualit
     saveDownloads();
 }
 
+void LocalStorageService::finishDownloadItem(int releaseId, int videoId, int quality, const QString &downloadedPath)
+{
+    auto result = std::find_if(
+        m_Downloads->begin(),
+        m_Downloads->end(),
+        [releaseId, videoId, quality](DownloadItemModel* model) -> bool {
+            return model->quality() == quality && model->releaseId() == releaseId && model->videoId() == videoId;
+        }
+    );
+    if (result == m_Downloads->end()) return;
+
+    DownloadItemModel* downloadItem = *result;
+    downloadItem->setDownloaded(true);
+    downloadItem->setDownloadedUrl(downloadedPath);
+
+    saveDownloads();
+}
+
 QList<QString> LocalStorageService::getDownloadsReleases()
 {
     QSet<int> releaseIds;

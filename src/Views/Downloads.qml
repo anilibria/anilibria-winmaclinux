@@ -14,14 +14,15 @@ Page {
     }
 
     property var downloads: []
+    property var downloadingRelease
+    property var currentDownload
 
     signal navigateFrom()
     signal navigateTo()
 
     onNavigateTo: {
         downloadItems.clear();
-        const downloads = JSON.parse(localStorage.getDownloads());
-        root.downloads = downloads;
+        refreshDownloads();
 
         const releases = localStorage.getDownloadsReleases();
         for (const release of releases) {
@@ -41,10 +42,29 @@ Page {
 
     DownloadManager {
         id: downloadManager
-        url: "https://de8.libria.fun/get/g28o9Wzv092760bVDE--yw/1595013300/mp4/8671/0001.mp4?download=OreGairu%203-1-hd.mp4"
+        url: ""
         destination: ""
         onError: {
-            console.log(errorString);
+            applicationNotification.sendNotification(
+                {
+                    type: "error",
+                    message: `Ошибка скачивания серии ${root.downloadingRelease.videoId} в релизе ${root.currentDownload.title}.`
+                }
+            );
+        }
+        onFinished: {
+            applicationNotification.sendNotification(
+                {
+                    type: "info",
+                    message: `Cерия ${root.downloadingRelease.videoId} в релизе ${root.currentDownload.title} успешно скачана.`
+                }
+            );
+            const item = root.downloadingRelease;
+            localStorage.finishDownloadItem(item.releaseId, item.videoId, item.quality, downloadedPath);
+
+            refreshDownloads();
+
+            takeNextDownloadItem();
         }
     }
 
@@ -210,4 +230,20 @@ Page {
             }
         }
     }
+
+    function refreshDownloads() {
+        root.downloads = JSON.parse(localStorage.getDownloads());
+    }
+
+    function takeNextDownloadItem() {
+        const downloadItem = root.downloads.find(a => !a.downloaded);
+        root.downloadingRelease = root.downloadingRelease.find(a => a.id === downloadItem.releaseId);
+        root.currentDownload = downloadItem;
+        const videos = JSON.parse(root.downloadingRelease.videos);
+        const video = videos.find(a => a.id === downloadItem.videoId)
+
+        downloadManager.url = downloadItem.quality === 2 ? video.srcSd : video.srcHd;
+        downloadManager.start();
+    }
+
 }
