@@ -14,8 +14,8 @@ Page {
     }
 
     property var downloads: []
-    property var downloadingRelease
-    property var currentDownload
+    property var downloadingRelease: ({})
+    property var currentDownload: ({})
 
     signal navigateFrom()
     signal navigateTo()
@@ -105,7 +105,7 @@ Page {
                     iconWidth: 34
                     iconHeight: 34
                     onButtonPressed: {
-                        downloadManager.start();
+                        takeNextDownloadItem();
                     }
                     ToolTip.delay: 1000
                     ToolTip.visible: hovered
@@ -215,6 +215,13 @@ Page {
 
                                     Item {
                                         Layout.fillHeight: true
+
+                                        PlainText {
+                                            visible: root.downloadingRelease && root.downloadingRelease.id === id
+                                            anchors.bottom: parent.bottom
+                                            fontPointSize: 10
+                                            text: "Скачивается серия " + (root.currentDownload ? root.currentDownload.videoId : "")
+                                        }
                                     }
                                 }
                             }
@@ -235,12 +242,21 @@ Page {
         root.downloads = JSON.parse(localStorage.getDownloads());
     }
 
+    function getReleaseById(id) {
+        for (let i = 0; i < downloadItems.count; i++) {
+            const release = downloadItems.get(i);
+            if (release.id === id) return release;
+        }
+
+        return null;
+    }
+
     function takeNextDownloadItem() {
         const downloadItem = root.downloads.find(a => !a.downloaded);
-        root.downloadingRelease = root.downloadingRelease.find(a => a.id === downloadItem.releaseId);
+        root.downloadingRelease = getReleaseById(downloadItem.releaseId);
         root.currentDownload = downloadItem;
         const videos = JSON.parse(root.downloadingRelease.videos);
-        const video = videos.find(a => a.id === downloadItem.videoId)
+        const video = videos.find(a => a.id === downloadItem.videoId + 1);
 
         downloadManager.url = downloadItem.quality === 2 ? video.srcSd : video.srcHd;
         downloadManager.start();
