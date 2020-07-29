@@ -35,7 +35,8 @@ class DownloadManager : public QObject
     Q_PROPERTY(bool running READ running NOTIFY runningChanged)
     Q_PROPERTY(qreal progress READ progress NOTIFY progressChanged)
     Q_PROPERTY(QString displayBytesInSeconds READ displayBytesInSeconds NOTIFY displayBytesInSecondsChanged)
-    Q_PROPERTY(QUrl destination READ destination WRITE setDestination NOTIFY destinationChanged)
+    Q_PROPERTY(QString destination READ destination WRITE setDestination NOTIFY destinationChanged)
+    Q_PROPERTY(QString saveFileName READ saveFileName WRITE setSaveFileName NOTIFY saveFileNameChanged)
 
 private:
     QNetworkAccessManager* m_CurrentAccessManager;
@@ -44,9 +45,10 @@ private:
     QUrl m_Url;
     bool m_Running;
     qreal m_Progress;
-    QUrl m_Destination;
+    QString m_Destination;
     QString m_DisplayBytesInSeconds;
     qint64 m_BytesInSeconds;
+    QString m_SaveFileName;
 
 public:
     explicit DownloadManager(QObject *parent = nullptr);
@@ -54,11 +56,13 @@ public:
     QUrl url() const { return m_Url; }
     bool running() const { return m_Running; }
     qreal progress() const { return m_Progress; }
-    QUrl destination() const { return m_Destination; }
+    QString destination() const { return m_Destination; }
     QString displayBytesInSeconds() const { return m_DisplayBytesInSeconds; }
+    QString saveFileName() const { return m_SaveFileName; }
 
     void setUrl(QUrl url) noexcept;
-    void setDestination(QUrl destination) noexcept;
+    void setDestination(QString destination) noexcept;
+    void setSaveFileName(QString saveFileName) noexcept;
 
 private:
     void setDisplayBytesInSeconds(QString displayBytesInSeconds);
@@ -70,8 +74,9 @@ signals:
     void seriaDownloaded(int id, int seriaId);
     void runningChanged(bool running);
     void progressChanged(qreal progress);
-    void destinationChanged(QUrl destination);
+    void destinationChanged(QString destination);
     void displayBytesInSecondsChanged(QString bytesInSeconds);
+    void saveFileNameChanged();
 
     void started();
     void finished(const QString& downloadedPath);

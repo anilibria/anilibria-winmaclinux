@@ -16,6 +16,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <QFile>
+#include <QStandardPaths>
 #include "downloadmanager.h"
 
 DownloadManager::DownloadManager(QObject *parent) : QObject(parent),
@@ -29,6 +31,7 @@ DownloadManager::DownloadManager(QObject *parent) : QObject(parent),
     m_DisplayBytesInSeconds(""),
     m_BytesInSeconds(0)
 {
+    m_Destination = QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation);
     connect(m_DownloadSpeedTimer, &QTimer::timeout, this, &DownloadManager::onTimerTimeout);
 }
 
@@ -40,12 +43,20 @@ void DownloadManager::setUrl(QUrl url) noexcept
     emit urlChanged(m_Url);
 }
 
-void DownloadManager::setDestination(QUrl destination) noexcept
+void DownloadManager::setDestination(QString destination) noexcept
 {
     if (destination == m_Destination) return;
 
     m_Destination = destination;
     emit destinationChanged(m_Destination);
+}
+
+void DownloadManager::setSaveFileName(QString saveFileName) noexcept
+{
+    if (saveFileName == m_SaveFileName) return;
+
+    m_SaveFileName = saveFileName;
+    emit saveFileNameChanged();
 }
 
 void DownloadManager::setDisplayBytesInSeconds(QString displayBytesInSeconds)
@@ -77,8 +88,8 @@ void DownloadManager::start()
     setRunning(true);
 
     m_CurrentNetworkReply = m_CurrentAccessManager->get(QNetworkRequest(m_Url));
-    connect(m_CurrentNetworkReply,&QNetworkReply::finished,this,&DownloadManager::onFinished);
-    connect(m_CurrentNetworkReply,&QNetworkReply::downloadProgress,this,&DownloadManager::onDownloadProgress);
+    connect(m_CurrentNetworkReply, &QNetworkReply::finished, this, &DownloadManager::onFinished);
+    connect(m_CurrentNetworkReply, &QNetworkReply::downloadProgress, this, &DownloadManager::onDownloadProgress);
 
     m_DownloadSpeedTimer->start(1000);
 }
@@ -105,8 +116,23 @@ void DownloadManager::onFinished()
         return;
     }
 
-    //TODO: save bytes to file
-    emit finished("");
+    auto bufferSize = 1024 * 10;
+    auto filePath = m_Destination + "/" + m_SaveFileName;
+    QFile file(filePath);
+    file.open(QFile::WriteOnly);
+
+    while (true) {
+        auto buffer = m_CurrentNetworkReply->read(bufferSize);
+        if (buffer.length() == 0) break;
+
+        file.write(buffer);
+
+        if (buffer.length() < bufferSize) break;
+    }
+
+    file.close();
+
+    emit finished(filePath);
 }
 
 void DownloadManager::onDownloadProgress(qint64 bytesReceived, qint64 bytesTotal)

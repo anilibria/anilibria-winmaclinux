@@ -43,7 +43,6 @@ Page {
     DownloadManager {
         id: downloadManager
         url: ""
-        destination: ""
         onError: {
             applicationNotification.sendNotification(
                 {
@@ -59,8 +58,8 @@ Page {
                     message: `Cерия ${root.downloadingRelease.videoId} в релизе ${root.currentDownload.title} успешно скачана.`
                 }
             );
-            const item = root.downloadingRelease;
-            localStorage.finishDownloadItem(item.releaseId, item.videoId, item.quality, downloadedPath);
+
+            localStorage.finishDownloadItem(root.downloadingRelease.id, root.currentDownload.videoId, root.currentDownload.quality, downloadedPath);
 
             refreshDownloads();
 
@@ -131,7 +130,7 @@ Page {
                     anchors.horizontalCenter: parent.horizontalCenter
                     visible: downloadManager.running
                     fontPointSize: 12
-                    text: "Скачивается " + downloadManager.displayBytesInSeconds + " " + Math.floor(downloadManager.progress)
+                    text: "Скорость " + downloadManager.displayBytesInSeconds + " Скачано " + Math.floor(downloadManager.progress) + "%"
                 }
             }
 
@@ -258,7 +257,9 @@ Page {
         const videos = JSON.parse(root.downloadingRelease.videos);
         const video = videos.find(a => a.id === downloadItem.videoId + 1);
 
-        downloadManager.url = downloadItem.quality === 2 ? video.srcSd : video.srcHd;
+        const url = downloadItem.quality === 2 ? video.srcSd : video.srcHd;
+        downloadManager.url = url;
+        downloadManager.saveFileName = `${root.downloadingRelease.id}${downloadItem.videoId}.mp4`;
         downloadManager.start();
     }
 
