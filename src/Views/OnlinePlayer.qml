@@ -1219,7 +1219,7 @@ Page {
                 return;
             }
         } else {
-            if (_page.selectedVideo === _page.releaseVideos.length) return;
+            if (_page.selectedVideo === _page.releaseVideos.length - 1) return;
 
             _page.selectedVideo++;
             video = _page.releaseVideos[_page.selectedVideo];
