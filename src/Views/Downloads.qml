@@ -218,8 +218,9 @@ Page {
                                         PlainText {
                                             visible: root.downloadingRelease && root.downloadingRelease.id === id
                                             anchors.bottom: parent.bottom
+                                            anchors.bottomMargin: 10
                                             fontPointSize: 10
-                                            text: "Скачивается серия " + (root.currentDownload ? root.currentDownload.videoId : "")
+                                            text: " >> Скачивается серия " + (root.currentDownload ? root.currentDownload.videoId : "")
                                         }
                                     }
                                 }

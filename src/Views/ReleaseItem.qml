@@ -75,7 +75,7 @@ Rectangle {
             Image {
                 anchors.centerIn: parent
                 source: localStorage.getReleasePosterPath(releaseModel.id, releaseModel.poster)
-                sourceSize: Qt.size(180, 270)
+                sourceSize: Qt.size(350, 500)
                 fillMode: Image.PreserveAspectCrop
                 width: 180
                 height: 270

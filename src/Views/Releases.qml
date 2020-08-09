@@ -1427,12 +1427,15 @@ Page {
                     visible: releasesModel.count > 0
                     anchors.horizontalCenter: parent.horizontalCenter
                     height: parent.height
-                    width: Math.floor(window.width / 490) * 490
-                    cellWidth: 490
+                    width: parent.width//Math.floor(window.width / 490) * 490
+                    cellWidth: parent.width / Math.floor(parent.width / 490)
                     cellHeight: 290
                     delegate: releaseDelegate
                     model: releasesModel
                     clip: true
+                    ScrollBar.vertical: ScrollBar {
+                        active: true
+                    }
                     onContentYChanged: {
                         if (page.fillingReleases) return;
 
@@ -1445,40 +1448,37 @@ Page {
                     }
 
                     Component {
-                        id: testDelegate
-                        Rectangle {
-                            width: 480
-                            height: 280
-                            color: "red"
-
-                        }
-                    }
-
-                    Component {
                         id: releaseDelegate
-                        ReleaseItem {
-                            releaseModel: modelData
-                            favoriteReleases: page.favoriteReleases
-                            isSelected: page.selectedReleases.filter(a => a === releaseModel.id).length
+                        Rectangle {
+                            color: "transparent"
+                            width: scrollview.cellWidth
+                            height: scrollview.cellHeight
 
-                            onLeftClicked: {
-                                if (page.openedRelease) return;
+                            ReleaseItem {
+                                anchors.centerIn: parent
+                                releaseModel: modelData
+                                favoriteReleases: page.favoriteReleases
+                                isSelected: page.selectedReleases.filter(a => a === releaseModel.id).length
 
-                                page.selectItem(modelData);
-                            }
-                            onRightClicked: {
-                                multupleMode.checked = !multupleMode.checked;
-                            }
-                            onAddToFavorite: {
-                                synchronizationService.addUserFavorites(applicationSettings.userToken, modelData.id.toString());
-                                page.selectedReleases = [];
-                            }
-                            onRemoveFromFavorite: {
-                                synchronizationService.removeUserFavorites(applicationSettings.userToken, modelData.id.toString());
-                                page.selectedReleases = [];
-                            }
-                            onWatchRelease: {
-                                page.watchRelease(id, videos, -1);
+                                onLeftClicked: {
+                                    if (page.openedRelease) return;
+
+                                    page.selectItem(modelData);
+                                }
+                                onRightClicked: {
+                                    multupleMode.checked = !multupleMode.checked;
+                                }
+                                onAddToFavorite: {
+                                    synchronizationService.addUserFavorites(applicationSettings.userToken, modelData.id.toString());
+                                    page.selectedReleases = [];
+                                }
+                                onRemoveFromFavorite: {
+                                    synchronizationService.removeUserFavorites(applicationSettings.userToken, modelData.id.toString());
+                                    page.selectedReleases = [];
+                                }
+                                onWatchRelease: {
+                                    page.watchRelease(id, videos, -1);
+                                }
                             }
                         }
                     }
@@ -1496,6 +1496,7 @@ Page {
         width: 50
         height: 50
         anchors.right: parent.right
+        anchors.rightMargin: 20
         anchors.bottom: parent.bottom
         IconButton {
             anchors.centerIn: parent
