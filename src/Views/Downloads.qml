@@ -32,6 +32,7 @@ Page {
             releaseModel.countHdDownloadsCompleted = releaseDownloads.filter(a => a.quality === 1 && a.downloaded).length;
             releaseModel.countSdDownloads = releaseDownloads.filter(a => a.quality === 2).length;
             releaseModel.countSdDownloadsCompleted = releaseDownloads.filter(a => a.quality === 2 && a.downloaded).length;
+            releaseModel.isSelected = false;
             downloadItems.append(releaseModel);
         }
     }
@@ -152,6 +153,15 @@ Page {
                         anchors.rightMargin: 4
                         radius: 10
                         color: ApplicationTheme.panelBackground
+                        border.color: ApplicationTheme.selectedItem
+                        border.width: isSelected ? 3 : 0
+
+                        MouseArea {
+                            anchors.fill: parent
+                            onPressed: {
+                                toggleSelected(id);
+                            }
+                        }
 
                         RowLayout {
                             anchors.fill: parent
@@ -262,6 +272,16 @@ Page {
         downloadManager.url = url;
         downloadManager.saveFileName = `${root.downloadingRelease.id}${downloadItem.videoId}.mp4`;
         downloadManager.start();
+    }
+
+    function toggleSelected(id) {
+        for (let i = 0; i < downloadItems.count; i++) {
+            const release = downloadItems.get(i);
+            if (release.id === id) {
+                release.isSelected = !release.isSelected;
+                break;
+            }
+        }
     }
 
 }
