@@ -101,7 +101,7 @@ Page {
                     height: 45
                     width: 40
                     iconColor: "white"
-                    iconPath: "../Assets/Icons/refresh.svg"
+                    iconPath: "../Assets/Icons/startdownload.svg"
                     iconWidth: 34
                     iconHeight: 34
                     onButtonPressed: {
@@ -110,6 +110,36 @@ Page {
                     ToolTip.delay: 1000
                     ToolTip.visible: hovered
                     ToolTip.text: "Запустить скачивание видео файлов"
+                }
+                IconButton {
+                    id: stopDownload
+                    height: 45
+                    width: 40
+                    iconColor: "white"
+                    iconPath: "../Assets/Icons/stopdownload.svg"
+                    iconWidth: 34
+                    iconHeight: 34
+                    onButtonPressed: {
+                        takeNextDownloadItem();
+                    }
+                    ToolTip.delay: 1000
+                    ToolTip.visible: hovered
+                    ToolTip.text: "Остановить скачивание файлов"
+                }
+                IconButton {
+                    id: trashDownload
+                    height: 45
+                    width: 40
+                    iconColor: "white"
+                    iconPath: "../Assets/Icons/trash.svg"
+                    iconWidth: 30
+                    iconHeight: 30
+                    onButtonPressed: {
+                        takeNextDownloadItem();
+                    }
+                    ToolTip.delay: 1000
+                    ToolTip.visible: hovered
+                    ToolTip.text: "Удалить все видео файлы выбранных релизов"
                 }
             }
         }
@@ -131,7 +161,7 @@ Page {
                     anchors.horizontalCenter: parent.horizontalCenter
                     visible: downloadManager.running
                     fontPointSize: 12
-                    text: "Скорость " + downloadManager.displayBytesInSeconds + " Скачано " + Math.floor(downloadManager.progress) + "%"
+                    text: "Выполняется скачивание, скорость " + downloadManager.displayBytesInSeconds + " скачано " + Math.floor(downloadManager.progress) + "%"
                 }
             }
 
@@ -236,10 +266,39 @@ Page {
                                 }
                             }
                             Rectangle {
+                                id: rightBlock
                                 Layout.preferredWidth: 200
+                                Layout.fillHeight: true
                                 Layout.rightMargin: 6
                                 height: parent.height
                                 color: "transparent"
+
+                                Column {
+                                    anchors.centerIn: parent
+
+                                    Item {
+                                        width: rightBlock.width
+                                        height: 40
+
+                                        Image {
+                                            anchors.horizontalCenter: parent.horizontalCenter
+                                            width: 40
+                                            height: 40
+                                            mipmap: true
+                                            source: root.downloadingRelease.id === id ? "../Assets/Icons/downloading.svg" : (countHdDownloads === countHdDownloadsCompleted ? "../Assets/Icons/downloadcheck.svg" : "../Assets/Icons/idledownload.svg")
+                                        }
+                                    }
+
+                                    Item {
+                                        width: rightBlock.width
+                                        height: 40
+
+                                        Text {
+                                            anchors.horizontalCenter: parent.horizontalCenter
+                                            text: root.downloadingRelease.id === id ? "Скачивается" : (countHdDownloads === countHdDownloadsCompleted ? "Скачано" : "В очереди")
+                                        }
+                                    }
+                                }
                             }
                         }
                     }

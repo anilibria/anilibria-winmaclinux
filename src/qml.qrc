@@ -81,5 +81,11 @@
         <file>Views/Cinemahall.qml</file>
         <file>Assets/Icons/cinemaplay.svg</file>
         <file>Assets/Icons/downloadcircle.svg</file>
+        <file>Assets/Icons/startdownload.svg</file>
+        <file>Assets/Icons/trash.svg</file>
+        <file>Assets/Icons/stopdownload.svg</file>
+        <file>Assets/Icons/downloading.svg</file>
+        <file>Assets/Icons/downloadcheck.svg</file>
+        <file>Assets/Icons/idledownload.svg</file>
     </qresource>
 </RCC>
