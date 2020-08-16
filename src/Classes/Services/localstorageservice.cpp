@@ -1730,6 +1730,8 @@ QString LocalStorageService::getCinemahallReleases()
 
     QJsonArray releases;
     foreach (auto cinemahallRelease, cinemahallReleases) {
+        if (cinemahallRelease == nullptr) continue; //Remove deplicates
+
         QJsonObject jsonValue;
         cinemahallRelease->writeToJson(jsonValue);
         releases.append(jsonValue);
