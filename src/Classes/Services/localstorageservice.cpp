@@ -1696,6 +1696,8 @@ QString LocalStorageService::packAsMPCPLAndOpen(int id, QString quality)
 void LocalStorageService::addToCinemahall(const QList<int>& ids)
 {
     foreach(auto id, ids) {
+        if (m_CinemaHall->contains(id)) continue;
+
         m_CinemaHall->append(id);
     }
 
