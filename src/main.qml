@@ -143,9 +143,9 @@ ApplicationWindow {
             "release": releases,
             "youtube": youtube,
             "about": about,
-            "cinemahall": cinemahall,
-            "download": download
-
+            "cinemahall": cinemahall,            
+            "download": download,
+            "maintenance": maintenance
         };
 
         const currentPage = pages[currentPageId];
@@ -604,6 +604,30 @@ ApplicationWindow {
                     Row {
                         spacing: 10
                         Image {
+                            source: "Assets/Icons/maintenance.svg"
+                            sourceSize.width: 30
+                            sourceSize.height: 30
+                            mipmap: true
+                        }
+                        Label {
+                            anchors.leftMargin: 10
+                            anchors.verticalCenter: parent.verticalCenter
+                            color: "white"
+                            text: qsTr("Обслуживание")
+                        }
+                    }
+                }
+                width: parent.width
+                onClicked: {
+                    showPage("maintenance");
+                    drawer.close();
+                }
+            }
+            ItemDelegate {
+                contentItem: Item {
+                    Row {
+                        spacing: 10
+                        Image {
                             source: "Assets/Icons/donate.svg"
                             sourceSize.width: 30
                             sourceSize.height: 30
@@ -766,6 +790,11 @@ ApplicationWindow {
             window.showPage("videoplayer");
             videoplayer.setCinemahallVideo();
         }
+    }
+
+    Maintenance {
+        id: maintenance
+        visible: false
     }
 
     Rectangle {

@@ -87,5 +87,7 @@
         <file>Assets/Icons/downloading.svg</file>
         <file>Assets/Icons/downloadcheck.svg</file>
         <file>Assets/Icons/idledownload.svg</file>
+        <file>Assets/Icons/maintenance.svg</file>
+        <file>Views/Maintenance.qml</file>
     </qresource>
 </RCC>
