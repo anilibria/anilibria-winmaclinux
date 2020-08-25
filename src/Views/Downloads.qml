@@ -98,6 +98,7 @@ Page {
                 }
                 IconButton {
                     id: startDownload
+                    visible: !downloadManager.running
                     height: 45
                     width: 40
                     iconColor: "white"
@@ -113,6 +114,7 @@ Page {
                 }
                 IconButton {
                     id: stopDownload
+                    visible: downloadManager.running
                     height: 45
                     width: 40
                     iconColor: "white"
@@ -120,7 +122,7 @@ Page {
                     iconWidth: 34
                     iconHeight: 34
                     onButtonPressed: {
-                        takeNextDownloadItem();
+                        downloadManager.stop();
                     }
                     ToolTip.delay: 1000
                     ToolTip.visible: hovered

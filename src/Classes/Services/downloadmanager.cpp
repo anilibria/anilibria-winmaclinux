@@ -101,8 +101,10 @@ void DownloadManager::stop()
     m_CurrentNetworkReply->abort();
     m_CurrentNetworkReply->deleteLater();
 
-    m_Running = false;
+    setRunning(false);
     m_DownloadSpeedTimer->stop();
+    setDisplayBytesInSeconds("");
+    setProgress(0);
 }
 
 void DownloadManager::onFinished()
