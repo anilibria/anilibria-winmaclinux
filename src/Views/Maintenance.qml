@@ -81,8 +81,54 @@ Page {
                     active: true
                 }
 
-                Item {
-                    id: itemGrid
+                Rectangle {
+                    width: scrollview.width - 10
+                    height: 300
+                    color: "transparent"
+                    border.color: "white"
+                    border.width: 1
+
+                    Grid {
+                        width: parent.width
+                        spacing: 4
+                        columns: 2
+
+                        Item {
+                            width: 200
+                            height: 100
+
+                            RoundedActionButton {
+                                anchors.verticalCenter: parent.verticalCenter
+                                anchors.left: parent.left
+                                anchors.leftMargin: 10
+                                text: "Очистить кеш постеров"
+                                onClicked: {
+                                }
+                            }
+                        }
+
+                        Text {
+                            text: "Удалить все сохраненные локально сохраненные постеры"
+                        }
+
+                        Item {
+                            width: 200
+                            height: 100
+
+                            RoundedActionButton {
+                                anchors.left: parent.left
+                                anchors.leftMargin: 10
+                                anchors.verticalCenter: parent.verticalCenter
+                                text: "Очистить загрузки"
+                                onClicked: {
+                                }
+                            }
+                        }
+
+                        Text {
+                            text: "Удалить все загруженные файлы а также записи о них из известных источников"
+                        }
+                    }
                 }
 
             }
