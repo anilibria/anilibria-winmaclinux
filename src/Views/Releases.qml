@@ -70,6 +70,7 @@ Page {
         11: { field: 0, direction: 1 }
     }
     property var changesCounts: []
+    property bool showSidePanel: false
 
     signal navigateFrom()
     signal watchRelease(int releaseId, string videos, int startSeria)
@@ -132,6 +133,16 @@ Page {
         visible: false
     }
 
+    MouseArea {
+        anchors.fill: parent
+        hoverEnabled: true
+        onPositionChanged: {
+            if (!compactModeSwitch.checked) return;
+            if (mouse.x < 80) page.showSidePanel = true;
+            if (mouse.x > 100) page.showSidePanel = false;
+        }
+    }
+
     RowLayout {
         id: panelContainer
         anchors.fill: parent
@@ -139,9 +150,13 @@ Page {
         enabled: !page.openedRelease
         Rectangle {
             color: ApplicationTheme.pageVerticalPanel
-            width: 40
+            Layout.preferredWidth: compactModeSwitch.checked && !page.showSidePanel ? 0 : 40
             Layout.fillHeight: true
+
             Column {
+                visible: !compactModeSwitch.checked || page.showSidePanel
+                width: compactModeSwitch.checked && !page.showSidePanel ? 0 : 40
+
                 IconButton {
                     height: 45
                     width: 40
@@ -995,7 +1010,7 @@ Page {
                     Popup {
                         id: releaseSettingsPopup
                         x: 40
-                        y: sortingPopupButton.height - 180
+                        y: sortingPopupButton.height - 220
                         width: 370
                         height: 390
                         modal: true
