@@ -28,7 +28,14 @@ UserSettingsModel::UserSettingsModel(): m_Quality(1),
     m_JumpSecond(15),
     m_ShowReleaseInfo(false),
     m_ClearFiltersAfterChangeSection(true),
-    m_CompactMode(false)
+    m_CompactMode(false),
+    m_HideCinemhallButton(false),
+    m_HideDownloadButton(false),
+    m_HideRandomReleaseButton(false),
+    m_HideNotificationButton(false),
+    m_HideInfoButton(false),
+    m_HideSortButton(false),
+    m_HideFilterButton(false)
 {
 
 }
@@ -88,6 +95,41 @@ void UserSettingsModel::setCompactMode(const bool compactMode) noexcept
     m_CompactMode = compactMode;
 }
 
+void UserSettingsModel::setHideCinemhallButton(const bool hideCinemhallButton) noexcept
+{
+    m_HideCinemhallButton = hideCinemhallButton;
+}
+
+void UserSettingsModel::setHideDownloadButton(const bool hideDownloadButton) noexcept
+{
+    m_HideDownloadButton = hideDownloadButton;
+}
+
+void UserSettingsModel::setHideRandomReleaseButton(const bool hideRandomReleaseButton) noexcept
+{
+    m_HideRandomReleaseButton = hideRandomReleaseButton;
+}
+
+void UserSettingsModel::setHideNotificationButton(const bool hideNotificationButton) noexcept
+{
+    m_HideNotificationButton = hideNotificationButton;
+}
+
+void UserSettingsModel::setHideInfoButton(const bool hideInfoButton) noexcept
+{
+    m_HideInfoButton = hideInfoButton;
+}
+
+void UserSettingsModel::setHideSortButton(const bool hideSortButton) noexcept
+{
+    m_HideSortButton = hideSortButton;
+}
+
+void UserSettingsModel::setHideFilterButton(const bool hideFilterButton) noexcept
+{
+    m_HideFilterButton = hideFilterButton;
+}
+
 void UserSettingsModel::fromJson(QString json)
 {
     if (json.isEmpty()) return;
@@ -106,6 +148,13 @@ void UserSettingsModel::fromJson(QString json)
     if (jsonSettings.contains("showReleaseInfo")) setShowReleaseInfo(jsonSettings.value("showReleaseInfo").toBool());
     if (jsonSettings.contains("clearFiltersAfterChangeSection")) setClearFiltersAfterChangeSection(jsonSettings.value("clearFiltersAfterChangeSection").toBool());
     if (jsonSettings.contains("compactMode")) setCompactMode(jsonSettings.value("compactMode").toBool());
+    if (jsonSettings.contains("hideCinemhallButton")) setHideCinemhallButton(jsonSettings.value("hideCinemhallButton").toBool());
+    if (jsonSettings.contains("hideDownloadButton")) setHideDownloadButton(jsonSettings.value("hideDownloadButton").toBool());
+    if (jsonSettings.contains("hideRandomReleaseButton")) setHideRandomReleaseButton(jsonSettings.value("hideRandomReleaseButton").toBool());
+    if (jsonSettings.contains("hideNotificationButton")) setHideNotificationButton(jsonSettings.value("hideNotificationButton").toBool());
+    if (jsonSettings.contains("hideInfoButton")) setHideInfoButton(jsonSettings.value("hideInfoButton").toBool());
+    if (jsonSettings.contains("hideSortButton")) setHideSortButton(jsonSettings.value("hideSortButton").toBool());
+    if (jsonSettings.contains("hideFilterButton")) setHideFilterButton(jsonSettings.value("hideFilterButton").toBool());
 }
 
 QString UserSettingsModel::toJson() noexcept
@@ -123,6 +172,13 @@ QString UserSettingsModel::toJson() noexcept
     object["showReleaseInfo"] = showReleaseInfo();
     object["clearFiltersAfterChangeSection"] = clearFiltersAfterChangeSection();
     object["compactMode"] = compactMode();
+    object["hideCinemhallButton"] = hideCinemhallButton();
+    object["hideDownloadButton"] = hideDownloadButton();
+    object["hideRandomReleaseButton"] = hideRandomReleaseButton();
+    object["hideNotificationButton"] = hideNotificationButton();
+    object["hideInfoButton"] = hideInfoButton();
+    object["hideSortButton"] = hideSortButton();
+    object["hideFilterButton"] = hideFilterButton();
 
     QJsonDocument saveDoc(object);
     return saveDoc.toJson();

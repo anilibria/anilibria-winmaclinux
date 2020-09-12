@@ -38,6 +38,13 @@ private:
     bool m_ShowReleaseInfo;
     bool m_ClearFiltersAfterChangeSection;
     bool m_CompactMode;
+    bool m_HideCinemhallButton;
+    bool m_HideDownloadButton;
+    bool m_HideRandomReleaseButton;
+    bool m_HideNotificationButton;
+    bool m_HideInfoButton;
+    bool m_HideSortButton;
+    bool m_HideFilterButton;
 
 public:
     UserSettingsModel();
@@ -53,6 +60,13 @@ public:
     bool showReleaseInfo() const { return m_ShowReleaseInfo; }
     bool clearFiltersAfterChangeSection() const { return m_ClearFiltersAfterChangeSection; }
     bool compactMode() const { return m_CompactMode; }
+    bool hideCinemhallButton() const { return m_HideCinemhallButton; }
+    bool hideDownloadButton() const { return m_HideDownloadButton; }
+    bool hideRandomReleaseButton() const { return m_HideRandomReleaseButton; }
+    bool hideNotificationButton() const { return m_HideNotificationButton; }
+    bool hideInfoButton() const { return m_HideInfoButton; }
+    bool hideSortButton() const { return m_HideSortButton; }
+    bool hideFilterButton() const { return m_HideFilterButton; }
 
     void setQuality(const int quality) noexcept;
     void setVolume(const double volume) noexcept;
@@ -65,6 +79,13 @@ public:
     void setShowReleaseInfo(const bool showReleaseInfo) noexcept;
     void setClearFiltersAfterChangeSection(const bool clearFiltersAfterChangeSection) noexcept;
     void setCompactMode(const bool compactMode) noexcept;
+    void setHideCinemhallButton(const bool hideCinemhallButton) noexcept;
+    void setHideDownloadButton(const bool hideDownloadButton) noexcept;
+    void setHideRandomReleaseButton(const bool hideRandomReleaseButton) noexcept;
+    void setHideNotificationButton(const bool hideNotificationButton) noexcept;
+    void setHideInfoButton(const bool hideInfoButton) noexcept;
+    void setHideSortButton(const bool hideSortButton) noexcept;
+    void setHideFilterButton(const bool hideFilterButton) noexcept;
 
     void fromJson(QString json);
     QString toJson() noexcept;
