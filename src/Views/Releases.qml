@@ -71,6 +71,8 @@ Page {
     }
     property var changesCounts: []
     property bool showSidePanel: false
+    property bool showButtonVisibleChanger: false
+    property bool hideCinemahallButton: false
 
     signal navigateFrom()
     signal watchRelease(int releaseId, string videos, int startSeria)
@@ -353,8 +355,14 @@ Page {
                     iconPath: "../Assets/Icons/popcorn.svg"
                     iconWidth: 30
                     iconHeight: 30
+                    showCrossIcon: page.showButtonVisibleChanger && page.hideCinemahallButton
+                    visible: page.showButtonVisibleChanger || !page.hideCinemahallButton
                     onButtonPressed: {
-                        cinemahallMenuPanel.open();
+                        if (page.showButtonVisibleChanger) {
+                            page.hideCinemahallButton = !page.hideCinemahallButton;
+                        } else {
+                            cinemahallMenuPanel.open();
+                        }
                     }
 
                     CommonMenu {
@@ -1155,7 +1163,17 @@ Page {
                     ToolTip.visible: informationMenuButton.hovered
                     ToolTip.text: "Просмотреть полезные ссылки связанные с приложением"
                 }
-
+                IconButton {
+                    height: 45
+                    width: 40
+                    iconColor: "white"
+                    iconPath: "../Assets/Icons/hidebuttonmenu.svg"
+                    iconWidth: 29
+                    iconHeight: 29
+                    onButtonPressed: {
+                        page.showButtonVisibleChanger = !page.showButtonVisibleChanger;
+                    }
+                }
             }
         }
 

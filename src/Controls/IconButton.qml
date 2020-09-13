@@ -28,6 +28,7 @@ Item {
     property alias iconHeight: iconImage.height
     property var hoverColor: "lightgray"
     property bool hovered: false
+    property alias showCrossIcon: crossIcon.visible
 
     signal buttonPressed()
     signal buttonHoverEnter()
@@ -71,6 +72,32 @@ Item {
             anchors.fill: iconImage
             source: iconImage
             color: "white"
+        }
+
+        Canvas {
+            id: crossIcon
+            visible: false
+            anchors.fill: parent
+            opacity: .5
+            onPaint: {
+                const ctx = getContext(`2d`);
+                const halfWidth = imageRectangle.width / 2;
+                const offset = 14;
+
+                ctx.lineWidth = 2;
+                ctx.strokeStyle = `#68b0ab`;
+                ctx.beginPath();
+                ctx.moveTo(imageRectangle.width - offset, offset);
+                ctx.lineTo(offset, imageRectangle.height - offset);
+                ctx.closePath();
+                ctx.stroke();
+
+                ctx.beginPath();
+                ctx.moveTo(offset, offset);
+                ctx.lineTo(imageRectangle.width - offset, imageRectangle.height - offset);
+                ctx.closePath();
+                ctx.stroke();
+            }
         }
     }
 }

@@ -89,5 +89,6 @@
         <file>Assets/Icons/idledownload.svg</file>
         <file>Assets/Icons/maintenance.svg</file>
         <file>Views/Maintenance.qml</file>
+        <file>Assets/Icons/hidebuttonmenu.svg</file>
     </qresource>
 </RCC>
