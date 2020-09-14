@@ -154,6 +154,14 @@ public:
     Q_INVOKABLE void setShowReleaseInfo(bool showReleaseInfo);
     Q_INVOKABLE void setClearFiltersAfterChangeSection(bool clearFiltersAfterChangeSection);
     Q_INVOKABLE void setCompactMode(bool compactMode);
+    Q_INVOKABLE void setHideCinemhallButton(bool hideCinemhallButton);
+    Q_INVOKABLE void setHideDownloadButton(bool hideDownloadButton);
+    Q_INVOKABLE void setHideRandomReleaseButton(bool hideRandomReleaseButton);
+    Q_INVOKABLE void setHideNotificationButton(bool hideNotificationButton);
+    Q_INVOKABLE void setHideInfoButton(bool hideInfoButton);
+    Q_INVOKABLE void setHideSortButton(bool hideSortButton);
+    Q_INVOKABLE void setHideFilterButton(bool hideFilterButton);
+
     Q_INVOKABLE QString getUserSettings();
     Q_INVOKABLE QString getYoutubeItems();
     Q_INVOKABLE void copyTorrentToFile(QString source, QString target);

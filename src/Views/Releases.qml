@@ -73,6 +73,12 @@ Page {
     property bool showSidePanel: false
     property bool showButtonVisibleChanger: false
     property bool hideCinemahallButton: false
+    property bool hideDownloadButton: false
+    property bool hideRandomReleaseButton: false
+    property bool hideNotificationButton: false
+    property bool hideInfoButton: false
+    property bool hideSortButton: false
+    property bool hideFilterButton: false
 
     signal navigateFrom()
     signal watchRelease(int releaseId, string videos, int startSeria)
@@ -360,6 +366,7 @@ Page {
                     onButtonPressed: {
                         if (page.showButtonVisibleChanger) {
                             page.hideCinemahallButton = !page.hideCinemahallButton;
+                            localStorage.setHideCinemhallButton(page.hideCinemahallButton);
                         } else {
                             cinemahallMenuPanel.open();
                         }
@@ -442,8 +449,15 @@ Page {
                     iconPath: "../Assets/Icons/downloadcircle.svg"
                     iconWidth: 30
                     iconHeight: 30
+                    showCrossIcon: page.showButtonVisibleChanger && page.hideDownloadButton
+                    visible: page.showButtonVisibleChanger || !page.hideDownloadButton
                     onButtonPressed: {
-                        downloadsMenuPanel.open();
+                        if (page.showButtonVisibleChanger) {
+                            page.hideDownloadButton = !page.hideDownloadButton;
+                            localStorage.setHideDownloadButton(page.hideDownloadButton);
+                        } else {
+                            downloadsMenuPanel.open();
+                        }
                     }
 
                     CommonMenu {
@@ -495,8 +509,15 @@ Page {
                     iconPath: "../Assets/Icons/search.svg"
                     iconWidth: 29
                     iconHeight: 29
+                    showCrossIcon: page.showButtonVisibleChanger && page.hideFilterButton
+                    visible: page.showButtonVisibleChanger || !page.hideFilterButton
                     onButtonPressed: {
-                        filtersPopup.open();
+                        if (page.showButtonVisibleChanger) {
+                            page.hideFilterButton = !page.hideFilterButton;
+                            localStorage.setHideFilterButton(page.hideFilterButton);
+                        } else {
+                            filtersPopup.open();
+                        }
                     }
 
                     Rectangle {
@@ -737,8 +758,15 @@ Page {
                     iconPath: "../Assets/Icons/sort.svg"
                     iconWidth: 29
                     iconHeight: 29
+                    showCrossIcon: page.showButtonVisibleChanger && page.hideSortButton
+                    visible: page.showButtonVisibleChanger || !page.hideSortButton
                     onButtonPressed: {
-                        sortingPopup.open();
+                        if (page.showButtonVisibleChanger) {
+                            page.hideSortButton = !page.hideSortButton;
+                            localStorage.setHideSortButton(page.hideSortButton);
+                        } else {
+                            sortingPopup.open();
+                        }
                     }
 
                     Popup {
@@ -845,9 +873,16 @@ Page {
                     iconPath: "../Assets/Icons/notification.svg"
                     iconWidth: 29
                     iconHeight: 29
+                    showCrossIcon: page.showButtonVisibleChanger && page.hideNotificationButton
+                    visible: page.showButtonVisibleChanger || !page.hideNotificationButton
                     onButtonPressed: {
-                        page.changesCounts = localStorage.getChangesCounts();
-                        notificationPopup.open();
+                        if (page.showButtonVisibleChanger) {
+                            page.hideNotificationButton = !page.hideNotificationButton;
+                            localStorage.setHideNotificationButton(page.hideNotificationButton);
+                        } else {
+                            page.changesCounts = localStorage.getChangesCounts();
+                            notificationPopup.open();
+                        }
                     }
 
                     Rectangle {
@@ -994,9 +1029,16 @@ Page {
                     iconPath: "../Assets/Icons/dice.svg"
                     iconWidth: 29
                     iconHeight: 29
+                    showCrossIcon: page.showButtonVisibleChanger && page.hideRandomReleaseButton
+                    visible: page.showButtonVisibleChanger || !page.hideRandomReleaseButton
                     onButtonPressed: {
-                        const randomRelease = JSON.parse(localStorage.getRandomRelease());
-                        showReleaseCard(randomRelease);
+                        if (page.showButtonVisibleChanger) {
+                            page.hideRandomReleaseButton = !page.hideRandomReleaseButton;
+                            localStorage.setHideRandomReleaseButton(page.hideRandomReleaseButton);
+                        } else {
+                            const randomRelease = JSON.parse(localStorage.getRandomRelease());
+                            showReleaseCard(randomRelease);
+                        }
                     }
 
                     ToolTip.delay: 1000
@@ -1124,8 +1166,15 @@ Page {
                     iconPath: "../Assets/Icons/information.svg"
                     iconWidth: 29
                     iconHeight: 29
+                    showCrossIcon: page.showButtonVisibleChanger && page.hideInfoButton
+                    visible: page.showButtonVisibleChanger || !page.hideInfoButton
                     onButtonPressed: {
-                        informationPopup.open();
+                        if (page.showButtonVisibleChanger) {
+                            page.hideInfoButton = !page.hideInfoButton;
+                            localStorage.setHideInfoButton(page.hideInfoButton);
+                        } else {
+                            informationPopup.open();
+                        }
                     }
 
                     Popup {
@@ -2334,5 +2383,12 @@ Page {
         darkModeSwitch.checked = applicationSettings.isDarkTheme;
         clearFilterAfterChangeSectionSwitch.checked = userSettings.clearFiltersAfterChangeSection;
         compactModeSwitch.checked = userSettings.compactMode;
+        page.hideCinemahallButton = userSettings.hideCinemhallButton;
+        page.hideDownloadButton = userSettings.hideDownloadButton;
+        page.hideRandomReleaseButton = userSettings.hideRandomReleaseButton;
+        page.hideNotificationButton = userSettings.hideNotificationButton;
+        page.hideInfoButton = userSettings.hideInfoButton;
+        page.hideSortButton = userSettings.hideSortButton;
+        page.hideFilterButton = userSettings.hideFilterButton;
     }
 }

@@ -1590,6 +1590,55 @@ void LocalStorageService::setCompactMode(bool compactMode)
     saveSettings();
 }
 
+void LocalStorageService::setHideCinemhallButton(bool hideCinemhallButton)
+{
+    m_UserSettingsModel->setHideCinemhallButton(hideCinemhallButton);
+
+    saveSettings();
+}
+
+void LocalStorageService::setHideDownloadButton(bool hideDownloadButton)
+{
+    m_UserSettingsModel->setHideDownloadButton(hideDownloadButton);
+
+    saveSettings();
+}
+
+void LocalStorageService::setHideRandomReleaseButton(bool hideRandomReleaseButton)
+{
+    m_UserSettingsModel->setHideRandomReleaseButton(hideRandomReleaseButton);
+
+    saveSettings();
+}
+
+void LocalStorageService::setHideNotificationButton(bool hideNotificationButton)
+{
+    m_UserSettingsModel->setHideNotificationButton(hideNotificationButton);
+
+    saveSettings();
+}
+
+void LocalStorageService::setHideInfoButton(bool hideInfoButton)
+{
+    m_UserSettingsModel->setHideInfoButton(hideInfoButton);
+
+    saveSettings();
+}
+
+void LocalStorageService::setHideSortButton(bool hideSortButton)
+{
+    m_UserSettingsModel->setHideSortButton(hideSortButton);
+
+    saveSettings();
+}
+
+void LocalStorageService::setHideFilterButton(bool hideFilterButton)
+{
+    m_UserSettingsModel->setHideFilterButton(hideFilterButton);
+
+    saveSettings();
+}
+
 QString LocalStorageService::getUserSettings()
 {
     return m_UserSettingsModel->toJson();
