@@ -29,6 +29,7 @@ Item {
     property var hoverColor: "lightgray"
     property bool hovered: false
     property alias showCrossIcon: crossIcon.visible
+    property color backgroundColor: "transparent"
 
     signal buttonPressed()
     signal buttonHoverEnter()
@@ -44,7 +45,7 @@ Item {
             hovered = true;
         }
         onExited: {
-            imageRectangle.color = "transparent";
+            imageRectangle.color = _button.backgroundColor;
             buttonHoverExit();
             hovered = false;
         }

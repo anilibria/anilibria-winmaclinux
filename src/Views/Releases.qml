@@ -1219,6 +1219,7 @@ Page {
                     iconPath: "../Assets/Icons/hidebuttonmenu.svg"
                     iconWidth: 29
                     iconHeight: 29
+                    backgroundColor: page.showButtonVisibleChanger ? "#8868b0ab" : "transparent"
                     onButtonPressed: {
                         page.showButtonVisibleChanger = !page.showButtonVisibleChanger;
                     }
