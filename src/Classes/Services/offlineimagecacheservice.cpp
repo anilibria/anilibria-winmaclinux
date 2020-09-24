@@ -16,6 +16,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <QHashIterator>
 #include "offlineimagecacheservice.h"
 
 void OfflineImageCacheService::loadCache()
@@ -62,6 +63,17 @@ void OfflineImageCacheService::invalidateReleasePoster(int id)
         QFile file (m_Images->value(id));
         file.remove();
         m_Images->remove(id);
+    }
+}
+
+void OfflineImageCacheService::clearPosterCache()
+{
+    QHashIterator<int, QString> iterator(*m_Images);
+    while (iterator.hasNext()) {
+        iterator.next();
+        auto filename = iterator.value();
+        QFile file(filename.replace("file:///", "").replace("file://", ""));
+        file.remove();
     }
 }
 

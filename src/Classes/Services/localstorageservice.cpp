@@ -1913,6 +1913,11 @@ QString LocalStorageService::getDownloads()
     return jsonDocument.toJson();
 }
 
+void LocalStorageService::clearPostersCache()
+{
+    m_OfflineImageCacheService->clearPosterCache();
+}
+
 void LocalStorageService::allReleasesUpdated()
 {
     emit allReleasesFinished();

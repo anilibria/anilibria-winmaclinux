@@ -43,6 +43,8 @@ public:
 
     void invalidateReleasePoster(int id);
 
+    void clearPosterCache();
+
     Q_INVOKABLE QString getReleasePath(int id, QString posterPath);
 
 signals:

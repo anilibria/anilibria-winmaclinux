@@ -97,7 +97,7 @@ private:
     QHash<int, int> getAllSeenMarkCount();
     int countOnlyFavorites(QList<int>* changes, QSet<int>* favorites);
     void setSeenMarkForRelease(int id, int countSeries, bool marked);
-    void recalculateSeenCounts();
+    void recalculateSeenCounts();    
 
 public:
     explicit LocalStorageService(QObject *parent = nullptr);
@@ -179,6 +179,7 @@ public:
     Q_INVOKABLE void finishDownloadItem(int releaseId, int videoId, int quality, const QString& downloadedPath);
     Q_INVOKABLE QList<QString> getDownloadsReleases();
     Q_INVOKABLE QString getDownloads();
+    Q_INVOKABLE void clearPostersCache();
 
 signals:
     void allReleasesFinished();

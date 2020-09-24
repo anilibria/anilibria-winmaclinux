@@ -88,9 +88,8 @@ Page {
                     border.color: "white"
                     border.width: 1
 
-                    Grid {
+                    GridLayout {
                         width: parent.width
-                        spacing: 4
                         columns: 2
 
                         Item {
@@ -103,30 +102,24 @@ Page {
                                 anchors.leftMargin: 10
                                 text: "Очистить кеш постеров"
                                 onClicked: {
+                                    localStorage.clearPostersCache();
                                 }
                             }
                         }
 
-                        Text {
-                            text: "Удалить все сохраненные локально сохраненные постеры"
-                        }
+                        Rectangle {
+                            color: "transparent"
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
 
-                        Item {
-                            width: 200
-                            height: 100
-
-                            RoundedActionButton {
-                                anchors.left: parent.left
-                                anchors.leftMargin: 10
+                            PlainText {
+                                fontPointSize: 12
                                 anchors.verticalCenter: parent.verticalCenter
-                                text: "Очистить загрузки"
-                                onClicked: {
-                                }
+                                anchors.left: parent.left
+                                width: parent.width
+                                wrapMode: Text.WordWrap
+                                text: "Удалить все сохраненные локально сохраненные постеры, после выполнения операции необходимо перезапустить приложение"
                             }
-                        }
-
-                        Text {
-                            text: "Удалить все загруженные файлы а также записи о них из известных источников"
                         }
                     }
                 }
