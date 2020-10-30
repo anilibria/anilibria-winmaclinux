@@ -283,6 +283,16 @@ ApplicationWindow {
         }
     }
 
+    FileDialog {
+        id: importReleasesFileDialog
+        title: "Выберите файл для импорта"
+        selectExisting: false
+        nameFilters: [ "Releases (*.releases)" ]
+        onAccepted: {
+            localStorage.importReleasesFromExternalFile(importReleasesFileDialog.fileUrl);
+        }
+    }
+
     SynchronizationService {
         id: synchronizationService
         Component.onCompleted: {

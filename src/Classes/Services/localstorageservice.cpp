@@ -737,6 +737,19 @@ void LocalStorageService::recalculateSeenCounts()
     setCountSeens(countSeens);
 }
 
+bool LocalStorageService::importReleasesFromFile(QString path)
+{
+    QFile importFile(path);
+    if (!importFile.open(QFile::ReadOnly | QFile::Text)) return false;
+
+    auto json = importFile.readAll();
+    importFile.close();
+
+    updateAllReleases(json);
+
+    return true;
+}
+
 QString LocalStorageService::getRelease(int id)
 {
     QListIterator<FullReleaseModel*> i(*m_CachedReleases);
@@ -1916,6 +1929,11 @@ QString LocalStorageService::getDownloads()
 void LocalStorageService::clearPostersCache()
 {
     m_OfflineImageCacheService->clearPosterCache();
+}
+
+bool LocalStorageService::importReleasesFromExternalFile(QString path)
+{
+    return importReleasesFromFile(path);
 }
 
 void LocalStorageService::allReleasesUpdated()

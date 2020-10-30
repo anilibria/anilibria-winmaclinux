@@ -97,8 +97,8 @@ private:
     QHash<int, int> getAllSeenMarkCount();
     int countOnlyFavorites(QList<int>* changes, QSet<int>* favorites);
     void setSeenMarkForRelease(int id, int countSeries, bool marked);
-    void recalculateSeenCounts();    
-
+    void recalculateSeenCounts();
+    bool importReleasesFromFile(QString path);
 public:
     explicit LocalStorageService(QObject *parent = nullptr);
 
@@ -180,6 +180,7 @@ public:
     Q_INVOKABLE QList<QString> getDownloadsReleases();
     Q_INVOKABLE QString getDownloads();
     Q_INVOKABLE void clearPostersCache();
+    Q_INVOKABLE bool importReleasesFromExternalFile(QString path);
 
 signals:
     void allReleasesFinished();
