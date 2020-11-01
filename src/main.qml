@@ -286,7 +286,7 @@ ApplicationWindow {
     FileDialog {
         id: importReleasesFileDialog
         title: "Выберите файл для импорта"
-        selectExisting: false
+        selectExisting: true
         nameFilters: [ "Releases (*.releases)" ]
         onAccepted: {
             localStorage.importReleasesFromExternalFile(importReleasesFileDialog.fileUrl);

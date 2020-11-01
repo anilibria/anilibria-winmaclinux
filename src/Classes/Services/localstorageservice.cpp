@@ -739,8 +739,12 @@ void LocalStorageService::recalculateSeenCounts()
 
 bool LocalStorageService::importReleasesFromFile(QString path)
 {
-    QFile importFile(path);
-    if (!importFile.open(QFile::ReadOnly | QFile::Text)) return false;
+    auto filePath = path.replace("file:///", "").replace("file://", "");
+    QFile importFile(filePath);
+    if (!importFile.open(QFile::ReadOnly | QFile::Text)) {
+        auto error = importFile.errorString();
+        return false;
+    }
 
     auto json = importFile.readAll();
     importFile.close();

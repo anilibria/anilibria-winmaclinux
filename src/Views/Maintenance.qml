@@ -76,7 +76,7 @@ Page {
                 Layout.alignment: Qt.AlignJustify
                 clip: true
                 contentWidth: parent.width
-                contentHeight: itemGrid.height
+                contentHeight: 100
                 ScrollBar.vertical: ScrollBar {
                     active: true
                 }
