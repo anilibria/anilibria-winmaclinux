@@ -707,10 +707,70 @@ Page {
                         height: 20
                         width: 40
                         visible: player.duration > 0
+                        text: "x0.25"
+                        isChecked: _page.videoSpeed === 0.25
+                        onButtonClicked: {
+                            _page.videoSpeed = 0.25;
+                        }
+                    }
+                    ToggleButton {
+                        height: 20
+                        width: 40
+                        visible: player.duration > 0
+                        text: "x0.5"
+                        isChecked: _page.videoSpeed === 0.5
+                        onButtonClicked: {
+                            _page.videoSpeed = 0.5;
+                        }
+                    }
+                    ToggleButton {
+                        height: 20
+                        width: 40
+                        visible: player.duration > 0
+                        text: "x0.75"
+                        isChecked: _page.videoSpeed === 0.75
+                        onButtonClicked: {
+                            _page.videoSpeed = 0.75;
+                        }
+                    }
+                    ToggleButton {
+                        height: 20
+                        width: 40
+                        visible: player.duration > 0
                         text: "x1"
                         isChecked: _page.videoSpeed === 1
                         onButtonClicked: {
                             _page.videoSpeed = 1;
+                        }
+                    }
+                    ToggleButton {
+                        height: 20
+                        width: 40
+                        visible: player.duration > 0
+                        text: "x1.25"
+                        isChecked: _page.videoSpeed === 1.1
+                        onButtonClicked: {
+                            _page.videoSpeed = 1.1;
+                        }
+                    }
+                    ToggleButton {
+                        height: 20
+                        width: 40
+                        visible: player.duration > 0
+                        text: "x1.5"
+                        isChecked: _page.videoSpeed === 1.2
+                        onButtonClicked: {
+                            _page.videoSpeed = 1.2;
+                        }
+                    }
+                    ToggleButton {
+                        height: 20
+                        width: 40
+                        visible: player.duration > 0
+                        text: "x1.75"
+                        isChecked: _page.videoSpeed === 1.3
+                        onButtonClicked: {
+                            _page.videoSpeed = 1.3;
                         }
                     }
                     ToggleButton {
@@ -731,16 +791,6 @@ Page {
                         isChecked: _page.videoSpeed === 2
                         onButtonClicked: {
                             _page.videoSpeed = 2;
-                        }
-                    }
-                    ToggleButton {
-                        height: 20
-                        width: 40
-                        visible: player.duration > 0
-                        text: "x4"
-                        isChecked: _page.videoSpeed === 3
-                        onButtonClicked: {
-                            _page.videoSpeed = 3;
                         }
                     }
                 }
