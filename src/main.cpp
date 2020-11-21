@@ -28,6 +28,7 @@
 #include "Classes/Services/analyticsservice.h"
 #include "Classes/Services/versionchecker.h"
 #include "Classes/Services/downloadmanager.h"
+#include "Classes/Services/apiserviceconfigurator.h"
 #include "globalconstants.h"
 
 int main(int argc, char *argv[])
@@ -57,6 +58,7 @@ int main(int argc, char *argv[])
     qmlRegisterType<AnalyticsService>("Anilibria.Services", 1, 0, "AnalyticsService");
     qmlRegisterType<VersionChecker>("Anilibria.Services", 1, 0, "VersionChecker");
     qmlRegisterType<DownloadManager>("Anilibria.Services", 1, 0, "DownloadManager");
+    qmlRegisterType<ApiServiceConfigurator>("Anilibria.Services", 1, 0, "ApiServiceConfigurator");
 
     QQmlApplicationEngine engine;
     engine.rootContext()->setContextProperty("ApplicationVersion", ApplicationVersion);

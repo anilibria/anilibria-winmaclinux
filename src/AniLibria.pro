@@ -77,6 +77,7 @@ SOURCES += \
     Classes/Models/youtubevideomodel.cpp \
     Classes/Services/analyticsservice.cpp \
     Classes/Services/anilibriaapiservice.cpp \
+    Classes/Services/apiserviceconfigurator.cpp \
     Classes/Services/applicationsettings.cpp \
     Classes/Services/downloadmanager.cpp \
     Classes/Services/imageloader.cpp \
@@ -123,6 +124,7 @@ HEADERS += \
     Classes/Models/youtubevideomodel.h \
     Classes/Services/analyticsservice.h \
     Classes/Services/anilibriaapiservice.h \
+    Classes/Services/apiserviceconfigurator.h \
     Classes/Services/applicationsettings.h \
     Classes/Services/downloadmanager.h \
     Classes/Services/imageloader.h \

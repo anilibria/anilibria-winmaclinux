@@ -20,6 +20,7 @@ import QtQuick 2.12
 import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.3
 import QtGraphicalEffects 1.0
+import Anilibria.Services 1.0
 import "../Controls"
 import "../Theme"
 
@@ -32,6 +33,10 @@ Page {
 
     background: Rectangle {
         color: ApplicationTheme.pageBackground
+    }
+
+    ApiServiceConfigurator {
+        id: apiServiceConfigurator
     }
 
     RowLayout {
@@ -93,13 +98,14 @@ Page {
                         columns: 2
 
                         Item {
-                            width: 200
+                            width: 220
                             height: 100
 
                             RoundedActionButton {
                                 anchors.verticalCenter: parent.verticalCenter
                                 anchors.left: parent.left
                                 anchors.leftMargin: 10
+                                width: parent.width - 10
                                 text: "Очистить кеш постеров"
                                 onClicked: {
                                     localStorage.clearPostersCache();
@@ -123,13 +129,14 @@ Page {
                         }
 
                         Item {
-                            width: 200
+                            width: 220
                             height: 100
 
                             RoundedActionButton {
                                 anchors.verticalCenter: parent.verticalCenter
                                 anchors.left: parent.left
                                 anchors.leftMargin: 10
+                                width: parent.width - 10
                                 text: "Импорт релизов из файла"
                                 onClicked: {
                                     importReleasesFileDialog.open();
@@ -151,9 +158,143 @@ Page {
                                 text: "Позволяет импортировать релизы из файла. Импортированные релизы не будут обновляться."
                             }
                         }
+
+                        Item {
+                            width: 220
+                            height: 100
+
+                            RoundedActionButton {
+                                anchors.verticalCenter: parent.verticalCenter
+                                anchors.left: parent.left
+                                anchors.leftMargin: 10
+                                width: parent.width - 10
+                                text: "Изменить адрес api"
+                                onClicked: {
+                                    apiAddress.text = apiServiceConfigurator.apiAddress;
+                                    staticAddress.text = apiServiceConfigurator.staticAddress;
+
+                                    apiAddressPopup.open();
+                                }
+                            }
+                        }
+
+                        Rectangle {
+                            color: "transparent"
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+
+                            PlainText {
+                                fontPointSize: 12
+                                anchors.verticalCenter: parent.verticalCenter
+                                anchors.left: parent.left
+                                width: parent.width
+                                wrapMode: Text.WordWrap
+                                text: "Позволяет изменить адрес api а также адрес для статики. Внимание! Стоит пользоваться этим функционалом только если Вы понимаете зачем Вам это нужно, иначе Вы просто сломаете приложение. Изменения вступят в силу после перезапуска приложения."
+                            }
+                        }
                     }
                 }
+            }
 
+            Popup {
+                id: apiAddressPopup
+                x: window.width / 2 - apiAddressPopup.width / 2
+                y: window.height / 2 - apiAddressPopup.height / 2
+                width: 450
+                height: 250
+                modal: true
+                focus: true
+                closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
+
+                ColumnLayout {
+                    width: parent.width
+                    spacing: 10
+
+                    AccentText {
+                        width: apiAddressPopup.width
+                        text: "Адрес api"
+                        fontPointSize: 12
+                        font.bold: true
+                        elide: Text.ElideRight
+                    }
+
+                    Rectangle {
+                        width: apiAddressPopup.width - 30
+                        height: apiAddress.height
+
+                        TextField {
+                            id: apiAddress
+                            width: parent.width
+                            placeholderText: "Введите url"
+                        }
+                    }
+
+
+                    AccentText {
+                        width: apiAddressPopup.width
+                        text: "Адрес статики"
+                        fontPointSize: 12
+                        font.bold: true
+                        elide: Text.ElideRight
+                    }
+
+                    Rectangle {
+                        width: apiAddressPopup.width - 30
+                        height: apiAddress.height
+
+                        TextField {
+                            id: staticAddress
+                            width: parent.width
+                            placeholderText: "Введите url"
+                        }
+                    }
+
+                    Rectangle {
+                        color: "transparent"
+                        width: apiAddressPopup.width - 20
+                        height: 70
+
+                        RoundedActionButton {
+                            anchors.right: saveButton.left
+                            anchors.rightMargin: 10
+                            anchors.verticalCenter: parent.verticalCenter
+                            visible: !apiServiceConfigurator.isDefault
+                            text: "Умолчание"
+                            width: 100
+                            onClicked: {
+                                apiServiceConfigurator.restoreDefault();
+
+                                apiAddressPopup.close();
+                            }
+                        }
+
+                        RoundedActionButton {
+                            id: saveButton
+                            anchors.right: cancelButton.left
+                            anchors.rightMargin: 10
+                            anchors.verticalCenter: parent.verticalCenter
+                            enabled: apiAddress.text !== `` && staticAddress.text !== ``
+                            text: "Сохранить"
+                            width: 100
+                            onClicked: {
+                                apiServiceConfigurator.saveApiConfiguration(apiAddress.text, staticAddress.text);
+
+                                apiAddressPopup.close();
+                            }
+                        }
+
+                        RoundedActionButton {
+                            id: cancelButton
+                            anchors.right: parent.right
+                            anchors.verticalCenter: parent.verticalCenter
+                            text: "Отмена"
+                            width: 100
+                            onClicked: {
+                                apiAddressPopup.close();
+                            }
+                        }
+                    }
+                }
             }
         }
     }
