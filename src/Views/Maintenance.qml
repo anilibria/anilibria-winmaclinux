@@ -88,7 +88,7 @@ Page {
 
                 Rectangle {
                     width: scrollview.width - 10
-                    height: 300
+                    height: 400
                     color: "transparent"
                     border.color: "white"
                     border.width: 1
@@ -192,6 +192,37 @@ Page {
                                 text: "Позволяет изменить адрес api а также адрес для статики. Внимание! Стоит пользоваться этим функционалом только если Вы понимаете зачем Вам это нужно, иначе Вы просто сломаете приложение. Изменения вступят в силу после перезапуска приложения."
                             }
                         }
+
+                        Item {
+                            width: 220
+                            height: 100
+
+                            RoundedActionButton {
+                                anchors.verticalCenter: parent.verticalCenter
+                                anchors.left: parent.left
+                                anchors.leftMargin: 10
+                                width: parent.width - 10
+                                text: "Настроить прокси"
+                                onClicked: {
+                                    proxyPopup.open();
+                                }
+                            }
+                        }
+
+                        Rectangle {
+                            color: "transparent"
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+
+                            PlainText {
+                                fontPointSize: 12
+                                anchors.verticalCenter: parent.verticalCenter
+                                anchors.left: parent.left
+                                width: parent.width
+                                wrapMode: Text.WordWrap
+                                text: "Позволяет указать настройки проксирования запросов для всего приложения."
+                            }
+                        }
                     }
                 }
             }
@@ -291,6 +322,165 @@ Page {
                             width: 100
                             onClicked: {
                                 apiAddressPopup.close();
+                            }
+                        }
+                    }
+                }
+            }
+
+            Popup {
+                id: proxyPopup
+                x: window.width / 2 - proxyPopup.width / 2
+                y: window.height / 2 - proxyPopup.height / 2
+                width: 450
+                height: 500
+                modal: true
+                focus: true
+                closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
+
+                ColumnLayout {
+                    width: parent.width
+                    spacing: 10
+
+                    AccentText {
+                        width: proxyPopup.width
+                        text: "Тип"
+                        fontPointSize: 12
+                        font.bold: true
+                        elide: Text.ElideRight
+                    }
+
+                    Rectangle {
+                        width: proxyPopup.width - 30
+                        height: proxyType.height
+
+                        ComboBox {
+                            id: proxyType
+                            width: parent.width
+                            model: [ "SOCKS5", "Http" ]
+                        }
+                    }
+
+
+                    AccentText {
+                        width: proxyPopup.width
+                        text: "Адрес сервера"
+                        fontPointSize: 12
+                        font.bold: true
+                        elide: Text.ElideRight
+                    }
+
+                    Rectangle {
+                        width: proxyPopup.width - 30
+                        height: proxyAddress.height
+
+                        TextField {
+                            id: proxyAddress
+                            width: parent.width
+                            placeholderText: "Введите url"
+                        }
+                    }
+
+                    AccentText {
+                        width: proxyPopup.width
+                        text: "Порт"
+                        fontPointSize: 12
+                        font.bold: true
+                        elide: Text.ElideRight
+                    }
+
+                    Rectangle {
+                        width: proxyPopup.width - 30
+                        height: proxyPort.height
+
+                        TextField {
+                            id: proxyPort
+                            width: parent.width
+                            inputMethodHints: Qt.ImhFormattedNumbersOnly
+                            placeholderText: "Введите число"
+                        }
+                    }
+
+                    AccentText {
+                        width: proxyPopup.width
+                        text: "Логин"
+                        fontPointSize: 12
+                        font.bold: true
+                        elide: Text.ElideRight
+                    }
+
+                    Rectangle {
+                        width: proxyPopup.width - 30
+                        height: proxyUsername.height
+
+                        TextField {
+                            id: proxyUsername
+                            width: parent.width
+                            placeholderText: "Введите имя пользователя"
+                        }
+                    }
+
+                    AccentText {
+                        width: proxyPopup.width
+                        text: "Пароль"
+                        fontPointSize: 12
+                        font.bold: true
+                        elide: Text.ElideRight
+                    }
+
+                    Rectangle {
+                        width: proxyPopup.width - 30
+                        height: proxyPassword.height
+
+                        TextField {
+                            id: proxyPassword
+                            width: parent.width
+                            placeholderText: "Введите пароль"
+                        }
+                    }
+
+                    Rectangle {
+                        color: "transparent"
+                        width: proxyPopup.width - 20
+                        height: 70
+
+                        RoundedActionButton {
+                            anchors.right: saveProxyButton.left
+                            anchors.rightMargin: 10
+                            anchors.verticalCenter: parent.verticalCenter
+                            visible: !apiServiceConfigurator.isDefault
+                            text: "Отключить"
+                            width: 100
+                            onClicked: {
+                                //TODO: remove proxy configuration
+
+                                proxyPopup.close();
+                            }
+                        }
+
+                        RoundedActionButton {
+                            id: saveProxyButton
+                            anchors.right: cancelProxyButton.left
+                            anchors.rightMargin: 10
+                            anchors.verticalCenter: parent.verticalCenter
+                            enabled: apiAddress.text !== `` && staticAddress.text !== ``
+                            text: "Сохранить"
+                            width: 100
+                            onClicked: {
+                                //TODO: set proxy configuration
+
+                                proxyPopup.close();
+                            }
+                        }
+
+                        RoundedActionButton {
+                            id: cancelProxyButton
+                            anchors.right: parent.right
+                            anchors.verticalCenter: parent.verticalCenter
+                            text: "Отмена"
+                            width: 100
+                            onClicked: {
+                                proxyPopup.close();
                             }
                         }
                     }
