@@ -29,6 +29,7 @@
 #include "Classes/Services/versionchecker.h"
 #include "Classes/Services/downloadmanager.h"
 #include "Classes/Services/apiserviceconfigurator.h"
+#include "Classes/Services/proxyconfigurator.h"
 #include "globalconstants.h"
 
 int main(int argc, char *argv[])
@@ -59,6 +60,7 @@ int main(int argc, char *argv[])
     qmlRegisterType<VersionChecker>("Anilibria.Services", 1, 0, "VersionChecker");
     qmlRegisterType<DownloadManager>("Anilibria.Services", 1, 0, "DownloadManager");
     qmlRegisterType<ApiServiceConfigurator>("Anilibria.Services", 1, 0, "ApiServiceConfigurator");
+    qmlRegisterType<ProxyConfigurator>("Anilibria.Services", 1, 0, "ProxyConfigurator");
 
     QQmlApplicationEngine engine;
     engine.rootContext()->setContextProperty("ApplicationVersion", ApplicationVersion);

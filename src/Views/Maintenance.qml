@@ -39,6 +39,10 @@ Page {
         id: apiServiceConfigurator
     }
 
+    ProxyConfigurator {
+        id: proxyConfigurator
+    }
+
     RowLayout {
         id: panelContainer
         anchors.fill: parent
@@ -204,6 +208,20 @@ Page {
                                 width: parent.width - 10
                                 text: "Настроить прокси"
                                 onClicked: {
+                                    proxyType.currentIndex = 0;
+                                    switch (proxyConfigurator.proxyType) {
+                                        case `SOCKS5`:
+                                            proxyType.currentIndex = 1;
+                                            break;
+                                        case `Http`:
+                                            proxyType.currentIndex = 2;
+                                            break;
+                                    }
+                                    proxyPort.text = proxyConfigurator.port;
+                                    proxyAddress.text = proxyConfigurator.address;
+                                    proxyUsername.text = proxyConfigurator.userName;
+                                    proxyPassword.text = proxyConfigurator.password;
+
                                     proxyPopup.open();
                                 }
                             }
@@ -357,7 +375,7 @@ Page {
                         ComboBox {
                             id: proxyType
                             width: parent.width
-                            model: [ "SOCKS5", "Http" ]
+                            model: [ "", "SOCKS5", "Http" ]
                         }
                     }
 
@@ -448,11 +466,10 @@ Page {
                             anchors.right: saveProxyButton.left
                             anchors.rightMargin: 10
                             anchors.verticalCenter: parent.verticalCenter
-                            visible: !apiServiceConfigurator.isDefault
                             text: "Отключить"
                             width: 100
                             onClicked: {
-                                //TODO: remove proxy configuration
+                                proxyConfigurator.disableProxy();
 
                                 proxyPopup.close();
                             }
@@ -463,11 +480,16 @@ Page {
                             anchors.right: cancelProxyButton.left
                             anchors.rightMargin: 10
                             anchors.verticalCenter: parent.verticalCenter
-                            enabled: apiAddress.text !== `` && staticAddress.text !== ``
+                            enabled: proxyType.text !== `` && proxyPort.text !== `0` && proxyAddress.text !== ``
                             text: "Сохранить"
                             width: 100
                             onClicked: {
-                                //TODO: set proxy configuration
+                                proxyConfigurator.proxyType = proxyType.currentText;
+                                proxyConfigurator.port = proxyPort.text;
+                                proxyConfigurator.address = proxyAddress.text;
+                                proxyConfigurator.userName = proxyUsername.text;
+                                proxyConfigurator.password = proxyPassword.text;
+                                proxyConfigurator.saveProxy();
 
                                 proxyPopup.close();
                             }

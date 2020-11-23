@@ -83,6 +83,7 @@ SOURCES += \
     Classes/Services/imageloader.cpp \
     Classes/Services/localstorageservice.cpp \
     Classes/Services/offlineimagecacheservice.cpp \
+    Classes/Services/proxyconfigurator.cpp \
     Classes/Services/synchronizationservice.cpp \
     Classes/Services/versionchecker.cpp \
     Classes/globalconstant.cpp \
@@ -130,6 +131,7 @@ HEADERS += \
     Classes/Services/imageloader.h \
     Classes/Services/localstorageservice.h \
     Classes/Services/offlineimagecacheservice.h \
+    Classes/Services/proxyconfigurator.h \
     Classes/Services/synchronizationservice.h \
     Classes/Services/versionchecker.h \
     globalconstants.h

@@ -6,13 +6,14 @@
 
 ApiServiceConfigurator::ApiServiceConfigurator(QObject *parent) : QObject(parent)
 {
-    QFile settingsFile(getConfiguratuionPath());
+    QFile settingsFile(getConfigurationPath());
     if (settingsFile.exists()) {
         if (settingsFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
             auto content = settingsFile.readAll();
             auto document = QJsonDocument::fromJson(content);
             auto rootObject = document.object();
             setConfiguration(rootObject.value("apiPath").toString(), rootObject.value("staticPath").toString());
+            settingsFile.close();
         }
     } else {
         setConfiguration("", "");
@@ -23,7 +24,7 @@ void ApiServiceConfigurator::saveApiConfiguration(const QString &apiAddress, con
 {
     setConfiguration(apiAddress, staticAddress);
 
-    QFile settingsFile(getConfiguratuionPath());
+    QFile settingsFile(getConfigurationPath());
     if (!settingsFile.open(QIODevice::WriteOnly | QIODevice::Text)) {
         //TODO: show user error message
         return;
@@ -42,7 +43,7 @@ void ApiServiceConfigurator::saveApiConfiguration(const QString &apiAddress, con
 
 void ApiServiceConfigurator::restoreDefault()
 {
-    QFile settingsFile(getConfiguratuionPath());
+    QFile settingsFile(getConfigurationPath());
     if (settingsFile.exists()) settingsFile.remove();
 
     setConfiguration("", "");
@@ -60,7 +61,7 @@ void ApiServiceConfigurator::setConfiguration(const QString &apiAddress, const Q
     emit isDefaultChanged();
 }
 
-QString ApiServiceConfigurator::getConfiguratuionPath()
+QString ApiServiceConfigurator::getConfigurationPath()
 {
     return QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation) + "/api.settings";
 }

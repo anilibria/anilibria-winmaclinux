@@ -27,7 +27,7 @@ public:
 
 private:
     void setConfiguration(const QString& apiAddress, const QString& staticAddress);
-    QString getConfiguratuionPath();
+    QString getConfigurationPath();
 
 signals:
     void isDefaultChanged();
