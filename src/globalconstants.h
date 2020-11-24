@@ -25,7 +25,7 @@ extern QString AnilibriaImagesPath;
 
 extern QString AnilibriaApiPath;
 
-const QString ApplicationVersion = "0.1.8";
+const QString ApplicationVersion = "1.0.0";
 
 const int HistoryReleaseCardMode = 0;
 
