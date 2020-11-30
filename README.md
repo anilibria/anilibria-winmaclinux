@@ -45,6 +45,10 @@ $ yay -S anilibria-winmaclinux-git
 
 ## Сборка из исходников:
 
+### Готовые инструкции для сборки под дистрибутивы:
+
+[Linux Mint 18-20](https://github.com/anilibria/anilibria-winmaclinux/blob/master/linuxmint20.md)
+
 ### Для сборки необходимо:
 - Минимальная поддерживаемая версия Qt 5.12.3
 - Поддержка C++11 (минимальные версии компиляторов MSVC15, GCC 4.8 или CLANG 3.3)
