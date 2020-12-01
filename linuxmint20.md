@@ -1,25 +1,11 @@
-## Сборка из исходников на Linux Mint 20
+## Сборка из исходников на Ubuntu/Linux Mint 20
 
 *Данный набор команд написан для полностью чистой системы.*  
 **Внимание! Если найдете ошибки в командах или будут предложения по улучшению то создавайте ишью!**
 
 **Этап 1. Устанавливаем зависимости необходимые для сборки**
 ```shell
-sudo apt install git
-sudo apt install build-essential
-sudo apt install qt5-default
-sudo apt install qtdeclarative5-dev
-sudo apt install qtmultimedia5-dev libqt5multimedia5-plugins
-sudo apt install libqt5svg5-dev
-sudo apt install libqt5webview5-dev
-sudo apt install qml-module-qtgraphicaleffects
-sudo apt install qml-module-qtquick-layouts
-sudo apt install qml-module-qtquick-dialogs
-sudo apt install qml-module-qtquick-controls
-sudo apt install qml-module-qtquick-controls2
-sudo apt install qml-module-qt-labs-folderlistmodel
-sudo apt install qml-module-qt-labs-settings
-sudo apt install qml-module-qtmultimedia
+sudo apt install git build-essential qt5-default qtdeclarative5-dev qtmultimedia5-dev libqt5multimedia5-plugins libqt5svg5-dev libqt5webview5-dev qml-module-qtgraphicaleffects  qml-module-qtquick-layouts qml-module-qtquick-dialogs qml-module-qtquick-controls qml-module-qtquick-controls2 qml-module-qt-labs-folderlistmodel qml-module-qt-labs-settings qml-module-qtmultimedia qml-module-qtwebview
 ```
 **Этап 2. Создаем папку для проекта, переходим в нее и извлекаем исходники (предполагается что Вы находитесь в домашней папке)**
 ```shell
