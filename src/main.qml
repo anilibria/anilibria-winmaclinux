@@ -24,6 +24,7 @@ import QtQuick.Controls.Material 2.0
 import QtGraphicalEffects 1.12
 import QtQuick.Dialogs 1.2
 import Anilibria.Services 1.0
+import Anilibria.RemotePlayer 1.0
 import "Views"
 import "Controls"
 import "Theme"
@@ -258,6 +259,14 @@ ApplicationWindow {
             );
         }
 
+    }
+
+    RemotePlayer {
+        id: remotePlayer
+
+        Component.onCompleted: {
+            remotePlayer.startServer();
+        }
     }
 
     AnalyticsService {
