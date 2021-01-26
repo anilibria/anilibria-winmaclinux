@@ -3,7 +3,6 @@
 
 #include <QObject>
 #include <QWebSocketServer>
-#include <QWebChannel>
 #include "remoteplayerchannel.h"
 #include "remoteplayerclientwrapper.h"
 
@@ -13,7 +12,6 @@ class RemotePlayer : public QObject
 private:
     QWebSocketServer* m_SocketServer;
     RemotePlayerChannel* m_RemotePlayerChannel;
-    QWebChannel* m_QWebChannel;
     RemotePlayerClientWrapper* m_RemotePlayerClientWrapper;
     QVector<RemotePlayerTransport*>* m_Connections;
 
@@ -25,7 +23,7 @@ public:
 
 private slots:
     void newConnection();
-    void messageReceived(const QString& message, RemotePlayerTransport* connection);
+    void simpleCommandReceived(const QString& message, RemotePlayerTransport* connection);
 
 signals:
     void errorWhileStartServer(const QString& message);

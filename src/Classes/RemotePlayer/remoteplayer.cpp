@@ -1,4 +1,3 @@
-#include <QWebChannel>
 #include <QWebSocketServer>
 #include "remoteplayerchannel.h"
 #include "remoteplayer.h"
@@ -13,7 +12,7 @@ RemotePlayer::RemotePlayer(QObject *parent) : QObject(parent),
 
 void RemotePlayer::startServer()
 {
-    if (!m_SocketServer->listen(QHostAddress::LocalHost, 12345)) {
+    if (!m_SocketServer->listen(QHostAddress::Any, 12345)) {
         emit errorWhileStartServer("Failed to open web socket server.");
         return;
     }
@@ -37,15 +36,15 @@ void RemotePlayer::stopServer()
 void RemotePlayer::newConnection()
 {
     auto socket = m_SocketServer->nextPendingConnection();
-    auto connection = new RemotePlayerTransport(socket);
+    auto connection = new RemotePlayerTransport(this, socket);
     m_Connections->append(connection);
 
-    connect(connection, &RemotePlayerTransport::messageReceived, this, &RemotePlayer::messageReceived);
+    connect(connection, &RemotePlayerTransport::simpleCommandReceived, this, &RemotePlayer::simpleCommandReceived);
 
     emit newConnectionAccepted(socket->localAddress().toString());
 }
 
-void RemotePlayer::messageReceived(const QString &message, RemotePlayerTransport *connection)
+void RemotePlayer::simpleCommandReceived(const QString &message, RemotePlayerTransport *connection)
 {
     if (message == "ping") connection->sendMessage("pong");
 

@@ -5,126 +5,92 @@
 
     <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.2/jquery.mobile-1.4.2.css" />
-    <link rel="stylesheet" type="text/css" href="http://www.jeasyui.com/easyui/themes/default/easyui.css" />
-    <link rel="stylesheet" type="text/css" href="http://www.jeasyui.com/easyui/themes/icon.css" />
-    <link rel="stylesheet" type="text/css" href="http://www.jeasyui.com/easyui/demo/demo.css" />
-    <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
-    <script type="text/javascript" src="http://www.jeasyui.com/easyui/jquery.easyui.min.js"></script>
-    <script type="text/javascript" src="qwebchannel.js"></script>
-
     <script>
-        'use strict';
-        var wsUri = "ws://localhost:12345";
-        window.loggedin = false;
+		let pingTimeoutId;
+		
+		function setPingTimeout(socket) {
+			pingTimeoutId = setTimeout(
+				() => {
+					socket.send(`ping`);
+					
+					setPingTimeout(socket);
+				},
+				10000
+			);
+		}
+		
+		function clearPingTimeout() {
+			if (pingTimeoutId) clearTimeout(pingTimeoutId);
+		}
 
-        window.onload = function() {
-            var socket = new WebSocket(wsUri);
+		function setVideoSource(videoSource) {
+			console.log(`Stub::setVideoSource`, videoSource);
+		}
 
-            socket.onclose = function() {
-                console.error("web channel closed");
-            };
-            socket.onerror = function(error) {
-                console.error("web channel error: " + error);
-            };
-            socket.onopen = function() {
-                window.channel = new QWebChannel(socket, function(channel) {
-					//connect to the changed signal of a property
-                    channel.objects.playerserver.userListChanged.connect(function() {
-                        $('#userlist').empty();
-                        //access the property
-                        channel.objects.playerserver.userList.forEach(function(user) {
-                            $('#userlist').append(user + '<br>');
-                        });
-                    });
-                    //connect to a signal
-                    channel.objects.playerserver.newMessage.connect(function(time, user, message) {
-                        $('#chat').append("[" + time + "] " + user + ": " + message + '<br>');
-                    });
-                    //connect to a signal
-                    channel.objects.playerserver.keepAlive.connect(function(args) {
-                        if (window.loggedin) {
-                            //call a method
-                            channel.objects.playerserver.keepAliveResponse($('#loginname').val())
-                            console.log("sent alive");
-                        }
-                    });
+		function setVideoPosition(position) {
+			console.log(`Stub::setVideoPosition`, position);
+		}
 
-                });
-            }
-        }
+		function setVolume(volume) {
+			console.log(`Stub::setVolume`, volume);
+		}
+
+		function webocketEntryPoint() {
+			const host = document.getElementById(`host`).value;
+			const port = document.getElementById(`port`).value;
+			const socket = new WebSocket(`ws://${host}:${port}`);
+
+			socket.onclose = function() {
+				console.log("web channel closed");
+				clearPingTimeout();
+			};
+			socket.onerror = function(error) {
+				console.error("web channel error: " + error);
+			};
+			socket.onopen = () => {
+				console.log("socket opened ");
+				
+				setPingTimeout(socket);
+			};
+			socket.onmessage = (event) => {
+				console.log(`message`, event.data);
+				const message = event.data;
+
+				if (message[0] === `{`) throw `Json commands don't supported!`;
+
+				const parts = message.split(`::`).filter(a => a);
+				if (!parts.length) throw `Unknown or empty command!`;
+
+				const command = parts[0];
+				const firstArgument = parts[1];
+
+				switch (command) {
+					case `positionchanged`:
+						if (!firstArgument) throw `Command positionchanged need int argument (positionchanged::1212)`;
+						
+						setVideoPosition(parseInt(firstArgument));
+						break;
+					case `videosourcechanged`:
+						if (!firstArgument) throw `Command videosourcechanged need string argument (videosourcechanged::http://video)`;
+						
+						setVideoSource(firstArgument);
+						break;
+
+					case `volumechanged`:
+						if (!firstArgument) throw `Command volumechanged need int argument (volumechanged::50)`;
+						
+						setVolume(firstArgument);
+						break;
+				}
+			};
+		}
     </script>
 </head>
 <body>
-
-<div id="loginDialog" class="easyui-dialog" title="Chat Login" data-options="iconCls:'icon-save'" style="width:400px;height:200px;padding:10px">
-    <form id="loginForm" method="post">
-        <table cellpadding="5">
-        <tr><td>Name:</td><td><input class="easyui-validatebox" type="text" id="loginname" name="name" data-options="required:true"></input></td></tr>
-        </table>
-    </form>
-    <div style="text-align:center;padding:5px">
-        <a href="javascript:void(0)" class="easyui-linkbutton" onclick="submitForm()">Login</a>
-    </div>
-    <div style="text-align:center;padding:5px" id="loginError">
-        Username already in use.
-    </div>
-    <script>
-    $('#loginForm').submit(submitForm);
-
-    function submitForm(event) {
-        console.log("DEBUG login: " + channel);
-		debugger;	
-        channel.objects.playerserver.login($('#loginname').val(), function(arg) {
-			console.log("DEBUG login response: " + arg);
-            if (arg === true) {
-                $('#loginError').hide();
-                $('#loginDialog').dialog('close');
-                window.loggedin = true;
-            } else {
-                $('#loginError').show();
-            }
-        });
-        console.log($('#loginname').val());
-        if (event !== undefined)
-            event.preventDefault();
-        return false;
-    }
-    </script>
-</div>
-
-
-<div class="easyui-layout" style="width:500px;height:300px;">
-    <div data-options="region:'east',split:true" title="Users" id="userlist" style="width:100px;">
-
-    </div>
-    <div data-options="region:'south',split:true" style="height:50px;">
-        <form id="messageForm">
-            <input class="easyui-validatebox" type="text" id="message" name="name" style="width: 97%"></input>
-        </form>
-    </div>
-    <div data-options="region:'center'" id="chat">
-
-    </div>
-    <script>
-    $('#messageForm').submit(submitMessage);
-
-    function submitMessage(event) {
-        channel.objects.chatserver.sendMessage($('#loginname').val(), $('#message').val());
-        $('#message').val('');
-        if (event !== undefined)
-            event.preventDefault();
-        return false;
-    }
-    </script>
-</div>
-
-
-<script type="text/javascript">
-$(document).ready(function() {
-    $('#loginError').hide();
-});
-</script>
-
+	<div style="width: 200px; height: 100px;">
+		<input type="text" id="host" placeholder="Хост" value="localhost" />
+		<input type="text" id="port" placeholder="Порт" value="12345" />
+		<button onclick="webocketEntryPoint()">Подключиться</button>
+	</div>
 </body>
 </html>

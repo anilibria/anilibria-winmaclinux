@@ -2,7 +2,6 @@
 #define REMOTEPLAYERTRANSPORT_H
 
 #include <QObject>
-#include <QWebChannelAbstractTransport>
 #include <QWebSocket>
 
 class RemotePlayerTransport : public QObject
@@ -22,7 +21,7 @@ private slots:
     void textMessageReceived(const QString& message);
 
 signals:
-    void messageReceived(const QString& message, RemotePlayerTransport* connection);
+    void simpleCommandReceived(const QString& message, RemotePlayerTransport* connection);
 
 };
 

@@ -22,7 +22,7 @@ void RemotePlayerTransport::sendMessage(const QString& message)
 
 void RemotePlayerTransport::textMessageReceived(const QString &messageData)
 {
-    QJsonParseError error;
+    /*QJsonParseError error;
     QJsonDocument message = QJsonDocument::fromJson(messageData.toUtf8(), &error);
     if (error.error) {
         qWarning() << "Failed to parse text message as JSON object:" << messageData
@@ -31,6 +31,6 @@ void RemotePlayerTransport::textMessageReceived(const QString &messageData)
     } else if (!message.isObject()) {
         qWarning() << "Received JSON message that is not an object: " << messageData;
         return;
-    }
-    emit messageReceived(messageData, this);//message.object());
+    }*/
+    emit simpleCommandReceived(messageData, this);
 }

@@ -9,6 +9,6 @@ RemotePlayerClientWrapper::RemotePlayerClientWrapper(QWebSocketServer *server, Q
 
 void RemotePlayerClientWrapper::handleNewConnection()
 {
-    emit clientConnected(new RemotePlayerTransport(m_Server->nextPendingConnection()));
+    emit clientConnected(new RemotePlayerTransport(this, m_Server->nextPendingConnection()));
 }
 
