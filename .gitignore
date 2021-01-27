@@ -57,3 +57,4 @@ deploy
 /.vs/ProjectSettings.json
 /.vs/anilibria-winmaclinux/v16
 /.vs/slnx.sqlite-journal
+/.vs/anilibria-winmaclinux/config/applicationhost.config

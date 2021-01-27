@@ -1,7 +1,5 @@
 #include <QWebSocketServer>
-#include "remoteplayerchannel.h"
 #include "remoteplayer.h"
-#include "remoteplayerclientwrapper.h"
 
 RemotePlayer::RemotePlayer(QObject *parent) : QObject(parent),
     m_SocketServer(new QWebSocketServer(QStringLiteral("Remote Player Server"), QWebSocketServer::NonSecureMode)),
@@ -10,20 +8,31 @@ RemotePlayer::RemotePlayer(QObject *parent) : QObject(parent),
     connect(m_SocketServer, &QWebSocketServer::newConnection, this, &RemotePlayer::newConnection);
 }
 
+RemotePlayer::~RemotePlayer()
+{
+    foreach (auto connection, *m_Connections) {
+        connection->closeConnection();
+    }
+
+    m_Connections->clear();
+
+    stopServer();
+}
+
+void RemotePlayer::setPort(const qint32 port)
+{
+    if (m_Port == port) return;
+
+    m_Port = port;
+    emit portChanged();
+}
+
 void RemotePlayer::startServer()
 {
     if (!m_SocketServer->listen(QHostAddress::Any, 12345)) {
         emit errorWhileStartServer("Failed to open web socket server.");
         return;
-    }
-
-    /*m_RemotePlayerClientWrapper = new RemotePlayerClientWrapper(m_SocketServer);
-
-    m_QWebChannel = new QWebChannel();
-    QObject::connect(m_RemotePlayerClientWrapper, &RemotePlayerClientWrapper::clientConnected, m_QWebChannel, &QWebChannel::connectTo);
-
-    m_RemotePlayerChannel = new RemotePlayerChannel(this);
-    m_QWebChannel->registerObject(QStringLiteral("playerserver"), m_RemotePlayerChannel);*/
+    }    
 }
 
 void RemotePlayer::stopServer()
@@ -33,6 +42,20 @@ void RemotePlayer::stopServer()
     m_SocketServer->close();
 }
 
+void RemotePlayer::broadcastCommand(const QString& command, const QString& argument)
+{
+    auto message = argument == nullptr || argument.isEmpty() ? command : command + "::" + argument;
+    foreach(RemotePlayerTransport* connectionItem, *m_Connections) {
+        connectionItem->sendMessage(message);
+    }
+}
+
+void RemotePlayer::setStarted(const bool started)
+{
+    m_Started = started;
+    emit startedChanged();
+}
+
 void RemotePlayer::newConnection()
 {
     auto socket = m_SocketServer->nextPendingConnection();
@@ -40,11 +63,12 @@ void RemotePlayer::newConnection()
     m_Connections->append(connection);
 
     connect(connection, &RemotePlayerTransport::simpleCommandReceived, this, &RemotePlayer::simpleCommandReceived);
+    connect(connection, &RemotePlayerTransport::forceClosed, this, &RemotePlayer::forceClosed);
 
     emit newConnectionAccepted(socket->localAddress().toString());
 }
 
-void RemotePlayer::simpleCommandReceived(const QString &message, RemotePlayerTransport *connection)
+void RemotePlayer::simpleCommandReceived(const QString &message, RemotePlayerTransport* connection)
 {
     if (message == "ping") connection->sendMessage("pong");
 
@@ -66,4 +90,11 @@ void RemotePlayer::simpleCommandReceived(const QString &message, RemotePlayerTra
         }
     }
 
+}
+
+void RemotePlayer::forceClosed(const RemotePlayerTransport* connection)
+{
+    auto localConnection = const_cast<RemotePlayerTransport*>(connection);
+
+    m_Connections->removeOne(localConnection);
 }

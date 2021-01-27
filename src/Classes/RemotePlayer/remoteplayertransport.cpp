@@ -4,8 +4,15 @@
 #include <QJsonObject>
 #include <QWebSocket>
 
-RemotePlayerTransport::RemotePlayerTransport(QObject *parent, QWebSocket* socket) : QObject(parent), m_WebSocket(socket)
+RemotePlayerTransport::RemotePlayerTransport(QObject *parent, QWebSocket* socket) : QObject(parent),
+    m_WebSocket(socket),
+    m_keepAliveCheckTimer(new QTimer(this)),
+    m_DateTime(new QDateTime())
 {
+    m_keepAliveCheckTimer->setInterval(15000);
+    m_keepAliveCheckTimer->start();
+
+    connect(m_keepAliveCheckTimer, &QTimer::timeout, this, &RemotePlayerTransport::keepAliveTimer);
     connect(socket, &QWebSocket::textMessageReceived, this, &RemotePlayerTransport::textMessageReceived);
     connect(socket, &QWebSocket::disconnected, this, &RemotePlayerTransport::deleteLater);
 }
@@ -20,17 +27,23 @@ void RemotePlayerTransport::sendMessage(const QString& message)
     m_WebSocket->sendTextMessage(message);
 }
 
-void RemotePlayerTransport::textMessageReceived(const QString &messageData)
+void RemotePlayerTransport::closeConnection()
 {
-    /*QJsonParseError error;
-    QJsonDocument message = QJsonDocument::fromJson(messageData.toUtf8(), &error);
-    if (error.error) {
-        qWarning() << "Failed to parse text message as JSON object:" << messageData
-                   << "Error is:" << error.errorString();
-        return;
-    } else if (!message.isObject()) {
-        qWarning() << "Received JSON message that is not an object: " << messageData;
-        return;
-    }*/
+    m_WebSocket->close(QWebSocketProtocol::CloseCodeNormal, "Server is shutdown");
+}
+
+void RemotePlayerTransport::textMessageReceived(const QString& messageData)
+{
+    if (messageData == "pong")
     emit simpleCommandReceived(messageData, this);
+}
+
+void RemotePlayerTransport::keepAliveTimer()
+{
+    auto now = QDateTime::currentDateTime();
+    auto difference = m_DateTime->msecsTo(now);
+
+    if (difference > 20000) {
+        m_WebSocket->close(QWebSocketProtocol::CloseCodeNormal, "Ping/Pong session is expire");
+    }
 }
