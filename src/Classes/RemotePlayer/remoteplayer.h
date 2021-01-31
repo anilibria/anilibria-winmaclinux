@@ -11,6 +11,7 @@ class RemotePlayer : public QObject
 
     Q_PROPERTY(qint32 port READ port WRITE setPort NOTIFY portChanged)
     Q_PROPERTY(bool started READ started NOTIFY startedChanged)
+    Q_PROPERTY(quint32 countUsers READ countUsers NOTIFY countUsersChanged)
 
 private:
     QWebSocketServer* m_SocketServer;
@@ -24,11 +25,12 @@ public:
 
     qint32 port() const { return m_Port; }
     bool started() const { return m_Started; }
+    quint32 countUsers() const { return m_Connections->count(); }
 
     void setPort(const qint32 port);
 
     Q_INVOKABLE void startServer();
-    Q_INVOKABLE void stopServer();
+    Q_INVOKABLE void stopServer() noexcept;
     Q_INVOKABLE void broadcastCommand(const QString& command, const QString& argument);
 
 private:
@@ -44,6 +46,7 @@ signals:
     void newConnectionAccepted(const QString& address);
     void portChanged();
     void startedChanged();
+    void countUsersChanged();
 
 };
 

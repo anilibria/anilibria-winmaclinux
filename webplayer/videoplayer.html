@@ -2,17 +2,199 @@
 <html lang="en" style="height:100%;">
 	<head>
 		<meta charset="utf-8">
-		<title>Web player</title>
+		<title>Remote web player</title>
 		<link href="https://vjs.zencdn.net/7.7.5/video-js.css" rel="stylesheet" />
-	</head>	
-	<body style="height:100%;">
-		<video
-			id="my-video"
-			class="video-js"
-			style="width: 100%; height: 100%;"
-			data-setup='{"controls": true, "preload": "auto"}'>
-			<source type="application/x-mpegURL" src="https://de10.libria.fun/videos/ts/8601/0001/playlist.m3u8">
-		</video>
 		<script src="https://vjs.zencdn.net/7.7.5/video.js"></script>
-	</body>
+		<script src="https://cdn.jsdelivr.net/npm/vue@2.6.12"></script>
+	</head>
+	<script>
+		function setVideoSource(videoSource) {
+			console.log(`Stub::setVideoSource`, videoSource);
+		}
+
+		function setVideoPosition(position) {
+			console.log(`Stub::setVideoPosition`, position);
+		}
+
+		function setVolume(volume) {
+			console.log(`Stub::setVolume`, volume);
+		}
+		
+		function setPlaybackRate(playbackRate) {
+			console.log(`Stub::setPlaybackRate`, playbackRate);
+		}
+		
+		function setPlayback(playback) {
+			console.log(`Stub::setPlayback`, playback);
+		}		
+	</script>
+	
+	<style>
+		.video-player {
+			margin-top: 20px;
+			display:flex;
+			align-items: center;
+			justify-content: center;
+		}
+		.form-container {
+			width: 300px;
+			display:flex;
+			align-items: center;
+			justify-content: center;
+			flex-direction: column;
+			padding: 10px;
+		}
+		.form-row-container {
+			display:flex;
+			justify-content: center;
+		}
+		.form-container input {
+			margin-bottom: 4px;
+			width: 100%;
+		}
+		.form-title {
+			align-self: flex-start;
+			display: flex;
+			flex-direction: row;
+			justify-content: flex-start;
+			font-size: 16px;
+			font-weight: bold;
+		}
+	</style>
+	
+	<body>
+		<div id="app">
+			<div class="form-row-container">
+				<div class="form-container">
+					<div class="form-title">
+						<span>
+							Адрес
+						</span>
+					</div>
+					<input
+						type="text"
+						v-model="host"
+						placeholder="Введите хост в виде ip адреса или имени"
+					/>
+					<div class="form-title">
+						<span>
+							Порт
+						</span>
+					</div>
+					<input
+						type="text"
+						v-model="port"
+						placeholder="Введите порт в виде числа 100-65535"
+					/>
+					<button
+						@click="connectToHost()">
+						Подключиться
+					</button>
+				</div>
+			</div>
+			<div class="video-player">
+				<video
+					id="videoplayer"
+					class="video-js"
+					style="width: 800px; height: 400px;"
+					data-setup='{"controls": true, "preload": "auto"}'>
+					<source type="application/x-mpegURL" :src="videoSource">
+				</video>
+			</div>		
+		</div>
+		<script>
+			new Vue(
+				{
+					el: `#app`,
+					data: {
+						videoSource: ``,
+						host: ``,
+						port: 12345,
+						socket: null,
+						connected: false,
+						pingTimeoutId: null
+					},
+					mounted() {
+						
+					},
+					methods: {
+						clearPingTimeout() {
+							if (this.pingTimeoutId) clearTimeout(this.pingTimeoutId);
+						},
+						setPingTimeout(socket) {
+							this.pingTimeoutId = setTimeout(
+								() => {
+									this.socket.send(`ping`);
+									
+									this.setPingTimeout(socket);
+								},
+								10000
+							);
+						},
+						connectToHost() {
+							if (!this.host || !this.port) return; //show error message
+							
+							this.socket = new WebSocket(`ws://${this.host}:${this.port}`);
+
+							this.socket.onclose = function() {
+								console.log("web channel closed");
+								clearPingTimeout();
+								this.connected = false;
+							};
+							this.socket.onerror = function(error) {
+								console.error("web channel error: " + error);
+							};
+							this.socket.onopen = () => {
+								console.log("socket opened ");
+								this.connected = true;
+								
+								setPingTimeout(socket);
+							};
+							this.socket.onmessage = (event) => {
+								console.log(`message`, event.data);
+								const message = event.data;
+
+								if (message[0] === `{`) throw `Json commands don't supported!`;
+
+								const parts = message.split(`::`).filter(a => a);
+								if (!parts.length) throw `Unknown or empty command!`;
+
+								const command = parts[0];
+								const firstArgument = parts[1];
+
+								switch (command) {
+									case `positionchanged`:
+										if (!firstArgument) throw `Command positionchanged need int argument (positionchanged::1212)`;
+										
+										setVideoPosition(parseInt(firstArgument));
+										break;
+									case `videosourcechanged`:
+										if (!firstArgument) throw `Command videosourcechanged need string argument (videosourcechanged::http://video)`;
+										
+										setVideoSource(firstArgument);
+										break;
+
+									case `volumechanged`:
+										if (!firstArgument) throw `Command volumechanged need int argument (volumechanged::50)`;
+										
+										setVolume(firstArgument);
+										break;
+									case `playbackratechanged`:
+										if (!firstArgument) throw `Command playbackratechanged need double argument (playbackratechanged::1)`;
+										
+										setPlaybackRate(firstArgument);
+										break;
+									case `playbackchanged`:
+										if (!firstArgument) throw `Command playbackchanged need string argument (playbackchanged::play)`;
+										
+										setPlayback(firstArgument);
+										break;
+								}
+							};
+						}
+					}
+				}
+			);
+		</script>
+	</body>	
 </html>

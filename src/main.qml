@@ -263,9 +263,10 @@ ApplicationWindow {
 
     RemotePlayer {
         id: remotePlayer
+        onErrorWhileStartServer: {
+            console.log(message);
+            //TODO: handle errors
 
-        Component.onCompleted: {
-            remotePlayer.startServer();
         }
     }
 

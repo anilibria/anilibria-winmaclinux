@@ -3,19 +3,15 @@
 
 RemotePlayer::RemotePlayer(QObject *parent) : QObject(parent),
     m_SocketServer(new QWebSocketServer(QStringLiteral("Remote Player Server"), QWebSocketServer::NonSecureMode)),
-    m_Connections(new QVector<RemotePlayerTransport*>())
+    m_Connections(new QVector<RemotePlayerTransport*>()),
+    m_Port(12345),
+    m_Started(false)
 {
     connect(m_SocketServer, &QWebSocketServer::newConnection, this, &RemotePlayer::newConnection);
 }
 
 RemotePlayer::~RemotePlayer()
 {
-    foreach (auto connection, *m_Connections) {
-        connection->closeConnection();
-    }
-
-    m_Connections->clear();
-
     stopServer();
 }
 
@@ -29,17 +25,27 @@ void RemotePlayer::setPort(const qint32 port)
 
 void RemotePlayer::startServer()
 {
-    if (!m_SocketServer->listen(QHostAddress::Any, 12345)) {
+    if (!m_SocketServer->listen(QHostAddress::Any, m_Port)) {
         emit errorWhileStartServer("Failed to open web socket server.");
         return;
-    }    
+    }
+
+    setStarted(true);
 }
 
-void RemotePlayer::stopServer()
+void RemotePlayer::stopServer() noexcept
 {
     if (!m_SocketServer->isListening()) return;
 
+    foreach (auto connection, *m_Connections) {
+        connection->closeConnection();
+    }
+
+    m_Connections->clear();
+
     m_SocketServer->close();
+
+    setStarted(false);
 }
 
 void RemotePlayer::broadcastCommand(const QString& command, const QString& argument)
@@ -72,24 +78,13 @@ void RemotePlayer::simpleCommandReceived(const QString &message, RemotePlayerTra
 {
     if (message == "ping") connection->sendMessage("pong");
 
-    if (message.startsWith("changeposition::")) {
-        auto newPosition = message.midRef(16).toInt();
+    if (message.startsWith("videosourcechanged::") || message.startsWith("volumechanged::") || message.startsWith("positionchanged::")) {
         foreach(RemotePlayerTransport* connectionItem, *m_Connections) {
             if (connectionItem == connection) continue;
 
-            connectionItem->sendMessage("positionchanged::" + QString::number(newPosition));
+            connectionItem->sendMessage(message);
         }
     }
-
-    if (message.startsWith("changevolume::")) {
-        auto newPosition = message.midRef(14).toInt();
-        foreach(RemotePlayerTransport* connectionItem, *m_Connections) {
-            if (connectionItem == connection) continue;
-
-            connectionItem->sendMessage("volumechanged::" + QString::number(newPosition));
-        }
-    }
-
 }
 
 void RemotePlayer::forceClosed(const RemotePlayerTransport* connection)

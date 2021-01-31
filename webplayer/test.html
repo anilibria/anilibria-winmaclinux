@@ -34,6 +34,14 @@
 		function setVolume(volume) {
 			console.log(`Stub::setVolume`, volume);
 		}
+		
+		function setPlaybackRate(playbackRate) {
+			console.log(`Stub::setPlaybackRate`, playbackRate);
+		}
+		
+		function setPlayback(playback) {
+			console.log(`Stub::setPlayback`, playback);
+		}
 
 		function webocketEntryPoint() {
 			const host = document.getElementById(`host`).value;
@@ -80,6 +88,16 @@
 						if (!firstArgument) throw `Command volumechanged need int argument (volumechanged::50)`;
 						
 						setVolume(firstArgument);
+						break;
+					case `playbackratechanged`:
+						if (!firstArgument) throw `Command playbackratechanged need double argument (playbackratechanged::1)`;
+						
+						setPlaybackRate(firstArgument);
+						break;
+					case `playbackchanged`:
+						if (!firstArgument) throw `Command playbackchanged need string argument (playbackchanged::play)`;
+						
+						setPlayback(firstArgument);
 						break;
 				}
 			};

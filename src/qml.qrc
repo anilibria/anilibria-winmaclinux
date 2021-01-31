@@ -90,5 +90,6 @@
         <file>Assets/Icons/maintenance.svg</file>
         <file>Views/Maintenance.qml</file>
         <file>Assets/Icons/hidebuttonmenu.svg</file>
+        <file>Assets/Icons/connect.svg</file>
     </qresource>
 </RCC>

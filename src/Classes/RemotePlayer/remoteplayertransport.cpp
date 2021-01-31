@@ -19,6 +19,7 @@ RemotePlayerTransport::RemotePlayerTransport(QObject *parent, QWebSocket* socket
 
 RemotePlayerTransport::~RemotePlayerTransport()
 {
+    m_keepAliveCheckTimer->stop();
     m_WebSocket->deleteLater();
 }
 
@@ -29,12 +30,17 @@ void RemotePlayerTransport::sendMessage(const QString& message)
 
 void RemotePlayerTransport::closeConnection()
 {
+    m_keepAliveCheckTimer->stop();
     m_WebSocket->close(QWebSocketProtocol::CloseCodeNormal, "Server is shutdown");
 }
 
 void RemotePlayerTransport::textMessageReceived(const QString& messageData)
 {
-    if (messageData == "pong")
+    if (messageData.startsWith("{")) {
+        //TODO: support json responses!
+        return;
+    }
+
     emit simpleCommandReceived(messageData, this);
 }
 
