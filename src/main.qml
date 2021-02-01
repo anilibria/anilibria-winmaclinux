@@ -268,6 +268,9 @@ ApplicationWindow {
             //TODO: handle errors
 
         }
+        onReceiveCommand: {
+            videoplayer.receiveRemoteCommand(id, command, argument);
+        }
     }
 
     AnalyticsService {

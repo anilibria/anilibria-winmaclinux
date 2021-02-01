@@ -3,32 +3,9 @@
 	<head>
 		<meta charset="utf-8">
 		<title>Remote web player</title>
-		<link href="https://vjs.zencdn.net/7.7.5/video-js.css" rel="stylesheet" />
-		<script src="https://vjs.zencdn.net/7.7.5/video.js"></script>
+		<script src="https://cdn.jsdelivr.net/npm/@clappr/player@latest/dist/clappr.min.js"></script>
 		<script src="https://cdn.jsdelivr.net/npm/vue@2.6.12"></script>
 	</head>
-	<script>
-		function setVideoSource(videoSource) {
-			console.log(`Stub::setVideoSource`, videoSource);
-		}
-
-		function setVideoPosition(position) {
-			console.log(`Stub::setVideoPosition`, position);
-		}
-
-		function setVolume(volume) {
-			console.log(`Stub::setVolume`, volume);
-		}
-		
-		function setPlaybackRate(playbackRate) {
-			console.log(`Stub::setPlaybackRate`, playbackRate);
-		}
-		
-		function setPlayback(playback) {
-			console.log(`Stub::setPlayback`, playback);
-		}		
-	</script>
-	
 	<style>
 		.video-player {
 			margin-top: 20px;
@@ -93,13 +70,6 @@
 				</div>
 			</div>
 			<div class="video-player">
-				<video
-					id="videoplayer"
-					class="video-js"
-					style="width: 800px; height: 400px;"
-					data-setup='{"controls": true, "preload": "auto"}'>
-					<source type="application/x-mpegURL" :src="videoSource">
-				</video>
 			</div>		
 		</div>
 		<script>
@@ -112,12 +82,56 @@
 						port: 12345,
 						socket: null,
 						connected: false,
-						pingTimeoutId: null
-					},
-					mounted() {
-						
+						pingTimeoutId: null,
+						player: null
 					},
 					methods: {
+						loadToPlayer(videoSource) {
+							if (!this.player) {
+								this.player = new Clappr.Player(
+									{
+										source: videoSource,
+										autoPlay: true,
+										parentId: ".video-player"
+									}
+								);
+								return;
+							}
+							
+							this.player.load(videoSource);
+						},
+						setVideoSource(videoSource) {
+							console.log(`setVideoSource`, videoSource);
+							if (this.videoSource === videoSource) return;
+							
+							this.videoSource = videoSource;
+							this.loadToPlayer(videoSource);
+						},
+						setVideoPosition(position) {
+							console.log(`setVideoPosition`, position);
+							this.player.seek(position);
+						},
+						setVolume(volume) {
+							const volumeDigit = parseInt(volume) / 100;
+							console.log(`setVolume`, volumeDigit);
+							this.player.setVolume(volumeDigit);
+						},						
+						setPlaybackRate(playbackRate) {
+							console.log(`setPlaybackRate`, playbackRate);
+							debugger;
+							player.core.activePlayback.el.playbackRate = parseFloat(playbackRate);
+						},						
+						setPlayback(playback) {
+							console.log(`setPlayback`, playback);
+							switch (playback) {
+								case `pause`:
+									this.player.pause();
+									break;
+								case `play`:
+									this.player.play();
+									break;
+							}
+						},
 						clearPingTimeout() {
 							if (this.pingTimeoutId) clearTimeout(this.pingTimeoutId);
 						},
@@ -131,14 +145,14 @@
 								10000
 							);
 						},
-						connectToHost() {
+						async connectToHost() {
 							if (!this.host || !this.port) return; //show error message
 							
 							this.socket = new WebSocket(`ws://${this.host}:${this.port}`);
 
 							this.socket.onclose = function() {
 								console.log("web channel closed");
-								clearPingTimeout();
+								this.clearPingTimeout();
 								this.connected = false;
 							};
 							this.socket.onerror = function(error) {
@@ -148,7 +162,14 @@
 								console.log("socket opened ");
 								this.connected = true;
 								
-								setPingTimeout(socket);
+								this.setPingTimeout(this.socket);
+
+								setTimeout(
+									() => {
+										this.socket.send(`getcurrentvideosource`);
+									},
+									100
+								);
 							};
 							this.socket.onmessage = (event) => {
 								console.log(`message`, event.data);
@@ -166,28 +187,28 @@
 									case `positionchanged`:
 										if (!firstArgument) throw `Command positionchanged need int argument (positionchanged::1212)`;
 										
-										setVideoPosition(parseInt(firstArgument));
+										this.setVideoPosition(parseInt(firstArgument));
 										break;
 									case `videosourcechanged`:
 										if (!firstArgument) throw `Command videosourcechanged need string argument (videosourcechanged::http://video)`;
 										
-										setVideoSource(firstArgument);
+										this.setVideoSource(firstArgument);
 										break;
 
 									case `volumechanged`:
 										if (!firstArgument) throw `Command volumechanged need int argument (volumechanged::50)`;
 										
-										setVolume(firstArgument);
+										this.setVolume(firstArgument);
 										break;
 									case `playbackratechanged`:
 										if (!firstArgument) throw `Command playbackratechanged need double argument (playbackratechanged::1)`;
 										
-										setPlaybackRate(firstArgument);
+										this.setPlaybackRate(firstArgument);
 										break;
 									case `playbackchanged`:
 										if (!firstArgument) throw `Command playbackchanged need string argument (playbackchanged::play)`;
 										
-										setPlayback(firstArgument);
+										this.setPlayback(firstArgument);
 										break;
 								}
 							};

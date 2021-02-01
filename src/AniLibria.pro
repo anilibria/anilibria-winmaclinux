@@ -76,7 +76,6 @@ SOURCES += \
     Classes/Models/usersettingsmodel.cpp \
     Classes/Models/youtubevideomodel.cpp \
     Classes/RemotePlayer/remoteplayer.cpp \
-    Classes/RemotePlayer/remoteplayerchannel.cpp \
     Classes/RemotePlayer/remoteplayertransport.cpp \
     Classes/Services/analyticsservice.cpp \
     Classes/Services/anilibriaapiservice.cpp \
@@ -127,7 +126,6 @@ HEADERS += \
     Classes/Models/usersettingsmodel.h \
     Classes/Models/youtubevideomodel.h \
     Classes/RemotePlayer/remoteplayer.h \
-    Classes/RemotePlayer/remoteplayerchannel.h \
     Classes/RemotePlayer/remoteplayertransport.h \
     Classes/Services/analyticsservice.h \
     Classes/Services/anilibriaapiservice.h \

@@ -4,10 +4,11 @@
 #include <QJsonObject>
 #include <QWebSocket>
 
-RemotePlayerTransport::RemotePlayerTransport(QObject *parent, QWebSocket* socket) : QObject(parent),
+RemotePlayerTransport::RemotePlayerTransport(QObject *parent, QWebSocket* socket, unsigned int id) : QObject(parent),
     m_WebSocket(socket),
     m_keepAliveCheckTimer(new QTimer(this)),
-    m_DateTime(new QDateTime())
+    m_DateTime(new QDateTime()),
+    m_Id(id)
 {
     m_keepAliveCheckTimer->setInterval(15000);
     m_keepAliveCheckTimer->start();

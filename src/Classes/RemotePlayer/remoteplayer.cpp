@@ -1,11 +1,15 @@
 #include <QWebSocketServer>
+#include <QMutexLocker>
 #include "remoteplayer.h"
+#include <QDebug>
 
 RemotePlayer::RemotePlayer(QObject *parent) : QObject(parent),
     m_SocketServer(new QWebSocketServer(QStringLiteral("Remote Player Server"), QWebSocketServer::NonSecureMode)),
     m_Connections(new QVector<RemotePlayerTransport*>()),
     m_Port(12345),
-    m_Started(false)
+    m_Started(false),
+    m_GetIdMutex(),
+    m_MaximumIdentifier(0)
 {
     connect(m_SocketServer, &QWebSocketServer::newConnection, this, &RemotePlayer::newConnection);
 }
@@ -56,16 +60,41 @@ void RemotePlayer::broadcastCommand(const QString& command, const QString& argum
     }
 }
 
+void RemotePlayer::sendCommandToUser(const unsigned int id, const QString &command, const QString &argument)
+{
+    auto findedConnection = std::find_if(
+        m_Connections->begin(),
+        m_Connections->end(),
+        [id](RemotePlayerTransport* connection) -> bool {
+            return connection->id() == id;
+        }
+    );
+    if (findedConnection == m_Connections->end()) return;
+
+    auto connection = *findedConnection;
+
+    auto message = argument == nullptr || argument.isEmpty() ? command : command + "::" + argument;
+    connection->sendMessage(message);
+}
+
 void RemotePlayer::setStarted(const bool started)
 {
     m_Started = started;
     emit startedChanged();
 }
 
+unsigned int RemotePlayer::getId()
+{
+    QMutexLocker locker(&m_GetIdMutex);
+
+    return m_MaximumIdentifier + 1;
+}
+
 void RemotePlayer::newConnection()
 {
     auto socket = m_SocketServer->nextPendingConnection();
-    auto connection = new RemotePlayerTransport(this, socket);
+    auto id = getId();
+    auto connection = new RemotePlayerTransport(this, socket, id);
     m_Connections->append(connection);
 
     connect(connection, &RemotePlayerTransport::simpleCommandReceived, this, &RemotePlayer::simpleCommandReceived);
@@ -77,6 +106,11 @@ void RemotePlayer::newConnection()
 void RemotePlayer::simpleCommandReceived(const QString &message, RemotePlayerTransport* connection)
 {
     if (message == "ping") connection->sendMessage("pong");
+
+    if (message == "getcurrentvideosource") {
+        emit receiveCommand(connection->id(), "getcurrentvideosource", "");
+        return;
+    }
 
     if (message.startsWith("videosourcechanged::") || message.startsWith("volumechanged::") || message.startsWith("positionchanged::")) {
         foreach(RemotePlayerTransport* connectionItem, *m_Connections) {

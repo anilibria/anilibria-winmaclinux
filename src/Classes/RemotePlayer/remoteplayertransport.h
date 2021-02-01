@@ -14,13 +14,15 @@ private:
     QWebSocket* m_WebSocket;
     QTimer* m_keepAliveCheckTimer;
     QDateTime* m_DateTime;
+    unsigned int m_Id;
 
 public:
-    explicit RemotePlayerTransport(QObject *parent = nullptr, QWebSocket* socket = nullptr);
+    explicit RemotePlayerTransport(QObject *parent = nullptr, QWebSocket* socket = nullptr, unsigned int id = 0);
     virtual ~RemotePlayerTransport();
 
     void sendMessage(const QString& message);
     void closeConnection();
+    unsigned int id() const { return m_Id; };
 
 private slots:
     void textMessageReceived(const QString& message);

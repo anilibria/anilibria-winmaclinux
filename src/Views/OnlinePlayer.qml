@@ -51,6 +51,8 @@ Page {
     property string releasePoster: ""
     property bool isCinemahall: false
     property var cinemahallReleases: []
+    property string videoSourceChangedCommand: `videosourcechanged`
+    property string videoPositionChangedCommand: `positionchanged`
 
     signal navigateFrom()
     signal setReleaseVideo()
@@ -59,6 +61,7 @@ Page {
     signal navigateTo()
     signal returnToReleasesPage()
     signal windowNotActived()
+    signal receiveRemoteCommand(int id, string command, string argument)
 
     Keys.onSpacePressed: {
         if (player.playbackState === MediaPlayer.PlayingState) {
@@ -123,6 +126,7 @@ Page {
         jumpSecondComboBox.currentIndex = jumpSeconds.indexOf(userSettings.jumpSecond);
         showReleaseInfo.checked = userSettings.showReleaseInfo;
         sendVolumeToRemoteSwitch.checked = applicationSettings.sendVolumeToRemote;
+        remotePlayer.port = applicationSettings.remotePort;
         remotePlayerPortComboBox.currentIndex = ports.indexOf(applicationSettings.remotePort);
 
         if (autoTopMost.checked && player.playbackState === MediaPlayer.PlayingState) windowSettings.setStayOnTop();
@@ -287,6 +291,17 @@ Page {
             if (_page.seenVideo.id && _page.seenVideo.videoId !== firstVideo.order) _page.seenVideo.videoPosition = 0;
         } else {
             setVideoSource("");
+        }
+    }
+
+    onReceiveRemoteCommand: {
+        switch (command){
+            case `getcurrentvideosource`:
+                remotePlayer.sendCommandToUser(id, _page.videoSourceChangedCommand, _page.videoSource);
+                break;
+            case `getcurrentvideoposition`:
+                remotePlayer.sendCommandToUser(id, _page.videoPositionChangedCommand, player.position.toString());
+                break;
         }
     }
 
@@ -610,7 +625,7 @@ Page {
                 onPressedChanged: {
                     if (!pressed && _page.lastMovedPosition > 0) {
                         player.seek(_page.lastMovedPosition);
-                        remotePlayer.broadcastCommand("positionchanged", _page.lastMovedPosition.toString());
+                        remotePlayer.broadcastCommand(_page.videoPositionChangedCommand, _page.lastMovedPosition.toString());
                         _page.lastMovedPosition = 0;
                     }
                     controlPanel.forceActiveFocus();
@@ -1362,7 +1377,7 @@ Page {
 
     function setVideoSource(source) {
         _page.videoSource = source;
-        remotePlayer.broadcastCommand("videosourcechanged", source);
+        remotePlayer.broadcastCommand(_page.videoSourceChangedCommand, source);
     }
 
     function setVideoSpeed(videoSpeed) {

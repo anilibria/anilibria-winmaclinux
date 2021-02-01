@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QWebSocketServer>
+#include <QMutex>
 #include "remoteplayertransport.h"
 
 class RemotePlayer : public QObject
@@ -18,6 +19,8 @@ private:
     QVector<RemotePlayerTransport*>* m_Connections;
     qint32 m_Port;
     bool m_Started;
+    QMutex m_GetIdMutex;
+    unsigned int m_MaximumIdentifier;
 
 public:
     explicit RemotePlayer(QObject *parent = nullptr);
@@ -32,14 +35,16 @@ public:
     Q_INVOKABLE void startServer();
     Q_INVOKABLE void stopServer() noexcept;
     Q_INVOKABLE void broadcastCommand(const QString& command, const QString& argument);
+    Q_INVOKABLE void sendCommandToUser(const unsigned int id, const QString& command, const QString& argument);
 
 private:
     void setStarted(const bool started);
+    unsigned int getId();
 
 private slots:
     void newConnection();
     void simpleCommandReceived(const QString& message, RemotePlayerTransport* connection);
-    void forceClosed(const RemotePlayerTransport* connection);
+    void forceClosed(const RemotePlayerTransport* connection);    
 
 signals:
     void errorWhileStartServer(const QString& message);
@@ -47,6 +52,7 @@ signals:
     void portChanged();
     void startedChanged();
     void countUsersChanged();
+    void receiveCommand(const unsigned int id, const QString& command, const QString& argument);
 
 };
 
