@@ -89,6 +89,10 @@ Page {
     signal navigateTo()
     signal watchCinemahall()
 
+    Keys.onPressed: {
+        if (event.key === Qt.Key_Escape) page.openedRelease = null;
+    }
+
     onWidthChanged: {
         const columnCount = parseInt(page.width / 520);
     }
@@ -945,7 +949,7 @@ Page {
                                         anchors.centerIn: parent
                                         fontPointSize: 11
                                         text: "Новых релизов: " + page.changesCounts[0]
-                                    }                                    
+                                    }
                                     MouseArea {
                                         anchors.fill: parent
                                         onPressed: {
@@ -2030,7 +2034,7 @@ Page {
                                     onPressed: {
                                         openInExternalPlayer(localStorage.packAsMPCPLAndOpen(page.openedRelease.id, "hd"));
                                         externalPlayerMenu.close();
-                                    }                                    
+                                    }
                                 }
                                 CommonMenuItem {
                                     notVisible: Qt.platform.os !== "windows"
@@ -2066,7 +2070,7 @@ Page {
 
                             CommonMenu {
                                 id: setSeriesMenu
-                                width: 330                                
+                                width: 330
                                 onClosed: {
                                     if (Qt.platform.os !== "windows") webView.visible = true;
                                 }
@@ -2112,7 +2116,7 @@ Page {
                                 model: torrentsModel
                                 CommonMenuItem {
                                     text: "Скачать " + modelData.quality + " [" + modelData.series + "]"
-                                    onPressed: {                                        
+                                    onPressed: {
                                         const torrentUri = synchronizationService.combineWithWebSiteUrl(modelData.url);
                                         synchronizationService.downloadTorrent(torrentUri);
                                     }
@@ -2332,7 +2336,7 @@ Page {
         localStorage.setToReleaseHistory(release.id, 0);
         analyticsService.sendView("releasecard", "show", "%2Freleases");
 
-        localStorage.resetReleaseChanges(release.id);        
+        localStorage.resetReleaseChanges(release.id);
         page.changesCounts = localStorage.getChangesCounts();
 
         webView.url = getVkontakteCommentPage();
