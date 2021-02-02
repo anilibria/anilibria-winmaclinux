@@ -34,6 +34,7 @@ class ApplicationSettings : public QObject
     Q_PROPERTY(bool isDarkTheme READ isDarkTheme WRITE setIsDarkTheme NOTIFY isDarkThemeChanged)
     Q_PROPERTY(int remotePort READ remotePort WRITE setRemotePort NOTIFY remotePortChanged)
     Q_PROPERTY(bool sendVolumeToRemote READ sendVolumeToRemote WRITE setSendVolumeToRemote NOTIFY sendVolumeToRemoteChanged)
+    Q_PROPERTY(bool sendPlaybackToRemote READ sendPlaybackToRemote WRITE setSendPlaybackToRemote NOTIFY sendPlaybackToRemoteChanged);
 
 private:
     QSettings* m_Settings;
@@ -65,6 +66,9 @@ public:
     bool sendVolumeToRemote();
     void setSendVolumeToRemote(bool sendVolumeToRemote);
 
+    bool sendPlaybackToRemote();
+    void setSendPlaybackToRemote(bool sendPlaybackToRemote);
+
 signals:
     void userTokenChanged(QString& token);
     void windowHeightChanged(int windowHeight);
@@ -74,6 +78,7 @@ signals:
     void isDarkThemeChanged(bool isDarkTheme);
     void remotePortChanged(int remotePort);
     void sendVolumeToRemoteChanged(bool sendVolumeToRemote);
+    void sendPlaybackToRemoteChanged(bool sendPlaybackToRemote);
 
 };
 

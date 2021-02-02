@@ -53,6 +53,9 @@ Page {
     property var cinemahallReleases: []
     property string videoSourceChangedCommand: `videosourcechanged`
     property string videoPositionChangedCommand: `positionchanged`
+    property string videoVolumeChangedCommand: `volumechanged`
+    property string videoPlaybackRateCommand: `playbackratechanged`
+    property string videoPlaybackCommand: `playbackchanged`
 
     signal navigateFrom()
     signal setReleaseVideo()
@@ -126,6 +129,7 @@ Page {
         jumpSecondComboBox.currentIndex = jumpSeconds.indexOf(userSettings.jumpSecond);
         showReleaseInfo.checked = userSettings.showReleaseInfo;
         sendVolumeToRemoteSwitch.checked = applicationSettings.sendVolumeToRemote;
+        sendPlaybackToRemoteSwitch.checked = applicationSettings.sendPlaybackToRemote;
         remotePlayer.port = applicationSettings.remotePort;
         remotePlayerPortComboBox.currentIndex = ports.indexOf(applicationSettings.remotePort);
 
@@ -300,7 +304,16 @@ Page {
                 remotePlayer.sendCommandToUser(id, _page.videoSourceChangedCommand, _page.videoSource);
                 break;
             case `getcurrentvideoposition`:
-                remotePlayer.sendCommandToUser(id, _page.videoPositionChangedCommand, player.position.toString());
+                remotePlayer.sendCommandToUser(id, _page.videoPositionChangedCommand, player.position.toString() + `/` + player.duration.toString());
+                break;
+            case `getcurrentvolume`:
+                if (sendVolumeToRemoteSwitch.checked) remotePlayer.sendCommandToUser(id, _page.videoVolumeChangedCommand, volumeSlider.value.toString());
+                break;
+            case `getcurrentplaybackrate`:
+                remotePlayer.sendCommandToUser(id, _page.videoPlaybackRateCommand, _page.videoSpeed.toString());
+                break;
+            case `getcurrentplayback`:
+                if (player.playbackState === MediaPlayer.PausedState && sendPlaybackToRemoteSwitch.checked) remotePlayer.sendCommandToUser(id, _page.videoPlaybackCommand, "pause");
                 break;
         }
     }
@@ -397,12 +410,14 @@ Page {
                 _page.setControlVisible(true);
             }
 
-            if (playbackState === MediaPlayer.PlayingState) remotePlayer.broadcastCommand("playbackchanged", "play");
-            if (playbackState === MediaPlayer.PausedState) remotePlayer.broadcastCommand("playbackchanged", "pause");
+            if (!sendPlaybackToRemoteSwitch.checked) return;
+
+            if (playbackState === MediaPlayer.PlayingState) remotePlayer.broadcastCommand(_page.videoPlaybackCommand, "play");
+            if (playbackState === MediaPlayer.PausedState) remotePlayer.broadcastCommand(_page.videoPlaybackCommand, "pause");
         }
         onVolumeChanged: {
             volumeSlider.value = volume * 100;
-            if (applicationSettings.sendVolumeToRemote) remotePlayer.broadcastCommand("volumechanged", volumeSlider.value);
+            if (applicationSettings.sendVolumeToRemote) remotePlayer.broadcastCommand(_page.videoVolumeChangedCommand, volumeSlider.value.toString());
         }
         onStatusChanged: {
             if (status === MediaPlayer.Loading) _page.isBuffering = true;
@@ -625,7 +640,7 @@ Page {
                 onPressedChanged: {
                     if (!pressed && _page.lastMovedPosition > 0) {
                         player.seek(_page.lastMovedPosition);
-                        remotePlayer.broadcastCommand(_page.videoPositionChangedCommand, _page.lastMovedPosition.toString());
+                        remotePlayer.broadcastCommand(_page.videoPositionChangedCommand, _page.lastMovedPosition.toString() + `/` + player.duration.toString());
                         _page.lastMovedPosition = 0;
                     }
                     controlPanel.forceActiveFocus();
@@ -979,9 +994,9 @@ Page {
                         Popup {
                             id: remotePlayerPopup
                             x: optionsButton.width - 300
-                            y: optionsButton.height - 340
+                            y: optionsButton.height - 380
                             width: 300
-                            height: 340
+                            height: 380
 
                             modal: true
                             focus: true
@@ -1011,11 +1026,12 @@ Page {
                                 PlainText {
                                     width: optionsPopup.width - 20
                                     fontPointSize: 10
-                                    text: "Порт\nПорт измениться после рестарта"
+                                    text: "Порт"
                                 }
 
                                 CommonComboBox {
                                     id: remotePlayerPortComboBox
+                                    enabled: !stateRemotePlayer.checked
                                     Layout.column: 0
                                     model: ListModel {
                                         ListElement {
@@ -1052,7 +1068,20 @@ Page {
                                 PlainText {
                                     width: optionsPopup.width - 20
                                     fontPointSize: 10
-                                    text: "Подключено: " + 0
+                                    text: "Передавать воспроизведение/пауза"
+                                }
+
+                                Switch {
+                                    id: sendPlaybackToRemoteSwitch
+                                    onCheckedChanged: {
+                                        applicationSettings.sendPlaybackToRemote = checked;
+                                    }
+                                }
+
+                                PlainText {
+                                    width: optionsPopup.width - 20
+                                    fontPointSize: 10
+                                    text: "Подключено: " + remotePlayer.countUsers
                                 }
                             }
                         }
@@ -1382,7 +1411,7 @@ Page {
 
     function setVideoSpeed(videoSpeed) {
         _page.videoSpeed = videoSpeed;
-        remotePlayer.broadcastCommand("playbackratechanged", videoSpeed);
+        remotePlayer.broadcastCommand(_page.videoPlaybackRateCommand, videoSpeed);
     }
 
     function nextVideo() {

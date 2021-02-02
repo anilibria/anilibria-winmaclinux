@@ -9,9 +9,16 @@ RemotePlayer::RemotePlayer(QObject *parent) : QObject(parent),
     m_Port(12345),
     m_Started(false),
     m_GetIdMutex(),
-    m_MaximumIdentifier(0)
+    m_MaximumIdentifier(0),
+    m_SimpleClientCommands(new QSet<QString>())
 {
     connect(m_SocketServer, &QWebSocketServer::newConnection, this, &RemotePlayer::newConnection);
+
+    m_SimpleClientCommands->insert("getcurrentvideosource");
+    m_SimpleClientCommands->insert("getcurrentvideoposition");
+    m_SimpleClientCommands->insert("getcurrentvolume");
+    m_SimpleClientCommands->insert("getcurrentplaybackrate");
+    m_SimpleClientCommands->insert("getcurrentplayback");
 }
 
 RemotePlayer::~RemotePlayer()
@@ -107,8 +114,9 @@ void RemotePlayer::simpleCommandReceived(const QString &message, RemotePlayerTra
 {
     if (message == "ping") connection->sendMessage("pong");
 
-    if (message == "getcurrentvideosource") {
-        emit receiveCommand(connection->id(), "getcurrentvideosource", "");
+    //for simple (without argument) client commands
+    if (m_SimpleClientCommands->contains(message)) {
+        emit receiveCommand(connection->id(), message, "");
         return;
     }
 

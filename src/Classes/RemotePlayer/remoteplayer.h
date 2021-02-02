@@ -4,6 +4,7 @@
 #include <QObject>
 #include <QWebSocketServer>
 #include <QMutex>
+#include <QSet>
 #include "remoteplayertransport.h"
 
 class RemotePlayer : public QObject
@@ -21,6 +22,7 @@ private:
     bool m_Started;
     QMutex m_GetIdMutex;
     unsigned int m_MaximumIdentifier;
+    QSet<QString>* m_SimpleClientCommands;
 
 public:
     explicit RemotePlayer(QObject *parent = nullptr);

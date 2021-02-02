@@ -123,3 +123,15 @@ void ApplicationSettings::setSendVolumeToRemote(bool sendVolumeToRemote)
 
     emit sendVolumeToRemoteChanged(sendVolumeToRemote);
 }
+
+bool ApplicationSettings::sendPlaybackToRemote()
+{
+    return m_Settings->value("sendplaybacktoremote", true).toBool();
+}
+
+void ApplicationSettings::setSendPlaybackToRemote(bool sendPlaybackToRemote)
+{
+    m_Settings->setValue("sendplaybacktoremote", sendPlaybackToRemote);
+
+    emit sendPlaybackToRemoteChanged(sendPlaybackToRemote);
+}

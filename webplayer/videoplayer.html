@@ -2,7 +2,7 @@
 <html lang="en" style="height:100%;">
 	<head>
 		<meta charset="utf-8">
-		<title>Remote web player</title>
+		<title>Anilibria remote web player</title>
 		<script src="https://cdn.jsdelivr.net/npm/@clappr/player@latest/dist/clappr.min.js"></script>
 		<script src="https://cdn.jsdelivr.net/npm/vue@2.6.12"></script>
 	</head>
@@ -83,7 +83,8 @@
 						socket: null,
 						connected: false,
 						pingTimeoutId: null,
-						player: null
+						player: null,
+						firstPlay: true
 					},
 					methods: {
 						loadToPlayer(videoSource) {
@@ -92,7 +93,20 @@
 									{
 										source: videoSource,
 										autoPlay: true,
-										parentId: ".video-player"
+										parentId: ".video-player",
+										events: {
+											onPlay: () => {
+												if (!this.firstPlay) return;
+
+												this.firstPlay = false;
+
+												//send all events for synchronization state with server
+												this.socket.send(`getcurrentvideoposition`);
+												this.socket.send(`getcurrentvolume`);
+												this.socket.send(`getcurrentplaybackrate`);
+												this.socket.send(`getcurrentplayback`);
+											}
+										}
 									}
 								);
 								return;
@@ -107,22 +121,24 @@
 							this.videoSource = videoSource;
 							this.loadToPlayer(videoSource);
 						},
-						setVideoPosition(position) {
-							console.log(`setVideoPosition`, position);
-							this.player.seek(position);
+						setVideoPosition(data) {
+							console.log(`setVideoPosition`, data);
+							const parts = data.split(`/`).map(a => parseInt(a));
+							const [position, duration] = parts;
+							this.player.seekPercentage(position / duration * 100);
 						},
 						setVolume(volume) {
-							const volumeDigit = parseInt(volume) / 100;
-							console.log(`setVolume`, volumeDigit);
-							this.player.setVolume(volumeDigit);
+							console.log(`setVolume`, volume);
+							this.player.setVolume(volume);
 						},						
 						setPlaybackRate(playbackRate) {
 							console.log(`setPlaybackRate`, playbackRate);
-							debugger;
-							player.core.activePlayback.el.playbackRate = parseFloat(playbackRate);
+							
+							this.player.core.activePlayback.el.playbackRate = parseFloat(playbackRate);
 						},						
 						setPlayback(playback) {
 							console.log(`setPlayback`, playback);
+
 							switch (playback) {
 								case `pause`:
 									this.player.pause();
@@ -150,7 +166,7 @@
 							
 							this.socket = new WebSocket(`ws://${this.host}:${this.port}`);
 
-							this.socket.onclose = function() {
+							this.socket.onclose = () => {
 								console.log("web channel closed");
 								this.clearPingTimeout();
 								this.connected = false;
@@ -187,7 +203,7 @@
 									case `positionchanged`:
 										if (!firstArgument) throw `Command positionchanged need int argument (positionchanged::1212)`;
 										
-										this.setVideoPosition(parseInt(firstArgument));
+										this.setVideoPosition(firstArgument);
 										break;
 									case `videosourcechanged`:
 										if (!firstArgument) throw `Command videosourcechanged need string argument (videosourcechanged::http://video)`;
