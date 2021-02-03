@@ -24,6 +24,7 @@ RemotePlayer::RemotePlayer(QObject *parent) : QObject(parent),
 RemotePlayer::~RemotePlayer()
 {
     stopServer();
+    m_SimpleClientCommands->clear();
 }
 
 void RemotePlayer::setPort(const qint32 port)
@@ -55,6 +56,7 @@ void RemotePlayer::stopServer() noexcept
     m_Connections->clear();
 
     m_SocketServer->close();
+    m_SocketServer->deleteLater();
 
     setStarted(false);
 }
@@ -108,6 +110,7 @@ void RemotePlayer::newConnection()
     connect(connection, &RemotePlayerTransport::forceClosed, this, &RemotePlayer::forceClosed);
 
     emit newConnectionAccepted(socket->localAddress().toString());
+    emit countUsersChanged();
 }
 
 void RemotePlayer::simpleCommandReceived(const QString &message, RemotePlayerTransport* connection)
@@ -120,7 +123,9 @@ void RemotePlayer::simpleCommandReceived(const QString &message, RemotePlayerTra
         return;
     }
 
-    if (message.startsWith("videosourcechanged::") || message.startsWith("volumechanged::") || message.startsWith("positionchanged::")) {
+    if (message.startsWith("videosourcechanged::") || message.startsWith("volumechanged::") ||
+        message.startsWith("positionchanged::") || message.startsWith("playbackratechanged::") ||
+        message.startsWith("playbackchanged::")) {
         foreach(RemotePlayerTransport* connectionItem, *m_Connections) {
             if (connectionItem == connection) continue;
 
@@ -134,4 +139,6 @@ void RemotePlayer::forceClosed(const RemotePlayerTransport* connection)
     auto localConnection = const_cast<RemotePlayerTransport*>(connection);
 
     m_Connections->removeOne(localConnection);
+
+    emit countUsersChanged();
 }

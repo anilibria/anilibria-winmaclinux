@@ -1016,6 +1016,7 @@ Page {
                                     id: stateRemotePlayer
                                     onCheckedChanged: {
                                         if (checked) {
+                                            remotePlayer.port = applicationSettings.remotePort;
                                             remotePlayer.startServer();
                                         } else {
                                             remotePlayer.stopServer();

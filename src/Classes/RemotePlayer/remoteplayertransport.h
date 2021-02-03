@@ -27,6 +27,7 @@ public:
 private slots:
     void textMessageReceived(const QString& message);
     void keepAliveTimer();
+    void disconnect();
 
 signals:
     void simpleCommandReceived(const QString& message, RemotePlayerTransport* connection);

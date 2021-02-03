@@ -10,12 +10,12 @@ RemotePlayerTransport::RemotePlayerTransport(QObject *parent, QWebSocket* socket
     m_DateTime(new QDateTime()),
     m_Id(id)
 {
-    m_keepAliveCheckTimer->setInterval(15000);
+    m_keepAliveCheckTimer->setInterval(10000);
     m_keepAliveCheckTimer->start();
 
     connect(m_keepAliveCheckTimer, &QTimer::timeout, this, &RemotePlayerTransport::keepAliveTimer);
     connect(socket, &QWebSocket::textMessageReceived, this, &RemotePlayerTransport::textMessageReceived);
-    connect(socket, &QWebSocket::disconnected, this, &RemotePlayerTransport::deleteLater);
+    connect(socket, &QWebSocket::disconnected, this, &RemotePlayerTransport::disconnect);
 }
 
 RemotePlayerTransport::~RemotePlayerTransport()
@@ -33,6 +33,7 @@ void RemotePlayerTransport::closeConnection()
 {
     m_keepAliveCheckTimer->stop();
     m_WebSocket->close(QWebSocketProtocol::CloseCodeNormal, "Server is shutdown");
+    emit forceClosed(this);
 }
 
 void RemotePlayerTransport::textMessageReceived(const QString& messageData)
@@ -50,7 +51,14 @@ void RemotePlayerTransport::keepAliveTimer()
     auto now = QDateTime::currentDateTime();
     auto difference = m_DateTime->msecsTo(now);
 
-    if (difference > 20000) {
+    if (difference > 15000) {
         m_WebSocket->close(QWebSocketProtocol::CloseCodeNormal, "Ping/Pong session is expire");
     }
+}
+
+void RemotePlayerTransport::disconnect()
+{
+    m_keepAliveCheckTimer->stop();
+    m_WebSocket->deleteLater();
+    emit forceClosed(this);
 }
