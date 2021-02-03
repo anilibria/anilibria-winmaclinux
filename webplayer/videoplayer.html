@@ -1,48 +1,63 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en" style="height:100%;">
 	<head>
 		<meta charset="utf-8">
 		<title>Anilibria remote web player</title>
 		<script src="https://cdn.jsdelivr.net/npm/@clappr/player@latest/dist/clappr.min.js"></script>
 		<script src="https://cdn.jsdelivr.net/npm/vue@2.6.12"></script>
+		<style>
+			.video-player {
+				margin-top: 20px;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+			}
+
+			.form-container {
+				width: 300px;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				flex-direction: column;
+				padding: 10px;
+			}
+
+			.form-row-container {
+				display: flex;
+				justify-content: center;
+			}
+
+			.form-container input {
+				margin-bottom: 4px;
+				width: 100%;
+			}
+
+			.form-title {
+				align-self: flex-start;
+				display: flex;
+				flex-direction: row;
+				justify-content: flex-start;
+				font-size: 16px;
+				font-weight: bold;
+			}
+
+			.connected-container {
+				display: flex;
+				justify-content: center;
+				flex-direction: column;
+			}
+
+				.connected-container > span {
+					margin: 10px;
+					color: green;
+				}
+		</style>
 	</head>
-	<style>
-		.video-player {
-			margin-top: 20px;
-			display:flex;
-			align-items: center;
-			justify-content: center;
-		}
-		.form-container {
-			width: 300px;
-			display:flex;
-			align-items: center;
-			justify-content: center;
-			flex-direction: column;
-			padding: 10px;
-		}
-		.form-row-container {
-			display:flex;
-			justify-content: center;
-		}
-		.form-container input {
-			margin-bottom: 4px;
-			width: 100%;
-		}
-		.form-title {
-			align-self: flex-start;
-			display: flex;
-			flex-direction: row;
-			justify-content: flex-start;
-			font-size: 16px;
-			font-weight: bold;
-		}
-	</style>
 	
 	<body>
 		<div id="app">
 			<div class="form-row-container">
-				<div class="form-container">
+				<div v-if="!connected" class="form-container">
 					<div class="form-title">
 						<span>
 							Адрес
@@ -66,6 +81,13 @@
 					<button
 						@click="connectToHost()">
 						Подключиться
+					</button>
+				</div>
+				<div v-if="connected" class="connected-container">
+					<span>Подключено к {{ host }}:{{ port }}</span>
+					<button
+						@click="disconnectFromHost()">
+						Отключиться
 					</button>
 				</div>
 			</div>
@@ -113,6 +135,7 @@
 							}
 							
 							this.player.load(videoSource);
+							this.player.play();
 						},
 						setVideoSource(videoSource) {
 							console.log(`setVideoSource`, videoSource);
@@ -130,12 +153,12 @@
 						setVolume(volume) {
 							console.log(`setVolume`, volume);
 							this.player.setVolume(volume);
-						},						
+						},
 						setPlaybackRate(playbackRate) {
 							console.log(`setPlaybackRate`, playbackRate);
 							
 							this.player.core.activePlayback.el.playbackRate = parseFloat(playbackRate);
-						},						
+						},
 						setPlayback(playback) {
 							console.log(`setPlayback`, playback);
 
@@ -160,6 +183,14 @@
 								},
 								5000
 							);
+						},
+						disconnectFromHost() {
+							this.socket.close(1000, `Will of client`);
+							this.connected = false;
+							this.clearPingTimeout();
+							if (this.player) this.player.load("https://media1.tenor.com/images/c925511d32350cc04411756d623ebad6/tenor.gif?itemid=13462237");
+							this.videoSource = ``;
+							this.firstPlay = true;
 						},
 						async connectToHost() {
 							if (!this.host || !this.port) return; //show error message
