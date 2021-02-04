@@ -270,7 +270,7 @@
 						setPlaybackRate(playbackRate) {
 							console.log(`setPlaybackRate`, playbackRate);
 							
-							this.player.core.activePlayback.el.playbackRate = parseFloat(playbackRate);
+							this.player.setPlaybackRate(parseFloat(playbackRate));
 						},
 						setPlayback(playback) {
 							console.log(`setPlayback`, playback);
