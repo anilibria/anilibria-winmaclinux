@@ -32,6 +32,9 @@ class ApplicationSettings : public QObject
     Q_PROPERTY(int windowX READ windowX WRITE setWindowX NOTIFY windowXChanged)
     Q_PROPERTY(int windowY READ windowY WRITE setWindowY NOTIFY windowYChanged)
     Q_PROPERTY(bool isDarkTheme READ isDarkTheme WRITE setIsDarkTheme NOTIFY isDarkThemeChanged)
+    Q_PROPERTY(int remotePort READ remotePort WRITE setRemotePort NOTIFY remotePortChanged)
+    Q_PROPERTY(bool sendVolumeToRemote READ sendVolumeToRemote WRITE setSendVolumeToRemote NOTIFY sendVolumeToRemoteChanged)
+    Q_PROPERTY(bool sendPlaybackToRemote READ sendPlaybackToRemote WRITE setSendPlaybackToRemote NOTIFY sendPlaybackToRemoteChanged);
 
 private:
     QSettings* m_Settings;
@@ -57,6 +60,15 @@ public:
     bool isDarkTheme();
     void setIsDarkTheme(bool isDarkTheme);
 
+    int remotePort();
+    void setRemotePort(int remotePort);
+
+    bool sendVolumeToRemote();
+    void setSendVolumeToRemote(bool sendVolumeToRemote);
+
+    bool sendPlaybackToRemote();
+    void setSendPlaybackToRemote(bool sendPlaybackToRemote);
+
 signals:
     void userTokenChanged(QString& token);
     void windowHeightChanged(int windowHeight);
@@ -64,6 +76,9 @@ signals:
     void windowXChanged(int windowX);
     void windowYChanged(int windowY);
     void isDarkThemeChanged(bool isDarkTheme);
+    void remotePortChanged(int remotePort);
+    void sendVolumeToRemoteChanged(bool sendVolumeToRemote);
+    void sendPlaybackToRemoteChanged(bool sendPlaybackToRemote);
 
 };
 

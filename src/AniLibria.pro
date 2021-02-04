@@ -1,4 +1,4 @@
-QT += quick multimedia network webview concurrent svg
+QT += quick multimedia network webview concurrent svg websockets
 CONFIG += c++11
 
 windows {
@@ -75,6 +75,8 @@ SOURCES += \
     Classes/Models/seenmodel.cpp \
     Classes/Models/usersettingsmodel.cpp \
     Classes/Models/youtubevideomodel.cpp \
+    Classes/RemotePlayer/remoteplayer.cpp \
+    Classes/RemotePlayer/remoteplayertransport.cpp \
     Classes/Services/analyticsservice.cpp \
     Classes/Services/anilibriaapiservice.cpp \
     Classes/Services/apiserviceconfigurator.cpp \
@@ -123,6 +125,8 @@ HEADERS += \
     Classes/Models/seenmodel.h \
     Classes/Models/usersettingsmodel.h \
     Classes/Models/youtubevideomodel.h \
+    Classes/RemotePlayer/remoteplayer.h \
+    Classes/RemotePlayer/remoteplayertransport.h \
     Classes/Services/analyticsservice.h \
     Classes/Services/anilibriaapiservice.h \
     Classes/Services/apiserviceconfigurator.h \

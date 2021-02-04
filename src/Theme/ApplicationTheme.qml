@@ -38,6 +38,7 @@ Item {
     readonly property color drawerGradiendStep3: isDarkTheme ? "#404040" : "#fc2626"
     readonly property color drawerGradiendStep4: isDarkTheme ? "#454341" : "#f52c39"
     readonly property color filterIconButtonColor: isDarkTheme ? "white" : "black"
+    readonly property color filterIconButtonGreenColor: isDarkTheme ? "green" : "green"
     readonly property color filterIconButtonHoverColor: isDarkTheme ? "#737373" : "white"
     readonly property color selectedItem: isDarkTheme ? "white" : "red"
     readonly property color selectedFavorite: isDarkTheme ? "#b30000" : "red"

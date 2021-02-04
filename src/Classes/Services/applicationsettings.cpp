@@ -99,3 +99,39 @@ void ApplicationSettings::setIsDarkTheme(bool isDarkTheme)
 
     emit isDarkThemeChanged(isDarkTheme);
 }
+
+int ApplicationSettings::remotePort()
+{
+    return m_Settings->value("remoteport", 12345).toInt();
+}
+
+void ApplicationSettings::setRemotePort(int remotePort)
+{
+    m_Settings->setValue("remoteport", remotePort);
+
+    emit remotePortChanged(remotePort);
+}
+
+bool ApplicationSettings::sendVolumeToRemote()
+{
+    return m_Settings->value("sendvolumetoremote", true).toBool();
+}
+
+void ApplicationSettings::setSendVolumeToRemote(bool sendVolumeToRemote)
+{
+    m_Settings->setValue("sendvolumetoremote", sendVolumeToRemote);
+
+    emit sendVolumeToRemoteChanged(sendVolumeToRemote);
+}
+
+bool ApplicationSettings::sendPlaybackToRemote()
+{
+    return m_Settings->value("sendplaybacktoremote", true).toBool();
+}
+
+void ApplicationSettings::setSendPlaybackToRemote(bool sendPlaybackToRemote)
+{
+    m_Settings->setValue("sendplaybacktoremote", sendPlaybackToRemote);
+
+    emit sendPlaybackToRemoteChanged(sendPlaybackToRemote);
+}

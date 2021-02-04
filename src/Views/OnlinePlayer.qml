@@ -46,10 +46,16 @@ Page {
     property int prefferedQuality: 0 // 0 - 480, 1 - 720p, 2 - 1080p
     property var jumpMinutes: [0, 1, 2]
     property var jumpSeconds: [0, 5, 10, 15, 20, 25, 30]
+    property var ports: [12345, 34560, 52354, 67289]
     property real lastMouseYPosition: 0
     property string releasePoster: ""
     property bool isCinemahall: false
     property var cinemahallReleases: []
+    property string videoSourceChangedCommand: `videosourcechanged`
+    property string videoPositionChangedCommand: `positionchanged`
+    property string videoVolumeChangedCommand: `volumechanged`
+    property string videoPlaybackRateCommand: `playbackratechanged`
+    property string videoPlaybackCommand: `playbackchanged`
 
     signal navigateFrom()
     signal setReleaseVideo()
@@ -58,6 +64,7 @@ Page {
     signal navigateTo()
     signal returnToReleasesPage()
     signal windowNotActived()
+    signal receiveRemoteCommand(int id, string command, string argument)
 
     Keys.onSpacePressed: {
         if (player.playbackState === MediaPlayer.PlayingState) {
@@ -121,6 +128,10 @@ Page {
         jumpMinuteComboBox.currentIndex = jumpMinutes.indexOf(userSettings.jumpMinute);
         jumpSecondComboBox.currentIndex = jumpSeconds.indexOf(userSettings.jumpSecond);
         showReleaseInfo.checked = userSettings.showReleaseInfo;
+        sendVolumeToRemoteSwitch.checked = applicationSettings.sendVolumeToRemote;
+        sendPlaybackToRemoteSwitch.checked = applicationSettings.sendPlaybackToRemote;
+        remotePlayer.port = applicationSettings.remotePort;
+        remotePlayerPortComboBox.currentIndex = ports.indexOf(applicationSettings.remotePort);
 
         if (autoTopMost.checked && player.playbackState === MediaPlayer.PlayingState) windowSettings.setStayOnTop();
         _page.prefferedQuality = userSettings.quality;
@@ -212,7 +223,7 @@ Page {
         _page.isFullHdAllowed = "fullhd" in firstVideo;
         if (!firstVideo[_page.videoQuality]) _page.videoQuality = "sd";
 
-        _page.videoSource = firstVideo[_page.videoQuality];
+        setVideoSource(firstVideo[_page.videoQuality]);
         player.play();
 
         localStorage.setToReleaseHistory(_page.setReleaseParameters.releaseId, 1);
@@ -274,7 +285,7 @@ Page {
             _page.isFullHdAllowed = "fullhd" in firstVideo;
             if (!firstVideo[_page.videoQuality]) _page.videoQuality = "sd";
 
-            _page.videoSource = firstVideo[_page.videoQuality];
+            setVideoSource(firstVideo[_page.videoQuality]);
             player.play();
 
             localStorage.setToReleaseHistory(firstVideo.releaseId, 1);
@@ -283,7 +294,27 @@ Page {
             _page.seenVideo = JSON.parse(localStorage.getVideoSeen(firstVideo.releaseId));
             if (_page.seenVideo.id && _page.seenVideo.videoId !== firstVideo.order) _page.seenVideo.videoPosition = 0;
         } else {
-            _page.videoSource = "";
+            setVideoSource("");
+        }
+    }
+
+    onReceiveRemoteCommand: {
+        switch (command){
+            case `getcurrentvideosource`:
+                remotePlayer.sendCommandToUser(id, _page.videoSourceChangedCommand, _page.videoSource);
+                break;
+            case `getcurrentvideoposition`:
+                remotePlayer.sendCommandToUser(id, _page.videoPositionChangedCommand, player.position.toString() + `/` + player.duration.toString());
+                break;
+            case `getcurrentvolume`:
+                if (sendVolumeToRemoteSwitch.checked) remotePlayer.sendCommandToUser(id, _page.videoVolumeChangedCommand, volumeSlider.value.toString());
+                break;
+            case `getcurrentplaybackrate`:
+                remotePlayer.sendCommandToUser(id, _page.videoPlaybackRateCommand, _page.videoSpeed.toString());
+                break;
+            case `getcurrentplayback`:
+                if (player.playbackState === MediaPlayer.PausedState && sendPlaybackToRemoteSwitch.checked) remotePlayer.sendCommandToUser(id, _page.videoPlaybackCommand, "pause");
+                break;
         }
     }
 
@@ -362,9 +393,6 @@ Page {
         anchors.fill: parent
         source: _page.videoSource
         playbackRate: _page.videoSpeed
-        onBufferProgressChanged: {
-            //_page.isBuffering = bufferProgress < 1;
-        }
         onPlaybackStateChanged: {
             if (playbackState === MediaPlayer.PlayingState && autoTopMost.checked) {
                 windowSettings.setStayOnTop();
@@ -381,9 +409,15 @@ Page {
                 playerTimer.stop();
                 _page.setControlVisible(true);
             }
+
+            if (!sendPlaybackToRemoteSwitch.checked) return;
+
+            if (playbackState === MediaPlayer.PlayingState) remotePlayer.broadcastCommand(_page.videoPlaybackCommand, "play");
+            if (playbackState === MediaPlayer.PausedState) remotePlayer.broadcastCommand(_page.videoPlaybackCommand, "pause");
         }
         onVolumeChanged: {
             volumeSlider.value = volume * 100;
+            if (applicationSettings.sendVolumeToRemote) remotePlayer.broadcastCommand(_page.videoVolumeChangedCommand, volumeSlider.value.toString());
         }
         onStatusChanged: {
             if (status === MediaPlayer.Loading) _page.isBuffering = true;
@@ -475,7 +509,7 @@ Page {
 
                                     _page.selectedVideo = modelData.order;
                                     _page.isFullHdAllowed = "fullhd" in modelData;
-                                    _page.videoSource = modelData[_page.videoQuality];
+                                    setVideoSource(modelData[_page.videoQuality]);
                                     _page.selectedRelease = modelData.releaseId;
                                     setReleasePoster(modelData.releasePoster, modelData.releaseId);
                                     player.play();
@@ -606,6 +640,7 @@ Page {
                 onPressedChanged: {
                     if (!pressed && _page.lastMovedPosition > 0) {
                         player.seek(_page.lastMovedPosition);
+                        remotePlayer.broadcastCommand(_page.videoPositionChangedCommand, _page.lastMovedPosition.toString() + `/` + player.duration.toString());
                         _page.lastMovedPosition = 0;
                     }
                     controlPanel.forceActiveFocus();
@@ -648,7 +683,7 @@ Page {
                             const video = _page.releaseVideos.find(a => a.order === _page.selectedVideo);
 
                             player.stop();
-                            _page.videoSource = video[_page.videoQuality];
+                            setVideoSource(video[_page.videoQuality]);
                             player.start();
 
                             localStorage.setVideoQuality(2);
@@ -667,7 +702,7 @@ Page {
                             const video = _page.releaseVideos.find(a => a.order === _page.selectedVideo);
 
                             player.stop();
-                            _page.videoSource = video[_page.videoQuality];
+                            setVideoSource(video[_page.videoQuality]);
                             player.start();
 
                             localStorage.setVideoQuality(1);
@@ -686,7 +721,7 @@ Page {
                             const video = _page.releaseVideos.find(a => a.order === _page.selectedVideo);
 
                             player.stop();
-                            _page.videoSource = video[_page.videoQuality];
+                            setVideoSource(video[_page.videoQuality]);
                             player.start();
 
                             localStorage.setVideoQuality(0);
@@ -710,7 +745,7 @@ Page {
                         text: "x0.25"
                         isChecked: _page.videoSpeed === 0.25
                         onButtonClicked: {
-                            _page.videoSpeed = 0.25;
+                            setVideoSpeed(0.25)
                         }
                     }
                     ToggleButton {
@@ -720,7 +755,7 @@ Page {
                         text: "x0.5"
                         isChecked: _page.videoSpeed === 0.5
                         onButtonClicked: {
-                            _page.videoSpeed = 0.5;
+                            setVideoSpeed(0.5);
                         }
                     }
                     ToggleButton {
@@ -730,7 +765,7 @@ Page {
                         text: "x0.75"
                         isChecked: _page.videoSpeed === 0.75
                         onButtonClicked: {
-                            _page.videoSpeed = 0.75;
+                            setVideoSpeed(0.75);
                         }
                     }
                     ToggleButton {
@@ -740,7 +775,7 @@ Page {
                         text: "x1"
                         isChecked: _page.videoSpeed === 1
                         onButtonClicked: {
-                            _page.videoSpeed = 1;
+                            setVideoSpeed(1);
                         }
                     }
                     ToggleButton {
@@ -750,7 +785,7 @@ Page {
                         text: "x1.25"
                         isChecked: _page.videoSpeed === 1.1
                         onButtonClicked: {
-                            _page.videoSpeed = 1.1;
+                            setVideoSpeed(1.1);
                         }
                     }
                     ToggleButton {
@@ -760,7 +795,7 @@ Page {
                         text: "x1.5"
                         isChecked: _page.videoSpeed === 1.2
                         onButtonClicked: {
-                            _page.videoSpeed = 1.2;
+                            setVideoSpeed(1.2);
                         }
                     }
                     ToggleButton {
@@ -770,7 +805,7 @@ Page {
                         text: "x1.75"
                         isChecked: _page.videoSpeed === 1.3
                         onButtonClicked: {
-                            _page.videoSpeed = 1.3;
+                            setVideoSpeed(1.3);
                         }
                     }
                     ToggleButton {
@@ -780,7 +815,7 @@ Page {
                         text: "x2"
                         isChecked: _page.videoSpeed === 1.5
                         onButtonClicked: {
-                            _page.videoSpeed = 1.5;
+                            setVideoSpeed(1.5);
                         }
                     }
                     ToggleButton {
@@ -790,7 +825,7 @@ Page {
                         text: "x3"
                         isChecked: _page.videoSpeed === 2
                         onButtonClicked: {
-                            _page.videoSpeed = 2;
+                            setVideoSpeed(2);
                         }
                     }
                 }
@@ -942,6 +977,117 @@ Page {
                     spacing: 5
                     anchors.right: parent.right
                     anchors.verticalCenter: parent.verticalCenter
+
+                    IconButton {
+                        id: remotePlayerButton
+                        width: 40
+                        height: 40
+                        iconColor: remotePlayer.started ? ApplicationTheme.filterIconButtonGreenColor : ApplicationTheme.filterIconButtonColor
+                        hoverColor: ApplicationTheme.filterIconButtonHoverColor
+                        iconPath: "../Assets/Icons/connect.svg"
+                        iconWidth: 24
+                        iconHeight: 24
+                        onButtonPressed: {
+                            remotePlayerPopup.open();
+                        }
+
+                        Popup {
+                            id: remotePlayerPopup
+                            x: optionsButton.width - 300
+                            y: optionsButton.height - 380
+                            width: 300
+                            height: 380
+
+                            modal: true
+                            focus: true
+                            closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
+
+                            Column {
+                                width: parent.width
+                                spacing: 10
+
+                                PlainText {
+                                    width: optionsPopup.width - 20
+                                    fontPointSize: 10
+                                    text: "Включить удаленный плеер"
+                                }
+
+                                Switch {
+                                    id: stateRemotePlayer
+                                    onCheckedChanged: {
+                                        if (checked) {
+                                            remotePlayer.port = applicationSettings.remotePort;
+                                            remotePlayer.startServer();
+                                        } else {
+                                            remotePlayer.stopServer();
+                                        }
+                                    }
+                                }
+
+                                PlainText {
+                                    width: optionsPopup.width - 20
+                                    fontPointSize: 10
+                                    text: "Порт"
+                                }
+
+                                CommonComboBox {
+                                    id: remotePlayerPortComboBox
+                                    enabled: !stateRemotePlayer.checked
+                                    Layout.column: 0
+                                    model: ListModel {
+                                        ListElement {
+                                            text: "12345"
+                                        }
+                                        ListElement {
+                                            text: "34560"
+                                        }
+                                        ListElement {
+                                            text: "52354"
+                                        }
+                                        ListElement {
+                                            text: "67289"
+                                        }
+                                    }
+                                    onActivated: {
+                                        applicationSettings.remotePort = _page.ports[index];
+                                    }
+                                }
+
+                                PlainText {
+                                    width: optionsPopup.width - 20
+                                    fontPointSize: 10
+                                    text: "Передавать громкость"
+                                }
+
+                                Switch {
+                                    id: sendVolumeToRemoteSwitch
+                                    onCheckedChanged: {
+                                        applicationSettings.sendVolumeToRemote = checked;
+                                    }
+                                }
+
+                                PlainText {
+                                    width: optionsPopup.width - 20
+                                    fontPointSize: 10
+                                    text: "Передавать воспроизведение/пауза"
+                                }
+
+                                Switch {
+                                    id: sendPlaybackToRemoteSwitch
+                                    onCheckedChanged: {
+                                        applicationSettings.sendPlaybackToRemote = checked;
+                                    }
+                                }
+
+                                PlainText {
+                                    width: optionsPopup.width - 20
+                                    fontPointSize: 10
+                                    text: "Подключено: " + remotePlayer.countUsers
+                                }
+                            }
+                        }
+
+                    }
 
                     IconButton {
                         id: optionsButton
@@ -1236,7 +1382,7 @@ Page {
         _page.releasePoster = video.releasePoster;
         _page.selectedRelease = video.releaseId;
 
-        _page.videoSource = checkExistingVideoQuality(video);
+        setVideoSource(checkExistingVideoQuality(video));
 
         if (!_page.isCinemahall) setSerieScrollPosition();
     }
@@ -1257,6 +1403,16 @@ Page {
         }
 
         return null;
+    }
+
+    function setVideoSource(source) {
+        _page.videoSource = source;
+        remotePlayer.broadcastCommand(_page.videoSourceChangedCommand, source);
+    }
+
+    function setVideoSpeed(videoSpeed) {
+        _page.videoSpeed = videoSpeed;
+        remotePlayer.broadcastCommand(_page.videoPlaybackRateCommand, videoSpeed);
     }
 
     function nextVideo() {
@@ -1282,7 +1438,7 @@ Page {
         _page.releasePoster = video.releasePoster;
         _page.selectedRelease = video.releaseId;
 
-        _page.videoSource = checkExistingVideoQuality(video);
+        setVideoSource(checkExistingVideoQuality(video));
 
         if (!_page.isCinemahall) setSerieScrollPosition();
     }
