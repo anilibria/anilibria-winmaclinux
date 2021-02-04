@@ -96,7 +96,9 @@ unsigned int RemotePlayer::getId()
 {
     QMutexLocker locker(&m_GetIdMutex);
 
-    return m_MaximumIdentifier + 1;
+    ++m_MaximumIdentifier;
+
+    return m_MaximumIdentifier;
 }
 
 void RemotePlayer::newConnection()

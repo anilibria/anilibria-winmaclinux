@@ -3,9 +3,77 @@
 	<head>
 		<meta charset="utf-8">
 		<title>Anilibria remote web player</title>
+		<link rel="preconnect" href="https://fonts.gstatic.com">
+		<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap" rel="stylesheet">
 		<script src="https://cdn.jsdelivr.net/npm/@clappr/player@latest/dist/clappr.min.js"></script>
+		<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/clappr-playback-rate-plugin@latest/lib/clappr-playback-rate-plugin.min.js"></script>
 		<script src="https://cdn.jsdelivr.net/npm/vue@2.6.12"></script>
 		<style>
+			html {
+				font-family: 'Roboto', sans-serif;
+			}
+			.primary-button {
+				box-shadow: inset 0px 1px 0px 0px #97c4fe;
+				background: linear-gradient(to bottom, #3d94f6 5%, #1e62d0 100%);
+				background-color: #3d94f6;
+				border-radius: 6px;
+				border:1px solid  #337fed;
+				display: inline-block;
+				cursor: pointer;
+				color: #ffffff;
+				font-family: 'Roboto';
+				font-size: 15px;
+				font-weight: bold;
+				padding: 6px 24px;
+				text-decoration: none;
+				text-shadow: 0px 1px 0px #1570cd;
+			}
+			.primary-button:hover {
+				background: linear-gradient(to bottom, #1e62d0 5%, #3d94f6 100%);
+				background-color: #1e62d0;
+			}
+			.primary-button:active {
+				position: relative;
+				top: 1px;
+			}
+			.red-button {
+				box-shadow: inset 0px 1px 0px 0px #f29c93;
+				background: linear-gradient(to bottom, #fe1a00 5%, #ce0100 100%);
+				background-color: #fe1a00;
+				border-radius: 6px;
+				border: 1px solid #d83526;
+				display: inline-block;
+				cursor: pointer;
+				color: #ffffff;
+				font-family: 'Roboto';
+				font-size: 15px;
+				font-weight: bold;
+				padding: 6px 24px;
+				text-decoration: none;
+				text-shadow: 0px 1px 0px #b23e35;
+			}
+			.red-button:hover {
+				background: linear-gradient(to bottom, #ce0100 5%, #fe1a00 100%);
+				background-color: #ce0100;
+			}
+			.red-button:active {
+				position: relative;
+				top: 1px;
+			}
+			.text-input {
+				padding: 5px;
+				font-size: 16px;
+				border-width: 1px;
+				border-color: #CCCCCC;
+				background-color: #FFFFFF;
+				color: #000000;
+				border-style: hidden;
+				border-radius: 3px;
+				box-shadow: 0px 0px 8px rgba(66,66,66,.75);
+			}
+			.text-input:focus {
+				outline:none;
+			}
 			.video-player {
 				margin-top: 20px;
 				display: flex;
@@ -14,7 +82,7 @@
 			}
 
 			.form-container {
-				width: 300px;
+				width: 350px;
 				display: flex;
 				align-items: center;
 				justify-content: center;
@@ -32,13 +100,18 @@
 				width: 100%;
 			}
 
+			.form-container button {
+				margin-top: 10px;
+			}
+
 			.form-title {
 				align-self: flex-start;
 				display: flex;
 				flex-direction: row;
 				justify-content: flex-start;
-				font-size: 16px;
+				font-size: 14px;
 				font-weight: bold;
+				padding: 2px;
 			}
 
 			.connected-container {
@@ -64,6 +137,7 @@
 						</span>
 					</div>
 					<input
+						class="text-input"
 						type="text"
 						v-model="host"
 						placeholder="Введите хост в виде ip адреса или имени"
@@ -74,11 +148,13 @@
 						</span>
 					</div>
 					<input
+						class="text-input"
 						type="text"
 						v-model="port"
 						placeholder="Введите порт в виде числа 100-65535"
 					/>
 					<button
+						class="primary-button"
 						@click="connectToHost()">
 						Подключиться
 					</button>
@@ -86,6 +162,7 @@
 				<div v-if="connected" class="connected-container">
 					<span>Подключено к {{ host }}:{{ port }}</span>
 					<button
+						class="red-button"
 						@click="disconnectFromHost()">
 						Отключиться
 					</button>
@@ -128,6 +205,42 @@
 												this.socket.send(`getcurrentplaybackrate`);
 												this.socket.send(`getcurrentplayback`);
 											}
+										},
+										plugins: [
+											PlaybackRatePlugin
+										],
+										playbackRateConfig: {
+											defaultValue: 1,
+											options: [
+												{
+													value: 0.5,
+													label: `x0.5`
+												},
+												{
+													value: 1,
+													label: `1x`
+												},
+												{
+													value: 1.25,
+													label: 'x1.25'
+												},
+												{
+													value: 1.5,
+													label: 'x1.5'
+												},
+												{
+													value: 1.75,
+													label: 'x1.75'
+												},
+												{
+													value: 2,
+													label: 'x2'
+												},
+												{
+													value: 3,
+													label: 'x3'
+												}
+											],
 										}
 									}
 								);
