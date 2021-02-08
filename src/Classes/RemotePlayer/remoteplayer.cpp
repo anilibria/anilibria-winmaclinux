@@ -24,6 +24,7 @@ RemotePlayer::RemotePlayer(QObject *parent) : QObject(parent),
 RemotePlayer::~RemotePlayer()
 {
     stopServer();
+    m_SocketServer->deleteLater();
     m_SimpleClientCommands->clear();
 }
 
@@ -54,9 +55,7 @@ void RemotePlayer::stopServer() noexcept
     }
 
     m_Connections->clear();
-
     m_SocketServer->close();
-    m_SocketServer->deleteLater();
 
     setStarted(false);
 }
