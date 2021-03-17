@@ -108,6 +108,8 @@ Page {
         if (event.key === Qt.Key_Left) jumpInPlayer(true);
         if (event.key === Qt.Key_Right) jumpInPlayer(false);
         if (event.key === Qt.Key_Escape) returnToReleasesPage();
+        if (event.key === Qt.Key_Home && !autoTopMost.checked) windowSettings.setStayOnTop();
+        if (event.key === Qt.Key_End && !autoTopMost.checked) windowSettings.unsetStayOnTop();
     }
 
     onWindowNotActived: {
@@ -979,6 +981,25 @@ Page {
                     anchors.verticalCenter: parent.verticalCenter
 
                     IconButton {
+                        id: topmostButton
+                        width: 40
+                        height: 40
+                        visible: !autoTopMost.checked
+                        iconColor: windowSettings.isTopMost ? ApplicationTheme.filterIconButtonGreenColor : ApplicationTheme.filterIconButtonColor
+                        hoverColor: ApplicationTheme.filterIconButtonHoverColor
+                        iconPath: "../Assets/Icons/topmostwindow.svg"
+                        iconWidth: 29
+                        iconHeight: 29
+                        onButtonPressed: {
+                            windowSettings.toggleStayOnTopMode();
+                        }
+
+                        ToolTip.delay: 1000
+                        ToolTip.visible: topmostButton.hovered
+                        ToolTip.text: windowSettings.isTopMost ? "Выключить режим поверх всех окон" : "Включить режим поверх всех окон"
+                    }
+
+                    IconButton {
                         id: remotePlayerButton
                         width: 40
                         height: 40
@@ -990,6 +1011,10 @@ Page {
                         onButtonPressed: {
                             remotePlayerPopup.open();
                         }
+
+                        ToolTip.delay: 1000
+                        ToolTip.visible: remotePlayerButton.hovered
+                        ToolTip.text: remotePlayer.started ? "Удаленный плеер включен" : "Удаленный плеер выключен, откройте настройки для подключения"
 
                         Popup {
                             id: remotePlayerPopup
@@ -1220,8 +1245,13 @@ Page {
                             }
                         }
 
+                        ToolTip.delay: 1000
+                        ToolTip.visible: optionsButton.hovered
+                        ToolTip.text: "Показать настройки страницы Видеоплеер"
+
                     }
                     IconButton {
+                        id: resizeVideoButton
                         width: 40
                         height: 40
                         iconColor: ApplicationTheme.filterIconButtonColor
@@ -1239,8 +1269,13 @@ Page {
                                     break;
                             }
                         }
+
+                        ToolTip.delay: 1000
+                        ToolTip.visible: resizeVideoButton.hovered
+                        ToolTip.text: "Включить режим обрезки видео потока, работает только на Linux и macOS"
                     }
                     IconButton {
+                        id: fullScreenButton
                         width: 40
                         height: 40
                         iconColor: ApplicationTheme.filterIconButtonColor
@@ -1251,6 +1286,10 @@ Page {
                         onButtonPressed: {
                             toggleFullScreen();
                         }
+
+                        ToolTip.delay: 1000
+                        ToolTip.visible: fullScreenButton.hovered
+                        ToolTip.text: "Переключиться между полноэкранным и оконным режимами"
                     }
                 }
             }

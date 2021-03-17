@@ -187,6 +187,7 @@ ApplicationWindow {
         id: windowSettings
 
         property real dpiSeparation: 0
+        property bool isTopMost: false
 
         signal setStayOnTop();
         signal unsetStayOnTop();
@@ -194,19 +195,21 @@ ApplicationWindow {
 
         onSetStayOnTop: {
             window.flags = Qt.WindowStaysOnTopHint;
+            windowSettings.isTopMost = true;
         }
 
         onUnsetStayOnTop: {
             if (window.flags === 1) return;
 
             window.flags = 1;
+            windowSettings.isTopMost = false;
         }
 
         onToggleStayOnTopMode: {
             if (window.flags === 1) {
-                window.flags = Qt.WindowStaysOnTopHint;
+                windowSettings.setStayOnTop();
             } else {
-                window.flags = 1;
+                windowSettings.unsetStayOnTop();
             }
         }
 
