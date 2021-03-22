@@ -1,3 +1,21 @@
+/*
+    AniLibria - desktop client for the website anilibria.tv
+    Copyright (C) 2020 Roman Vladimirov
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
 import QtQuick 2.12
 import QtQuick.Layouts 1.3
 import QtGraphicalEffects 1.0
@@ -160,14 +178,7 @@ Rectangle {
                     fontPointSize: 10
                     leftPadding: 8
                     topPadding: 4
-                    text: qsTr("<b>Статус:</b> ") + qsTr(releaseModel.status)
-                }
-                PlainText {
-                    visible: releaseModel.id > -1
-                    fontPointSize: 10
-                    leftPadding: 8
-                    topPadding: 4
-                    text: qsTr("<b>" + releaseModel.season + " " + releaseModel.year + "</b>")
+                    text: qsTr(releaseModel.status) + ' - ' + releaseModel.season + " " + releaseModel.year
                 }
                 PlainText {
                     visible: releaseModel.id > -1
@@ -224,9 +235,23 @@ Rectangle {
                     }
                     PlainText {
                         leftPadding: 4
-                        rightPadding: 4
+                        rightPadding: 8
                         fontPointSize: 12
                         text: '' + releaseModel.countTorrents
+                    }
+                    ColoredIcon {
+                        visible: releaseModel.id in page.scheduledReleases
+                        iconSource: '../Assets/Icons/calendar.svg'
+                        iconWidth: 22
+                        iconHeight: 22
+                        iconColor: ApplicationTheme.plainTextColor
+                    }
+                    PlainText {
+                        visible: releaseModel.id in page.scheduledReleases
+                        leftPadding: 8
+                        topPadding: 1
+                        fontPointSize: 11
+                        text: page.scheduledReleases[releaseModel.id] ? getScheduleDay(page.scheduledReleases[releaseModel.id]) : ''
                     }
                 }
             }

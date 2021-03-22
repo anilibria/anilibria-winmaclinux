@@ -887,7 +887,7 @@ static bool compareSeasonDescending(const FullReleaseModel* first, const FullRel
     return first->season() > second->season();
 }
 
-QString LocalStorageService::getReleasesByFilter(int page, QString title, int section, QString description, QString type, QString genres, bool genresOr, QString voices, bool voicesOr, QString years, QString seasones, QString statuses, int sortingField, bool sortingDescending, int favoriteMark, int seenMark)
+QString LocalStorageService::getReleasesByFilter(int page, QString title, int section, QString description, QString type, QString genres, bool genresOr, QString voices, bool voicesOr, QString years, QString seasones, QString statuses, int sortingField, bool sortingDescending, int favoriteMark, int seenMark, const QStringList& alphabets)
 {
     int pageSize = 12;
     int startIndex = (page - 1) * pageSize;
@@ -1128,6 +1128,16 @@ QString LocalStorageService::getReleasesByFilter(int page, QString title, int se
             } else {
                 if (!checkOrCondition(voicesList, releaseVoicesList)) continue;
             }
+        }
+
+        if (!alphabets.empty()) {
+            bool startWithAlphabetsCharacters = false;
+            foreach (auto alphabetCharacter, alphabets) {
+                if (releaseItem->title().startsWith(alphabetCharacter)) {
+                    startWithAlphabetsCharacters = true;
+                }
+            }
+            if (!startWithAlphabetsCharacters) continue;
         }
 
         //favorite mark

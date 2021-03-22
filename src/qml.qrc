@@ -92,5 +92,7 @@
         <file>Assets/Icons/hidebuttonmenu.svg</file>
         <file>Assets/Icons/connect.svg</file>
         <file>Assets/Icons/topmostwindow.svg</file>
+        <file>Views/ReleaseAlphabeticalCharacters.qml</file>
+        <file>Assets/Icons/alphabet.svg</file>
     </qresource>
 </RCC>

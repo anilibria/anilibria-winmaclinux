@@ -79,6 +79,8 @@ Page {
     property bool hideInfoButton: false
     property bool hideSortButton: false
     property bool hideFilterButton: false
+    property var selectedAlhabeticalCharacters: ({})
+    property bool showAlpabeticalCharaters: false
 
     signal navigateFrom()
     signal watchRelease(int releaseId, string videos, int startSeria)
@@ -90,7 +92,10 @@ Page {
     signal watchCinemahall()
 
     Keys.onPressed: {
-        if (event.key === Qt.Key_Escape) page.openedRelease = null;
+        if (event.key === Qt.Key_Escape) {
+            page.openedRelease = null;
+            page.showAlpabeticalCharaters = false;
+        }
     }
 
     onWidthChanged: {
@@ -1476,6 +1481,21 @@ Page {
                             }
                         }
                     }
+                    IconButton {
+                        height: 30
+                        width: 30
+                        iconColor: ApplicationTheme.filterIconButtonColor
+                        hoverColor: ApplicationTheme.filterIconButtonHoverColor
+                        iconPath: "../Assets/Icons/alphabet.svg"
+                        iconWidth: 24
+                        iconHeight: 24
+                        ToolTip.delay: 1000
+                        ToolTip.visible: hovered
+                        ToolTip.text: "Показать фильтр для выбора букв алфавита для поиска по первой букве релиза"
+                        onButtonPressed: {
+                            page.showAlpabeticalCharaters = true;
+                        }
+                    }
                 }
             }
 
@@ -2172,6 +2192,11 @@ Page {
 
     }
 
+    ReleaseAlphabeticalCharacters {
+        id: releaseAlphabeticalCharacters
+        visible: page.showAlpabeticalCharaters
+    }
+
     function setSeenStateForOpenedRelease(newState) {
         localStorage.setSeenMarkAllSeries(page.openedRelease.id, page.openedRelease.countVideos, newState);
         page.openedRelease.countSeensSeries = newState ? page.openedRelease.countVideos : 0;
@@ -2229,7 +2254,8 @@ Page {
                 sortingComboBox.currentIndex,
                 sortingDirectionComboBox.currentIndex == 1 ? true : false,
                 favoriteMarkSearchField.currentIndex,
-                seenMarkSearchField.currentIndex
+                seenMarkSearchField.currentIndex,
+                Object.keys(page.selectedAlhabeticalCharacters)
             )
         );
     }

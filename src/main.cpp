@@ -31,6 +31,7 @@
 #include "Classes/Services/apiserviceconfigurator.h"
 #include "Classes/Services/proxyconfigurator.h"
 #include "Classes/RemotePlayer/remoteplayer.h"
+#include "Classes/ListModels/alphabetlistmodel.h"
 #include "globalconstants.h"
 
 int main(int argc, char *argv[])
@@ -63,6 +64,7 @@ int main(int argc, char *argv[])
     qmlRegisterType<ApiServiceConfigurator>("Anilibria.Services", 1, 0, "ApiServiceConfigurator");
     qmlRegisterType<ProxyConfigurator>("Anilibria.Services", 1, 0, "ProxyConfigurator");
     qmlRegisterType<RemotePlayer>("Anilibria.RemotePlayer", 1, 0, "RemotePlayer");
+    qmlRegisterType<AlphabetListModel>("Anilibria.ListModels", 1, 0, "AlphabetListModel");
 
     QQmlApplicationEngine engine;
     engine.rootContext()->setContextProperty("ApplicationVersion", ApplicationVersion);

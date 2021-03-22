@@ -686,7 +686,7 @@ Page {
 
                             player.stop();
                             setVideoSource(video[_page.videoQuality]);
-                            player.start();
+                            if (player.start) player.start();
 
                             localStorage.setVideoQuality(2);
                         }
@@ -705,7 +705,7 @@ Page {
 
                             player.stop();
                             setVideoSource(video[_page.videoQuality]);
-                            player.start();
+                            if (player.start) player.start();
 
                             localStorage.setVideoQuality(1);
                         }
@@ -724,7 +724,7 @@ Page {
 
                             player.stop();
                             setVideoSource(video[_page.videoQuality]);
-                            player.start();
+                            if (player.start) player.start();
 
                             localStorage.setVideoQuality(0);
                         }

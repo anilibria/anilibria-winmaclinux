@@ -25,6 +25,7 @@ import QtGraphicalEffects 1.12
 import QtQuick.Dialogs 1.2
 import Anilibria.Services 1.0
 import Anilibria.RemotePlayer 1.0
+import Anilibria.ListModels 1.0
 import "Views"
 import "Controls"
 import "Theme"
@@ -278,6 +279,10 @@ ApplicationWindow {
 
     AnalyticsService {
         id: analyticsService
+    }
+
+    AlphabetListModel {
+        id: alphabetListModel
     }
 
     WorkerScript {

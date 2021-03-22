@@ -89,6 +89,7 @@ SOURCES += \
     Classes/Services/synchronizationservice.cpp \
     Classes/Services/versionchecker.cpp \
     Classes/globalconstant.cpp \
+    Classes/ListModels/alphabetlistmodel.cpp \
     main.cpp
 
 RESOURCES += qml.qrc
@@ -138,4 +139,5 @@ HEADERS += \
     Classes/Services/proxyconfigurator.h \
     Classes/Services/synchronizationservice.h \
     Classes/Services/versionchecker.h \
+    Classes/ListModels/alphabetlistmodel.h \
     globalconstants.h
