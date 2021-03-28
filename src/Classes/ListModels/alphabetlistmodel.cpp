@@ -19,7 +19,9 @@
 #include "alphabetlistmodel.h"
 
 AlphabetListModel::AlphabetListModel(QObject *parent)
-    : QAbstractListModel(parent), m_alphabet("АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ")
+    : QAbstractListModel(parent),
+      m_alphabet("АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯAIR1279"),
+      m_selectedCharacters(new QSet<QString>())
 {
 }
 
@@ -34,8 +36,13 @@ QVariant AlphabetListModel::data(const QModelIndex &index, int role) const
 {
     if (!index.isValid()) return QVariant();
 
-    if (role == AlphabetCharacterRole) {
-        return QVariant(m_alphabet.at(index.row()));
+    switch (role) {
+        case AlphabetCharacterRole: {
+            return QVariant(m_alphabet.at(index.row()));
+        }
+        case CharacterSelectedRole: {
+            return QVariant(m_selectedCharacters->contains(m_alphabet.at(index.row())));
+        }
     }
 
     return QVariant();
@@ -47,6 +54,43 @@ QHash<int, QByteArray> AlphabetListModel::roleNames() const
         {
             AlphabetCharacterRole,
             "alphabetCharacter"
+        },
+        {
+            CharacterSelectedRole,
+            "characterSelected"
         }
     };
+}
+
+void AlphabetListModel::selectCharacter(const QString &character)
+{
+    if (m_selectedCharacters->contains(character)) {
+        m_selectedCharacters->remove(character);
+    } else {
+        m_selectedCharacters->insert(character);
+    }
+
+    auto index = m_alphabet.indexOf(character);
+    auto topLeft = createIndex(index,0);
+    emit dataChanged(topLeft, topLeft);}
+
+void AlphabetListModel::clearCharacters()
+{
+    QSet<int> indexes;
+    foreach (auto selectedCharacter, *m_selectedCharacters) {
+        auto index = m_alphabet.indexOf(selectedCharacter);
+        indexes.insert(index);
+    }
+
+    m_selectedCharacters->clear();
+
+    foreach (auto index, indexes) {
+        auto topLeft = createIndex(index,0);
+        emit dataChanged(topLeft, topLeft);
+    }
+}
+
+QStringList AlphabetListModel::getSelectedCharacters()
+{
+    return QStringList(m_selectedCharacters->values());
 }

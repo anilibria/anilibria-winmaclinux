@@ -52,14 +52,9 @@ Item {
             ToggleButton {
                 anchors.fill: parent
                 text: alphabetCharacter
+                isChecked: characterSelected
                 onButtonClicked: {
-                    if (isChecked) {
-                        delete selectedAlhabeticalCharacters[alphabetCharacter];
-                        isChecked = false;
-                    } else {
-                        selectedAlhabeticalCharacters[alphabetCharacter] = true;
-                        isChecked = true;
-                    }
+                    alphabetListModel.selectCharacter(alphabetCharacter)
 
                     refreshAllReleases(false);
                 }

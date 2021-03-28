@@ -20,6 +20,7 @@
 #define ALPHABETLISTMODEL_H
 
 #include <QAbstractListModel>
+#include <QSet>
 
 class AlphabetListModel : public QAbstractListModel
 {
@@ -27,9 +28,11 @@ class AlphabetListModel : public QAbstractListModel
 
 private:
     QString m_alphabet;
+    QSet<QString>* m_selectedCharacters;
 
     enum ItemRoles {
-        AlphabetCharacterRole = Qt::UserRole + 1
+        AlphabetCharacterRole = Qt::UserRole + 1,
+        CharacterSelectedRole
     };
 
 public:
@@ -40,6 +43,10 @@ public:
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
 
     QHash<int,QByteArray> roleNames() const override;
+
+    Q_INVOKABLE void selectCharacter(const QString& character);
+    Q_INVOKABLE void clearCharacters();
+    Q_INVOKABLE QStringList getSelectedCharacters();
 
 private:
 };

@@ -79,7 +79,6 @@ Page {
     property bool hideInfoButton: false
     property bool hideSortButton: false
     property bool hideFilterButton: false
-    property var selectedAlhabeticalCharacters: ({})
     property bool showAlpabeticalCharaters: false
 
     signal navigateFrom()
@@ -2255,7 +2254,7 @@ Page {
                 sortingDirectionComboBox.currentIndex == 1 ? true : false,
                 favoriteMarkSearchField.currentIndex,
                 seenMarkSearchField.currentIndex,
-                Object.keys(page.selectedAlhabeticalCharacters)
+                alphabetListModel.getSelectedCharacters()
             )
         );
     }
@@ -2308,6 +2307,7 @@ Page {
         statusesSearchField.text = "";
         favoriteMarkSearchField.currentIndex = 0;
         seenMarkSearchField.currentIndex = 0;
+        alphabetListModel.clearCharacters();
     }
 
     function changeSection(section) {
