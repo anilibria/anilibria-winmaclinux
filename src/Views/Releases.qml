@@ -92,8 +92,12 @@ Page {
 
     Keys.onPressed: {
         if (event.key === Qt.Key_Escape) {
-            page.openedRelease = null;
-            page.showAlpabeticalCharaters = false;
+            if (releasePosterPreview.isVisible) {
+                releasePosterPreview.isVisible = false;
+            } else {
+                page.openedRelease = null;
+                page.showAlpabeticalCharaters = false;
+            }
         }
     }
 
@@ -1652,6 +1656,13 @@ Page {
                         layer.effect: OpacityMask {
                             maskSource: cardMask
                         }
+
+                        MouseArea {
+                            anchors.fill: parent
+                            onPressed: {
+                                releasePosterPreview.isVisible = true;
+                            }
+                        }
                     }
                     Column {
                         width: page.width - cardButtons.width - cardPoster.width
@@ -2170,6 +2181,7 @@ Page {
                             watchRelease(page.openedRelease.id, page.openedRelease.videos, -1);
 
                             page.openedRelease = null;
+                            releasePosterPreview.isVisible = false;
                         }
                     }
 
@@ -2194,6 +2206,10 @@ Page {
     ReleaseAlphabeticalCharacters {
         id: releaseAlphabeticalCharacters
         visible: page.showAlpabeticalCharaters
+    }
+
+    ReleasePosterPreview {
+        id: releasePosterPreview
     }
 
     function setSeenStateForOpenedRelease(newState) {

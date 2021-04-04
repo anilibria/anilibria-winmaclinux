@@ -94,5 +94,6 @@
         <file>Assets/Icons/topmostwindow.svg</file>
         <file>Views/ReleaseAlphabeticalCharacters.qml</file>
         <file>Assets/Icons/alphabet.svg</file>
+        <file>Views/ReleasePosterPreview.qml</file>
     </qresource>
 </RCC>
