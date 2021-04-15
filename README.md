@@ -47,7 +47,7 @@ $ yay -S anilibria-winmaclinux-git
 
 ### Готовые инструкции для сборки под дистрибутивы:
 
-[Ubuntu/Linux Mint 20](https://github.com/anilibria/anilibria-winmaclinux/blob/master/linuxmint20.md)
+[Ubuntu/Linux Mint 20](https://github.com/anilibria/anilibria-winmaclinux/blob/master/linuxmint20.md)  
 [Fedora](https://github.com/anilibria/anilibria-winmaclinux/blob/master/fedora.md)
 
 ### Для сборки необходимо:
