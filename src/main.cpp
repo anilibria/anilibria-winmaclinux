@@ -51,6 +51,9 @@ int main(int argc, char *argv[])
         freopen("CON", "r", stdin);
     }
 #endif
+    if (argc >= 2 && QString(argv[1]) == "portable") {
+        IsPortable = true;
+    }
 
     QGuiApplication app(argc, argv);
     QtWebView::initialize();

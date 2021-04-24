@@ -94,6 +94,7 @@ Page {
         if (event.key === Qt.Key_Escape) {
             if (releasePosterPreview.isVisible) {
                 releasePosterPreview.isVisible = false;
+                if (Qt.platform.os !== "windows") webView.visible = true;
             } else {
                 page.openedRelease = null;
                 page.showAlpabeticalCharaters = false;
@@ -1661,6 +1662,7 @@ Page {
                             anchors.fill: parent
                             onPressed: {
                                 releasePosterPreview.isVisible = true;
+                                if (Qt.platform.os !== "windows") webView.visible = false;
                             }
                         }
                     }
@@ -2182,6 +2184,7 @@ Page {
 
                             page.openedRelease = null;
                             releasePosterPreview.isVisible = false;
+                            if (Qt.platform.os !== "windows") webView.visible = true;
                         }
                     }
 

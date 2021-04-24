@@ -70,10 +70,16 @@ LocalStorageService::LocalStorageService(QObject *parent) : QObject(parent),
 {
     m_AllReleaseUpdatedWatcher = new QFutureWatcher<void>(this);
 
-    QDir cacheDicrectory(QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation));
-    QDir().mkpath(QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation));
-    QDir().mkpath(QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation) + "/imagecache");
-    qDebug() << "Cache location: " << QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation);
+    if (IsPortable) {
+        auto cachePath = QDir::currentPath() + "/imagecache";
+        QDir().mkpath(cachePath);
+        qDebug() << "Portable Cache location: " << cachePath;
+    } else {
+        QDir cacheDicrectory(QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation));
+        QDir().mkpath(QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation));
+        QDir().mkpath(QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation) + "/imagecache");
+        qDebug() << "Cache location: " << QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation);
+    }
 
 #ifdef Q_OS_WIN
     //WORKAROUND: sorry guys for it, I move this code to another place shortly
@@ -382,57 +388,101 @@ int LocalStorageService::randomBetween(int low, int high, uint seed)
 
 QString LocalStorageService::getReleasesCachePath() const
 {
-    return QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation) + "/releases.cache";
+    if (IsPortable) {
+        return QDir::currentPath() + "/releases.cache";
+    } else {
+        return QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation) + "/releases.cache";
+    }
 }
 
 QString LocalStorageService::getFavoritesCachePath() const
 {
-    return QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation) + "/favorites.cache";
+    if (IsPortable) {
+        return QDir::currentPath() + "/favorites.cache";
+    } else {
+        return QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation) + "/favorites.cache";
+    }
 }
 
 QString LocalStorageService::getScheduleCachePath() const
 {
-    return QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation) + "/schedule.cache";
+    if (IsPortable) {
+        return QDir::currentPath() + "/schedule.cache";
+    } else {
+        return QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation) + "/schedule.cache";
+    }
 }
 
 QString LocalStorageService::getSeensCachePath() const
 {
-    return QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation) + "/seen.cache";
+    if (IsPortable) {
+        return QDir::currentPath() + "/seen.cache";
+    } else {
+        return QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation) + "/seen.cache";
+    }
 }
 
 QString LocalStorageService::getSeenMarksCachePath() const
 {
-    return QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation) + "/seenmark.cache";
+    if (IsPortable) {
+        return QDir::currentPath() + "/seenmark.cache";
+    } else {
+        return QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation) + "/seenmark.cache";
+    }
 }
 
 QString LocalStorageService::getHistoryCachePath() const
 {
-    return QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation) + "/history.cache";
+    if (IsPortable) {
+        return QDir::currentPath() + "/history.cache";
+    } else {
+        return QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation) + "/history.cache";
+    }
 }
 
 QString LocalStorageService::getYoutubeCachePath() const
 {
-    return QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation) + "/youtube.cache";
+    if (IsPortable) {
+        return QDir::currentPath() + "/youtube.cache";
+    } else {
+        return QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation) + "/youtube.cache";
+    }
 }
 
 QString LocalStorageService::getUserSettingsCachePath() const
 {
-    return QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation) + "/usersettings.cache";
+    if (IsPortable) {
+        return QDir::currentPath() + "/usersettings.cache";
+    } else {
+        return QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation) + "/usersettings.cache";
+    }
 }
 
 QString LocalStorageService::getNotificationCachePath() const
 {
-    return QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation) + "/notification.cache";
+    if (IsPortable) {
+        return QDir::currentPath() + "/notification.cache";
+    } else {
+        return QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation) + "/notification.cache";
+    }
 }
 
 QString LocalStorageService::getCinemahallCachePath() const
 {
-    return QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation) + "/cinemahall.cache";
+    if (IsPortable) {
+        return QDir::currentPath() + "/cinemahall.cache";
+    } else {
+        return QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation) + "/cinemahall.cache";
+    }
 }
 
 QString LocalStorageService::getDownloadsCachePath() const
 {
-    return QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation) + "/downloads.cache";
+    if (IsPortable) {
+        return QDir::currentPath() + "/downloads.cache";
+    } else {
+        return QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation) + "/downloads.cache";
+    }
 }
 
 void LocalStorageService::createIfNotExistsFile(QString path, QString defaultContent)

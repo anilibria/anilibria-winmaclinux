@@ -18,6 +18,7 @@
 
 #include <QHashIterator>
 #include "offlineimagecacheservice.h"
+#include "globalconstants.h"
 
 void OfflineImageCacheService::loadCache()
 {
@@ -47,7 +48,11 @@ OfflineImageCacheService::OfflineImageCacheService(QObject *parent) : QObject(pa
     m_Images(new QHash<int, QString>()),
     m_RunningLoading(new QHash<int, ImageLoader*>())
 {
-    m_CachePath = QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation) + "/imagecache";
+    if (IsPortable) {
+        m_CachePath = QDir::currentPath() + "/imagecache";
+    } else {
+        m_CachePath = QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation) + "/imagecache";
+    }
 #ifdef Q_OS_WIN
     m_Protocol = "file:///";
 #else
