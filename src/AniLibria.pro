@@ -70,6 +70,7 @@ SOURCES += \
     Classes/Models/historymodel.cpp \
     Classes/Models/onlinevideomodel.cpp \
     Classes/Models/releasemodel.cpp \
+    Classes/Models/releaseseriesmodel.cpp \
     Classes/Models/releasetorrentmodel.cpp \
     Classes/Models/seenmarkmodel.cpp \
     Classes/Models/seenmodel.cpp \
@@ -86,6 +87,7 @@ SOURCES += \
     Classes/Services/localstorageservice.cpp \
     Classes/Services/offlineimagecacheservice.cpp \
     Classes/Services/proxyconfigurator.cpp \
+    Classes/Services/releaselinkedseries.cpp \
     Classes/Services/synchronizationservice.cpp \
     Classes/Services/versionchecker.cpp \
     Classes/globalconstant.cpp \
@@ -121,6 +123,7 @@ HEADERS += \
     Classes/Models/historymodel.h \
     Classes/Models/onlinevideomodel.h \
     Classes/Models/releasemodel.h \
+    Classes/Models/releaseseriesmodel.h \
     Classes/Models/releasetorrentmodel.h \
     Classes/Models/seenmarkmodel.h \
     Classes/Models/seenmodel.h \
@@ -137,6 +140,7 @@ HEADERS += \
     Classes/Services/localstorageservice.h \
     Classes/Services/offlineimagecacheservice.h \
     Classes/Services/proxyconfigurator.h \
+    Classes/Services/releaselinkedseries.h \
     Classes/Services/synchronizationservice.h \
     Classes/Services/versionchecker.h \
     Classes/ListModels/alphabetlistmodel.h \

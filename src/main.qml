@@ -261,6 +261,8 @@ ApplicationWindow {
                     message: "Синхронизация релизов успешно завершена в " + new Date().toLocaleTimeString()
                 }
             );
+
+            releaseLinkedSeries.refreshSeries();
         }
 
     }
@@ -283,6 +285,10 @@ ApplicationWindow {
 
     AlphabetListModel {
         id: alphabetListModel
+    }
+
+    ReleaseLinkedSeries {
+        id: releaseLinkedSeries
     }
 
     WorkerScript {

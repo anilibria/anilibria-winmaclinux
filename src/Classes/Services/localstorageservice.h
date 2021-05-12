@@ -54,6 +54,7 @@ private:
     OfflineImageCacheService* m_OfflineImageCacheService;
     int m_CountReleases;
     QVector<int>* m_CinemaHall;
+    QVector<int>* m_HidedReleases;
     int m_CountSeens;
     QVector<DownloadItemModel*>* m_Downloads;
     int m_CountCinemahall;
@@ -80,6 +81,7 @@ private:
     QString getNotificationCachePath() const;
     QString getCinemahallCachePath() const;
     QString getDownloadsCachePath() const;
+    QString getHidedReleasesCachePath() const;
     void createIfNotExistsFile(QString path, QString defaultContent);
     void saveChanges();
     void resetChanges();
@@ -92,13 +94,16 @@ private:
     void saveSettings();
     void loadDownloads();
     void loadCinemahall();
+    void loadHidedReleases();
     void saveDownloads();
     void saveCinemahall();
+    void saveHidedReleases();
     QHash<int, int> getAllSeenMarkCount();
     int countOnlyFavorites(QList<int>* changes, QSet<int>* favorites);
     void setSeenMarkForRelease(int id, int countSeries, bool marked);
     void recalculateSeenCounts();
     bool importReleasesFromFile(QString path);
+    void afterSynchronizedReleases();
 public:
     explicit LocalStorageService(QObject *parent = nullptr);
 
@@ -181,6 +186,10 @@ public:
     Q_INVOKABLE QString getDownloads();
     Q_INVOKABLE void clearPostersCache();
     Q_INVOKABLE bool importReleasesFromExternalFile(QString path);
+    Q_INVOKABLE void addToHidedReleases(const QList<int>& ids);
+    Q_INVOKABLE void removeFromHidedReleases(const QList<int>& ids);
+    Q_INVOKABLE void removeAllHidedReleases();
+    Q_INVOKABLE bool isReleaseInHided(int id);
 
 signals:
     void allReleasesFinished();

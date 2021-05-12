@@ -33,6 +33,7 @@
 #include "Classes/RemotePlayer/remoteplayer.h"
 #include "Classes/ListModels/alphabetlistmodel.h"
 #include "globalconstants.h"
+#include "Classes/Services/releaselinkedseries.h"
 
 int main(int argc, char *argv[])
 {
@@ -67,7 +68,12 @@ int main(int argc, char *argv[])
     qmlRegisterType<ApiServiceConfigurator>("Anilibria.Services", 1, 0, "ApiServiceConfigurator");
     qmlRegisterType<ProxyConfigurator>("Anilibria.Services", 1, 0, "ProxyConfigurator");
     qmlRegisterType<RemotePlayer>("Anilibria.RemotePlayer", 1, 0, "RemotePlayer");
+    qmlRegisterType<ReleaseLinkedSeries>("Anilibria.Services", 1, 0, "ReleaseLinkedSeries");
     qmlRegisterType<AlphabetListModel>("Anilibria.ListModels", 1, 0, "AlphabetListModel");
+
+    QCoreApplication::setOrganizationDomain("anilibria.tv");
+    QCoreApplication::setOrganizationName("EmptyFlow");
+    QCoreApplication::setApplicationName("AnilibriaDesktopClient");
 
     QQmlApplicationEngine engine;
     engine.rootContext()->setContextProperty("ApplicationVersion", ApplicationVersion);

@@ -53,6 +53,7 @@ const int WatchHistorySection = 8;
 const int SeenHistorySection = 9;
 const int SeeningHistorySection = 10;
 const int NotSeeningHistorySection = 11;
+const int HiddenReleasesSection = 12;
 
 LocalStorageService::LocalStorageService(QObject *parent) : QObject(parent),
     m_CachedReleases(new QList<FullReleaseModel*>()),
@@ -64,6 +65,7 @@ LocalStorageService::LocalStorageService(QObject *parent) : QObject(parent),
     m_IsChangesExists(false),
     m_CountReleases(0),
     m_CinemaHall(new QVector<int>()),
+    m_HidedReleases(new QVector<int>()),
     m_CountSeens(0),
     m_Downloads(new QVector<DownloadItemModel*>()),
     m_CountCinemahall(0)
@@ -99,6 +101,7 @@ LocalStorageService::LocalStorageService(QObject *parent) : QObject(parent),
     createIfNotExistsFile(getYoutubeCachePath(), "[]");
     createIfNotExistsFile(getCinemahallCachePath(), "[]");
     createIfNotExistsFile(getDownloadsCachePath(), "[]");
+    createIfNotExistsFile(getHidedReleasesCachePath(), "[]");
     QString favoritespath = getFavoritesCachePath();
 
     updateReleasesInnerCache();
@@ -112,6 +115,7 @@ LocalStorageService::LocalStorageService(QObject *parent) : QObject(parent),
     loadSettings();
     loadDownloads();
     loadCinemahall();
+    loadHidedReleases();
 
     resetChanges();
 
@@ -485,6 +489,15 @@ QString LocalStorageService::getDownloadsCachePath() const
     }
 }
 
+QString LocalStorageService::getHidedReleasesCachePath() const
+{
+    if (IsPortable) {
+        return QDir::currentPath() + "/hidedreleases.cache";
+    } else {
+        return QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation) + "/hidedreleases.cache";
+    }
+}
+
 void LocalStorageService::createIfNotExistsFile(QString path, QString defaultContent)
 {
     if (!QFile::exists(path)) {
@@ -690,6 +703,22 @@ void LocalStorageService::loadCinemahall()
     setCountCinemahall(m_CinemaHall->count());
 }
 
+void LocalStorageService::loadHidedReleases()
+{
+    QFile hidedReleasesFile(getHidedReleasesCachePath());
+    if (!hidedReleasesFile.open(QFile::ReadOnly | QFile::Text)) {
+        //TODO: handle this situation
+    }
+    auto json = hidedReleasesFile.readAll();
+    hidedReleasesFile.close();
+
+    auto document = QJsonDocument::fromJson(json);
+    auto jsonArray = document.array();
+
+    m_HidedReleases->clear();
+    foreach (auto item, jsonArray) m_HidedReleases->append(item.toInt());
+}
+
 void LocalStorageService::saveDownloads()
 {
     QJsonArray downloadsArray;
@@ -731,6 +760,26 @@ void LocalStorageService::saveCinemahall()
     cinemahallFile.close();
 
     setCountCinemahall(m_CinemaHall->count());
+}
+
+void LocalStorageService::saveHidedReleases()
+{
+    QJsonArray hidedReleasesArray;
+
+    foreach (auto releaseId, *m_HidedReleases) {
+        QJsonValue value(releaseId);
+        hidedReleasesArray.append(value);
+    }
+
+    QFile hidedReleasesFile(getHidedReleasesCachePath());
+    if (!hidedReleasesFile.open(QFile::WriteOnly | QFile::Text)) {
+        //TODO: handle this situation
+    }
+
+    auto document = QJsonDocument(hidedReleasesArray);
+    hidedReleasesFile.write(document.toJson());
+
+    hidedReleasesFile.close();
 }
 
 QHash<int, int> LocalStorageService::getAllSeenMarkCount()
@@ -1120,7 +1169,7 @@ QString LocalStorageService::getReleasesByFilter(int page, QString title, int se
     }
 
     foreach (auto releaseItem, *m_CachedReleases) {
-
+        if (m_HidedReleases->contains(releaseItem->id()) && section != HiddenReleasesSection) continue;
         if (!title.isEmpty() && !releaseItem->title().toLower().contains(title.toLower())) continue;
         if (!description.isEmpty() && !releaseItem->description().toLower().contains(description.toLower())) continue;
         if (!type.isEmpty() && !releaseItem->type().toLower().contains(type.toLower())) continue;
@@ -1236,6 +1285,8 @@ QString LocalStorageService::getReleasesByFilter(int page, QString title, int se
         if (section == SeeningHistorySection && !(countReleaseSeenVideos > 0 && !isAllSeens)) continue;
 
         if (section == NotSeeningHistorySection && !(countReleaseSeenVideos == 0)) continue;
+
+        if (section == HiddenReleasesSection && !m_HidedReleases->contains(releaseItem->id())) continue;
 
         if (startIndex > 0) {
             startIndex--;
@@ -1998,6 +2049,41 @@ void LocalStorageService::clearPostersCache()
 bool LocalStorageService::importReleasesFromExternalFile(QString path)
 {
     return importReleasesFromFile(path);
+}
+
+void LocalStorageService::addToHidedReleases(const QList<int>& ids)
+{
+    foreach(auto id, ids) {
+        if (m_HidedReleases->contains(id)) continue;
+
+        m_HidedReleases->append(id);
+    }
+
+    saveHidedReleases();
+}
+
+void LocalStorageService::removeFromHidedReleases(const QList<int>& ids)
+{
+    foreach (auto id, ids) {       
+        auto index = m_HidedReleases->indexOf(id);
+        if (index == -1) continue;
+
+        m_HidedReleases->remove(index);
+    }
+
+    saveHidedReleases();
+}
+
+void LocalStorageService::removeAllHidedReleases()
+{
+    m_HidedReleases->clear();
+
+    saveHidedReleases();
+}
+
+bool LocalStorageService::isReleaseInHided(int id)
+{
+    return m_HidedReleases->indexOf(id) > -1;
 }
 
 void LocalStorageService::allReleasesUpdated()

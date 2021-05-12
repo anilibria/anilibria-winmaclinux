@@ -53,7 +53,8 @@ Page {
         "История просмотра",
         "Просмотренные",
         "Просматриваемые",
-        "Не просмотренные"
+        "Не просмотренные",
+        "Скрытые релизы"
     ]
     property var sectionSortings: {
         0: { field: 0, direction: 1 },
@@ -67,7 +68,8 @@ Page {
         8: { field: 8, direction: 1 },
         9: { field: 0, direction: 1 },
         10: { field: 0, direction: 1 },
-        11: { field: 0, direction: 1 }
+        11: { field: 0, direction: 1 },
+        12: { field: 0, direction: 1 },
     }
     property var changesCounts: []
     property bool showSidePanel: false
@@ -80,6 +82,7 @@ Page {
     property bool hideSortButton: false
     property bool hideFilterButton: false
     property bool showAlpabeticalCharaters: false
+    property bool toggler: false
 
     signal navigateFrom()
     signal watchRelease(int releaseId, string videos, int startSeria)
@@ -297,7 +300,7 @@ Page {
                 IconButton {
                     id: seenMarkMenuPanelButton
                     height: 45
-                    width: 40
+                    width: 42
                     iconColor: "white"
                     iconPath: "../Assets/Icons/seenmarkpanel.svg"
                     iconWidth: 29
@@ -309,7 +312,7 @@ Page {
                     CommonMenu {
                         id: seenMarkMenuPanel
                         y: seenMarkMenuPanelButton.height
-                        width: 300
+                        width: 350
 
                         CommonMenuItem {
                             text: "Отметить как просмотренное"
@@ -330,6 +333,83 @@ Page {
                             onPressed: {
                                 seenMarkMenuPanel.close();
                                 removeAllSeenMark.open();
+                            }
+                        }
+                        CommonMenuItem {
+                            text: "Скрыть выбранные релизы"
+                            enabled: page.selectedReleases.length
+                            onPressed: {
+                                seenMarkMenuPanel.close();
+                                addToHidedReleasesConfirm.open();
+                            }
+                        }
+                        CommonMenuItem {
+                            enabled: page.selectedReleases.length
+                            text: "Убрать из скрытых выбранные релизы"
+                            onPressed: {
+                                seenMarkMenuPanel.close();
+                                localStorage.removeFromHidedReleases(page.selectedReleases);
+                                page.selectedReleases = [];
+                            }
+                        }
+                        CommonMenuItem {
+                            text: "Сделать все скрытые релизы видимыми"
+                            onPressed: {
+                                seenMarkMenuPanel.close();
+                                removeAllHidedReleasesConfirm.open();
+                            }
+                        }
+                    }
+
+                    MessageModal {
+                        id: addToHidedReleasesConfirm
+                        header: "Добавить релизы в скрытые?"
+                        message: "Вы уверены что хотите добавить релизы в скрытые?\nЭти релизы будут скрыты везде кроме раздела Скрытые релизы."
+                        content: Row {
+                            spacing: 6
+                            anchors.right: parent.right
+
+                            RoundedActionButton {
+                                text: "Ок"
+                                width: 100
+                                onClicked: {
+                                    localStorage.addToHidedReleases(page.selectedReleases);
+                                    addToHidedReleasesConfirm.close();
+                                    page.selectedReleases = [];
+                                }
+                            }
+                            RoundedActionButton {
+                                text: "Отмена"
+                                width: 100
+                                onClicked: {
+                                    addToHidedReleasesConfirm.close();
+                                }
+                            }
+                        }
+                    }
+
+                    MessageModal {
+                        id: removeAllHidedReleasesConfirm
+                        header: "Сделать все релизы видимыми?"
+                        message: "Вы уверены что хотите удалить все скрытые релизы?\nЭти релизы будут доступны во всех разделах."
+                        content: Row {
+                            spacing: 6
+                            anchors.right: parent.right
+
+                            RoundedActionButton {
+                                text: "Ок"
+                                width: 100
+                                onClicked: {
+                                    localStorage.removeAllHidedReleases(page.selectedReleases);
+                                    removeAllHidedReleasesConfirm.close();
+                                }
+                            }
+                            RoundedActionButton {
+                                text: "Отмена"
+                                width: 100
+                                onClicked: {
+                                    removeAllHidedReleasesConfirm.close();
+                                }
                             }
                         }
                     }
@@ -1483,6 +1563,12 @@ Page {
                                     page.changeSection(11);
                                 }
                             }
+                            CommonMenuItem {
+                                text: page.sections[12]
+                                onPressed: {
+                                    page.changeSection(12);
+                                }
+                            }
                         }
                     }
                     IconButton {
@@ -1969,6 +2055,28 @@ Page {
                                     text: "Отметить как не просмотренное"
                                     onPressed: {
                                         setSeenStateForOpenedRelease(false);
+                                    }
+                                }                                
+                                CommonMenuItem {
+                                    id: hideReleaseCardMenu
+                                    enabled: page.openedRelease && !localStorage.isReleaseInHided(page.openedRelease.id)
+                                    text: "Скрыть релиз"
+                                    onPressed: {
+                                        localStorage.addToHidedReleases([page.openedRelease.id]);
+                                        hideReleaseCardMenu.enabled = false;
+                                        removeFromHideReleaseCardMenu.enabled = true;
+                                        seenMarkMenu.close();
+                                    }
+                                }
+                                CommonMenuItem {
+                                    id: removeFromHideReleaseCardMenu
+                                    enabled: page.openedRelease && localStorage.isReleaseInHided(page.openedRelease.id)
+                                    text: "Убрать релиз из скрытых"
+                                    onPressed: {
+                                        localStorage.removeFromHidedReleases([page.openedRelease.id]);
+                                        hideReleaseCardMenu.enabled = true;
+                                        removeFromHideReleaseCardMenu.enabled = false;
+                                        seenMarkMenu.close();
                                     }
                                 }
                             }
