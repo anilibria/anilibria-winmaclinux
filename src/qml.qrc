@@ -95,5 +95,7 @@
         <file>Views/ReleaseAlphabeticalCharacters.qml</file>
         <file>Assets/Icons/alphabet.svg</file>
         <file>Views/ReleasePosterPreview.qml</file>
+        <file>Assets/Icons/series.svg</file>
+        <file>Views/ReleaseSeries.qml</file>
     </qresource>
 </RCC>

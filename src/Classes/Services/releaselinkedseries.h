@@ -21,7 +21,12 @@ private:
         FirstNameRole,
         SecondNameRole,
         ThirdNameRole,
-        ReleaseIds
+        ReleaseIds,
+        Posters,
+        FirstPosterRole,
+        SecondPosterRole,
+        ThirdPosterRole,
+        OtherReleasesRole
     };
 
 public:
@@ -41,8 +46,8 @@ private:
     QString getReleasesCachePath() const noexcept;
     void loadSeries();
     void createCacheFileIfNotExists() const noexcept;
-    void setSeriaName(int index, QString name, ReleaseSeriesModel& model);
-    void processReleasesFromDescription(const QString& description, const QMap<QString, FullReleaseModel*>& releases, int currentRelease, const QString currentReleaseTitle) noexcept;
+    void setSeriaName(int index, QString name, ReleaseSeriesModel& model, const QString& poster);
+    void processReleasesFromDescription(const QString& description, const QMap<QString, FullReleaseModel*>& releases, int currentRelease, const QString currentReleaseTitle, const QString& poster) noexcept;
     void saveSeries();
 
 signals:

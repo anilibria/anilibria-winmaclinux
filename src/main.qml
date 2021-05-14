@@ -147,7 +147,8 @@ ApplicationWindow {
             "about": about,
             "cinemahall": cinemahall,            
             "download": download,
-            "maintenance": maintenance
+            "maintenance": maintenance,
+            "releaseseries": releaseseries
         };
 
         const currentPage = pages[currentPageId];
@@ -617,6 +618,29 @@ ApplicationWindow {
                     Row {
                         spacing: 10
                         Image {
+                            source: "../Assets/Icons/series.svg"
+                            sourceSize.width: 30
+                            sourceSize.height: 30
+                            mipmap: true
+                        }
+                        Label {
+                            anchors.leftMargin: 10
+                            anchors.verticalCenter: parent.verticalCenter
+                            color: "white"
+                            text: qsTr("Связанные релизы")
+                        }
+                    }
+                }
+                width: parent.width
+                onClicked: {
+                    showPage("releaseseries");
+                }
+            }
+            ItemDelegate {
+                contentItem: Item {
+                    Row {
+                        spacing: 10
+                        Image {
                             source: "Assets/Icons/downloadcircle.svg"
                             sourceSize.width: 30
                             sourceSize.height: 30
@@ -827,6 +851,11 @@ ApplicationWindow {
             window.showPage("videoplayer");
             videoplayer.setCinemahallVideo();
         }
+    }
+
+    ReleaseSeries {
+        id: releaseseries
+        visible: false
     }
 
     Maintenance {

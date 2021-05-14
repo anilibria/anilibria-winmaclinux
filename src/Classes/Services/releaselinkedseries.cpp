@@ -40,6 +40,26 @@ QVariant ReleaseLinkedSeries::data(const QModelIndex &index, int role) const
         case ReleaseIds: {
             return QVariant(*m_series->at(index.row())->releaseIds());
         }
+        case Posters: {
+            return QVariant(*m_series->at(index.row())->posters());
+        }
+        case FirstPosterRole: {
+            return QVariant(m_series->at(index.row())->firstPoster());
+        }
+        case SecondPosterRole: {
+            return QVariant(m_series->at(index.row())->secondPoster());
+        }
+        case ThirdPosterRole: {
+            return QVariant(m_series->at(index.row())->thirdPoster());
+        }
+        case OtherReleasesRole: {
+            auto count = m_series->at(index.row())->countReleases();
+
+            QString other = "";
+            if (count > 3) other += " + еще " + QString::number(count - 3) + " релиза";
+
+            return QVariant(other);
+        }
     }
 
     return QVariant();
@@ -50,24 +70,45 @@ QHash<int, QByteArray> ReleaseLinkedSeries::roleNames() const
     return {
         {
             CountReleasesRole,
-            "countReleasesRole"
+            "countReleases"
         },
         {
             FirstNameRole,
-            "firstNameRole"
+            "firstName"
         },
         {
             SecondNameRole,
-            "secondNameRole"
+            "secondName"
         },
         {
             ThirdNameRole,
-            "thirdNameRole"
+            "thirdName"
         },
         {
             ReleaseIds,
             "releaseIds"
-        }
+        },
+        {
+            Posters,
+            "posters"
+        },
+        {
+            FirstPosterRole,
+            "firstPoster"
+        },
+        {
+            SecondPosterRole,
+            "secondPoster"
+        },
+        {
+            ThirdPosterRole,
+            "thirdPoster"
+        },
+        {
+            OtherReleasesRole,
+            "otherReleases"
+        },
+
     };
 }
 
@@ -103,7 +144,7 @@ void ReleaseLinkedSeries::refreshSeries()
 
     foreach (auto release, releases) {
         auto description = release->description();
-        processReleasesFromDescription(description, releases, release->id(), release->title());
+        processReleasesFromDescription(description, releases, release->id(), release->title(), release->poster());
     }
 
     saveSeries();
@@ -169,22 +210,25 @@ void ReleaseLinkedSeries::createCacheFileIfNotExists() const noexcept
     }
 }
 
-void ReleaseLinkedSeries::setSeriaName(int index, QString name, ReleaseSeriesModel& model)
+void ReleaseLinkedSeries::setSeriaName(int index, QString name, ReleaseSeriesModel& model, const QString& poster)
 {
     switch (index) {
         case 0:
             model.setFirstName(name);
+            model.setFirstPoster(poster);
             break;
         case 1:
             model.setSecondName(name);
+            model.setSecondPoster(poster);
             break;
         case 2:
             model.setThirdName(name);
+            model.setThirdPoster(poster);
             break;
     }
 }
 
-void ReleaseLinkedSeries::processReleasesFromDescription(const QString& description, const QMap<QString, FullReleaseModel*>& releases, int currentRelease, const QString currentReleaseTitle) noexcept
+void ReleaseLinkedSeries::processReleasesFromDescription(const QString& description, const QMap<QString, FullReleaseModel*>& releases, int currentRelease, const QString currentReleaseTitle, const QString& poster) noexcept
 {
     QString startToken = "Порядок просмотра:";
     int watchOrderIndex = description.indexOf(startToken);
@@ -192,10 +236,6 @@ void ReleaseLinkedSeries::processReleasesFromDescription(const QString& descript
 
     auto cuttedDescription = description.midRef(watchOrderIndex + startToken.length());
     auto parts = cuttedDescription.split("#").mid(1);
-
-    if (currentRelease == 8948) {
-        qDebug() << "huyna";
-    }
 
     QRegExp linkRegexp("(https|http)\\:\\/\\/(www\\.anilibria|anilibria)\\.tv\\/release\\/(.*)\\.html");
 
@@ -211,8 +251,6 @@ void ReleaseLinkedSeries::processReleasesFromDescription(const QString& descript
     // if already have series with less items then remove it
     if (seriesItem != m_series->end()) m_series->removeOne(*seriesItem);
 
-    //TODO: fix case currentRelease greather then previous parts
-
     auto series = new ReleaseSeriesModel();
 
     int iterator = 0;
@@ -221,17 +259,18 @@ void ReleaseLinkedSeries::processReleasesFromDescription(const QString& descript
 
         if (linkRegexp.indexIn(partString, 0) > -1) {
             auto link = linkRegexp.cap(3);
-            qDebug() << link;
             if (releases.contains(link)) {
                 auto release = releases[link];
                 if (series->appendReleaseId(release->id())) {
-                    setSeriaName(iterator, release->title(), *series);
+                    setSeriaName(iterator, release->title(), *series, release->poster());
+                    series->appendPoster(release->poster());
                     iterator++;
                 }
             }
         } else {
             if (series->appendReleaseId(currentRelease)) {
-                setSeriaName(iterator, currentReleaseTitle, *series);
+                setSeriaName(iterator, currentReleaseTitle, *series, poster);
+                series->appendPoster(poster);
                 iterator++;
             }
         }
