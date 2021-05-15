@@ -11,10 +11,12 @@ class ReleaseLinkedSeries : public QAbstractListModel
 {
     Q_OBJECT
 
-    Q_PROPERTY(qint32 countSeries READ countSeries WRITE setCountSeries NOTIFY countSeriesChanged)
+    Q_PROPERTY(QString nameFilter READ nameFilter WRITE setNameFilter NOTIFY nameFilterChanged)
 private:
-    qint32 m_countSeries;
+    QString m_nameFilter;
     QVector<ReleaseSeriesModel*>* m_series;
+    QVector<ReleaseSeriesModel*>* m_filteredSeries;
+    bool m_filtering = false;
 
     enum ItemRoles {
         CountReleasesRole = Qt::UserRole + 1,
@@ -36,22 +38,23 @@ public:
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
     QHash<int,QByteArray> roleNames() const override;
 
-    qint32 countSeries() const { return m_countSeries; }
-    void setCountSeries(const qint32& countSeries ) noexcept;
+    QString nameFilter() const { return m_nameFilter; }
+    void setNameFilter(const QString& nameFilter) noexcept;
     Q_INVOKABLE void refreshSeries();
     Q_INVOKABLE bool isReleaseInSeries(int id);
+    Q_INVOKABLE void filterSeries();
+    Q_INVOKABLE void clearFilters();
 
 private:
     QString getSeriesCachePath() const noexcept;
     QString getReleasesCachePath() const noexcept;
     void loadSeries();
     void createCacheFileIfNotExists() const noexcept;
-    void setSeriaName(int index, QString name, ReleaseSeriesModel& model, const QString& poster);
     void processReleasesFromDescription(const QString& description, const QMap<QString, FullReleaseModel*>& releases, int currentRelease, const QString currentReleaseTitle, const QString& poster) noexcept;
     void saveSeries();
 
 signals:
-    void countSeriesChanged();
+    void nameFilterChanged();
 
 };
 

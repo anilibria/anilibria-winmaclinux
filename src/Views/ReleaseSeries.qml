@@ -44,6 +44,66 @@ Page {
                         drawer.open();
                     }
                 }
+                IconButton {
+                    id: searchFilterButton
+                    height: 45
+                    width: 40
+                    iconColor: "white"
+                    iconPath: "../Assets/Icons/search.svg"
+                    iconWidth: 29
+                    iconHeight: 29
+                    onButtonPressed: {
+                        seriesFiltersPopup.open();
+                    }
+
+                    Popup {
+                        id: seriesFiltersPopup
+                        x: 40
+                        y: searchFilterButton.height - 45
+                        width: 450
+                        height: 200
+                        modal: true
+                        focus: true
+                        closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
+
+                        Rectangle {
+                            width: parent.width
+                            RoundedActionButton {
+                                id: startFilterButton
+                                anchors.left: parent.left
+                                text: "Фильтровать"
+                                onClicked: {
+                                    releaseLinkedSeries.filterSeries();
+                                }
+                            }
+                            RoundedActionButton {
+                                id: clearFiltersButton
+                                anchors.right: parent.right
+                                text: "Очистить фильтры"
+                                onClicked: {
+                                    releaseLinkedSeries.clearFilters();
+                                }
+                            }
+                            PlainText {
+                                id: labelNameSearchField
+                                anchors.top: clearFiltersButton.bottom
+                                fontPointSize: 11
+                                text: qsTr("Наименование")
+                            }
+                            TextField {
+                                id: nameSearchField
+                                width: parent.width - 5
+                                anchors.top: labelNameSearchField.bottom
+                                anchors.rightMargin: 10
+                                placeholderText: "Введите часть или полное наименование релиза"
+                                text: releaseLinkedSeries.nameFilter
+                                onTextChanged: {
+                                    releaseLinkedSeries.nameFilter = text;
+                                }
+                            }
+                        }
+                    }
+                }
             }
         }
 
@@ -99,15 +159,6 @@ Page {
                         anchors.rightMargin: 4
                         radius: 10
                         color: ApplicationTheme.panelBackground
-                        //border.color: ApplicationTheme.selectedItem
-                        //border.width: isSelected ? 3 : 0
-
-                        MouseArea {
-                            anchors.fill: parent
-                            onPressed: {
-                                //toggleSelected(id);
-                            }
-                        }
 
                         RowLayout {
                             anchors.fill: parent

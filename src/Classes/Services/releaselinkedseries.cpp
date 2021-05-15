@@ -6,8 +6,9 @@
 #include "globalconstants.h"
 
 ReleaseLinkedSeries::ReleaseLinkedSeries(QObject *parent) : QAbstractListModel(parent),
-    m_countSeries(0),
-    m_series(new QVector<ReleaseSeriesModel*>())
+    m_nameFilter(""),
+    m_series(new QVector<ReleaseSeriesModel*>()),
+    m_filteredSeries(new QVector<ReleaseSeriesModel*>())
 {
     createCacheFileIfNotExists();
     loadSeries();
@@ -17,43 +18,55 @@ int ReleaseLinkedSeries::rowCount(const QModelIndex &parent) const
 {
     if (parent.isValid()) return 0;
 
-    return m_series->size();
+    return m_filtering ? m_filteredSeries->size() : m_series->size();
 }
 
 QVariant ReleaseLinkedSeries::data(const QModelIndex &index, int role) const
 {
     if (!index.isValid()) return QVariant();
 
+    auto series = m_filtering ? m_filteredSeries : m_series;
+
+    auto element = series->at(index.row());
+
     switch (role) {
         case CountReleasesRole: {
-            return QVariant(m_series->at(index.row())->countReleases());
+            return QVariant(element->countReleases());
         }
         case FirstNameRole: {
-            return QVariant(m_series->at(index.row())->firstName());
+            return QVariant(element->titles()->first().toString());
         }
         case SecondNameRole: {
-            return QVariant(m_series->at(index.row())->secondName());
+            return QVariant(element->titles()->at(1).toString());
         }
         case ThirdNameRole: {
-            return QVariant(m_series->at(index.row())->thirdName());
+            if (element->titles()->length() > 2) {
+                return QVariant(QVariant(element->titles()->at(2).toString()));
+            } else {
+                return QVariant("");
+            }
         }
         case ReleaseIds: {
-            return QVariant(*m_series->at(index.row())->releaseIds());
+            return QVariant(*series->at(index.row())->releaseIds());
         }
         case Posters: {
-            return QVariant(*m_series->at(index.row())->posters());
+            return QVariant(*series->at(index.row())->posters());
         }
         case FirstPosterRole: {
-            return QVariant(m_series->at(index.row())->firstPoster());
+            return QVariant(element->posters()->first().toString());
         }
         case SecondPosterRole: {
-            return QVariant(m_series->at(index.row())->secondPoster());
+            return QVariant(element->titles()->at(1).toString());
         }
         case ThirdPosterRole: {
-            return QVariant(m_series->at(index.row())->thirdPoster());
+            if (element->posters()->length() > 2) {
+                return QVariant(QVariant(element->posters()->at(2).toString()));
+            } else {
+                return QVariant("");
+            }
         }
         case OtherReleasesRole: {
-            auto count = m_series->at(index.row())->countReleases();
+            auto count = series->at(index.row())->countReleases();
 
             QString other = "";
             if (count > 3) other += " + еще " + QString::number(count - 3) + " релиза";
@@ -112,12 +125,12 @@ QHash<int, QByteArray> ReleaseLinkedSeries::roleNames() const
     };
 }
 
-void ReleaseLinkedSeries::setCountSeries(const qint32 &countSeries) noexcept
+void ReleaseLinkedSeries::setNameFilter(const QString& nameFilter) noexcept
 {
-    if (countSeries == m_countSeries) return;
+    if (nameFilter == m_nameFilter) return;
 
-    m_countSeries = countSeries;
-    emit countSeriesChanged();
+    m_nameFilter = nameFilter;
+    emit nameFilterChanged();
 }
 
 void ReleaseLinkedSeries::refreshSeries()
@@ -157,6 +170,45 @@ bool ReleaseLinkedSeries::isReleaseInSeries(int id)
     });
 
     return series != m_series->end();
+}
+
+void ReleaseLinkedSeries::filterSeries()
+{
+    beginResetModel();
+
+    m_filtering = true;
+    m_filteredSeries->clear();
+
+    auto nameFilter = m_nameFilter;
+
+    std::copy_if(
+        m_series->begin(),
+        m_series->end(),
+        std::back_inserter(*m_filteredSeries),
+        [nameFilter] (ReleaseSeriesModel* model) {
+            auto titles = model->titles();
+            auto title = std::find_if(
+                titles->begin(),
+                titles->end(),
+                [nameFilter](const QVariant& title) {
+                    return title.toString().toLower().contains(nameFilter.toLower());
+                }
+            );
+
+            auto isTitles = title != titles->end();
+            return isTitles;
+        }
+    );
+
+    endResetModel();
+}
+
+void ReleaseLinkedSeries::clearFilters()
+{
+    setNameFilter("");
+    m_filtering = false;
+
+    filterSeries();
 }
 
 QString ReleaseLinkedSeries::getSeriesCachePath() const noexcept
@@ -210,24 +262,6 @@ void ReleaseLinkedSeries::createCacheFileIfNotExists() const noexcept
     }
 }
 
-void ReleaseLinkedSeries::setSeriaName(int index, QString name, ReleaseSeriesModel& model, const QString& poster)
-{
-    switch (index) {
-        case 0:
-            model.setFirstName(name);
-            model.setFirstPoster(poster);
-            break;
-        case 1:
-            model.setSecondName(name);
-            model.setSecondPoster(poster);
-            break;
-        case 2:
-            model.setThirdName(name);
-            model.setThirdPoster(poster);
-            break;
-    }
-}
-
 void ReleaseLinkedSeries::processReleasesFromDescription(const QString& description, const QMap<QString, FullReleaseModel*>& releases, int currentRelease, const QString currentReleaseTitle, const QString& poster) noexcept
 {
     QString startToken = "Порядок просмотра:";
@@ -253,7 +287,6 @@ void ReleaseLinkedSeries::processReleasesFromDescription(const QString& descript
 
     auto series = new ReleaseSeriesModel();
 
-    int iterator = 0;
     foreach (auto part, parts) {
         auto partString = part.toString();
 
@@ -262,16 +295,14 @@ void ReleaseLinkedSeries::processReleasesFromDescription(const QString& descript
             if (releases.contains(link)) {
                 auto release = releases[link];
                 if (series->appendReleaseId(release->id())) {
-                    setSeriaName(iterator, release->title(), *series, release->poster());
                     series->appendPoster(release->poster());
-                    iterator++;
+                    series->appendTitle(release->title());
                 }
             }
         } else {
             if (series->appendReleaseId(currentRelease)) {
-                setSeriaName(iterator, currentReleaseTitle, *series, poster);
                 series->appendPoster(poster);
-                iterator++;
+                series->appendTitle(currentReleaseTitle);
             }
         }
     }
