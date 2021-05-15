@@ -1153,7 +1153,7 @@ Page {
                     Popup {
                         id: releaseSettingsPopup
                         x: 40
-                        y: sortingPopupButton.height - 220
+                        y: sortingPopupButton.height - 300
                         width: 370
                         height: 390
                         modal: true
