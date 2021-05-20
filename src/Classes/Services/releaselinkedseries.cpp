@@ -161,6 +161,8 @@ void ReleaseLinkedSeries::refreshSeries()
     }
 
     saveSeries();
+
+    filterSeries(); // update data in UI
 }
 
 bool ReleaseLinkedSeries::isReleaseInSeries(int id)
