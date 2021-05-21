@@ -4,6 +4,7 @@
 
 #include <QObject>
 #include <QAbstractListModel>
+#include <QVariant>
 #include "../Models/fullreleasemodel.h"
 #include "../Models/releaseseriesmodel.h"
 

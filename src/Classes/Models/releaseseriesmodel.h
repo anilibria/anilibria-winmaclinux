@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QJsonObject>
+#include <QVariant>
 
 class ReleaseSeriesModel
 {
