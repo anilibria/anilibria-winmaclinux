@@ -63,6 +63,7 @@ DEFINES += USE_VERSION_CHECK
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    Classes/ListModels/onlineplayervideolist.cpp \
     Classes/Models/changesmodel.cpp \
     Classes/Models/downloaditemmodel.cpp \
     Classes/Models/externalplaylistvideo.cpp \
@@ -90,6 +91,7 @@ SOURCES += \
     Classes/Services/releaselinkedseries.cpp \
     Classes/Services/synchronizationservice.cpp \
     Classes/Services/versionchecker.cpp \
+    Classes/ViewModels/onlineplayerviewmodel.cpp \
     Classes/globalconstant.cpp \
     Classes/ListModels/alphabetlistmodel.cpp \
     main.cpp
@@ -116,6 +118,7 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 }
 
 HEADERS += \
+    Classes/ListModels/onlineplayervideolist.h \
     Classes/Models/changesmodel.h \
     Classes/Models/downloaditemmodel.h \
     Classes/Models/externalplaylistvideo.h \
@@ -144,4 +147,5 @@ HEADERS += \
     Classes/Services/synchronizationservice.h \
     Classes/Services/versionchecker.h \
     Classes/ListModels/alphabetlistmodel.h \
+    Classes/ViewModels/onlineplayerviewmodel.h \
     globalconstants.h

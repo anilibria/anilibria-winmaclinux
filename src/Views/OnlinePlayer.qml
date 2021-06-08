@@ -26,30 +26,16 @@ import "../Theme"
 
 Page {
     id: _page
-    property bool isFullScreen: false
     property int selectedRelease: -1
-    property string videoSource: ""
     property var releaseVideos: []
-    property var selectedVideo: null
-    property bool isFullHdAllowed: false
     property real lastMovedPosition: 0
     property real restorePosition: 0
-    property string videoQuality: "sd"
-    property string displayVideoPosition: "00:00:00"
-    property string displayEndVideoPosition: "00:00:00"
-    property bool isBuffering: false
     property var setReleaseParameters: ({})
-    property double videoSpeed: 1
     property int positionIterator: 0
     property var seenVideo: ({})
     property var seenMarks: ({})
-    property int prefferedQuality: 0 // 0 - 480, 1 - 720p, 2 - 1080p
-    property var jumpMinutes: [0, 1, 2]
-    property var jumpSeconds: [0, 5, 10, 15, 20, 25, 30]
     property var ports: [12345, 34560, 52354, 67289]
     property real lastMouseYPosition: 0
-    property string releasePoster: ""
-    property bool isCinemahall: false
     property var cinemahallReleases: []
     property string videoSourceChangedCommand: `videosourcechanged`
     property string videoPositionChangedCommand: `positionchanged`
@@ -60,7 +46,6 @@ Page {
     signal navigateFrom()
     signal setReleaseVideo()
     signal setCinemahallVideo()
-    signal changeFullScreenMode(bool fullScreen)
     signal navigateTo()
     signal returnToReleasesPage()
     signal windowNotActived()
@@ -89,7 +74,7 @@ Page {
             //changepage to releases
         }
         if (event.key === Qt.Key_F11 || event.key === Qt.Key_F || event.key === 1040) {
-            toggleFullScreen();
+            onlinePlayerViewModel.onlinePlayerViewModel.toggleFullScreen();
         }
         if (event.key === Qt.Key_Up) {
             if (player.volume < 1) player.volume += .1;
@@ -119,7 +104,7 @@ Page {
     onNavigateFrom: {
         windowSettings.unsetStayOnTop();
         player.pause();
-        disableFullScreen();
+        onlinePlayerViewModel.isFullScreen = false;
     }
 
     onNavigateTo: {
@@ -127,8 +112,8 @@ Page {
         player.volume = userSettings.volume;
         autoNextVideo.checked = userSettings.autoNextVideo;
         autoTopMost.checked = userSettings.autoTopMost;
-        jumpMinuteComboBox.currentIndex = jumpMinutes.indexOf(userSettings.jumpMinute);
-        jumpSecondComboBox.currentIndex = jumpSeconds.indexOf(userSettings.jumpSecond);
+        jumpMinuteComboBox.currentIndex = onlinePlayerViewModel.jumpMinutes.indexOf(userSettings.jumpMinute);
+        jumpSecondComboBox.currentIndex = onlinePlayerViewModel.jumpSeconds.indexOf(userSettings.jumpSecond);
         showReleaseInfo.checked = userSettings.showReleaseInfo;
         sendVolumeToRemoteSwitch.checked = applicationSettings.sendVolumeToRemote;
         sendPlaybackToRemoteSwitch.checked = applicationSettings.sendPlaybackToRemote;
@@ -136,26 +121,25 @@ Page {
         remotePlayerPortComboBox.currentIndex = ports.indexOf(applicationSettings.remotePort);
 
         if (autoTopMost.checked && player.playbackState === MediaPlayer.PlayingState) windowSettings.setStayOnTop();
-        _page.prefferedQuality = userSettings.quality;
         switch (userSettings.quality) {
             case 0:
-                _page.videoQuality = "sd";
+                onlinePlayerViewModel.videoQuality = "sd";
                 break;
             case 1:
-                _page.videoQuality = "hd";
+                onlinePlayerViewModel.videoQuality = "hd";
                 break;
             case 2:
-                _page.videoQuality = "fullhd";
+                onlinePlayerViewModel.videoQuality = "fullhd";
                 break;
         }
 
-        if (!_page.setReleaseParameters.releaseId && !_page.isCinemahall) {
+        if (!_page.setReleaseParameters.releaseId && !onlinePlayerViewModel.isCinemahall) {
             const lastSeenObject = localStorage.getLastVideoSeen();
             if (lastSeenObject === ``) return;
 
             const seenObject = JSON.parse(lastSeenObject);
             const release = JSON.parse(localStorage.getRelease(seenObject.id));
-            _page.releasePoster = release.poster;
+            onlinePlayerViewModel.releasePoster = release.poster;
             _page.setReleaseParameters = {
                 releaseId: seenObject.id,
                 videos: release.videos,
@@ -167,7 +151,7 @@ Page {
     }
 
     onSetReleaseVideo: {
-        _page.isCinemahall = false;
+        onlinePlayerViewModel.isCinemahall = false;
         const jsonVideos = JSON.parse(_page.setReleaseParameters.videos);
         const seenJson = localStorage.getVideoSeen(_page.setReleaseParameters.releaseId);
         _page.seenVideo = {};
@@ -175,7 +159,7 @@ Page {
         _page.selectedRelease = _page.setReleaseParameters.releaseId;
 
         const release = JSON.parse(localStorage.getRelease(_page.setReleaseParameters.releaseId));
-        _page.releasePoster = release.poster;
+        onlinePlayerViewModel.releasePoster = release.poster;
 
         const releaseVideos = [];
 
@@ -221,11 +205,11 @@ Page {
 
         refreshSeenMarks();
 
-        _page.selectedVideo = firstVideo.order;
-        _page.isFullHdAllowed = "fullhd" in firstVideo;
-        if (!firstVideo[_page.videoQuality]) _page.videoQuality = "sd";
+        onlinePlayerViewModel.selectedVideo = firstVideo.order;
+        onlinePlayerViewModel.isFullHdAllowed = "fullhd" in firstVideo;
+        if (!firstVideo[onlinePlayerViewModel.videoQuality]) onlinePlayerViewModel.videoQuality = "sd";
 
-        setVideoSource(firstVideo[_page.videoQuality]);
+        setVideoSource(firstVideo[onlinePlayerViewModel.videoQuality]);
         player.play();
 
         localStorage.setToReleaseHistory(_page.setReleaseParameters.releaseId, 1);
@@ -234,7 +218,7 @@ Page {
     }
 
     onSetCinemahallVideo: {
-        _page.isCinemahall = true;
+        onlinePlayerViewModel.isCinemahall = true;
         _page.cinemahallReleases = JSON.parse(localStorage.getCinemahallReleases());
 
         const releaseVideos = [];
@@ -283,11 +267,11 @@ Page {
             _page.selectedRelease = firstVideo.releaseId;
             setReleasePoster(firstVideo.releasePoster, firstVideo.releaseId);
 
-            _page.selectedVideo = firstVideo.order;
-            _page.isFullHdAllowed = "fullhd" in firstVideo;
-            if (!firstVideo[_page.videoQuality]) _page.videoQuality = "sd";
+            onlinePlayerViewModel.selectedVideo = firstVideo.order;
+            onlinePlayerViewModel.isFullHdAllowed = "fullhd" in firstVideo;
+            if (!firstVideo[onlinePlayerViewModel.videoQuality]) onlinePlayerViewModel.videoQuality = "sd";
 
-            setVideoSource(firstVideo[_page.videoQuality]);
+            setVideoSource(firstVideo[onlinePlayerViewModel.videoQuality]);
             player.play();
 
             localStorage.setToReleaseHistory(firstVideo.releaseId, 1);
@@ -303,7 +287,7 @@ Page {
     onReceiveRemoteCommand: {
         switch (command){
             case `getcurrentvideosource`:
-                remotePlayer.sendCommandToUser(id, _page.videoSourceChangedCommand, _page.videoSource);
+                remotePlayer.sendCommandToUser(id, _page.videoSourceChangedCommand, onlinePlayerViewModel.videoSource);
                 break;
             case `getcurrentvideoposition`:
                 remotePlayer.sendCommandToUser(id, _page.videoPositionChangedCommand, player.position.toString() + `/` + player.duration.toString());
@@ -312,28 +296,12 @@ Page {
                 if (sendVolumeToRemoteSwitch.checked) remotePlayer.sendCommandToUser(id, _page.videoVolumeChangedCommand, volumeSlider.value.toString());
                 break;
             case `getcurrentplaybackrate`:
-                remotePlayer.sendCommandToUser(id, _page.videoPlaybackRateCommand, _page.videoSpeed.toString());
+                remotePlayer.sendCommandToUser(id, _page.videoPlaybackRateCommand, onlinePlayerViewModel.playbackRate.toString());
                 break;
             case `getcurrentplayback`:
                 if (player.playbackState === MediaPlayer.PausedState && sendPlaybackToRemoteSwitch.checked) remotePlayer.sendCommandToUser(id, _page.videoPlaybackCommand, "pause");
                 break;
         }
-    }
-
-    function getZeroBasedDigit(digit) {
-        if (digit < 10) return `0${digit}`;
-        return `${digit}`;
-    }
-
-    function getDisplayTimeFromSeconds(seconds) {
-        const days = Math.floor(seconds / (3600 * 24));
-        seconds -= days * 3600 * 24;
-        const hours = Math.floor(seconds / 3600);
-        seconds -= hours * 3600;
-        const minutes = Math.floor(seconds / 60);
-        seconds  -= minutes * 60;
-
-        return `${getZeroBasedDigit(hours)}:${getZeroBasedDigit(minutes)}:${getZeroBasedDigit(Math.round(seconds))}`;
     }
 
     function setControlVisible(visible) {
@@ -367,7 +335,7 @@ Page {
         anchors.fill: parent
         hoverEnabled: true
         onDoubleClicked: {
-            toggleFullScreen();
+            onlinePlayerViewModel.toggleFullScreen();
         }
         onPositionChanged: {
             if (!(player.playbackState === MediaPlayer.PlayingState)) {
@@ -390,11 +358,11 @@ Page {
         }
     }
 
-    QtPlayer {
+    QtAvPlayer {
         id: player
         anchors.fill: parent
-        source: _page.videoSource
-        playbackRate: _page.videoSpeed
+        source: onlinePlayerViewModel.videoSource
+        playbackRate: onlinePlayerViewModel.playbackRate
         onPlaybackStateChanged: {
             if (playbackState === MediaPlayer.PlayingState && autoTopMost.checked) {
                 windowSettings.setStayOnTop();
@@ -422,7 +390,7 @@ Page {
             if (applicationSettings.sendVolumeToRemote) remotePlayer.broadcastCommand(_page.videoVolumeChangedCommand, volumeSlider.value.toString());
         }
         onStatusChanged: {
-            if (status === MediaPlayer.Loading) _page.isBuffering = true;
+            if (status === MediaPlayer.Loading) onlinePlayerViewModel.isBuffering = true;
 
             if (status === MediaPlayer.EndOfMedia && autoNextVideo.checked) _page.nextVideo();
 
@@ -430,10 +398,10 @@ Page {
                 console.log("InvalidMedia")
             }
 
-            if (status === MediaPlayer.Buffering) _page.isBuffering = true;
+            if (status === MediaPlayer.Buffering) onlinePlayerViewModel.isBuffering = true;
 
             if (status === MediaPlayer.Buffered) {                
-                _page.isBuffering = false;                
+                onlinePlayerViewModel.isBuffering = false;
                 if (_page.restorePosition > 0){
                     player.seek(_page.restorePosition);
                     if (player.position >= _page.restorePosition) _page.restorePosition = 0;
@@ -447,25 +415,24 @@ Page {
         onPositionChanged: {
             if (!playerLocation.pressed && _page.lastMovedPosition === 0) playerLocation.value = position;
 
-            _page.displayVideoPosition = `${_page.getDisplayTimeFromSeconds(position / 1000)} из ${_page.getDisplayTimeFromSeconds(duration / 1000)}`;
-            _page.displayEndVideoPosition = _page.getDisplayTimeFromSeconds((duration - position) / 1000);
+            onlinePlayerViewModel.changeVideoPosition(duration, position);
 
             if (_page.positionIterator < 20) _page.positionIterator++;
 
             if (_page.positionIterator >= 20) {
                 _page.positionIterator = 0;
-                localStorage.setVideoSeens(_page.selectedRelease, _page.selectedVideo, position);
+                localStorage.setVideoSeens(_page.selectedRelease, onlinePlayerViewModel.selectedVideo, position);
             }
 
-            if (!(_page.selectedRelease in _page.seenMarks && _page.selectedVideo in _page.seenMarks[_page.selectedRelease])) {
+            if (!(_page.selectedRelease in _page.seenMarks && onlinePlayerViewModel.selectedVideo in _page.seenMarks[_page.selectedRelease])) {
                 if (duration > 0 && position > 0) {
                     const positionPercent = position / duration * 100;
                     if (positionPercent >= 90) {
                         let seenMarks = getReleaseSeens(_page.selectedRelease);
-                        seenMarks[_page.selectedVideo] = true;
+                        seenMarks[onlinePlayerViewModel.selectedVideo] = true;
                         const obj = _page.seenMarks;
                         _page.seenMarks = obj;
-                        localStorage.setSeenMark(_page.selectedRelease, _page.selectedVideo, true);
+                        localStorage.setSeenMark(_page.selectedRelease, onlinePlayerViewModel.selectedVideo, true);
                     }
                 }
             }
@@ -499,7 +466,7 @@ Page {
                         Rectangle {
                             height:  modelData.isGroup ? 70 : 40
                             width: seriesPopup.width
-                            color: _page.selectedVideo === modelData.order && _page.selectedRelease === modelData.releaseId ? ApplicationTheme.playlistSelectedBackground : ApplicationTheme.playlistBackground
+                            color: onlinePlayerViewModel.selectedVideo === modelData.order && _page.selectedRelease === modelData.releaseId ? ApplicationTheme.playlistSelectedBackground : ApplicationTheme.playlistBackground
                             MouseArea {
                                 anchors.fill: parent
                                 hoverEnabled: true
@@ -509,9 +476,9 @@ Page {
                                 onClicked: {
                                     if (modelData.isGroup) return;
 
-                                    _page.selectedVideo = modelData.order;
-                                    _page.isFullHdAllowed = "fullhd" in modelData;
-                                    setVideoSource(modelData[_page.videoQuality]);
+                                    onlinePlayerViewModel.selectedVideo = modelData.order;
+                                    onlinePlayerViewModel.isFullHdAllowed = "fullhd" in modelData;
+                                    setVideoSource(modelData[onlinePlayerViewModel.videoQuality]);
                                     _page.selectedRelease = modelData.releaseId;
                                     setReleasePoster(modelData.releasePoster, modelData.releaseId);
                                     player.play();
@@ -519,7 +486,7 @@ Page {
                             }
                             Text {
                                 visible: !modelData.isGroup
-                                color: _page.selectedVideo === modelData.order && _page.selectedRelease === modelData.releaseId ? ApplicationTheme.playlistSelectedText : ApplicationTheme.playlistText
+                                color: onlinePlayerViewModel.selectedVideo === modelData.order && _page.selectedRelease === modelData.releaseId ? ApplicationTheme.playlistSelectedText : ApplicationTheme.playlistText
                                 anchors.verticalCenter: parent.verticalCenter
                                 anchors.left: parent.left
                                 anchors.leftMargin: 10
@@ -534,7 +501,7 @@ Page {
 
                                 Text {
                                     visible: modelData.isGroup
-                                    color: _page.selectedVideo === modelData.order && _page.selectedRelease === modelData.releaseId ? ApplicationTheme.playlistSelectedText : ApplicationTheme.playlistText
+                                    color: onlinePlayerViewModel.selectedVideo === modelData.order && _page.selectedRelease === modelData.releaseId ? ApplicationTheme.playlistSelectedText : ApplicationTheme.playlistText
                                     text: modelData.title
                                     width: parent.width
                                     anchors.verticalCenter: parent.verticalCenter
@@ -597,7 +564,7 @@ Page {
                                         if (playerTimer.running) playerTimer.stop();
                                     }
                                     onButtonPressed: {
-                                        switch (_page.videoQuality) {
+                                        switch (onlinePlayerViewModel.videoQuality) {
                                             case "fullhd":
                                             case "hd":
                                                 Qt.openUrlExternally(modelData.hdfile);
@@ -665,7 +632,7 @@ Page {
                 width: controlPanel.width
 
                 PlainText {
-                    text: _page.displayVideoPosition
+                    text: onlinePlayerViewModel.displayVideoPosition
                     fontPointSize: 10
                 }
 
@@ -676,16 +643,16 @@ Page {
                         height: 20
                         width: 60
                         text: "1080p"
-                        visible: player.duration > 0 && _page.isFullHdAllowed
-                        isChecked: _page.videoQuality === `fullhd`
+                        visible: player.duration > 0 && onlinePlayerViewModel.isFullHdAllowed
+                        isChecked: onlinePlayerViewModel.videoQuality === `fullhd`
                         onButtonClicked: {
-                            _page.videoQuality = `fullhd`;
+                            onlinePlayerViewModel.videoQuality = `fullhd`;
                             _page.restorePosition = player.position;
 
-                            const video = _page.releaseVideos.find(a => a.order === _page.selectedVideo);
+                            const video = _page.releaseVideos.find(a => a.order === onlinePlayerViewModel.selectedVideo);
 
                             player.stop();
-                            setVideoSource(video[_page.videoQuality]);
+                            setVideoSource(video[onlinePlayerViewModel.videoQuality]);
                             if (player.start) player.start();
 
                             localStorage.setVideoQuality(2);
@@ -696,15 +663,15 @@ Page {
                         width: 60
                         visible: player.duration > 0
                         text: "720p"
-                        isChecked: _page.videoQuality === `hd`
+                        isChecked: onlinePlayerViewModel.videoQuality === `hd`
                         onButtonClicked: {
-                            _page.videoQuality = `hd`;
+                            onlinePlayerViewModel.videoQuality = `hd`;
                             _page.restorePosition = player.position;
 
-                            const video = _page.releaseVideos.find(a => a.order === _page.selectedVideo);
+                            const video = _page.releaseVideos.find(a => a.order === onlinePlayerViewModel.selectedVideo);
 
                             player.stop();
-                            setVideoSource(video[_page.videoQuality]);
+                            setVideoSource(video[onlinePlayerViewModel.videoQuality]);
                             if (player.start) player.start();
 
                             localStorage.setVideoQuality(1);
@@ -715,15 +682,15 @@ Page {
                         width: 60
                         visible: player.duration > 0
                         text: "480p"
-                        isChecked: _page.videoQuality === `sd`
+                        isChecked: onlinePlayerViewModel.videoQuality === `sd`
                         onButtonClicked: {
-                            _page.videoQuality = `sd`;
+                            onlinePlayerViewModel.videoQuality = `sd`;
                             _page.restorePosition = player.position;
 
-                            const video = _page.releaseVideos.find(a => a.order === _page.selectedVideo);
+                            const video = _page.releaseVideos.find(a => a.order === onlinePlayerViewModel.selectedVideo);
 
                             player.stop();
-                            setVideoSource(video[_page.videoQuality]);
+                            setVideoSource(video[onlinePlayerViewModel.videoQuality]);
                             if (player.start) player.start();
 
                             localStorage.setVideoQuality(0);
@@ -745,7 +712,7 @@ Page {
                         width: 40
                         visible: player.duration > 0
                         text: "x0.25"
-                        isChecked: _page.videoSpeed === 0.25
+                        isChecked: onlinePlayerViewModel.playbackRate === 0.25
                         onButtonClicked: {
                             setVideoSpeed(0.25)
                         }
@@ -755,7 +722,7 @@ Page {
                         width: 40
                         visible: player.duration > 0
                         text: "x0.5"
-                        isChecked: _page.videoSpeed === 0.5
+                        isChecked: onlinePlayerViewModel.playbackRate === 0.5
                         onButtonClicked: {
                             setVideoSpeed(0.5);
                         }
@@ -765,7 +732,7 @@ Page {
                         width: 40
                         visible: player.duration > 0
                         text: "x0.75"
-                        isChecked: _page.videoSpeed === 0.75
+                        isChecked: onlinePlayerViewModel.playbackRate === 0.75
                         onButtonClicked: {
                             setVideoSpeed(0.75);
                         }
@@ -775,7 +742,7 @@ Page {
                         width: 40
                         visible: player.duration > 0
                         text: "x1"
-                        isChecked: _page.videoSpeed === 1
+                        isChecked: onlinePlayerViewModel.playbackRate === 1
                         onButtonClicked: {
                             setVideoSpeed(1);
                         }
@@ -785,7 +752,7 @@ Page {
                         width: 40
                         visible: player.duration > 0
                         text: "x1.25"
-                        isChecked: _page.videoSpeed === 1.1
+                        isChecked: onlinePlayerViewModel.playbackRate === 1.1
                         onButtonClicked: {
                             setVideoSpeed(1.1);
                         }
@@ -795,7 +762,7 @@ Page {
                         width: 40
                         visible: player.duration > 0
                         text: "x1.5"
-                        isChecked: _page.videoSpeed === 1.2
+                        isChecked: onlinePlayerViewModel.playbackRate === 1.2
                         onButtonClicked: {
                             setVideoSpeed(1.2);
                         }
@@ -805,7 +772,7 @@ Page {
                         width: 40
                         visible: player.duration > 0
                         text: "x1.75"
-                        isChecked: _page.videoSpeed === 1.3
+                        isChecked: onlinePlayerViewModel.playbackRate === 1.3
                         onButtonClicked: {
                             setVideoSpeed(1.3);
                         }
@@ -815,7 +782,7 @@ Page {
                         width: 40
                         visible: player.duration > 0
                         text: "x2"
-                        isChecked: _page.videoSpeed === 1.5
+                        isChecked: onlinePlayerViewModel.playbackRate === 1.5
                         onButtonClicked: {
                             setVideoSpeed(1.5);
                         }
@@ -825,7 +792,7 @@ Page {
                         width: 40
                         visible: player.duration > 0
                         text: "x3"
-                        isChecked: _page.videoSpeed === 2
+                        isChecked: onlinePlayerViewModel.playbackRate === 2
                         onButtonClicked: {
                             setVideoSpeed(2);
                         }
@@ -836,7 +803,7 @@ Page {
                     height: 20
                     anchors.right: parent.right
                     anchors.rightMargin: 4
-                    text: _page.displayEndVideoPosition
+                    text: onlinePlayerViewModel.displayEndVideoPosition
                     fontPointSize: 10
                 }
             }
@@ -1166,7 +1133,7 @@ Page {
                                             }
                                         }
                                         onActivated: {
-                                            localStorage.setJumpMinute(_page.jumpMinutes[index]);
+                                            localStorage.setJumpMinute(onlinePlayerViewModel.jumpMinutes[index]);
                                         }
                                     }
                                     CommonComboBox {
@@ -1197,7 +1164,7 @@ Page {
                                         }
 
                                         onActivated: {
-                                            localStorage.setJumpSecond(_page.jumpSeconds[index]);
+                                            localStorage.setJumpSecond(onlinePlayerViewModel.jumpSeconds[index]);
                                         }
                                     }
                                 }
@@ -1284,7 +1251,7 @@ Page {
                         iconWidth: 29
                         iconHeight: 29
                         onButtonPressed: {
-                            toggleFullScreen();
+                            onlinePlayerViewModel.toggleFullScreen();
                         }
 
                         ToolTip.delay: 1000
@@ -1319,7 +1286,7 @@ Page {
         radius: 12
         Image {
             anchors.centerIn: parent
-            source: _page.releasePoster
+            source: onlinePlayerViewModel.releasePoster
             fillMode: Image.PreserveAspectCrop
             width: 180
             height: 270
@@ -1336,7 +1303,7 @@ Page {
         color: "white"
         radius: 20
         opacity: 0.8
-        visible: _page.isBuffering
+        visible: onlinePlayerViewModel.isBuffering
         anchors.centerIn: parent
         AnimatedImage {
             id: spinner
@@ -1349,7 +1316,7 @@ Page {
 
     function setReleasePoster(poster, releaseId) {
         let posterPath = poster ? localStorage.getReleasePosterPath(releaseId, poster) : '../Assets/Icons/donate.jpg';
-        _page.releasePoster = posterPath;
+        onlinePlayerViewModel.releasePoster = posterPath;
     }
 
     function getReleaseSeens(releaseId) {
@@ -1364,19 +1331,19 @@ Page {
     }
 
     function checkExistingVideoQuality(video) {
-        if (video[_page.videoQuality]) {
-            return video[_page.videoQuality];
+        if (video[onlinePlayerViewModel.videoQuality]) {
+            return video[onlinePlayerViewModel.videoQuality];
         } else {
             if (`sd` in video) {
-                _page.videoQuality = `sd`;
+                onlinePlayerViewModel.videoQuality = `sd`;
                 return video['sd'];
             }
             if (`hd` in video) {
-                _page.videoQuality = `hd`;
+                onlinePlayerViewModel.videoQuality = `hd`;
                 return video['hd'];
             }
             if (`fullhd` in video) {
-                _page.videoQuality = `fullhd`;
+                onlinePlayerViewModel.videoQuality = `fullhd`;
                 return video['fullhd'];
             }
 
@@ -1389,7 +1356,7 @@ Page {
 
         for (const releaseVideo of _page.releaseVideos) {
             if (releaseVideo.isGroup) continue;
-            if (releaseVideo.releaseId === _page.selectedRelease && releaseVideo.order === _page.selectedVideo) break;
+            if (releaseVideo.releaseId === _page.selectedRelease && releaseVideo.order === onlinePlayerViewModel.selectedVideo) break;
 
             if (!(releaseVideo.releaseId in _page.seenMarks && releaseVideo.order in _page.seenMarks[releaseVideo.releaseId])) lastNotSeenVideo = releaseVideo;
         }
@@ -1398,38 +1365,38 @@ Page {
     }
 
     function previousVideo() {
-        if (_page.selectedVideo === 0) return;
+        if (onlinePlayerViewModel.selectedVideo === 0) return;
         _page.restorePosition = 0;
 
         let video;
 
-        if (_page.isCinemahall) {
+        if (onlinePlayerViewModel.isCinemahall) {
             const previousVideo = previousNotSeenVideo();
             if (previousVideo) {
-                _page.selectedVideo = previousVideo.order;
+                onlinePlayerViewModel.selectedVideo = previousVideo.order;
                 video = previousVideo;
             } else {
                 return;
             }
 
         } else {
-            _page.selectedVideo--;
-            video = _page.releaseVideos[_page.selectedVideo];
+            onlinePlayerViewModel.selectedVideo--;
+            video = _page.releaseVideos[onlinePlayerViewModel.selectedVideo];
         }
 
-        _page.isFullHdAllowed = "fullhd" in video;
-        _page.releasePoster = video.releasePoster;
+        onlinePlayerViewModel.isFullHdAllowed = "fullhd" in video;
+        onlinePlayerViewModel.releasePoster = video.releasePoster;
         _page.selectedRelease = video.releaseId;
 
         setVideoSource(checkExistingVideoQuality(video));
 
-        if (!_page.isCinemahall) setSerieScrollPosition();
+        if (!onlinePlayerViewModel.isCinemahall) setSerieScrollPosition();
     }
 
     function nextNotSeenVideo() {
         var beforeCurrent = true;
         for (const releaseVideo of _page.releaseVideos) {
-            if (releaseVideo.releaseId === _page.selectedRelease && releaseVideo.order <= _page.selectedVideo) {
+            if (releaseVideo.releaseId === _page.selectedRelease && releaseVideo.order <= onlinePlayerViewModel.selectedVideo) {
                 beforeCurrent = false;
                 continue;
             }
@@ -1445,12 +1412,12 @@ Page {
     }
 
     function setVideoSource(source) {
-        _page.videoSource = source;
+        onlinePlayerViewModel.videoSource = source;
         remotePlayer.broadcastCommand(_page.videoSourceChangedCommand, source);
     }
 
     function setVideoSpeed(videoSpeed) {
-        _page.videoSpeed = videoSpeed;
+        onlinePlayerViewModel.playbackRate = videoSpeed;
         remotePlayer.broadcastCommand(_page.videoPlaybackRateCommand, videoSpeed);
     }
 
@@ -1458,52 +1425,41 @@ Page {
         _page.restorePosition = 0;
         let video;
 
-        if (_page.isCinemahall) {
+        if (onlinePlayerViewModel.isCinemahall) {
             const nextVideo = nextNotSeenVideo();
             if (nextVideo) {
-                _page.selectedVideo = nextVideo.order;
+                onlinePlayerViewModel.selectedVideo = nextVideo.order;
                 video = nextVideo;
             } else {
                 return;
             }
         } else {
-            if (_page.selectedVideo === _page.releaseVideos.length - 1) return;
+            if (onlinePlayerViewModel.selectedVideo === _page.releaseVideos.length - 1) return;
 
-            _page.selectedVideo++;
-            video = _page.releaseVideos[_page.selectedVideo];
+            onlinePlayerViewModel.selectedVideo++;
+            video = _page.releaseVideos[onlinePlayerViewModel.selectedVideo];
         }
 
-        _page.isFullHdAllowed = "fullhd" in video;
-        _page.releasePoster = video.releasePoster;
+        onlinePlayerViewModel.isFullHdAllowed = "fullhd" in video;
+        onlinePlayerViewModel.releasePoster = video.releasePoster;
         _page.selectedRelease = video.releaseId;
 
         setVideoSource(checkExistingVideoQuality(video));
 
-        if (!_page.isCinemahall) setSerieScrollPosition();
+        if (!onlinePlayerViewModel.isCinemahall) setSerieScrollPosition();
     }
 
     function setSerieScrollPosition() {
-        let newPosition = _page.selectedVideo * 40 - serieScrollContainer.height;
+        let newPosition = onlinePlayerViewModel.selectedVideo * 40 - serieScrollContainer.height;
         newPosition += 40;
         if (newPosition < 0) newPosition = 0;
         serieScrollContainer.contentY = newPosition;
     }
 
-    function toggleFullScreen() {
-        isFullScreen = !isFullScreen;
-        changeFullScreenMode(isFullScreen);
-    }
-
-    function disableFullScreen() {
-        if (!isFullScreen) return;
-        isFullScreen = false;
-        changeFullScreenMode(isFullScreen);
-    }
-
     function refreshSeenMarks() {
         let releaseIds = [];
 
-        if (_page.isCinemahall) {
+        if (onlinePlayerViewModel.isCinemahall) {
             releaseIds = _page.cinemahallReleases.map(a => a.id);
         } else {
             releaseIds.push(_page.setReleaseParameters.releaseId);
@@ -1513,8 +1469,8 @@ Page {
     }
 
     function jumpInPlayer(direction){
-        const minutes = _page.jumpMinutes[jumpMinuteComboBox.currentIndex];
-        const seconds = _page.jumpSeconds[jumpSecondComboBox.currentIndex];
+        const minutes = onlinePlayerViewModel.jumpMinutes[jumpMinuteComboBox.currentIndex];
+        const seconds = onlinePlayerViewModel.jumpSeconds[jumpSecondComboBox.currentIndex];
         const jumpvalue = (minutes * 60 + seconds) * 1000;
         let seekPosition = player.position + (direction ? -jumpvalue : jumpvalue);
         if (seekPosition < 0) seekPosition = 80;

@@ -26,6 +26,7 @@ import QtQuick.Dialogs 1.2
 import Anilibria.Services 1.0
 import Anilibria.RemotePlayer 1.0
 import Anilibria.ListModels 1.0
+import Anilibria.ViewModels 1.0
 import "Views"
 import "Controls"
 import "Theme"
@@ -783,16 +784,21 @@ ApplicationWindow {
         }
     }
 
-    OnlinePlayer {
-        id: videoplayer
-        visible: false
-        onChangeFullScreenMode: {
-            if (fullScreen) {
+    OnlinePlayerViewModel {
+        id: onlinePlayerViewModel
+
+        onIsFullScreenChanged: {
+            if (isFullScreen) {
                 window.showFullScreen();
             } else {
                 window.showNormal();
             }
         }
+    }
+
+    OnlinePlayer {
+        id: videoplayer
+        visible: false
         onReturnToReleasesPage: {
             window.showPage("release");
         }
@@ -813,7 +819,6 @@ ApplicationWindow {
             videoplayer.setReleaseVideo();
         }
         onWatchCinemahall: {
-            videoplayer.isCinemahall = true; //WORKAROUND: for reset state based on single release
             window.showPage("videoplayer");
             videoplayer.setCinemahallVideo();
         }
@@ -847,7 +852,6 @@ ApplicationWindow {
         id: cinemahall
         visible: false
         onWatchCinemahall: {
-            videoplayer.isCinemahall = true; //WORKAROUND: for reset state based on single release
             window.showPage("videoplayer");
             videoplayer.setCinemahallVideo();
         }

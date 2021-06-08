@@ -1,3 +1,21 @@
+/*
+    AniLibria - desktop client for the website anilibria.tv
+    Copyright (C) 2021 Roman Vladimirov
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
 import QtQuick 2.12
 import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.3
@@ -118,25 +136,6 @@ Page {
                 Layout.preferredHeight: 45
                 height: 45
                 color: ApplicationTheme.pageUpperPanel
-
-                /*Switch {
-                    id: selectMode
-                    anchors.left: parent.left
-                    onCheckedChanged: {
-                        root.selectedItems = {};
-                    }
-                    ToolTip.delay: 1000
-                    ToolTip.visible: selectMode.hovered
-                    ToolTip.text: "Данный переключатель влияет на поведение при клике ЛКМ на связанных релизах в списке\nРежим выбора позволяет выбрать несколько связанных релизов и выполнять действия(например добавление в избранное) сразу в группе"
-                }*/
-
-                /*PlainText {
-                    anchors.verticalCenter: parent.verticalCenter
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    visible: downloadManager.running
-                    fontPointSize: 12
-                    text: "Выполняется скачивание, скорость " + downloadManager.displayBytesInSeconds + " скачано " + Math.floor(downloadManager.progress) + "%"
-                }*/
             }
 
             ListView {
