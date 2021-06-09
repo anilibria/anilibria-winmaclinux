@@ -41,6 +41,8 @@ class OnlinePlayerViewModel : public QObject
     Q_PROPERTY(bool isFullHdAllowed READ isFullHdAllowed WRITE setIsFullHdAllowed NOTIFY isFullHdAllowedChanged)
     Q_PROPERTY(int selectedVideo READ selectedVideo WRITE setSelectedVideo NOTIFY selectedVideoChanged)
     Q_PROPERTY(int positionIterator READ positionIterator WRITE setPositionIterator NOTIFY positionIteratorChanged)
+    Q_PROPERTY(int lastMovedPosition READ lastMovedPosition WRITE setLastMovedPosition NOTIFY lastMovedPositionChanged)
+    Q_PROPERTY(int restorePosition READ restorePosition WRITE setRestorePosition NOTIFY restorePositionChanged)
 
 private:
     bool m_isFullScreen;
@@ -58,6 +60,8 @@ private:
     bool m_isFullHdAllowed;
     int m_selectedVideo;
     int m_positionIterator;
+    int m_lastMovedPosition;
+    int m_restorePosition;
 
 public:
     explicit OnlinePlayerViewModel(QObject *parent = nullptr);
@@ -104,6 +108,12 @@ public:
     int positionIterator() const { return m_positionIterator; }
     void setPositionIterator(int positionIterator) noexcept;
 
+    int lastMovedPosition() const { return m_lastMovedPosition; }
+    void setLastMovedPosition(int lastMovedPosition) noexcept;
+
+    int restorePosition() const { return m_restorePosition; }
+    void setRestorePosition(int restorePosition) noexcept;
+
     Q_INVOKABLE void toggleFullScreen();
     Q_INVOKABLE void changeVideoPosition(int duration, int position) noexcept;
     Q_INVOKABLE QString checkExistingVideoQuality(int index);
@@ -128,6 +138,8 @@ signals:
     void isFullHdAllowedChanged();
     void selectedVideoChanged();
     void positionIteratorChanged();
+    void lastMovedPositionChanged();
+    void restorePositionChanged();
 
 };
 

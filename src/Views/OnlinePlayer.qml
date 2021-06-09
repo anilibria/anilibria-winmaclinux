@@ -28,10 +28,7 @@ Page {
     id: _page
     property int selectedRelease: -1
     property var releaseVideos: []
-    property real lastMovedPosition: 0
-    property real restorePosition: 0
     property var setReleaseParameters: ({})
-    property int positionIterator: 0
     property var seenVideo: ({})
     property var seenMarks: ({})
     property var ports: [12345, 34560, 52354, 67289]
@@ -402,9 +399,9 @@ Page {
 
             if (status === MediaPlayer.Buffered) {                
                 onlinePlayerViewModel.isBuffering = false;
-                if (_page.restorePosition > 0){
-                    player.seek(_page.restorePosition);
-                    if (player.position >= _page.restorePosition) _page.restorePosition = 0;
+                if (onlinePlayerViewModel.restorePosition > 0){
+                    player.seek(onlinePlayerViewModel.restorePosition);
+                    if (player.position >= onlinePlayerViewModel.restorePosition) onlinePlayerViewModel.restorePosition = 0;
                 } else if (_page.seenVideo.id && _page.seenVideo.videoPosition) {
                     player.seek(_page.seenVideo.videoPosition);
                     _page.seenVideo.videoPosition = 0;
@@ -413,14 +410,14 @@ Page {
         }
 
         onPositionChanged: {
-            if (!playerLocation.pressed && _page.lastMovedPosition === 0) playerLocation.value = position;
+            if (!playerLocation.pressed && onlinePlayerViewModel.lastMovedPosition === 0) playerLocation.value = position;
 
             onlinePlayerViewModel.changeVideoPosition(duration, position);
 
-            if (_page.positionIterator < 20) _page.positionIterator++;
+            if (onlinePlayerViewModel.positionIterator < 20) onlinePlayerViewModel.positionIterator++;
 
-            if (_page.positionIterator >= 20) {
-                _page.positionIterator = 0;
+            if (onlinePlayerViewModel.positionIterator >= 20) {
+                onlinePlayerViewModel.positionIterator = 0;
                 localStorage.setVideoSeens(_page.selectedRelease, onlinePlayerViewModel.selectedVideo, position);
             }
 
@@ -607,16 +604,16 @@ Page {
                 value: 1
                 to: player.duration
                 onPressedChanged: {
-                    if (!pressed && _page.lastMovedPosition > 0) {
-                        player.seek(_page.lastMovedPosition);
-                        remotePlayer.broadcastCommand(_page.videoPositionChangedCommand, _page.lastMovedPosition.toString() + `/` + player.duration.toString());
-                        _page.lastMovedPosition = 0;
+                    if (!pressed && onlinePlayerViewModel.lastMovedPosition > 0) {
+                        player.seek(onlinePlayerViewModel.lastMovedPosition);
+                        remotePlayer.broadcastCommand(_page.videoPositionChangedCommand, onlinePlayerViewModel.lastMovedPosition.toString() + `/` + player.duration.toString());
+                        onlinePlayerViewModel.lastMovedPosition = 0;
                     }
                     controlPanel.forceActiveFocus();
                 }
 
                 onMoved: {
-                    if (pressed) _page.lastMovedPosition = value;
+                    if (pressed) onlinePlayerViewModel.lastMovedPosition = value;
                 }
             }
 
@@ -647,7 +644,7 @@ Page {
                         isChecked: onlinePlayerViewModel.videoQuality === `fullhd`
                         onButtonClicked: {
                             onlinePlayerViewModel.videoQuality = `fullhd`;
-                            _page.restorePosition = player.position;
+                            onlinePlayerViewModel.restorePosition = player.position;
 
                             const video = _page.releaseVideos.find(a => a.order === onlinePlayerViewModel.selectedVideo);
 
@@ -666,7 +663,7 @@ Page {
                         isChecked: onlinePlayerViewModel.videoQuality === `hd`
                         onButtonClicked: {
                             onlinePlayerViewModel.videoQuality = `hd`;
-                            _page.restorePosition = player.position;
+                            onlinePlayerViewModel.restorePosition = player.position;
 
                             const video = _page.releaseVideos.find(a => a.order === onlinePlayerViewModel.selectedVideo);
 
@@ -685,7 +682,7 @@ Page {
                         isChecked: onlinePlayerViewModel.videoQuality === `sd`
                         onButtonClicked: {
                             onlinePlayerViewModel.videoQuality = `sd`;
-                            _page.restorePosition = player.position;
+                            onlinePlayerViewModel.restorePosition = player.position;
 
                             const video = _page.releaseVideos.find(a => a.order === onlinePlayerViewModel.selectedVideo);
 
@@ -1366,7 +1363,7 @@ Page {
 
     function previousVideo() {
         if (onlinePlayerViewModel.selectedVideo === 0) return;
-        _page.restorePosition = 0;
+        onlinePlayerViewModel.restorePosition = 0;
 
         let video;
 
@@ -1422,7 +1419,7 @@ Page {
     }
 
     function nextVideo() {
-        _page.restorePosition = 0;
+        onlinePlayerViewModel.restorePosition = 0;
         let video;
 
         if (onlinePlayerViewModel.isCinemahall) {

@@ -33,7 +33,9 @@ OnlinePlayerViewModel::OnlinePlayerViewModel(QObject *parent) : QObject(parent),
     m_releasePoster(""),
     m_isFullHdAllowed(false),
     m_selectedVideo(0),
-    m_positionIterator(0)
+    m_positionIterator(0),
+    m_lastMovedPosition(0),
+    m_restorePosition(0)
 {
     m_jumpMinutes->append(0);
     m_jumpMinutes->append(1);
@@ -142,6 +144,22 @@ void OnlinePlayerViewModel::setPositionIterator(int positionIterator) noexcept
 
     m_positionIterator = positionIterator;
     emit positionIteratorChanged();
+}
+
+void OnlinePlayerViewModel::setLastMovedPosition(int lastMovedPosition) noexcept
+{
+    if (m_lastMovedPosition == lastMovedPosition) return;
+
+    m_lastMovedPosition = lastMovedPosition;
+    emit lastMovedPositionChanged();
+}
+
+void OnlinePlayerViewModel::setRestorePosition(int restorePosition) noexcept
+{
+    if (m_restorePosition == restorePosition) return;
+
+    m_restorePosition = restorePosition;
+    emit restorePositionChanged();
 }
 
 void OnlinePlayerViewModel::toggleFullScreen()
