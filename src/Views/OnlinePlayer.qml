@@ -26,13 +26,10 @@ import "../Theme"
 
 Page {
     id: _page
-    property int selectedRelease: -1
     property var releaseVideos: []
     property var setReleaseParameters: ({})
     property var seenVideo: ({})
     property var seenMarks: ({})
-    property var ports: [12345, 34560, 52354, 67289]
-    property real lastMouseYPosition: 0
     property var cinemahallReleases: []
     property string videoSourceChangedCommand: `videosourcechanged`
     property string videoPositionChangedCommand: `positionchanged`
@@ -115,7 +112,7 @@ Page {
         sendVolumeToRemoteSwitch.checked = applicationSettings.sendVolumeToRemote;
         sendPlaybackToRemoteSwitch.checked = applicationSettings.sendPlaybackToRemote;
         remotePlayer.port = applicationSettings.remotePort;
-        remotePlayerPortComboBox.currentIndex = ports.indexOf(applicationSettings.remotePort);
+        remotePlayerPortComboBox.currentIndex = onlinePlayerViewModel.ports.indexOf(applicationSettings.remotePort);
 
         if (autoTopMost.checked && player.playbackState === MediaPlayer.PlayingState) windowSettings.setStayOnTop();
         switch (userSettings.quality) {
@@ -153,7 +150,7 @@ Page {
         const seenJson = localStorage.getVideoSeen(_page.setReleaseParameters.releaseId);
         _page.seenVideo = {};
         if (seenJson) _page.seenVideo = JSON.parse(seenJson);
-        _page.selectedRelease = _page.setReleaseParameters.releaseId;
+        onlinePlayerViewModel.selectedRelease = _page.setReleaseParameters.releaseId;
 
         const release = JSON.parse(localStorage.getRelease(_page.setReleaseParameters.releaseId));
         onlinePlayerViewModel.releasePoster = release.poster;
@@ -261,7 +258,7 @@ Page {
         );
 
         if (firstVideo) {
-            _page.selectedRelease = firstVideo.releaseId;
+            onlinePlayerViewModel.selectedRelease = firstVideo.releaseId;
             setReleasePoster(firstVideo.releasePoster, firstVideo.releaseId);
 
             onlinePlayerViewModel.selectedVideo = firstVideo.order;
@@ -343,7 +340,7 @@ Page {
             _page.setControlVisible(true);
             const x = mouse.x;
             const y = mouse.y;
-            _page.lastMouseYPosition = y;
+            onlinePlayerViewModel.lastMouseYPosition = y;
             if (y > _page.height - controlPanel.height) {
                 playerTimer.stop();
             } else {
@@ -351,7 +348,7 @@ Page {
             }
         }
         onExited: {
-            if (_page.height - _page.lastMouseYPosition < 10) if (!playerTimer.running) playerTimer.restart();
+            if (_page.height - onlinePlayerViewModel.lastMouseYPosition < 10) if (!playerTimer.running) playerTimer.restart();
         }
     }
 
@@ -418,18 +415,18 @@ Page {
 
             if (onlinePlayerViewModel.positionIterator >= 20) {
                 onlinePlayerViewModel.positionIterator = 0;
-                localStorage.setVideoSeens(_page.selectedRelease, onlinePlayerViewModel.selectedVideo, position);
+                localStorage.setVideoSeens(onlinePlayerViewModel.selectedRelease, onlinePlayerViewModel.selectedVideo, position);
             }
 
-            if (!(_page.selectedRelease in _page.seenMarks && onlinePlayerViewModel.selectedVideo in _page.seenMarks[_page.selectedRelease])) {
+            if (!(onlinePlayerViewModel.selectedRelease in _page.seenMarks && onlinePlayerViewModel.selectedVideo in _page.seenMarks[onlinePlayerViewModel.selectedRelease])) {
                 if (duration > 0 && position > 0) {
                     const positionPercent = position / duration * 100;
                     if (positionPercent >= 90) {
-                        let seenMarks = getReleaseSeens(_page.selectedRelease);
+                        let seenMarks = getReleaseSeens(onlinePlayerViewModel.selectedRelease);
                         seenMarks[onlinePlayerViewModel.selectedVideo] = true;
                         const obj = _page.seenMarks;
                         _page.seenMarks = obj;
-                        localStorage.setSeenMark(_page.selectedRelease, onlinePlayerViewModel.selectedVideo, true);
+                        localStorage.setSeenMark(onlinePlayerViewModel.selectedRelease, onlinePlayerViewModel.selectedVideo, true);
                     }
                 }
             }
@@ -463,7 +460,7 @@ Page {
                         Rectangle {
                             height:  modelData.isGroup ? 70 : 40
                             width: seriesPopup.width
-                            color: onlinePlayerViewModel.selectedVideo === modelData.order && _page.selectedRelease === modelData.releaseId ? ApplicationTheme.playlistSelectedBackground : ApplicationTheme.playlistBackground
+                            color: onlinePlayerViewModel.selectedVideo === modelData.order && onlinePlayerViewModel.selectedRelease === modelData.releaseId ? ApplicationTheme.playlistSelectedBackground : ApplicationTheme.playlistBackground
                             MouseArea {
                                 anchors.fill: parent
                                 hoverEnabled: true
@@ -476,14 +473,14 @@ Page {
                                     onlinePlayerViewModel.selectedVideo = modelData.order;
                                     onlinePlayerViewModel.isFullHdAllowed = "fullhd" in modelData;
                                     setVideoSource(modelData[onlinePlayerViewModel.videoQuality]);
-                                    _page.selectedRelease = modelData.releaseId;
+                                    onlinePlayerViewModel.selectedRelease = modelData.releaseId;
                                     setReleasePoster(modelData.releasePoster, modelData.releaseId);
                                     player.play();
                                 }
                             }
                             Text {
                                 visible: !modelData.isGroup
-                                color: onlinePlayerViewModel.selectedVideo === modelData.order && _page.selectedRelease === modelData.releaseId ? ApplicationTheme.playlistSelectedText : ApplicationTheme.playlistText
+                                color: onlinePlayerViewModel.selectedVideo === modelData.order && onlinePlayerViewModel.selectedRelease === modelData.releaseId ? ApplicationTheme.playlistSelectedText : ApplicationTheme.playlistText
                                 anchors.verticalCenter: parent.verticalCenter
                                 anchors.left: parent.left
                                 anchors.leftMargin: 10
@@ -498,7 +495,7 @@ Page {
 
                                 Text {
                                     visible: modelData.isGroup
-                                    color: onlinePlayerViewModel.selectedVideo === modelData.order && _page.selectedRelease === modelData.releaseId ? ApplicationTheme.playlistSelectedText : ApplicationTheme.playlistText
+                                    color: onlinePlayerViewModel.selectedVideo === modelData.order && onlinePlayerViewModel.selectedRelease === modelData.releaseId ? ApplicationTheme.playlistSelectedText : ApplicationTheme.playlistText
                                     text: modelData.title
                                     width: parent.width
                                     anchors.verticalCenter: parent.verticalCenter
@@ -1353,7 +1350,7 @@ Page {
 
         for (const releaseVideo of _page.releaseVideos) {
             if (releaseVideo.isGroup) continue;
-            if (releaseVideo.releaseId === _page.selectedRelease && releaseVideo.order === onlinePlayerViewModel.selectedVideo) break;
+            if (releaseVideo.releaseId === onlinePlayerViewModel.selectedRelease && releaseVideo.order === onlinePlayerViewModel.selectedVideo) break;
 
             if (!(releaseVideo.releaseId in _page.seenMarks && releaseVideo.order in _page.seenMarks[releaseVideo.releaseId])) lastNotSeenVideo = releaseVideo;
         }
@@ -1383,7 +1380,7 @@ Page {
 
         onlinePlayerViewModel.isFullHdAllowed = "fullhd" in video;
         onlinePlayerViewModel.releasePoster = video.releasePoster;
-        _page.selectedRelease = video.releaseId;
+        onlinePlayerViewModel.selectedRelease = video.releaseId;
 
         setVideoSource(checkExistingVideoQuality(video));
 
@@ -1393,7 +1390,7 @@ Page {
     function nextNotSeenVideo() {
         var beforeCurrent = true;
         for (const releaseVideo of _page.releaseVideos) {
-            if (releaseVideo.releaseId === _page.selectedRelease && releaseVideo.order <= onlinePlayerViewModel.selectedVideo) {
+            if (releaseVideo.releaseId === onlinePlayerViewModel.selectedRelease && releaseVideo.order <= onlinePlayerViewModel.selectedVideo) {
                 beforeCurrent = false;
                 continue;
             }
@@ -1439,7 +1436,7 @@ Page {
 
         onlinePlayerViewModel.isFullHdAllowed = "fullhd" in video;
         onlinePlayerViewModel.releasePoster = video.releasePoster;
-        _page.selectedRelease = video.releaseId;
+        onlinePlayerViewModel.selectedRelease = video.releaseId;
 
         setVideoSource(checkExistingVideoQuality(video));
 

@@ -35,7 +35,10 @@ OnlinePlayerViewModel::OnlinePlayerViewModel(QObject *parent) : QObject(parent),
     m_selectedVideo(0),
     m_positionIterator(0),
     m_lastMovedPosition(0),
-    m_restorePosition(0)
+    m_restorePosition(0),
+    m_lastMouseYPosition(0),
+    m_selectedRelease(-1),
+    m_ports(new QList<int>())
 {
     m_jumpMinutes->append(0);
     m_jumpMinutes->append(1);
@@ -48,6 +51,11 @@ OnlinePlayerViewModel::OnlinePlayerViewModel(QObject *parent) : QObject(parent),
     m_jumpSeconds->append(20);
     m_jumpSeconds->append(25);
     m_jumpSeconds->append(30);
+
+    m_ports->append(12345);
+    m_ports->append(34560);
+    m_ports->append(52354);
+    m_ports->append(67289);
 }
 
 void OnlinePlayerViewModel::setIsFullScreen(bool isFullScreen) noexcept
@@ -160,6 +168,22 @@ void OnlinePlayerViewModel::setRestorePosition(int restorePosition) noexcept
 
     m_restorePosition = restorePosition;
     emit restorePositionChanged();
+}
+
+void OnlinePlayerViewModel::setLastMouseYPosition(int lastMouseYPosition) noexcept
+{
+    if (m_lastMouseYPosition == lastMouseYPosition) return;
+
+    m_lastMouseYPosition = lastMouseYPosition;
+    emit lastMouseYPositionChanged();
+}
+
+void OnlinePlayerViewModel::setSelectedRelease(int selectedRelease) noexcept
+{
+    if (m_selectedRelease == selectedRelease) return;
+
+    m_selectedRelease = selectedRelease;
+    emit selectedReleaseChanged();
 }
 
 void OnlinePlayerViewModel::toggleFullScreen()

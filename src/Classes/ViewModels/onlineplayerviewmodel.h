@@ -43,6 +43,9 @@ class OnlinePlayerViewModel : public QObject
     Q_PROPERTY(int positionIterator READ positionIterator WRITE setPositionIterator NOTIFY positionIteratorChanged)
     Q_PROPERTY(int lastMovedPosition READ lastMovedPosition WRITE setLastMovedPosition NOTIFY lastMovedPositionChanged)
     Q_PROPERTY(int restorePosition READ restorePosition WRITE setRestorePosition NOTIFY restorePositionChanged)
+    Q_PROPERTY(int lastMouseYPosition READ lastMouseYPosition WRITE setLastMouseYPosition NOTIFY lastMouseYPositionChanged)
+    Q_PROPERTY(int selectedRelease READ selectedRelease WRITE setSelectedRelease NOTIFY selectedReleaseChanged)
+    Q_PROPERTY(QList<int> ports READ ports NOTIFY portsChanged)
 
 private:
     bool m_isFullScreen;
@@ -62,6 +65,9 @@ private:
     int m_positionIterator;
     int m_lastMovedPosition;
     int m_restorePosition;
+    int m_lastMouseYPosition;
+    int m_selectedRelease;
+    QList<int>* m_ports;
 
 public:
     explicit OnlinePlayerViewModel(QObject *parent = nullptr);
@@ -114,6 +120,14 @@ public:
     int restorePosition() const { return m_restorePosition; }
     void setRestorePosition(int restorePosition) noexcept;
 
+    int lastMouseYPosition() const { return m_lastMouseYPosition; }
+    void setLastMouseYPosition(int lastMouseYPosition) noexcept;
+
+    int selectedRelease() const { return m_selectedRelease; }
+    void setSelectedRelease(int selectedRelease) noexcept;
+
+    QList<int> ports() const { return *m_ports; }
+
     Q_INVOKABLE void toggleFullScreen();
     Q_INVOKABLE void changeVideoPosition(int duration, int position) noexcept;
     Q_INVOKABLE QString checkExistingVideoQuality(int index);
@@ -140,6 +154,9 @@ signals:
     void positionIteratorChanged();
     void lastMovedPositionChanged();
     void restorePositionChanged();
+    void lastMouseYPositionChanged();
+    void selectedReleaseChanged();
+    void portsChanged();
 
 };
 
