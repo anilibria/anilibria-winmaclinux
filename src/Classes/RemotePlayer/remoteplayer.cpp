@@ -62,6 +62,8 @@ void RemotePlayer::stopServer() noexcept
 
 void RemotePlayer::broadcastCommand(const QString& command, const QString& argument)
 {
+    if (!m_Started) return;
+
     auto message = argument == nullptr || argument.isEmpty() ? command : command + "::" + argument;
     foreach(RemotePlayerTransport* connectionItem, *m_Connections) {
         connectionItem->sendMessage(message);

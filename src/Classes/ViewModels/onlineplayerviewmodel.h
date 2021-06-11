@@ -21,6 +21,7 @@
 
 #include <QObject>
 #include "../ListModels/onlineplayervideolist.h"
+#include "../RemotePlayer/remoteplayer.h"
 
 class OnlinePlayerViewModel : public QObject
 {
@@ -46,6 +47,7 @@ class OnlinePlayerViewModel : public QObject
     Q_PROPERTY(int lastMouseYPosition READ lastMouseYPosition WRITE setLastMouseYPosition NOTIFY lastMouseYPositionChanged)
     Q_PROPERTY(int selectedRelease READ selectedRelease WRITE setSelectedRelease NOTIFY selectedReleaseChanged)
     Q_PROPERTY(QList<int> ports READ ports NOTIFY portsChanged)
+    Q_PROPERTY(RemotePlayer remotePlayer READ remotePlayer NOTIFY remotePlayerChanged)
 
 private:
     bool m_isFullScreen;
@@ -68,6 +70,9 @@ private:
     int m_lastMouseYPosition;
     int m_selectedRelease;
     QList<int>* m_ports;
+    RemotePlayer* m_remotePlayer;
+    QString m_videoSourceChangedCommand;
+    QString m_videoPlaybackRateCommand;
 
 public:
     explicit OnlinePlayerViewModel(QObject *parent = nullptr);
@@ -128,13 +133,20 @@ public:
 
     QList<int> ports() const { return *m_ports; }
 
+    RemotePlayer* remotePlayer() const { return m_remotePlayer; }
+
     Q_INVOKABLE void toggleFullScreen();
     Q_INVOKABLE void changeVideoPosition(int duration, int position) noexcept;
-    Q_INVOKABLE QString checkExistingVideoQuality(int index);
+    Q_INVOKABLE QString checkExistingVideoQuality(int index);    
+    Q_INVOKABLE void nextVideo();
+    Q_INVOKABLE void previousVideo();
 
 private:
     QString getZeroBasedDigit(int digit);
     QString getDisplayTimeFromSeconds(int seconds);
+    QString getVideoFromQuality(OnlineVideoModel* video);
+    OnlineVideoModel* nextNotSeenVideo();
+    OnlineVideoModel* previousNotSeenVideo();
 
 signals:
     void isFullScreenChanged();
@@ -157,6 +169,7 @@ signals:
     void lastMouseYPositionChanged();
     void selectedReleaseChanged();
     void portsChanged();
+    void remotePlayerChanged();
 
 };
 

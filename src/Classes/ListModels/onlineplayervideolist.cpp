@@ -115,7 +115,27 @@ OnlineVideoModel *OnlinePlayerVideoList::getVideoAtIndex(int index) const noexce
     return m_videos->at(index);
 }
 
-void OnlinePlayerVideoList::setVideosFromSingleList(const QString &json) noexcept
+int OnlinePlayerVideoList::getReleaseVideosCount(int releaseId) const noexcept
+{
+    return std::count_if(m_videos->begin(), m_videos->end(), [releaseId] (OnlineVideoModel* item) { return item->releaseId() == releaseId; });
+}
+
+OnlineVideoModel *OnlinePlayerVideoList::getFirstReleaseWithPredicate(std::function<bool(OnlineVideoModel *)> callback) const noexcept
+{
+    auto searchResult = std::find_if(
+        m_videos->begin(),
+        m_videos->end(),
+        [callback](OnlineVideoModel * video) {
+            return callback(video);
+        }
+    );
+
+    if (searchResult == m_videos->end()) return nullptr;
+
+    return *searchResult;
+}
+
+void OnlinePlayerVideoList::setVideosFromSingleList(const QString &json, int releaseId) noexcept
 {
     beginResetModel();
 
@@ -127,6 +147,7 @@ void OnlinePlayerVideoList::setVideosFromSingleList(const QString &json) noexcep
     foreach (auto video, videosArray) {
         auto videoModel = new OnlineVideoModel();
         videoModel->readFromApiModel(video.toObject());
+        videoModel->setReleaseId(releaseId);
         m_videos->append(videoModel);
     }
 

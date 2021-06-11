@@ -31,6 +31,10 @@ private:
     QString m_FullHD;
     QString m_SourceSD;
     QString m_SourceHD;
+    int m_releaseId;
+    int m_order;
+    QString m_releasePoster;
+    bool m_isGroup;
 
 public:
     OnlineVideoModel();
@@ -46,6 +50,10 @@ public:
     QString fullhd() const { return m_FullHD; }
     QString sourcesd() const { return m_SourceSD; }
     QString sourcehd() const { return m_SourceHD; }
+    int releaseId() const { return m_releaseId; }
+    int order() const { return m_order; }
+    QString releasePoster() const { return m_releasePoster; }
+    bool isGroup() const { return m_isGroup; }
 
     void setId(const int id) noexcept;
     void setTitle(const QString &title) noexcept;
@@ -54,6 +62,10 @@ public:
     void setFullHd(const QString &fullhd) noexcept;
     void setSourceSd(const QString &sourcesd) noexcept;
     void setSourceHd(const QString &sourcehd) noexcept;
+    void setReleaseId(int releaseId) noexcept;
+    void setOrder(int order) noexcept;
+    void setReleasePoster(QString releasePoster) noexcept;
+    void setIsGroup(bool isGroup) noexcept;
 };
 
 #endif // ONLINEVIDEOMODEL_H

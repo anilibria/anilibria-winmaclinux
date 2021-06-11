@@ -44,8 +44,10 @@ public:
     QHash<int,QByteArray> roleNames() const override;
 
     OnlineVideoModel* getVideoAtIndex(int index) const noexcept;
+    int getReleaseVideosCount(int releaseId) const noexcept;
+    OnlineVideoModel* getFirstReleaseWithPredicate(std::function<bool(OnlineVideoModel*)> callback) const noexcept;
 
-    void setVideosFromSingleList(const QString& json) noexcept;
+    void setVideosFromSingleList(const QString& json, int releaseId) noexcept;
     void setVideosFromMultipleList(const QStringList& json) noexcept;
 
 signals:    

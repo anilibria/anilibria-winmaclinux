@@ -79,3 +79,23 @@ void OnlineVideoModel::setSourceHd(const QString &sourcehd) noexcept
 {
     m_SourceHD = sourcehd;
 }
+
+void OnlineVideoModel::setReleaseId(int releaseId) noexcept
+{
+    m_releaseId = releaseId;
+}
+
+void OnlineVideoModel::setOrder(int order) noexcept
+{
+    m_order = order;
+}
+
+void OnlineVideoModel::setReleasePoster(QString releasePoster) noexcept
+{
+    m_releasePoster = releasePoster;
+}
+
+void OnlineVideoModel::setIsGroup(bool isGroup) noexcept
+{
+    m_isGroup = isGroup;
+}

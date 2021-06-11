@@ -38,7 +38,10 @@ OnlinePlayerViewModel::OnlinePlayerViewModel(QObject *parent) : QObject(parent),
     m_restorePosition(0),
     m_lastMouseYPosition(0),
     m_selectedRelease(-1),
-    m_ports(new QList<int>())
+    m_ports(new QList<int>()),
+    m_remotePlayer(new RemotePlayer(parent)),
+    m_videoSourceChangedCommand("videosourcechanged"),
+    m_videoPlaybackRateCommand("playbackratechanged")
 {
     m_jumpMinutes->append(0);
     m_jumpMinutes->append(1);
@@ -72,6 +75,8 @@ void OnlinePlayerViewModel::setPlaybackRate(qreal playbackRate) noexcept
 
     m_playbackRate = playbackRate;
     emit playbackRateChanged();
+
+    m_remotePlayer->broadcastCommand(m_videoPlaybackRateCommand, QString::number(playbackRate));
 }
 
 void OnlinePlayerViewModel::setIsBuffering(bool isBuffering) noexcept
@@ -120,6 +125,8 @@ void OnlinePlayerViewModel::setVideoSource(const QString &videoSource)
 
     m_videoSource = videoSource;
     emit videoSourceChanged();
+
+    m_remotePlayer->broadcastCommand(m_videoSourceChangedCommand, videoSource);
 }
 
 void OnlinePlayerViewModel::setReleasePoster(const QString &releasePoster) noexcept
@@ -206,28 +213,68 @@ QString OnlinePlayerViewModel::checkExistingVideoQuality(int index)
     auto video = m_videos->getVideoAtIndex(index);
     if (video == nullptr) return "";
 
-    if (m_videoQuality == "sd" && !video->sd().isEmpty()) {
-        return video->sd();
-    } else if (m_videoQuality == "hd" && !video->hd().isEmpty()) {
-        return video->hd();
-    } else if (m_videoQuality == "fullhd" && !video->fullhd().isEmpty()) {
-        return video->fullhd();
+    return getVideoFromQuality(video);
+}
+
+void OnlinePlayerViewModel::nextVideo()
+{
+    setRestorePosition(0);
+
+    OnlineVideoModel* video;
+
+    if (m_isCinemahall) {
+        auto nextVideo = nextNotSeenVideo();
+        if (nextVideo == nullptr) return;
+
+        setSelectedVideo(nextVideo->order());
+        video = nextVideo;
+    } else {
+        if (m_selectedVideo == m_videos->getReleaseVideosCount(m_selectedRelease)) return;
+
+        setSelectedVideo(m_selectedVideo + 1);
+
+        video = m_videos->getVideoAtIndex(m_selectedVideo);
     }
 
-    if (!video->sd().isEmpty()) {
-        setVideoQuality("sd");
-        return video->sd();
-    }
-    if (!video->hd().isEmpty()) {
-        setVideoQuality("hd");
-        return video->hd();
-    }
-    if (!video->fullhd().isEmpty()) {
-        setVideoQuality("fullhd");
-        return video->fullhd();
+    setIsFullHdAllowed(!video->fullhd().isEmpty());
+    setReleasePoster(video->releasePoster());
+    setSelectedRelease(video->releaseId());
+
+    setVideoSource(getVideoFromQuality(video));
+
+    //TODO: add emit for set seriescroll
+    //if (!onlinePlayerViewModel.isCinemahall) setSerieScrollPosition();
+}
+
+void OnlinePlayerViewModel::previousVideo()
+{
+    if (m_selectedVideo == 0) return;
+    setRestorePosition(0);
+
+    OnlineVideoModel* video;
+
+    if (m_isCinemahall) {
+        auto previousVideo = previousNotSeenVideo();
+        if (previousVideo) {
+            setSelectedVideo(previousVideo->order());
+            video = previousVideo;
+        } else {
+            return;
+        }
+
+    } else {
+        setSelectedVideo(m_selectedVideo - 1);
+        video = m_videos->getVideoAtIndex(m_selectedVideo);
     }
 
-    return "";
+    setIsFullHdAllowed(!video->fullhd().isEmpty());
+    setReleasePoster(video->releasePoster());
+    setSelectedRelease(video->releaseId());
+
+    setVideoSource(getVideoFromQuality(video));
+
+    //TODO: add emit for set seriescroll
+    //if (!onlinePlayerViewModel.isCinemahall) setSerieScrollPosition();
 }
 
 QString OnlinePlayerViewModel::getZeroBasedDigit(int digit)
@@ -252,4 +299,75 @@ QString OnlinePlayerViewModel::getDisplayTimeFromSeconds(int seconds)
     result.append(":");
     result.append(getZeroBasedDigit(seconds));
     return result;
+}
+
+QString OnlinePlayerViewModel::getVideoFromQuality(OnlineVideoModel *video)
+{
+    if (m_videoQuality == "sd" && !video->sd().isEmpty()) {
+        return video->sd();
+    } else if (m_videoQuality == "hd" && !video->hd().isEmpty()) {
+        return video->hd();
+    } else if (m_videoQuality == "fullhd" && !video->fullhd().isEmpty()) {
+        return video->fullhd();
+    }
+
+    if (!video->sd().isEmpty()) {
+        setVideoQuality("sd");
+        return video->sd();
+    }
+    if (!video->hd().isEmpty()) {
+        setVideoQuality("hd");
+        return video->hd();
+    }
+    if (!video->fullhd().isEmpty()) {
+        setVideoQuality("fullhd");
+        return video->fullhd();
+    }
+
+    return "";
+}
+
+OnlineVideoModel* OnlinePlayerViewModel::nextNotSeenVideo()
+{
+    auto selectedRelease = m_selectedRelease;
+    auto selectedVideo = m_selectedVideo;
+    return m_videos->getFirstReleaseWithPredicate(
+        [selectedRelease, selectedVideo](OnlineVideoModel* video) {
+            bool beforeCurrent = true;
+
+            if (video->releaseId() == selectedRelease && video->order() <= selectedVideo) {
+                beforeCurrent = false;
+                return false;
+            }
+            if (beforeCurrent) return false;
+            if (video->isGroup()) return false;
+
+            //TODO: add seen marks
+            /*if (!(releaseVideo.releaseId in _page.seenMarks && releaseVideo.order in _page.seenMarks[releaseVideo.releaseId])) {
+                return releaseVideo;
+            }*/
+
+            return true;
+        }
+    );
+}
+
+OnlineVideoModel *OnlinePlayerViewModel::previousNotSeenVideo()
+{
+    auto selectedRelease = m_selectedRelease;
+    auto selectedVideo = m_selectedVideo;
+
+    return m_videos->getFirstReleaseWithPredicate(
+        [selectedRelease, selectedVideo](OnlineVideoModel* video) {
+            if (video->isGroup()) return false;
+
+            if (video->releaseId() == selectedRelease && video->order() == selectedVideo) return false;
+
+            //TODO: add seen marks
+            /*if (!(releaseVideo.releaseId in _page.seenMarks && releaseVideo.order in _page.seenMarks[releaseVideo.releaseId])) lastNotSeenVideo = releaseVideo;
+            }*/
+
+            return true;
+        }
+    );
 }
