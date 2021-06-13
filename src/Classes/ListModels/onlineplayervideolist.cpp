@@ -135,7 +135,7 @@ OnlineVideoModel *OnlinePlayerVideoList::getFirstReleaseWithPredicate(std::funct
     return *searchResult;
 }
 
-void OnlinePlayerVideoList::setVideosFromSingleList(const QString &json, int releaseId) noexcept
+void OnlinePlayerVideoList::setVideosFromSingleList(const QString &json, int releaseId, const QString& poster) noexcept
 {
     beginResetModel();
 
@@ -148,7 +148,24 @@ void OnlinePlayerVideoList::setVideosFromSingleList(const QString &json, int rel
         auto videoModel = new OnlineVideoModel();
         videoModel->readFromApiModel(video.toObject());
         videoModel->setReleaseId(releaseId);
+        videoModel->setReleasePoster(poster);
         m_videos->append(videoModel);
+    }
+
+    std::sort(
+        m_videos->begin(),
+        m_videos->end(),
+        [](const OnlineVideoModel* first, const OnlineVideoModel* second) {
+            return first->id() > second->id();
+        }
+    );
+
+    QVectorIterator<OnlineVideoModel*> iterator(*m_videos);
+    int index = -1;
+    while (iterator.hasNext()) {
+        auto item = iterator.next();
+        index += 1;
+        item->setOrder(index);
     }
 
     endResetModel();

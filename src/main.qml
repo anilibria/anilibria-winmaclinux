@@ -794,6 +794,15 @@ ApplicationWindow {
                 window.showNormal();
             }
         }
+        onNeedScrollSeriaPosition: {
+            videoplayer.setSerieScrollPosition();
+        }
+        onSaveToWatchHistory: {
+            localStorage.setToReleaseHistory(releaseId, 1);
+        }
+        onPlayInPlayer: {
+            videoplayer.playInPlayer();
+        }
     }
 
     OnlinePlayer {

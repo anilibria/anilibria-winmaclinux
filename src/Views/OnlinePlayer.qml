@@ -31,11 +31,6 @@ Page {
     property var seenVideo: ({})
     property var seenMarks: ({})
     property var cinemahallReleases: []
-    property string videoSourceChangedCommand: `videosourcechanged`
-    property string videoPositionChangedCommand: `positionchanged`
-    property string videoVolumeChangedCommand: `volumechanged`
-    property string videoPlaybackRateCommand: `playbackratechanged`
-    property string videoPlaybackCommand: `playbackchanged`
 
     signal navigateFrom()
     signal setReleaseVideo()
@@ -44,6 +39,11 @@ Page {
     signal returnToReleasesPage()
     signal windowNotActived()
     signal receiveRemoteCommand(int id, string command, string argument)
+    signal playInPlayer()
+
+    onPlayInPlayer: {
+        player.play();
+    }
 
     Keys.onSpacePressed: {
         if (player.playbackState === MediaPlayer.PlayingState) {
@@ -104,12 +104,14 @@ Page {
     onNavigateTo: {
         const userSettings = JSON.parse(localStorage.getUserSettings());
         player.volume = userSettings.volume;
+        onlinePlayerViewModel.volumeSlider = player.volume;
         autoNextVideo.checked = userSettings.autoNextVideo;
         autoTopMost.checked = userSettings.autoTopMost;
         jumpMinuteComboBox.currentIndex = onlinePlayerViewModel.jumpMinutes.indexOf(userSettings.jumpMinute);
         jumpSecondComboBox.currentIndex = onlinePlayerViewModel.jumpSeconds.indexOf(userSettings.jumpSecond);
         showReleaseInfo.checked = userSettings.showReleaseInfo;
         sendVolumeToRemoteSwitch.checked = applicationSettings.sendVolumeToRemote;
+        onlinePlayerViewModel.sendPlaybackToRemoteSwitch = sendVolumeToRemoteSwitch.checked;
         sendPlaybackToRemoteSwitch.checked = applicationSettings.sendPlaybackToRemote;
         remotePlayer.port = applicationSettings.remotePort;
         remotePlayerPortComboBox.currentIndex = onlinePlayerViewModel.ports.indexOf(applicationSettings.remotePort);
@@ -128,14 +130,13 @@ Page {
         }
 
         if (!_page.setReleaseParameters.releaseId && !onlinePlayerViewModel.isCinemahall) {
-            const lastSeenObject = localStorage.getLastVideoSeen();
-            if (lastSeenObject === ``) return;
+            const lastSeenReleaseId = onlinePlayerViewModel.getLastVideoSeen();
+            if (lastSeenReleaseId === 0) return;
 
-            const seenObject = JSON.parse(lastSeenObject);
-            const release = JSON.parse(localStorage.getRelease(seenObject.id));
+            const release = JSON.parse(localStorage.getRelease(lastSeenReleaseId));
             onlinePlayerViewModel.releasePoster = release.poster;
             _page.setReleaseParameters = {
-                releaseId: seenObject.id,
+                releaseId: lastSeenReleaseId,
                 videos: release.videos,
                 customPlaylistPosition: -1
             };
@@ -147,7 +148,7 @@ Page {
     onSetReleaseVideo: {
         onlinePlayerViewModel.isCinemahall = false;
         const jsonVideos = JSON.parse(_page.setReleaseParameters.videos);
-        const seenJson = localStorage.getVideoSeen(_page.setReleaseParameters.releaseId);
+        const seenJson = onlinePlayerViewModel.getVideoSeen(_page.setReleaseParameters.releaseId);
         _page.seenVideo = {};
         if (seenJson) _page.seenVideo = JSON.parse(seenJson);
         onlinePlayerViewModel.selectedRelease = _page.setReleaseParameters.releaseId;
@@ -271,7 +272,7 @@ Page {
             localStorage.setToReleaseHistory(firstVideo.releaseId, 1);
 
             setSerieScrollPosition();
-            _page.seenVideo = JSON.parse(localStorage.getVideoSeen(firstVideo.releaseId));
+            _page.seenVideo = JSON.parse(onlinePlayerViewModel.getVideoSeen(firstVideo.releaseId));
             if (_page.seenVideo.id && _page.seenVideo.videoId !== firstVideo.order) _page.seenVideo.videoPosition = 0;
         } else {
             setVideoSource("");
@@ -279,7 +280,7 @@ Page {
     }
 
     onReceiveRemoteCommand: {
-        switch (command){
+        /*switch (command){
             case `getcurrentvideosource`:
                 remotePlayer.sendCommandToUser(id, _page.videoSourceChangedCommand, onlinePlayerViewModel.videoSource);
                 break;
@@ -295,7 +296,7 @@ Page {
             case `getcurrentplayback`:
                 if (player.playbackState === MediaPlayer.PausedState && sendPlaybackToRemoteSwitch.checked) remotePlayer.sendCommandToUser(id, _page.videoPlaybackCommand, "pause");
                 break;
-        }
+        }*/
     }
 
     function setControlVisible(visible) {
@@ -358,6 +359,7 @@ Page {
         source: onlinePlayerViewModel.videoSource
         playbackRate: onlinePlayerViewModel.playbackRate
         onPlaybackStateChanged: {
+            onlinePlayerViewModel.playerPlaybackState = playbackState;
             if (playbackState === MediaPlayer.PlayingState && autoTopMost.checked) {
                 windowSettings.setStayOnTop();
             } else {
@@ -381,6 +383,7 @@ Page {
         }
         onVolumeChanged: {
             volumeSlider.value = volume * 100;
+            onlinePlayerViewModel.volumeSlider = volumeSlider.value;
             if (applicationSettings.sendVolumeToRemote) remotePlayer.broadcastCommand(_page.videoVolumeChangedCommand, volumeSlider.value.toString());
         }
         onStatusChanged: {
@@ -415,7 +418,7 @@ Page {
 
             if (onlinePlayerViewModel.positionIterator >= 20) {
                 onlinePlayerViewModel.positionIterator = 0;
-                localStorage.setVideoSeens(onlinePlayerViewModel.selectedRelease, onlinePlayerViewModel.selectedVideo, position);
+                onlinePlayerViewModel.setVideoSeens(onlinePlayerViewModel.selectedRelease, onlinePlayerViewModel.selectedVideo, position);
             }
 
             if (!(onlinePlayerViewModel.selectedRelease in _page.seenMarks && onlinePlayerViewModel.selectedVideo in _page.seenMarks[onlinePlayerViewModel.selectedRelease])) {
@@ -1049,6 +1052,8 @@ Page {
                                     id: sendVolumeToRemoteSwitch
                                     onCheckedChanged: {
                                         applicationSettings.sendVolumeToRemote = checked;
+
+                                        onlinePlayerViewModel.sendPlaybackToRemoteSwitch = checked;
                                     }
                                 }
 
@@ -1407,12 +1412,12 @@ Page {
 
     function setVideoSource(source) {
         onlinePlayerViewModel.videoSource = source;
-        remotePlayer.broadcastCommand(_page.videoSourceChangedCommand, source);
+        //remotePlayer.broadcastCommand(_page.videoSourceChangedCommand, source);
     }
 
     function setVideoSpeed(videoSpeed) {
         onlinePlayerViewModel.playbackRate = videoSpeed;
-        remotePlayer.broadcastCommand(_page.videoPlaybackRateCommand, videoSpeed);
+        //remotePlayer.broadcastCommand(_page.videoPlaybackRateCommand, videoSpeed);
     }
 
     function nextVideo() {

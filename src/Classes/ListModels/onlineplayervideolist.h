@@ -47,7 +47,7 @@ public:
     int getReleaseVideosCount(int releaseId) const noexcept;
     OnlineVideoModel* getFirstReleaseWithPredicate(std::function<bool(OnlineVideoModel*)> callback) const noexcept;
 
-    void setVideosFromSingleList(const QString& json, int releaseId) noexcept;
+    void setVideosFromSingleList(const QString& json, int releaseId, const QString& poster) noexcept;
     void setVideosFromMultipleList(const QStringList& json) noexcept;
 
 signals:    

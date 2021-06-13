@@ -18,6 +18,10 @@
 
 #include "onlineplayerviewmodel.h"
 #include <math.h>
+#include <QFile>
+#include <QStandardPaths>
+#include <QJsonDocument>
+#include <QJsonArray>
 
 OnlinePlayerViewModel::OnlinePlayerViewModel(QObject *parent) : QObject(parent),
     m_isFullScreen(false),
@@ -41,8 +45,20 @@ OnlinePlayerViewModel::OnlinePlayerViewModel(QObject *parent) : QObject(parent),
     m_ports(new QList<int>()),
     m_remotePlayer(new RemotePlayer(parent)),
     m_videoSourceChangedCommand("videosourcechanged"),
-    m_videoPlaybackRateCommand("playbackratechanged")
+    m_videoPlaybackRateCommand("playbackratechanged"),
+    m_videoPositionChangedCommand("positionchanged"),
+    m_videoVolumeChangedCommand("volumechanged"),
+    m_videoPlaybackCommand("playbackchanged"),
+    m_seenModels(new QHash<int, SeenModel*>()),
+    m_navigateReleaseId(0),
+    m_customPlaylistPosition(-1),
+    m_navigateVideos(""),
+    m_navigatePoster("")
 {
+    createIfNotExistsFile(getSeensCachePath(), "[]");
+
+    loadSeens();
+
     m_jumpMinutes->append(0);
     m_jumpMinutes->append(1);
     m_jumpMinutes->append(2);
@@ -59,6 +75,8 @@ OnlinePlayerViewModel::OnlinePlayerViewModel(QObject *parent) : QObject(parent),
     m_ports->append(34560);
     m_ports->append(52354);
     m_ports->append(67289);
+
+    connect(m_remotePlayer, &RemotePlayer::receiveCommand, this, &OnlinePlayerViewModel::receiveCommand);
 }
 
 void OnlinePlayerViewModel::setIsFullScreen(bool isFullScreen) noexcept
@@ -193,6 +211,62 @@ void OnlinePlayerViewModel::setSelectedRelease(int selectedRelease) noexcept
     emit selectedReleaseChanged();
 }
 
+void OnlinePlayerViewModel::setSendPlaybackToRemoteSwitch(bool sendPlaybackToRemoteSwitch)
+{
+    if (m_sendPlaybackToRemoteSwitch == sendPlaybackToRemoteSwitch) return;
+
+    m_sendPlaybackToRemoteSwitch = sendPlaybackToRemoteSwitch;
+    emit sendPlaybackToRemoteSwitchChanged();
+}
+
+void OnlinePlayerViewModel::setVolumeSlider(int volumeSlider) noexcept
+{
+    if (m_volumeSlider == volumeSlider) return;
+
+    m_volumeSlider = volumeSlider;
+    emit volumeSliderChanged();
+}
+
+void OnlinePlayerViewModel::setPlayerPlaybackState(int playerPlaybackState) noexcept
+{
+    if (m_playerPlaybackState == playerPlaybackState) return;
+
+    m_playerPlaybackState = playerPlaybackState;
+    emit playerPlaybackStateChanged();
+}
+
+void OnlinePlayerViewModel::setNavigateReleaseId(int navigateReleaseId) noexcept
+{
+    if (m_navigateReleaseId == navigateReleaseId) return;
+
+    m_navigateReleaseId = navigateReleaseId;
+    emit navigateReleaseIdChanged();
+}
+
+void OnlinePlayerViewModel::setCustomPlaylistPosition(int customPlaylistPosition) noexcept
+{
+    if (m_customPlaylistPosition == customPlaylistPosition) return;
+
+    m_customPlaylistPosition = customPlaylistPosition;
+    emit customPlaylistPositionChanged();
+}
+
+void OnlinePlayerViewModel::setNavigateVideos(const QString &navigateVideos)
+{
+    if (m_navigateVideos == navigateVideos) return;
+
+    m_navigateVideos = navigateVideos;
+    emit navigateVideosChanged();
+}
+
+void OnlinePlayerViewModel::setNavigatePoster(const QString &navigatePoster) noexcept
+{
+    if (m_navigatePoster == navigatePoster) return;
+
+    m_navigatePoster = navigatePoster;
+    emit navigatePosterChanged();
+}
+
 void OnlinePlayerViewModel::toggleFullScreen()
 {
     setIsFullScreen(!m_isFullScreen);
@@ -242,8 +316,7 @@ void OnlinePlayerViewModel::nextVideo()
 
     setVideoSource(getVideoFromQuality(video));
 
-    //TODO: add emit for set seriescroll
-    //if (!onlinePlayerViewModel.isCinemahall) setSerieScrollPosition();
+    if (!m_isCinemahall) emit needScrollSeriaPosition();
 }
 
 void OnlinePlayerViewModel::previousVideo()
@@ -273,8 +346,114 @@ void OnlinePlayerViewModel::previousVideo()
 
     setVideoSource(getVideoFromQuality(video));
 
-    //TODO: add emit for set seriescroll
-    //if (!onlinePlayerViewModel.isCinemahall) setSerieScrollPosition();
+    if (!m_isCinemahall) emit needScrollSeriaPosition();
+}
+
+QString OnlinePlayerViewModel::getVideoSeen(int id)
+{
+    if (m_seenModels->contains(id)) {
+        auto seenModel = m_seenModels->value(id);
+        QJsonObject object;
+        seenModel->writeToJson(object);
+
+        QJsonDocument seenDocument(object);
+        QString seenJson(seenDocument.toJson());
+        return seenJson;
+    } else {
+        return "{}";
+    }
+}
+
+static bool compareSeenTimeStampDescending(const SeenModel* first, const SeenModel* second)
+{
+    return first->timestamp() > second->timestamp();
+}
+
+int OnlinePlayerViewModel::getLastVideoSeen()
+{
+    if (m_seenModels->count() == 0) return 0;
+
+
+    auto models = m_seenModels->values();
+
+    std::sort(models.begin(), models.end(), compareSeenTimeStampDescending);
+    return models.first()->id();
+}
+
+void OnlinePlayerViewModel::setVideoSeens(int id, int videoId, double videoPosition)
+{
+    QDateTime now = QDateTime::currentDateTime();
+    auto timestamp = now.toTime_t();
+    if (!m_seenModels->contains(id)) {
+        SeenModel* seenModel = new SeenModel();
+        seenModel->setId(id);
+        seenModel->setVideoId(videoId);
+        seenModel->setVideoPosition(videoPosition);
+        seenModel->setTimestamp(static_cast<int>(timestamp));
+
+        m_seenModels->insert(id, seenModel);
+    } else {
+        auto existingSeenModel = m_seenModels->value(id);
+        existingSeenModel->setVideoId(videoId);
+        existingSeenModel->setVideoPosition(videoPosition);
+        existingSeenModel->setTimestamp(static_cast<int>(timestamp));
+    }
+
+    saveVideoSeens();
+}
+
+void OnlinePlayerViewModel::setupForSingleRelease()
+{
+    setIsCinemahall(false);
+
+    m_videos->setVideosFromSingleList(m_navigateVideos, m_navigateReleaseId, m_navigatePoster);
+
+    setReleasePoster(m_navigatePoster);
+    setSelectedRelease(m_navigateReleaseId);
+
+    int videoIndex = 0;
+    if (m_seenModels->contains(m_navigateReleaseId)) {
+        auto model = m_seenModels->value(m_navigateReleaseId);
+        videoIndex = model->videoId();
+    }
+
+    if (m_customPlaylistPosition > -1) videoIndex = m_customPlaylistPosition;
+
+    auto firstVideo = m_videos->getVideoAtIndex(videoIndex);
+
+    //refreshSeenMarks();
+
+    setSelectedVideo(firstVideo->order());
+    setIsFullHdAllowed(!firstVideo->fullhd().isEmpty());
+    setVideoSource(getVideoFromQuality(firstVideo));
+
+    emit playInPlayer();
+    emit saveToWatchHistory(m_navigateReleaseId);
+    emit needScrollSeriaPosition();
+}
+
+void OnlinePlayerViewModel::saveVideoSeens()
+{
+    QJsonArray array;
+
+    QHashIterator<int, SeenModel*> iterator(*m_seenModels);
+    while (iterator.hasNext()) {
+        iterator.next();
+
+        QJsonObject object;
+        iterator.value()->writeToJson(object);
+        array.append(object);
+    }
+
+    QJsonDocument seenDocument(array);
+    QString seenJson(seenDocument.toJson());
+
+    QFile seenFile(getSeensCachePath());
+    if (!seenFile.open(QFile::WriteOnly | QFile::Text)) {
+        //TODO: handle this situation
+    }
+    seenFile.write(seenJson.toUtf8());
+    seenFile.close();
 }
 
 QString OnlinePlayerViewModel::getZeroBasedDigit(int digit)
@@ -370,4 +549,67 @@ OnlineVideoModel *OnlinePlayerViewModel::previousNotSeenVideo()
             return true;
         }
     );
+}
+
+void OnlinePlayerViewModel::receiveCommand(const unsigned int id, const QString &command, const QString &argument)
+{
+    qDebug() << argument;
+
+    if (command == "getcurrentvideosource"){
+         m_remotePlayer->sendCommandToUser(id, m_videoSourceChangedCommand, m_videoSource);
+    }
+    if (command == "getcurrentvideoposition"){
+        //TODO: added position and duration from player
+         m_remotePlayer->sendCommandToUser(id, m_videoPositionChangedCommand, ""/*player.position.toString() + `/` + player.duration.toString()*/);
+    }
+    if (command == "getcurrentvolume"){
+         if (m_sendPlaybackToRemoteSwitch) m_remotePlayer->sendCommandToUser(id, m_videoVolumeChangedCommand, QString::number(m_volumeSlider));
+    }
+    if (command == "getcurrentplaybackrate"){
+         m_remotePlayer->sendCommandToUser(id, m_videoPlaybackRateCommand, QString::number(m_playbackRate));
+    }
+    if (command == "getcurrentplayback"){
+        qDebug() << "m_playerPlaybackState: " << m_playerPlaybackState;
+        if (m_playerPlaybackState == 3 && m_sendPlaybackToRemoteSwitch) m_remotePlayer->sendCommandToUser(id, m_videoPlaybackCommand, "pause");
+    }
+}
+
+void OnlinePlayerViewModel::loadSeens()
+{
+    QFile seenFile(getSeensCachePath());
+    if (!seenFile.open(QFile::ReadOnly | QFile::Text)) {
+        //TODO: handle this situation
+    }
+    auto seenJson = seenFile.readAll();
+    seenFile.close();
+
+    auto document = QJsonDocument::fromJson(seenJson);
+    auto jsonSeens = document.array();
+
+    foreach (auto item, jsonSeens) {
+        SeenModel* seenModel = new SeenModel();
+        seenModel->readFromJson(item);
+        if (!m_seenModels->contains(seenModel->id())) {
+            m_seenModels->insert(seenModel->id(), seenModel);
+        }
+    }
+}
+
+QString OnlinePlayerViewModel::getSeensCachePath()
+{
+    if (IsPortable) {
+        return QDir::currentPath() + "/seen.cache";
+    } else {
+        return QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation) + "/seen.cache";
+    }
+}
+
+void OnlinePlayerViewModel::createIfNotExistsFile(QString path, QString defaultContent)
+{
+    if (!QFile::exists(path)) {
+        QFile file(path);
+        file.open(QFile::WriteOnly | QFile::Text);
+        file.write(defaultContent.toUtf8());
+        file.close();
+    }
 }

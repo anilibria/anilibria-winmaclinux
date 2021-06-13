@@ -20,8 +20,12 @@
 #define ONLINEPLAYERVIEWMODEL_H
 
 #include <QObject>
+#include <QHash>
+#include <QList>
 #include "../ListModels/onlineplayervideolist.h"
 #include "../RemotePlayer/remoteplayer.h"
+#include "../Models/seenmodel.h"
+#include "../../globalconstants.h"
 
 class OnlinePlayerViewModel : public QObject
 {
@@ -48,6 +52,13 @@ class OnlinePlayerViewModel : public QObject
     Q_PROPERTY(int selectedRelease READ selectedRelease WRITE setSelectedRelease NOTIFY selectedReleaseChanged)
     Q_PROPERTY(QList<int> ports READ ports NOTIFY portsChanged)
     Q_PROPERTY(RemotePlayer remotePlayer READ remotePlayer NOTIFY remotePlayerChanged)
+    Q_PROPERTY(bool sendPlaybackToRemoteSwitch READ sendPlaybackToRemoteSwitch WRITE setSendPlaybackToRemoteSwitch NOTIFY sendPlaybackToRemoteSwitchChanged)
+    Q_PROPERTY(int volumeSlider READ volumeSlider WRITE setVolumeSlider NOTIFY volumeSliderChanged)
+    Q_PROPERTY(int playerPlaybackState READ playerPlaybackState WRITE setPlayerPlaybackState NOTIFY playerPlaybackStateChanged)
+    Q_PROPERTY(int navigateReleaseId READ navigateReleaseId WRITE setNavigateReleaseId NOTIFY navigateReleaseIdChanged)
+    Q_PROPERTY(int customPlaylistPosition READ customPlaylistPosition WRITE setCustomPlaylistPosition NOTIFY customPlaylistPositionChanged)
+    Q_PROPERTY(QString navigateVideos READ navigateVideos WRITE setNavigateVideos NOTIFY navigateVideosChanged)
+    Q_PROPERTY(QString navigatePoster READ navigatePoster WRITE setNavigatePoster NOTIFY navigatePosterChanged)
 
 private:
     bool m_isFullScreen;
@@ -73,6 +84,17 @@ private:
     RemotePlayer* m_remotePlayer;
     QString m_videoSourceChangedCommand;
     QString m_videoPlaybackRateCommand;
+    QString m_videoPositionChangedCommand;
+    QString m_videoVolumeChangedCommand;
+    QString m_videoPlaybackCommand;
+    bool m_sendPlaybackToRemoteSwitch;
+    int m_volumeSlider;
+    int m_playerPlaybackState;
+    QHash<int, SeenModel*>* m_seenModels;
+    int m_navigateReleaseId;
+    int m_customPlaylistPosition;
+    QString m_navigateVideos;
+    QString m_navigatePoster;
 
 public:
     explicit OnlinePlayerViewModel(QObject *parent = nullptr);
@@ -135,18 +157,48 @@ public:
 
     RemotePlayer* remotePlayer() const { return m_remotePlayer; }
 
+    bool sendPlaybackToRemoteSwitch() const { return m_sendPlaybackToRemoteSwitch; }
+    void setSendPlaybackToRemoteSwitch(bool sendPlaybackToRemoteSwitch);
+
+    int volumeSlider() const { return m_volumeSlider; }
+    void setVolumeSlider(int volumeSlider) noexcept;
+
+    int playerPlaybackState() const { return m_playerPlaybackState; }
+    void setPlayerPlaybackState(int playerPlaybackState) noexcept;
+
+    int navigateReleaseId() const { return m_navigateReleaseId; }
+    void setNavigateReleaseId(int navigateReleaseId) noexcept;
+
+    int customPlaylistPosition() const { return m_customPlaylistPosition; }
+    void setCustomPlaylistPosition(int customPlaylistPosition) noexcept;
+
+    QString navigateVideos() const { return m_navigateVideos; }
+    void setNavigateVideos(const QString& navigateVideos);
+
+    QString navigatePoster() const { return m_navigatePoster; }
+    void setNavigatePoster(const QString& navigatePoster) noexcept;
+
     Q_INVOKABLE void toggleFullScreen();
     Q_INVOKABLE void changeVideoPosition(int duration, int position) noexcept;
     Q_INVOKABLE QString checkExistingVideoQuality(int index);    
     Q_INVOKABLE void nextVideo();
     Q_INVOKABLE void previousVideo();
+    Q_INVOKABLE QString getVideoSeen(int id);
+    Q_INVOKABLE int getLastVideoSeen();
+    Q_INVOKABLE void setVideoSeens(int id, int videoId, double videoPosition);
+    Q_INVOKABLE void setupForSingleRelease();
 
 private:
+    void saveVideoSeens();
     QString getZeroBasedDigit(int digit);
     QString getDisplayTimeFromSeconds(int seconds);
     QString getVideoFromQuality(OnlineVideoModel* video);
     OnlineVideoModel* nextNotSeenVideo();
     OnlineVideoModel* previousNotSeenVideo();
+    void receiveCommand(const unsigned int id, const QString& command, const QString& argument);
+    void loadSeens();
+    QString getSeensCachePath();
+    void createIfNotExistsFile(QString path, QString defaultContent);
 
 signals:
     void isFullScreenChanged();
@@ -170,6 +222,16 @@ signals:
     void selectedReleaseChanged();
     void portsChanged();
     void remotePlayerChanged();
+    void sendPlaybackToRemoteSwitchChanged();
+    void volumeSliderChanged();
+    void playerPlaybackStateChanged();
+    void needScrollSeriaPosition();
+    void navigateReleaseIdChanged();
+    void customPlaylistPositionChanged();
+    void navigateVideosChanged();
+    void navigatePosterChanged();
+    void playInPlayer();
+    void saveToWatchHistory(int releaseId);
 
 };
 

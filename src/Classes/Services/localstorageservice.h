@@ -46,7 +46,6 @@ private:
     QFutureWatcher<void>* m_AllReleaseUpdatedWatcher;
     QList<FullReleaseModel*>* m_CachedReleases;
     ChangesModel* m_ChangesModel;
-    QHash<int, SeenModel*>* m_SeenModels;
     QHash<QString, bool>* m_SeenMarkModels;
     QHash<int, HistoryModel*>* m_HistoryModels;
     UserSettingsModel* m_UserSettingsModel;    
@@ -73,7 +72,6 @@ private:
     QString getReleasesCachePath() const;
     QString getFavoritesCachePath() const;
     QString getScheduleCachePath() const;
-    QString getSeensCachePath() const;
     QString getSeenMarksCachePath() const;
     QString getHistoryCachePath() const;
     QString getYoutubeCachePath() const;
@@ -85,7 +83,6 @@ private:
     void createIfNotExistsFile(QString path, QString defaultContent);
     void saveChanges();
     void resetChanges();
-    void loadSeens();
     void loadSeenMarks();
     void saveSeenMarks();
     void loadHistory();
@@ -135,11 +132,6 @@ public:
     Q_INVOKABLE QList<int> getChangesCounts();
     Q_INVOKABLE void resetAllChanges();
     Q_INVOKABLE void resetReleaseChanges(int releaseId);
-    Q_INVOKABLE QString getVideoSeens();
-    Q_INVOKABLE QString getVideoSeen(int id);
-    Q_INVOKABLE QString getLastVideoSeen();
-    Q_INVOKABLE void setVideoSeens(int id, int videoId, double videoPosition);
-    Q_INVOKABLE void saveVideoSeens();
     Q_INVOKABLE void setSeenMark(int id, int seriaId, bool marked);    
     Q_INVOKABLE void setSeenMarkAllSeries(int id, int countSeries, bool marked);
     Q_INVOKABLE void removeAllSeenMark();
