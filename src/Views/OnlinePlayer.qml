@@ -429,7 +429,7 @@ Page {
                         seenMarks[onlinePlayerViewModel.selectedVideo] = true;
                         const obj = _page.seenMarks;
                         _page.seenMarks = obj;
-                        localStorage.setSeenMark(onlinePlayerViewModel.selectedRelease, onlinePlayerViewModel.selectedVideo, true);
+                        onlinePlayerViewModel.setSeenMark(onlinePlayerViewModel.selectedRelease, onlinePlayerViewModel.selectedVideo, true);
                     }
                 }
             }
@@ -544,7 +544,7 @@ Page {
                                         _page.seenMarks = {};
                                         _page.seenMarks = oldSeenMarks;
 
-                                        localStorage.setSeenMark(modelData.releaseId, modelData.order, newState);
+                                        onlinePlayerViewModel.setSeenMark(modelData.releaseId, modelData.order, newState);
                                     }
                                 }
 
@@ -1464,7 +1464,8 @@ Page {
             releaseIds.push(_page.setReleaseParameters.releaseId);
         }
 
-        _page.seenMarks = JSON.parse(localStorage.getReleasesSeenMarks(releaseIds));
+        _page.seenMarks = JSON.parse(onlinePlayerViewModel.getReleasesSeenMarks(releaseIds));
+        console.log("Pizda " + JSON.stringify(_page.seenMarks));
     }
 
     function jumpInPlayer(direction){

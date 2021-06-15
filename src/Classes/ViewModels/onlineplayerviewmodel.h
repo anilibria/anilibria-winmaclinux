@@ -95,6 +95,7 @@ private:
     int m_customPlaylistPosition;
     QString m_navigateVideos;
     QString m_navigatePoster;
+    QHash<QString, bool>* m_seenMarkModels;
 
 public:
     explicit OnlinePlayerViewModel(QObject *parent = nullptr);
@@ -187,6 +188,14 @@ public:
     Q_INVOKABLE int getLastVideoSeen();
     Q_INVOKABLE void setVideoSeens(int id, int videoId, double videoPosition);
     Q_INVOKABLE void setupForSingleRelease();
+    Q_INVOKABLE void setSeenMark(int id, int seriaId, bool marked);
+    Q_INVOKABLE void setSeenMarkAllSeries(int id, int countSeries, bool marked);
+    Q_INVOKABLE void setSeenMarkAllSeriesWithoutSave(int id, int countSeries, bool marked);
+    Q_INVOKABLE void saveSeenMarkCacheToFile();
+    Q_INVOKABLE void removeAllSeenMark();
+    Q_INVOKABLE QList<int> getReleseSeenMarks(int id, int count);
+    Q_INVOKABLE QString getReleasesSeenMarks(QList<int> ids);
+    Q_INVOKABLE QString getSeenMarks();
 
 private:
     void saveVideoSeens();
@@ -199,6 +208,10 @@ private:
     void loadSeens();
     QString getSeensCachePath();
     void createIfNotExistsFile(QString path, QString defaultContent);
+    void loadSeenMarks();
+    QString getSeenMarksCachePath() const;
+    void saveSeenMarks();
+    void setSeenMarkForRelease(int id, int countSeries, bool marked);
 
 signals:
     void isFullScreenChanged();
@@ -232,6 +245,7 @@ signals:
     void navigatePosterChanged();
     void playInPlayer();
     void saveToWatchHistory(int releaseId);
+    void recalculateSeenCounts();
 
 };
 

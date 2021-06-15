@@ -76,7 +76,6 @@ LocalStorageService::LocalStorageService(QObject *parent) : QObject(parent),
         QDir().mkpath(cachePath);
         qDebug() << "Portable Cache location: " << cachePath;
     } else {
-        QDir cacheDicrectory(QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation));
         QDir().mkpath(QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation));
         QDir().mkpath(QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation) + "/imagecache");
         qDebug() << "Cache location: " << QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation);
@@ -167,7 +166,6 @@ void LocalStorageService::updateAllReleases(const QString &releases)
             if (jsonError.error != 0) return; //TODO: handle this situation and show message
 
             auto jsonReleases = jsonDocument.array();
-            auto variantList = jsonReleases.toVariantList();
             auto newReleases = m_ChangesModel->newReleases();
             auto newOnlineSeries = m_ChangesModel->newOnlineSeries();
             auto newTorrents = m_ChangesModel->newTorrents();
@@ -531,34 +529,11 @@ void LocalStorageService::loadSeenMarks()
     auto document = QJsonDocument::fromJson(seenMarkJson);
     auto jsonSeenMarks = document.array();
 
+    m_SeenMarkModels->clear();
+
     foreach (auto item, jsonSeenMarks) {
         m_SeenMarkModels->insert(item.toString(), true);
     }
-
-    recalculateSeenCounts();
-}
-
-void LocalStorageService::saveSeenMarks()
-{
-    QJsonArray array;
-
-    QHashIterator<QString, bool> iterator(*m_SeenMarkModels);
-    while (iterator.hasNext()) {
-        iterator.next();
-
-        QJsonValue value(iterator.key());
-        array.append(value);
-    }
-
-    QJsonDocument seenDocument(array);
-    QString seenMarkJson(seenDocument.toJson());
-
-    QFile seenMarkFile(getSeenMarksCachePath());
-    if (!seenMarkFile.open(QFile::WriteOnly | QFile::Text)) {
-        //TODO: handle this situation
-    }
-    seenMarkFile.write(seenMarkJson.toUtf8());
-    seenMarkFile.close();
 
     recalculateSeenCounts();
 }
@@ -798,9 +773,17 @@ void LocalStorageService::recalculateSeenCounts()
         seenIterator.next();
 
         auto release = getReleaseFromCache(seenIterator.key());
-        if (release->countOnlineVideos() == seenIterator.value()) countSeens++;
+        if (release->countOnlineVideos() == seenIterator.value()) countSeens += 1;
     }
+
     setCountSeens(countSeens);
+}
+
+void LocalStorageService::recalculateSeenCountsFromFile()
+{
+    loadSeenMarks();
+
+    recalculateSeenCounts();
 }
 
 bool LocalStorageService::importReleasesFromFile(QString path)
@@ -808,7 +791,7 @@ bool LocalStorageService::importReleasesFromFile(QString path)
     auto filePath = path.replace("file:///", "").replace("file://", "");
     QFile importFile(filePath);
     if (!importFile.open(QFile::ReadOnly | QFile::Text)) {
-        auto error = importFile.errorString();
+        qInfo() << "Error while import releases from file";
         return false;
     }
 
@@ -1373,113 +1356,6 @@ void LocalStorageService::resetReleaseChanges(int releaseId)
     if (m_ChangesModel->newTorrentSeries()->contains(releaseId)) m_ChangesModel->newTorrentSeries()->removeOne(releaseId);
 
     saveChanges();
-}
-
-void LocalStorageService::setSeenMark(int id, int seriaId, bool marked)
-{
-    auto key = QString::number(id) + "." + QString::number(seriaId);
-    if (marked) {
-        if (!m_SeenMarkModels->contains(key)) m_SeenMarkModels->insert(key, true);
-    } else {
-        if (m_SeenMarkModels->contains(key)) m_SeenMarkModels->remove(key);
-    }
-    saveSeenMarks();
-}
-
-void LocalStorageService::setSeenMarkAllSeries(int id, int countSeries, bool marked)
-{
-    setSeenMarkForRelease(id, countSeries, marked);
-
-    saveSeenMarks();
-}
-
-void LocalStorageService::removeAllSeenMark()
-{
-    m_SeenMarkModels->clear();
-
-    saveSeenMarks();
-}
-
-void LocalStorageService::setMultipleSeenMarkAllSeries(QList<int> ids, bool marked)
-{
-    auto idsSet = ids.toSet();
-    foreach (auto release, *m_CachedReleases) {
-        if (idsSet.contains(release->id())) {
-            setSeenMarkForRelease(release->id(), release->countOnlineVideos(), marked);
-        }
-    }
-
-    saveSeenMarks();
-}
-
-QList<int> LocalStorageService::getReleseSeenMarks(int id, int count)
-{
-    QList<int> result;
-    for (int i=0; i < count; i++) {
-        auto key = QString::number(id) + "." + QString::number(i);
-        if (m_SeenMarkModels->contains(key)) {
-            result.append(i);
-        }
-    }
-    return result;
-}
-
-QString LocalStorageService::getReleasesSeenMarks(QList<int> ids)
-{
-    QJsonObject result;
-    QListIterator<FullReleaseModel*> i(*m_CachedReleases);
-
-    while(i.hasNext()) {
-        auto release = i.next();
-        if (!ids.contains(release->id())) continue;
-
-        auto id = release->id();
-
-        QJsonObject releaseSeens;
-        for (auto l = 0; l < release->countOnlineVideos(); l++) {
-            auto key = QString::number(id) + "." + QString::number(l);
-            if (m_SeenMarkModels->contains(key)) {
-                auto objectKey = QString::number(l);
-                releaseSeens.insert(objectKey, QJsonValue(true));
-            }
-        }
-
-        auto stringId = QString::number(id);
-        result[stringId] = releaseSeens;
-    }
-
-    QJsonDocument document(result);
-    return document.toJson();
-}
-
-QString LocalStorageService::getSeenMarks()
-{
-    QHash<int, int> counts;
-    QHashIterator<QString, bool> iterator(*m_SeenMarkModels);
-    while (iterator.hasNext()) {
-        iterator.next();
-
-        auto item = iterator.key();
-        auto parts = item.split(".");
-        int id = parts[0].toInt();
-        if (counts.contains(id)) {
-            counts[id] += 1;
-        } else {
-            counts.insert(id, 1);
-        }
-    }
-
-    QJsonObject object;
-    QHashIterator<int, int> countIterator(counts);
-    while (countIterator.hasNext()) {
-        countIterator.next();
-
-        auto key = QString::number(countIterator.key());
-        object[key] = countIterator.value();
-    }
-
-    QJsonDocument document(object);
-    return document.toJson();
 }
 
 void LocalStorageService::setToReleaseHistory(int id, int type)

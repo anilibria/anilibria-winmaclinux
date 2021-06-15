@@ -803,6 +803,9 @@ ApplicationWindow {
         onPlayInPlayer: {
             videoplayer.playInPlayer();
         }
+        onRecalculateSeenCounts: {
+            localStorage.recalculateSeenCountsFromFile();
+        }
     }
 
     OnlinePlayer {

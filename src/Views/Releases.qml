@@ -426,7 +426,7 @@ Page {
                                 text: "Ок"
                                 width: 100
                                 onClicked: {
-                                    localStorage.removeAllSeenMark();
+                                    onlinePlayerViewModel.removeAllSeenMark();
                                     refreshSeenMarks();
                                     refreshAllReleases(true);
                                     removeAllSeenMark.close();
@@ -2324,7 +2324,7 @@ Page {
     }
 
     function setSeenStateForOpenedRelease(newState) {
-        localStorage.setSeenMarkAllSeries(page.openedRelease.id, page.openedRelease.countVideos, newState);
+        onlinePlayerViewModel.setSeenMarkAllSeries(page.openedRelease.id, page.openedRelease.countVideos, newState);
         page.openedRelease.countSeensSeries = newState ? page.openedRelease.countVideos : 0;
         const oldRelease = page.openedRelease;
         page.openedRelease = null;
@@ -2334,7 +2334,13 @@ Page {
     }
 
     function setSeenStateForRelease(newState, releases) {
-        localStorage.setMultipleSeenMarkAllSeries(releases, newState);
+        for (const releaseId of releases) {
+            const release = JSON.parse(localStorage.getRelease(releaseId));
+            const videos = JSON.parse(release.videos);
+            onlinePlayerViewModel.setSeenMarkAllSeriesWithoutSave(releaseId, videos.length, newState);
+        }
+        onlinePlayerViewModel.saveSeenMarkCacheToFile();
+
         page.selectedReleases = [];
         refreshSeenMarks();
         refreshAllReleases(true);
@@ -2387,7 +2393,7 @@ Page {
     }
 
     function refreshSeenMarks() {
-        page.seenMarks = JSON.parse(localStorage.getSeenMarks());
+        page.seenMarks = JSON.parse(onlinePlayerViewModel.getSeenMarks());
     }
 
     function setSeensCounts(releases) {

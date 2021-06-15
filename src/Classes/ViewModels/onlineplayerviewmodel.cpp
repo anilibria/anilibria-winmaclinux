@@ -53,11 +53,13 @@ OnlinePlayerViewModel::OnlinePlayerViewModel(QObject *parent) : QObject(parent),
     m_navigateReleaseId(0),
     m_customPlaylistPosition(-1),
     m_navigateVideos(""),
-    m_navigatePoster("")
+    m_navigatePoster(""),
+    m_seenMarkModels(new QHash<QString, bool>())
 {
     createIfNotExistsFile(getSeensCachePath(), "[]");
 
     loadSeens();
+    loadSeenMarks();
 
     m_jumpMinutes->append(0);
     m_jumpMinutes->append(1);
@@ -432,6 +434,115 @@ void OnlinePlayerViewModel::setupForSingleRelease()
     emit needScrollSeriaPosition();
 }
 
+void OnlinePlayerViewModel::setSeenMark(int id, int seriaId, bool marked)
+{
+    auto key = QString::number(id) + "." + QString::number(seriaId);
+    if (marked) {
+        if (!m_seenMarkModels->contains(key)) m_seenMarkModels->insert(key, true);
+    } else {
+        if (m_seenMarkModels->contains(key)) m_seenMarkModels->remove(key);
+    }
+    saveSeenMarks();
+}
+
+void OnlinePlayerViewModel::setSeenMarkAllSeries(int id, int countSeries, bool marked)
+{
+    setSeenMarkForRelease(id, countSeries, marked);
+
+    saveSeenMarks();
+}
+
+void OnlinePlayerViewModel::setSeenMarkAllSeriesWithoutSave(int id, int countSeries, bool marked)
+{
+    setSeenMarkForRelease(id, countSeries, marked);
+}
+
+void OnlinePlayerViewModel::saveSeenMarkCacheToFile()
+{
+    saveSeenMarks();
+}
+
+void OnlinePlayerViewModel::removeAllSeenMark()
+{
+    m_seenMarkModels->clear();
+
+    saveSeenMarks();
+}
+
+QList<int> OnlinePlayerViewModel::getReleseSeenMarks(int id, int count)
+{
+    QList<int> result;
+    for (int i=0; i < count; i++) {
+        auto key = QString::number(id) + "." + QString::number(i);
+        if (m_seenMarkModels->contains(key)) {
+            result.append(i);
+        }
+    }
+    return result;
+}
+
+QString OnlinePlayerViewModel::getReleasesSeenMarks(QList<int> ids)
+{
+    QJsonObject result;
+    QHashIterator<QString, bool> iterator(*m_seenMarkModels);
+
+    while(iterator.hasNext()) {
+        auto seenMark = iterator.next();
+        auto key = seenMark.key();
+        auto parts = key.split(".");
+        auto releaseId = parts.at(0).toInt();
+        auto releseIdString = QString::number(releaseId);
+        auto videoId = parts.at(1).toInt();
+
+        if (!ids.contains(releaseId)) continue;
+
+        if (result.contains(releseIdString)) {
+            auto releaseObject = result.value(releseIdString);
+            auto object = releaseObject.toObject();
+            auto key = QString::number(videoId);
+            object.insert(key, QJsonValue(true));
+            result[releseIdString] = object;
+        } else {
+            QJsonObject releaseSeens;
+            releaseSeens.insert(QString::number(videoId), QJsonValue(true));
+            result.insert(releseIdString, releaseSeens);
+        }
+    }
+
+    QJsonDocument document(result);
+    return document.toJson();
+}
+
+QString OnlinePlayerViewModel::getSeenMarks()
+{
+    QHash<int, int> counts;
+    QHashIterator<QString, bool> iterator(*m_seenMarkModels);
+    while (iterator.hasNext()) {
+        iterator.next();
+
+        auto item = iterator.key();
+        auto parts = item.split(".");
+        int id = parts[0].toInt();
+        if (counts.contains(id)) {
+            counts[id] += 1;
+        } else {
+            counts.insert(id, 1);
+        }
+    }
+
+    QJsonObject object;
+    QHashIterator<int, int> countIterator(counts);
+    while (countIterator.hasNext()) {
+        countIterator.next();
+
+        auto key = QString::number(countIterator.key());
+        object[key] = countIterator.value();
+    }
+
+    QJsonDocument document(object);
+    return document.toJson();
+}
+
 void OnlinePlayerViewModel::saveVideoSeens()
 {
     QJsonArray array;
@@ -510,8 +621,10 @@ OnlineVideoModel* OnlinePlayerViewModel::nextNotSeenVideo()
 {
     auto selectedRelease = m_selectedRelease;
     auto selectedVideo = m_selectedVideo;
+    auto seenMarks = m_seenMarkModels;
+
     return m_videos->getFirstReleaseWithPredicate(
-        [selectedRelease, selectedVideo](OnlineVideoModel* video) {
+        [selectedRelease, selectedVideo, seenMarks](OnlineVideoModel* video) {
             bool beforeCurrent = true;
 
             if (video->releaseId() == selectedRelease && video->order() <= selectedVideo) {
@@ -521,12 +634,10 @@ OnlineVideoModel* OnlinePlayerViewModel::nextNotSeenVideo()
             if (beforeCurrent) return false;
             if (video->isGroup()) return false;
 
-            //TODO: add seen marks
-            /*if (!(releaseVideo.releaseId in _page.seenMarks && releaseVideo.order in _page.seenMarks[releaseVideo.releaseId])) {
-                return releaseVideo;
-            }*/
+            auto key = QString::number(video->releaseId()) + "." + video->order();
+            if (seenMarks->contains(key)) return true;
 
-            return true;
+            return false;
         }
     );
 }
@@ -536,17 +647,17 @@ OnlineVideoModel *OnlinePlayerViewModel::previousNotSeenVideo()
     auto selectedRelease = m_selectedRelease;
     auto selectedVideo = m_selectedVideo;
 
+    auto seenMarks = m_seenMarkModels;
     return m_videos->getFirstReleaseWithPredicate(
-        [selectedRelease, selectedVideo](OnlineVideoModel* video) {
+        [selectedRelease, selectedVideo, seenMarks](OnlineVideoModel* video) {
             if (video->isGroup()) return false;
 
             if (video->releaseId() == selectedRelease && video->order() == selectedVideo) return false;
 
-            //TODO: add seen marks
-            /*if (!(releaseVideo.releaseId in _page.seenMarks && releaseVideo.order in _page.seenMarks[releaseVideo.releaseId])) lastNotSeenVideo = releaseVideo;
-            }*/
+            auto key = QString::number(video->releaseId()) + "." + video->order();
+            if (seenMarks->contains(key)) return true;
 
-            return true;
+            return false;
         }
     );
 }
@@ -611,5 +722,67 @@ void OnlinePlayerViewModel::createIfNotExistsFile(QString path, QString defaultC
         file.open(QFile::WriteOnly | QFile::Text);
         file.write(defaultContent.toUtf8());
         file.close();
+    }
+}
+
+void OnlinePlayerViewModel::loadSeenMarks()
+{
+    QFile seenMarkFile(getSeenMarksCachePath());
+    if (!seenMarkFile.open(QFile::ReadOnly | QFile::Text)) {
+        //TODO: handle this situation
+    }
+    auto seenMarkJson = seenMarkFile.readAll();
+    seenMarkFile.close();
+
+    auto document = QJsonDocument::fromJson(seenMarkJson);
+    auto jsonSeenMarks = document.array();
+
+    foreach (auto item, jsonSeenMarks) {
+        m_seenMarkModels->insert(item.toString(), true);
+    }
+}
+
+QString OnlinePlayerViewModel::getSeenMarksCachePath() const
+{
+    if (IsPortable) {
+        return QDir::currentPath() + "/seenmark.cache";
+    } else {
+        return QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation) + "/seenmark.cache";
+    }
+}
+
+void OnlinePlayerViewModel::saveSeenMarks()
+{
+    QJsonArray array;
+
+    QHashIterator<QString, bool> iterator(*m_seenMarkModels);
+    while (iterator.hasNext()) {
+        iterator.next();
+
+        QJsonValue value(iterator.key());
+        array.append(value);
+    }
+
+    QJsonDocument seenDocument(array);
+    QString seenMarkJson(seenDocument.toJson());
+
+    QFile seenMarkFile(getSeenMarksCachePath());
+    if (!seenMarkFile.open(QFile::WriteOnly | QFile::Text)) return;
+
+    seenMarkFile.write(seenMarkJson.toUtf8());
+    seenMarkFile.close();
+
+    emit recalculateSeenCounts();
+}
+
+void OnlinePlayerViewModel::setSeenMarkForRelease(int id, int countSeries, bool marked)
+{
+    for (int i = 0; i < countSeries; i++) {
+        auto key = QString::number(id) + "." + QString::number(i);
+        if (marked) {
+            if (!m_seenMarkModels->contains(key)) m_seenMarkModels->insert(key, true);
+        } else {
+            if (m_seenMarkModels->contains(key)) m_seenMarkModels->remove(key);
+        }
     }
 }

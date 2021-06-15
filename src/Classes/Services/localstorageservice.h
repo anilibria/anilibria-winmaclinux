@@ -84,7 +84,6 @@ private:
     void saveChanges();
     void resetChanges();
     void loadSeenMarks();
-    void saveSeenMarks();
     void loadHistory();
     void saveHistory();
     void loadSettings();
@@ -98,7 +97,7 @@ private:
     QHash<int, int> getAllSeenMarkCount();
     int countOnlyFavorites(QList<int>* changes, QSet<int>* favorites);
     void setSeenMarkForRelease(int id, int countSeries, bool marked);
-    void recalculateSeenCounts();
+    void recalculateSeenCounts();    
     bool importReleasesFromFile(QString path);
     void afterSynchronizedReleases();
 public:
@@ -132,13 +131,6 @@ public:
     Q_INVOKABLE QList<int> getChangesCounts();
     Q_INVOKABLE void resetAllChanges();
     Q_INVOKABLE void resetReleaseChanges(int releaseId);
-    Q_INVOKABLE void setSeenMark(int id, int seriaId, bool marked);    
-    Q_INVOKABLE void setSeenMarkAllSeries(int id, int countSeries, bool marked);
-    Q_INVOKABLE void removeAllSeenMark();
-    Q_INVOKABLE void setMultipleSeenMarkAllSeries(QList<int> ids, bool marked);
-    Q_INVOKABLE QList<int> getReleseSeenMarks(int id, int count);
-    Q_INVOKABLE QString getReleasesSeenMarks(QList<int> ids);
-    Q_INVOKABLE QString getSeenMarks();
     Q_INVOKABLE void setToReleaseHistory(int id, int type);
     Q_INVOKABLE void setVolume(double volume);
     Q_INVOKABLE void setVideoQuality(int quality);
@@ -182,6 +174,7 @@ public:
     Q_INVOKABLE void removeFromHidedReleases(const QList<int>& ids);
     Q_INVOKABLE void removeAllHidedReleases();
     Q_INVOKABLE bool isReleaseInHided(int id);
+    Q_INVOKABLE void recalculateSeenCountsFromFile();
 
 signals:
     void allReleasesFinished();
