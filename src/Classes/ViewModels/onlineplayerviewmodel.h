@@ -59,6 +59,8 @@ class OnlinePlayerViewModel : public QObject
     Q_PROPERTY(int customPlaylistPosition READ customPlaylistPosition WRITE setCustomPlaylistPosition NOTIFY customPlaylistPositionChanged)
     Q_PROPERTY(QString navigateVideos READ navigateVideos WRITE setNavigateVideos NOTIFY navigateVideosChanged)
     Q_PROPERTY(QString navigatePoster READ navigatePoster WRITE setNavigatePoster NOTIFY navigatePosterChanged)
+    Q_PROPERTY(bool remotePlayerStarted READ remotePlayerStarted NOTIFY remotePlayerStartedChanged)
+    Q_PROPERTY(int remotePlayerCountUsers READ remotePlayerCountUsers NOTIFY remotePlayerCountUsersChanged)
 
 private:
     bool m_isFullScreen;
@@ -96,6 +98,8 @@ private:
     QString m_navigateVideos;
     QString m_navigatePoster;
     QHash<QString, bool>* m_seenMarkModels;
+    bool m_remotePlayerStarted;
+    int m_remotePlayerCountUsers;
 
 public:
     explicit OnlinePlayerViewModel(QObject *parent = nullptr);
@@ -179,6 +183,10 @@ public:
     QString navigatePoster() const { return m_navigatePoster; }
     void setNavigatePoster(const QString& navigatePoster) noexcept;
 
+    bool remotePlayerStarted() const { return m_remotePlayerStarted; }
+
+    int remotePlayerCountUsers() const { return m_remotePlayerCountUsers; }
+
     Q_INVOKABLE void toggleFullScreen();
     Q_INVOKABLE void changeVideoPosition(int duration, int position) noexcept;
     Q_INVOKABLE QString checkExistingVideoQuality(int index);    
@@ -197,6 +205,11 @@ public:
     Q_INVOKABLE QString getReleasesSeenMarks(QList<int> ids);
     Q_INVOKABLE QString getSeenMarks();
 
+    Q_INVOKABLE void remotePlayerBroadcastCommand(const QString& command, const QString& argument);
+    Q_INVOKABLE void remotePlayerStartServer();
+    Q_INVOKABLE void remotePlayerStopServer() noexcept;
+    Q_INVOKABLE void remotePlayerSetPort(int port) noexcept;
+
 private:
     void saveVideoSeens();
     QString getZeroBasedDigit(int digit);
@@ -212,6 +225,8 @@ private:
     QString getSeenMarksCachePath() const;
     void saveSeenMarks();
     void setSeenMarkForRelease(int id, int countSeries, bool marked);
+    void receiveRemotePort();
+    void receiveCountUsers();
 
 signals:
     void isFullScreenChanged();
@@ -246,6 +261,8 @@ signals:
     void playInPlayer();
     void saveToWatchHistory(int releaseId);
     void recalculateSeenCounts();
+    void remotePlayerStartedChanged();
+    void remotePlayerCountUsersChanged();
 
 };
 

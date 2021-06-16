@@ -54,7 +54,9 @@ OnlinePlayerViewModel::OnlinePlayerViewModel(QObject *parent) : QObject(parent),
     m_customPlaylistPosition(-1),
     m_navigateVideos(""),
     m_navigatePoster(""),
-    m_seenMarkModels(new QHash<QString, bool>())
+    m_seenMarkModels(new QHash<QString, bool>()),
+    m_remotePlayerStarted(false),
+    m_remotePlayerCountUsers(0)
 {
     createIfNotExistsFile(getSeensCachePath(), "[]");
 
@@ -79,6 +81,8 @@ OnlinePlayerViewModel::OnlinePlayerViewModel(QObject *parent) : QObject(parent),
     m_ports->append(67289);
 
     connect(m_remotePlayer, &RemotePlayer::receiveCommand, this, &OnlinePlayerViewModel::receiveCommand);
+    connect(m_remotePlayer, &RemotePlayer::startedChanged, this, &OnlinePlayerViewModel::receiveRemotePort);
+    connect(m_remotePlayer, &RemotePlayer::countUsersChanged, this, &OnlinePlayerViewModel::receiveCountUsers);
 }
 
 void OnlinePlayerViewModel::setIsFullScreen(bool isFullScreen) noexcept
@@ -543,6 +547,26 @@ QString OnlinePlayerViewModel::getSeenMarks()
     return document.toJson();
 }
 
+void OnlinePlayerViewModel::remotePlayerBroadcastCommand(const QString &command, const QString &argument)
+{
+    m_remotePlayer->broadcastCommand(command, argument);
+}
+
+void OnlinePlayerViewModel::remotePlayerStartServer()
+{
+    m_remotePlayer->startServer();
+}
+
+void OnlinePlayerViewModel::remotePlayerStopServer() noexcept
+{
+    m_remotePlayer->stopServer();
+}
+
+void OnlinePlayerViewModel::remotePlayerSetPort(int port) noexcept
+{
+    m_remotePlayer->setPort(port);
+}
+
 void OnlinePlayerViewModel::saveVideoSeens()
 {
     QJsonArray array;
@@ -785,4 +809,16 @@ void OnlinePlayerViewModel::setSeenMarkForRelease(int id, int countSeries, bool 
             if (m_seenMarkModels->contains(key)) m_seenMarkModels->remove(key);
         }
     }
+}
+
+void OnlinePlayerViewModel::receiveRemotePort()
+{
+    m_remotePlayerStarted = m_remotePlayer->started();
+    emit remotePlayerStartedChanged();
+}
+
+void OnlinePlayerViewModel::receiveCountUsers()
+{
+    m_remotePlayerCountUsers = m_remotePlayer->countUsers();
+    emit remotePlayerCountUsersChanged();
 }

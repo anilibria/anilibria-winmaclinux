@@ -113,7 +113,7 @@ Page {
         sendVolumeToRemoteSwitch.checked = applicationSettings.sendVolumeToRemote;
         onlinePlayerViewModel.sendPlaybackToRemoteSwitch = sendVolumeToRemoteSwitch.checked;
         sendPlaybackToRemoteSwitch.checked = applicationSettings.sendPlaybackToRemote;
-        remotePlayer.port = applicationSettings.remotePort;
+        onlinePlayerViewModel.remotePlayerSetPort(applicationSettings.remotePort);
         remotePlayerPortComboBox.currentIndex = onlinePlayerViewModel.ports.indexOf(applicationSettings.remotePort);
 
         if (autoTopMost.checked && player.playbackState === MediaPlayer.PlayingState) windowSettings.setStayOnTop();
@@ -280,23 +280,7 @@ Page {
     }
 
     onReceiveRemoteCommand: {
-        /*switch (command){
-            case `getcurrentvideosource`:
-                remotePlayer.sendCommandToUser(id, _page.videoSourceChangedCommand, onlinePlayerViewModel.videoSource);
-                break;
-            case `getcurrentvideoposition`:
-                remotePlayer.sendCommandToUser(id, _page.videoPositionChangedCommand, player.position.toString() + `/` + player.duration.toString());
-                break;
-            case `getcurrentvolume`:
-                if (sendVolumeToRemoteSwitch.checked) remotePlayer.sendCommandToUser(id, _page.videoVolumeChangedCommand, volumeSlider.value.toString());
-                break;
-            case `getcurrentplaybackrate`:
-                remotePlayer.sendCommandToUser(id, _page.videoPlaybackRateCommand, onlinePlayerViewModel.playbackRate.toString());
-                break;
-            case `getcurrentplayback`:
-                if (player.playbackState === MediaPlayer.PausedState && sendPlaybackToRemoteSwitch.checked) remotePlayer.sendCommandToUser(id, _page.videoPlaybackCommand, "pause");
-                break;
-        }*/
+
     }
 
     function setControlVisible(visible) {
@@ -378,13 +362,13 @@ Page {
 
             if (!sendPlaybackToRemoteSwitch.checked) return;
 
-            if (playbackState === MediaPlayer.PlayingState) remotePlayer.broadcastCommand(_page.videoPlaybackCommand, "play");
-            if (playbackState === MediaPlayer.PausedState) remotePlayer.broadcastCommand(_page.videoPlaybackCommand, "pause");
+            if (playbackState === MediaPlayer.PlayingState) onlinePlayerViewModel.remotePlayerBroadcastCommand(_page.videoPlaybackCommand, "play");
+            if (playbackState === MediaPlayer.PausedState) onlinePlayerViewModel.remotePlayerBroadcastCommand(_page.videoPlaybackCommand, "pause");
         }
         onVolumeChanged: {
             volumeSlider.value = volume * 100;
             onlinePlayerViewModel.volumeSlider = volumeSlider.value;
-            if (applicationSettings.sendVolumeToRemote) remotePlayer.broadcastCommand(_page.videoVolumeChangedCommand, volumeSlider.value.toString());
+            if (applicationSettings.sendVolumeToRemote) onlinePlayerViewModel.remotePlayerBroadcastCommand(_page.videoVolumeChangedCommand, volumeSlider.value.toString());
         }
         onStatusChanged: {
             if (status === MediaPlayer.Loading) onlinePlayerViewModel.isBuffering = true;
@@ -606,7 +590,7 @@ Page {
                 onPressedChanged: {
                     if (!pressed && onlinePlayerViewModel.lastMovedPosition > 0) {
                         player.seek(onlinePlayerViewModel.lastMovedPosition);
-                        remotePlayer.broadcastCommand(_page.videoPositionChangedCommand, onlinePlayerViewModel.lastMovedPosition.toString() + `/` + player.duration.toString());
+                        onlinePlayerViewModel.remotePlayerBroadcastCommand(_page.videoPositionChangedCommand, onlinePlayerViewModel.lastMovedPosition.toString() + `/` + player.duration.toString());
                         onlinePlayerViewModel.lastMovedPosition = 0;
                     }
                     controlPanel.forceActiveFocus();
@@ -967,7 +951,7 @@ Page {
                         id: remotePlayerButton
                         width: 40
                         height: 40
-                        iconColor: remotePlayer.started ? ApplicationTheme.filterIconButtonGreenColor : ApplicationTheme.filterIconButtonColor
+                        iconColor: onlinePlayerViewModel.remotePlayerStarted ? ApplicationTheme.filterIconButtonGreenColor : ApplicationTheme.filterIconButtonColor
                         hoverColor: ApplicationTheme.filterIconButtonHoverColor
                         iconPath: "../Assets/Icons/connect.svg"
                         iconWidth: 24
@@ -978,7 +962,7 @@ Page {
 
                         ToolTip.delay: 1000
                         ToolTip.visible: remotePlayerButton.hovered
-                        ToolTip.text: remotePlayer.started ? "Удаленный плеер включен" : "Удаленный плеер выключен, откройте настройки для подключения"
+                        ToolTip.text: onlinePlayerViewModel.remotePlayerStarted ? "Удаленный плеер включен" : "Удаленный плеер выключен, откройте настройки для подключения"
 
                         Popup {
                             id: remotePlayerPopup
@@ -1005,10 +989,10 @@ Page {
                                     id: stateRemotePlayer
                                     onCheckedChanged: {
                                         if (checked) {
-                                            remotePlayer.port = applicationSettings.remotePort;
-                                            remotePlayer.startServer();
+                                            onlinePlayerViewModel.remotePlayerSetPort(applicationSettings.remotePort);
+                                            onlinePlayerViewModel.remotePlayerStartServer();
                                         } else {
-                                            remotePlayer.stopServer();
+                                            onlinePlayerViewModel.remotePlayerStopServer();
                                         }
                                     }
                                 }
@@ -1073,7 +1057,7 @@ Page {
                                 PlainText {
                                     width: optionsPopup.width - 20
                                     fontPointSize: 10
-                                    text: "Подключено: " + remotePlayer.countUsers
+                                    text: "Подключено: " + onlinePlayerViewModel.remotePlayerCountUsers
                                 }
                             }
                         }
@@ -1412,12 +1396,12 @@ Page {
 
     function setVideoSource(source) {
         onlinePlayerViewModel.videoSource = source;
-        //remotePlayer.broadcastCommand(_page.videoSourceChangedCommand, source);
+        //remotePlayerBroadcastCommand(_page.videoSourceChangedCommand, source);
     }
 
     function setVideoSpeed(videoSpeed) {
         onlinePlayerViewModel.playbackRate = videoSpeed;
-        //remotePlayer.broadcastCommand(_page.videoPlaybackRateCommand, videoSpeed);
+        //remotePlayerBroadcastCommand(_page.videoPlaybackRateCommand, videoSpeed);
     }
 
     function nextVideo() {
