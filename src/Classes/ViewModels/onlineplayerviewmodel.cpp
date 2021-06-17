@@ -33,6 +33,7 @@ OnlinePlayerViewModel::OnlinePlayerViewModel(QObject *parent) : QObject(parent),
     m_displayEndVideoPosition("00:00:00"),
     m_jumpMinutes(new QList<int>()),
     m_jumpSeconds(new QList<int>()),
+    m_videos(new OnlinePlayerVideoList()),
     m_videoSource(""),
     m_releasePoster(""),
     m_isFullHdAllowed(false),
@@ -322,6 +323,8 @@ void OnlinePlayerViewModel::nextVideo()
 
     setVideoSource(getVideoFromQuality(video));
 
+    m_videos->selectVideo(m_selectedRelease, m_selectedVideo);
+
     if (!m_isCinemahall) emit needScrollSeriaPosition();
 }
 
@@ -351,6 +354,8 @@ void OnlinePlayerViewModel::previousVideo()
     setSelectedRelease(video->releaseId());
 
     setVideoSource(getVideoFromQuality(video));
+
+    m_videos->selectVideo(m_selectedRelease, m_selectedVideo);
 
     if (!m_isCinemahall) emit needScrollSeriaPosition();
 }
@@ -427,12 +432,13 @@ void OnlinePlayerViewModel::setupForSingleRelease()
 
     auto firstVideo = m_videos->getVideoAtIndex(videoIndex);
 
-    //refreshSeenMarks();
-
     setSelectedVideo(firstVideo->order());
     setIsFullHdAllowed(!firstVideo->fullhd().isEmpty());
     setVideoSource(getVideoFromQuality(firstVideo));
 
+    m_videos->selectVideo(m_selectedRelease, m_selectedVideo);
+
+    emit refreshSeenMarks();
     emit playInPlayer();
     emit saveToWatchHistory(m_navigateReleaseId);
     emit needScrollSeriaPosition();
@@ -545,6 +551,26 @@ QString OnlinePlayerViewModel::getSeenMarks()
 
     QJsonDocument document(object);
     return document.toJson();
+}
+
+void OnlinePlayerViewModel::selectVideo(int releaseId, int videoId)
+{
+    setSelectedVideo(videoId);
+    setSelectedRelease(releaseId);
+
+    auto video = m_videos->getFirstReleaseWithPredicate(
+        [releaseId, videoId](OnlineVideoModel* video) {
+            return video->releaseId() == releaseId && video->order() == videoId;
+        }
+    );
+
+    setIsFullHdAllowed(!video->fullhd().isEmpty());
+    setVideoSource(getVideoFromQuality(video));
+    setReleasePoster(video->releasePoster());
+
+    m_videos->selectVideo(releaseId, videoId);
+
+    emit playInPlayer();
 }
 
 void OnlinePlayerViewModel::remotePlayerBroadcastCommand(const QString &command, const QString &argument)

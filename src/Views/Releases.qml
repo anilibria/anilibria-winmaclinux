@@ -86,6 +86,7 @@ Page {
 
     signal navigateFrom()
     signal watchRelease(int releaseId, string videos, int startSeria)
+    signal watchSingleRelease(int releaseId, string videos, int startSeria, string poster)
     signal refreshReleases()
     signal refreshFavorites()
     signal refreshReleaseSchedules()
@@ -2288,7 +2289,7 @@ Page {
                         anchors.right: parent.right
                         anchors.rightMargin: 10
                         onClicked: {
-                            watchRelease(page.openedRelease.id, page.openedRelease.videos, -1);
+                            watchSingleRelease(page.openedRelease.id, page.openedRelease.videos, -1, page.openedRelease.poster)
 
                             page.openedRelease = null;
                             releasePosterPreview.isVisible = false;

@@ -793,6 +793,9 @@ ApplicationWindow {
         onRecalculateSeenCounts: {
             localStorage.recalculateSeenCountsFromFile();
         }
+        onRefreshSeenMarks: {
+            videoplayer.refreshSeenMarks();
+        }
     }
 
     OnlinePlayer {
@@ -816,6 +819,15 @@ ApplicationWindow {
             };
             window.showPage("videoplayer");
             videoplayer.setReleaseVideo();
+        }
+        onWatchSingleRelease: {
+            onlinePlayerViewModel.customPlaylistPosition = startSeria;
+            onlinePlayerViewModel.navigateReleaseId = releaseId;
+            onlinePlayerViewModel.navigateVideos = videos;
+            onlinePlayerViewModel.navigatePoster = poster;
+
+            window.showPage("videoplayer");
+            onlinePlayerViewModel.setupForSingleRelease();
         }
         onWatchCinemahall: {
             window.showPage("videoplayer");

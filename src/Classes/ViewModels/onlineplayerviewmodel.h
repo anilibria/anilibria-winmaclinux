@@ -40,7 +40,7 @@ class OnlinePlayerViewModel : public QObject
     Q_PROPERTY(QString displayEndVideoPosition READ displayEndVideoPosition WRITE setDisplayEndVideoPosition NOTIFY displayEndVideoPositionChanged)
     Q_PROPERTY(QList<int> jumpMinutes READ jumpMinutes NOTIFY jumpMinutesChanged)
     Q_PROPERTY(QList<int> jumpSeconds READ jumpSeconds NOTIFY jumpSecondsChanged)
-    Q_PROPERTY(OnlinePlayerVideoList videos READ videos NOTIFY videosChanged)
+    Q_PROPERTY(OnlinePlayerVideoList* videos READ videos NOTIFY videosChanged)
     Q_PROPERTY(QString videoSource READ videoSource WRITE setVideoSource NOTIFY videoSourceChanged)
     Q_PROPERTY(QString releasePoster READ releasePoster WRITE setReleasePoster NOTIFY releasePosterChanged)
     Q_PROPERTY(bool isFullHdAllowed READ isFullHdAllowed WRITE setIsFullHdAllowed NOTIFY isFullHdAllowedChanged)
@@ -204,6 +204,7 @@ public:
     Q_INVOKABLE QList<int> getReleseSeenMarks(int id, int count);
     Q_INVOKABLE QString getReleasesSeenMarks(QList<int> ids);
     Q_INVOKABLE QString getSeenMarks();
+    Q_INVOKABLE void selectVideo(int releaseId, int videoId);
 
     Q_INVOKABLE void remotePlayerBroadcastCommand(const QString& command, const QString& argument);
     Q_INVOKABLE void remotePlayerStartServer();
@@ -263,6 +264,7 @@ signals:
     void recalculateSeenCounts();
     void remotePlayerStartedChanged();
     void remotePlayerCountUsersChanged();
+    void refreshSeenMarks();
 
 };
 

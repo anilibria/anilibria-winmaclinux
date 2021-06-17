@@ -19,6 +19,8 @@ class OnlinePlayerVideoList : public QAbstractListModel
 
 private:
     QVector<OnlineVideoModel*>* m_videos;
+    int m_selectedReleaseId;
+    int m_selectedVideoId;
 
     enum PlayListRoles {
         IdRole = Qt::UserRole + 1,
@@ -31,7 +33,9 @@ private:
         IsSeenRole,
         IsGroupRole,
         ReleaseIdRole,
-        ReleasePosterRole
+        ReleasePosterRole,
+        SelectedRole,
+        OrderRole
     };
 
 public:
@@ -49,6 +53,7 @@ public:
 
     void setVideosFromSingleList(const QString& json, int releaseId, const QString& poster) noexcept;
     void setVideosFromMultipleList(const QStringList& json) noexcept;
+    void selectVideo(int releaseId, int videoId) noexcept;
 
 signals:    
 

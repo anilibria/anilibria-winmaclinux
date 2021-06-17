@@ -1,7 +1,9 @@
 #include "onlineplayervideolist.h"
 
 OnlinePlayerVideoList::OnlinePlayerVideoList(QObject *parent) : QAbstractListModel(parent),
-    m_videos(new QVector<OnlineVideoModel*>())
+    m_videos(new QVector<OnlineVideoModel*>()),
+    m_selectedReleaseId(0),
+    m_selectedVideoId(0)
 {
 
 }
@@ -9,7 +11,6 @@ OnlinePlayerVideoList::OnlinePlayerVideoList(QObject *parent) : QAbstractListMod
 int OnlinePlayerVideoList::rowCount(const QModelIndex &parent) const
 {
     if (parent.isValid()) return 0;
-
     return m_videos->size();
 }
 
@@ -42,16 +43,22 @@ QVariant OnlinePlayerVideoList::data(const QModelIndex &index, int role) const
             return QVariant(video->sourcesd());
         }
         case ReleaseIdRole: {
-            return QVariant("");
+            return QVariant(video->releaseId());
         }
         case ReleasePosterRole: {
-            return QVariant("");
+            return QVariant(video->releasePoster());
         }
         case IsSeenRole: {
             return QVariant(false);
         }
         case IsGroupRole: {
-            return QVariant(false);
+            return QVariant(video->isGroup());
+        }
+        case SelectedRole: {
+            return QVariant(video->releaseId() == m_selectedReleaseId && video->order() == m_selectedVideoId);
+        }
+        case OrderRole: {
+            return QVariant(video->order());
         }
     }
 
@@ -104,6 +111,14 @@ QHash<int, QByteArray> OnlinePlayerVideoList::roleNames() const
         {
             ReleasePosterRole,
             "releasePoster"
+        },
+        {
+            SelectedRole,
+            "selectedVideo"
+        },
+        {
+            OrderRole,
+            "order"
         }
     };
 }
@@ -149,6 +164,7 @@ void OnlinePlayerVideoList::setVideosFromSingleList(const QString &json, int rel
         videoModel->readFromApiModel(video.toObject());
         videoModel->setReleaseId(releaseId);
         videoModel->setReleasePoster(poster);
+        videoModel->setIsGroup(false);
         m_videos->append(videoModel);
     }
 
@@ -156,7 +172,7 @@ void OnlinePlayerVideoList::setVideosFromSingleList(const QString &json, int rel
         m_videos->begin(),
         m_videos->end(),
         [](const OnlineVideoModel* first, const OnlineVideoModel* second) {
-            return first->id() > second->id();
+            return first->id() < second->id();
         }
     );
 
@@ -168,7 +184,7 @@ void OnlinePlayerVideoList::setVideosFromSingleList(const QString &json, int rel
         item->setOrder(index);
     }
 
-    endResetModel();
+    endResetModel();    
 }
 
 void OnlinePlayerVideoList::setVideosFromMultipleList(const QStringList &json) noexcept
@@ -176,4 +192,37 @@ void OnlinePlayerVideoList::setVideosFromMultipleList(const QStringList &json) n
     if (json.count() > 0) {
 
     }
+}
+
+void OnlinePlayerVideoList::selectVideo(int releaseId, int videoId) noexcept
+{
+    if (releaseId == m_selectedReleaseId && videoId == m_selectedVideoId) return;
+
+    int currentIndex = -1;
+    int newIndex = -1;
+    int currentSelectedReleaseId = m_selectedReleaseId;
+    int currentSelectedVideoId = m_selectedVideoId;
+    auto currentlySelected = std::find_if(
+        m_videos->begin(),
+        m_videos->end(),
+        [currentSelectedReleaseId, currentSelectedVideoId](OnlineVideoModel * video) {
+            return video->releaseId() == currentSelectedReleaseId && video->order() == currentSelectedVideoId;
+        }
+    );
+    if (currentlySelected != m_videos->end()) currentIndex = m_videos->indexOf(*currentlySelected);
+
+    auto newSelected = std::find_if(
+        m_videos->begin(),
+        m_videos->end(),
+        [releaseId, videoId](OnlineVideoModel * video) {
+            return video->releaseId() == releaseId && video->order() == videoId;
+        }
+    );
+    newIndex = m_videos->indexOf(*newSelected);
+
+    m_selectedReleaseId = releaseId;
+    m_selectedVideoId = videoId;
+
+    emit dataChanged(index(currentIndex), index(currentIndex));
+    emit dataChanged(index(newIndex), index(newIndex));
 }

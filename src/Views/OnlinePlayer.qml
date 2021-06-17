@@ -38,7 +38,6 @@ Page {
     signal navigateTo()
     signal returnToReleasesPage()
     signal windowNotActived()
-    signal receiveRemoteCommand(int id, string command, string argument)
     signal playInPlayer()
 
     onPlayInPlayer: {
@@ -129,19 +128,18 @@ Page {
                 break;
         }
 
-        if (!_page.setReleaseParameters.releaseId && !onlinePlayerViewModel.isCinemahall) {
+        if (!onlinePlayerViewModel.navigateReleaseId && !onlinePlayerViewModel.isCinemahall) {
             const lastSeenReleaseId = onlinePlayerViewModel.getLastVideoSeen();
             if (lastSeenReleaseId === 0) return;
 
             const release = JSON.parse(localStorage.getRelease(lastSeenReleaseId));
-            onlinePlayerViewModel.releasePoster = release.poster;
-            _page.setReleaseParameters = {
-                releaseId: lastSeenReleaseId,
-                videos: release.videos,
-                customPlaylistPosition: -1
-            };
+            
+            onlinePlayerViewModel.customPlaylistPosition = -1;
+            onlinePlayerViewModel.navigateReleaseId = lastSeenReleaseId;
+            onlinePlayerViewModel.navigateVideos = release.videos;
+            onlinePlayerViewModel.navigatePoster = release.poster;
 
-            _page.setReleaseVideo();
+            onlinePlayerViewModel.setupForSingleRelease();
         }
     }
 
@@ -277,10 +275,6 @@ Page {
         } else {
             setVideoSource("");
         }
-    }
-
-    onReceiveRemoteCommand: {
-
     }
 
     function setControlVisible(visible) {
@@ -442,12 +436,12 @@ Page {
             Column {
                 id: itemsContent
                 Repeater {
-                    model: _page.releaseVideos
+                    model: onlinePlayerViewModel.videos
                     delegate: Row {
                         Rectangle {
-                            height:  modelData.isGroup ? 70 : 40
+                            height: isGroup ? 70 : 40
                             width: seriesPopup.width
-                            color: onlinePlayerViewModel.selectedVideo === modelData.order && onlinePlayerViewModel.selectedRelease === modelData.releaseId ? ApplicationTheme.playlistSelectedBackground : ApplicationTheme.playlistBackground
+                            color: selectedVideo ? ApplicationTheme.playlistSelectedBackground : ApplicationTheme.playlistBackground
                             MouseArea {
                                 anchors.fill: parent
                                 hoverEnabled: true
@@ -455,23 +449,18 @@ Page {
                                     if (playerTimer.running) playerTimer.stop();
                                 }
                                 onClicked: {
-                                    if (modelData.isGroup) return;
+                                    if (isGroup) return;
 
-                                    onlinePlayerViewModel.selectedVideo = modelData.order;
-                                    onlinePlayerViewModel.isFullHdAllowed = "fullhd" in modelData;
-                                    setVideoSource(modelData[onlinePlayerViewModel.videoQuality]);
-                                    onlinePlayerViewModel.selectedRelease = modelData.releaseId;
-                                    setReleasePoster(modelData.releasePoster, modelData.releaseId);
-                                    player.play();
+                                    onlinePlayerViewModel.selectVideo(releaseId, order);
                                 }
                             }
                             Text {
-                                visible: !modelData.isGroup
-                                color: onlinePlayerViewModel.selectedVideo === modelData.order && onlinePlayerViewModel.selectedRelease === modelData.releaseId ? ApplicationTheme.playlistSelectedText : ApplicationTheme.playlistText
+                                visible: !isGroup
+                                color: selectedVideo ? ApplicationTheme.playlistSelectedText : ApplicationTheme.playlistText
                                 anchors.verticalCenter: parent.verticalCenter
                                 anchors.left: parent.left
                                 anchors.leftMargin: 10
-                                text: modelData.title
+                                text: title
                             }
 
                             Rectangle {
@@ -481,9 +470,9 @@ Page {
                                 anchors.rightMargin: 10
 
                                 Text {
-                                    visible: modelData.isGroup
-                                    color: onlinePlayerViewModel.selectedVideo === modelData.order && onlinePlayerViewModel.selectedRelease === modelData.releaseId ? ApplicationTheme.playlistSelectedText : ApplicationTheme.playlistText
-                                    text: modelData.title
+                                    visible: isGroup
+                                    color: selectedVideo ? ApplicationTheme.playlistSelectedText : ApplicationTheme.playlistText
+                                    text: title
                                     width: parent.width
                                     anchors.verticalCenter: parent.verticalCenter
                                     maximumLineCount: 3
@@ -502,10 +491,10 @@ Page {
                                 IconButton {
                                     height: 36
                                     width: 36
-                                    visible: !modelData.isGroup
+                                    visible: !isGroup
                                     iconColor: ApplicationTheme.filterIconButtonColor
                                     hoverColor: ApplicationTheme.filterIconButtonHoverColor
-                                    iconPath: _page.seenMarks && modelData.releaseId in _page.seenMarks && modelData.order in _page.seenMarks[modelData.releaseId] ? "../Assets/Icons/seenmarkselected.svg" : "../Assets/Icons/seenmark.svg"
+                                    iconPath: _page.seenMarks && releaseId in _page.seenMarks && order in _page.seenMarks[releaseId] ? "../Assets/Icons/seenmarkselected.svg" : "../Assets/Icons/seenmark.svg"
                                     iconWidth: 22
                                     iconHeight: 22
                                     onButtonHoverEnter: {
@@ -513,13 +502,13 @@ Page {
                                     }
                                     onButtonPressed: {
                                         let newState = false;
-                                        let seenMarks = getReleaseSeens(modelData.releaseId);
+                                        let seenMarks = getReleaseSeens(releaseId);
 
-                                        if (seenMarks[modelData.order]) {
-                                            delete seenMarks[modelData.order];
+                                        if (seenMarks[order]) {
+                                            delete seenMarks[order];
                                             newState = false;
                                         } else {
-                                            seenMarks[modelData.order] = true;
+                                            seenMarks[order] = true;
                                             newState = true;
 
                                         }
@@ -528,14 +517,14 @@ Page {
                                         _page.seenMarks = {};
                                         _page.seenMarks = oldSeenMarks;
 
-                                        onlinePlayerViewModel.setSeenMark(modelData.releaseId, modelData.order, newState);
+                                        onlinePlayerViewModel.setSeenMark(releaseId, order, newState);
                                     }
                                 }
 
                                 IconButton {
                                     height: 36
                                     width: 36
-                                    visible: !modelData.isGroup
+                                    visible: !isGroup
                                     iconColor: ApplicationTheme.filterIconButtonColor
                                     hoverColor: ApplicationTheme.filterIconButtonHoverColor
                                     iconPath: "../Assets/Icons/download.svg"
@@ -548,10 +537,10 @@ Page {
                                         switch (onlinePlayerViewModel.videoQuality) {
                                             case "fullhd":
                                             case "hd":
-                                                Qt.openUrlExternally(modelData.hdfile);
+                                                Qt.openUrlExternally(hdfile);
                                                 break;
                                             case "sd":
-                                                Qt.openUrlExternally(modelData.sdfile);
+                                                Qt.openUrlExternally(sdfile);
                                                 break;
                                         }
                                     }
@@ -865,7 +854,7 @@ Page {
                         iconWidth: 24
                         iconHeight: 24
                         onButtonPressed: {
-                            _page.previousVideo();
+                            onlinePlayerViewModel.previousVideo();
                         }
                     }
                     IconButton {
@@ -905,7 +894,7 @@ Page {
                         iconWidth: 24
                         iconHeight: 24
                         onButtonPressed: {
-                            _page.nextVideo();
+                            onlinePlayerViewModel.nextVideo();
                         }
                     }
                     IconButton {
@@ -1445,7 +1434,7 @@ Page {
         if (onlinePlayerViewModel.isCinemahall) {
             releaseIds = _page.cinemahallReleases.map(a => a.id);
         } else {
-            releaseIds.push(_page.setReleaseParameters.releaseId);
+            releaseIds.push(onlinePlayerViewModel.selectedRelease);
         }
 
         _page.seenMarks = JSON.parse(onlinePlayerViewModel.getReleasesSeenMarks(releaseIds));
