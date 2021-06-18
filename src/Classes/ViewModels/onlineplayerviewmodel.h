@@ -211,6 +211,8 @@ public:
     Q_INVOKABLE void remotePlayerStopServer() noexcept;
     Q_INVOKABLE void remotePlayerSetPort(int port) noexcept;
 
+    Q_INVOKABLE void changeVideoQuality(const QString& quality) noexcept;
+
 private:
     void saveVideoSeens();
     QString getZeroBasedDigit(int digit);
@@ -265,6 +267,7 @@ signals:
     void remotePlayerStartedChanged();
     void remotePlayerCountUsersChanged();
     void refreshSeenMarks();
+    void stopInPlayer();
 
 };
 

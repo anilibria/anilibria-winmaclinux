@@ -85,7 +85,6 @@ Page {
     property bool toggler: false
 
     signal navigateFrom()
-    signal watchRelease(int releaseId, string videos, int startSeria)
     signal watchSingleRelease(int releaseId, string videos, int startSeria, string poster)
     signal refreshReleases()
     signal refreshFavorites()
@@ -1675,7 +1674,7 @@ Page {
                                     page.selectedReleases = [];
                                 }
                                 onWatchRelease: {
-                                    page.watchRelease(id, videos, -1);
+                                    page.watchSingleRelease(id, videos, -1, poster);
                                 }
                             }
                         }
@@ -2222,7 +2221,7 @@ Page {
                                     CommonMenuItem {
                                         text: "Серия " + (index + 1)
                                         onPressed: {
-                                            watchRelease(page.openedRelease.id, page.openedRelease.videos, index);
+                                            watchSingleRelease(page.openedRelease.id, page.openedRelease.videos, index, page.openedRelease.poster);
                                         }
                                     }
                                 }

@@ -593,6 +593,16 @@ void OnlinePlayerViewModel::remotePlayerSetPort(int port) noexcept
     m_remotePlayer->setPort(port);
 }
 
+void OnlinePlayerViewModel::changeVideoQuality(const QString &quality) noexcept
+{
+    setVideoQuality(quality);
+
+    auto video = m_videos->getVideoAtIndex(m_selectedVideo);
+    emit stopInPlayer();
+    setVideoSource(getVideoFromQuality(video));
+    emit playInPlayer();
+}
+
 void OnlinePlayerViewModel::saveVideoSeens()
 {
     QJsonArray array;

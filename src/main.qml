@@ -796,6 +796,9 @@ ApplicationWindow {
         onRefreshSeenMarks: {
             videoplayer.refreshSeenMarks();
         }
+        onStopInPlayer: {
+            videoplayer.stopInPlayer();
+        }
     }
 
     OnlinePlayer {
@@ -811,15 +814,6 @@ ApplicationWindow {
         visible: true
         focus: true
         synchronizeEnabled: window.synchronizationEnabled
-        onWatchRelease: {
-            videoplayer.setReleaseParameters = {
-                releaseId,
-                customPlaylistPosition: startSeria,
-                videos
-            };
-            window.showPage("videoplayer");
-            videoplayer.setReleaseVideo();
-        }
         onWatchSingleRelease: {
             onlinePlayerViewModel.customPlaylistPosition = startSeria;
             onlinePlayerViewModel.navigateReleaseId = releaseId;

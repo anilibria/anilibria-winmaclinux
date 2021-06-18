@@ -39,9 +39,14 @@ Page {
     signal returnToReleasesPage()
     signal windowNotActived()
     signal playInPlayer()
+    signal stopInPlayer()
 
     onPlayInPlayer: {
         player.play();
+    }
+
+    onStopInPlayer: {
+        player.stop();
     }
 
     Keys.onSpacePressed: {
@@ -616,15 +621,8 @@ Page {
                         visible: player.duration > 0 && onlinePlayerViewModel.isFullHdAllowed
                         isChecked: onlinePlayerViewModel.videoQuality === `fullhd`
                         onButtonClicked: {
-                            onlinePlayerViewModel.videoQuality = `fullhd`;
                             onlinePlayerViewModel.restorePosition = player.position;
-
-                            const video = _page.releaseVideos.find(a => a.order === onlinePlayerViewModel.selectedVideo);
-
-                            player.stop();
-                            setVideoSource(video[onlinePlayerViewModel.videoQuality]);
-                            if (player.start) player.start();
-
+                            onlinePlayerViewModel.changeVideoQuality(`fullhd`);
                             localStorage.setVideoQuality(2);
                         }
                     }
@@ -635,15 +633,8 @@ Page {
                         text: "720p"
                         isChecked: onlinePlayerViewModel.videoQuality === `hd`
                         onButtonClicked: {
-                            onlinePlayerViewModel.videoQuality = `hd`;
                             onlinePlayerViewModel.restorePosition = player.position;
-
-                            const video = _page.releaseVideos.find(a => a.order === onlinePlayerViewModel.selectedVideo);
-
-                            player.stop();
-                            setVideoSource(video[onlinePlayerViewModel.videoQuality]);
-                            if (player.start) player.start();
-
+                            onlinePlayerViewModel.changeVideoQuality(`hd`);
                             localStorage.setVideoQuality(1);
                         }
                     }
@@ -654,15 +645,8 @@ Page {
                         text: "480p"
                         isChecked: onlinePlayerViewModel.videoQuality === `sd`
                         onButtonClicked: {
-                            onlinePlayerViewModel.videoQuality = `sd`;
                             onlinePlayerViewModel.restorePosition = player.position;
-
-                            const video = _page.releaseVideos.find(a => a.order === onlinePlayerViewModel.selectedVideo);
-
-                            player.stop();
-                            setVideoSource(video[onlinePlayerViewModel.videoQuality]);
-                            if (player.start) player.start();
-
+                            onlinePlayerViewModel.changeVideoQuality(`sd`);
                             localStorage.setVideoQuality(0);
                         }
                     }
