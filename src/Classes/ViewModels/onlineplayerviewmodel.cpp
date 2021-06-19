@@ -375,6 +375,14 @@ QString OnlinePlayerViewModel::getVideoSeen(int id)
     }
 }
 
+int OnlinePlayerViewModel::getCurrentVideoSeenVideoPosition()
+{
+    if (!m_seenModels->contains(m_selectedRelease)) return 0;
+
+    auto seenModel = m_seenModels->value(m_selectedRelease);
+    return seenModel->videoPosition();
+}
+
 static bool compareSeenTimeStampDescending(const SeenModel* first, const SeenModel* second)
 {
     return first->timestamp() > second->timestamp();

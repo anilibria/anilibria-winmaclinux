@@ -193,6 +193,7 @@ public:
     Q_INVOKABLE void nextVideo();
     Q_INVOKABLE void previousVideo();
     Q_INVOKABLE QString getVideoSeen(int id);
+    Q_INVOKABLE int getCurrentVideoSeenVideoPosition();
     Q_INVOKABLE int getLastVideoSeen();
     Q_INVOKABLE void setVideoSeens(int id, int videoId, double videoPosition);
     Q_INVOKABLE void setupForSingleRelease();

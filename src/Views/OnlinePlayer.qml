@@ -31,6 +31,7 @@ Page {
     property var seenVideo: ({})
     property var seenMarks: ({})
     property var cinemahallReleases: []
+    property bool isFromNavigated: false
 
     signal navigateFrom()
     signal setReleaseVideo()
@@ -106,6 +107,7 @@ Page {
     }
 
     onNavigateTo: {
+        _page.isFromNavigated = true;
         const userSettings = JSON.parse(localStorage.getUserSettings());
         player.volume = userSettings.volume;
         onlinePlayerViewModel.volumeSlider = player.volume;
@@ -146,73 +148,7 @@ Page {
 
             onlinePlayerViewModel.setupForSingleRelease();
         }
-    }
 
-    onSetReleaseVideo: {
-        onlinePlayerViewModel.isCinemahall = false;
-        const jsonVideos = JSON.parse(_page.setReleaseParameters.videos);
-        const seenJson = onlinePlayerViewModel.getVideoSeen(_page.setReleaseParameters.releaseId);
-        _page.seenVideo = {};
-        if (seenJson) _page.seenVideo = JSON.parse(seenJson);
-        onlinePlayerViewModel.selectedRelease = _page.setReleaseParameters.releaseId;
-
-        const release = JSON.parse(localStorage.getRelease(_page.setReleaseParameters.releaseId));
-        onlinePlayerViewModel.releasePoster = release.poster;
-
-        const releaseVideos = [];
-
-        for (let i = 0; i < jsonVideos.length; i++) {
-            const video = jsonVideos[i];
-            releaseVideos.push(
-                {
-                    title: video.title,
-                    sd: video.sd,
-                    id: video.id,
-                    hd: video.hd,
-                    fullhd: video.fullhd,
-                    sdfile: video.srcSd,
-                    hdfile: video.srcHd,
-                    releaseId: _page.setReleaseParameters.releaseId,
-                    releasePoster: release.poster,
-                    isGroup: false
-                }
-            );
-        }
-        releaseVideos.sort(
-            (left, right) => {
-                if (left.id === right.id) return 0;
-                return left.id > right.id ? 1 : -1;
-            }
-        );
-        let iterator = -1;
-        releaseVideos.forEach(
-            a => {
-                a.order = ++iterator;
-            }
-        );
-
-        _page.releaseVideos = releaseVideos;
-        let firstVideo = releaseVideos[0];
-        if (_page.seenVideo.id) {
-            firstVideo = releaseVideos[_page.seenVideo.videoId];
-        }
-        if (_page.setReleaseParameters.customPlaylistPosition > -1) {
-            _page.seenVideo = {};
-            firstVideo = releaseVideos[_page.setReleaseParameters.customPlaylistPosition];
-        }
-
-        refreshSeenMarks();
-
-        onlinePlayerViewModel.selectedVideo = firstVideo.order;
-        onlinePlayerViewModel.isFullHdAllowed = "fullhd" in firstVideo;
-        if (!firstVideo[onlinePlayerViewModel.videoQuality]) onlinePlayerViewModel.videoQuality = "sd";
-
-        setVideoSource(firstVideo[onlinePlayerViewModel.videoQuality]);
-        player.play();
-
-        localStorage.setToReleaseHistory(_page.setReleaseParameters.releaseId, 1);
-
-        setSerieScrollPosition();
     }
 
     onSetCinemahallVideo: {
@@ -385,9 +321,12 @@ Page {
                 if (onlinePlayerViewModel.restorePosition > 0){
                     player.seek(onlinePlayerViewModel.restorePosition);
                     if (player.position >= onlinePlayerViewModel.restorePosition) onlinePlayerViewModel.restorePosition = 0;
-                } else if (_page.seenVideo.id && _page.seenVideo.videoPosition) {
-                    player.seek(_page.seenVideo.videoPosition);
-                    _page.seenVideo.videoPosition = 0;
+                } else {
+                    if (_page.isFromNavigated) {
+                        const videoPosition = onlinePlayerViewModel.getCurrentVideoSeenVideoPosition()
+                        if (videoPosition > 0) player.seek(videoPosition);
+                        _page.isFromNavigated = false;
+                    }
                 }
             }
         }
@@ -1286,125 +1225,6 @@ Page {
         return seenMarks;
     }
 
-    function checkExistingVideoQuality(video) {
-        if (video[onlinePlayerViewModel.videoQuality]) {
-            return video[onlinePlayerViewModel.videoQuality];
-        } else {
-            if (`sd` in video) {
-                onlinePlayerViewModel.videoQuality = `sd`;
-                return video['sd'];
-            }
-            if (`hd` in video) {
-                onlinePlayerViewModel.videoQuality = `hd`;
-                return video['hd'];
-            }
-            if (`fullhd` in video) {
-                onlinePlayerViewModel.videoQuality = `fullhd`;
-                return video['fullhd'];
-            }
-
-            return null;
-        }        
-    }
-
-    function previousNotSeenVideo() {
-        let lastNotSeenVideo = null;
-
-        for (const releaseVideo of _page.releaseVideos) {
-            if (releaseVideo.isGroup) continue;
-            if (releaseVideo.releaseId === onlinePlayerViewModel.selectedRelease && releaseVideo.order === onlinePlayerViewModel.selectedVideo) break;
-
-            if (!(releaseVideo.releaseId in _page.seenMarks && releaseVideo.order in _page.seenMarks[releaseVideo.releaseId])) lastNotSeenVideo = releaseVideo;
-        }
-
-        return lastNotSeenVideo;
-    }
-
-    function previousVideo() {
-        if (onlinePlayerViewModel.selectedVideo === 0) return;
-        onlinePlayerViewModel.restorePosition = 0;
-
-        let video;
-
-        if (onlinePlayerViewModel.isCinemahall) {
-            const previousVideo = previousNotSeenVideo();
-            if (previousVideo) {
-                onlinePlayerViewModel.selectedVideo = previousVideo.order;
-                video = previousVideo;
-            } else {
-                return;
-            }
-
-        } else {
-            onlinePlayerViewModel.selectedVideo--;
-            video = _page.releaseVideos[onlinePlayerViewModel.selectedVideo];
-        }
-
-        onlinePlayerViewModel.isFullHdAllowed = "fullhd" in video;
-        onlinePlayerViewModel.releasePoster = video.releasePoster;
-        onlinePlayerViewModel.selectedRelease = video.releaseId;
-
-        setVideoSource(checkExistingVideoQuality(video));
-
-        if (!onlinePlayerViewModel.isCinemahall) setSerieScrollPosition();
-    }
-
-    function nextNotSeenVideo() {
-        var beforeCurrent = true;
-        for (const releaseVideo of _page.releaseVideos) {
-            if (releaseVideo.releaseId === onlinePlayerViewModel.selectedRelease && releaseVideo.order <= onlinePlayerViewModel.selectedVideo) {
-                beforeCurrent = false;
-                continue;
-            }
-            if (beforeCurrent) continue;
-            if (releaseVideo.isGroup) continue;
-
-            if (!(releaseVideo.releaseId in _page.seenMarks && releaseVideo.order in _page.seenMarks[releaseVideo.releaseId])) {
-                return releaseVideo;
-            }
-        }
-
-        return null;
-    }
-
-    function setVideoSource(source) {
-        onlinePlayerViewModel.videoSource = source;
-        //remotePlayerBroadcastCommand(_page.videoSourceChangedCommand, source);
-    }
-
-    function setVideoSpeed(videoSpeed) {
-        onlinePlayerViewModel.playbackRate = videoSpeed;
-        //remotePlayerBroadcastCommand(_page.videoPlaybackRateCommand, videoSpeed);
-    }
-
-    function nextVideo() {
-        onlinePlayerViewModel.restorePosition = 0;
-        let video;
-
-        if (onlinePlayerViewModel.isCinemahall) {
-            const nextVideo = nextNotSeenVideo();
-            if (nextVideo) {
-                onlinePlayerViewModel.selectedVideo = nextVideo.order;
-                video = nextVideo;
-            } else {
-                return;
-            }
-        } else {
-            if (onlinePlayerViewModel.selectedVideo === _page.releaseVideos.length - 1) return;
-
-            onlinePlayerViewModel.selectedVideo++;
-            video = _page.releaseVideos[onlinePlayerViewModel.selectedVideo];
-        }
-
-        onlinePlayerViewModel.isFullHdAllowed = "fullhd" in video;
-        onlinePlayerViewModel.releasePoster = video.releasePoster;
-        onlinePlayerViewModel.selectedRelease = video.releaseId;
-
-        setVideoSource(checkExistingVideoQuality(video));
-
-        if (!onlinePlayerViewModel.isCinemahall) setSerieScrollPosition();
-    }
-
     function setSerieScrollPosition() {
         let newPosition = onlinePlayerViewModel.selectedVideo * 40 - serieScrollContainer.height;
         newPosition += 40;
@@ -1422,7 +1242,6 @@ Page {
         }
 
         _page.seenMarks = JSON.parse(onlinePlayerViewModel.getReleasesSeenMarks(releaseIds));
-        console.log("Pizda " + JSON.stringify(_page.seenMarks));
     }
 
     function jumpInPlayer(direction){
