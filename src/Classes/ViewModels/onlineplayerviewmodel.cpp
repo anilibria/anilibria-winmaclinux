@@ -452,6 +452,37 @@ void OnlinePlayerViewModel::setupForSingleRelease()
     emit needScrollSeriaPosition();
 }
 
+void OnlinePlayerViewModel::setupForCinemahall(const QStringList &json, const QList<int> &releases, const QStringList &posters, const QStringList& names)
+{
+    setIsCinemahall(true);
+
+    m_videos->setVideosFromCinemahall(json, releases, posters, names);
+    emit refreshSeenMarks();
+    auto seenMarks = m_seenMarkModels;
+    auto video = m_videos->getFirstReleaseWithPredicate(
+        [seenMarks](OnlineVideoModel* video) {
+            if (video->isGroup()) return false;
+
+            return !seenMarks->contains(QString::number(video->releaseId()) + "." + QString::number(video->order()));
+        }
+    );
+
+    if (video == nullptr) {
+        setVideoSource("");
+        return;
+    }
+
+    setSelectedRelease(video->releaseId());
+    setReleasePoster(video->releasePoster());
+    setSelectedVideo(video->order());
+    setIsFullHdAllowed(!video->fullhd().isEmpty());
+    setVideoSource(getVideoFromQuality(video));
+    m_videos->selectVideo(m_selectedRelease, m_selectedVideo);
+    emit playInPlayer();
+    emit needScrollSeriaPosition();
+    emit saveToWatchHistory(video->releaseId());
+}
+
 void OnlinePlayerViewModel::setSeenMark(int id, int seriaId, bool marked)
 {
     auto key = QString::number(id) + "." + QString::number(seriaId);
@@ -690,22 +721,26 @@ OnlineVideoModel* OnlinePlayerViewModel::nextNotSeenVideo()
     auto selectedRelease = m_selectedRelease;
     auto selectedVideo = m_selectedVideo;
     auto seenMarks = m_seenMarkModels;
+    auto videos = m_videos;
+
+    auto currentVideo = m_videos->getFirstReleaseWithPredicate(
+        [selectedRelease, selectedVideo](OnlineVideoModel* video) {
+            return video->releaseId() == selectedRelease && video->order() == selectedVideo;
+        }
+    );
+
+    auto currentIndex = m_videos->getVideoIndex(currentVideo);
 
     return m_videos->getFirstReleaseWithPredicate(
-        [selectedRelease, selectedVideo, seenMarks](OnlineVideoModel* video) {
-            bool beforeCurrent = true;
-
-            if (video->releaseId() == selectedRelease && video->order() <= selectedVideo) {
-                beforeCurrent = false;
-                return false;
-            }
-            if (beforeCurrent) return false;
+        [seenMarks, currentIndex, videos](OnlineVideoModel* video) {
+            auto videoIndex = videos->getVideoIndex(video);
+            if (videoIndex <= currentIndex) return false;
             if (video->isGroup()) return false;
 
-            auto key = QString::number(video->releaseId()) + "." + video->order();
-            if (seenMarks->contains(key)) return true;
+            auto key = QString::number(video->releaseId()) + "." + QString::number(video->order());
+            if (seenMarks->contains(key)) return false;
 
-            return false;
+            return true;
         }
     );
 }
@@ -714,18 +749,26 @@ OnlineVideoModel *OnlinePlayerViewModel::previousNotSeenVideo()
 {
     auto selectedRelease = m_selectedRelease;
     auto selectedVideo = m_selectedVideo;
-
     auto seenMarks = m_seenMarkModels;
+    auto videos = m_videos;
+    auto currentVideo = m_videos->getFirstReleaseWithPredicate(
+        [selectedRelease, selectedVideo](OnlineVideoModel* video) {
+            return video->releaseId() == selectedRelease && video->order() == selectedVideo;
+        }
+    );
+    auto currentIndex = m_videos->getVideoIndex(currentVideo);
+
     return m_videos->getFirstReleaseWithPredicate(
-        [selectedRelease, selectedVideo, seenMarks](OnlineVideoModel* video) {
+        [seenMarks, currentIndex, videos](OnlineVideoModel* video) {
             if (video->isGroup()) return false;
 
-            if (video->releaseId() == selectedRelease && video->order() == selectedVideo) return false;
+            auto videoIndex = videos->getVideoIndex(video);
+            if (videoIndex >= currentIndex) return false;
 
-            auto key = QString::number(video->releaseId()) + "." + video->order();
-            if (seenMarks->contains(key)) return true;
+            auto key = QString::number(video->releaseId()) + "." + QString::number(video->order());
+            if (seenMarks->contains(key)) return false;
 
-            return false;
+            return true;
         }
     );
 }

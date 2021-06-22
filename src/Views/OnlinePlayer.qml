@@ -73,7 +73,7 @@ Page {
             //changepage to releases
         }
         if (event.key === Qt.Key_F11 || event.key === Qt.Key_F || event.key === 1040) {
-            onlinePlayerViewModel.onlinePlayerViewModel.toggleFullScreen();
+            onlinePlayerViewModel.toggleFullScreen();
         }
         if (event.key === Qt.Key_Up) {
             if (player.volume < 1) player.volume += .1;
@@ -149,73 +149,6 @@ Page {
             onlinePlayerViewModel.setupForSingleRelease();
         }
 
-    }
-
-    onSetCinemahallVideo: {
-        onlinePlayerViewModel.isCinemahall = true;
-        _page.cinemahallReleases = JSON.parse(localStorage.getCinemahallReleases());
-
-        const releaseVideos = [];
-
-        for (let i = 0; i < _page.cinemahallReleases.length; i++) {
-            const release = _page.cinemahallReleases[i];
-            const videos = JSON.parse(release.videos);
-            releaseVideos.push({ title: release.title, isGroup: true });
-
-            videos.sort(
-                (left, right) => {
-                    if (left.id === right.id) return 0;
-                    return left.id > right.id ? 1 : -1;
-                }
-            );
-
-            for (var l = 0; l < videos.length; l++) {
-                const video = videos[l];
-                releaseVideos.push(
-                    {
-                        title: video.title,
-                        sd: video.sd,
-                        id: video.id,
-                        hd: video.hd,
-                        fullhd: video.fullhd,
-                        sdfile: video.srcSd,
-                        hdfile: video.srcHd,
-                        releaseId: release.id,
-                        releasePoster: release.poster,
-                        order: l,
-                        isGroup: false
-                    }
-                );
-            }
-        }
-
-        _page.releaseVideos = releaseVideos;
-
-        refreshSeenMarks();
-
-        let firstVideo = releaseVideos.filter(a => !a.isGroup).find(
-            (releaseVideo) => !(releaseVideo.releaseId in _page.seenMarks && releaseVideo.order in _page.seenMarks[releaseVideo.releaseId])
-        );
-
-        if (firstVideo) {
-            onlinePlayerViewModel.selectedRelease = firstVideo.releaseId;
-            setReleasePoster(firstVideo.releasePoster, firstVideo.releaseId);
-
-            onlinePlayerViewModel.selectedVideo = firstVideo.order;
-            onlinePlayerViewModel.isFullHdAllowed = "fullhd" in firstVideo;
-            if (!firstVideo[onlinePlayerViewModel.videoQuality]) onlinePlayerViewModel.videoQuality = "sd";
-
-            setVideoSource(firstVideo[onlinePlayerViewModel.videoQuality]);
-            player.play();
-
-            localStorage.setToReleaseHistory(firstVideo.releaseId, 1);
-
-            setSerieScrollPosition();
-            _page.seenVideo = JSON.parse(onlinePlayerViewModel.getVideoSeen(firstVideo.releaseId));
-            if (_page.seenVideo.id && _page.seenVideo.videoId !== firstVideo.order) _page.seenVideo.videoPosition = 0;
-        } else {
-            setVideoSource("");
-        }
     }
 
     function setControlVisible(visible) {
@@ -1209,11 +1142,6 @@ Page {
         }
     }
 
-    function setReleasePoster(poster, releaseId) {
-        let posterPath = poster ? localStorage.getReleasePosterPath(releaseId, poster) : '../Assets/Icons/donate.jpg';
-        onlinePlayerViewModel.releasePoster = posterPath;
-    }
-
     function getReleaseSeens(releaseId) {
         let seenMarks = [];
         if (releaseId in _page.seenMarks) {
@@ -1236,7 +1164,7 @@ Page {
         let releaseIds = [];
 
         if (onlinePlayerViewModel.isCinemahall) {
-            releaseIds = _page.cinemahallReleases.map(a => a.id);
+            releaseIds = JSON.parse(localStorage.getCinemahallReleases()).map(a => a.id);
         } else {
             releaseIds.push(onlinePlayerViewModel.selectedRelease);
         }

@@ -184,14 +184,54 @@ void OnlinePlayerVideoList::setVideosFromSingleList(const QString &json, int rel
         item->setOrder(index);
     }
 
-    endResetModel();    
+    endResetModel();
 }
 
-void OnlinePlayerVideoList::setVideosFromMultipleList(const QStringList &json) noexcept
+inline void swap(QJsonValueRef v1, QJsonValueRef v2)
 {
-    if (json.count() > 0) {
+    QJsonValue temp(v1);
+    v1 = QJsonValue(v2);
+    v2 = temp;
+}
 
+void OnlinePlayerVideoList::setVideosFromCinemahall(const QStringList &json, const QList<int> &releases, const QStringList &posters, const QStringList& names) noexcept
+{
+    if (json.count() != releases.count()) return;
+    if (releases.count() != posters.count()) return;
+    if (names.count() != posters.count()) return;
+
+    beginResetModel();
+
+    m_videos->clear();
+
+    for (int i = 0; i < json.count(); i++) {
+        auto document = QJsonDocument::fromJson(json.value(i).toUtf8());
+        auto videosArray = document.array();
+
+        std::sort(videosArray.begin(), videosArray.end(), [](const QJsonValue &left, const QJsonValue &right) {
+            return left.toObject()["id"].toInt() < right.toObject()["id"].toInt();
+        });
+
+        auto groupModel = new OnlineVideoModel();
+        groupModel->setTitle(names.value(i));
+        groupModel->setIsGroup(true);
+        m_videos->append(groupModel);
+
+        auto release = releases.value(i);
+        int index = -1;
+        foreach (auto video, videosArray) {
+            auto videoModel = new OnlineVideoModel();
+            videoModel->readFromApiModel(video.toObject());
+            videoModel->setReleaseId(release);
+            videoModel->setReleasePoster(posters.value(i));
+            videoModel->setIsGroup(false);
+            index += 1;
+            videoModel->setOrder(index);
+            m_videos->append(videoModel);
+        }
     }
+
+    endResetModel();
 }
 
 void OnlinePlayerVideoList::selectVideo(int releaseId, int videoId) noexcept
@@ -225,4 +265,9 @@ void OnlinePlayerVideoList::selectVideo(int releaseId, int videoId) noexcept
 
     emit dataChanged(index(currentIndex), index(currentIndex));
     emit dataChanged(index(newIndex), index(newIndex));
+}
+
+int OnlinePlayerVideoList::getVideoIndex(OnlineVideoModel* video) noexcept
+{
+    return m_videos->indexOf(video);
 }

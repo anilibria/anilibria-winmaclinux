@@ -197,6 +197,7 @@ public:
     Q_INVOKABLE int getLastVideoSeen();
     Q_INVOKABLE void setVideoSeens(int id, int videoId, double videoPosition);
     Q_INVOKABLE void setupForSingleRelease();
+    Q_INVOKABLE void setupForCinemahall(const QStringList &json, const QList<int> &releases, const QStringList &posters, const QStringList& names);
     Q_INVOKABLE void setSeenMark(int id, int seriaId, bool marked);
     Q_INVOKABLE void setSeenMarkAllSeries(int id, int countSeries, bool marked);
     Q_INVOKABLE void setSeenMarkAllSeriesWithoutSave(int id, int countSeries, bool marked);
