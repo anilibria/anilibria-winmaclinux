@@ -26,11 +26,8 @@ import "../Theme"
 
 Page {
     id: _page
-    property var releaseVideos: []
-    property var setReleaseParameters: ({})
     property var seenVideo: ({})
     property var seenMarks: ({})
-    property var cinemahallReleases: []
     property bool isFromNavigated: false
 
     signal navigateFrom()
@@ -62,7 +59,7 @@ Page {
 
     Keys.onPressed: {
         if (event.key === Qt.Key_PageUp) {
-            _page.nextVideo();
+            onlinePlayerViewModel.nextVideo();
             event.accepted = true;
         }
         if (event.key === Qt.Key_PageDown) {
@@ -70,7 +67,7 @@ Page {
             event.accepted = true;
         }
         if (event.key === Qt.Key_Escape) {
-            //changepage to releases
+            window.showPage("release");
         }
         if (event.key === Qt.Key_F11 || event.key === Qt.Key_F || event.key === 1040) {
             onlinePlayerViewModel.toggleFullScreen();
@@ -119,7 +116,7 @@ Page {
         sendVolumeToRemoteSwitch.checked = applicationSettings.sendVolumeToRemote;
         onlinePlayerViewModel.sendPlaybackToRemoteSwitch = sendVolumeToRemoteSwitch.checked;
         sendPlaybackToRemoteSwitch.checked = applicationSettings.sendPlaybackToRemote;
-        onlinePlayerViewModel.remotePlayerSetPort(applicationSettings.remotePort);
+        onlinePlayerViewModel.remotePlayer.port = applicationSettings.remotePort;
         remotePlayerPortComboBox.currentIndex = onlinePlayerViewModel.ports.indexOf(applicationSettings.remotePort);
 
         if (autoTopMost.checked && player.playbackState === MediaPlayer.PlayingState) windowSettings.setStayOnTop();
@@ -149,18 +146,6 @@ Page {
             onlinePlayerViewModel.setupForSingleRelease();
         }
 
-    }
-
-    function setControlVisible(visible) {
-        if (visible) {
-            seriesPopup.opacity = 1;
-            controlPanel.opacity = 1;
-            mainPlayerMouseArea.cursorShape = "ArrowCursor";
-        } else {
-            seriesPopup.opacity = 0;
-            controlPanel.opacity = 0;
-            mainPlayerMouseArea.cursorShape = "BlankCursor";
-        }
     }
 
     anchors.fill: parent
@@ -230,18 +215,18 @@ Page {
 
             if (!sendPlaybackToRemoteSwitch.checked) return;
 
-            if (playbackState === MediaPlayer.PlayingState) onlinePlayerViewModel.remotePlayerBroadcastCommand(_page.videoPlaybackCommand, "play");
-            if (playbackState === MediaPlayer.PausedState) onlinePlayerViewModel.remotePlayerBroadcastCommand(_page.videoPlaybackCommand, "pause");
+            if (playbackState === MediaPlayer.PlayingState) onlinePlayerViewModel.remotePlayer.broadcastCommand(_page.videoPlaybackCommand, "play");
+            if (playbackState === MediaPlayer.PausedState) onlinePlayerViewModel.remotePlayer.broadcastCommand(_page.videoPlaybackCommand, "pause");
         }
         onVolumeChanged: {
             volumeSlider.value = volume * 100;
             onlinePlayerViewModel.volumeSlider = volumeSlider.value;
-            if (applicationSettings.sendVolumeToRemote) onlinePlayerViewModel.remotePlayerBroadcastCommand(_page.videoVolumeChangedCommand, volumeSlider.value.toString());
+            if (applicationSettings.sendVolumeToRemote) onlinePlayerViewModel.remotePlayer.broadcastCommand(_page.videoVolumeChangedCommand, volumeSlider.value.toString());
         }
         onStatusChanged: {
             if (status === MediaPlayer.Loading) onlinePlayerViewModel.isBuffering = true;
 
-            if (status === MediaPlayer.EndOfMedia && autoNextVideo.checked) _page.nextVideo();
+            if (status === MediaPlayer.EndOfMedia && autoNextVideo.checked) onlinePlayerViewModel.nextVideo();
 
             if (status === MediaPlayer.InvalidMedia) {
                 console.log("InvalidMedia")
@@ -456,7 +441,7 @@ Page {
                 onPressedChanged: {
                     if (!pressed && onlinePlayerViewModel.lastMovedPosition > 0) {
                         player.seek(onlinePlayerViewModel.lastMovedPosition);
-                        onlinePlayerViewModel.remotePlayerBroadcastCommand(_page.videoPositionChangedCommand, onlinePlayerViewModel.lastMovedPosition.toString() + `/` + player.duration.toString());
+                        onlinePlayerViewModel.remotePlayer.broadcastCommand(_page.videoPositionChangedCommand, onlinePlayerViewModel.lastMovedPosition.toString() + `/` + player.duration.toString());
                         onlinePlayerViewModel.lastMovedPosition = 0;
                     }
                     controlPanel.forceActiveFocus();
@@ -796,7 +781,7 @@ Page {
                         id: remotePlayerButton
                         width: 40
                         height: 40
-                        iconColor: onlinePlayerViewModel.remotePlayerStarted ? ApplicationTheme.filterIconButtonGreenColor : ApplicationTheme.filterIconButtonColor
+                        iconColor: onlinePlayerViewModel.remotePlayer.started ? ApplicationTheme.filterIconButtonGreenColor : ApplicationTheme.filterIconButtonColor
                         hoverColor: ApplicationTheme.filterIconButtonHoverColor
                         iconPath: "../Assets/Icons/connect.svg"
                         iconWidth: 24
@@ -807,7 +792,7 @@ Page {
 
                         ToolTip.delay: 1000
                         ToolTip.visible: remotePlayerButton.hovered
-                        ToolTip.text: onlinePlayerViewModel.remotePlayerStarted ? "Удаленный плеер включен" : "Удаленный плеер выключен, откройте настройки для подключения"
+                        ToolTip.text: onlinePlayerViewModel.remotePlayer.started ? "Удаленный плеер включен" : "Удаленный плеер выключен, откройте настройки для подключения"
 
                         Popup {
                             id: remotePlayerPopup
@@ -834,10 +819,10 @@ Page {
                                     id: stateRemotePlayer
                                     onCheckedChanged: {
                                         if (checked) {
-                                            onlinePlayerViewModel.remotePlayerSetPort(applicationSettings.remotePort);
-                                            onlinePlayerViewModel.remotePlayerStartServer();
+                                            onlinePlayerViewModel.remotePlayer.port = applicationSettings.remotePort;
+                                            onlinePlayerViewModel.remotePlayer.startServer();
                                         } else {
-                                            onlinePlayerViewModel.remotePlayerStopServer();
+                                            onlinePlayerViewModel.remotePlayer.stopServer();
                                         }
                                     }
                                 }
@@ -902,7 +887,7 @@ Page {
                                 PlainText {
                                     width: optionsPopup.width - 20
                                     fontPointSize: 10
-                                    text: "Подключено: " + onlinePlayerViewModel.remotePlayerCountUsers
+                                    text: "Подключено: " + onlinePlayerViewModel.remotePlayer.countUsers
                                 }
                             }
                         }
@@ -1180,6 +1165,18 @@ Page {
         if (seekPosition < 0) seekPosition = 80;
         if (seekPosition > player.duration) seekPosition = player.duration - 100;
         player.seek(seekPosition);
+    }
+
+    function setControlVisible(visible) {
+        if (visible) {
+            seriesPopup.opacity = 1;
+            controlPanel.opacity = 1;
+            mainPlayerMouseArea.cursorShape = "ArrowCursor";
+        } else {
+            seriesPopup.opacity = 0;
+            controlPanel.opacity = 0;
+            mainPlayerMouseArea.cursorShape = "BlankCursor";
+        }
     }
 
     Component.onCompleted: {
