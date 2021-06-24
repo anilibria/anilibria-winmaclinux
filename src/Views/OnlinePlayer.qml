@@ -525,7 +525,7 @@ Page {
                         text: "x0.25"
                         isChecked: onlinePlayerViewModel.playbackRate === 0.25
                         onButtonClicked: {
-                            setVideoSpeed(0.25)
+                            onlinePlayerViewModel.setVideoSpeed(0.25)
                         }
                     }
                     ToggleButton {
@@ -535,7 +535,7 @@ Page {
                         text: "x0.5"
                         isChecked: onlinePlayerViewModel.playbackRate === 0.5
                         onButtonClicked: {
-                            setVideoSpeed(0.5);
+                            onlinePlayerViewModel.setVideoSpeed(0.5);
                         }
                     }
                     ToggleButton {
@@ -545,7 +545,7 @@ Page {
                         text: "x0.75"
                         isChecked: onlinePlayerViewModel.playbackRate === 0.75
                         onButtonClicked: {
-                            setVideoSpeed(0.75);
+                            onlinePlayerViewModel.setVideoSpeed(0.75);
                         }
                     }
                     ToggleButton {
@@ -555,7 +555,7 @@ Page {
                         text: "x1"
                         isChecked: onlinePlayerViewModel.playbackRate === 1
                         onButtonClicked: {
-                            setVideoSpeed(1);
+                            onlinePlayerViewModel.setVideoSpeed(1);
                         }
                     }
                     ToggleButton {
@@ -565,7 +565,7 @@ Page {
                         text: "x1.25"
                         isChecked: onlinePlayerViewModel.playbackRate === 1.1
                         onButtonClicked: {
-                            setVideoSpeed(1.1);
+                            onlinePlayerViewModel.setVideoSpeed(1.1);
                         }
                     }
                     ToggleButton {
@@ -575,7 +575,7 @@ Page {
                         text: "x1.5"
                         isChecked: onlinePlayerViewModel.playbackRate === 1.2
                         onButtonClicked: {
-                            setVideoSpeed(1.2);
+                            onlinePlayerViewModel.setVideoSpeed(1.2);
                         }
                     }
                     ToggleButton {
@@ -585,7 +585,7 @@ Page {
                         text: "x1.75"
                         isChecked: onlinePlayerViewModel.playbackRate === 1.3
                         onButtonClicked: {
-                            setVideoSpeed(1.3);
+                            onlinePlayerViewModel.setVideoSpeed(1.3);
                         }
                     }
                     ToggleButton {
@@ -595,7 +595,7 @@ Page {
                         text: "x2"
                         isChecked: onlinePlayerViewModel.playbackRate === 1.5
                         onButtonClicked: {
-                            setVideoSpeed(1.5);
+                            onlinePlayerViewModel.setVideoSpeed(1.5);
                         }
                     }
                     ToggleButton {
@@ -605,7 +605,7 @@ Page {
                         text: "x3"
                         isChecked: onlinePlayerViewModel.playbackRate === 2
                         onButtonClicked: {
-                            setVideoSpeed(2);
+                            onlinePlayerViewModel.setVideoSpeed(2);
                         }
                     }
                 }

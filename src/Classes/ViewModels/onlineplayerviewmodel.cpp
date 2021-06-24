@@ -618,6 +618,12 @@ void OnlinePlayerViewModel::changeVideoQuality(const QString &quality) noexcept
     emit playInPlayer();
 }
 
+void OnlinePlayerViewModel::setVideoSpeed(qreal speed) noexcept
+{
+    setPlaybackRate(speed);
+    m_remotePlayer->broadcastCommand(m_videoPlaybackRateCommand, QString::number(speed));
+}
+
 void OnlinePlayerViewModel::saveVideoSeens()
 {
     QJsonArray array;

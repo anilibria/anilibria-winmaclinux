@@ -200,6 +200,7 @@ public:
     Q_INVOKABLE QString getSeenMarks();
     Q_INVOKABLE void selectVideo(int releaseId, int videoId);
     Q_INVOKABLE void changeVideoQuality(const QString& quality) noexcept;
+    Q_INVOKABLE void setVideoSpeed(double speed) noexcept;
 
 private:
     void saveVideoSeens();
