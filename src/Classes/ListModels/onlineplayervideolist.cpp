@@ -135,19 +135,33 @@ int OnlinePlayerVideoList::getReleaseVideosCount(int releaseId) const noexcept
     return std::count_if(m_videos->begin(), m_videos->end(), [releaseId] (OnlineVideoModel* item) { return item->releaseId() == releaseId; });
 }
 
-OnlineVideoModel *OnlinePlayerVideoList::getFirstReleaseWithPredicate(std::function<bool(OnlineVideoModel *)> callback) const noexcept
+OnlineVideoModel *OnlinePlayerVideoList::getFirstReleaseWithPredicate(std::function<bool(OnlineVideoModel *)> callback, bool isEndDirection) const noexcept
 {
-    auto searchResult = std::find_if(
-        m_videos->begin(),
-        m_videos->end(),
-        [callback](OnlineVideoModel * video) {
-            return callback(video);
-        }
-    );
+    if (isEndDirection) {
+        auto searchResult = std::find_if(
+            m_videos->crbegin(),
+            m_videos->crend(),
+            [callback](OnlineVideoModel * video) {
+                return callback(video);
+            }
+        );
 
-    if (searchResult == m_videos->end()) return nullptr;
+        if (searchResult == m_videos->crend()) return nullptr;
 
-    return *searchResult;
+        return *searchResult;
+    } else {
+        auto searchResult = std::find_if(
+            m_videos->begin(),
+            m_videos->end(),
+            [callback](OnlineVideoModel * video) {
+                return callback(video);
+            }
+        );
+
+        if (searchResult == m_videos->end()) return nullptr;
+
+        return *searchResult;
+    }
 }
 
 void OnlinePlayerVideoList::setVideosFromSingleList(const QString &json, int releaseId, const QString& poster) noexcept

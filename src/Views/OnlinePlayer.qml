@@ -107,7 +107,6 @@ Page {
         _page.isFromNavigated = true;
         const userSettings = JSON.parse(localStorage.getUserSettings());
         player.volume = userSettings.volume;
-        onlinePlayerViewModel.volumeSlider = player.volume;
         autoNextVideo.checked = userSettings.autoNextVideo;
         autoTopMost.checked = userSettings.autoTopMost;
         jumpMinuteComboBox.currentIndex = onlinePlayerViewModel.jumpMinutes.indexOf(userSettings.jumpMinute);
@@ -215,13 +214,13 @@ Page {
 
             if (!sendPlaybackToRemoteSwitch.checked) return;
 
-            if (playbackState === MediaPlayer.PlayingState) onlinePlayerViewModel.remotePlayer.broadcastCommand(_page.videoPlaybackCommand, "play");
-            if (playbackState === MediaPlayer.PausedState) onlinePlayerViewModel.remotePlayer.broadcastCommand(_page.videoPlaybackCommand, "pause");
+            if (playbackState === MediaPlayer.PlayingState) onlinePlayerViewModel.broadcastPlaybackState("play");
+            if (playbackState === MediaPlayer.PausedState) onlinePlayerViewModel.broadcastPlaybackState("pause");
         }
         onVolumeChanged: {
             volumeSlider.value = volume * 100;
             onlinePlayerViewModel.volumeSlider = volumeSlider.value;
-            if (applicationSettings.sendVolumeToRemote) onlinePlayerViewModel.remotePlayer.broadcastCommand(_page.videoVolumeChangedCommand, volumeSlider.value.toString());
+            if (applicationSettings.sendVolumeToRemote) onlinePlayerViewModel.broadcastVolume(volumeSlider.value);
         }
         onStatusChanged: {
             if (status === MediaPlayer.Loading) onlinePlayerViewModel.isBuffering = true;
@@ -441,7 +440,7 @@ Page {
                 onPressedChanged: {
                     if (!pressed && onlinePlayerViewModel.lastMovedPosition > 0) {
                         player.seek(onlinePlayerViewModel.lastMovedPosition);
-                        onlinePlayerViewModel.remotePlayer.broadcastCommand(_page.videoPositionChangedCommand, onlinePlayerViewModel.lastMovedPosition.toString() + `/` + player.duration.toString());
+                        onlinePlayerViewModel.broadcastVideoPosition(onlinePlayerViewModel.lastMovedPosition.toString() + `/` + player.duration.toString());
                         onlinePlayerViewModel.lastMovedPosition = 0;
                     }
                     controlPanel.forceActiveFocus();
@@ -867,7 +866,7 @@ Page {
                                     onCheckedChanged: {
                                         applicationSettings.sendVolumeToRemote = checked;
 
-                                        onlinePlayerViewModel.sendPlaybackToRemoteSwitch = checked;
+                                        onlinePlayerViewModel.sendVolumeToRemote = checked;
                                     }
                                 }
 
@@ -881,6 +880,8 @@ Page {
                                     id: sendPlaybackToRemoteSwitch
                                     onCheckedChanged: {
                                         applicationSettings.sendPlaybackToRemote = checked;
+
+                                        onlinePlayerViewModel.sendPlaybackToRemoteSwitch = checked;
                                     }
                                 }
 

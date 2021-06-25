@@ -49,7 +49,7 @@ public:
 
     OnlineVideoModel* getVideoAtIndex(int index) const noexcept;
     int getReleaseVideosCount(int releaseId) const noexcept;
-    OnlineVideoModel* getFirstReleaseWithPredicate(std::function<bool(OnlineVideoModel*)> callback) const noexcept;
+    OnlineVideoModel* getFirstReleaseWithPredicate(std::function<bool(OnlineVideoModel*)> callback, bool isEndDirection = false) const noexcept;
 
     void setVideosFromSingleList(const QString& json, int releaseId, const QString& poster) noexcept;
     void setVideosFromCinemahall(const QStringList& json, const QList<int>& releases, const QStringList& posters, const QStringList& names) noexcept;

@@ -59,6 +59,9 @@ class OnlinePlayerViewModel : public QObject
     Q_PROPERTY(int customPlaylistPosition READ customPlaylistPosition WRITE setCustomPlaylistPosition NOTIFY customPlaylistPositionChanged)
     Q_PROPERTY(QString navigateVideos READ navigateVideos WRITE setNavigateVideos NOTIFY navigateVideosChanged)
     Q_PROPERTY(QString navigatePoster READ navigatePoster WRITE setNavigatePoster NOTIFY navigatePosterChanged)
+    Q_PROPERTY(int videoPosition READ videoPosition WRITE setVideoPosition NOTIFY videoPositionChanged)
+    Q_PROPERTY(int videoDuration READ videoDuration WRITE setVideoDuration NOTIFY videoDurationChanged)
+    Q_PROPERTY(bool sendVolumeToRemote READ sendVolumeToRemote WRITE setSendVolumeToRemote NOTIFY sendVolumeToRemoteChanged)
 
 private:
     bool m_isFullScreen;
@@ -96,6 +99,9 @@ private:
     QString m_navigateVideos;
     QString m_navigatePoster;
     QHash<QString, bool>* m_seenMarkModels;
+    int m_videoPosition;
+    int m_videoDuration;
+    bool m_sendVolumeToRemote;
 
 public:
     explicit OnlinePlayerViewModel(QObject *parent = nullptr);
@@ -179,6 +185,15 @@ public:
     QString navigatePoster() const { return m_navigatePoster; }
     void setNavigatePoster(const QString& navigatePoster) noexcept;
 
+    int videoPosition() const { return m_videoPosition; }
+    void setVideoPosition(int position) noexcept;
+
+    int videoDuration() const { return m_videoDuration; }
+    void setVideoDuration(int videoDuration) noexcept;
+
+    bool sendVolumeToRemote() const { return m_sendVolumeToRemote; }
+    void setSendVolumeToRemote(bool sendVolumeToRemote) noexcept;
+
     Q_INVOKABLE void toggleFullScreen();
     Q_INVOKABLE void changeVideoPosition(int duration, int position) noexcept;
     Q_INVOKABLE QString checkExistingVideoQuality(int index);    
@@ -201,6 +216,9 @@ public:
     Q_INVOKABLE void selectVideo(int releaseId, int videoId);
     Q_INVOKABLE void changeVideoQuality(const QString& quality) noexcept;
     Q_INVOKABLE void setVideoSpeed(double speed) noexcept;
+    Q_INVOKABLE void broadcastPlaybackState(const QString& state) noexcept;
+    Q_INVOKABLE void broadcastVolume(int volume) noexcept;
+    Q_INVOKABLE void broadcastVideoPosition(const QString& position) noexcept;
 
 private:
     void saveVideoSeens();
@@ -257,6 +275,9 @@ signals:
     void remotePlayerCountUsersChanged();
     void refreshSeenMarks();
     void stopInPlayer();
+    void videoPositionChanged();
+    void videoDurationChanged();
+    void sendVolumeToRemoteChanged();
 
 };
 

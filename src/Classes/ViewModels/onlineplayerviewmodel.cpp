@@ -55,7 +55,10 @@ OnlinePlayerViewModel::OnlinePlayerViewModel(QObject *parent) : QObject(parent),
     m_customPlaylistPosition(-1),
     m_navigateVideos(""),
     m_navigatePoster(""),
-    m_seenMarkModels(new QHash<QString, bool>())
+    m_seenMarkModels(new QHash<QString, bool>()),
+    m_videoPosition(0),
+    m_videoDuration(0),
+    m_sendVolumeToRemote(false)
 {
     createIfNotExistsFile(getSeensCachePath(), "[]");
 
@@ -270,6 +273,30 @@ void OnlinePlayerViewModel::setNavigatePoster(const QString &navigatePoster) noe
     emit navigatePosterChanged();
 }
 
+void OnlinePlayerViewModel::setVideoPosition(int position) noexcept
+{
+    if (m_videoPosition == position) return;
+
+    m_videoPosition = position;
+    emit videoPositionChanged();
+}
+
+void OnlinePlayerViewModel::setVideoDuration(int videoDuration) noexcept
+{
+    if (m_videoDuration == videoDuration) return;
+
+    m_videoDuration = videoDuration;
+    emit videoDurationChanged();
+}
+
+void OnlinePlayerViewModel::setSendVolumeToRemote(bool sendVolumeToRemote) noexcept
+{
+    if (m_sendVolumeToRemote == sendVolumeToRemote) return;
+
+    m_sendVolumeToRemote = sendVolumeToRemote;
+    emit sendVolumeToRemoteChanged();
+}
+
 void OnlinePlayerViewModel::toggleFullScreen()
 {
     setIsFullScreen(!m_isFullScreen);
@@ -283,6 +310,9 @@ void OnlinePlayerViewModel::changeVideoPosition(int duration, int position) noex
     setDisplayVideoPosition(start + " из " + end);
 
     setDisplayEndVideoPosition(getDisplayTimeFromSeconds((duration - position) / 1000));
+
+    setVideoPosition(position);
+    setVideoDuration(duration);
 }
 
 QString OnlinePlayerViewModel::checkExistingVideoQuality(int index)
@@ -624,6 +654,21 @@ void OnlinePlayerViewModel::setVideoSpeed(qreal speed) noexcept
     m_remotePlayer->broadcastCommand(m_videoPlaybackRateCommand, QString::number(speed));
 }
 
+void OnlinePlayerViewModel::broadcastPlaybackState(const QString &state) noexcept
+{
+    m_remotePlayer->broadcastCommand(m_videoPlaybackCommand, state);
+}
+
+void OnlinePlayerViewModel::broadcastVolume(int volume) noexcept
+{
+    m_remotePlayer->broadcastCommand(m_videoVolumeChangedCommand, QString::number(volume));
+}
+
+void OnlinePlayerViewModel::broadcastVideoPosition(const QString& position) noexcept
+{
+    m_remotePlayer->broadcastCommand(m_videoPositionChangedCommand, position);
+}
+
 void OnlinePlayerViewModel::saveVideoSeens()
 {
     QJsonArray array;
@@ -751,30 +796,30 @@ OnlineVideoModel *OnlinePlayerViewModel::previousNotSeenVideo()
             if (seenMarks->contains(key)) return false;
 
             return true;
-        }
+        },
+        true
     );
 }
 
 void OnlinePlayerViewModel::receiveCommand(const unsigned int id, const QString &command, const QString &argument)
 {
-    qDebug() << argument;
+    qDebug() << "receiveCommand:" << command << " " << argument;
 
     if (command == "getcurrentvideosource"){
          m_remotePlayer->sendCommandToUser(id, m_videoSourceChangedCommand, m_videoSource);
     }
     if (command == "getcurrentvideoposition"){
-        //TODO: added position and duration from player
-         m_remotePlayer->sendCommandToUser(id, m_videoPositionChangedCommand, ""/*player.position.toString() + `/` + player.duration.toString()*/);
+         m_remotePlayer->sendCommandToUser(id, m_videoPositionChangedCommand, QString::number(m_videoPosition) + "/" + QString::number(m_videoDuration));
     }
-    if (command == "getcurrentvolume"){
-         if (m_sendPlaybackToRemoteSwitch) m_remotePlayer->sendCommandToUser(id, m_videoVolumeChangedCommand, QString::number(m_volumeSlider));
+    if (command == "getcurrentvolume" && m_sendVolumeToRemote){
+        m_remotePlayer->sendCommandToUser(id, m_videoVolumeChangedCommand, QString::number(m_volumeSlider));
     }
     if (command == "getcurrentplaybackrate"){
          m_remotePlayer->sendCommandToUser(id, m_videoPlaybackRateCommand, QString::number(m_playbackRate));
     }
-    if (command == "getcurrentplayback"){
+    if (command == "getcurrentplayback" && m_sendPlaybackToRemoteSwitch){
         qDebug() << "m_playerPlaybackState: " << m_playerPlaybackState;
-        if (m_playerPlaybackState == 3 && m_sendPlaybackToRemoteSwitch) m_remotePlayer->sendCommandToUser(id, m_videoPlaybackCommand, "pause");
+        if (m_playerPlaybackState == 3) m_remotePlayer->sendCommandToUser(id, m_videoPlaybackCommand, "pause");
     }
 }
 
