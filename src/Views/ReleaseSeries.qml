@@ -289,6 +289,7 @@ Page {
                                             width: 300
 
                                             CommonMenuItem {
+                                                enabled: !!window.userModel.login
                                                 text: "Добавить в избранное"
                                                 onPressed: {
                                                     const ids = releaseIds.join(`,`);
@@ -298,6 +299,7 @@ Page {
                                                 }
                                             }
                                             CommonMenuItem {
+                                                enabled: !!window.userModel.login
                                                 text: "Удалить из избранного"
                                                 onPressed: {
                                                     const ids = releaseIds.join(`,`);

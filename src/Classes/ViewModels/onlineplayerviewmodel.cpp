@@ -336,7 +336,7 @@ void OnlinePlayerViewModel::nextVideo()
         setSelectedVideo(nextVideo->order());
         video = nextVideo;
     } else {
-        if (m_selectedVideo == m_videos->getReleaseVideosCount(m_selectedRelease)) return;
+        if (m_selectedVideo == m_videos->getReleaseVideosCount(m_selectedRelease) - 1) return;
 
         setSelectedVideo(m_selectedVideo + 1);
 
