@@ -34,6 +34,7 @@
 #include "Classes/ListModels/alphabetlistmodel.h"
 #include "globalconstants.h"
 #include "Classes/Services/releaselinkedseries.h"
+#include "Classes/ViewModels/onlineplayerviewmodel.h"
 
 int main(int argc, char *argv[])
 {
@@ -70,6 +71,7 @@ int main(int argc, char *argv[])
     qmlRegisterType<RemotePlayer>("Anilibria.RemotePlayer", 1, 0, "RemotePlayer");
     qmlRegisterType<ReleaseLinkedSeries>("Anilibria.Services", 1, 0, "ReleaseLinkedSeries");
     qmlRegisterType<AlphabetListModel>("Anilibria.ListModels", 1, 0, "AlphabetListModel");
+    qmlRegisterType<OnlinePlayerViewModel>("Anilibria.ViewModels", 1, 0, "OnlinePlayerViewModel");
 
     QCoreApplication::setOrganizationDomain("anilibria.tv");
     QCoreApplication::setOrganizationName("EmptyFlow");

@@ -24,8 +24,8 @@ import QtQuick.Controls.Material 2.0
 import QtGraphicalEffects 1.12
 import QtQuick.Dialogs 1.2
 import Anilibria.Services 1.0
-import Anilibria.RemotePlayer 1.0
 import Anilibria.ListModels 1.0
+import Anilibria.ViewModels 1.0
 import "Views"
 import "Controls"
 import "Theme"
@@ -266,18 +266,6 @@ ApplicationWindow {
             releaseLinkedSeries.refreshSeries();
         }
 
-    }
-
-    RemotePlayer {
-        id: remotePlayer
-        onErrorWhileStartServer: {
-            console.log(message);
-            //TODO: handle errors
-
-        }
-        onReceiveCommand: {
-            videoplayer.receiveRemoteCommand(id, command, argument);
-        }
     }
 
     AnalyticsService {
@@ -783,16 +771,39 @@ ApplicationWindow {
         }
     }
 
-    OnlinePlayer {
-        id: videoplayer
-        visible: false
-        onChangeFullScreenMode: {
-            if (fullScreen) {
+    OnlinePlayerViewModel {
+        id: onlinePlayerViewModel
+
+        onIsFullScreenChanged: {
+            if (isFullScreen) {
                 window.showFullScreen();
             } else {
                 window.showNormal();
             }
         }
+        onNeedScrollSeriaPosition: {
+            videoplayer.setSerieScrollPosition();
+        }
+        onSaveToWatchHistory: {
+            localStorage.setToReleaseHistory(releaseId, 1);
+        }
+        onPlayInPlayer: {
+            videoplayer.playInPlayer();
+        }
+        onRecalculateSeenCounts: {
+            localStorage.recalculateSeenCountsFromFile();
+        }
+        onRefreshSeenMarks: {
+            videoplayer.refreshSeenMarks();
+        }
+        onStopInPlayer: {
+            videoplayer.stopInPlayer();
+        }
+    }
+
+    OnlinePlayer {
+        id: videoplayer
+        visible: false
         onReturnToReleasesPage: {
             window.showPage("release");
         }
@@ -803,19 +814,24 @@ ApplicationWindow {
         visible: true
         focus: true
         synchronizeEnabled: window.synchronizationEnabled
-        onWatchRelease: {
-            videoplayer.setReleaseParameters = {
-                releaseId,
-                customPlaylistPosition: startSeria,
-                videos
-            };
+        onWatchSingleRelease: {
+            onlinePlayerViewModel.customPlaylistPosition = startSeria;
+            onlinePlayerViewModel.navigateReleaseId = releaseId;
+            onlinePlayerViewModel.navigateVideos = videos;
+            onlinePlayerViewModel.navigatePoster = poster;
+
             window.showPage("videoplayer");
-            videoplayer.setReleaseVideo();
+            onlinePlayerViewModel.setupForSingleRelease();
         }
         onWatchCinemahall: {
-            videoplayer.isCinemahall = true; //WORKAROUND: for reset state based on single release
             window.showPage("videoplayer");
-            videoplayer.setCinemahallVideo();
+            const releases = JSON.parse(localStorage.getCinemahallReleases());
+            const allVideos = releases.map(a => a.videos);
+            const allPosters = releases.map(a => a.poster);
+            const allNames = releases.map(a => a.title);
+            const allIds = releases.map(a => a.id);
+
+            onlinePlayerViewModel.setupForCinemahall(allVideos, allIds, allPosters, allNames);
         }
         onRequestSynchronizeReleases: {
             window.synchronizationEnabled = true;
@@ -847,9 +863,14 @@ ApplicationWindow {
         id: cinemahall
         visible: false
         onWatchCinemahall: {
-            videoplayer.isCinemahall = true; //WORKAROUND: for reset state based on single release
             window.showPage("videoplayer");
-            videoplayer.setCinemahallVideo();
+            const releases = JSON.parse(localStorage.getCinemahallReleases());
+            const allVideos = releases.map(a => a.videos);
+            const allPosters = releases.map(a => a.poster);
+            const allNames = releases.map(a => a.title);
+            const allIds = releases.map(a => a.id);
+
+            onlinePlayerViewModel.setupForCinemahall(allVideos, allIds, allPosters, allNames);
         }
     }
 

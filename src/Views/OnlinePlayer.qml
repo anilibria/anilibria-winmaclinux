@@ -26,45 +26,26 @@ import "../Theme"
 
 Page {
     id: _page
-    property bool isFullScreen: false
-    property int selectedRelease: -1
-    property string videoSource: ""
-    property var releaseVideos: []
-    property var selectedVideo: null
-    property bool isFullHdAllowed: false
-    property real lastMovedPosition: 0
-    property real restorePosition: 0
-    property string videoQuality: "sd"
-    property string displayVideoPosition: "00:00:00"
-    property string displayEndVideoPosition: "00:00:00"
-    property bool isBuffering: false
-    property var setReleaseParameters: ({})
-    property double videoSpeed: 1
-    property int positionIterator: 0
     property var seenVideo: ({})
     property var seenMarks: ({})
-    property int prefferedQuality: 0 // 0 - 480, 1 - 720p, 2 - 1080p
-    property var jumpMinutes: [0, 1, 2]
-    property var jumpSeconds: [0, 5, 10, 15, 20, 25, 30]
-    property var ports: [12345, 34560, 52354, 67289]
-    property real lastMouseYPosition: 0
-    property string releasePoster: ""
-    property bool isCinemahall: false
-    property var cinemahallReleases: []
-    property string videoSourceChangedCommand: `videosourcechanged`
-    property string videoPositionChangedCommand: `positionchanged`
-    property string videoVolumeChangedCommand: `volumechanged`
-    property string videoPlaybackRateCommand: `playbackratechanged`
-    property string videoPlaybackCommand: `playbackchanged`
+    property bool isFromNavigated: false
 
     signal navigateFrom()
     signal setReleaseVideo()
     signal setCinemahallVideo()
-    signal changeFullScreenMode(bool fullScreen)
     signal navigateTo()
     signal returnToReleasesPage()
     signal windowNotActived()
-    signal receiveRemoteCommand(int id, string command, string argument)
+    signal playInPlayer()
+    signal stopInPlayer()
+
+    onPlayInPlayer: {
+        player.play();
+    }
+
+    onStopInPlayer: {
+        player.stop();
+    }
 
     Keys.onSpacePressed: {
         if (player.playbackState === MediaPlayer.PlayingState) {
@@ -78,7 +59,7 @@ Page {
 
     Keys.onPressed: {
         if (event.key === Qt.Key_PageUp) {
-            _page.nextVideo();
+            onlinePlayerViewModel.nextVideo();
             event.accepted = true;
         }
         if (event.key === Qt.Key_PageDown) {
@@ -86,10 +67,10 @@ Page {
             event.accepted = true;
         }
         if (event.key === Qt.Key_Escape) {
-            //changepage to releases
+            window.showPage("release");
         }
         if (event.key === Qt.Key_F11 || event.key === Qt.Key_F || event.key === 1040) {
-            toggleFullScreen();
+            onlinePlayerViewModel.toggleFullScreen();
         }
         if (event.key === Qt.Key_Up) {
             if (player.volume < 1) player.volume += .1;
@@ -119,233 +100,51 @@ Page {
     onNavigateFrom: {
         windowSettings.unsetStayOnTop();
         player.pause();
-        disableFullScreen();
+        onlinePlayerViewModel.isFullScreen = false;
     }
 
     onNavigateTo: {
+        _page.isFromNavigated = true;
         const userSettings = JSON.parse(localStorage.getUserSettings());
         player.volume = userSettings.volume;
         autoNextVideo.checked = userSettings.autoNextVideo;
         autoTopMost.checked = userSettings.autoTopMost;
-        jumpMinuteComboBox.currentIndex = jumpMinutes.indexOf(userSettings.jumpMinute);
-        jumpSecondComboBox.currentIndex = jumpSeconds.indexOf(userSettings.jumpSecond);
+        jumpMinuteComboBox.currentIndex = onlinePlayerViewModel.jumpMinutes.indexOf(userSettings.jumpMinute);
+        jumpSecondComboBox.currentIndex = onlinePlayerViewModel.jumpSeconds.indexOf(userSettings.jumpSecond);
         showReleaseInfo.checked = userSettings.showReleaseInfo;
         sendVolumeToRemoteSwitch.checked = applicationSettings.sendVolumeToRemote;
+        onlinePlayerViewModel.sendPlaybackToRemoteSwitch = sendVolumeToRemoteSwitch.checked;
         sendPlaybackToRemoteSwitch.checked = applicationSettings.sendPlaybackToRemote;
-        remotePlayer.port = applicationSettings.remotePort;
-        remotePlayerPortComboBox.currentIndex = ports.indexOf(applicationSettings.remotePort);
+        onlinePlayerViewModel.remotePlayer.port = applicationSettings.remotePort;
+        remotePlayerPortComboBox.currentIndex = onlinePlayerViewModel.ports.indexOf(applicationSettings.remotePort);
 
         if (autoTopMost.checked && player.playbackState === MediaPlayer.PlayingState) windowSettings.setStayOnTop();
-        _page.prefferedQuality = userSettings.quality;
         switch (userSettings.quality) {
             case 0:
-                _page.videoQuality = "sd";
+                onlinePlayerViewModel.videoQuality = "sd";
                 break;
             case 1:
-                _page.videoQuality = "hd";
+                onlinePlayerViewModel.videoQuality = "hd";
                 break;
             case 2:
-                _page.videoQuality = "fullhd";
+                onlinePlayerViewModel.videoQuality = "fullhd";
                 break;
         }
 
-        if (!_page.setReleaseParameters.releaseId && !_page.isCinemahall) {
-            const lastSeenObject = localStorage.getLastVideoSeen();
-            if (lastSeenObject === ``) return;
+        if (!onlinePlayerViewModel.navigateReleaseId && !onlinePlayerViewModel.isCinemahall) {
+            const lastSeenReleaseId = onlinePlayerViewModel.getLastVideoSeen();
+            if (lastSeenReleaseId === 0) return;
 
-            const seenObject = JSON.parse(lastSeenObject);
-            const release = JSON.parse(localStorage.getRelease(seenObject.id));
-            _page.releasePoster = release.poster;
-            _page.setReleaseParameters = {
-                releaseId: seenObject.id,
-                videos: release.videos,
-                customPlaylistPosition: -1
-            };
+            const release = JSON.parse(localStorage.getRelease(lastSeenReleaseId));
+            
+            onlinePlayerViewModel.customPlaylistPosition = -1;
+            onlinePlayerViewModel.navigateReleaseId = lastSeenReleaseId;
+            onlinePlayerViewModel.navigateVideos = release.videos;
+            onlinePlayerViewModel.navigatePoster = release.poster;
 
-            _page.setReleaseVideo();
-        }
-    }
-
-    onSetReleaseVideo: {
-        _page.isCinemahall = false;
-        const jsonVideos = JSON.parse(_page.setReleaseParameters.videos);
-        const seenJson = localStorage.getVideoSeen(_page.setReleaseParameters.releaseId);
-        _page.seenVideo = {};
-        if (seenJson) _page.seenVideo = JSON.parse(seenJson);
-        _page.selectedRelease = _page.setReleaseParameters.releaseId;
-
-        const release = JSON.parse(localStorage.getRelease(_page.setReleaseParameters.releaseId));
-        _page.releasePoster = release.poster;
-
-        const releaseVideos = [];
-
-        for (let i = 0; i < jsonVideos.length; i++) {
-            const video = jsonVideos[i];
-            releaseVideos.push(
-                {
-                    title: video.title,
-                    sd: video.sd,
-                    id: video.id,
-                    hd: video.hd,
-                    fullhd: video.fullhd,
-                    sdfile: video.srcSd,
-                    hdfile: video.srcHd,
-                    releaseId: _page.setReleaseParameters.releaseId,
-                    releasePoster: release.poster,
-                    isGroup: false
-                }
-            );
-        }
-        releaseVideos.sort(
-            (left, right) => {
-                if (left.id === right.id) return 0;
-                return left.id > right.id ? 1 : -1;
-            }
-        );
-        let iterator = -1;
-        releaseVideos.forEach(
-            a => {
-                a.order = ++iterator;
-            }
-        );
-
-        _page.releaseVideos = releaseVideos;
-        let firstVideo = releaseVideos[0];
-        if (_page.seenVideo.id) {
-            firstVideo = releaseVideos[_page.seenVideo.videoId];
-        }
-        if (_page.setReleaseParameters.customPlaylistPosition > -1) {
-            _page.seenVideo = {};
-            firstVideo = releaseVideos[_page.setReleaseParameters.customPlaylistPosition];
+            onlinePlayerViewModel.setupForSingleRelease();
         }
 
-        refreshSeenMarks();
-
-        _page.selectedVideo = firstVideo.order;
-        _page.isFullHdAllowed = "fullhd" in firstVideo;
-        if (!firstVideo[_page.videoQuality]) _page.videoQuality = "sd";
-
-        setVideoSource(firstVideo[_page.videoQuality]);
-        player.play();
-
-        localStorage.setToReleaseHistory(_page.setReleaseParameters.releaseId, 1);
-
-        setSerieScrollPosition();
-    }
-
-    onSetCinemahallVideo: {
-        _page.isCinemahall = true;
-        _page.cinemahallReleases = JSON.parse(localStorage.getCinemahallReleases());
-
-        const releaseVideos = [];
-
-        for (let i = 0; i < _page.cinemahallReleases.length; i++) {
-            const release = _page.cinemahallReleases[i];
-            const videos = JSON.parse(release.videos);
-            releaseVideos.push({ title: release.title, isGroup: true });
-
-            videos.sort(
-                (left, right) => {
-                    if (left.id === right.id) return 0;
-                    return left.id > right.id ? 1 : -1;
-                }
-            );
-
-            for (var l = 0; l < videos.length; l++) {
-                const video = videos[l];
-                releaseVideos.push(
-                    {
-                        title: video.title,
-                        sd: video.sd,
-                        id: video.id,
-                        hd: video.hd,
-                        fullhd: video.fullhd,
-                        sdfile: video.srcSd,
-                        hdfile: video.srcHd,
-                        releaseId: release.id,
-                        releasePoster: release.poster,
-                        order: l,
-                        isGroup: false
-                    }
-                );
-            }
-        }
-
-        _page.releaseVideos = releaseVideos;
-
-        refreshSeenMarks();
-
-        let firstVideo = releaseVideos.filter(a => !a.isGroup).find(
-            (releaseVideo) => !(releaseVideo.releaseId in _page.seenMarks && releaseVideo.order in _page.seenMarks[releaseVideo.releaseId])
-        );
-
-        if (firstVideo) {
-            _page.selectedRelease = firstVideo.releaseId;
-            setReleasePoster(firstVideo.releasePoster, firstVideo.releaseId);
-
-            _page.selectedVideo = firstVideo.order;
-            _page.isFullHdAllowed = "fullhd" in firstVideo;
-            if (!firstVideo[_page.videoQuality]) _page.videoQuality = "sd";
-
-            setVideoSource(firstVideo[_page.videoQuality]);
-            player.play();
-
-            localStorage.setToReleaseHistory(firstVideo.releaseId, 1);
-
-            setSerieScrollPosition();
-            _page.seenVideo = JSON.parse(localStorage.getVideoSeen(firstVideo.releaseId));
-            if (_page.seenVideo.id && _page.seenVideo.videoId !== firstVideo.order) _page.seenVideo.videoPosition = 0;
-        } else {
-            setVideoSource("");
-        }
-    }
-
-    onReceiveRemoteCommand: {
-        switch (command){
-            case `getcurrentvideosource`:
-                remotePlayer.sendCommandToUser(id, _page.videoSourceChangedCommand, _page.videoSource);
-                break;
-            case `getcurrentvideoposition`:
-                remotePlayer.sendCommandToUser(id, _page.videoPositionChangedCommand, player.position.toString() + `/` + player.duration.toString());
-                break;
-            case `getcurrentvolume`:
-                if (sendVolumeToRemoteSwitch.checked) remotePlayer.sendCommandToUser(id, _page.videoVolumeChangedCommand, volumeSlider.value.toString());
-                break;
-            case `getcurrentplaybackrate`:
-                remotePlayer.sendCommandToUser(id, _page.videoPlaybackRateCommand, _page.videoSpeed.toString());
-                break;
-            case `getcurrentplayback`:
-                if (player.playbackState === MediaPlayer.PausedState && sendPlaybackToRemoteSwitch.checked) remotePlayer.sendCommandToUser(id, _page.videoPlaybackCommand, "pause");
-                break;
-        }
-    }
-
-    function getZeroBasedDigit(digit) {
-        if (digit < 10) return `0${digit}`;
-        return `${digit}`;
-    }
-
-    function getDisplayTimeFromSeconds(seconds) {
-        const days = Math.floor(seconds / (3600 * 24));
-        seconds -= days * 3600 * 24;
-        const hours = Math.floor(seconds / 3600);
-        seconds -= hours * 3600;
-        const minutes = Math.floor(seconds / 60);
-        seconds  -= minutes * 60;
-
-        return `${getZeroBasedDigit(hours)}:${getZeroBasedDigit(minutes)}:${getZeroBasedDigit(Math.round(seconds))}`;
-    }
-
-    function setControlVisible(visible) {
-        if (visible) {
-            seriesPopup.opacity = 1;
-            controlPanel.opacity = 1;
-            mainPlayerMouseArea.cursorShape = "ArrowCursor";
-        } else {
-            seriesPopup.opacity = 0;
-            controlPanel.opacity = 0;
-            mainPlayerMouseArea.cursorShape = "BlankCursor";
-        }
     }
 
     anchors.fill: parent
@@ -367,7 +166,7 @@ Page {
         anchors.fill: parent
         hoverEnabled: true
         onDoubleClicked: {
-            toggleFullScreen();
+            onlinePlayerViewModel.toggleFullScreen();
         }
         onPositionChanged: {
             if (!(player.playbackState === MediaPlayer.PlayingState)) {
@@ -378,7 +177,7 @@ Page {
             _page.setControlVisible(true);
             const x = mouse.x;
             const y = mouse.y;
-            _page.lastMouseYPosition = y;
+            onlinePlayerViewModel.lastMouseYPosition = y;
             if (y > _page.height - controlPanel.height) {
                 playerTimer.stop();
             } else {
@@ -386,16 +185,17 @@ Page {
             }
         }
         onExited: {
-            if (_page.height - _page.lastMouseYPosition < 10) if (!playerTimer.running) playerTimer.restart();
+            if (_page.height - onlinePlayerViewModel.lastMouseYPosition < 10) if (!playerTimer.running) playerTimer.restart();
         }
     }
 
-    QtPlayer {
+    QtAvPlayer {
         id: player
         anchors.fill: parent
-        source: _page.videoSource
-        playbackRate: _page.videoSpeed
+        source: onlinePlayerViewModel.videoSource
+        playbackRate: onlinePlayerViewModel.playbackRate
         onPlaybackStateChanged: {
+            onlinePlayerViewModel.playerPlaybackState = playbackState;
             if (playbackState === MediaPlayer.PlayingState && autoTopMost.checked) {
                 windowSettings.setStayOnTop();
             } else {
@@ -414,58 +214,61 @@ Page {
 
             if (!sendPlaybackToRemoteSwitch.checked) return;
 
-            if (playbackState === MediaPlayer.PlayingState) remotePlayer.broadcastCommand(_page.videoPlaybackCommand, "play");
-            if (playbackState === MediaPlayer.PausedState) remotePlayer.broadcastCommand(_page.videoPlaybackCommand, "pause");
+            if (playbackState === MediaPlayer.PlayingState) onlinePlayerViewModel.broadcastPlaybackState("play");
+            if (playbackState === MediaPlayer.PausedState) onlinePlayerViewModel.broadcastPlaybackState("pause");
         }
         onVolumeChanged: {
             volumeSlider.value = volume * 100;
-            if (applicationSettings.sendVolumeToRemote) remotePlayer.broadcastCommand(_page.videoVolumeChangedCommand, volumeSlider.value.toString());
+            onlinePlayerViewModel.volumeSlider = volumeSlider.value;
+            if (applicationSettings.sendVolumeToRemote) onlinePlayerViewModel.broadcastVolume(volumeSlider.value);
         }
         onStatusChanged: {
-            if (status === MediaPlayer.Loading) _page.isBuffering = true;
+            if (status === MediaPlayer.Loading) onlinePlayerViewModel.isBuffering = true;
 
-            if (status === MediaPlayer.EndOfMedia && autoNextVideo.checked) _page.nextVideo();
+            if (status === MediaPlayer.EndOfMedia && autoNextVideo.checked) onlinePlayerViewModel.nextVideo();
 
             if (status === MediaPlayer.InvalidMedia) {
                 console.log("InvalidMedia")
             }
 
-            if (status === MediaPlayer.Buffering) _page.isBuffering = true;
+            if (status === MediaPlayer.Buffering) onlinePlayerViewModel.isBuffering = true;
 
             if (status === MediaPlayer.Buffered) {                
-                _page.isBuffering = false;                
-                if (_page.restorePosition > 0){
-                    player.seek(_page.restorePosition);
-                    if (player.position >= _page.restorePosition) _page.restorePosition = 0;
-                } else if (_page.seenVideo.id && _page.seenVideo.videoPosition) {
-                    player.seek(_page.seenVideo.videoPosition);
-                    _page.seenVideo.videoPosition = 0;
+                onlinePlayerViewModel.isBuffering = false;
+                if (onlinePlayerViewModel.restorePosition > 0){
+                    player.seek(onlinePlayerViewModel.restorePosition);
+                    if (player.position >= onlinePlayerViewModel.restorePosition) onlinePlayerViewModel.restorePosition = 0;
+                } else {
+                    if (_page.isFromNavigated) {
+                        const videoPosition = onlinePlayerViewModel.getCurrentVideoSeenVideoPosition()
+                        if (videoPosition > 0) player.seek(videoPosition);
+                        _page.isFromNavigated = false;
+                    }
                 }
             }
         }
 
         onPositionChanged: {
-            if (!playerLocation.pressed && _page.lastMovedPosition === 0) playerLocation.value = position;
+            if (!playerLocation.pressed && onlinePlayerViewModel.lastMovedPosition === 0) playerLocation.value = position;
 
-            _page.displayVideoPosition = `${_page.getDisplayTimeFromSeconds(position / 1000)} из ${_page.getDisplayTimeFromSeconds(duration / 1000)}`;
-            _page.displayEndVideoPosition = _page.getDisplayTimeFromSeconds((duration - position) / 1000);
+            onlinePlayerViewModel.changeVideoPosition(duration, position);
 
-            if (_page.positionIterator < 20) _page.positionIterator++;
+            if (onlinePlayerViewModel.positionIterator < 20) onlinePlayerViewModel.positionIterator++;
 
-            if (_page.positionIterator >= 20) {
-                _page.positionIterator = 0;
-                localStorage.setVideoSeens(_page.selectedRelease, _page.selectedVideo, position);
+            if (onlinePlayerViewModel.positionIterator >= 20) {
+                onlinePlayerViewModel.positionIterator = 0;
+                onlinePlayerViewModel.setVideoSeens(onlinePlayerViewModel.selectedRelease, onlinePlayerViewModel.selectedVideo, position);
             }
 
-            if (!(_page.selectedRelease in _page.seenMarks && _page.selectedVideo in _page.seenMarks[_page.selectedRelease])) {
+            if (!(onlinePlayerViewModel.selectedRelease in _page.seenMarks && onlinePlayerViewModel.selectedVideo in _page.seenMarks[onlinePlayerViewModel.selectedRelease])) {
                 if (duration > 0 && position > 0) {
                     const positionPercent = position / duration * 100;
                     if (positionPercent >= 90) {
-                        let seenMarks = getReleaseSeens(_page.selectedRelease);
-                        seenMarks[_page.selectedVideo] = true;
+                        let seenMarks = getReleaseSeens(onlinePlayerViewModel.selectedRelease);
+                        seenMarks[onlinePlayerViewModel.selectedVideo] = true;
                         const obj = _page.seenMarks;
                         _page.seenMarks = obj;
-                        localStorage.setSeenMark(_page.selectedRelease, _page.selectedVideo, true);
+                        onlinePlayerViewModel.setSeenMark(onlinePlayerViewModel.selectedRelease, onlinePlayerViewModel.selectedVideo, true);
                     }
                 }
             }
@@ -494,12 +297,12 @@ Page {
             Column {
                 id: itemsContent
                 Repeater {
-                    model: _page.releaseVideos
+                    model: onlinePlayerViewModel.videos
                     delegate: Row {
                         Rectangle {
-                            height:  modelData.isGroup ? 70 : 40
+                            height: isGroup ? 70 : 40
                             width: seriesPopup.width
-                            color: _page.selectedVideo === modelData.order && _page.selectedRelease === modelData.releaseId ? ApplicationTheme.playlistSelectedBackground : ApplicationTheme.playlistBackground
+                            color: selectedVideo ? ApplicationTheme.playlistSelectedBackground : ApplicationTheme.playlistBackground
                             MouseArea {
                                 anchors.fill: parent
                                 hoverEnabled: true
@@ -507,23 +310,18 @@ Page {
                                     if (playerTimer.running) playerTimer.stop();
                                 }
                                 onClicked: {
-                                    if (modelData.isGroup) return;
+                                    if (isGroup) return;
 
-                                    _page.selectedVideo = modelData.order;
-                                    _page.isFullHdAllowed = "fullhd" in modelData;
-                                    setVideoSource(modelData[_page.videoQuality]);
-                                    _page.selectedRelease = modelData.releaseId;
-                                    setReleasePoster(modelData.releasePoster, modelData.releaseId);
-                                    player.play();
+                                    onlinePlayerViewModel.selectVideo(releaseId, order);
                                 }
                             }
                             Text {
-                                visible: !modelData.isGroup
-                                color: _page.selectedVideo === modelData.order && _page.selectedRelease === modelData.releaseId ? ApplicationTheme.playlistSelectedText : ApplicationTheme.playlistText
+                                visible: !isGroup
+                                color: selectedVideo ? ApplicationTheme.playlistSelectedText : ApplicationTheme.playlistText
                                 anchors.verticalCenter: parent.verticalCenter
                                 anchors.left: parent.left
                                 anchors.leftMargin: 10
-                                text: modelData.title
+                                text: title
                             }
 
                             Rectangle {
@@ -533,9 +331,9 @@ Page {
                                 anchors.rightMargin: 10
 
                                 Text {
-                                    visible: modelData.isGroup
-                                    color: _page.selectedVideo === modelData.order && _page.selectedRelease === modelData.releaseId ? ApplicationTheme.playlistSelectedText : ApplicationTheme.playlistText
-                                    text: modelData.title
+                                    visible: isGroup
+                                    color: selectedVideo ? ApplicationTheme.playlistSelectedText : ApplicationTheme.playlistText
+                                    text: title
                                     width: parent.width
                                     anchors.verticalCenter: parent.verticalCenter
                                     maximumLineCount: 3
@@ -554,10 +352,10 @@ Page {
                                 IconButton {
                                     height: 36
                                     width: 36
-                                    visible: !modelData.isGroup
+                                    visible: !isGroup
                                     iconColor: ApplicationTheme.filterIconButtonColor
                                     hoverColor: ApplicationTheme.filterIconButtonHoverColor
-                                    iconPath: _page.seenMarks && modelData.releaseId in _page.seenMarks && modelData.order in _page.seenMarks[modelData.releaseId] ? "../Assets/Icons/seenmarkselected.svg" : "../Assets/Icons/seenmark.svg"
+                                    iconPath: _page.seenMarks && releaseId in _page.seenMarks && order in _page.seenMarks[releaseId] ? "../Assets/Icons/seenmarkselected.svg" : "../Assets/Icons/seenmark.svg"
                                     iconWidth: 22
                                     iconHeight: 22
                                     onButtonHoverEnter: {
@@ -565,13 +363,13 @@ Page {
                                     }
                                     onButtonPressed: {
                                         let newState = false;
-                                        let seenMarks = getReleaseSeens(modelData.releaseId);
+                                        let seenMarks = getReleaseSeens(releaseId);
 
-                                        if (seenMarks[modelData.order]) {
-                                            delete seenMarks[modelData.order];
+                                        if (seenMarks[order]) {
+                                            delete seenMarks[order];
                                             newState = false;
                                         } else {
-                                            seenMarks[modelData.order] = true;
+                                            seenMarks[order] = true;
                                             newState = true;
 
                                         }
@@ -580,14 +378,14 @@ Page {
                                         _page.seenMarks = {};
                                         _page.seenMarks = oldSeenMarks;
 
-                                        localStorage.setSeenMark(modelData.releaseId, modelData.order, newState);
+                                        onlinePlayerViewModel.setSeenMark(releaseId, order, newState);
                                     }
                                 }
 
                                 IconButton {
                                     height: 36
                                     width: 36
-                                    visible: !modelData.isGroup
+                                    visible: !isGroup
                                     iconColor: ApplicationTheme.filterIconButtonColor
                                     hoverColor: ApplicationTheme.filterIconButtonHoverColor
                                     iconPath: "../Assets/Icons/download.svg"
@@ -597,13 +395,13 @@ Page {
                                         if (playerTimer.running) playerTimer.stop();
                                     }
                                     onButtonPressed: {
-                                        switch (_page.videoQuality) {
+                                        switch (onlinePlayerViewModel.videoQuality) {
                                             case "fullhd":
                                             case "hd":
-                                                Qt.openUrlExternally(modelData.hdfile);
+                                                Qt.openUrlExternally(hdfile);
                                                 break;
                                             case "sd":
-                                                Qt.openUrlExternally(modelData.sdfile);
+                                                Qt.openUrlExternally(sdfile);
                                                 break;
                                         }
                                     }
@@ -640,16 +438,16 @@ Page {
                 value: 1
                 to: player.duration
                 onPressedChanged: {
-                    if (!pressed && _page.lastMovedPosition > 0) {
-                        player.seek(_page.lastMovedPosition);
-                        remotePlayer.broadcastCommand(_page.videoPositionChangedCommand, _page.lastMovedPosition.toString() + `/` + player.duration.toString());
-                        _page.lastMovedPosition = 0;
+                    if (!pressed && onlinePlayerViewModel.lastMovedPosition > 0) {
+                        player.seek(onlinePlayerViewModel.lastMovedPosition);
+                        onlinePlayerViewModel.broadcastVideoPosition(onlinePlayerViewModel.lastMovedPosition.toString() + `/` + player.duration.toString());
+                        onlinePlayerViewModel.lastMovedPosition = 0;
                     }
                     controlPanel.forceActiveFocus();
                 }
 
                 onMoved: {
-                    if (pressed) _page.lastMovedPosition = value;
+                    if (pressed) onlinePlayerViewModel.lastMovedPosition = value;
                 }
             }
 
@@ -665,7 +463,7 @@ Page {
                 width: controlPanel.width
 
                 PlainText {
-                    text: _page.displayVideoPosition
+                    text: onlinePlayerViewModel.displayVideoPosition
                     fontPointSize: 10
                 }
 
@@ -676,18 +474,11 @@ Page {
                         height: 20
                         width: 60
                         text: "1080p"
-                        visible: player.duration > 0 && _page.isFullHdAllowed
-                        isChecked: _page.videoQuality === `fullhd`
+                        visible: player.duration > 0 && onlinePlayerViewModel.isFullHdAllowed
+                        isChecked: onlinePlayerViewModel.videoQuality === `fullhd`
                         onButtonClicked: {
-                            _page.videoQuality = `fullhd`;
-                            _page.restorePosition = player.position;
-
-                            const video = _page.releaseVideos.find(a => a.order === _page.selectedVideo);
-
-                            player.stop();
-                            setVideoSource(video[_page.videoQuality]);
-                            if (player.start) player.start();
-
+                            onlinePlayerViewModel.restorePosition = player.position;
+                            onlinePlayerViewModel.changeVideoQuality(`fullhd`);
                             localStorage.setVideoQuality(2);
                         }
                     }
@@ -696,17 +487,10 @@ Page {
                         width: 60
                         visible: player.duration > 0
                         text: "720p"
-                        isChecked: _page.videoQuality === `hd`
+                        isChecked: onlinePlayerViewModel.videoQuality === `hd`
                         onButtonClicked: {
-                            _page.videoQuality = `hd`;
-                            _page.restorePosition = player.position;
-
-                            const video = _page.releaseVideos.find(a => a.order === _page.selectedVideo);
-
-                            player.stop();
-                            setVideoSource(video[_page.videoQuality]);
-                            if (player.start) player.start();
-
+                            onlinePlayerViewModel.restorePosition = player.position;
+                            onlinePlayerViewModel.changeVideoQuality(`hd`);
                             localStorage.setVideoQuality(1);
                         }
                     }
@@ -715,17 +499,10 @@ Page {
                         width: 60
                         visible: player.duration > 0
                         text: "480p"
-                        isChecked: _page.videoQuality === `sd`
+                        isChecked: onlinePlayerViewModel.videoQuality === `sd`
                         onButtonClicked: {
-                            _page.videoQuality = `sd`;
-                            _page.restorePosition = player.position;
-
-                            const video = _page.releaseVideos.find(a => a.order === _page.selectedVideo);
-
-                            player.stop();
-                            setVideoSource(video[_page.videoQuality]);
-                            if (player.start) player.start();
-
+                            onlinePlayerViewModel.restorePosition = player.position;
+                            onlinePlayerViewModel.changeVideoQuality(`sd`);
                             localStorage.setVideoQuality(0);
                         }
                     }
@@ -745,9 +522,9 @@ Page {
                         width: 40
                         visible: player.duration > 0
                         text: "x0.25"
-                        isChecked: _page.videoSpeed === 0.25
+                        isChecked: onlinePlayerViewModel.playbackRate === 0.25
                         onButtonClicked: {
-                            setVideoSpeed(0.25)
+                            onlinePlayerViewModel.setVideoSpeed(0.25)
                         }
                     }
                     ToggleButton {
@@ -755,9 +532,9 @@ Page {
                         width: 40
                         visible: player.duration > 0
                         text: "x0.5"
-                        isChecked: _page.videoSpeed === 0.5
+                        isChecked: onlinePlayerViewModel.playbackRate === 0.5
                         onButtonClicked: {
-                            setVideoSpeed(0.5);
+                            onlinePlayerViewModel.setVideoSpeed(0.5);
                         }
                     }
                     ToggleButton {
@@ -765,9 +542,9 @@ Page {
                         width: 40
                         visible: player.duration > 0
                         text: "x0.75"
-                        isChecked: _page.videoSpeed === 0.75
+                        isChecked: onlinePlayerViewModel.playbackRate === 0.75
                         onButtonClicked: {
-                            setVideoSpeed(0.75);
+                            onlinePlayerViewModel.setVideoSpeed(0.75);
                         }
                     }
                     ToggleButton {
@@ -775,9 +552,9 @@ Page {
                         width: 40
                         visible: player.duration > 0
                         text: "x1"
-                        isChecked: _page.videoSpeed === 1
+                        isChecked: onlinePlayerViewModel.playbackRate === 1
                         onButtonClicked: {
-                            setVideoSpeed(1);
+                            onlinePlayerViewModel.setVideoSpeed(1);
                         }
                     }
                     ToggleButton {
@@ -785,9 +562,9 @@ Page {
                         width: 40
                         visible: player.duration > 0
                         text: "x1.25"
-                        isChecked: _page.videoSpeed === 1.1
+                        isChecked: onlinePlayerViewModel.playbackRate === 1.1
                         onButtonClicked: {
-                            setVideoSpeed(1.1);
+                            onlinePlayerViewModel.setVideoSpeed(1.1);
                         }
                     }
                     ToggleButton {
@@ -795,9 +572,9 @@ Page {
                         width: 40
                         visible: player.duration > 0
                         text: "x1.5"
-                        isChecked: _page.videoSpeed === 1.2
+                        isChecked: onlinePlayerViewModel.playbackRate === 1.2
                         onButtonClicked: {
-                            setVideoSpeed(1.2);
+                            onlinePlayerViewModel.setVideoSpeed(1.2);
                         }
                     }
                     ToggleButton {
@@ -805,9 +582,9 @@ Page {
                         width: 40
                         visible: player.duration > 0
                         text: "x1.75"
-                        isChecked: _page.videoSpeed === 1.3
+                        isChecked: onlinePlayerViewModel.playbackRate === 1.3
                         onButtonClicked: {
-                            setVideoSpeed(1.3);
+                            onlinePlayerViewModel.setVideoSpeed(1.3);
                         }
                     }
                     ToggleButton {
@@ -815,9 +592,9 @@ Page {
                         width: 40
                         visible: player.duration > 0
                         text: "x2"
-                        isChecked: _page.videoSpeed === 1.5
+                        isChecked: onlinePlayerViewModel.playbackRate === 1.5
                         onButtonClicked: {
-                            setVideoSpeed(1.5);
+                            onlinePlayerViewModel.setVideoSpeed(1.5);
                         }
                     }
                     ToggleButton {
@@ -825,9 +602,9 @@ Page {
                         width: 40
                         visible: player.duration > 0
                         text: "x3"
-                        isChecked: _page.videoSpeed === 2
+                        isChecked: onlinePlayerViewModel.playbackRate === 2
                         onButtonClicked: {
-                            setVideoSpeed(2);
+                            onlinePlayerViewModel.setVideoSpeed(2);
                         }
                     }
                 }
@@ -836,7 +613,7 @@ Page {
                     height: 20
                     anchors.right: parent.right
                     anchors.rightMargin: 4
-                    text: _page.displayEndVideoPosition
+                    text: onlinePlayerViewModel.displayEndVideoPosition
                     fontPointSize: 10
                 }
             }
@@ -917,7 +694,7 @@ Page {
                         iconWidth: 24
                         iconHeight: 24
                         onButtonPressed: {
-                            _page.previousVideo();
+                            onlinePlayerViewModel.previousVideo();
                         }
                     }
                     IconButton {
@@ -957,7 +734,7 @@ Page {
                         iconWidth: 24
                         iconHeight: 24
                         onButtonPressed: {
-                            _page.nextVideo();
+                            onlinePlayerViewModel.nextVideo();
                         }
                     }
                     IconButton {
@@ -1003,7 +780,7 @@ Page {
                         id: remotePlayerButton
                         width: 40
                         height: 40
-                        iconColor: remotePlayer.started ? ApplicationTheme.filterIconButtonGreenColor : ApplicationTheme.filterIconButtonColor
+                        iconColor: onlinePlayerViewModel.remotePlayer.started ? ApplicationTheme.filterIconButtonGreenColor : ApplicationTheme.filterIconButtonColor
                         hoverColor: ApplicationTheme.filterIconButtonHoverColor
                         iconPath: "../Assets/Icons/connect.svg"
                         iconWidth: 24
@@ -1014,7 +791,7 @@ Page {
 
                         ToolTip.delay: 1000
                         ToolTip.visible: remotePlayerButton.hovered
-                        ToolTip.text: remotePlayer.started ? "Удаленный плеер включен" : "Удаленный плеер выключен, откройте настройки для подключения"
+                        ToolTip.text: onlinePlayerViewModel.remotePlayer.started ? "Удаленный плеер включен" : "Удаленный плеер выключен, откройте настройки для подключения"
 
                         Popup {
                             id: remotePlayerPopup
@@ -1041,10 +818,10 @@ Page {
                                     id: stateRemotePlayer
                                     onCheckedChanged: {
                                         if (checked) {
-                                            remotePlayer.port = applicationSettings.remotePort;
-                                            remotePlayer.startServer();
+                                            onlinePlayerViewModel.remotePlayer.port = applicationSettings.remotePort;
+                                            onlinePlayerViewModel.remotePlayer.startServer();
                                         } else {
-                                            remotePlayer.stopServer();
+                                            onlinePlayerViewModel.remotePlayer.stopServer();
                                         }
                                     }
                                 }
@@ -1088,6 +865,8 @@ Page {
                                     id: sendVolumeToRemoteSwitch
                                     onCheckedChanged: {
                                         applicationSettings.sendVolumeToRemote = checked;
+
+                                        onlinePlayerViewModel.sendVolumeToRemote = checked;
                                     }
                                 }
 
@@ -1101,13 +880,15 @@ Page {
                                     id: sendPlaybackToRemoteSwitch
                                     onCheckedChanged: {
                                         applicationSettings.sendPlaybackToRemote = checked;
+
+                                        onlinePlayerViewModel.sendPlaybackToRemoteSwitch = checked;
                                     }
                                 }
 
                                 PlainText {
                                     width: optionsPopup.width - 20
                                     fontPointSize: 10
-                                    text: "Подключено: " + remotePlayer.countUsers
+                                    text: "Подключено: " + onlinePlayerViewModel.remotePlayer.countUsers
                                 }
                             }
                         }
@@ -1166,7 +947,7 @@ Page {
                                             }
                                         }
                                         onActivated: {
-                                            localStorage.setJumpMinute(_page.jumpMinutes[index]);
+                                            localStorage.setJumpMinute(onlinePlayerViewModel.jumpMinutes[index]);
                                         }
                                     }
                                     CommonComboBox {
@@ -1197,7 +978,7 @@ Page {
                                         }
 
                                         onActivated: {
-                                            localStorage.setJumpSecond(_page.jumpSeconds[index]);
+                                            localStorage.setJumpSecond(onlinePlayerViewModel.jumpSeconds[index]);
                                         }
                                     }
                                 }
@@ -1284,7 +1065,7 @@ Page {
                         iconWidth: 29
                         iconHeight: 29
                         onButtonPressed: {
-                            toggleFullScreen();
+                            onlinePlayerViewModel.toggleFullScreen();
                         }
 
                         ToolTip.delay: 1000
@@ -1319,7 +1100,7 @@ Page {
         radius: 12
         Image {
             anchors.centerIn: parent
-            source: _page.releasePoster
+            source: onlinePlayerViewModel.releasePoster
             fillMode: Image.PreserveAspectCrop
             width: 180
             height: 270
@@ -1336,7 +1117,7 @@ Page {
         color: "white"
         radius: 20
         opacity: 0.8
-        visible: _page.isBuffering
+        visible: onlinePlayerViewModel.isBuffering
         anchors.centerIn: parent
         AnimatedImage {
             id: spinner
@@ -1345,11 +1126,6 @@ Page {
             playing: _page.visible
             source: _page.visible ? "../Assets/Icons/spinner.gif" : ""
         }
-    }
-
-    function setReleasePoster(poster, releaseId) {
-        let posterPath = poster ? localStorage.getReleasePosterPath(releaseId, poster) : '../Assets/Icons/donate.jpg';
-        _page.releasePoster = posterPath;
     }
 
     function getReleaseSeens(releaseId) {
@@ -1363,163 +1139,45 @@ Page {
         return seenMarks;
     }
 
-    function checkExistingVideoQuality(video) {
-        if (video[_page.videoQuality]) {
-            return video[_page.videoQuality];
-        } else {
-            if (`sd` in video) {
-                _page.videoQuality = `sd`;
-                return video['sd'];
-            }
-            if (`hd` in video) {
-                _page.videoQuality = `hd`;
-                return video['hd'];
-            }
-            if (`fullhd` in video) {
-                _page.videoQuality = `fullhd`;
-                return video['fullhd'];
-            }
-
-            return null;
-        }        
-    }
-
-    function previousNotSeenVideo() {
-        let lastNotSeenVideo = null;
-
-        for (const releaseVideo of _page.releaseVideos) {
-            if (releaseVideo.isGroup) continue;
-            if (releaseVideo.releaseId === _page.selectedRelease && releaseVideo.order === _page.selectedVideo) break;
-
-            if (!(releaseVideo.releaseId in _page.seenMarks && releaseVideo.order in _page.seenMarks[releaseVideo.releaseId])) lastNotSeenVideo = releaseVideo;
-        }
-
-        return lastNotSeenVideo;
-    }
-
-    function previousVideo() {
-        if (_page.selectedVideo === 0) return;
-        _page.restorePosition = 0;
-
-        let video;
-
-        if (_page.isCinemahall) {
-            const previousVideo = previousNotSeenVideo();
-            if (previousVideo) {
-                _page.selectedVideo = previousVideo.order;
-                video = previousVideo;
-            } else {
-                return;
-            }
-
-        } else {
-            _page.selectedVideo--;
-            video = _page.releaseVideos[_page.selectedVideo];
-        }
-
-        _page.isFullHdAllowed = "fullhd" in video;
-        _page.releasePoster = video.releasePoster;
-        _page.selectedRelease = video.releaseId;
-
-        setVideoSource(checkExistingVideoQuality(video));
-
-        if (!_page.isCinemahall) setSerieScrollPosition();
-    }
-
-    function nextNotSeenVideo() {
-        var beforeCurrent = true;
-        for (const releaseVideo of _page.releaseVideos) {
-            if (releaseVideo.releaseId === _page.selectedRelease && releaseVideo.order <= _page.selectedVideo) {
-                beforeCurrent = false;
-                continue;
-            }
-            if (beforeCurrent) continue;
-            if (releaseVideo.isGroup) continue;
-
-            if (!(releaseVideo.releaseId in _page.seenMarks && releaseVideo.order in _page.seenMarks[releaseVideo.releaseId])) {
-                return releaseVideo;
-            }
-        }
-
-        return null;
-    }
-
-    function setVideoSource(source) {
-        _page.videoSource = source;
-        remotePlayer.broadcastCommand(_page.videoSourceChangedCommand, source);
-    }
-
-    function setVideoSpeed(videoSpeed) {
-        _page.videoSpeed = videoSpeed;
-        remotePlayer.broadcastCommand(_page.videoPlaybackRateCommand, videoSpeed);
-    }
-
-    function nextVideo() {
-        _page.restorePosition = 0;
-        let video;
-
-        if (_page.isCinemahall) {
-            const nextVideo = nextNotSeenVideo();
-            if (nextVideo) {
-                _page.selectedVideo = nextVideo.order;
-                video = nextVideo;
-            } else {
-                return;
-            }
-        } else {
-            if (_page.selectedVideo === _page.releaseVideos.length - 1) return;
-
-            _page.selectedVideo++;
-            video = _page.releaseVideos[_page.selectedVideo];
-        }
-
-        _page.isFullHdAllowed = "fullhd" in video;
-        _page.releasePoster = video.releasePoster;
-        _page.selectedRelease = video.releaseId;
-
-        setVideoSource(checkExistingVideoQuality(video));
-
-        if (!_page.isCinemahall) setSerieScrollPosition();
-    }
-
     function setSerieScrollPosition() {
-        let newPosition = _page.selectedVideo * 40 - serieScrollContainer.height;
+        let newPosition = onlinePlayerViewModel.selectedVideo * 40 - serieScrollContainer.height;
         newPosition += 40;
         if (newPosition < 0) newPosition = 0;
         serieScrollContainer.contentY = newPosition;
     }
 
-    function toggleFullScreen() {
-        isFullScreen = !isFullScreen;
-        changeFullScreenMode(isFullScreen);
-    }
-
-    function disableFullScreen() {
-        if (!isFullScreen) return;
-        isFullScreen = false;
-        changeFullScreenMode(isFullScreen);
-    }
-
     function refreshSeenMarks() {
         let releaseIds = [];
 
-        if (_page.isCinemahall) {
-            releaseIds = _page.cinemahallReleases.map(a => a.id);
+        if (onlinePlayerViewModel.isCinemahall) {
+            releaseIds = JSON.parse(localStorage.getCinemahallReleases()).map(a => a.id);
         } else {
-            releaseIds.push(_page.setReleaseParameters.releaseId);
+            releaseIds.push(onlinePlayerViewModel.selectedRelease);
         }
 
-        _page.seenMarks = JSON.parse(localStorage.getReleasesSeenMarks(releaseIds));
+        _page.seenMarks = JSON.parse(onlinePlayerViewModel.getReleasesSeenMarks(releaseIds));
     }
 
     function jumpInPlayer(direction){
-        const minutes = _page.jumpMinutes[jumpMinuteComboBox.currentIndex];
-        const seconds = _page.jumpSeconds[jumpSecondComboBox.currentIndex];
+        const minutes = onlinePlayerViewModel.jumpMinutes[jumpMinuteComboBox.currentIndex];
+        const seconds = onlinePlayerViewModel.jumpSeconds[jumpSecondComboBox.currentIndex];
         const jumpvalue = (minutes * 60 + seconds) * 1000;
         let seekPosition = player.position + (direction ? -jumpvalue : jumpvalue);
         if (seekPosition < 0) seekPosition = 80;
         if (seekPosition > player.duration) seekPosition = player.duration - 100;
         player.seek(seekPosition);
+    }
+
+    function setControlVisible(visible) {
+        if (visible) {
+            seriesPopup.opacity = 1;
+            controlPanel.opacity = 1;
+            mainPlayerMouseArea.cursorShape = "ArrowCursor";
+        } else {
+            seriesPopup.opacity = 0;
+            controlPanel.opacity = 0;
+            mainPlayerMouseArea.cursorShape = "BlankCursor";
+        }
     }
 
     Component.onCompleted: {

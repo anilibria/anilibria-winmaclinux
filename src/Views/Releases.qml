@@ -85,7 +85,7 @@ Page {
     property bool toggler: false
 
     signal navigateFrom()
-    signal watchRelease(int releaseId, string videos, int startSeria)
+    signal watchSingleRelease(int releaseId, string videos, int startSeria, string poster)
     signal refreshReleases()
     signal refreshFavorites()
     signal refreshReleaseSchedules()
@@ -426,7 +426,7 @@ Page {
                                 text: "Ок"
                                 width: 100
                                 onClicked: {
-                                    localStorage.removeAllSeenMark();
+                                    onlinePlayerViewModel.removeAllSeenMark();
                                     refreshSeenMarks();
                                     refreshAllReleases(true);
                                     removeAllSeenMark.close();
@@ -1674,7 +1674,7 @@ Page {
                                     page.selectedReleases = [];
                                 }
                                 onWatchRelease: {
-                                    page.watchRelease(id, videos, -1);
+                                    page.watchSingleRelease(id, videos, -1, poster);
                                 }
                             }
                         }
@@ -2221,7 +2221,7 @@ Page {
                                     CommonMenuItem {
                                         text: "Серия " + (index + 1)
                                         onPressed: {
-                                            watchRelease(page.openedRelease.id, page.openedRelease.videos, index);
+                                            watchSingleRelease(page.openedRelease.id, page.openedRelease.videos, index, page.openedRelease.poster);
                                         }
                                     }
                                 }
@@ -2288,7 +2288,7 @@ Page {
                         anchors.right: parent.right
                         anchors.rightMargin: 10
                         onClicked: {
-                            watchRelease(page.openedRelease.id, page.openedRelease.videos, -1);
+                            watchSingleRelease(page.openedRelease.id, page.openedRelease.videos, -1, page.openedRelease.poster)
 
                             page.openedRelease = null;
                             releasePosterPreview.isVisible = false;
@@ -2324,7 +2324,7 @@ Page {
     }
 
     function setSeenStateForOpenedRelease(newState) {
-        localStorage.setSeenMarkAllSeries(page.openedRelease.id, page.openedRelease.countVideos, newState);
+        onlinePlayerViewModel.setSeenMarkAllSeries(page.openedRelease.id, page.openedRelease.countVideos, newState);
         page.openedRelease.countSeensSeries = newState ? page.openedRelease.countVideos : 0;
         const oldRelease = page.openedRelease;
         page.openedRelease = null;
@@ -2334,7 +2334,13 @@ Page {
     }
 
     function setSeenStateForRelease(newState, releases) {
-        localStorage.setMultipleSeenMarkAllSeries(releases, newState);
+        for (const releaseId of releases) {
+            const release = JSON.parse(localStorage.getRelease(releaseId));
+            const videos = JSON.parse(release.videos);
+            onlinePlayerViewModel.setSeenMarkAllSeriesWithoutSave(releaseId, videos.length, newState);
+        }
+        onlinePlayerViewModel.saveSeenMarkCacheToFile();
+
         page.selectedReleases = [];
         refreshSeenMarks();
         refreshAllReleases(true);
@@ -2387,7 +2393,7 @@ Page {
     }
 
     function refreshSeenMarks() {
-        page.seenMarks = JSON.parse(localStorage.getSeenMarks());
+        page.seenMarks = JSON.parse(onlinePlayerViewModel.getSeenMarks());
     }
 
     function setSeensCounts(releases) {

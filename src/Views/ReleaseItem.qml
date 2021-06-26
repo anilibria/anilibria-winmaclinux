@@ -48,7 +48,7 @@ Rectangle {
     signal rightClicked()
     signal addToFavorite(int id)
     signal removeFromFavorite(int id)
-    signal watchRelease(int id, string videos)
+    signal watchRelease(int id, string videos, string poster)
 
     Rectangle {
         id: mask
@@ -292,7 +292,7 @@ Rectangle {
                             text: "Смотреть"
                             onPressed: {
                                 quickActions.close();
-                                releaseItem.watchRelease(releaseModel.id, releaseModel.videos);
+                                releaseItem.watchRelease(releaseModel.id, releaseModel.videos, releaseModel.poster);
                             }
                         }
                     }
