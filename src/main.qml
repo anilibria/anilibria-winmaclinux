@@ -263,6 +263,15 @@ ApplicationWindow {
                 }
             );
 
+            if (localStorage.newEntities) {
+                applicationNotification.sendNotification(
+                    {
+                        type: "info",
+                        message: localStorage.newEntities
+                    }
+                );
+            }
+
             releaseLinkedSeries.refreshSeries();
         }
 
