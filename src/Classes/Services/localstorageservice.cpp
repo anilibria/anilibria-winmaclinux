@@ -67,7 +67,8 @@ LocalStorageService::LocalStorageService(QObject *parent) : QObject(parent),
     m_HidedReleases(new QVector<int>()),
     m_CountSeens(0),
     m_Downloads(new QVector<DownloadItemModel*>()),
-    m_CountCinemahall(0)
+    m_CountCinemahall(0),
+    m_newEntities("")
 {
     m_AllReleaseUpdatedWatcher = new QFutureWatcher<void>(this);
 
@@ -166,6 +167,10 @@ void LocalStorageService::updateAllReleases(const QString &releases)
             if (jsonError.error != 0) return; //TODO: handle this situation and show message
 
             auto jsonReleases = jsonDocument.array();
+            auto newReleasesCount = m_ChangesModel->newReleases()->count();
+            auto newOnlineSeriesCount = m_ChangesModel->newOnlineSeries()->count();
+            auto newTorrentsCount = m_ChangesModel->newTorrents()->count();
+            auto newTorrentSeriesCount = m_ChangesModel->newTorrentSeries()->count();
             auto newReleases = m_ChangesModel->newReleases();
             auto newOnlineSeries = m_ChangesModel->newOnlineSeries();
             auto newTorrents = m_ChangesModel->newTorrents();
@@ -208,6 +213,13 @@ void LocalStorageService::updateAllReleases(const QString &releases)
             saveCachedReleasesToFile();
             updateReleasesInnerCache();
             saveChanges();
+
+            QString newEntities;
+            if (newReleases->count() > newReleasesCount) newEntities += "Новых релизов " + QString::number(newReleases->count() - newReleasesCount) + " ";
+            if (newOnlineSeries->count() > newOnlineSeriesCount) newEntities += "Новых серий " + QString::number(newOnlineSeries->count() - newOnlineSeriesCount) + " ";
+            if (newTorrents->count() > newTorrentsCount) newEntities += "Новых торрентов " + QString::number(newTorrents->count() - newTorrentsCount) + " ";
+            if (newTorrentSeries->count() > newTorrentSeriesCount) newEntities += "Новых серий в торрентах " + QString::number(newTorrentSeries->count() - newTorrentSeriesCount);
+            setNewEntities(newEntities);
         }
     );
     m_AllReleaseUpdatedWatcher->setFuture(future);
@@ -801,6 +813,14 @@ bool LocalStorageService::importReleasesFromFile(QString path)
     updateAllReleases(json);
 
     return true;
+}
+
+void LocalStorageService::setNewEntities(const QString &newEntities)
+{
+    if (m_newEntities == newEntities) return;
+
+    m_newEntities = newEntities;
+    emit newEntitiesChanged();
 }
 
 QString LocalStorageService::getRelease(int id)
@@ -1622,22 +1642,6 @@ void LocalStorageService::addToCinemahall(const QList<int>& ids)
     }
 
     saveCinemahall();    
-}
-
-QString LocalStorageService::getReleasesByIds(const QList<int> &ids)
-{
-    auto idsSet = ids.toSet();
-    QJsonArray releases;
-    foreach (auto releaseItem, *m_CachedReleases) {
-        if (!idsSet.contains(releaseItem->id())) continue;
-
-        QJsonObject jsonValue;
-        releaseItem->writeToJson(jsonValue);
-        releases.append(jsonValue);
-    }
-
-    QJsonDocument saveDoc(releases);
-    return saveDoc.toJson();
 }
 
 QString LocalStorageService::getCinemahallReleases()

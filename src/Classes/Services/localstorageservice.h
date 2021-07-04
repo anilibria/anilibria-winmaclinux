@@ -41,6 +41,7 @@ class LocalStorageService : public QObject
     Q_PROPERTY(int countReleases READ countReleases WRITE setCountReleases NOTIFY countReleasesChanged)
     Q_PROPERTY(int countSeens READ countSeens WRITE setCountSeens NOTIFY countSeensChanged)
     Q_PROPERTY(int countCinemahall READ countCinemahall WRITE setCountCinemahall NOTIFY countCinemahallChanged)
+    Q_PROPERTY(QString newEntities READ newEntities WRITE setNewEntities NOTIFY newEntitiesChanged)
 
 private:
     QFutureWatcher<void>* m_AllReleaseUpdatedWatcher;
@@ -57,6 +58,7 @@ private:
     int m_CountSeens;
     QVector<DownloadItemModel*>* m_Downloads;
     int m_CountCinemahall;
+    QString m_newEntities;
 
     QString videosToJson(QList<OnlineVideoModel>& videos);
     QString torrentsToJson(QList<ReleaseTorrentModel>& torrents);
@@ -80,6 +82,7 @@ private:
     QString getCinemahallCachePath() const;
     QString getDownloadsCachePath() const;
     QString getHidedReleasesCachePath() const;
+    QString newEntities() const { return m_newEntities; }
     void createIfNotExistsFile(QString path, QString defaultContent);
     void saveChanges();
     void resetChanges();
@@ -100,6 +103,7 @@ private:
     void recalculateSeenCounts();    
     bool importReleasesFromFile(QString path);
     void afterSynchronizedReleases();
+    void setNewEntities(const QString& newEntities);
 public:
     explicit LocalStorageService(QObject *parent = nullptr);
 
@@ -158,7 +162,6 @@ public:
     Q_INVOKABLE QString packAsM3UAndOpen(int id, QString quality);
     Q_INVOKABLE QString packAsMPCPLAndOpen(int id, QString quality);
     Q_INVOKABLE void addToCinemahall(const QList<int>& ids);
-    Q_INVOKABLE QString getReleasesByIds(const QList<int>& ids);
     Q_INVOKABLE QString getCinemahallReleases();
     Q_INVOKABLE bool hasCinemahallReleases();
     Q_INVOKABLE void reorderReleaseInCinemahall(int reorderId, int targetId);
@@ -182,6 +185,7 @@ signals:
     void countReleasesChanged(int countReleases);
     void countSeensChanged(int countSeens);
     void countCinemahallChanged();
+    void newEntitiesChanged();
 
 public slots:
     void allReleasesUpdated();    
