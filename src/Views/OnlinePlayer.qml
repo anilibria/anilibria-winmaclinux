@@ -189,7 +189,7 @@ Page {
         }
     }
 
-    QtAvPlayer {
+    QtPlayer {
         id: player
         anchors.fill: parent
         source: onlinePlayerViewModel.videoSource
