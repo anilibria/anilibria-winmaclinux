@@ -92,7 +92,7 @@ Page {
 
                 Rectangle {
                     width: scrollview.width - 10
-                    height: 400
+                    height: 500
                     color: "transparent"
                     border.color: "white"
                     border.width: 1
@@ -239,6 +239,37 @@ Page {
                                 width: parent.width
                                 wrapMode: Text.WordWrap
                                 text: "Позволяет указать настройки проксирования запросов для всего приложения."
+                            }
+                        }
+
+                        Item {
+                            width: 220
+                            height: 100
+
+                            RoundedActionButton {
+                                anchors.verticalCenter: parent.verticalCenter
+                                anchors.left: parent.left
+                                anchors.leftMargin: 10
+                                width: parent.width - 10
+                                text: "Синхронизовать с DL"
+                                onClicked: {
+                                    synchronizationService.synchronizeDL();
+                                }
+                            }
+                        }
+
+                        Rectangle {
+                            color: "transparent"
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+
+                            PlainText {
+                                fontPointSize: 12
+                                anchors.verticalCenter: parent.verticalCenter
+                                anchors.left: parent.left
+                                width: parent.width
+                                wrapMode: Text.WordWrap
+                                text: "Позволяет выполнить синхронизацию релизов с DL. Чтобы релизы повторно обновились необходимо нажать эту кнопку снова."
                             }
                         }
                     }

@@ -49,6 +49,8 @@ public:
     ReleaseModel();
 
     void readFromApiModel(const QJsonObject &jsonObject);
+    
+    void writeToApiModel(QJsonObject& jsonObject) const noexcept;
 
     void writeToJson(QJsonObject &json) const noexcept;
 
@@ -56,23 +58,39 @@ public:
 
     int id() const { return m_Id; }
 
+    void setId(int id) { m_Id = id; }
+
     QString code() const { return m_Code; }
+
+    void setCode(const QString& code) { m_Code = code; }
 
     QString series() const { return m_Series; }
 
     QString poster() const { return m_Poster; }
 
+    void setPoster(const QString& poster) { m_Poster = poster; }
+
     QString timestamp() const { return m_Timestamp; }
 
     QString status() const { return m_Status; }
 
+    void setStatus(const QString& status) { m_Status = status; }
+
     QString type() const { return m_Type; }
+
+    void setType(const QString& type) { m_Type = type; }
 
     QString year() const { return m_Year; }
 
+    void setYear(const QString& year) { m_Year = year; }
+
     QString description() const { return m_Description; }
 
+    void setDescription(const QString& description) { m_Description = description; }
+
     QString season() const { return m_Season; }
+
+    void setSeason(const QString& season) { m_Season = season; }
 
     QString announce() const { return m_Announce; }
 
@@ -85,6 +103,16 @@ public:
     int rating() const { return m_Rating; }
 
     QString title() const { return m_Title; }
+
+    void setTitle(const QString& title) { m_Title = title; }
+
+    void addToNames(const QString& name) { m_Names.append(name); }
+
+    void addToVoices(const QString& voice) { m_Voices.append(voice); }
+
+    void addToGenres(const QString& genre) { m_Genres.append(genre); }
+
+    void addToVideos(const OnlineVideoModel& video) { m_Videos.append(video); }
 
     QList<OnlineVideoModel> videos() const { return m_Videos; }
 

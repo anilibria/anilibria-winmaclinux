@@ -339,6 +339,10 @@ ApplicationWindow {
             parseReleasesWorker.sendMessage({ releasesJson: data });
         }
 
+        onSynchronizedFromDL: {
+            localStorage.updateAllReleases(data);
+        }
+
         onSynchronizedSchedule: {
             const jsonData = JSON.parse(data);
 

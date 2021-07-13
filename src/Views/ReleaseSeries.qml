@@ -226,7 +226,11 @@ Page {
                                 ColumnLayout {
                                     spacing: 4
                                     anchors.fill: parent
-                                    anchors.topMargin: 6
+                                    anchors.leftMargin: 10
+
+                                    Item {
+                                        Layout.fillHeight: true
+                                    }
 
                                     PlainText {
                                         Layout.preferredHeight: 20
@@ -243,12 +247,14 @@ Page {
                                     PlainText {
                                         Layout.preferredHeight: 20
                                         fontPointSize: 10
+                                        visible: !!thirdName
                                         text: thirdName
                                     }
 
                                     PlainText {
                                         Layout.preferredHeight: 20
                                         fontPointSize: 10
+                                        visible: !!otherReleases
                                         text: otherReleases
                                     }
 

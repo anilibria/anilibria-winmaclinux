@@ -353,7 +353,7 @@ Page {
                                     height: 36
                                     width: 36
                                     visible: !isGroup
-                                    iconColor: ApplicationTheme.filterIconButtonColor
+                                    iconColor: _page.seenMarks && releaseId in _page.seenMarks && order in _page.seenMarks[releaseId] ? ApplicationTheme.filterIconButtonGreenColor : ApplicationTheme.filterIconButtonColor
                                     hoverColor: ApplicationTheme.filterIconButtonHoverColor
                                     iconPath: _page.seenMarks && releaseId in _page.seenMarks && order in _page.seenMarks[releaseId] ? "../Assets/Icons/seenmarkselected.svg" : "../Assets/Icons/seenmark.svg"
                                     iconWidth: 22

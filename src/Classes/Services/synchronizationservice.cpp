@@ -18,14 +18,17 @@
 
 #include <QtCore>
 #include <QQmlListProperty>
+#include <QJsonDocument>
 #include "synchronizationservice.h"
 #include "anilibriaapiservice.h"
 #include "../Models/releasemodel.h"
 #include "../../globalconstants.h"
 
-SynchronizationService::SynchronizationService(QObject *parent) : QObject(parent)
+SynchronizationService::SynchronizationService(QObject *parent) : QObject(parent),
+    m_AnilibriaApiService(new AnilibriaApiService(this)),
+    m_dlService(new DLService(this))
 {
-    m_AnilibriaApiService = new AnilibriaApiService(this);
+
     connect(m_AnilibriaApiService,&AnilibriaApiService::allReleasesReceived,this,&SynchronizationService::saveReleasesToCache);
     connect(m_AnilibriaApiService,&AnilibriaApiService::scheduleReceived,this,&SynchronizationService::saveScheduleToCache);
     connect(m_AnilibriaApiService,&AnilibriaApiService::signinReceived,this,&SynchronizationService::handleSignin);
@@ -35,6 +38,7 @@ SynchronizationService::SynchronizationService(QObject *parent) : QObject(parent
     connect(m_AnilibriaApiService,&AnilibriaApiService::userFavoritesUpdated,this,&SynchronizationService::handleEditUserFavorites);
     connect(m_AnilibriaApiService,&AnilibriaApiService::torrentDownloaded,this,&SynchronizationService::handleTorrentDownloaded);
     connect(m_AnilibriaApiService,&AnilibriaApiService::allYoutubeItemReceived,this,&SynchronizationService::saveYoutubeToCache);
+    connect(m_dlService, &DLService::allSynchronized, this, &SynchronizationService::saveReleasesFromDLToCache);
 }
 
 void SynchronizationService::synchronizeReleases()
@@ -92,9 +96,32 @@ void SynchronizationService::synchronizeYoutube()
     m_AnilibriaApiService->getYoutubeVideos();
 }
 
+void SynchronizationService::synchronizeDL()
+{
+    m_dlService->synchronize();
+}
+
 void SynchronizationService::saveReleasesToCache(QString data)
 {
     emit synchronizedReleases(data);
+}
+
+void SynchronizationService::saveReleasesFromDLToCache()
+{
+    auto loadedReleases = m_dlService->getLoadedReleases();
+    if (loadedReleases->count() == 0) return;
+
+    QJsonArray releases;
+
+    foreach(auto loadedRelease, *loadedReleases) {
+        QJsonObject releaseObject;
+        loadedRelease->writeToApiModel(releaseObject);
+        releases.append(releaseObject);
+    }
+
+    QJsonDocument document(releases);
+
+    emit synchronizedFromDL(document.toJson());
 }
 
 void SynchronizationService::saveScheduleToCache(QString data)

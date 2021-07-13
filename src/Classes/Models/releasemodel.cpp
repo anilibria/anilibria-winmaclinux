@@ -1,4 +1,4 @@
-/*
+﻿/*
     AniLibria - desktop client for the website anilibria.tv
     Copyright (C) 2020 Roman Vladimirov
 
@@ -24,6 +24,54 @@ ReleaseModel::ReleaseModel()
 {
     m_Videos = QList<OnlineVideoModel>();
     m_Torrents = QList<ReleaseTorrentModel>();
+    m_Timestamp = "0";
+    m_Rating = 0;
+    m_Status = "";
+    m_Announce = "";
+}
+
+void ReleaseModel::writeToApiModel(QJsonObject& json) const noexcept
+{
+    json["id"] = m_Id;
+    json["code"] = m_Code;
+    json["poster"] = m_Poster;
+    json["series"] = m_Series;
+    json["status"] = m_Status;
+    json["last"] = m_Timestamp;
+    json["type"] = m_Type;
+    json["year"] = m_Year;
+    json["description"] = m_Description;
+    QJsonObject rating;
+    rating["rating"] = m_Rating;
+    json["favorite"] = rating;
+    json["season"] = m_Season;
+    json["announce"] = m_Announce;
+    QJsonArray namesArray = QJsonArray();
+    foreach(const QString & name, m_Names) namesArray.append(QJsonValue(name));
+    json["names"] = namesArray;
+    QJsonArray voicesArray = QJsonArray();
+    foreach(const QString & voice, m_Voices) voicesArray.append(QJsonValue(voice));
+    json["voices"] = voicesArray;
+    QJsonArray genresArray = QJsonArray();
+    foreach(const QString & genre, m_Genres) genresArray.append(QJsonValue(genre));
+    json["genres"] = genresArray;
+
+    QJsonArray playlistArray = QJsonArray();
+    foreach(OnlineVideoModel video, m_Videos) {
+        QJsonObject jsonObject;
+        video.writeToJson(jsonObject);
+        playlistArray.append(jsonObject);
+    }
+    json["playlist"] = playlistArray;
+
+
+    QJsonArray torrentsArray = QJsonArray();
+    foreach(ReleaseTorrentModel torrent, m_Torrents) {
+        QJsonObject jsonObject;
+        torrent.writeToJson(jsonObject);
+        torrentsArray.append(jsonObject);
+    }
+    json["torrents"] = torrentsArray;
 }
 
 void ReleaseModel::readFromApiModel(const QJsonObject &jsonObject)
