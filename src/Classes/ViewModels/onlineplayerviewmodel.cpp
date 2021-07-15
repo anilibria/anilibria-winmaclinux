@@ -328,7 +328,6 @@ void OnlinePlayerViewModel::nextVideo()
     setRestorePosition(0);
 
     OnlineVideoModel* video;
-
     if (m_isCinemahall) {
         auto nextVideo = nextNotSeenVideo();
         if (nextVideo == nullptr) return;
@@ -336,11 +335,32 @@ void OnlinePlayerViewModel::nextVideo()
         setSelectedVideo(nextVideo->order());
         video = nextVideo;
     } else {
-        if (m_selectedVideo == m_videos->getReleaseVideosCount(m_selectedRelease) - 1) return;
+        if (!m_isMultipleRelease) {
+            if (m_selectedVideo == m_videos->getReleaseVideosCount(m_selectedRelease) - 1) return;
 
-        setSelectedVideo(m_selectedVideo + 1);
+            setSelectedVideo(m_selectedVideo + 1);
 
-        video = m_videos->getVideoAtIndex(m_selectedVideo);
+            video = m_videos->getVideoAtIndex(m_selectedVideo);
+        } else {
+            auto selectedRelease = m_selectedRelease;
+            auto selectedVideo = m_selectedVideo;
+            auto currentVideo = m_videos->getFirstReleaseWithPredicate(
+                [selectedRelease, selectedVideo](OnlineVideoModel* video) {
+                    return video->releaseId() == selectedRelease && video->order() == selectedVideo;
+                }
+            );
+
+            auto currentIndex = m_videos->getVideoIndex(currentVideo);
+
+            currentIndex += 1;
+            if (currentIndex >= m_videos->rowCount()) return;
+
+            video = m_videos->getVideoAtIndex(currentIndex);
+            if (video->isGroup()) video = m_videos->getVideoAtIndex(currentIndex + 1);
+
+            setSelectedVideo(video->order());
+
+        }
     }
 
     setIsFullHdAllowed(!video->fullhd().isEmpty());
@@ -356,7 +376,7 @@ void OnlinePlayerViewModel::nextVideo()
 
 void OnlinePlayerViewModel::previousVideo()
 {
-    if (m_selectedVideo == 0) return;
+    if (m_selectedVideo == 0 && !m_isMultipleRelease) return;
     setRestorePosition(0);
 
     OnlineVideoModel* video;
@@ -371,8 +391,32 @@ void OnlinePlayerViewModel::previousVideo()
         }
 
     } else {
-        setSelectedVideo(m_selectedVideo - 1);
-        video = m_videos->getVideoAtIndex(m_selectedVideo);
+        if (!m_isMultipleRelease) {
+            setSelectedVideo(m_selectedVideo - 1);
+            video = m_videos->getVideoAtIndex(m_selectedVideo);
+        } else {
+            auto selectedRelease = m_selectedRelease;
+            auto selectedVideo = m_selectedVideo;
+            auto currentVideo = m_videos->getFirstReleaseWithPredicate(
+                [selectedRelease, selectedVideo](OnlineVideoModel* video) {
+                    return video->releaseId() == selectedRelease && video->order() == selectedVideo;
+                }
+            );
+            auto currentIndex = m_videos->getVideoIndex(currentVideo);
+
+            currentIndex -= 1;
+
+            if (currentIndex < 0) return;
+
+            video = m_videos->getVideoAtIndex(currentIndex);
+            if (video->isGroup()) {
+                if (currentIndex == 0) return;
+                video = m_videos->getVideoAtIndex(currentIndex - 1);
+            }
+
+            setSelectedVideo(video->order());
+
+        }
     }
 
     setIsFullHdAllowed(!video->fullhd().isEmpty());
@@ -450,6 +494,7 @@ void OnlinePlayerViewModel::setVideoSeens(int id, int videoId, double videoPosit
 void OnlinePlayerViewModel::setupForSingleRelease()
 {
     setIsCinemahall(false);
+    m_isMultipleRelease = false;
 
     m_videos->setVideosFromSingleList(m_navigateVideos, m_navigateReleaseId, m_navigatePoster);
 
@@ -478,9 +523,17 @@ void OnlinePlayerViewModel::setupForSingleRelease()
     emit needScrollSeriaPosition();
 }
 
+void OnlinePlayerViewModel::setupForMultipleRelease(const QStringList &json, const QList<int> &releases, const QStringList &posters, const QStringList& names)
+{
+    setupForCinemahall(json, releases, posters, names);
+    setIsCinemahall(false);
+    m_isMultipleRelease = true;
+}
+
 void OnlinePlayerViewModel::setupForCinemahall(const QStringList &json, const QList<int> &releases, const QStringList &posters, const QStringList& names)
 {
     setIsCinemahall(true);
+    m_isMultipleRelease = false;
 
     m_videos->setVideosFromCinemahall(json, releases, posters, names);
     emit refreshSeenMarks();

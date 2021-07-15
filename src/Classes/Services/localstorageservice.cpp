@@ -1667,6 +1667,29 @@ QString LocalStorageService::getCinemahallReleases()
     return saveDoc.toJson();
 }
 
+QString LocalStorageService::getReleases(const QList<int> &ids)
+{
+    QVector<FullReleaseModel*> resultReleases;
+
+    foreach (auto releaseItem, *m_CachedReleases) {
+        if (!ids.contains(releaseItem->id())) continue;
+
+        resultReleases.append(releaseItem);
+    }
+
+    QJsonArray releases;
+    foreach (auto release, resultReleases) {
+        if (release == nullptr) continue;
+
+        QJsonObject jsonValue;
+        release->writeToJson(jsonValue);
+        releases.append(jsonValue);
+    }
+
+    QJsonDocument saveDoc(releases);
+    return saveDoc.toJson();
+}
+
 bool LocalStorageService::hasCinemahallReleases()
 {
     return m_CinemaHall->count() > 0;

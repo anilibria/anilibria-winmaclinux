@@ -846,6 +846,18 @@ ApplicationWindow {
 
             onlinePlayerViewModel.setupForCinemahall(allVideos, allIds, allPosters, allNames);
         }
+        onWatchMultipleReleases: {
+            window.showPage("videoplayer");
+
+            const releases = JSON.parse(localStorage.getReleases(ids));
+            const allVideos = releases.map(a => a.videos);
+            const allPosters = releases.map(a => a.poster);
+            const allNames = releases.map(a => a.title);
+            const allIds = releases.map(a => a.id);
+
+            onlinePlayerViewModel.setupForMultipleRelease(allVideos, allIds, allPosters, allNames);
+        }
+
         onRequestSynchronizeReleases: {
             window.synchronizationEnabled = true;
             synchronizationService.synchronizeReleases();

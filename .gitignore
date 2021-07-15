@@ -58,3 +58,13 @@ deploy
 /.vs/anilibria-winmaclinux/v16
 /.vs/slnx.sqlite-journal
 /.vs/anilibria-winmaclinux/config/applicationhost.config
+/src/debug
+/src/release
+/src/.vs/AniLibria/v16
+/src/cpp.hint
+/src/AniLibria_resource.rc
+/src/AniLibria.vcxproj.user
+/src/AniLibria.vcxproj.filters
+/src/AniLibria.vcxproj
+/src/AniLibria.sln
+/src/.qmake.stash

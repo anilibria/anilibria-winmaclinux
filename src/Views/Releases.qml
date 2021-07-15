@@ -92,6 +92,7 @@ Page {
     signal requestSynchronizeReleases()
     signal navigateTo()
     signal watchCinemahall()
+    signal watchMultipleReleases(var ids)
 
     Keys.onPressed: {
         if (event.key === Qt.Key_Escape) {
@@ -1690,13 +1691,29 @@ Page {
 
     Rectangle {
         color: "transparent"
-        width: 50
+        width: 190
         height: 50
         anchors.right: parent.right
         anchors.rightMargin: 20
         anchors.bottom: parent.bottom
+
+        RoundedActionButton {
+            id: watchMultipleButton
+            visible: page.selectedReleases.length
+            text: qsTr("Смотреть выбранное")
+            anchors.verticalCenter: parent.verticalCenter
+            anchors.left: parent.left
+            opacity: 0.8
+            onClicked: {
+                watchMultipleReleases(page.selectedReleases);
+
+                page.selectedReleases = [];
+            }
+        }
         IconButton {
-            anchors.centerIn: parent
+            anchors.right: parent.right
+            anchors.top: parent.top
+            anchors.topMargin: 8
             visible: scrollview.contentY > 100
             height: 30
             width: 30

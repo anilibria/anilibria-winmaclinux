@@ -163,6 +163,7 @@ public:
     Q_INVOKABLE QString packAsMPCPLAndOpen(int id, QString quality);
     Q_INVOKABLE void addToCinemahall(const QList<int>& ids);
     Q_INVOKABLE QString getCinemahallReleases();
+    Q_INVOKABLE QString getReleases(const QList<int>& ids);
     Q_INVOKABLE bool hasCinemahallReleases();
     Q_INVOKABLE void reorderReleaseInCinemahall(int reorderId, int targetId);
     Q_INVOKABLE void deleteReleasesFromCinemahall(const QList<int>& ids);
