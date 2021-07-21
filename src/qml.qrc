@@ -97,5 +97,10 @@
         <file>Views/ReleasePosterPreview.qml</file>
         <file>Assets/Icons/series.svg</file>
         <file>Views/ReleaseSeries.qml</file>
+        <file>Assets/Icons/closewindow.svg</file>
+        <file>Assets/Icons/minimize.svg</file>
+        <file>Assets/Icons/fullscreensize.svg</file>
+        <file>Assets/Icons/windowsize.svg</file>
+        <file>Assets/Icons/releasepage.svg</file>
     </qresource>
 </RCC>

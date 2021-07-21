@@ -44,6 +44,7 @@ ApplicationWindow {
     property bool notVisibleSignin: false
     property var userModel: ({})
     property string tempTorrentPath: ""
+    property bool isShowFullScreenSize: false
 
     Material.accent: Material.Red
     Material.theme: ApplicationTheme.isDarkTheme ? Material.Dark : Material.Light
@@ -74,6 +75,182 @@ ApplicationWindow {
         applicationSettings.windowHeight = window.height;
         applicationSettings.windowX = window.x;
         applicationSettings.windowY = window.y;
+    }
+
+    header: Rectangle {
+        id: toolBar
+        visible: false
+        width: window.width
+        height: 35
+        color: ApplicationTheme.notificationCenterBackground
+        Rectangle {
+            id: titleArea
+            enabled: false
+            color: "transparent"
+            anchors.left: parent.left
+            anchors.right: parent.right
+            height: parent.height
+
+            Image {
+                anchors.right: taskbarTitle.left
+                anchors.rightMargin: 8
+                anchors.top: parent.top
+                anchors.topMargin: 4
+                source: "Assets/Icons/anilibrialogodefault.svg"
+                mipmap: true
+                width: 25
+                height: 25
+            }
+            AccentText {
+                id: taskbarTitle
+                anchors.centerIn: parent
+                fontPointSize: 12
+                text: "AniLibria"
+            }
+        }
+        IconButton {
+            id: goToReleasePage
+            height: 35
+            width: 40
+            iconColor: ApplicationTheme.filterIconButtonColor
+            hoverColor: ApplicationTheme.filterIconButtonHoverColor
+            iconPath: "Assets/Icons/releasepage.svg"
+            iconWidth: 20
+            iconHeight: 20
+            ToolTip.delay: 1000
+            ToolTip.visible: goToReleasePage.hovered
+            ToolTip.text: "Перейти на страницу релизов"
+            onButtonPressed: {
+                showPage("release");
+            }
+        }
+        IconButton {
+            id: goToOnlineVideoPage
+            anchors.left: goToReleasePage.right
+            height: 35
+            width: 40
+            iconColor: ApplicationTheme.filterIconButtonColor
+            hoverColor: ApplicationTheme.filterIconButtonHoverColor
+            iconPath: "Assets/Icons/videoplayer.svg"
+            iconWidth: 20
+            iconHeight: 20
+            ToolTip.delay: 1000
+            ToolTip.visible: goToOnlineVideoPage.hovered
+            ToolTip.text: "Перейти на страницу видеоплеер"
+            onButtonPressed: {
+                showPage("videoplayer");
+            }
+        }
+        IconButton {
+            id: goToCinemaHall
+            anchors.left: goToOnlineVideoPage.right
+            height: 35
+            width: 40
+            iconColor: ApplicationTheme.filterIconButtonColor
+            hoverColor: ApplicationTheme.filterIconButtonHoverColor
+            iconPath: "Assets/Icons/popcorn.svg"
+            iconWidth: 20
+            iconHeight: 20
+            ToolTip.delay: 1000
+            ToolTip.visible: goToCinemaHall.hovered
+            ToolTip.text: "Перейти на страницу Кинозал"
+            onButtonPressed: {
+                showPage("cinemahall");
+            }
+        }
+        IconButton {
+            id: goToReleaseSeries
+            anchors.left: goToCinemaHall.right
+            height: 35
+            width: 40
+            iconColor: ApplicationTheme.filterIconButtonColor
+            hoverColor: ApplicationTheme.filterIconButtonHoverColor
+            iconPath: "Assets/Icons/series.svg"
+            iconWidth: 20
+            iconHeight: 20
+            ToolTip.delay: 1000
+            ToolTip.visible: goToReleaseSeries.hovered
+            ToolTip.text: "Перейти на страницу Связанные релизы"
+            onButtonPressed: {
+                showPage("releaseseries");
+            }
+        }
+        IconButton {
+            id: minimizeWindow
+            anchors.right: windowOrFullScreenSize.left
+            height: 35
+            width: 40
+            iconColor: ApplicationTheme.filterIconButtonColor
+            hoverColor: ApplicationTheme.filterIconButtonHoverColor
+            iconPath: "Assets/Icons/minimize.svg"
+            iconWidth: 15
+            iconHeight: 15
+            ToolTip.delay: 1000
+            ToolTip.visible: minimizeWindow.hovered
+            ToolTip.text: "Минимизировать окно в панель задач"
+            onButtonPressed: {
+                window.showMinimized();
+            }
+        }
+        IconButton {
+            id: windowOrFullScreenSize
+            anchors.right: closeWindow.left
+            height: 35
+            width: 40
+            iconColor: ApplicationTheme.filterIconButtonColor
+            hoverColor: ApplicationTheme.filterIconButtonHoverColor
+            iconPath: window.isShowFullScreenSize ? "Assets/Icons/windowsize.svg" : "Assets/Icons/fullscreensize.svg"
+            iconWidth: 15
+            iconHeight: 15
+            ToolTip.delay: 1000
+            ToolTip.visible: windowOrFullScreenSize.hovered
+            ToolTip.text: window.isShowFullScreenSize ? "Вернуть окну нормальный размер" : "Открыть окно на полный экран"
+            onButtonPressed: {
+                if (window.isShowFullScreenSize) {
+                    window.isShowFullScreenSize = false;
+                    window.showNormal();
+                } else {
+                    window.isShowFullScreenSize = true;
+                    window.showMaximized();
+                }
+            }
+        }
+        IconButton {
+            id: closeWindow
+            anchors.right: parent.right
+            height: 35
+            width: 40
+            iconColor: ApplicationTheme.filterIconButtonColor
+            hoverColor: ApplicationTheme.filterIconButtonHoverColor
+            iconPath: "Assets/Icons/closewindow.svg"
+            iconWidth: 15
+            iconHeight: 15
+            ToolTip.delay: 1000
+            ToolTip.visible: closeWindow.hovered
+            ToolTip.text: "Выйти из приложения"
+            onButtonPressed: {
+                window.close();
+            }
+        }
+
+        MouseArea {
+            id: windowDraggingArea
+            enabled: true
+            anchors.left: goToReleaseSeries.right
+            anchors.right: minimizeWindow.left
+            height: parent.height
+            property variant clickPosition: "1,1"
+            onPressed: {
+                windowDraggingArea.clickPosition = Qt.point(mouse.x, mouse.y);
+            }
+            onPositionChanged: {
+                const delta = Qt.point(mouse.x - clickPosition.x, mouse.y - clickPosition.y);
+                const deltaPosition = Qt.point(window.x + delta.x, window.y + delta.y);
+                window.x = deltaPosition.x;
+                window.y = deltaPosition.y;
+            }
+        }
+
     }
 
     footer: Rectangle {
@@ -596,7 +773,7 @@ ApplicationWindow {
                     Row {
                         spacing: 10
                         Image {
-                            source: "../Assets/Icons/popcorn.svg"
+                            source: "Assets/Icons/popcorn.svg"
                             sourceSize.width: 30
                             sourceSize.height: 30
                             mipmap: true
@@ -619,7 +796,7 @@ ApplicationWindow {
                     Row {
                         spacing: 10
                         Image {
-                            source: "../Assets/Icons/series.svg"
+                            source: "Assets/Icons/series.svg"
                             sourceSize.width: 30
                             sourceSize.height: 30
                             mipmap: true
