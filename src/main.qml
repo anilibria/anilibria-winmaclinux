@@ -39,12 +39,15 @@ ApplicationWindow {
     height: 600
     title: qsTr("AniLibria")
     font.capitalization: Font.MixedCase
+    flags: Qt.FramelessWindowHint | Qt.Window | Qt.WindowMinimizeButtonHint
     property string currentPageId: "release"
     property bool synchronizationEnabled: false
     property bool notVisibleSignin: false
     property var userModel: ({})
     property string tempTorrentPath: ""
     property bool isShowFullScreenSize: false
+    property int previousX
+    property int previousY
 
     Material.accent: Material.Red
     Material.theme: ApplicationTheme.isDarkTheme ? Material.Dark : Material.Light
@@ -79,10 +82,35 @@ ApplicationWindow {
 
     header: Rectangle {
         id: toolBar
-        visible: false
+        visible: true
         width: window.width
         height: 35
         color: ApplicationTheme.notificationCenterBackground
+
+        Rectangle {
+            color: "black"
+            width: 1
+            anchors.left: parent.left
+            anchors.top: parent.top
+            anchors.bottom: parent.bottom
+        }
+
+        Rectangle {
+            color: "black"
+            width: 1
+            anchors.right: parent.right
+            anchors.top: parent.top
+            anchors.bottom: parent.bottom
+        }
+
+        Rectangle {
+            color: "black"
+            height: 1
+            anchors.left: parent.left
+            anchors.right: parent.right
+            anchors.top: parent.top
+        }
+
         Rectangle {
             id: titleArea
             enabled: false
@@ -93,13 +121,13 @@ ApplicationWindow {
 
             Image {
                 anchors.right: taskbarTitle.left
-                anchors.rightMargin: 8
+                anchors.rightMargin: 12
                 anchors.top: parent.top
-                anchors.topMargin: 4
+                anchors.topMargin: 8
                 source: "Assets/Icons/anilibrialogodefault.svg"
                 mipmap: true
-                width: 25
-                height: 25
+                width: 20
+                height: 20
             }
             AccentText {
                 id: taskbarTitle
@@ -107,10 +135,24 @@ ApplicationWindow {
                 fontPointSize: 12
                 text: "AniLibria"
             }
+            Image {
+                anchors.left: taskbarTitle.right
+                anchors.leftMargin: 12
+                anchors.top: parent.top
+                anchors.topMargin: 8
+                source: "Assets/Icons/anilibrialogodefault.svg"
+                mipmap: true
+                width: 20
+                height: 20
+            }
         }
         IconButton {
             id: goToReleasePage
-            height: 35
+            anchors.left: parent.left
+            anchors.leftMargin: 1
+            anchors.top: parent.top
+            anchors.topMargin: 1
+            height: 34
             width: 40
             iconColor: ApplicationTheme.filterIconButtonColor
             hoverColor: ApplicationTheme.filterIconButtonHoverColor
@@ -119,7 +161,7 @@ ApplicationWindow {
             iconHeight: 20
             ToolTip.delay: 1000
             ToolTip.visible: goToReleasePage.hovered
-            ToolTip.text: "Перейти на страницу релизов"
+            ToolTip.text: "Перейти на страницу Каталог Релизов"
             onButtonPressed: {
                 showPage("release");
             }
@@ -127,7 +169,9 @@ ApplicationWindow {
         IconButton {
             id: goToOnlineVideoPage
             anchors.left: goToReleasePage.right
-            height: 35
+            anchors.top: parent.top
+            anchors.topMargin: 1
+            height: 34
             width: 40
             iconColor: ApplicationTheme.filterIconButtonColor
             hoverColor: ApplicationTheme.filterIconButtonHoverColor
@@ -136,7 +180,7 @@ ApplicationWindow {
             iconHeight: 20
             ToolTip.delay: 1000
             ToolTip.visible: goToOnlineVideoPage.hovered
-            ToolTip.text: "Перейти на страницу видеоплеер"
+            ToolTip.text: "Перейти на страницу Видеоплеер"
             onButtonPressed: {
                 showPage("videoplayer");
             }
@@ -144,7 +188,9 @@ ApplicationWindow {
         IconButton {
             id: goToCinemaHall
             anchors.left: goToOnlineVideoPage.right
-            height: 35
+            anchors.top: parent.top
+            anchors.topMargin: 1
+            height: 34
             width: 40
             iconColor: ApplicationTheme.filterIconButtonColor
             hoverColor: ApplicationTheme.filterIconButtonHoverColor
@@ -161,7 +207,9 @@ ApplicationWindow {
         IconButton {
             id: goToReleaseSeries
             anchors.left: goToCinemaHall.right
-            height: 35
+            anchors.top: parent.top
+            anchors.topMargin: 1
+            height: 34
             width: 40
             iconColor: ApplicationTheme.filterIconButtonColor
             hoverColor: ApplicationTheme.filterIconButtonHoverColor
@@ -178,7 +226,9 @@ ApplicationWindow {
         IconButton {
             id: minimizeWindow
             anchors.right: windowOrFullScreenSize.left
-            height: 35
+            anchors.top: parent.top
+            anchors.topMargin: 1
+            height: 34
             width: 40
             iconColor: ApplicationTheme.filterIconButtonColor
             hoverColor: ApplicationTheme.filterIconButtonHoverColor
@@ -195,7 +245,9 @@ ApplicationWindow {
         IconButton {
             id: windowOrFullScreenSize
             anchors.right: closeWindow.left
-            height: 35
+            anchors.top: parent.top
+            anchors.topMargin: 1
+            height: 34
             width: 40
             iconColor: ApplicationTheme.filterIconButtonColor
             hoverColor: ApplicationTheme.filterIconButtonHoverColor
@@ -218,7 +270,10 @@ ApplicationWindow {
         IconButton {
             id: closeWindow
             anchors.right: parent.right
-            height: 35
+            anchors.rightMargin: 1
+            anchors.top: parent.top
+            anchors.topMargin: 1
+            height: 34
             width: 40
             iconColor: ApplicationTheme.filterIconButtonColor
             hoverColor: ApplicationTheme.filterIconButtonHoverColor
@@ -251,6 +306,22 @@ ApplicationWindow {
             }
         }
 
+        MouseArea {
+            id: topWindowResize
+            height: 3
+            anchors.left: parent.left
+            anchors.top: parent.top
+            anchors.right: parent.right
+            cursorShape: Qt.SizeVerCursor
+            onPressed: {
+                previousY = mouseY
+            }
+            onMouseYChanged: {
+                const delta = mouseY - previousY;
+                window.y += delta;
+                window.height -= delta;
+            }
+        }
     }
 
     footer: Rectangle {
@@ -259,6 +330,30 @@ ApplicationWindow {
         width: window.width
         height: 16
         color: ApplicationTheme.notificationCenterBackground
+
+        Rectangle {
+            color: "black"
+            width: 1
+            anchors.left: parent.left
+            anchors.top: parent.top
+            anchors.bottom: parent.bottom
+        }
+
+        Rectangle {
+            color: "black"
+            width: 1
+            anchors.right: parent.right
+            anchors.top: parent.top
+            anchors.bottom: parent.bottom
+        }
+
+        Rectangle {
+            color: "black"
+            height: 1
+            anchors.left: parent.left
+            anchors.right: parent.right
+            anchors.bottom: parent.bottom
+        }
 
         Rectangle {
             color: "transparent"
@@ -308,6 +403,60 @@ ApplicationWindow {
             }
         }
 
+        MouseArea {
+            id: rightbottomWindowResize
+            width: 3
+            anchors.right: parent.right
+            anchors.top: parent.top
+            anchors.bottom: parent.bottom
+            cursorShape: Qt.SizeFDiagCursor
+            onPressed: {
+                previousX = mouseX
+                previousY = mouseY
+            }
+            onMouseXChanged: {
+                window.width += mouseX - previousX;
+            }
+            onMouseYChanged: {
+                window.height += mouseY - previousY;
+            }
+        }
+
+        MouseArea {
+            id: leftbottomWindowResize
+            width: 3
+            anchors.left: parent.left
+            anchors.top: parent.top
+            anchors.bottom: parent.bottom
+            cursorShape: Qt.SizeBDiagCursor
+            onPressed: {
+                previousX = mouseX
+                previousY = mouseY
+            }
+            onMouseXChanged: {
+                const delta = mouseX - previousX;
+                window.x = window.x + delta;
+                window.width = window.width - delta;
+            }
+            onMouseYChanged: {
+                window.height += mouseY - previousY;
+            }
+        }
+
+        MouseArea {
+            id: bottomWindowResize
+            height: 2
+            anchors.left: parent.left
+            anchors.right: parent.right
+            anchors.bottom: parent.bottom
+            cursorShape: Qt.SizeVerCursor
+            onPressed: {
+                previousY = mouseY
+            }
+            onMouseYChanged: {
+                window.height += mouseY - previousY;
+            }
+        }
     }
 
     function showPage(pageId) {
@@ -373,19 +522,21 @@ ApplicationWindow {
         signal toggleStayOnTopMode();
 
         onSetStayOnTop: {
-            window.flags = Qt.WindowStaysOnTopHint;
+            window.flags = Qt.FramelessWindowHint | Qt.Window | Qt.WindowStaysOnTopHint;
             windowSettings.isTopMost = true;
         }
 
         onUnsetStayOnTop: {
-            if (window.flags === 1) return;
+            if (window.flags === (Qt.FramelessWindowHint | Qt.Window)) return;
 
-            window.flags = 1;
+            window.flags = Qt.FramelessWindowHint;
             windowSettings.isTopMost = false;
         }
 
         onToggleStayOnTopMode: {
-            if (window.flags === 1) {
+            console.log("current ", window.flags);
+            console.log("check ", Qt.FramelessWindowHint | Qt.Window);
+            if (window.flags === (Qt.FramelessWindowHint | Qt.Window)) {
                 windowSettings.setStayOnTop();
             } else {
                 windowSettings.unsetStayOnTop();
@@ -633,6 +784,7 @@ ApplicationWindow {
     Drawer {
         id: drawer
         width: 300
+        dragMargin: 0
         height: window.height
         background:  LinearGradient {
             anchors.fill: parent
@@ -991,99 +1143,156 @@ ApplicationWindow {
         }
     }
 
-    OnlinePlayer {
-        id: videoplayer
-        visible: false
-        onReturnToReleasesPage: {
-            window.showPage("release");
-        }
+    Rectangle {
+        id: leftWindowResizeArea
+        color: "black"
+        width: 1
+        anchors.left: parent.left
+        anchors.top: parent.top
+        anchors.bottom: parent.bottom
     }
 
-    Releases {
-        id: releases
-        visible: true
-        focus: true
-        synchronizeEnabled: window.synchronizationEnabled
-        onWatchSingleRelease: {
-            onlinePlayerViewModel.customPlaylistPosition = startSeria;
-            onlinePlayerViewModel.navigateReleaseId = releaseId;
-            onlinePlayerViewModel.navigateVideos = videos;
-            onlinePlayerViewModel.navigatePoster = poster;
+    Rectangle {
+        color: "black"
+        width: 1
+        anchors.right: parent.right
+        anchors.top: parent.top
+        anchors.bottom: parent.bottom
+    }
 
-            window.showPage("videoplayer");
-            onlinePlayerViewModel.setupForSingleRelease();
-        }
-        onWatchCinemahall: {
-            window.showPage("videoplayer");
-            const releases = JSON.parse(localStorage.getCinemahallReleases());
-            const allVideos = releases.map(a => a.videos);
-            const allPosters = releases.map(a => a.poster);
-            const allNames = releases.map(a => a.title);
-            const allIds = releases.map(a => a.id);
+    Rectangle {
+        color: "transparent"
+        anchors.fill: parent
+        anchors.leftMargin: 1
+        anchors.rightMargin: 1
 
-            onlinePlayerViewModel.setupForCinemahall(allVideos, allIds, allPosters, allNames);
-        }
-        onWatchMultipleReleases: {
-            window.showPage("videoplayer");
-
-            const releases = JSON.parse(localStorage.getReleases(ids));
-            const allVideos = releases.map(a => a.videos);
-            const allPosters = releases.map(a => a.poster);
-            const allNames = releases.map(a => a.title);
-            const allIds = releases.map(a => a.id);
-
-            onlinePlayerViewModel.setupForMultipleRelease(allVideos, allIds, allPosters, allNames);
+        OnlinePlayer {
+            id: videoplayer
+            visible: false
+            onReturnToReleasesPage: {
+                window.showPage("release");
+            }
         }
 
-        onRequestSynchronizeReleases: {
-            window.synchronizationEnabled = true;
-            synchronizationService.synchronizeReleases();
+        Releases {
+            id: releases
+            visible: true
+            focus: true
+            synchronizeEnabled: window.synchronizationEnabled
+            onWatchSingleRelease: {
+                onlinePlayerViewModel.customPlaylistPosition = startSeria;
+                onlinePlayerViewModel.navigateReleaseId = releaseId;
+                onlinePlayerViewModel.navigateVideos = videos;
+                onlinePlayerViewModel.navigatePoster = poster;
+
+                window.showPage("videoplayer");
+                onlinePlayerViewModel.setupForSingleRelease();
+            }
+            onWatchCinemahall: {
+                window.showPage("videoplayer");
+                const releases = JSON.parse(localStorage.getCinemahallReleases());
+                const allVideos = releases.map(a => a.videos);
+                const allPosters = releases.map(a => a.poster);
+                const allNames = releases.map(a => a.title);
+                const allIds = releases.map(a => a.id);
+
+                onlinePlayerViewModel.setupForCinemahall(allVideos, allIds, allPosters, allNames);
+            }
+            onWatchMultipleReleases: {
+                window.showPage("videoplayer");
+
+                const releases = JSON.parse(localStorage.getReleases(ids));
+                const allVideos = releases.map(a => a.videos);
+                const allPosters = releases.map(a => a.poster);
+                const allNames = releases.map(a => a.title);
+                const allIds = releases.map(a => a.id);
+
+                onlinePlayerViewModel.setupForMultipleRelease(allVideos, allIds, allPosters, allNames);
+            }
+
+            onRequestSynchronizeReleases: {
+                window.synchronizationEnabled = true;
+                synchronizationService.synchronizeReleases();
+            }
         }
-    }
 
-    Authorization {
-        id: authorization
-        visible: false
-    }
-
-    Youtube {
-        id: youtube
-        visible: false
-    }
-
-    About {
-        id: about
-        visible: false
-    }
-
-    Downloads {
-        id: download
-        visible: false
-    }
-
-    Cinemahall {
-        id: cinemahall
-        visible: false
-        onWatchCinemahall: {
-            window.showPage("videoplayer");
-            const releases = JSON.parse(localStorage.getCinemahallReleases());
-            const allVideos = releases.map(a => a.videos);
-            const allPosters = releases.map(a => a.poster);
-            const allNames = releases.map(a => a.title);
-            const allIds = releases.map(a => a.id);
-
-            onlinePlayerViewModel.setupForCinemahall(allVideos, allIds, allPosters, allNames);
+        Authorization {
+            id: authorization
+            visible: false
         }
-    }
 
-    ReleaseSeries {
-        id: releaseseries
-        visible: false
-    }
+        Youtube {
+            id: youtube
+            visible: false
+        }
 
-    Maintenance {
-        id: maintenance
-        visible: false
+        About {
+            id: about
+            visible: false
+        }
+
+        Downloads {
+            id: download
+            visible: false
+        }
+
+        Cinemahall {
+            id: cinemahall
+            visible: false
+            onWatchCinemahall: {
+                window.showPage("videoplayer");
+                const releases = JSON.parse(localStorage.getCinemahallReleases());
+                const allVideos = releases.map(a => a.videos);
+                const allPosters = releases.map(a => a.poster);
+                const allNames = releases.map(a => a.title);
+                const allIds = releases.map(a => a.id);
+
+                onlinePlayerViewModel.setupForCinemahall(allVideos, allIds, allPosters, allNames);
+            }
+        }
+
+        ReleaseSeries {
+            id: releaseseries
+            visible: false
+        }
+
+        Maintenance {
+            id: maintenance
+            visible: false
+        }
+
+        MouseArea {
+            id: leftWindowResize
+            width: 1
+            anchors.left: parent.left
+            anchors.top: parent.top
+            anchors.bottom: parent.bottom
+            cursorShape:  Qt.SizeHorCursor
+            onPressed: {
+                previousX = mouseX
+            }
+
+            onMouseXChanged: {
+                const delta = mouseX - previousX;
+                window.x = window.x + delta;
+                window.width = window.width - delta;
+            }
+        }
+
+        MouseArea {
+            id: rightWindowResize
+            width: 1
+            anchors.right: parent.right
+            anchors.top: parent.top
+            anchors.bottom: parent.bottom
+            cursorShape:  Qt.SizeHorCursor
+            onPressed: {
+                previousX = mouseX
+            }
+            onMouseXChanged: {
+                window.width += mouseX - previousX;
+            }
+        }
     }
 
     Rectangle {
