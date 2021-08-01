@@ -53,7 +53,7 @@ void DLService::downloadReleasesPage(int number)
 void DLService::downloadDetailsPage()
 {
     if (m_detailsIndex >= m_releasesUrls->length()) {
-        allSynchronized();
+        emit allSynchronized();
         return;
     }
 
@@ -198,7 +198,7 @@ void DLService::downloadedDetailsPage(QNetworkReply *reply)
 
     auto seriesJson = data.mid(startSeriesIndex, endSeriesIndex).toUtf8();
     //WORAROUND: need run it once again, I don't know why it don't work for first time :(
-    auto endSeriesIndexForScript = seriesJson.lastIndexOf("}]");//, startSeriesIndex);
+    auto endSeriesIndexForScript = seriesJson.lastIndexOf("}]");
     seriesJson = (seriesJson.mid(0, endSeriesIndexForScript) + "}]");
     seriesJson = seriesJson.replace("\\\"", "\"");
 
