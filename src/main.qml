@@ -570,6 +570,7 @@ ApplicationWindow {
             const screen = Qt.application.screens[i];
             if (window.x >= screen.virtualX && window.x <= screen.virtualX + screen.width) {
                 currentScreen = screen;
+                break;
             }
         }
 
