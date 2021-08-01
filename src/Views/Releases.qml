@@ -41,6 +41,7 @@ Page {
     property int selectedSection: 0
     property var seenMarks: ({})
     property bool fillingReleases: false
+    property int startedSection: 0
     property var sections: [
         "Все релизы",
         "Избранное",
@@ -1368,7 +1369,22 @@ Page {
                     fontPointSize: 12
                     text: "Выполняется синхронизация..."
                 }
+
+                RoundedActionButton {
+                    id: setToStartedSectionButton
+                    visible: page.startedSection !== page.selectedSection
+                    text: "Сделать стартовым"
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.right: displaySection.left
+                    anchors.rightMargin: 8
+                    onClicked: {
+                        localStorage.setStartedSection(page.selectedSection);
+                        page.startedSection = page.selectedSection;
+                    }
+                }
+
                 PlainText {
+                    id: displaySection
                     text: page.sections[page.selectedSection]
                     anchors.verticalCenter: parent.verticalCenter
                     anchors.right: parent.right
@@ -2571,5 +2587,9 @@ Page {
         page.hideInfoButton = userSettings.hideInfoButton;
         page.hideSortButton = userSettings.hideSortButton;
         page.hideFilterButton = userSettings.hideFilterButton;
+
+        const startedSection = userSettings.startedSection;
+        if (startedSection) changeSection(startedSection);
+        page.startedSection = startedSection;
     }
 }

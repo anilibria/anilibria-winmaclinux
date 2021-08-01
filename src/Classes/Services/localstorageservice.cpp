@@ -1530,6 +1530,13 @@ void LocalStorageService::setHideFilterButton(bool hideFilterButton)
     saveSettings();
 }
 
+void LocalStorageService::setStartedSection(int startedSection)
+{
+    m_UserSettingsModel->setStartedSection(startedSection);
+
+    saveSettings();
+}
+
 QString LocalStorageService::getUserSettings()
 {
     return m_UserSettingsModel->toJson();

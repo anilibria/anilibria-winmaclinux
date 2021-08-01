@@ -326,6 +326,7 @@ QString OnlinePlayerViewModel::checkExistingVideoQuality(int index)
 void OnlinePlayerViewModel::nextVideo()
 {
     setRestorePosition(0);
+    setPositionIterator(0);
 
     OnlineVideoModel* video;
     if (m_isCinemahall) {

@@ -41,6 +41,7 @@ ApplicationWindow {
     font.capitalization: Font.MixedCase
     flags: Qt.FramelessWindowHint | Qt.Window | Qt.WindowMinimizeButtonHint
     property string currentPageId: "release"
+    property string currentPageDisplayName: "Каталог релизов"
     property bool synchronizationEnabled: false
     property bool notVisibleSignin: false
     property var userModel: ({})
@@ -65,7 +66,7 @@ ApplicationWindow {
         const savedHeight = applicationSettings.windowHeight;
         const savedX = applicationSettings.windowX;
         const savedY = applicationSettings.windowY;
-        if (savedWidth > 0 && savedHeight > 0 && savedX !== 0 && savedY !== 0) {
+        if (savedWidth > 0 && savedHeight > 0) {
             window.x = savedX;
             window.y = savedY;
             window.width = savedWidth;
@@ -119,31 +120,18 @@ ApplicationWindow {
             anchors.right: parent.right
             height: parent.height
 
-            Image {
-                anchors.right: taskbarTitle.left
-                anchors.rightMargin: 12
-                anchors.top: parent.top
-                anchors.topMargin: 8
-                source: "Assets/Icons/anilibrialogodefault.svg"
-                mipmap: true
-                width: 20
-                height: 20
-            }
             AccentText {
                 id: taskbarTitle
                 anchors.centerIn: parent
                 fontPointSize: 12
-                text: "AniLibria"
+                text: "AniLibria - "
             }
-            Image {
+            AccentText {
+                id: currentPageTitle
                 anchors.left: taskbarTitle.right
-                anchors.leftMargin: 12
-                anchors.top: parent.top
-                anchors.topMargin: 8
-                source: "Assets/Icons/anilibrialogodefault.svg"
-                mipmap: true
-                width: 20
-                height: 20
+                anchors.verticalCenter: parent.verticalCenter
+                fontPointSize: 12
+                text: window.currentPageDisplayName
             }
         }
         IconButton {
@@ -224,6 +212,56 @@ ApplicationWindow {
             }
         }
         IconButton {
+            id: leftHalfScreenWindow
+            anchors.right: rightHalfScreenWindow.left
+            anchors.top: parent.top
+            anchors.topMargin: 1
+            height: 34
+            width: 40
+            iconColor: ApplicationTheme.filterIconButtonColor
+            hoverColor: ApplicationTheme.filterIconButtonHoverColor
+            iconPath: "Assets/Icons/lefthalf.svg"
+            iconWidth: 18
+            iconHeight: 18
+            ToolTip.delay: 1000
+            ToolTip.visible: leftHalfScreenWindow.hovered
+            ToolTip.text: "Выставить размер окна - левая половина экрана"
+            onButtonPressed: {
+                let currentScreen = getCurrentScreen();
+                if (!currentScreen) return;
+
+                window.x = currentScreen.virtualX;
+                window.width = currentScreen.width / 2;
+                window.y = 0;
+                window.height = currentScreen.desktopAvailableHeight;
+            }
+        }
+        IconButton {
+            id: rightHalfScreenWindow
+            anchors.right: minimizeWindow.left
+            anchors.top: parent.top
+            anchors.topMargin: 1
+            height: 34
+            width: 40
+            iconColor: ApplicationTheme.filterIconButtonColor
+            hoverColor: ApplicationTheme.filterIconButtonHoverColor
+            iconPath: "Assets/Icons/righthalf.svg"
+            iconWidth: 18
+            iconHeight: 18
+            ToolTip.delay: 1000
+            ToolTip.visible: rightHalfScreenWindow.hovered
+            ToolTip.text: "Выставить размер окна - правая половина экрана"
+            onButtonPressed: {
+                let currentScreen = getCurrentScreen();
+                if (!currentScreen) return;
+
+                window.x = currentScreen.virtualX + currentScreen.width / 2;
+                window.width = currentScreen.width / 2;
+                window.y = 0;
+                window.height = currentScreen.desktopAvailableHeight;
+            }
+        }
+        IconButton {
             id: minimizeWindow
             anchors.right: windowOrFullScreenSize.left
             anchors.top: parent.top
@@ -292,7 +330,7 @@ ApplicationWindow {
             id: windowDraggingArea
             enabled: true
             anchors.left: goToReleaseSeries.right
-            anchors.right: minimizeWindow.left
+            anchors.right: leftHalfScreenWindow.left
             height: parent.height
             property variant clickPosition: "1,1"
             onPressed: {
@@ -493,8 +531,51 @@ ApplicationWindow {
 
         analyticsService.sendView("Pages", "ChangePage", "%2F" + pageId);
 
+        switch (pageId) {
+            case "videoplayer":
+                window.currentPageDisplayName = "Видеоплеер"
+                break;
+            case "release":
+                window.currentPageDisplayName = "Каталог релизов"
+                break;
+            case "youtube":
+                window.currentPageDisplayName = "Youtube"
+                break;
+            case "about":
+                window.currentPageDisplayName = "О Программе"
+                break;
+            case "cinemahall":
+                window.currentPageDisplayName = "Кинозал"
+                break;
+            case "download":
+                window.currentPageDisplayName = "Менеджер загрузок"
+                break;
+            case "maintenance":
+                window.currentPageDisplayName = "Обслуживание"
+                break;
+            case "releaseseries":
+                window.currentPageDisplayName = "Связанные релизы"
+                break;
+        }
+
+
+
         drawer.close();
     }
+
+    function getCurrentScreen() {
+        let currentScreen;
+        const countScreens = Qt.application.screens.length;
+        for (let i = 0; i < countScreens; i++) {
+            const screen = Qt.application.screens[i];
+            if (window.x >= screen.virtualX && window.x <= screen.virtualX + screen.width) {
+                currentScreen = screen;
+            }
+        }
+
+        return currentScreen;
+    }
+
 
     ListModel {
         id: applicationNotificationModel
@@ -522,21 +603,19 @@ ApplicationWindow {
         signal toggleStayOnTopMode();
 
         onSetStayOnTop: {
-            window.flags = Qt.FramelessWindowHint | Qt.Window | Qt.WindowStaysOnTopHint;
+            window.flags = Qt.FramelessWindowHint | Qt.Window | Qt.WindowMinimizeButtonHint | Qt.WindowStaysOnTopHint;
             windowSettings.isTopMost = true;
         }
 
         onUnsetStayOnTop: {
-            if (window.flags === (Qt.FramelessWindowHint | Qt.Window)) return;
+            if (!windowSettings.isTopMost) return;
 
-            window.flags = Qt.FramelessWindowHint;
+            window.flags = Qt.FramelessWindowHint | Qt.Window | Qt.WindowMinimizeButtonHint;
             windowSettings.isTopMost = false;
         }
 
         onToggleStayOnTopMode: {
-            console.log("current ", window.flags);
-            console.log("check ", Qt.FramelessWindowHint | Qt.Window);
-            if (window.flags === (Qt.FramelessWindowHint | Qt.Window)) {
+            if (!windowSettings.isTopMost) {
                 windowSettings.setStayOnTop();
             } else {
                 windowSettings.unsetStayOnTop();
@@ -987,7 +1066,6 @@ ApplicationWindow {
                 width: parent.width
                 onClicked: {
                     showPage("download");
-                    drawer.close();
                 }
             }
             ItemDelegate {
@@ -1011,7 +1089,6 @@ ApplicationWindow {
                 width: parent.width
                 onClicked: {
                     showPage("maintenance");
-                    drawer.close();
                 }
             }
             ItemDelegate {
@@ -1119,8 +1196,10 @@ ApplicationWindow {
         onIsFullScreenChanged: {
             if (isFullScreen) {
                 window.showFullScreen();
+                toolBar.visible = false;
             } else {
                 window.showNormal();
+                toolBar.visible = true;
             }
         }
         onNeedScrollSeriaPosition: {

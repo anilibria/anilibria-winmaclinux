@@ -55,7 +55,7 @@ void AnilibriaApiService::getAllReleases()
     QUrlQuery params;
     params.addQueryItem("query", "list");
     params.addQueryItem("page", "1");
-    params.addQueryItem("perPage", "1000");
+    params.addQueryItem("perPage", "1500");
 
     connect(networkManager,&QNetworkAccessManager::finished,this,&AnilibriaApiService::getAllReleasesResponse);
 
