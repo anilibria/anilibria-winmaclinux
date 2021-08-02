@@ -36,7 +36,8 @@ UserSettingsModel::UserSettingsModel(): m_Quality(1),
     m_HideInfoButton(false),
     m_HideSortButton(false),
     m_HideFilterButton(false),
-    m_StartedSection(0)
+    m_StartedSection(0),
+    m_ShowReleaseDescription(false)
 {
 
 }
@@ -136,6 +137,11 @@ void UserSettingsModel::setStartedSection(const int startedSection) noexcept
     m_StartedSection = startedSection;
 }
 
+void UserSettingsModel::setShowReleaseDescription(const bool showReleaseDescription) noexcept
+{
+    m_ShowReleaseDescription = showReleaseDescription;
+}
+
 void UserSettingsModel::fromJson(QString json)
 {
     if (json.isEmpty()) return;
@@ -162,6 +168,7 @@ void UserSettingsModel::fromJson(QString json)
     if (jsonSettings.contains("hideSortButton")) setHideSortButton(jsonSettings.value("hideSortButton").toBool());
     if (jsonSettings.contains("hideFilterButton")) setHideFilterButton(jsonSettings.value("hideFilterButton").toBool());
     if (jsonSettings.contains("startedSection")) setStartedSection(jsonSettings.value("startedSection").toInt());
+    if (jsonSettings.contains("showReleaseDescription")) setShowReleaseDescription(jsonSettings.value("showReleaseDescription").toBool());
 }
 
 QString UserSettingsModel::toJson() noexcept
@@ -187,6 +194,7 @@ QString UserSettingsModel::toJson() noexcept
     object["hideSortButton"] = hideSortButton();
     object["hideFilterButton"] = hideFilterButton();
     object["startedSection"] = startedSection();
+    object["showReleaseDescription"] = showReleaseDescription();
 
     QJsonDocument saveDoc(object);
     return saveDoc.toJson();

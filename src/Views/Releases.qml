@@ -42,6 +42,7 @@ Page {
     property var seenMarks: ({})
     property bool fillingReleases: false
     property int startedSection: 0
+    property string releaseDescription: ""
     property var sections: [
         "Все релизы",
         "Избранное",
@@ -1155,9 +1156,9 @@ Page {
                     Popup {
                         id: releaseSettingsPopup
                         x: 40
-                        y: sortingPopupButton.height - 300
+                        y: sortingPopupButton.height - 370
                         width: 370
-                        height: 390
+                        height: 450
                         modal: true
                         focus: true
                         closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
@@ -1245,6 +1246,25 @@ Page {
                             ToolTip.delay: 1000
                             ToolTip.visible: hovered
                             ToolTip.text: "Компактный режим позволяет уменьшить количество элементов на странице"
+                        }
+
+                        PlainText {
+                            id: showReleaseDescriptionLabel
+                            anchors.top: compactModeSwitch.bottom
+                            anchors.topMargin: 4
+                            fontPointSize: 11
+                            text: "Показывать описание в списке"
+                        }
+                        Switch {
+                            id: showReleaseDescriptionSwitch
+                            anchors.top: showReleaseDescriptionLabel.bottom
+                            onCheckedChanged: {
+                                localStorage.setShowReleaseDescription(checked);
+                            }
+
+                            ToolTip.delay: 1000
+                            ToolTip.visible: hovered
+                            ToolTip.text: "Если настройка включена при наведении на релизы будет показываться описание в виде небольшой плашки в нижней части окна"
                         }
                     }
 
@@ -2347,6 +2367,28 @@ Page {
 
     }
 
+    Rectangle {
+        color: ApplicationTheme.pageBackground
+        opacity: 0.8
+        visible: page.releaseDescription && page.releaseDescription !== "" && showReleaseDescriptionSwitch.checked
+        enabled: false
+        anchors.left: parent.left
+        anchors.leftMargin: 42
+        anchors.bottom: parent.bottom
+        anchors.rightMargin: 2
+        height: 105
+        width: parent.width / 2
+
+        PlainText {
+            anchors.fill: parent
+            fontPointSize: 11
+            text: page.releaseDescription
+            wrapMode: Text.WordWrap
+            maximumLineCount: 5
+            verticalAlignment: Text.AlignVCenter
+        }
+    }
+
     ReleaseAlphabeticalCharacters {
         id: releaseAlphabeticalCharacters
         visible: page.showAlpabeticalCharaters
@@ -2587,6 +2629,7 @@ Page {
         page.hideInfoButton = userSettings.hideInfoButton;
         page.hideSortButton = userSettings.hideSortButton;
         page.hideFilterButton = userSettings.hideFilterButton;
+        showReleaseDescriptionSwitch.checked = userSettings.showReleaseDescription;
 
         const startedSection = userSettings.startedSection;
         if (startedSection) changeSection(startedSection);

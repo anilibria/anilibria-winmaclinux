@@ -1537,6 +1537,13 @@ void LocalStorageService::setStartedSection(int startedSection)
     saveSettings();
 }
 
+void LocalStorageService::setShowReleaseDescription(bool showReleaseDescription)
+{
+    m_UserSettingsModel->setShowReleaseDescription(showReleaseDescription);
+
+    saveSettings();
+}
+
 QString LocalStorageService::getUserSettings()
 {
     return m_UserSettingsModel->toJson();

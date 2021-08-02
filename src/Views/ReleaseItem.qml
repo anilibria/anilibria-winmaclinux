@@ -62,6 +62,7 @@ Rectangle {
         width: 480
         height: 280
         acceptedButtons: Qt.LeftButton | Qt.RightButton
+        hoverEnabled: true
         onClicked: {
             if(mouse.button & Qt.RightButton) {
                 releaseItem.rightClicked();
@@ -69,6 +70,22 @@ Rectangle {
             } else {
                 releaseItem.leftClicked();
             }
+        }
+        onEntered: {
+            let description = releaseModel.description.replace(`\n`,` `).replace(`\r`,``).replace(/\&quot\;/g,``);
+            const tagIndex = description.indexOf(`<`);
+            if (tagIndex > -1) {
+                description = description.substring(0, tagIndex);
+            }
+
+            if (description.length > 350) {
+                page.releaseDescription = description.substring(0, 340) + "...";
+            } else {
+                page.releaseDescription = description;
+            }
+        }
+        onExited: {
+            page.releaseDescription = "";
         }
     }
     Grid {
@@ -89,6 +106,7 @@ Rectangle {
             border.color: "#adadad"
             border.width: 1
             radius: 12
+
 
             Image {
                 anchors.centerIn: parent
@@ -163,6 +181,7 @@ Rectangle {
             Column {
                 id: gridItemtextContainer
                 AccentText {
+                    enabled: false
                     textFormat: Text.RichText
                     fontPointSize: 12
                     width: 280
@@ -173,6 +192,7 @@ Rectangle {
                     text: qsTr(releaseModel.title)
                 }
                 PlainText {
+                    enabled: false
                     visible: releaseModel.id > -1
                     textFormat: Text.RichText
                     fontPointSize: 10
@@ -181,6 +201,7 @@ Rectangle {
                     text: qsTr(releaseModel.status) + ' - ' + releaseModel.season + " " + releaseModel.year
                 }
                 PlainText {
+                    enabled: false
                     visible: releaseModel.id > -1
                     textFormat: Text.RichText
                     fontPointSize: 10
@@ -192,6 +213,7 @@ Rectangle {
                     text: qsTr("<b>Тип:</b> ") + qsTr(releaseModel.type)
                 }
                 PlainText {
+                    enabled: false
                     visible: releaseModel.id > -1
                     fontPointSize: 10
                     leftPadding: 8
@@ -202,6 +224,7 @@ Rectangle {
                     text: qsTr("<b>Жанры:</b> ") + qsTr(releaseModel.genres)
                 }
                 PlainText {
+                    enabled: false
                     visible: releaseModel.id > -1
                     fontPointSize: 10
                     leftPadding: 8
@@ -225,6 +248,7 @@ Rectangle {
                         leftPadding: 4
                         rightPadding: 8
                         fontPointSize: 12
+                        enabled: false
                         text: '' + releaseModel.countVideos + (releaseModel.countSeensSeries > 0 ? " <font color='" + (ApplicationTheme.isDarkTheme ? "white" : "green") + "'>(" + releaseModel.countSeensSeries + ")</font>  " : "")
                     }
                     ColoredIcon {
