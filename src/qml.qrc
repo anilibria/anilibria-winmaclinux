@@ -102,5 +102,7 @@
         <file>Assets/Icons/fullscreensize.svg</file>
         <file>Assets/Icons/windowsize.svg</file>
         <file>Assets/Icons/releasepage.svg</file>
+        <file>Assets/Icons/lefthalf.svg</file>
+        <file>Assets/Icons/righthalf.svg</file>
     </qresource>
 </RCC>

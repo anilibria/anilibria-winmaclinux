@@ -1076,6 +1076,14 @@ Page {
             }
         }
 
+        Rectangle {
+            color: "black"
+            height: 1
+            anchors.bottom: parent.bottom
+            anchors.left: parent.left
+            anchors.right: parent.right
+        }
+
         Behavior on opacity {
             NumberAnimation { duration: 200 }
         }

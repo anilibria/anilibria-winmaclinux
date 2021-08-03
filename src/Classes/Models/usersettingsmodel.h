@@ -45,6 +45,8 @@ private:
     bool m_HideInfoButton;
     bool m_HideSortButton;
     bool m_HideFilterButton;
+    int m_StartedSection;
+    bool m_ShowReleaseDescription;
 
 public:
     UserSettingsModel();
@@ -67,6 +69,8 @@ public:
     bool hideInfoButton() const { return m_HideInfoButton; }
     bool hideSortButton() const { return m_HideSortButton; }
     bool hideFilterButton() const { return m_HideFilterButton; }
+    int startedSection() const { return m_StartedSection; }
+    bool showReleaseDescription() const { return m_ShowReleaseDescription; }
 
     void setQuality(const int quality) noexcept;
     void setVolume(const double volume) noexcept;
@@ -86,6 +90,8 @@ public:
     void setHideInfoButton(const bool hideInfoButton) noexcept;
     void setHideSortButton(const bool hideSortButton) noexcept;
     void setHideFilterButton(const bool hideFilterButton) noexcept;
+    void setStartedSection(const int startedSection) noexcept;
+    void setShowReleaseDescription(const bool showReleaseDescription) noexcept;
 
     void fromJson(QString json);
     QString toJson() noexcept;
