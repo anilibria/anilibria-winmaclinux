@@ -728,7 +728,15 @@ void OnlinePlayerViewModel::changeVideoQuality(const QString &quality) noexcept
 {
     setVideoQuality(quality);
 
-    auto video = m_videos->getVideoAtIndex(m_selectedVideo);
+    auto selectedRelease = m_selectedRelease;
+    auto selectedVideo = m_selectedVideo;
+
+    auto video = m_videos->getFirstReleaseWithPredicate(
+        [selectedRelease, selectedVideo](OnlineVideoModel* video) {
+            return video->releaseId() == selectedRelease && video->order() == selectedVideo;
+        }
+    );
+
     emit stopInPlayer();
     setVideoSource(getVideoFromQuality(video));
     emit playInPlayer();
