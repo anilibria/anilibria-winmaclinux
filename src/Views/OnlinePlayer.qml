@@ -1157,7 +1157,9 @@ Page {
     function refreshSeenMarks() {
         let releaseIds = [];
 
-        if (onlinePlayerViewModel.isCinemahall) {
+        if (onlinePlayerViewModel.isMultipleRelease) {
+            releaseIds = onlinePlayerViewModel.getReleaseIds();
+        } else if (onlinePlayerViewModel.isCinemahall) {
             releaseIds = JSON.parse(localStorage.getCinemahallReleases()).map(a => a.id);
         } else {
             releaseIds.push(onlinePlayerViewModel.selectedRelease);

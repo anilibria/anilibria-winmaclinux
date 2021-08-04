@@ -285,3 +285,24 @@ int OnlinePlayerVideoList::getVideoIndex(OnlineVideoModel* video) noexcept
 {
     return m_videos->indexOf(video);
 }
+
+QList<int> OnlinePlayerVideoList::getReleaseIds() noexcept
+{
+    QList<int> result;
+
+    std::transform(
+        m_videos->begin(),
+        m_videos->end(),
+        std::back_inserter(result),
+        [](OnlineVideoModel* video) -> int {
+            if (video->isGroup()) return -1;
+
+            return video->releaseId();
+        }
+    );
+
+    //remove group ids
+    result.removeAll(-1);
+
+    return result.toSet().toList();
+}

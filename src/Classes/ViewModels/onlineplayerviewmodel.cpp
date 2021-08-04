@@ -297,6 +297,14 @@ void OnlinePlayerViewModel::setSendVolumeToRemote(bool sendVolumeToRemote) noexc
     emit sendVolumeToRemoteChanged();
 }
 
+void OnlinePlayerViewModel::setIsMultipleRelease(bool isMultipleRelease) noexcept
+{
+    if (m_isMultipleRelease == isMultipleRelease) return;
+
+    m_isMultipleRelease = isMultipleRelease;
+    emit isMultipleReleaseChanged();
+}
+
 void OnlinePlayerViewModel::toggleFullScreen()
 {
     setIsFullScreen(!m_isFullScreen);
@@ -495,7 +503,7 @@ void OnlinePlayerViewModel::setVideoSeens(int id, int videoId, double videoPosit
 void OnlinePlayerViewModel::setupForSingleRelease()
 {
     setIsCinemahall(false);
-    m_isMultipleRelease = false;
+    setIsMultipleRelease(false);
 
     m_videos->setVideosFromSingleList(m_navigateVideos, m_navigateReleaseId, m_navigatePoster);
 
@@ -526,15 +534,39 @@ void OnlinePlayerViewModel::setupForSingleRelease()
 
 void OnlinePlayerViewModel::setupForMultipleRelease(const QStringList &json, const QList<int> &releases, const QStringList &posters, const QStringList& names)
 {
-    setupForCinemahall(json, releases, posters, names);
     setIsCinemahall(false);
-    m_isMultipleRelease = true;
+    setIsMultipleRelease(true);
+
+    m_videos->setVideosFromCinemahall(json, releases, posters, names);
+
+    auto video = m_videos->getFirstReleaseWithPredicate(
+        [](OnlineVideoModel* video) {
+            return !video->isGroup();
+        }
+    );
+
+    if (video == nullptr) {
+        setVideoSource("");
+        return;
+    }
+
+    setSelectedRelease(video->releaseId());
+    setReleasePoster(video->releasePoster());
+    setSelectedVideo(video->order());
+    setIsFullHdAllowed(!video->fullhd().isEmpty());
+    setVideoSource(getVideoFromQuality(video));
+    m_videos->selectVideo(m_selectedRelease, m_selectedVideo);
+
+    emit refreshSeenMarks();
+    emit playInPlayer();
+    emit needScrollSeriaPosition();
+    emit saveToWatchHistory(video->releaseId());
 }
 
 void OnlinePlayerViewModel::setupForCinemahall(const QStringList &json, const QList<int> &releases, const QStringList &posters, const QStringList& names)
 {
     setIsCinemahall(true);
-    m_isMultipleRelease = false;
+    setIsMultipleRelease(false);
 
     m_videos->setVideosFromCinemahall(json, releases, posters, names);
     emit refreshSeenMarks();
@@ -721,6 +753,11 @@ void OnlinePlayerViewModel::broadcastVolume(int volume) noexcept
 void OnlinePlayerViewModel::broadcastVideoPosition(const QString& position) noexcept
 {
     m_remotePlayer->broadcastCommand(m_videoPositionChangedCommand, position);
+}
+
+QList<int> OnlinePlayerViewModel::getReleaseIds() noexcept
+{
+    return m_videos->getReleaseIds();
 }
 
 void OnlinePlayerViewModel::saveVideoSeens()

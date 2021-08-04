@@ -62,6 +62,7 @@ class OnlinePlayerViewModel : public QObject
     Q_PROPERTY(int videoPosition READ videoPosition WRITE setVideoPosition NOTIFY videoPositionChanged)
     Q_PROPERTY(int videoDuration READ videoDuration WRITE setVideoDuration NOTIFY videoDurationChanged)
     Q_PROPERTY(bool sendVolumeToRemote READ sendVolumeToRemote WRITE setSendVolumeToRemote NOTIFY sendVolumeToRemoteChanged)
+    Q_PROPERTY(bool isMultipleRelease READ isMultipleRelease WRITE setIsMultipleRelease NOTIFY isMultipleReleaseChanged)
 
 private:
     bool m_isFullScreen;
@@ -195,6 +196,9 @@ public:
     bool sendVolumeToRemote() const { return m_sendVolumeToRemote; }
     void setSendVolumeToRemote(bool sendVolumeToRemote) noexcept;
 
+    bool isMultipleRelease() const { return m_isMultipleRelease; }
+    void setIsMultipleRelease(bool isMultipleRelease) noexcept;
+
     Q_INVOKABLE void toggleFullScreen();
     Q_INVOKABLE void changeVideoPosition(int duration, int position) noexcept;
     Q_INVOKABLE QString checkExistingVideoQuality(int index);    
@@ -221,6 +225,7 @@ public:
     Q_INVOKABLE void broadcastPlaybackState(const QString& state) noexcept;
     Q_INVOKABLE void broadcastVolume(int volume) noexcept;
     Q_INVOKABLE void broadcastVideoPosition(const QString& position) noexcept;
+    Q_INVOKABLE QList<int> getReleaseIds() noexcept;
 
 private:
     void saveVideoSeens();
@@ -280,6 +285,7 @@ signals:
     void videoPositionChanged();
     void videoDurationChanged();
     void sendVolumeToRemoteChanged();
+    void isMultipleReleaseChanged();
 
 };
 

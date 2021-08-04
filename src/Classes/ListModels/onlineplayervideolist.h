@@ -5,6 +5,7 @@
 #include <QAbstractListModel>
 #include <QVariant>
 #include <QHash>
+#include <QSet>
 #include <QVector>
 #include <QStringList>
 #include <QJsonDocument>
@@ -55,6 +56,7 @@ public:
     void setVideosFromCinemahall(const QStringList& json, const QList<int>& releases, const QStringList& posters, const QStringList& names) noexcept;
     void selectVideo(int releaseId, int videoId) noexcept;
     int getVideoIndex(OnlineVideoModel* video) noexcept;
+    QList<int> getReleaseIds() noexcept;
 
 signals:    
 

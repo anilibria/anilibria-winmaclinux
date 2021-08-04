@@ -483,7 +483,7 @@ ApplicationWindow {
 
         MouseArea {
             id: bottomWindowResize
-            height: 2
+            height: 3
             anchors.left: parent.left
             anchors.right: parent.right
             anchors.bottom: parent.bottom
