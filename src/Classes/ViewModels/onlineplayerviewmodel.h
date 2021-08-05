@@ -226,6 +226,7 @@ public:
     Q_INVOKABLE void broadcastVolume(int volume) noexcept;
     Q_INVOKABLE void broadcastVideoPosition(const QString& position) noexcept;
     Q_INVOKABLE QList<int> getReleaseIds() noexcept;
+    Q_INVOKABLE int jumpInPlayer(int minutes, int seconds, bool direction) noexcept;
 
 private:
     void saveVideoSeens();

@@ -86,8 +86,8 @@ Page {
         }
         if (event.key === Qt.Key_M || event.key === 1068) player.muted = !player.muted;
         if ((event.key === Qt.Key_P || event.key === 1047) && !autoTopMost.checked) windowSettings.toggleStayOnTopMode();
-        if (event.key === Qt.Key_Left) jumpInPlayer(true);
-        if (event.key === Qt.Key_Right) jumpInPlayer(false);
+        if (event.key === Qt.Key_Left) player.seek(onlinePlayerViewModel.jumpInPlayer(jumpMinuteComboBox.currentIndex, jumpSecondComboBox.currentIndex, true));
+        if (event.key === Qt.Key_Right) player.seek(onlinePlayerViewModel.jumpInPlayer(jumpMinuteComboBox.currentIndex, jumpSecondComboBox.currentIndex, false));
         if (event.key === Qt.Key_Escape) returnToReleasesPage();
         if (event.key === Qt.Key_Home && !autoTopMost.checked) windowSettings.setStayOnTop();
         if (event.key === Qt.Key_End && !autoTopMost.checked) windowSettings.unsetStayOnTop();
@@ -682,7 +682,7 @@ Page {
                         iconWidth: 24
                         iconHeight: 24
                         onButtonPressed: {
-                            player.seek(player.position - 10 * 1000);
+                            player.seek(onlinePlayerViewModel.jumpInPlayer(jumpMinuteComboBox.currentIndex, jumpSecondComboBox.currentIndex, true))
                         }
                     }
                     IconButton {
@@ -747,7 +747,7 @@ Page {
                         iconWidth: 24
                         iconHeight: 24
                         onButtonPressed: {
-                            player.seek(player.position + 30 * 1000);
+                            player.seek(onlinePlayerViewModel.jumpInPlayer(jumpMinuteComboBox.currentIndex, jumpSecondComboBox.currentIndex, false));
                         }
                     }
                 }
@@ -1166,16 +1166,6 @@ Page {
         }
 
         _page.seenMarks = JSON.parse(onlinePlayerViewModel.getReleasesSeenMarks(releaseIds));
-    }
-
-    function jumpInPlayer(direction){
-        const minutes = onlinePlayerViewModel.jumpMinutes[jumpMinuteComboBox.currentIndex];
-        const seconds = onlinePlayerViewModel.jumpSeconds[jumpSecondComboBox.currentIndex];
-        const jumpvalue = (minutes * 60 + seconds) * 1000;
-        let seekPosition = player.position + (direction ? -jumpvalue : jumpvalue);
-        if (seekPosition < 0) seekPosition = 80;
-        if (seekPosition > player.duration) seekPosition = player.duration - 100;
-        player.seek(seekPosition);
     }
 
     function setControlVisible(visible) {

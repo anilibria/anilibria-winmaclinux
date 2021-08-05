@@ -768,6 +768,19 @@ QList<int> OnlinePlayerViewModel::getReleaseIds() noexcept
     return m_videos->getReleaseIds();
 }
 
+int OnlinePlayerViewModel::jumpInPlayer(int minutes, int seconds, bool direction) noexcept
+{
+    auto jumpMinutes = m_jumpMinutes->value(minutes);
+    auto jumpSeconds = m_jumpSeconds->value(seconds);
+    auto jumpvalue = (jumpMinutes * 60 + jumpSeconds) * 1000;
+    auto duration = videoDuration();
+    auto seekPosition = videoPosition() + (direction ? -jumpvalue : jumpvalue);
+    if (seekPosition < 0) seekPosition = 80;
+    if (seekPosition > duration) seekPosition = duration - 100;
+
+    return seekPosition;
+}
+
 void OnlinePlayerViewModel::saveVideoSeens()
 {
     QJsonArray array;
