@@ -1084,6 +1084,21 @@ Page {
             anchors.right: parent.right
         }
 
+        MouseArea {
+            id: onlinePlayebottomWindowResize
+            height: 3
+            anchors.bottom: parent.bottom
+            anchors.left: parent.left
+            anchors.right: parent.right
+            cursorShape: Qt.SizeVerCursor
+            onPressed: {
+                window.previousY = mouseY;
+            }
+            onMouseYChanged: {
+                window.height += mouseY - window.previousY;
+            }
+        }
+
         Behavior on opacity {
             NumberAnimation { duration: 200 }
         }
