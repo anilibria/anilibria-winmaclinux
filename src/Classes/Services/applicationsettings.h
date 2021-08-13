@@ -35,6 +35,7 @@ class ApplicationSettings : public QObject
     Q_PROPERTY(int remotePort READ remotePort WRITE setRemotePort NOTIFY remotePortChanged)
     Q_PROPERTY(bool sendVolumeToRemote READ sendVolumeToRemote WRITE setSendVolumeToRemote NOTIFY sendVolumeToRemoteChanged)
     Q_PROPERTY(bool sendPlaybackToRemote READ sendPlaybackToRemote WRITE setSendPlaybackToRemote NOTIFY sendPlaybackToRemoteChanged);
+    Q_PROPERTY(bool useCustomToolbar READ useCustomToolbar WRITE setUseCustomToolbar NOTIFY useCustomToolbarChanged)
 
 private:
     QSettings* m_Settings;
@@ -69,6 +70,9 @@ public:
     bool sendPlaybackToRemote();
     void setSendPlaybackToRemote(bool sendPlaybackToRemote);
 
+    bool useCustomToolbar();
+    void setUseCustomToolbar(bool useCustomToolbar);
+
 signals:
     void userTokenChanged(QString& token);
     void windowHeightChanged(int windowHeight);
@@ -79,6 +83,7 @@ signals:
     void remotePortChanged(int remotePort);
     void sendVolumeToRemoteChanged(bool sendVolumeToRemote);
     void sendPlaybackToRemoteChanged(bool sendPlaybackToRemote);
+    void useCustomToolbarChanged(bool useCustomToolbar);
 
 };
 

@@ -1156,9 +1156,9 @@ Page {
                     Popup {
                         id: releaseSettingsPopup
                         x: 40
-                        y: sortingPopupButton.height - 370
+                        y: -390
                         width: 370
-                        height: 450
+                        height: 530
                         modal: true
                         focus: true
                         closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
@@ -1265,6 +1265,31 @@ Page {
                             ToolTip.delay: 1000
                             ToolTip.visible: hovered
                             ToolTip.text: "Если настройка включена при наведении на релизы будет показываться описание в виде небольшой плашки в нижней части окна"
+                        }
+
+                        PlainText {
+                            id: useCustomToolbarLabel
+                            anchors.top: showReleaseDescriptionSwitch.bottom
+                            anchors.topMargin: 4
+                            fontPointSize: 11
+                            text: "Использовать кастомный тулбар"
+                        }
+                        Switch {
+                            id: useCustomToolbarSwitch
+                            anchors.top: useCustomToolbarLabel.bottom
+                            onCheckedChanged: {
+                                applicationSettings.useCustomToolbar = checked;
+
+                                if (applicationSettings.useCustomToolbar) {
+                                    window.flags = Qt.FramelessWindowHint | Qt.Window | Qt.WindowMinimizeButtonHint;
+                                } else {
+                                    window.flags = 1;
+                                }
+                            }
+
+                            ToolTip.delay: 1000
+                            ToolTip.visible: hovered
+                            ToolTip.text: "Если настройка включена будет использоваться кастомный тулбар окна с дополнительным функционалом"
                         }
                     }
 
@@ -2630,6 +2655,7 @@ Page {
         page.hideSortButton = userSettings.hideSortButton;
         page.hideFilterButton = userSettings.hideFilterButton;
         showReleaseDescriptionSwitch.checked = userSettings.showReleaseDescription;
+        useCustomToolbarSwitch.checked = applicationSettings.useCustomToolbar;
 
         const startedSection = userSettings.startedSection;
         if (startedSection) changeSection(startedSection);

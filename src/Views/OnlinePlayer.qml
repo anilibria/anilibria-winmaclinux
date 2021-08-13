@@ -1077,6 +1077,7 @@ Page {
         }
 
         Rectangle {
+            visible: applicationSettings.useCustomToolbar
             color: "black"
             height: 1
             anchors.bottom: parent.bottom
@@ -1086,6 +1087,7 @@ Page {
 
         MouseArea {
             id: onlinePlayebottomWindowResize
+            enabled: applicationSettings.useCustomToolbar
             height: 3
             anchors.bottom: parent.bottom
             anchors.left: parent.left

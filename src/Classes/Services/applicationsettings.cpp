@@ -131,3 +131,15 @@ void ApplicationSettings::setSendPlaybackToRemote(bool sendPlaybackToRemote)
 
     emit sendPlaybackToRemoteChanged(sendPlaybackToRemote);
 }
+
+bool ApplicationSettings::useCustomToolbar()
+{
+    return m_Settings->value("usecustomtoolbar", true).toBool();
+}
+
+void ApplicationSettings::setUseCustomToolbar(bool useCustomToolbar)
+{
+    m_Settings->setValue("usecustomtoolbar", useCustomToolbar);
+
+    emit useCustomToolbarChanged(useCustomToolbar);
+}

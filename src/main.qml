@@ -62,6 +62,8 @@ ApplicationWindow {
     }
 
     Component.onCompleted: {
+        if (!applicationSettings.useCustomToolbar) window.flags = 1;
+
         const savedWidth = applicationSettings.windowWidth;
         const savedHeight = applicationSettings.windowHeight;
         const savedX = applicationSettings.windowX;
@@ -83,7 +85,7 @@ ApplicationWindow {
 
     header: Rectangle {
         id: toolBar
-        visible: true
+        visible: applicationSettings.useCustomToolbar
         width: window.width
         height: 35
         color: ApplicationTheme.notificationCenterBackground
@@ -328,7 +330,7 @@ ApplicationWindow {
 
         MouseArea {
             id: windowDraggingArea
-            enabled: true
+            enabled: applicationSettings.useCustomToolbar
             anchors.left: goToReleaseSeries.right
             anchors.right: leftHalfScreenWindow.left
             height: parent.height
@@ -346,6 +348,7 @@ ApplicationWindow {
 
         MouseArea {
             id: topWindowResize
+            enabled: applicationSettings.useCustomToolbar
             height: 3
             anchors.left: parent.left
             anchors.top: parent.top
@@ -370,6 +373,7 @@ ApplicationWindow {
         color: ApplicationTheme.notificationCenterBackground
 
         Rectangle {
+            visible: applicationSettings.useCustomToolbar
             color: "black"
             width: 1
             anchors.left: parent.left
@@ -378,6 +382,7 @@ ApplicationWindow {
         }
 
         Rectangle {
+            visible: applicationSettings.useCustomToolbar
             color: "black"
             width: 1
             anchors.right: parent.right
@@ -386,6 +391,7 @@ ApplicationWindow {
         }
 
         Rectangle {
+            visible: applicationSettings.useCustomToolbar
             color: "black"
             height: 1
             anchors.left: parent.left
@@ -443,6 +449,7 @@ ApplicationWindow {
 
         MouseArea {
             id: rightbottomWindowResize
+            enabled: applicationSettings.useCustomToolbar
             width: 3
             anchors.right: parent.right
             anchors.top: parent.top
@@ -462,6 +469,7 @@ ApplicationWindow {
 
         MouseArea {
             id: leftbottomWindowResize
+            enabled: applicationSettings.useCustomToolbar
             width: 3
             anchors.left: parent.left
             anchors.top: parent.top
@@ -483,6 +491,7 @@ ApplicationWindow {
 
         MouseArea {
             id: bottomWindowResize
+            enabled: applicationSettings.useCustomToolbar
             height: 3
             anchors.left: parent.left
             anchors.right: parent.right
@@ -604,14 +613,24 @@ ApplicationWindow {
         signal toggleStayOnTopMode();
 
         onSetStayOnTop: {
-            window.flags = Qt.FramelessWindowHint | Qt.Window | Qt.WindowMinimizeButtonHint | Qt.WindowStaysOnTopHint;
+            if (applicationSettings.useCustomToolbar) {
+                window.flags = Qt.FramelessWindowHint | Qt.Window | Qt.WindowMinimizeButtonHint | Qt.WindowStaysOnTopHint;
+            } else {
+                window.flags = Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint;
+            }
+
             windowSettings.isTopMost = true;
         }
 
         onUnsetStayOnTop: {
             if (!windowSettings.isTopMost) return;
 
-            window.flags = Qt.FramelessWindowHint | Qt.Window | Qt.WindowMinimizeButtonHint;
+            if (applicationSettings.useCustomToolbar) {
+                window.flags = Qt.FramelessWindowHint | Qt.Window | Qt.WindowMinimizeButtonHint;
+            } else {
+                window.flags = 1;
+            }
+
             windowSettings.isTopMost = false;
         }
 
@@ -1225,6 +1244,7 @@ ApplicationWindow {
 
     Rectangle {
         id: leftWindowResizeArea
+        visible: applicationSettings.useCustomToolbar
         color: "black"
         width: 1
         anchors.left: parent.left
@@ -1234,6 +1254,7 @@ ApplicationWindow {
 
     Rectangle {
         color: "black"
+        visible: applicationSettings.useCustomToolbar
         width: 1
         anchors.right: parent.right
         anchors.top: parent.top
@@ -1243,8 +1264,8 @@ ApplicationWindow {
     Rectangle {
         color: "transparent"
         anchors.fill: parent
-        anchors.leftMargin: 1
-        anchors.rightMargin: 1
+        anchors.leftMargin: applicationSettings.useCustomToolbar ? 1 : 0
+        anchors.rightMargin: applicationSettings.useCustomToolbar ? 1 : 0
 
         OnlinePlayer {
             id: videoplayer
@@ -1343,6 +1364,7 @@ ApplicationWindow {
 
         MouseArea {
             id: leftWindowResize
+            enabled: applicationSettings.useCustomToolbar
             width: 1
             anchors.left: parent.left
             anchors.top: parent.top
@@ -1361,6 +1383,7 @@ ApplicationWindow {
 
         MouseArea {
             id: rightWindowResize
+            enabled: applicationSettings.useCustomToolbar
             width: 1
             anchors.right: parent.right
             anchors.top: parent.top
