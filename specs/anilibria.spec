@@ -23,13 +23,12 @@ BuildRequires: gcc
 Application for watching anime from AniLibria website.
  
 %build
-ls
-cd src
-qmake-qt5
-sudo make
+mkdir -p %{_target_platform}
+pushd %{_target_platform} %qmake_qt5 PREFIX=%{_prefix} CONFIG+=anilibria-winmaclinux .. popd
+%make_build -C %{_target_platform}
  
 %install
-sudo make install
+%make_install
  
 %doc README.md
 %license LICENSE
