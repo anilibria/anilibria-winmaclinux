@@ -24,7 +24,12 @@ Application for watching anime from AniLibria website.
  
 %build
 mkdir -p %{_target_platform}
-pushd %{_target_platform} %qmake_qt5 PREFIX=%{_prefix} CONFIG+=anilibria-winmaclinux .. popd
+pushd %{_target_platform}
+	%qmake_qt5 \
+	PREFIX=%{_prefix} \
+	CONFIG+=anilibria-winmaclinux \
+	..
+popd
 %make_build -C %{_target_platform}
  
 %install
