@@ -4,7 +4,7 @@ License: GPLv3+
 Release: 1%{?dist}
 Summary: Application for watching anime from AniLibria website
 URL: https://github.com/anilibria/%{name}
-Source0: %{url}/archive/v%{version}.tar.gz#/%{name}-%{version}.tar.gz
+Source0: %{url}/archive/refs/tags/%{version}.tar.gz
  
 BuildRequires: qt5-qtbase-devel
 BuildRequires: qt5-qtwebview-devel
