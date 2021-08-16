@@ -23,6 +23,7 @@ BuildRequires: gcc
 Application for watching anime from AniLibria website.
  
 %build
+ls
 cd src
 qmake-qt5
 sudo make
