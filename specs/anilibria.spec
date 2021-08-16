@@ -1,6 +1,7 @@
 Name: anilibria-winmaclinux
 Version: 1.0.3
 License: GPLv3+
+Release: 1%{?dist}
 Summary: Application for watching anime from AniLibria website
 URL: https://github.com/anilibria/%{name}
 Source0: %{url}/archive/v%{version}.tar.gz#/%{name}-%{version}.tar.gz
