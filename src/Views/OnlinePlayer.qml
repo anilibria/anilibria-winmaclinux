@@ -62,7 +62,7 @@ Page {
             onlinePlayerViewModel.nextVideo();
             event.accepted = true;
         }
-        if (event.key === Qt.Key_PageUp || event.nativeVirtualKey === Qt.Key_P || event.key === 1047) {
+        if (event.key === Qt.Key_PageUp || event.key === Qt.Key_P || event.key === 1047) {
             onlinePlayerViewModel.previousVideo();
             event.accepted = true;
         }
@@ -641,7 +641,7 @@ Page {
                     IconButton {
                         width: 40
                         height: 40
-                        iconColor: ApplicationTheme.filterIconButtonColor
+                        iconColor: player.muted ? ApplicationTheme.filterIconButtonGreenColor : ApplicationTheme.filterIconButtonColor
                         hoverColor: ApplicationTheme.filterIconButtonHoverColor
                         iconPath: "../Assets/Icons/speaker.svg"
                         iconWidth: 24
@@ -699,7 +699,7 @@ Page {
                         }
                         ToolTip.delay: 1000
                         ToolTip.visible: prevButton.hovered
-                        ToolTip.text: "Предыдущая серия (P)"
+                        ToolTip.text: "Предыдущая серия (P / PgUp)"
                     }
                     IconButton {
                         id: playButton
@@ -743,7 +743,7 @@ Page {
                         }
                         ToolTip.delay: 1000
                         ToolTip.visible: nextButton.hovered
-                        ToolTip.text: "Следующая серия (N)"
+                        ToolTip.text: "Следующая серия (N / PgDn)"
                     }
                     IconButton {
                         width: 40
