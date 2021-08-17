@@ -6,5 +6,5 @@ Icon=anilibria
 Type=Application
 Version=1.0.3
 Terminal=false
-Categories=Application;Multimedia;
+Categories=Qt;AudioVideo;Player;
 Keywords=anime;
