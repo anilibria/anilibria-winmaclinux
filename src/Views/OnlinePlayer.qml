@@ -58,12 +58,12 @@ Page {
     }
 
     Keys.onPressed: {
-        if (event.key === Qt.Key_PageUp) {
+        if (event.key === Qt.Key_PageDown || event.key === Qt.Key_N) {
             onlinePlayerViewModel.nextVideo();
             event.accepted = true;
         }
-        if (event.key === Qt.Key_PageDown) {
-            _page.previousVideo();
+        if (event.key === Qt.Key_PageUp || event.key === Qt.Key_P) {
+            onlinePlayerViewModel.previousVideo();
             event.accepted = true;
         }
         if (event.key === Qt.Key_Escape) {
@@ -85,7 +85,7 @@ Page {
             volumeSlider.value = player.volume * 100;
         }
         if (event.key === Qt.Key_M || event.key === 1068) player.muted = !player.muted;
-        if ((event.key === Qt.Key_P || event.key === 1047) && !autoTopMost.checked) windowSettings.toggleStayOnTopMode();
+        if ((event.key === Qt.Key_T || event.key === 1047) && !autoTopMost.checked) windowSettings.toggleStayOnTopMode();
         if (event.key === Qt.Key_Left) player.seek(onlinePlayerViewModel.jumpInPlayer(jumpMinuteComboBox.currentIndex, jumpSecondComboBox.currentIndex, true));
         if (event.key === Qt.Key_Right) player.seek(onlinePlayerViewModel.jumpInPlayer(jumpMinuteComboBox.currentIndex, jumpSecondComboBox.currentIndex, false));
         if (event.key === Qt.Key_Escape) returnToReleasesPage();
@@ -686,6 +686,7 @@ Page {
                         }
                     }
                     IconButton {
+                        id: prevButton
                         width: 40
                         height: 40
                         iconColor: ApplicationTheme.filterIconButtonColor
@@ -696,6 +697,9 @@ Page {
                         onButtonPressed: {
                             onlinePlayerViewModel.previousVideo();
                         }
+                        ToolTip.delay: 1000
+                        ToolTip.visible: prevButton.hovered
+                        ToolTip.text: "Предыдущая серия (P)"
                     }
                     IconButton {
                         id: playButton
@@ -726,6 +730,7 @@ Page {
                         }
                     }
                     IconButton {
+                        id: nextButton
                         width: 40
                         height: 40
                         iconColor: ApplicationTheme.filterIconButtonColor
@@ -736,6 +741,9 @@ Page {
                         onButtonPressed: {
                             onlinePlayerViewModel.nextVideo();
                         }
+                        ToolTip.delay: 1000
+                        ToolTip.visible: nextButton.hovered
+                        ToolTip.text: "Следующая серия (N)"
                     }
                     IconButton {
                         width: 40
@@ -773,7 +781,7 @@ Page {
 
                         ToolTip.delay: 1000
                         ToolTip.visible: topmostButton.hovered
-                        ToolTip.text: windowSettings.isTopMost ? "Выключить режим поверх всех окон" : "Включить режим поверх всех окон"
+                        ToolTip.text: windowSettings.isTopMost ? "Выключить режим поверх всех окон (T)" : "Включить режим поверх всех окон (T)"
                     }
 
                     IconButton {
