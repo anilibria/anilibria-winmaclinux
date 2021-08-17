@@ -58,11 +58,11 @@ Page {
     }
 
     Keys.onPressed: {
-        if (event.key === Qt.Key_PageDown || event.key === Qt.Key_N) {
+        if (event.key === Qt.Key_PageDown || event.key === Qt.Key_N || event.key === 1058) {
             onlinePlayerViewModel.nextVideo();
             event.accepted = true;
         }
-        if (event.key === Qt.Key_PageUp || event.key === Qt.Key_P) {
+        if (event.key === Qt.Key_PageUp || event.nativeVirtualKey === Qt.Key_P || event.key === 1047) {
             onlinePlayerViewModel.previousVideo();
             event.accepted = true;
         }
@@ -85,7 +85,7 @@ Page {
             volumeSlider.value = player.volume * 100;
         }
         if (event.key === Qt.Key_M || event.key === 1068) player.muted = !player.muted;
-        if ((event.key === Qt.Key_T || event.key === 1047) && !autoTopMost.checked) windowSettings.toggleStayOnTopMode();
+        if ((event.key === Qt.Key_T || event.key === 1045) && !autoTopMost.checked) windowSettings.toggleStayOnTopMode();
         if (event.key === Qt.Key_Left) player.seek(onlinePlayerViewModel.jumpInPlayer(jumpMinuteComboBox.currentIndex, jumpSecondComboBox.currentIndex, true));
         if (event.key === Qt.Key_Right) player.seek(onlinePlayerViewModel.jumpInPlayer(jumpMinuteComboBox.currentIndex, jumpSecondComboBox.currentIndex, false));
         if (event.key === Qt.Key_Escape) returnToReleasesPage();
