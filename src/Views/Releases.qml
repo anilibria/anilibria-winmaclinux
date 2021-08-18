@@ -19,7 +19,7 @@
 import QtQuick 2.12
 import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.3
-import QtWebView 1.1
+import QtWebEngine 1.8
 import QtQuick.Controls.Styles 1.4
 import QtQuick.Dialogs 1.2
 import QtGraphicalEffects 1.0
@@ -2380,8 +2380,15 @@ Page {
                         anchors.rightMargin: 10
                     }
 
+                    PlainText {
+                        anchors.verticalCenter: parent.verticalCenter
+                        anchors.centerIn: parent
+                        visible: webView.loading
+                        fontPointSize: 11
+                        text: "Загрузка комментариев..."
+                    }
                 }
-                WebView {
+                WebEngineView {
                     id: webView
                     visible: page.openedRelease ? true : false
                     width: cardContainer.width

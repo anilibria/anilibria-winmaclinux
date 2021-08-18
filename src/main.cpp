@@ -18,7 +18,7 @@
 
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
-#include <QtWebView>
+#include <QtWebEngine>
 #include <QtSvg>
 #include <QQmlContext>
 #include <QString>
@@ -57,8 +57,8 @@ int main(int argc, char *argv[])
         IsPortable = true;
     }
 
-    QGuiApplication app(argc, argv);
-    QtWebView::initialize();
+    QtWebEngine::initialize();
+    QGuiApplication app(argc, argv);    
 
     qmlRegisterType<SynchronizationService>("Anilibria.Services", 1, 0, "SynchronizationService");
     qmlRegisterType<LocalStorageService>("Anilibria.Services", 1, 0, "LocalStorage");

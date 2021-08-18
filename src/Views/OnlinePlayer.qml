@@ -88,7 +88,6 @@ Page {
         if ((event.key === Qt.Key_T || event.key === 1045) && !autoTopMost.checked) windowSettings.toggleStayOnTopMode();
         if (event.key === Qt.Key_Left) player.seek(onlinePlayerViewModel.jumpInPlayer(jumpMinuteComboBox.currentIndex, jumpSecondComboBox.currentIndex, true));
         if (event.key === Qt.Key_Right) player.seek(onlinePlayerViewModel.jumpInPlayer(jumpMinuteComboBox.currentIndex, jumpSecondComboBox.currentIndex, false));
-        if (event.key === Qt.Key_Escape) returnToReleasesPage();
         if (event.key === Qt.Key_Home && !autoTopMost.checked) windowSettings.setStayOnTop();
         if (event.key === Qt.Key_End && !autoTopMost.checked) windowSettings.unsetStayOnTop();
     }
@@ -665,6 +664,50 @@ Page {
                         }
                         onMoved: {
                             player.volume = value / 100;
+                        }
+                    }
+                    IconButton {
+                        id: helpbutton
+                        width: 40
+                        height: 40
+                        iconColor: ApplicationTheme.filterIconButtonColor
+                        hoverColor: ApplicationTheme.filterIconButtonHoverColor
+                        iconPath: "../Assets/Icons/help.svg"
+                        iconWidth: 24
+                        iconHeight: 24
+                        onButtonPressed: {
+                            helpPlayerPopup.open();
+                        }
+
+                        Popup {
+                            id: helpPlayerPopup
+                            x: helpbutton.width - 300
+                            y: helpbutton.height - 240
+                            width: 300
+                            height: 240
+
+                            modal: true
+                            closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
+
+                            PlainText {
+                                text: "Горячие клавиши:\n" +
+                                      "Следующая серия - Page Down, N\n" +
+                                      "Предыдущая серия - Page Up, P\n" +
+                                      "Полный экран - F11, F\n" +
+                                      "Увеличение громкости - Up\n" +
+                                      "Уменьшение громкости - Down\n" +
+                                      "Mute - M\n" +
+                                      "Поверх всех окон (вкл/выкл) - T\n" +
+                                      "Прыжок влево - Left\n" +
+                                      "Прыжок вправо - Right\n" +
+                                      "Поверх всех окон вкл - Home\n" +
+                                      "Поверх всех окон выкл - End\n" +
+                                      "Вернуться в каталог релизов - Esc"
+                                fontPointSize: 10
+                                verticalAlignment: Text.AlignVCenter
+                                anchors.fill: parent
+                            }
+
                         }
                     }
                 }
