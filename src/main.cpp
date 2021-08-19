@@ -57,8 +57,8 @@ int main(int argc, char *argv[])
         IsPortable = true;
     }
 
-    QtWebEngine::initialize();
     QGuiApplication app(argc, argv);    
+    QtWebEngine::initialize();
 
     qmlRegisterType<SynchronizationService>("Anilibria.Services", 1, 0, "SynchronizationService");
     qmlRegisterType<LocalStorageService>("Anilibria.Services", 1, 0, "LocalStorage");
