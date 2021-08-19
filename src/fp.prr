@@ -1,0 +1,118 @@
+QT += quick multimedia network webengine concurrent svg websockets
+CONFIG += c++11
+
+windows {
+    QT += av
+    Debug:CONFIG += qml_debug
+}
+
+# The following define makes your compiler emit warnings if you use
+# any Qt feature that has been marked deprecated (the exact warnings
+# depend on your compiler). Refer to the documentation for the
+# deprecated API to know how to port your code away from it.
+DEFINES += QT_DEPRECATED_WARNINGS
+
+# If you need not check version remove or comment this line
+DEFINES += USE_VERSION_CHECK
+
+# You can also make your code fail to compile if it uses deprecated APIs.
+# In order to do so, uncomment the following line.
+# You can also select to disable deprecated APIs only up to a certain version of Qt.
+#DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
+
+SOURCES += \
+    Classes/ListModels/onlineplayervideolist.cpp \
+    Classes/Models/changesmodel.cpp \
+    Classes/Models/downloaditemmodel.cpp \
+    Classes/Models/externalplaylistvideo.cpp \
+    Classes/Models/fullreleasemodel.cpp \
+    Classes/Models/historymodel.cpp \
+    Classes/Models/onlinevideomodel.cpp \
+    Classes/Models/releasemodel.cpp \
+    Classes/Models/releaseseriesmodel.cpp \
+    Classes/Models/releasetorrentmodel.cpp \
+    Classes/Models/seenmarkmodel.cpp \
+    Classes/Models/seenmodel.cpp \
+    Classes/Models/usersettingsmodel.cpp \
+    Classes/Models/youtubevideomodel.cpp \
+    Classes/RemotePlayer/remoteplayer.cpp \
+    Classes/RemotePlayer/remoteplayertransport.cpp \
+    Classes/Services/analyticsservice.cpp \
+    Classes/Services/anilibriaapiservice.cpp \
+    Classes/Services/apiserviceconfigurator.cpp \
+    Classes/Services/applicationsettings.cpp \
+    Classes/Services/dlservice.cpp \
+    Classes/Services/downloadmanager.cpp \
+    Classes/Services/imageloader.cpp \
+    Classes/Services/localstorageservice.cpp \
+    Classes/Services/offlineimagecacheservice.cpp \
+    Classes/Services/proxyconfigurator.cpp \
+    Classes/Services/releaselinkedseries.cpp \
+    Classes/Services/synchronizationservice.cpp \
+    Classes/Services/versionchecker.cpp \
+    Classes/ViewModels/onlineplayerviewmodel.cpp \
+    Classes/globalconstant.cpp \
+    Classes/ListModels/alphabetlistmodel.cpp \
+    main.cpp
+
+RESOURCES += qml.qrc
+
+RC_ICONS = fullsizesicon.ico
+
+ICON = anilibria.icns
+
+# Additional import path used to resolve QML modules in Qt Creator's code model
+QML_IMPORT_PATH =
+
+# Additional import path used to resolve QML modules just for Qt Quick Designer
+QML_DESIGNER_IMPORT_PATH =
+
+# Default rules for deployment.
+unix: {
+    isEmpty(PREFIX) {
+      packaging {
+        PREFIX = /usr
+      } else {
+        PREFIX = /usr/local
+      }
+    }
+    DEFINES += APP_PREFIX=\\\"$$PREFIX\\\"
+
+    target.path = $${PREFIX}/bin/
+
+     INSTALLS += target
+}
+
+HEADERS += \
+    Classes/ListModels/onlineplayervideolist.h \
+    Classes/Models/changesmodel.h \
+    Classes/Models/downloaditemmodel.h \
+    Classes/Models/externalplaylistvideo.h \
+    Classes/Models/fullreleasemodel.h \
+    Classes/Models/historymodel.h \
+    Classes/Models/onlinevideomodel.h \
+    Classes/Models/releasemodel.h \
+    Classes/Models/releaseseriesmodel.h \
+    Classes/Models/releasetorrentmodel.h \
+    Classes/Models/seenmarkmodel.h \
+    Classes/Models/seenmodel.h \
+    Classes/Models/usersettingsmodel.h \
+    Classes/Models/youtubevideomodel.h \
+    Classes/RemotePlayer/remoteplayer.h \
+    Classes/RemotePlayer/remoteplayertransport.h \
+    Classes/Services/analyticsservice.h \
+    Classes/Services/anilibriaapiservice.h \
+    Classes/Services/apiserviceconfigurator.h \
+    Classes/Services/applicationsettings.h \
+    Classes/Services/dlservice.h \
+    Classes/Services/downloadmanager.h \
+    Classes/Services/imageloader.h \
+    Classes/Services/localstorageservice.h \
+    Classes/Services/offlineimagecacheservice.h \
+    Classes/Services/proxyconfigurator.h \
+    Classes/Services/releaselinkedseries.h \
+    Classes/Services/synchronizationservice.h \
+    Classes/Services/versionchecker.h \
+    Classes/ListModels/alphabetlistmodel.h \
+    Classes/ViewModels/onlineplayerviewmodel.h \
+    globalconstants.h
