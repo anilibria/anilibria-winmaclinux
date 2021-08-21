@@ -33,6 +33,7 @@
 #include <QProcess>
 #include <QCoreApplication>
 #include <QOperatingSystemVersion>
+#include <QRandomGenerator>
 #include "../Models/releasemodel.h"
 #include "../Models/fullreleasemodel.h"
 #include "../Models/changesmodel.h"
@@ -86,7 +87,11 @@ LocalStorageService::LocalStorageService(QObject *parent) : QObject(parent),
     //WORKAROUND: sorry guys for it, I move this code to another place shortly
     //run installer for xaudio in first application start for windows 7
     auto osVersion = QOperatingSystemVersion::current();
-    if (!QFile::exists(getReleasesCachePath()) && osVersion < QOperatingSystemVersion(QOperatingSystemVersion::Windows8)) QProcess::startDetached(QCoreApplication::applicationDirPath() + "/codecpacks/DXSETUP.exe");
+    if (!QFile::exists(getReleasesCachePath()) && osVersion < QOperatingSystemVersion(QOperatingSystemVersion::Windows8)) {
+        QProcess audioPorcess(this);
+        QStringList arguments;
+        audioPorcess.start(QCoreApplication::applicationDirPath() + "/codecpacks/DXSETUP.exe", arguments);
+    }
 #endif
 
     createIfNotExistsFile(getReleasesCachePath(), "[]");
@@ -100,7 +105,6 @@ LocalStorageService::LocalStorageService(QObject *parent) : QObject(parent),
     createIfNotExistsFile(getCinemahallCachePath(), "[]");
     createIfNotExistsFile(getDownloadsCachePath(), "[]");
     createIfNotExistsFile(getHidedReleasesCachePath(), "[]");
-    QString favoritespath = getFavoritesCachePath();
 
     updateReleasesInnerCache();
 
@@ -291,7 +295,9 @@ FullReleaseModel* LocalStorageService::mapToFullReleaseModel(ReleaseModel &relea
     model->setId(releaseModel.id());
     model->setTitle(releaseModel.title());
     model->setCode(releaseModel.code());
-    model->setOriginalName(releaseModel.names().last());
+    auto names = releaseModel.names();
+    auto last = names.last();
+    model->setOriginalName(last);
     model->setRating(releaseModel.rating());
     model->setSeries(releaseModel.series());
     model->setStatus(releaseModel.status());
@@ -391,10 +397,9 @@ void LocalStorageService::removeTrimsInStringCollection(QStringList& list) {
     }
 }
 
-int LocalStorageService::randomBetween(int low, int high, uint seed)
+int LocalStorageService::randomBetween(int low, int high)
 {
-    qsrand(seed);
-    return (qrand() % ((high + 1) - low) + low);
+    return QRandomGenerator::global()->bounded(low, high);
 }
 
 QString LocalStorageService::getReleasesCachePath() const
@@ -863,7 +868,7 @@ QString LocalStorageService::getRandomRelease()
 {
     auto count = m_CachedReleases->count() - 1;
 
-    auto position = randomBetween(1, count, static_cast<uint>(QDateTime::currentMSecsSinceEpoch()));
+    auto position = randomBetween(1, count);
 
     auto release = m_CachedReleases->at(position);
 

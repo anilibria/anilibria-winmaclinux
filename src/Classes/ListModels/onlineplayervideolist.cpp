@@ -304,5 +304,7 @@ QList<int> OnlinePlayerVideoList::getReleaseIds() noexcept
     //remove group ids
     result.removeAll(-1);
 
-    return result.toSet().toList();
+    QSet<int> set(result.cbegin(), result.cend());
+
+    return set.values();
 }

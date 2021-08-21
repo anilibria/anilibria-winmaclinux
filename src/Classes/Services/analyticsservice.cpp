@@ -47,20 +47,19 @@ void AnalyticsService::sendPostEvent(QString type, QString category, QString mes
     request.setRawHeader("User-Agent", userAgent.toUtf8());
     request.setHeader(QNetworkRequest::ContentTypeHeader, QVariant("plain/text"));
 
-    QByteArray postData;
-    postData.append("v=1&");
-    postData.append("tid=UA-152944623-1&");
+    QString returnData;
+    returnData.append("v=1&");
+    returnData.append("tid=UA-152944623-1&");
     auto uniqueName = QSysInfo::machineUniqueId();//TODO: check if null and replace on something
-    postData.append("cid=" + uniqueName + "&");
-    postData.append("t=" + type + "&");
-    postData.append("an=AniLibriaDesktop&");
-    postData.append("av=" + ApplicationVersion + "&");
-    if (!page.isEmpty()) postData.append("dp=" + page + "&");
-    postData.append("ec=" + category + "&");
-    postData.append("ea=" + message);
+    returnData.append("cid=" + uniqueName + "&");
+    returnData.append("t=" + type + "&");
+    returnData.append("an=AniLibriaDesktop&");
+    returnData.append("av=" + ApplicationVersion + "&");
+    if (!page.isEmpty()) returnData.append("dp=" + page + "&");
+    returnData.append("ec=" + category + "&");
+    returnData.append("ea=" + message);
 
-
-    networkManager->post(request, postData);
+    networkManager->post(request, returnData.toUtf8());
 #endif
 }
 

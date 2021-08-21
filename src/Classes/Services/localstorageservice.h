@@ -70,7 +70,7 @@ private:
     bool checkOrCondition(QStringList source, QStringList target);
     bool checkAllCondition(QStringList source, QStringList target);
     void removeTrimsInStringCollection(QStringList& list);
-    int randomBetween(int low, int high, uint seed);
+    int randomBetween(int low, int high);
     QString getReleasesCachePath() const;
     QString getFavoritesCachePath() const;
     QString getScheduleCachePath() const;
