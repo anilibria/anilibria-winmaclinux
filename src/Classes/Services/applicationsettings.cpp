@@ -134,7 +134,12 @@ void ApplicationSettings::setSendPlaybackToRemote(bool sendPlaybackToRemote)
 
 bool ApplicationSettings::useCustomToolbar()
 {
-    return m_Settings->value("usecustomtoolbar", true).toBool();
+#ifdef Q_OS_LINUX
+    bool defaultValue = false;
+#else
+    bool defaultValue = true;
+#endif
+    return m_Settings->value("usecustomtoolbar", defaultValue).toBool();
 }
 
 void ApplicationSettings::setUseCustomToolbar(bool useCustomToolbar)
