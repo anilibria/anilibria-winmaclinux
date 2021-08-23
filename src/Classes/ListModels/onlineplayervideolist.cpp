@@ -1,4 +1,5 @@
 #include "onlineplayervideolist.h"
+#include <QtGlobal>
 
 OnlinePlayerVideoList::OnlinePlayerVideoList(QObject *parent) : QAbstractListModel(parent),
     m_videos(new QVector<OnlineVideoModel*>()),
@@ -304,7 +305,11 @@ QList<int> OnlinePlayerVideoList::getReleaseIds() noexcept
     //remove group ids
     result.removeAll(-1);
 
+#if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
+    return result.toSet().toList();
+#else
     QSet<int> set(result.cbegin(), result.cend());
 
     return set.values();
+#endif
 }
