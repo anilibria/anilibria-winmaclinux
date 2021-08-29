@@ -32,10 +32,8 @@ Page {
             width: 40
             Layout.fillHeight: true
             Column {
-                IconButton {
-                    height: 45
-                    width: 40
-                    iconColor: "white"
+                LeftPanelIconButton {
+                    tooltipMessage: "Открыть меню приложения"
                     iconPath: "../Assets/Icons/menu.svg"
                     iconWidth: 29
                     iconHeight: 29
@@ -43,21 +41,16 @@ Page {
                         drawer.open();
                     }
                 }
-                IconButton {
-                    id: cinemahallMenuButton
-                    height: 45
-                    width: 40
-                    iconColor: "white"
+                LeftPanelIconButton {
                     iconPath: "../Assets/Icons/popcorn.svg"
-                    iconWidth: 30
-                    iconHeight: 30
+                    tooltipMessage: "Управление кинозалом"
                     onButtonPressed: {
                         cinemahallMenuPanel.open();
                     }
 
                     CommonMenu {
                         id: cinemahallMenuPanel
-                        y: cinemahallMenuButton.height
+                        y: parent.height
                         width: 300
 
                         CommonMenuItem {
@@ -81,25 +74,15 @@ Page {
                             }
                         }
                     }
-
-                    ToolTip.delay: 1000
-                    ToolTip.visible: hovered
-                    ToolTip.text: "Управление кинозалом"
                 }
-                IconButton {
-                    height: 45
-                    width: 40
-                    iconColor: "white"
+                LeftPanelIconButton {
                     iconPath: "../Assets/Icons/cinemaplay.svg"
+                    tooltipMessage: "Смотреть кинозал в видеоплеере"
                     iconWidth: 29
                     iconHeight: 29
                     onButtonPressed: {
                         watchCinemahall();
                     }
-
-                    ToolTip.delay: 1000
-                    ToolTip.visible: hovered
-                    ToolTip.text: "Смотреть кинозал в видеоплеере"
                 }
             }
         }

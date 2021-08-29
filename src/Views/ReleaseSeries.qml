@@ -51,23 +51,18 @@ Page {
             width: 40
             Layout.fillHeight: true
             Column {
-                IconButton {
-                    height: 45
-                    width: 40
-                    iconColor: "white"
+                LeftPanelIconButton {
                     iconPath: "../Assets/Icons/menu.svg"
+                    tooltipMessage: "Открыть меню приложения"
                     iconWidth: 29
                     iconHeight: 29
                     onButtonPressed: {
                         drawer.open();
                     }
                 }
-                IconButton {
-                    id: searchFilterButton
-                    height: 45
-                    width: 40
-                    iconColor: "white"
+                LeftPanelIconButton {
                     iconPath: "../Assets/Icons/search.svg"
+                    tooltipMessage: "Открыть всплывающее окно с фильтрами"
                     iconWidth: 29
                     iconHeight: 29
                     onButtonPressed: {
@@ -77,7 +72,7 @@ Page {
                     Popup {
                         id: seriesFiltersPopup
                         x: 40
-                        y: searchFilterButton.height - 45
+                        y: parent.height - 45
                         width: 450
                         height: 200
                         modal: true
@@ -274,17 +269,9 @@ Page {
                                 Column {
                                     anchors.centerIn: parent
 
-                                    IconButton {
-                                        height: 30
-                                        width: 30
-                                        iconColor: ApplicationTheme.filterIconButtonColor
-                                        hoverColor: ApplicationTheme.filterIconButtonHoverColor
+                                    FilterPanelIconButton {
                                         iconPath: "../Assets/Icons/favorite.svg"
-                                        iconWidth: 24
-                                        iconHeight: 24
-                                        ToolTip.delay: 1000
-                                        ToolTip.visible: hovered
-                                        ToolTip.text: "Открыть меню для операций по добавлению/удалению всей группы в избранное"
+                                        tooltipMessage: "Открыть меню для операций по добавлению/удалению всей группы в избранное"
                                         onButtonPressed: {
                                             favoriteSeriesMenu.open();
                                         }
@@ -316,17 +303,9 @@ Page {
                                             }
                                         }
                                     }
-                                    IconButton {
-                                        height: 30
-                                        width: 30
-                                        iconColor: ApplicationTheme.filterIconButtonColor
-                                        hoverColor: ApplicationTheme.filterIconButtonHoverColor
+                                    FilterPanelIconButton {
                                         iconPath: "../Assets/Icons/popcorn.svg"
-                                        iconWidth: 24
-                                        iconHeight: 24
-                                        ToolTip.delay: 1000
-                                        ToolTip.visible: hovered
-                                        ToolTip.text: "Открыть меню для операций по добавлению/удалению всей группы в кинозал"
+                                        tooltipMessage: "Открыть меню для операций по добавлению/удалению всей группы в кинозал"
                                         onButtonPressed: {
                                             cinemahallSeriesMenu.open();
                                         }

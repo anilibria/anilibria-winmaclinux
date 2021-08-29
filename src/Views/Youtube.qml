@@ -71,11 +71,9 @@ Page {
             width: 40
             Layout.fillHeight: true
             Column {
-                IconButton {
-                    height: 45
-                    width: 40
-                    iconColor: "white"
+                LeftPanelIconButton {
                     iconPath: "../Assets/Icons/menu.svg"
+                    tooltipMessage: "Открыть меню приложения"
                     iconWidth: 29
                     iconHeight: 29
                     onButtonPressed: {
