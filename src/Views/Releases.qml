@@ -184,43 +184,33 @@ Page {
                 visible: !compactModeSwitch.checked || page.showSidePanel
                 width: compactModeSwitch.checked && !page.showSidePanel ? 0 : 40
 
-                IconButton {
-                    height: 45
-                    width: 40
-                    iconColor: "white"
+                LeftPanelIconButton {
                     iconPath: "../Assets/Icons/menu.svg"
                     iconWidth: 29
                     iconHeight: 29
+                    tooltipMessage: "Открыть меню приложения"
                     onButtonPressed: {
                         drawer.open();
                     }
                 }
-                IconButton {
-                    id: refreshMenuButton
-                    height: 45
-                    width: 40
-                    iconColor: "white"
+
+                LeftPanelIconButton {
                     iconPath: "../Assets/Icons/refresh.svg"
                     iconWidth: 34
                     iconHeight: 34
+                    tooltipMessage: "Выполнить синхронизацию релизов"
                     onButtonPressed: {
                         if (page.synchronizeEnabled) return;
 
                         page.requestSynchronizeReleases();
                     }
-
-                    ToolTip.delay: 1000
-                    ToolTip.visible: refreshMenuButton.hovered
-                    ToolTip.text: "Выполнить синхронизацию релизов"
                 }
-                IconButton {
-                    id: favoriteMenuButton
-                    height: 45
-                    width: 40
-                    iconColor: "white"
+
+                LeftPanelIconButton {
                     iconPath: "../Assets/Icons/favorite.svg"
                     iconWidth: 29
                     iconHeight: 29
+                    tooltipMessage: "Добавить или удалить релизы из избранного"
                     onButtonPressed: {
                         if (!page.selectedReleases.length) {
                             favoritePopupHeader.text = "Избранное не доступно";
@@ -241,7 +231,7 @@ Page {
 
                     CommonMenu {
                         id: favoriteMenu
-                        y: favoriteMenuButton.height
+                        y: parent.height
                         width: 350
 
                         CommonMenuItem {
@@ -295,26 +285,19 @@ Page {
                             }
                         }
                     }
-
-                    ToolTip.delay: 1000
-                    ToolTip.visible: favoriteMenuButton.hovered
-                    ToolTip.text: "Добавить или удалить релизы из избранного"
                 }
-                IconButton {
-                    id: seenMarkMenuPanelButton
-                    height: 45
-                    width: 42
-                    iconColor: "white"
+                LeftPanelIconButton {
                     iconPath: "../Assets/Icons/seenmarkpanel.svg"
                     iconWidth: 29
                     iconHeight: 29
+                    tooltipMessage: "Отметить релизы как просмотренные или не просмотренные"
                     onButtonPressed: {
                         seenMarkMenuPanel.open();
                     }
 
                     CommonMenu {
                         id: seenMarkMenuPanel
-                        y: seenMarkMenuPanelButton.height
+                        y: parent.height
                         width: 350
 
                         CommonMenuItem {
@@ -444,21 +427,12 @@ Page {
                             }
                         }
                     }
-
-                    ToolTip.delay: 1000
-                    ToolTip.visible: seenMarkMenuPanelButton.hovered
-                    ToolTip.text: "Отметить релизы как просмотренные или не просмотренные"
                 }
-                IconButton {
-                    id: cinemahallMenuButton
-                    height: 45
-                    width: 40
-                    iconColor: "white"
+                LeftPanelIconButton {
                     iconPath: "../Assets/Icons/popcorn.svg"
-                    iconWidth: 30
-                    iconHeight: 30
                     showCrossIcon: page.showButtonVisibleChanger && page.hideCinemahallButton
                     visible: page.showButtonVisibleChanger || !page.hideCinemahallButton
+                    tooltipMessage: "Управление кинозалом"
                     onButtonPressed: {
                         if (page.showButtonVisibleChanger) {
                             page.hideCinemahallButton = !page.hideCinemahallButton;
@@ -470,7 +444,7 @@ Page {
 
                     CommonMenu {
                         id: cinemahallMenuPanel
-                        y: cinemahallMenuButton.height
+                        y: parent.height
                         width: 300
 
                         CommonMenuItem {
@@ -532,19 +506,10 @@ Page {
                             }
                         }
                     }
-
-                    ToolTip.delay: 1000
-                    ToolTip.visible: hovered
-                    ToolTip.text: "Управление кинозалом"
                 }
-                IconButton {
-                    id: downloadsMenuButton
-                    height: 45
-                    width: 40
-                    iconColor: "white"
+                LeftPanelIconButton {
                     iconPath: "../Assets/Icons/downloadcircle.svg"
-                    iconWidth: 30
-                    iconHeight: 30
+                    tooltipMessage: "Скачивание файлов серий в разных качествах локально"
                     showCrossIcon: page.showButtonVisibleChanger && page.hideDownloadButton
                     visible: page.showButtonVisibleChanger || !page.hideDownloadButton
                     onButtonPressed: {
@@ -558,7 +523,7 @@ Page {
 
                     CommonMenu {
                         id: downloadsMenuPanel
-                        y: downloadsMenuButton.height
+                        y: parent.height
                         width: 300
 
                         CommonMenuItem {
@@ -592,21 +557,14 @@ Page {
                             }
                         }
                     }
-
-                    ToolTip.delay: 1000
-                    ToolTip.visible: hovered
-                    ToolTip.text: "Скачивание файлов серий в разных качествах локально"
                 }
-                IconButton {
-                    id: searchPopupButton
-                    height: 45
-                    width: 40
-                    iconColor: "white"
+                LeftPanelIconButton {
                     iconPath: "../Assets/Icons/search.svg"
                     iconWidth: 29
                     iconHeight: 29
                     showCrossIcon: page.showButtonVisibleChanger && page.hideFilterButton
                     visible: page.showButtonVisibleChanger || !page.hideFilterButton
+                    tooltipMessage: "Добавить фильтры по дополнительным полям релиза таким как жанры озвучка и т.п."
                     onButtonPressed: {
                         if (page.showButtonVisibleChanger) {
                             page.hideFilterButton = !page.hideFilterButton;
@@ -634,7 +592,7 @@ Page {
                     Popup {
                         id: filtersPopup
                         x: 40
-                        y: searchPopupButton.height - 45
+                        y: -200
                         width: 450
                         height: 440
                         modal: true
@@ -841,19 +799,12 @@ Page {
                             }
                         }
                     }
-
-                    ToolTip.delay: 1000
-                    ToolTip.visible: searchPopupButton.hovered
-                    ToolTip.text: "Добавить фильтры по дополнительным полям релиза таким как жанры озвучка и т.п."
                 }
-                IconButton {
-                    id: sortingPopupButton
-                    height: 45
-                    width: 40
-                    iconColor: "white"
+                LeftPanelIconButton {
                     iconPath: "../Assets/Icons/sort.svg"
                     iconWidth: 29
                     iconHeight: 29
+                    tooltipMessage: "Указать сортировку списка по одному из полей а также направление сортировки"
                     showCrossIcon: page.showButtonVisibleChanger && page.hideSortButton
                     visible: page.showButtonVisibleChanger || !page.hideSortButton
                     onButtonPressed: {
@@ -868,7 +819,7 @@ Page {
                     Popup {
                         id: sortingPopup
                         x: 40
-                        y: sortingPopupButton.height - 100
+                        y: parent.height - 100
                         width: 450
                         height: 200
                         modal: true
@@ -956,20 +907,13 @@ Page {
                             }
                         }
                     }
-
-                    ToolTip.delay: 1000
-                    ToolTip.visible: sortingPopupButton.hovered
-                    ToolTip.text: "Указать сортировку списка по одному из полей а также направление сортировки"
                 }
-                IconButton {
-                    id: notificationPopupButton
-                    height: 45
-                    width: 40
-                    iconColor: "white"
+                LeftPanelIconButton {
                     iconPath: "../Assets/Icons/notification.svg"
                     iconWidth: 29
                     iconHeight: 29
                     showCrossIcon: page.showButtonVisibleChanger && page.hideNotificationButton
+                    tooltipMessage: "Посмотреть уведомления о непросмотренных изменениях в релизах"
                     visible: page.showButtonVisibleChanger || !page.hideNotificationButton
                     onButtonPressed: {
                         if (page.showButtonVisibleChanger) {
@@ -996,7 +940,7 @@ Page {
                     Popup {
                         id: notificationPopup
                         x: 40
-                        y: sortingPopupButton.height - 100
+                        y: parent.height - 100
                         width: 370
                         height: 250
                         modal: true
@@ -1112,21 +1056,14 @@ Page {
                             }
                         }
                     }
-
-                    ToolTip.delay: 1000
-                    ToolTip.visible: notificationPopupButton.hovered
-                    ToolTip.text: "Посмотреть уведомления о непросмотренных изменениях в релизах"
                 }
-                IconButton {
-                    id: randomReleaseMenuButton
-                    height: 45
-                    width: 40
-                    iconColor: "white"
+                LeftPanelIconButton {
                     iconPath: "../Assets/Icons/dice.svg"
                     iconWidth: 29
                     iconHeight: 29
                     showCrossIcon: page.showButtonVisibleChanger && page.hideRandomReleaseButton
                     visible: page.showButtonVisibleChanger || !page.hideRandomReleaseButton
+                    tooltipMessage: "Открыть карточку релиза выбранного случайным образом"
                     onButtonPressed: {
                         if (page.showButtonVisibleChanger) {
                             page.hideRandomReleaseButton = !page.hideRandomReleaseButton;
@@ -1136,19 +1073,12 @@ Page {
                             showReleaseCard(randomRelease);
                         }
                     }
-
-                    ToolTip.delay: 1000
-                    ToolTip.visible: randomReleaseMenuButton.hovered
-                    ToolTip.text: "Открыть карточку релиза выбранного случайным образом"
                 }
-                IconButton {
-                    id: settingsMenuButton
-                    height: 45
-                    width: 40
-                    iconColor: "white"
+                LeftPanelIconButton {
                     iconPath: "../Assets/Icons/options.svg"
                     iconWidth: 29
                     iconHeight: 29
+                    tooltipMessage: "Настройки страницы Каталог релизов"
                     onButtonPressed: {
                         releaseSettingsPopup.open();
                     }
@@ -1292,21 +1222,14 @@ Page {
                             ToolTip.text: "Если настройка включена будет использоваться кастомный тулбар окна с дополнительным функционалом"
                         }
                     }
-
-                    ToolTip.delay: 1000
-                    ToolTip.visible: settingsMenuButton.hovered
-                    ToolTip.text: "Настройки страницы Каталог релизов"
                 }
 
-                IconButton {
-                    id: informationMenuButton
-                    height: 45
-                    width: 40
-                    iconColor: "white"
+                LeftPanelIconButton {
                     iconPath: "../Assets/Icons/information.svg"
                     iconWidth: 29
                     iconHeight: 29
                     showCrossIcon: page.showButtonVisibleChanger && page.hideInfoButton
+                    tooltipMessage: "Просмотреть полезные ссылки связанные с приложением"
                     visible: page.showButtonVisibleChanger || !page.hideInfoButton
                     onButtonPressed: {
                         if (page.showButtonVisibleChanger) {
@@ -1320,7 +1243,7 @@ Page {
                     Popup {
                         id: informationPopup
                         x: 40
-                        y: sortingPopupButton.height - 100
+                        y: parent.height - 100
                         width: 320
                         height: 96
                         modal: true
@@ -1347,15 +1270,8 @@ Page {
 
                         }
                     }
-
-                    ToolTip.delay: 1000
-                    ToolTip.visible: informationMenuButton.hovered
-                    ToolTip.text: "Просмотреть полезные ссылки связанные с приложением"
                 }
-                IconButton {
-                    height: 45
-                    width: 40
-                    iconColor: "white"
+                LeftPanelIconButton {
                     iconPath: "../Assets/Icons/hidebuttonmenu.svg"
                     iconWidth: 29
                     iconHeight: 29
@@ -1458,48 +1374,23 @@ Page {
                             refreshAllReleases(false);
                         }
                     }
-                    IconButton {
-                        height: 30
-                        width: 30
-                        iconColor: ApplicationTheme.filterIconButtonColor
-                        hoverColor: ApplicationTheme.filterIconButtonHoverColor
+                    FilterPanelIconButton {
                         iconPath: "../Assets/Icons/allreleases.svg"
-                        iconWidth: 24
-                        iconHeight: 24
-                        ToolTip.delay: 1000
-                        ToolTip.visible: hovered
-                        ToolTip.text: "Все релизы"
+                        tooltipMessage: "Все релизы"
                         onButtonPressed: {
                             changeSection(0);
                         }
                     }
-                    IconButton {
-                        height: 30
-                        width: 30
-                        iconColor: ApplicationTheme.filterIconButtonColor
-                        hoverColor: ApplicationTheme.filterIconButtonHoverColor
+                    FilterPanelIconButton {
                         iconPath: "../Assets/Icons/favorite.svg"
-                        iconWidth: 24
-                        iconHeight: 24
-                        ToolTip.delay: 1000
-                        ToolTip.visible: hovered
-                        ToolTip.text: "Избранное"
+                        tooltipMessage: "Избранное"
                         onButtonPressed: {
                             changeSection(1);
                         }
                     }
-                    IconButton {
-                        id: notificationMenuButton
-                        height: 30
-                        width: 30
-                        iconColor: ApplicationTheme.filterIconButtonColor
-                        hoverColor: ApplicationTheme.filterIconButtonHoverColor
+                    FilterPanelIconButton {
                         iconPath: "../Assets/Icons/notification.svg"
-                        iconWidth: 24
-                        iconHeight: 24
-                        ToolTip.delay: 1000
-                        ToolTip.visible: hovered
-                        ToolTip.text: "Показать меню с фильтрами по уведомлениям"
+                        tooltipMessage: "Показать меню с фильтрами по уведомлениям"
                         onButtonPressed: {
                             notificationsMenuSections.open();
                         }
@@ -1507,7 +1398,7 @@ Page {
                         CommonMenu {
                             id: notificationsMenuSections
                             width: 350
-                            y: notificationMenuButton.height
+                            y: parent.height
 
                             CommonMenuItem {
                                 text: page.sections[2]
@@ -1535,34 +1426,18 @@ Page {
                             }
                         }
                     }
-                    IconButton {
-                        height: 30
-                        width: 30
-                        iconColor: ApplicationTheme.filterIconButtonColor
-                        hoverColor: ApplicationTheme.filterIconButtonHoverColor
+                    FilterPanelIconButton {
                         iconPath: "../Assets/Icons/calendar.svg"
                         iconWidth: 26
                         iconHeight: 26
-                        ToolTip.delay: 1000
-                        ToolTip.visible: hovered
-                        ToolTip.text: "Расписание релизов"
+                        tooltipMessage: "Расписание релизов"
                         onButtonPressed: {
                             changeSection(5);
                         }
                     }
-
-                    IconButton {
-                        id: historyMenuButton
-                        height: 30
-                        width: 30
-                        iconColor: ApplicationTheme.filterIconButtonColor
-                        hoverColor: ApplicationTheme.filterIconButtonHoverColor
+                    FilterPanelIconButton {
                         iconPath: "../Assets/Icons/history.svg"
-                        iconWidth: 24
-                        iconHeight: 24
-                        ToolTip.delay: 1000
-                        ToolTip.visible: hovered
-                        ToolTip.text: "Показать меню с фильтрами по истории и истории просмотра"
+                        tooltipMessage: "Показать меню с фильтрами по истории и истории просмотра"
                         onButtonPressed: {
                             historyMenuSections.open();
                         }
@@ -1570,7 +1445,7 @@ Page {
                         CommonMenu {
                             id: historyMenuSections
                             width: 300
-                            y: historyMenuButton.height
+                            y: parent.height
 
                             CommonMenuItem {
                                 text: page.sections[7]
@@ -1586,18 +1461,10 @@ Page {
                             }
                         }
                     }
-                    IconButton {
+                    FilterPanelIconButton {
                         id: seenMenuButton
-                        height: 30
-                        width: 30
-                        iconColor: ApplicationTheme.filterIconButtonColor
-                        hoverColor: ApplicationTheme.filterIconButtonHoverColor
                         iconPath: "../Assets/Icons/seenmarkpanel.svg"
-                        iconWidth: 24
-                        iconHeight: 24
-                        ToolTip.delay: 1000
-                        ToolTip.visible: hovered
-                        ToolTip.text: "Показать меню с фильтрами по состоянию просмотра"
+                        tooltipMessage: "Показать меню с фильтрами по состоянию просмотра"
                         onButtonPressed: {
                             seenMenuSections.open();
                         }
@@ -1605,7 +1472,7 @@ Page {
                         CommonMenu {
                             id: seenMenuSections
                             width: 300
-                            y: seenMenuButton.height
+                            y: parent.height
 
                             CommonMenuItem {
                                 text: page.sections[9]
@@ -1633,17 +1500,9 @@ Page {
                             }
                         }
                     }
-                    IconButton {
-                        height: 30
-                        width: 30
-                        iconColor: ApplicationTheme.filterIconButtonColor
-                        hoverColor: ApplicationTheme.filterIconButtonHoverColor
+                    FilterPanelIconButton {
                         iconPath: "../Assets/Icons/alphabet.svg"
-                        iconWidth: 24
-                        iconHeight: 24
-                        ToolTip.delay: 1000
-                        ToolTip.visible: hovered
-                        ToolTip.text: "Показать фильтр для выбора букв алфавита для поиска по первой букве релиза"
+                        tooltipMessage: "Показать фильтр для выбора букв алфавита для поиска по первой букве релиза"
                         onButtonPressed: {
                             page.showAlpabeticalCharaters = true;
                         }

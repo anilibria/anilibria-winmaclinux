@@ -105,5 +105,7 @@
         <file>Assets/Icons/lefthalf.svg</file>
         <file>Assets/Icons/righthalf.svg</file>
         <file>Assets/Icons/help.svg</file>
+        <file>Views/LeftPanelIconButton.qml</file>
+        <file>Views/FilterPanelIconButton.qml</file>
     </qresource>
 </RCC>
