@@ -93,6 +93,7 @@ SOURCES += \
     Classes/Services/synchronizationservice.cpp \
     Classes/Services/versionchecker.cpp \
     Classes/ViewModels/onlineplayerviewmodel.cpp \
+    Classes/ViewModels/youtubeviewmodel.cpp \
     Classes/globalconstant.cpp \
     Classes/ListModels/alphabetlistmodel.cpp \
     main.cpp
@@ -150,4 +151,5 @@ HEADERS += \
     Classes/Services/versionchecker.h \
     Classes/ListModels/alphabetlistmodel.h \
     Classes/ViewModels/onlineplayerviewmodel.h \
+    Classes/ViewModels/youtubeviewmodel.h \
     globalconstants.h

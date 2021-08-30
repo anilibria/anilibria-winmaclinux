@@ -76,7 +76,6 @@ private:
     QString getScheduleCachePath() const;
     QString getSeenMarksCachePath() const;
     QString getHistoryCachePath() const;
-    QString getYoutubeCachePath() const;
     QString getUserSettingsCachePath() const;
     QString getNotificationCachePath() const;
     QString getCinemahallCachePath() const;
@@ -120,7 +119,6 @@ public:
     void setCountCinemahall(int countCinemahall) noexcept;
 
     Q_INVOKABLE void updateAllReleases(const QString& releases);
-    Q_INVOKABLE void updateYoutubeItems(const QString& youtubeItems);
     Q_INVOKABLE QString getRelease(int id);
     Q_INVOKABLE QString getReleaseByCode(const QString& code);
     Q_INVOKABLE QString getRandomRelease();
@@ -158,7 +156,6 @@ public:
     Q_INVOKABLE void setShowReleaseDescription(bool showReleaseDescription);
 
     Q_INVOKABLE QString getUserSettings();
-    Q_INVOKABLE QString getYoutubeItems();
     Q_INVOKABLE void copyTorrentToFile(QString source, QString target);
     Q_INVOKABLE QString getReleasePosterPath(int id, QString url);   
     Q_INVOKABLE QString packAsM3UAndOpen(int id, QString quality);

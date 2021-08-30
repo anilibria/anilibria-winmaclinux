@@ -101,7 +101,6 @@ LocalStorageService::LocalStorageService(QObject *parent) : QObject(parent),
     createIfNotExistsFile(getHistoryCachePath(), "[]");
     createIfNotExistsFile(getUserSettingsCachePath(), "{}");
     createIfNotExistsFile(getNotificationCachePath(), "{ \"newReleases\": [], \"newOnlineSeries\": [], \"newTorrents\": [], \"newTorrentSeries\": [] }");
-    createIfNotExistsFile(getYoutubeCachePath(), "[]");
     createIfNotExistsFile(getCinemahallCachePath(), "[]");
     createIfNotExistsFile(getDownloadsCachePath(), "[]");
     createIfNotExistsFile(getHidedReleasesCachePath(), "[]");
@@ -227,18 +226,6 @@ void LocalStorageService::updateAllReleases(const QString &releases)
         }
     );
     m_AllReleaseUpdatedWatcher->setFuture(future);
-}
-
-void LocalStorageService::updateYoutubeItems(const QString &youtubeItems)
-{
-    QFile youtubeFile(getYoutubeCachePath());
-    if (!youtubeFile.open(QFile::WriteOnly | QFile::Text)) {
-        //TODO: handle this situation
-    }
-
-    youtubeFile.write(youtubeItems.toUtf8());
-
-    youtubeFile.close();
 }
 
 QString LocalStorageService::videosToJson(QList<OnlineVideoModel> &videos)
@@ -444,15 +431,6 @@ QString LocalStorageService::getHistoryCachePath() const
         return QDir::currentPath() + "/history.cache";
     } else {
         return QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation) + "/history.cache";
-    }
-}
-
-QString LocalStorageService::getYoutubeCachePath() const
-{
-    if (IsPortable) {
-        return QDir::currentPath() + "/youtube.cache";
-    } else {
-        return QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation) + "/youtube.cache";
     }
 }
 
@@ -1552,19 +1530,6 @@ void LocalStorageService::setShowReleaseDescription(bool showReleaseDescription)
 QString LocalStorageService::getUserSettings()
 {
     return m_UserSettingsModel->toJson();
-}
-
-QString LocalStorageService::getYoutubeItems()
-{
-    QFile youtubeFile(getYoutubeCachePath());
-    if (!youtubeFile.open(QFile::ReadOnly | QFile::Text)) {
-        //TODO: handle this situation
-    }
-
-    auto data = youtubeFile.readAll();
-    youtubeFile.close();
-
-    return data;
 }
 
 void LocalStorageService::copyTorrentToFile(QString source, QString target)

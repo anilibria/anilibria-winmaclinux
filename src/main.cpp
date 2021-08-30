@@ -35,6 +35,7 @@
 #include "globalconstants.h"
 #include "Classes/Services/releaselinkedseries.h"
 #include "Classes/ViewModels/onlineplayerviewmodel.h"
+#include "Classes/ViewModels/youtubeviewmodel.h"
 
 int main(int argc, char *argv[])
 {
@@ -72,6 +73,7 @@ int main(int argc, char *argv[])
     qmlRegisterType<ReleaseLinkedSeries>("Anilibria.Services", 1, 0, "ReleaseLinkedSeries");
     qmlRegisterType<AlphabetListModel>("Anilibria.ListModels", 1, 0, "AlphabetListModel");
     qmlRegisterType<OnlinePlayerViewModel>("Anilibria.ViewModels", 1, 0, "OnlinePlayerViewModel");
+    qmlRegisterType<YoutubeViewModel>("Anilibria.ViewModels", 1, 0, "YoutubeViewModel");
 
     QCoreApplication::setOrganizationDomain("anilibria.tv");
     QCoreApplication::setOrganizationName("EmptyFlow");

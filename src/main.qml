@@ -788,8 +788,6 @@ ApplicationWindow {
             localStorage.setSchedule(JSON.stringify(scheduleResult));
 
             releases.refreshReleaseSchedules();
-
-            synchronizationService.synchronizeYoutube();
         }
 
         onUserCompleteAuthentificated: {
@@ -871,12 +869,6 @@ ApplicationWindow {
                 window.tempTorrentPath = torrentPath;
                 saveTorrentFileDialog.open();
             }
-        }
-
-        onSynchronizedYoutube: {
-            const json = JSON.parse(data);
-
-            localStorage.updateYoutubeItems(JSON.stringify(json.data.items));
         }
     }
 
@@ -1239,6 +1231,13 @@ ApplicationWindow {
         }
         onStopInPlayer: {
             videoplayer.stopInPlayer();
+        }
+    }
+
+    YoutubeViewModel {
+        id: youtubeViewModel
+        Component.onCompleted: {
+            youtubeViewModel.synchronize();
         }
     }
 

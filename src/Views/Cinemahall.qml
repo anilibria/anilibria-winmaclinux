@@ -196,12 +196,15 @@ Page {
                             drag.onActiveChanged: {
                                 if (itemMouseArea.drag.active) {
                                     root.dragRelease = id;
+                                    root.dropRelease = -1;
                                     itemContainer.parent = listViewReleases;
                                     itemContainer.opacity = .7;
                                     itemContainer.showTextHeader = false;
                                 } else {
                                     if (root.dragRelease > -1 && root.dropRelease > -1) {
                                         localStorage.reorderReleaseInCinemahall(root.dragRelease, root.dropRelease);
+                                        root.dragRelease = -1;
+                                        root.dropRelease = -1;
                                     }
                                     refreshReleases();
                                 }
@@ -283,9 +286,6 @@ Page {
                         anchors.fill: parent
                         onEntered: {
                             root.dropRelease = id;
-                        }
-                        onExited: {
-                            root.dropRelease = -1;
                         }
                     }
                 }
