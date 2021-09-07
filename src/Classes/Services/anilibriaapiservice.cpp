@@ -282,7 +282,7 @@ void AnilibriaApiService::signinResponse(QNetworkReply *reply)
     QList<QByteArray> headerList = reply->rawHeaderList();
     QString cookie;
     foreach(QByteArray head, headerList) {
-        if (head == "Set-Cookie") {
+        if (head.toLower() == "set-cookie") {
             cookie = reply->rawHeader(head);
             break;
         }
