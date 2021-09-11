@@ -1123,7 +1123,12 @@ QString LocalStorageService::getReleasesByFilter(int page, QString title, int se
 
     foreach (auto releaseItem, *m_CachedReleases) {
         if (m_HidedReleases->contains(releaseItem->id()) && section != HiddenReleasesSection) continue;
-        if (!title.isEmpty() && !releaseItem->title().toLower().contains(title.toLower())) continue;
+        if (!title.isEmpty()) {
+            auto filteredTitle = title.toLower().replace("ё", "е").trimmed();
+            auto inTitle = releaseItem->title().toLower().replace("ё", "е").contains(filteredTitle);
+            auto inOriginalTitle = releaseItem->originalName().toLower().replace("ё", "е").contains(filteredTitle);
+            if (!(inTitle || inOriginalTitle)) continue;
+        }
         if (!description.isEmpty() && !releaseItem->description().toLower().contains(description.toLower())) continue;
         if (!type.isEmpty() && !releaseItem->type().toLower().contains(type.toLower())) continue;
 
