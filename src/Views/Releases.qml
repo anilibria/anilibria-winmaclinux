@@ -1276,6 +1276,7 @@ Page {
                     iconWidth: 29
                     iconHeight: 29
                     backgroundColor: page.showButtonVisibleChanger ? "#8868b0ab" : "transparent"
+                    tooltipMessage: "Переключение между режимом добавления/удаления кнопок и обычным меню"
                     onButtonPressed: {
                         page.showButtonVisibleChanger = !page.showButtonVisibleChanger;
                     }
