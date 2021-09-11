@@ -30,22 +30,11 @@ Page {
         color: ApplicationTheme.pageBackground
     }
 
-    property alias email: emailTextBox.text
-    property alias password: passwordTextBox.text
-    property alias fa2code: fa2codeTextBox.text
-
     signal navigateFrom()
     signal navigateTo()
-    signal authentificateFailed(string message)
 
-    onNavigateFrom: {
-        emailTextBox.text = "";
-        passwordTextBox.text = "";
-        fa2codeTextBox.text = "";
-    }
-
-    onAuthentificateFailed: {
-        errorMessage.text = message;
+    onNavigateTo: {
+        authorizationViewModel.resetModel();
     }
 
     RowLayout {
@@ -92,24 +81,35 @@ Page {
                         id: emailTextBox
                         Layout.fillWidth: true
                         placeholderText: "Логин"
+                        text: authorizationViewModel.login
+                        onTextChanged: {
+                            authorizationViewModel.login = text;
+                        }
                     }
                     TextField {
                         id: passwordTextBox
                         Layout.fillWidth: true
                         echoMode: "PasswordEchoOnEdit"
                         placeholderText: "Пароль"
+                        text: authorizationViewModel.password
+                        onTextChanged: {
+                            authorizationViewModel.password = text;
+                        }
                     }
                     TextField {
                         id: fa2codeTextBox
                         Layout.fillWidth: true
                         placeholderText: "2fa код (оставить пустым если не настроено)"
+                        text: authorizationViewModel.twoFactorCode
+                        onTextChanged: {
+                            authorizationViewModel.twoFactorCode = text;
+                        }
                     }
                     Item {
                         Layout.fillWidth: true
                         height: 40
                         AccentText {
-                            id: errorMessage
-                            text: ""
+                            text: authorizationViewModel.errorMessage
                             fontPointSize: 10
                             anchors.left: parent.left
                             anchors.leftMargin: 10                            
@@ -120,20 +120,9 @@ Page {
                         RoundedActionButton {
                             anchors.right: parent.right
                             anchors.rightMargin: 10
-                            text: qsTr("Войти")
+                            text: "Войти"
                             onClicked: {
-                                errorMessage.text = "";
-
-                                if (emailTextBox.text === "") {
-                                    errorMessage.text = "Поле Логин обязательное";
-                                    return;
-                                }
-                                if (passwordTextBox.text === "") {
-                                    errorMessage.text = "Поле Пароль обязательное";
-                                    return;
-                                }
-
-                                synchronizationService.authorize(encodeURIComponent(authorizePage.email), encodeURIComponent(authorizePage.password), encodeURIComponent(authorizePage.fa2code));
+                                authorizationViewModel.signin();
                             }
                         }
 
@@ -146,7 +135,7 @@ Page {
                 anchors.top: fieldsContainer.bottom
                 anchors.right: fieldsContainer.right
                 fontPointSize: 10
-                text: "<a href='https://www.anilibria.tv/pages/login.php'>Регистрация</a>"
+                text: authorizationViewModel.registerLink
             }
         }
     }

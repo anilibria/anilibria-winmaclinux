@@ -31,7 +31,6 @@ SynchronizationService::SynchronizationService(QObject *parent) : QObject(parent
 
     connect(m_AnilibriaApiService,&AnilibriaApiService::allReleasesReceived,this,&SynchronizationService::saveReleasesToCache);
     connect(m_AnilibriaApiService,&AnilibriaApiService::scheduleReceived,this,&SynchronizationService::saveScheduleToCache);
-    connect(m_AnilibriaApiService,&AnilibriaApiService::signinReceived,this,&SynchronizationService::handleSignin);
     connect(m_AnilibriaApiService,&AnilibriaApiService::signoutReceived,this,&SynchronizationService::handleSignout);
     connect(m_AnilibriaApiService,&AnilibriaApiService::userDataReceived,this,&SynchronizationService::handleUserData);
     connect(m_AnilibriaApiService,&AnilibriaApiService::userFavoritesReceived,this,&SynchronizationService::handleUserFavorites);
@@ -132,22 +131,6 @@ void SynchronizationService::saveScheduleToCache(QString data)
 void SynchronizationService::saveYoutubeToCache(QString data)
 {
     emit synchronizedYoutube(data);
-}
-
-void SynchronizationService::handleSignin(QString token, QString data)
-{
-    QJsonParseError jsonError;
-    QJsonDocument jsonDocument = QJsonDocument::fromJson(data.toUtf8(), &jsonError);
-    auto object = jsonDocument.object();
-    auto errorReply = object.value("err").toString();
-    auto errorMessage = object.value("mes").toString();
-
-    if (errorReply == "ok") {
-        emit userCompleteAuthentificated(token);
-        return;
-    } else {
-        emit userFailedAuthentificated(errorMessage);
-    }
 }
 
 void SynchronizationService::handleSignout()

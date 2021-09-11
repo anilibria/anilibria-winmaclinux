@@ -92,6 +92,7 @@ SOURCES += \
     Classes/Services/releaselinkedseries.cpp \
     Classes/Services/synchronizationservice.cpp \
     Classes/Services/versionchecker.cpp \
+    Classes/ViewModels/authorizationviewmodel.cpp \
     Classes/ViewModels/onlineplayerviewmodel.cpp \
     Classes/ViewModels/youtubeviewmodel.cpp \
     Classes/globalconstant.cpp \
@@ -150,6 +151,7 @@ HEADERS += \
     Classes/Services/synchronizationservice.h \
     Classes/Services/versionchecker.h \
     Classes/ListModels/alphabetlistmodel.h \
+    Classes/ViewModels/authorizationviewmodel.h \
     Classes/ViewModels/onlineplayerviewmodel.h \
     Classes/ViewModels/youtubeviewmodel.h \
     globalconstants.h

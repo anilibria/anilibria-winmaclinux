@@ -790,28 +790,6 @@ ApplicationWindow {
             releases.refreshReleaseSchedules();
         }
 
-        onUserCompleteAuthentificated: {
-            applicationSettings.userToken = token;
-            if (window.currentPageId === "authorization") {
-                showPage("release");
-                synchronizationService.getUserData(applicationSettings.userToken);
-
-                applicationNotification.sendNotification(
-                    {
-                        type: "info",
-                        message: "Вы успешно вошли в аккаунт. Ваше избранное будет синхронизовано автоматически."
-                    }
-                );
-            }
-        }
-
-        onUserFailedAuthentificated: {
-            applicationSettings.userToken = "";
-            if (!(window.currentPageId === "authorization")) return;
-
-            authorization.authentificateFailed(errorMessage);
-        }
-
         onUserDataReceived: {
             try {
                 const userData = JSON.parse(data);
@@ -1238,6 +1216,22 @@ ApplicationWindow {
         id: youtubeViewModel
         Component.onCompleted: {
             youtubeViewModel.synchronize();
+        }
+    }
+
+    AuthorizationViewModel {
+        id: authorizationViewModel
+        onSuccessAuthentificated: {
+            applicationSettings.userToken = token;
+            if (window.currentPageId === "authorization") showPage("release");
+
+            synchronizationService.getUserData(applicationSettings.userToken);
+            applicationNotification.sendNotification(
+                {
+                    type: "info",
+                    message: "Вы успешно вошли в аккаунт. Ваше избранное будет синхронизовано автоматически."
+                }
+            );
         }
     }
 
