@@ -39,6 +39,7 @@ ApplicationWindow {
 
     signal showWindow()
     signal hideWindow(bool paused)
+    signal closeWindow()
 
     Loader {
         id: videoOutputLoader
@@ -58,8 +59,8 @@ ApplicationWindow {
         hoverEnabled: true
         cursorShape: onlinePlayerWindowViewModel.windowCursorShape
         onDoubleClicked: {
+            window.showPage("videoplayer");
             hideWindow(false);
-            showPage(`release`);
         }
         onPositionChanged: {
             if (!(root.videoSource.playbackState === MediaPlayer.PlayingState)) {
@@ -216,7 +217,24 @@ ApplicationWindow {
         Behavior on opacity {
             NumberAnimation { duration: 200 }
         }
-    }    
+    }
+
+    Rectangle {
+        width: 80
+        height: 80
+        color: "white"
+        radius: 20
+        opacity: 0.8
+        visible: onlinePlayerViewModel.isBuffering
+        anchors.centerIn: parent
+        AnimatedImage {
+            id: spinner
+            anchors.centerIn: parent
+            paused: !onlinePlayerWindowViewModel.opened
+            playing: onlinePlayerWindowViewModel.opened
+            source: "../Assets/Icons/spinner.gif"
+        }
+    }
 
     Timer {
         id: windowPlayerTimer
@@ -238,12 +256,15 @@ ApplicationWindow {
     }
 
     onShowWindow:  {
+        videoOutputLoader.item.visible = true;
         show();
         onlinePlayerWindowViewModel.opened = true;
         onlinePlayerWindowViewModel.showPanel();
+
     }
 
     onHideWindow: {
+        videoOutputLoader.item.visible = false;
         hide();
         onlinePlayerWindowViewModel.opened = false;
         if (paused) root.videoSource.pause();
@@ -251,6 +272,11 @@ ApplicationWindow {
 
     onClosing: {
         hideWindow(true);
+    }
+
+    onCloseWindow: {
+        root.videoSource.playbackStateChanged.disconnect(playbackStateChanged);
+        root.videoSource.volumeChanged.disconnect(volumeChanged);
     }
 
     Component.onCompleted: {

@@ -55,6 +55,7 @@ ApplicationWindow {
 
     onClosing: {
         analyticsService.sendEvent("Session", "End");
+        onlinePlayerWindow.closeWindow();
         onlinePlayerWindow.hide();
     }
 
