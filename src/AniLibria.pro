@@ -94,6 +94,7 @@ SOURCES += \
     Classes/Services/versionchecker.cpp \
     Classes/ViewModels/authorizationviewmodel.cpp \
     Classes/ViewModels/onlineplayerviewmodel.cpp \
+    Classes/ViewModels/onlineplayerwindowviewmodel.cpp \
     Classes/ViewModels/youtubeviewmodel.cpp \
     Classes/globalconstant.cpp \
     Classes/ListModels/alphabetlistmodel.cpp \
@@ -153,5 +154,6 @@ HEADERS += \
     Classes/ListModels/alphabetlistmodel.h \
     Classes/ViewModels/authorizationviewmodel.h \
     Classes/ViewModels/onlineplayerviewmodel.h \
+    Classes/ViewModels/onlineplayerwindowviewmodel.h \
     Classes/ViewModels/youtubeviewmodel.h \
     globalconstants.h

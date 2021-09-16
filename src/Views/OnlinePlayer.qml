@@ -29,6 +29,7 @@ Page {
     property var seenVideo: ({})
     property var seenMarks: ({})
     property bool isFromNavigated: false
+    property alias videoPlayerSource: player.videoPlayerSource
 
     signal navigateFrom()
     signal setReleaseVideo()
@@ -45,7 +46,7 @@ Page {
 
     onStopInPlayer: {
         player.stop();
-    }
+    }    
 
     Keys.onSpacePressed: {
         if (player.playbackState === MediaPlayer.PlayingState) {
@@ -98,11 +99,17 @@ Page {
 
     onNavigateFrom: {
         windowSettings.unsetStayOnTop();
-        player.pause();
         onlinePlayerViewModel.isFullScreen = false;
+        if (player.playbackState === MediaPlayer.PlayingState) {
+            onlinePlayerWindow.showWindow();
+        } else {
+            // paranoic mode on
+            player.pause();
+        }
     }
 
     onNavigateTo: {
+        if (onlinePlayerWindowViewModel.opened) onlinePlayerWindow.hideWindow(false);
         _page.isFromNavigated = true;
         const userSettings = JSON.parse(localStorage.getUserSettings());
         player.volume = userSettings.volume;
@@ -818,13 +825,10 @@ Page {
                         iconPath: "../Assets/Icons/topmostwindow.svg"
                         iconWidth: 29
                         iconHeight: 29
+                        tooltipMessage: windowSettings.isTopMost ? "Выключить режим поверх всех окон (T)" : "Включить режим поверх всех окон (T)"
                         onButtonPressed: {
                             windowSettings.toggleStayOnTopMode();
                         }
-
-                        ToolTip.delay: 1000
-                        ToolTip.visible: topmostButton.hovered
-                        ToolTip.text: windowSettings.isTopMost ? "Выключить режим поверх всех окон (T)" : "Включить режим поверх всех окон (T)"
                     }
 
                     IconButton {
