@@ -1516,10 +1516,6 @@ ApplicationWindow {
 
     OnlinePlayerWindowViewModel {
         id: onlinePlayerWindowViewModel
-        Component.onCompleted: {
-            console.log("opened", opened);
-            console.log("lastPizda", lastMouseYPosition);
-        }
     }
 
     OnlinePlayerWindow {
