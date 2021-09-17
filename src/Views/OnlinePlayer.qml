@@ -100,10 +100,9 @@ Page {
     onNavigateFrom: {
         windowSettings.unsetStayOnTop();
         onlinePlayerViewModel.isFullScreen = false;
-        if (player.playbackState === MediaPlayer.PlayingState) {
+        if (player.playbackState === MediaPlayer.PlayingState && showVideoPreview.checked) {
             onlinePlayerWindow.showWindow();
         } else {
-            // paranoic mode on
             player.pause();
         }
     }
@@ -123,6 +122,7 @@ Page {
         sendPlaybackToRemoteSwitch.checked = applicationSettings.sendPlaybackToRemote;
         onlinePlayerViewModel.remotePlayer.port = applicationSettings.remotePort;
         remotePlayerPortComboBox.currentIndex = onlinePlayerViewModel.ports.indexOf(applicationSettings.remotePort);
+        showVideoPreview.checked = userSettings.showVideoPreview;
 
         if (autoTopMost.checked && player.playbackState === MediaPlayer.PlayingState) windowSettings.setStayOnTop();
         switch (userSettings.quality) {
@@ -966,9 +966,9 @@ Page {
                         Popup {
                             id: optionsPopup
                             x: optionsButton.width - 300
-                            y: optionsButton.height - 340
+                            y: optionsButton.height - 430
                             width: 300
-                            height: 340
+                            height: 430
 
                             modal: true
                             focus: true
@@ -1076,6 +1076,19 @@ Page {
                                     onCheckedChanged: {
                                         localStorage.setShowReleaseInfo(checked);
                                         if (!checked) releasePosterArea.visible = false;
+                                    }
+                                }
+
+                                PlainText {
+                                    width: optionsPopup.width - 20
+                                    fontPointSize: 10
+                                    text: "Показывать видео превью"
+                                }
+
+                                Switch {
+                                    id: showVideoPreview
+                                    onCheckedChanged: {
+                                        localStorage.setShowVideoPreview(checked);
                                     }
                                 }
                             }

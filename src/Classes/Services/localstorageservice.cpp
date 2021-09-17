@@ -1532,6 +1532,13 @@ void LocalStorageService::setShowReleaseDescription(bool showReleaseDescription)
     saveSettings();
 }
 
+void LocalStorageService::setShowVideoPreview(bool showVideoPreview)
+{
+    m_UserSettingsModel->setShowVideoPreview(showVideoPreview);
+
+    saveSettings();
+}
+
 QString LocalStorageService::getUserSettings()
 {
     return m_UserSettingsModel->toJson();

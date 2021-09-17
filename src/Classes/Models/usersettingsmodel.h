@@ -47,6 +47,7 @@ private:
     bool m_HideFilterButton;
     int m_StartedSection;
     bool m_ShowReleaseDescription;
+    bool m_ShowVideoPreview;
 
 public:
     UserSettingsModel();
@@ -71,6 +72,7 @@ public:
     bool hideFilterButton() const { return m_HideFilterButton; }
     int startedSection() const { return m_StartedSection; }
     bool showReleaseDescription() const { return m_ShowReleaseDescription; }
+    bool showVideoPreview() const { return m_ShowVideoPreview; }
 
     void setQuality(const int quality) noexcept;
     void setVolume(const double volume) noexcept;
@@ -92,6 +94,7 @@ public:
     void setHideFilterButton(const bool hideFilterButton) noexcept;
     void setStartedSection(const int startedSection) noexcept;
     void setShowReleaseDescription(const bool showReleaseDescription) noexcept;
+    void setShowVideoPreview(const bool showVideoPreview) noexcept;
 
     void fromJson(QString json);
     QString toJson() noexcept;
