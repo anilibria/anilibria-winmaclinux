@@ -31,6 +31,7 @@ Item {
     property alias playbackRate: videoPlayer.playbackRate
     property alias fillMode: videoOutput.fillMode
     property alias videoPlayerSource: videoPlayer
+    property alias videoOutputSource: videoOutput
 
     signal play();
     signal pause();

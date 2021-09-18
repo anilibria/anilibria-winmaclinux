@@ -20,7 +20,7 @@ import QtQuick 2.12
 import QtQuick.Window 2.12
 import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.12
-import QtMultimedia 5.12
+import QtMultimedia 5.15
 import "../Controls"
 import "../Theme"
 
@@ -35,7 +35,9 @@ ApplicationWindow {
     maximumWidth: 500
     maximumHeight: 350
 
+    property bool isStandartPlayer: Qt.platform.os !== `windows`
     property var videoSource
+    property var videoOutput
 
     signal showWindow()
     signal hideWindow(bool paused)
@@ -44,9 +46,10 @@ ApplicationWindow {
     Loader {
         id: videoOutputLoader
         anchors.fill: parent
-        source: Qt.platform.os === `windows` ? `QtAvVideoOutput.qml` : `QtVideoOutput.qml`
+        source: isStandartPlayer ? `QtVideoOutput.qml` : `QtAvVideoOutput.qml`
         onLoaded: {
-            videoOutputLoader.item.source = root.videoSource;
+            if (!isStandartPlayer) videoOutputLoader.item.source = root.videoSource;
+            if (isStandartPlayer) videoSource.videoOutput = [root.videoOutput, videoOutputLoader.item];
             root.videoSource.playbackStateChanged.connect(playbackStateChanged);
             root.videoSource.volumeChanged.connect(volumeChanged);
         }
@@ -110,8 +113,6 @@ ApplicationWindow {
                     value: 10
                     to: 100
                     onPressedChanged: {
-                        if (!pressed) localStorage.setVolume(player.volume);
-
                         controlPanel.forceActiveFocus();
                     }
                     onMoved: {
@@ -260,7 +261,6 @@ ApplicationWindow {
         show();
         onlinePlayerWindowViewModel.opened = true;
         onlinePlayerWindowViewModel.showPanel();
-
     }
 
     onHideWindow: {

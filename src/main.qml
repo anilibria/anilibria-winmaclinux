@@ -1523,6 +1523,7 @@ ApplicationWindow {
     OnlinePlayerWindow {
         id: onlinePlayerWindow
         videoSource: videoplayer.videoPlayerSource
+        videoOutput: videoplayer.videoOutputSource
     }
 
 }
