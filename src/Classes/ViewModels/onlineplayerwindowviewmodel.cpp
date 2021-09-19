@@ -24,8 +24,12 @@ OnlinePlayerWindowViewModel::OnlinePlayerWindowViewModel(QObject *parent) : QObj
     m_opened(true),
     m_isTopMost(false),
     m_windowCursorShape(Qt::ArrowCursor),
-    m_panelOpacity(1)
+    m_panelOpacity(1),
+    m_isStandartPlayer(true)
 {
+#ifdef Q_OS_WIN
+    m_isStandartPlayer = false;
+#endif
 }
 
 void OnlinePlayerWindowViewModel::setPlayerButtonVisible(const bool &playerButtonVisible) noexcept
@@ -74,6 +78,14 @@ void OnlinePlayerWindowViewModel::setPanelOpacity(int panelOpacity) noexcept
         m_panelOpacity = panelOpacity;
         emit panelOpacityChanged();
     }
+}
+
+void OnlinePlayerWindowViewModel::setIsStandartPlayer(bool isStandartPlayer) noexcept
+{
+    if (isStandartPlayer == m_isStandartPlayer) return;
+
+    m_isStandartPlayer = isStandartPlayer;
+    emit isStandartPlayerChanged();
 }
 
 void OnlinePlayerWindowViewModel::playbackStateChanged(const bool &isPlaying)

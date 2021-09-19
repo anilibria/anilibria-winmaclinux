@@ -19,7 +19,7 @@
 import QtQuick 2.12
 import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.3
-import QtMultimedia 5.15
+import QtMultimedia 5.12
 import QtGraphicalEffects 1.0
 import "../Controls"
 import "../Theme"
@@ -101,7 +101,7 @@ Page {
     onNavigateFrom: {
         windowSettings.unsetStayOnTop();
         onlinePlayerViewModel.isFullScreen = false;
-        if (player.playbackState === MediaPlayer.PlayingState && showVideoPreview.checked) {
+        if (!onlinePlayerWindowViewModel.isStandartPlayer && player.playbackState === MediaPlayer.PlayingState && showVideoPreview.checked) {
             onlinePlayerWindow.showWindow();
         } else {
             player.pause();

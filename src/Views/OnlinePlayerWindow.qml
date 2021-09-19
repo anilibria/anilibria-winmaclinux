@@ -20,7 +20,7 @@ import QtQuick 2.12
 import QtQuick.Window 2.12
 import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.12
-import QtMultimedia 5.15
+import QtMultimedia 5.12
 import "../Controls"
 import "../Theme"
 
@@ -35,7 +35,6 @@ ApplicationWindow {
     maximumWidth: 500
     maximumHeight: 350
 
-    property bool isStandartPlayer: Qt.platform.os !== `windows`
     property var videoSource
     property var videoOutput
 
@@ -46,10 +45,11 @@ ApplicationWindow {
     Loader {
         id: videoOutputLoader
         anchors.fill: parent
-        source: isStandartPlayer ? `QtVideoOutput.qml` : `QtAvVideoOutput.qml`
+        source: onlinePlayerWindowViewModel.isStandartPlayer ? `QtVideoOutput.qml` : `QtAvVideoOutput.qml`
         onLoaded: {
-            if (!isStandartPlayer) videoOutputLoader.item.source = root.videoSource;
-            if (isStandartPlayer) videoSource.videoOutput = [root.videoOutput, videoOutputLoader.item];
+            if (!onlinePlayerWindowViewModel.isStandartPlayer) videoOutputLoader.item.source = root.videoSource;
+            //for Qt 5.15
+            //if (isStandartPlayer) videoSource.videoOutput = [root.videoOutput, videoOutputLoader.item];
             root.videoSource.playbackStateChanged.connect(playbackStateChanged);
             root.videoSource.volumeChanged.connect(volumeChanged);
         }

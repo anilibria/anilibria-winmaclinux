@@ -32,6 +32,7 @@ class OnlinePlayerWindowViewModel : public QObject
     Q_PROPERTY(bool isTopMost READ isTopMost WRITE setIsTopMost NOTIFY isTopMostChanged)
     Q_PROPERTY(int windowCursorShape READ windowCursorShape WRITE setWindowCursorShape NOTIFY windowCursorShapeChanged)
     Q_PROPERTY(int panelOpacity READ panelOpacity WRITE setPanelOpacity NOTIFY panelOpacityChanged)
+    Q_PROPERTY(bool isStandartPlayer READ isStandartPlayer WRITE setIsStandartPlayer NOTIFY isStandartPlayerChanged)
 
 private:
     bool m_playerButtonVisible;
@@ -40,6 +41,7 @@ private:
     bool m_isTopMost;
     int m_windowCursorShape;
     int m_panelOpacity;
+    bool m_isStandartPlayer;
 
 public:
     explicit OnlinePlayerWindowViewModel(QObject *parent = nullptr);
@@ -50,6 +52,7 @@ public:
     bool isTopMost() const noexcept { return m_isTopMost; }
     int windowCursorShape() const noexcept { return m_windowCursorShape; }
     int panelOpacity() const noexcept { return m_panelOpacity; }
+    bool isStandartPlayer() const noexcept { return m_isStandartPlayer; }
 
     void setPlayerButtonVisible(const bool& playerButtonVisible) noexcept;
     void setPauseButtonVisible(const bool& pauseButtonVisible) noexcept;
@@ -57,6 +60,7 @@ public:
     void setIsTopMost(const bool& isTopMost) noexcept;
     void setWindowCursorShape(const int& windowCursorShape) noexcept;
     void setPanelOpacity(int panelOpacity) noexcept;
+    void setIsStandartPlayer(bool isStandartPlayer) noexcept;
 
     Q_INVOKABLE void playbackStateChanged(const bool& isPlaying);
     Q_INVOKABLE void hideControlPanel();
@@ -70,6 +74,7 @@ signals:
     void controlPanelOpacityChanged();
     void windowCursorShapeChanged();
     void panelOpacityChanged();
+    void isStandartPlayerChanged();
 
 };
 
