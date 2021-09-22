@@ -426,7 +426,7 @@ ApplicationWindow {
                 id: notificationPopupButton
                 height: 16
                 width: 16
-                iconColor: applicationNotificationModel.count > 0 ? "#9e2323" : ApplicationTheme.filterIconButtonColor
+                iconColor: notificationViewModel.countNotifications > 0 ? "#9e2323" : ApplicationTheme.filterIconButtonColor
                 hoverColor: ApplicationTheme.filterIconButtonColor
                 iconPath: "../Assets/Icons/notification.svg"
                 iconWidth: 14
@@ -438,7 +438,7 @@ ApplicationWindow {
             PlainText {
                 id: countNotifications
                 fontPointSize: 10
-                text: applicationNotificationModel.count
+                text: notificationViewModel.countNotifications
             }
             Rectangle {
                 width: 6
@@ -587,19 +587,8 @@ ApplicationWindow {
     }
 
 
-    ListModel {
-        id: applicationNotificationModel
-    }
-
-    Item {
-        id: applicationNotification
-
-        signal sendNotification(var settings);
-
-        onSendNotification: {
-            settings.timestamp = new Date().getTime();
-            applicationNotificationModel.append({model: settings});
-        }
+    NotificationViewModel {
+        id: notificationViewModel
     }
 
     Item {
@@ -651,12 +640,7 @@ ApplicationWindow {
     VersionChecker {
         id: versionChecker
         onNewVersionAvailable: {
-            applicationNotification.sendNotification(
-                {
-                    type: "info",
-                    message: `Доступна новая версия ${version}. Перейдите для скачивания по <a href='${url}'>этой ссылке</a>`
-                }
-            );
+            notificationViewModel.sendInfoNotification(`Доступна новая версия ${version}. Перейдите для скачивания по <a href='${url}'>этой ссылке</a>`)
         }
     }
 
@@ -683,20 +667,10 @@ ApplicationWindow {
 
             window.synchronizationEnabled = false;
 
-            applicationNotification.sendNotification(
-                {
-                    type: "info",
-                    message: "Синхронизация релизов успешно завершена в " + new Date().toLocaleTimeString()
-                }
-            );
+            notificationViewModel.sendInfoNotification("Синхронизация релизов успешно завершена в " + new Date().toLocaleTimeString());
 
             if (localStorage.newEntities) {
-                applicationNotification.sendNotification(
-                    {
-                        type: "info",
-                        message: localStorage.newEntities
-                    }
-                );
+                notificationViewModel.sendInfoNotification(localStorage.newEntities);
             }
 
             releaseLinkedSeries.refreshSeries();
@@ -755,12 +729,7 @@ ApplicationWindow {
         onSynchronizedReleases: {
             if (!data || !data.length) {
                 window.synchronizationEnabled = false;
-                applicationNotification.sendNotification(
-                    {
-                        type: "info",
-                        message: "Не удалось синхронизовать релизы. Попробуйте повторить синхронизацию через некоторое время."
-                    }
-                );
+                notificationViewModel.sendErrorNotification(`Не удалось синхронизовать релизы. Попробуйте повторить синхронизацию через некоторое время.`);
             }
 
             parseReleasesWorker.sendMessage({ releasesJson: data });
@@ -812,12 +781,7 @@ ApplicationWindow {
             localStorage.clearFavorites();
             releases.refreshFavorites();
 
-            applicationNotification.sendNotification(
-                {
-                    type: "info",
-                    message: "Вы успешно вышли из аккаунта. Чтобы войти обратно перейдите на страницу Войти."
-                }
-            );
+            notificationViewModel.sendInfoNotification(`Вы успешно вышли из аккаунта. Чтобы войти обратно перейдите на страницу Войти.`)
         }
 
         onUserFavoritesReceived:  {
@@ -1226,12 +1190,7 @@ ApplicationWindow {
             if (window.currentPageId === "authorization") showPage("release");
 
             synchronizationService.getUserData(applicationSettings.userToken);
-            applicationNotification.sendNotification(
-                {
-                    type: "info",
-                    message: "Вы успешно вошли в аккаунт. Ваше избранное будет синхронизовано автоматически."
-                }
-            );
+            notificationViewModel.sendInfoNotification(`Вы успешно вошли в аккаунт. Ваше избранное будет синхронизовано автоматически.`);
         }
     }
 
@@ -1439,7 +1398,7 @@ ApplicationWindow {
                     anchors.rightMargin: 10
                     text: "Очистить все"
                     onClicked: {
-                        applicationNotificationModel.clear();
+                        notificationViewModel.clearAllNotifications();
                     }
                 }
             }
@@ -1457,7 +1416,7 @@ ApplicationWindow {
                     id: notificationRepeater
                     spacing: 3
                     Repeater {
-                        model: applicationNotificationModel
+                        model: notificationViewModel
                         Rectangle {
                             color: "transparent"
                             width: 239
@@ -1479,7 +1438,7 @@ ApplicationWindow {
                                     width: parent.width
                                     wrapMode: Text.WordWrap
                                     elide: Text.ElideRight
-                                    text: modelData.message
+                                    text: message
                                     anchors.verticalCenter: parent.verticalCenter
                                 }
                                 IconButton {
@@ -1495,15 +1454,7 @@ ApplicationWindow {
                                     iconWidth: 14
                                     iconHeight: 14
                                     onButtonPressed: {
-                                        let iterator = -1;
-                                        const count = applicationNotificationModel.count;
-                                        for (var i = 0; i < count; i++) {
-                                            let item = applicationNotificationModel.get(i);
-                                            if (item.model.timestamp === modelData.timestamp) {
-                                                applicationNotificationModel.remove(i);
-                                                break;
-                                            }
-                                        }
+                                        notificationViewModel.clearNotification(id);
                                     }
                                 }
                             }
