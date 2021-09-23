@@ -17,9 +17,9 @@ private:
     QList<NotificationModel*>* m_notifications;
     PopupNotificationVideoList* m_popupNotifications;
 
-    static const int InfoType = 1;
-    static const int ErrorType = 2;
-    static const int NewsType = 3;
+    const static int InfoType;
+    const static int ErrorType;
+    const static int NewsType;
 
     enum NotificationRoles {
         TimeStampRole = Qt::UserRole + 1,

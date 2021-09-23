@@ -1,5 +1,9 @@
 #include "notificationviewmodel.h"
 
+const int NotificationViewModel::InfoType = 1;
+const int NotificationViewModel::ErrorType = 2;
+const int NotificationViewModel::NewsType = 3;
+
 NotificationViewModel::NotificationViewModel(QObject *parent) : QAbstractListModel(parent),
     m_notifications(new QList<NotificationModel*>()),
     m_popupNotifications(new PopupNotificationVideoList(parent))
