@@ -5,14 +5,17 @@
 #include <QAbstractListModel>
 #include <QList>
 #include "../Models/notificationmodel.h"
+#include "../ListModels/popupnotificationvideolist.h"
 
 class NotificationViewModel : public QAbstractListModel
 {
     Q_OBJECT
     Q_PROPERTY(int countNotifications READ countNotifications NOTIFY countNotificationsChanged)
+    Q_PROPERTY(PopupNotificationVideoList* popupNotifications READ popupNotifications NOTIFY popupNotificationsChanged)
 
 private:
     QList<NotificationModel*>* m_notifications;
+    PopupNotificationVideoList* m_popupNotifications;
 
     static const int InfoType = 1;
     static const int ErrorType = 2;
@@ -31,6 +34,7 @@ public:
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
     QHash<int,QByteArray> roleNames() const override;
     int countNotifications() { return m_notifications->count(); }
+    PopupNotificationVideoList* popupNotifications() { return m_popupNotifications; }
 
     Q_INVOKABLE void sendInfoNotification(const QString& message);
     Q_INVOKABLE void sendErrorNotification(const QString& message);
@@ -43,6 +47,7 @@ private:
 
 signals:
     void countNotificationsChanged();
+    void popupNotificationsChanged();
 
 };
 

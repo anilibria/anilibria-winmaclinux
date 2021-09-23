@@ -1,7 +1,8 @@
 #include "notificationviewmodel.h"
 
 NotificationViewModel::NotificationViewModel(QObject *parent) : QAbstractListModel(parent),
-    m_notifications(new QList<NotificationModel*>())
+    m_notifications(new QList<NotificationModel*>()),
+    m_popupNotifications(new PopupNotificationVideoList(parent))
 {
 
 }
@@ -126,5 +127,7 @@ void NotificationViewModel::addNewNotification(const int &type, const QString &m
     endResetModel();
 
     emit countNotificationsChanged();
+
+    m_popupNotifications->addNewNotification(type, message);
 }
 

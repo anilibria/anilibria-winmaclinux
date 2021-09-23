@@ -64,6 +64,7 @@ DEFINES += USE_VERSION_CHECK
 
 SOURCES += \
     Classes/ListModels/onlineplayervideolist.cpp \
+    Classes/ListModels/popupnotificationvideolist.cpp \
     Classes/Models/changesmodel.cpp \
     Classes/Models/downloaditemmodel.cpp \
     Classes/Models/externalplaylistvideo.cpp \
@@ -124,6 +125,7 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 
 HEADERS += \
     Classes/ListModels/onlineplayervideolist.h \
+    Classes/ListModels/popupnotificationvideolist.h \
     Classes/Models/changesmodel.h \
     Classes/Models/downloaditemmodel.h \
     Classes/Models/externalplaylistvideo.h \

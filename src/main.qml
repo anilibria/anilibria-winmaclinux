@@ -586,7 +586,6 @@ ApplicationWindow {
         return currentScreen;
     }
 
-
     NotificationViewModel {
         id: notificationViewModel
     }
@@ -1346,6 +1345,44 @@ ApplicationWindow {
             }
             onMouseXChanged: {
                 window.width += mouseX - previousX;
+            }
+        }
+    }
+
+    ListView {
+        anchors.left: parent.left
+        anchors.bottom: parent.bottom
+        anchors.leftMargin: 45
+        anchors.bottomMargin: 8
+        anchors.top: parent.top
+        width: 250
+        rotation: 180
+        layoutDirection: Qt.RightToLeft
+        remove: Transition {
+            ParallelAnimation {
+                NumberAnimation { property: "opacity"; to: 0; duration: 1000 }
+                NumberAnimation { properties: "x,y"; to: 100; duration: 1000 }
+            }
+        }
+        model: notificationViewModel.popupNotifications
+        delegate: Rectangle {
+            rotation: 180
+            width: 250
+            height: 80
+            radius: 8
+            border.color: ApplicationTheme.selectedItem
+            border.width: 2
+            color: ApplicationTheme.notificationCenterItemBackground
+
+            LinkedText {
+                padding: 10
+                maximumLineCount: 3
+                fontPointSize: 8
+                width: parent.width
+                wrapMode: Text.WordWrap
+                elide: Text.ElideRight
+                text: message
+                anchors.verticalCenter: parent.verticalCenter
             }
         }
     }
