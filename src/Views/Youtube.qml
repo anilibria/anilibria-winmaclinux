@@ -44,10 +44,6 @@ Page {
         visible: false
     }
 
-    ListModel {
-        id: youtubeVideosModel
-    }
-
     RowLayout {
         id: panelContainer
         anchors.fill: parent

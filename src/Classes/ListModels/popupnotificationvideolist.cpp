@@ -4,7 +4,8 @@
 
 PopupNotificationVideoList::PopupNotificationVideoList(QObject *parent) : QAbstractListModel(parent),
     m_popupNotifications(new QList<NotificationModel*>()),
-    m_timer(new QTimer(parent))
+    m_timer(new QTimer(parent)),
+    m_showNotifications(false)
 {
     m_timer->setInterval(1000);
     connect(m_timer, &QTimer::timeout, this, &PopupNotificationVideoList::timeout);
@@ -62,6 +63,16 @@ void PopupNotificationVideoList::addNewNotification(const int &type, const QStri
     if (!m_timer->isActive()) m_timer->start();
 
     endResetModel();
+
+    setShowNotifications(true);
+}
+
+void PopupNotificationVideoList::setShowNotifications(const bool &showNotifications)
+{
+    if (m_showNotifications == showNotifications) return;
+
+    m_showNotifications = showNotifications;
+    emit showNotificationsChanged();
 }
 
 void PopupNotificationVideoList::timeout()
@@ -83,5 +94,8 @@ void PopupNotificationVideoList::timeout()
 
     endResetModel();
 
-    if (m_popupNotifications->empty()) m_timer->stop();
+    if (m_popupNotifications->empty()) {
+        m_timer->stop();
+        setShowNotifications(false);
+    }
 }

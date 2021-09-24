@@ -1350,15 +1350,23 @@ ApplicationWindow {
     }
 
     ListView {
-        anchors.left: parent.left
+        anchors.right: parent.right
         anchors.bottom: parent.bottom
-        anchors.leftMargin: 45
-        anchors.bottomMargin: 8
+        anchors.rightMargin: 30
+        anchors.bottomMargin: 10
         anchors.top: parent.top
         width: 250
         rotation: 180
+        visible: notificationViewModel.popupNotifications.showNotifications
+        enabled: notificationViewModel.popupNotifications.showNotifications
         layoutDirection: Qt.RightToLeft
         remove: Transition {
+            ParallelAnimation {
+                NumberAnimation { property: "opacity"; to: 0; duration: 1000 }
+                NumberAnimation { properties: "x,y"; to: 100; duration: 1000 }
+            }
+        }
+        removeDisplaced: Transition {
             ParallelAnimation {
                 NumberAnimation { property: "opacity"; to: 0; duration: 1000 }
                 NumberAnimation { properties: "x,y"; to: 100; duration: 1000 }
