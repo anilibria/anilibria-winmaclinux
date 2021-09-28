@@ -17,7 +17,7 @@
 */
 
 import QtQuick 2.12
-import QtMultimedia 5.12
+import QtMultimedia 5.15
 
 Item {
     property alias muted: videoPlayer.muted
@@ -63,14 +63,18 @@ Item {
     VideoOutput {
         id: videoOutput
         anchors.fill: parent
-        source: videoPlayer
     }
 
     MediaPlayer {
         id: videoPlayer
-        //for Qt 5.15
-        //videoOutput: [videoOutput]
+        videoOutput: [videoOutput]
         autoPlay: true
+
+        signal addNewVideoOuput(var newVideoOutput);
+
+        onAddNewVideoOuput: {
+            videoPlayer.videoOutput = [videoOutput, newVideoOutput];
+        }
         onBufferProgressChanged: {
             playerBufferProgressChanged();
         }

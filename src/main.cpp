@@ -37,6 +37,7 @@
 #include "Classes/ViewModels/onlineplayerviewmodel.h"
 #include "Classes/ViewModels/youtubeviewmodel.h"
 #include "Classes/ViewModels/authorizationviewmodel.h"
+#include "Classes/ViewModels/notificationviewmodel.h"
 #include "Classes/ViewModels/onlineplayerwindowviewmodel.h"
 
 int main(int argc, char *argv[])
@@ -77,6 +78,7 @@ int main(int argc, char *argv[])
     qmlRegisterType<OnlinePlayerViewModel>("Anilibria.ViewModels", 1, 0, "OnlinePlayerViewModel");
     qmlRegisterType<YoutubeViewModel>("Anilibria.ViewModels", 1, 0, "YoutubeViewModel");
     qmlRegisterType<AuthorizationViewModel>("Anilibria.ViewModels", 1, 0, "AuthorizationViewModel");
+    qmlRegisterType<NotificationViewModel>("Anilibria.ViewModels", 1, 0, "NotificationViewModel");
     qmlRegisterType<OnlinePlayerWindowViewModel>("Anilibria.ViewModels", 1, 0, "OnlinePlayerWindowViewModel");
 
     QCoreApplication::setOrganizationDomain("anilibria.tv");

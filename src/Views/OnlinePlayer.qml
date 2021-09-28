@@ -23,6 +23,7 @@ import QtMultimedia 5.12
 import QtGraphicalEffects 1.0
 import "../Controls"
 import "../Theme"
+import "Videoplayer"
 
 Page {
     id: _page
@@ -101,7 +102,8 @@ Page {
     onNavigateFrom: {
         windowSettings.unsetStayOnTop();
         onlinePlayerViewModel.isFullScreen = false;
-        if (!onlinePlayerWindowViewModel.isStandartPlayer && player.playbackState === MediaPlayer.PlayingState && showVideoPreview.checked) {
+        const enableVideoPreview = !onlinePlayerWindowViewModel.isStandartPlayer || (onlinePlayerWindowViewModel.isStandartPlayer && onlinePlayerWindowViewModel.isQt515);
+        if (enableVideoPreview && player.playbackState === MediaPlayer.PlayingState && showVideoPreview.checked) {
             onlinePlayerWindow.showWindow();
         } else {
             player.pause();

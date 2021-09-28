@@ -33,6 +33,7 @@ class OnlinePlayerWindowViewModel : public QObject
     Q_PROPERTY(int windowCursorShape READ windowCursorShape WRITE setWindowCursorShape NOTIFY windowCursorShapeChanged)
     Q_PROPERTY(int panelOpacity READ panelOpacity WRITE setPanelOpacity NOTIFY panelOpacityChanged)
     Q_PROPERTY(bool isStandartPlayer READ isStandartPlayer WRITE setIsStandartPlayer NOTIFY isStandartPlayerChanged)
+    Q_PROPERTY(bool isQt515 READ isQt515 NOTIFY isQt515Changed)
 
 private:
     bool m_playerButtonVisible;
@@ -53,6 +54,13 @@ public:
     int windowCursorShape() const noexcept { return m_windowCursorShape; }
     int panelOpacity() const noexcept { return m_panelOpacity; }
     bool isStandartPlayer() const noexcept { return m_isStandartPlayer; }
+    bool isQt515() const noexcept {
+#if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
+        return false;
+#else
+        return true;
+#endif
+    }
 
     void setPlayerButtonVisible(const bool& playerButtonVisible) noexcept;
     void setPauseButtonVisible(const bool& pauseButtonVisible) noexcept;
@@ -75,6 +83,7 @@ signals:
     void windowCursorShapeChanged();
     void panelOpacityChanged();
     void isStandartPlayerChanged();
+    void isQt515Changed();
 
 };
 

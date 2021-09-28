@@ -65,8 +65,6 @@
         <file>Assets/Icons/rewind10.svg</file>
         <file>Assets/Icons/next30.svg</file>
         <file>Assets/Icons/previous10.svg</file>
-        <file>Views/QtAvPlayer.qml</file>
-        <file>Views/QtPlayer.qml</file>
         <file>Theme/ApplicationTheme.qml</file>
         <file>Theme/qmldir</file>
         <file>Controls/LinkedText.qml</file>
@@ -108,7 +106,11 @@
         <file>Views/LeftPanelIconButton.qml</file>
         <file>Views/FilterPanelIconButton.qml</file>
         <file>Views/OnlinePlayerWindow.qml</file>
-        <file>Views/QtAvVideoOutput.qml</file>
-        <file>Views/QtVideoOutput.qml</file>
+        <file>Views/Videoplayer/QtPlayer515.qml</file>
+        <file>Views/Videoplayer/QtAvPlayer.qml</file>
+        <file>Views/Videoplayer/QtAvVideoOutput.qml</file>
+        <file>Views/Videoplayer/QtPlayer.qml</file>
+        <file>Views/Videoplayer/QtVideo515Output.qml</file>
+        <file>Views/Videoplayer/QtVideoOutput.qml</file>
     </qresource>
 </RCC>

@@ -45,20 +45,10 @@ Page {
         id: downloadManager
         url: ""
         onError: {
-            applicationNotification.sendNotification(
-                {
-                    type: "error",
-                    message: `Ошибка скачивания серии ${root.downloadingRelease.videoId} в релизе ${root.currentDownload.title}.`
-                }
-            );
+            notificationViewModel.sendErrorNotification(`Ошибка скачивания серии ${root.downloadingRelease.videoId} в релизе ${root.currentDownload.title}.`);
         }
         onFinished: {
-            applicationNotification.sendNotification(
-                {
-                    type: "info",
-                    message: `Cерия ${root.downloadingRelease.videoId} в релизе ${root.currentDownload.title} успешно скачана.`
-                }
-            );
+            notificationViewModel.sendInfoNotification(`Cерия ${root.downloadingRelease.videoId} в релизе ${root.currentDownload.title} успешно скачана.`);
 
             localStorage.finishDownloadItem(root.downloadingRelease.id, root.currentDownload.videoId, root.currentDownload.quality, downloadedPath);
 

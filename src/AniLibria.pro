@@ -64,11 +64,13 @@ DEFINES += USE_VERSION_CHECK
 
 SOURCES += \
     Classes/ListModels/onlineplayervideolist.cpp \
+    Classes/ListModels/popupnotificationvideolist.cpp \
     Classes/Models/changesmodel.cpp \
     Classes/Models/downloaditemmodel.cpp \
     Classes/Models/externalplaylistvideo.cpp \
     Classes/Models/fullreleasemodel.cpp \
     Classes/Models/historymodel.cpp \
+    Classes/Models/notificationmodel.cpp \
     Classes/Models/onlinevideomodel.cpp \
     Classes/Models/releasemodel.cpp \
     Classes/Models/releaseseriesmodel.cpp \
@@ -93,6 +95,7 @@ SOURCES += \
     Classes/Services/synchronizationservice.cpp \
     Classes/Services/versionchecker.cpp \
     Classes/ViewModels/authorizationviewmodel.cpp \
+    Classes/ViewModels/notificationviewmodel.cpp \
     Classes/ViewModels/onlineplayerviewmodel.cpp \
     Classes/ViewModels/onlineplayerwindowviewmodel.cpp \
     Classes/ViewModels/youtubeviewmodel.cpp \
@@ -123,11 +126,13 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 
 HEADERS += \
     Classes/ListModels/onlineplayervideolist.h \
+    Classes/ListModels/popupnotificationvideolist.h \
     Classes/Models/changesmodel.h \
     Classes/Models/downloaditemmodel.h \
     Classes/Models/externalplaylistvideo.h \
     Classes/Models/fullreleasemodel.h \
     Classes/Models/historymodel.h \
+    Classes/Models/notificationmodel.h \
     Classes/Models/onlinevideomodel.h \
     Classes/Models/releasemodel.h \
     Classes/Models/releaseseriesmodel.h \
@@ -153,6 +158,7 @@ HEADERS += \
     Classes/Services/versionchecker.h \
     Classes/ListModels/alphabetlistmodel.h \
     Classes/ViewModels/authorizationviewmodel.h \
+    Classes/ViewModels/notificationviewmodel.h \
     Classes/ViewModels/onlineplayerviewmodel.h \
     Classes/ViewModels/onlineplayerwindowviewmodel.h \
     Classes/ViewModels/youtubeviewmodel.h \

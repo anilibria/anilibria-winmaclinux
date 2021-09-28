@@ -23,6 +23,7 @@ import QtQuick.Controls 2.12
 import QtMultimedia 5.12
 import "../Controls"
 import "../Theme"
+import "Videoplayer"
 
 ApplicationWindow {
     id: root
@@ -45,11 +46,12 @@ ApplicationWindow {
     Loader {
         id: videoOutputLoader
         anchors.fill: parent
-        source: onlinePlayerWindowViewModel.isStandartPlayer ? `QtVideoOutput.qml` : `QtAvVideoOutput.qml`
+        source: onlinePlayerWindowViewModel.isStandartPlayer ? (onlinePlayerWindowViewModel.isQt515 ? `Videoplayer/QtVideo515Output.qml` : `Videoplayer/QtVideoOutput.qml`) : `Videoplayer/QtAvVideoOutput.qml`
         onLoaded: {
             if (!onlinePlayerWindowViewModel.isStandartPlayer) videoOutputLoader.item.source = root.videoSource;
-            //for Qt 5.15
-            //if (isStandartPlayer) videoSource.videoOutput = [root.videoOutput, videoOutputLoader.item];
+            if (onlinePlayerWindowViewModel.isQt515 && onlinePlayerWindowViewModel.isStandartPlayer) {
+                root.videoSource.addNewVideoOuput(videoOutputLoader.item);
+            }
             root.videoSource.playbackStateChanged.connect(playbackStateChanged);
             root.videoSource.volumeChanged.connect(volumeChanged);
         }
@@ -135,7 +137,7 @@ ApplicationWindow {
                         height: 40
                         iconColor: ApplicationTheme.filterIconButtonColor
                         hoverColor: ApplicationTheme.filterIconButtonHoverColor
-                        iconPath: "../Assets/Icons/step-backward.svg"
+                        iconPath: assetsLocation.path + "Icons/step-backward.svg"
                         iconWidth: 24
                         iconHeight: 24
                         onButtonPressed: {
@@ -151,7 +153,7 @@ ApplicationWindow {
                         height: 40
                         iconColor: ApplicationTheme.filterIconButtonColor
                         hoverColor: ApplicationTheme.filterIconButtonHoverColor
-                        iconPath: "../Assets/Icons/play-button.svg"
+                        iconPath: assetsLocation.path + "Icons/play-button.svg"
                         iconWidth: 24
                         iconHeight: 24
                         onButtonPressed: {
@@ -165,7 +167,7 @@ ApplicationWindow {
                         height: 40
                         iconColor: ApplicationTheme.filterIconButtonColor
                         hoverColor: ApplicationTheme.filterIconButtonHoverColor
-                        iconPath: "../Assets/Icons/pause.svg"
+                        iconPath: assetsLocation.path + "Icons/pause.svg"
                         iconWidth: 24
                         iconHeight: 24
                         onButtonPressed: {
@@ -179,7 +181,7 @@ ApplicationWindow {
                         height: 40
                         iconColor: ApplicationTheme.filterIconButtonColor
                         hoverColor: ApplicationTheme.filterIconButtonHoverColor
-                        iconPath: "../Assets/Icons/step-forward.svg"
+                        iconPath: assetsLocation.path + "Icons/step-forward.svg"
                         iconWidth: 24
                         iconHeight: 24
                         onButtonPressed: {
@@ -203,7 +205,7 @@ ApplicationWindow {
                     height: 40
                     iconColor: onlinePlayerWindowViewModel.isTopMost ? ApplicationTheme.filterIconButtonGreenColor : ApplicationTheme.filterIconButtonColor
                     hoverColor: ApplicationTheme.filterIconButtonHoverColor
-                    iconPath: "../Assets/Icons/topmostwindow.svg"
+                    iconPath: assetsLocation.path + "Icons/topmostwindow.svg"
                     iconWidth: 29
                     iconHeight: 29
                     tooltipMessage: onlinePlayerWindowViewModel.isTopMost ? "Выключить режим поверх всех окон" : "Включить режим поверх всех окон"
@@ -233,7 +235,7 @@ ApplicationWindow {
             anchors.centerIn: parent
             paused: !onlinePlayerWindowViewModel.opened
             playing: onlinePlayerWindowViewModel.opened
-            source: "../Assets/Icons/spinner.gif"
+            source: assetsLocation.path + "Icons/spinner.gif"
         }
     }
 
