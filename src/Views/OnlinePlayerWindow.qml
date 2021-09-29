@@ -42,19 +42,26 @@ ApplicationWindow {
     signal showWindow()
     signal hideWindow(bool paused)
     signal closeWindow()
+    signal loadPlayer()
+
+    function playerLoadedHandler() {
+        if (!onlinePlayerWindowViewModel.isStandartPlayer) videoOutputLoader.item.source = root.videoSource;
+        if (onlinePlayerWindowViewModel.isQt515 && onlinePlayerWindowViewModel.isStandartPlayer) {
+            root.videoSource.addNewVideoOuput(videoOutputLoader.item);
+        }
+        root.videoSource.playbackStateChanged.connect(playbackStateChanged);
+        root.videoSource.volumeChanged.connect(volumeChanged);
+        volumeSlider.value = root.videoSource.volume * 100;
+    }
 
     Loader {
         id: videoOutputLoader
         anchors.fill: parent
         source: onlinePlayerWindowViewModel.isStandartPlayer ? (onlinePlayerWindowViewModel.isQt515 ? `Videoplayer/QtVideo515Output.qml` : `Videoplayer/QtVideoOutput.qml`) : `Videoplayer/QtAvVideoOutput.qml`
-        onLoaded: {
-            if (!onlinePlayerWindowViewModel.isStandartPlayer) videoOutputLoader.item.source = root.videoSource;
-            if (onlinePlayerWindowViewModel.isQt515 && onlinePlayerWindowViewModel.isStandartPlayer) {
-                root.videoSource.addNewVideoOuput(videoOutputLoader.item);
-            }
-            root.videoSource.playbackStateChanged.connect(playbackStateChanged);
-            root.videoSource.volumeChanged.connect(volumeChanged);
-        }
+    }
+
+    onLoadPlayer: {
+        if (videoOutputLoader.loaded) playerLoadedHandler();
     }
 
     MouseArea {
@@ -280,9 +287,4 @@ ApplicationWindow {
         root.videoSource.playbackStateChanged.disconnect(playbackStateChanged);
         root.videoSource.volumeChanged.disconnect(volumeChanged);
     }
-
-    Component.onCompleted: {
-        volumeSlider.value = root.videoSource.volume * 100;
-    }
-
 }

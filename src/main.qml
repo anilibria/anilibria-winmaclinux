@@ -1226,6 +1226,9 @@ ApplicationWindow {
             onReturnToReleasesPage: {
                 window.showPage("release");
             }
+            onPlayerCreated: {
+                onlinePlayerWindow.loadPlayer();
+            }
         }
 
         Releases {
