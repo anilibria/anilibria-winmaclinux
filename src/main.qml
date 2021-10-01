@@ -1153,7 +1153,12 @@ ApplicationWindow {
                 window.showFullScreen();
                 if (applicationSettings.useCustomToolbar) toolBar.visible = false;
             } else {
-                window.showNormal();
+                if (window.isShowFullScreenSize) {
+                    window.showMaximized();
+                } else {
+                    window.showNormal();
+                }
+
                 if (applicationSettings.useCustomToolbar) toolBar.visible = true;
             }
         }
