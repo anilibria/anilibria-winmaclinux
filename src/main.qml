@@ -1151,10 +1151,10 @@ ApplicationWindow {
         onIsFullScreenChanged: {
             if (isFullScreen) {
                 window.showFullScreen();
-                toolBar.visible = false;
+                if (applicationSettings.useCustomToolbar) toolBar.visible = false;
             } else {
                 window.showNormal();
-                toolBar.visible = true;
+                if (applicationSettings.useCustomToolbar) toolBar.visible = true;
             }
         }
         onNeedScrollSeriaPosition: {
