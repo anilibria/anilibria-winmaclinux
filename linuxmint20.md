@@ -40,6 +40,6 @@ sudo apt install libqtav-dev qml-module-qtav qtav-players vainfo libass9
 ```  
 **После этапа 2 выполнить:**
 ```shell
-sed -i 's/QtPlayer/QtAvPlayer/g' Views/OnlinePlayer.qml
+sed -i 's/m_isStandartPlayer(true)/m_isStandartPlayer(false)/g' Classes/ViewModels/onlineplayerwindowviewmodel.cpp
 ```
 
