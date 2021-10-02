@@ -17,7 +17,7 @@
 */
 
 import QtQuick 2.12
-import QtAV 1.7
+import QtMultimedia 5.15
 
 Item {
     property alias muted: videoPlayer.muted
@@ -30,6 +30,8 @@ Item {
     property alias source: videoPlayer.source
     property alias playbackRate: videoPlayer.playbackRate
     property alias fillMode: videoOutput.fillMode
+    property alias videoPlayerSource: videoPlayer
+    property alias videoOutputSource: videoOutput
 
     signal play();
     signal pause();
@@ -58,16 +60,21 @@ Item {
         videoPlayer.seek(position);
     }
 
-    VideoOutput2 {
+    VideoOutput {
         id: videoOutput
         anchors.fill: parent
-        source: videoPlayer
     }
 
     MediaPlayer {
         id: videoPlayer
+        videoOutput: [videoOutput]
         autoPlay: true
-        bufferSize: 300
+
+        signal addNewVideoOuput(var newVideoOutput);
+
+        onAddNewVideoOuput: {
+            videoPlayer.videoOutput = [videoOutput, newVideoOutput];
+        }
         onBufferProgressChanged: {
             playerBufferProgressChanged();
         }

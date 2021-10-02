@@ -1212,8 +1212,10 @@ Page {
 
                                 if (applicationSettings.useCustomToolbar) {
                                     window.flags = Qt.FramelessWindowHint | Qt.Window | Qt.WindowMinimizeButtonHint;
+                                    toolBar.visible = true;
                                 } else {
                                     window.flags = 1;
+                                    toolBar.visible = false;
                                 }
                             }
 
@@ -1367,9 +1369,8 @@ Page {
                     spacing: 8
                     RoundedTextBox {
                         id: filterByTitle
-                        width: 200
-                        height: 30
-                        fontSize: 10
+                        width: 250
+                        height: 40
                         placeholder: "Введите название релиза"
                         onCompleteEditing: {
                             refreshAllReleases(false);

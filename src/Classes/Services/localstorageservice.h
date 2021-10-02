@@ -154,6 +154,7 @@ public:
     Q_INVOKABLE void setHideFilterButton(bool hideFilterButton);
     Q_INVOKABLE void setStartedSection(int startedSection);
     Q_INVOKABLE void setShowReleaseDescription(bool showReleaseDescription);
+    Q_INVOKABLE void setShowVideoPreview(bool showVideoPreview);
 
     Q_INVOKABLE QString getUserSettings();
     Q_INVOKABLE void copyTorrentToFile(QString source, QString target);

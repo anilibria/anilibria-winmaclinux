@@ -23,12 +23,15 @@ import QtMultimedia 5.12
 import QtGraphicalEffects 1.0
 import "../Controls"
 import "../Theme"
+import "Videoplayer"
 
 Page {
     id: _page
     property var seenVideo: ({})
     property var seenMarks: ({})
     property bool isFromNavigated: false
+    property var videoPlayerSource
+    property var videoOutputSource
 
     signal navigateFrom()
     signal setReleaseVideo()
@@ -38,22 +41,23 @@ Page {
     signal windowNotActived()
     signal playInPlayer()
     signal stopInPlayer()
+    signal playerCreated()
 
     onPlayInPlayer: {
-        player.play();
+        playerLoader.item.play();
     }
 
     onStopInPlayer: {
-        player.stop();
-    }
+        playerLoader.item.stop();
+    }    
 
     Keys.onSpacePressed: {
-        if (player.playbackState === MediaPlayer.PlayingState) {
-            player.pause();
+        if (playerLoader.item.playbackState === MediaPlayer.PlayingState) {
+            playerLoader.item.pause();
             return;
         }
-        if (player.playbackState === MediaPlayer.PausedState || player.playbackState === MediaPlayer.StoppedState) {
-            player.play();
+        if (playerLoader.item.playbackState === MediaPlayer.PausedState || playerLoader.item.playbackState === MediaPlayer.StoppedState) {
+            playerLoader.item.play();
         }
     }
 
@@ -73,21 +77,21 @@ Page {
             onlinePlayerViewModel.toggleFullScreen();
         }
         if (event.key === Qt.Key_Up) {
-            if (player.volume < 1) player.volume += .1;
-            if (player.volume > 1) player.volume = 1;
+            if (playerLoader.item.volume < 1) playerLoader.item.volume += .1;
+            if (playerLoader.item.volume > 1) playerLoader.item.volume = 1;
 
-            volumeSlider.value = player.volume * 100;
+            volumeSlider.value = playerLoader.item.volume * 100;
         }
         if (event.key === Qt.Key_Down) {
-            if (player.volume > 0) player.volume -= .1;
-            if (player.volume < 0) player.volume = 0;
+            if (playerLoader.item.volume > 0) playerLoader.item.volume -= .1;
+            if (playerLoader.item.volume < 0) playerLoader.item.volume = 0;
 
-            volumeSlider.value = player.volume * 100;
+            volumeSlider.value = playerLoader.item.volume * 100;
         }
-        if (event.key === Qt.Key_M || event.key === 1068) player.muted = !player.muted;
+        if (event.key === Qt.Key_M || event.key === 1068) playerLoader.item.muted = !playerLoader.item.muted;
         if ((event.key === Qt.Key_T || event.key === 1045) && !autoTopMost.checked) windowSettings.toggleStayOnTopMode();
-        if (event.key === Qt.Key_Left) player.seek(onlinePlayerViewModel.jumpInPlayer(jumpMinuteComboBox.currentIndex, jumpSecondComboBox.currentIndex, true));
-        if (event.key === Qt.Key_Right) player.seek(onlinePlayerViewModel.jumpInPlayer(jumpMinuteComboBox.currentIndex, jumpSecondComboBox.currentIndex, false));
+        if (event.key === Qt.Key_Left) playerLoader.item.seek(onlinePlayerViewModel.jumpInPlayer(jumpMinuteComboBox.currentIndex, jumpSecondComboBox.currentIndex, true));
+        if (event.key === Qt.Key_Right) playerLoader.item.seek(onlinePlayerViewModel.jumpInPlayer(jumpMinuteComboBox.currentIndex, jumpSecondComboBox.currentIndex, false));
         if (event.key === Qt.Key_Home && !autoTopMost.checked) windowSettings.setStayOnTop();
         if (event.key === Qt.Key_End && !autoTopMost.checked) windowSettings.unsetStayOnTop();
     }
@@ -98,14 +102,20 @@ Page {
 
     onNavigateFrom: {
         windowSettings.unsetStayOnTop();
-        player.pause();
         onlinePlayerViewModel.isFullScreen = false;
+        const enableVideoPreview = !onlinePlayerWindowViewModel.isStandartPlayer || (onlinePlayerWindowViewModel.isStandartPlayer && onlinePlayerWindowViewModel.isQt515);
+        if (enableVideoPreview && playerLoader.item.playbackState === MediaPlayer.PlayingState && showVideoPreview.checked) {
+            onlinePlayerWindow.showWindow();
+        } else {
+            playerLoader.item.pause();
+        }
     }
 
     onNavigateTo: {
+        if (onlinePlayerWindowViewModel.opened) onlinePlayerWindow.hideWindow(false);
         _page.isFromNavigated = true;
         const userSettings = JSON.parse(localStorage.getUserSettings());
-        player.volume = userSettings.volume;
+        playerLoader.item.volume = userSettings.volume;
         autoNextVideo.checked = userSettings.autoNextVideo;
         autoTopMost.checked = userSettings.autoTopMost;
         jumpMinuteComboBox.currentIndex = onlinePlayerViewModel.jumpMinutes.indexOf(userSettings.jumpMinute);
@@ -116,8 +126,9 @@ Page {
         sendPlaybackToRemoteSwitch.checked = applicationSettings.sendPlaybackToRemote;
         onlinePlayerViewModel.remotePlayer.port = applicationSettings.remotePort;
         remotePlayerPortComboBox.currentIndex = onlinePlayerViewModel.ports.indexOf(applicationSettings.remotePort);
+        showVideoPreview.checked = userSettings.showVideoPreview;
 
-        if (autoTopMost.checked && player.playbackState === MediaPlayer.PlayingState) windowSettings.setStayOnTop();
+        if (autoTopMost.checked && playerLoader.item.playbackState === MediaPlayer.PlayingState) windowSettings.setStayOnTop();
         switch (userSettings.quality) {
             case 0:
                 onlinePlayerViewModel.videoQuality = "sd";
@@ -168,7 +179,7 @@ Page {
             onlinePlayerViewModel.toggleFullScreen();
         }
         onPositionChanged: {
-            if (!(player.playbackState === MediaPlayer.PlayingState)) {
+            if (!(playerLoader.item.playbackState === MediaPlayer.PlayingState)) {
                 if (controlPanel.opacity === 0) _page.setControlVisible(true);
                 return;
             }
@@ -188,13 +199,28 @@ Page {
         }
     }
 
-    QtPlayer {
-        id: player
+    Loader {
+        id: playerLoader
         anchors.fill: parent
-        source: onlinePlayerViewModel.videoSource
-        playbackRate: onlinePlayerViewModel.playbackRate
-        onPlaybackStateChanged: {
-            onlinePlayerViewModel.playerPlaybackState = playbackState;
+        source: onlinePlayerWindowViewModel.isStandartPlayer ? (onlinePlayerWindowViewModel.isQt515 ? `Videoplayer/QtPlayer515.qml` : `Videoplayer/QtPlayer.qml` ) : `Videoplayer/QtAvPlayer.qml`
+        Component.onCompleted: {
+            _page.videoPlayerSource = playerLoader.item.videoPlayerSource;
+            _page.videoOutputSource = playerLoader.item.videoOutputSource;
+
+            playerCreated();
+
+            playerLoader.item.source = Qt.binding(function() { return onlinePlayerViewModel.videoSource; });
+            playerLoader.item.playbackRate = Qt.binding(function() { return onlinePlayerViewModel.playbackRate; });
+
+            playerLoader.item.playbackStateChanged.connect(loaderPlaybackStateChanged);
+            playerLoader.item.volumeChanged.connect(loaderVolumeChanged);
+            playerLoader.item.statusChanged.connect(loaderStatusChanged);
+            playerLoader.item.positionChanged.connect(loaderPositionChanged);
+        }
+
+        function loaderPlaybackStateChanged() {
+            onlinePlayerViewModel.playerPlaybackState = playerLoader.item.playbackState;
+            const playbackState = onlinePlayerViewModel.playerPlaybackState;
             if (playbackState === MediaPlayer.PlayingState && autoTopMost.checked) {
                 windowSettings.setStayOnTop();
             } else {
@@ -216,12 +242,15 @@ Page {
             if (playbackState === MediaPlayer.PlayingState) onlinePlayerViewModel.broadcastPlaybackState("play");
             if (playbackState === MediaPlayer.PausedState) onlinePlayerViewModel.broadcastPlaybackState("pause");
         }
-        onVolumeChanged: {
-            volumeSlider.value = volume * 100;
+
+        function loaderVolumeChanged() {
+            volumeSlider.value = playerLoader.item.volume * 100;
             onlinePlayerViewModel.volumeSlider = volumeSlider.value;
             if (applicationSettings.sendVolumeToRemote) onlinePlayerViewModel.broadcastVolume(volumeSlider.value);
         }
-        onStatusChanged: {
+
+        function loaderStatusChanged() {
+            const status = playerLoader.item.status;
             if (status === MediaPlayer.Loading) onlinePlayerViewModel.isBuffering = true;
 
             if (status === MediaPlayer.EndOfMedia && autoNextVideo.checked) onlinePlayerViewModel.nextVideo();
@@ -232,22 +261,25 @@ Page {
 
             if (status === MediaPlayer.Buffering) onlinePlayerViewModel.isBuffering = true;
 
-            if (status === MediaPlayer.Buffered) {                
+            if (status === MediaPlayer.Buffered) {
                 onlinePlayerViewModel.isBuffering = false;
                 if (onlinePlayerViewModel.restorePosition > 0){
-                    player.seek(onlinePlayerViewModel.restorePosition);
-                    if (player.position >= onlinePlayerViewModel.restorePosition) onlinePlayerViewModel.restorePosition = 0;
+                    playerLoader.item.seek(onlinePlayerViewModel.restorePosition);
+                    if (playerLoader.item.position >= onlinePlayerViewModel.restorePosition) onlinePlayerViewModel.restorePosition = 0;
                 } else {
                     if (_page.isFromNavigated) {
                         const videoPosition = onlinePlayerViewModel.getCurrentVideoSeenVideoPosition()
-                        if (videoPosition > 0) player.seek(videoPosition);
+                        if (videoPosition > 0) playerLoader.item.seek(videoPosition);
                         _page.isFromNavigated = false;
                     }
                 }
             }
         }
 
-        onPositionChanged: {
+        function loaderPositionChanged() {
+            const position = playerLoader.item.position;
+            const duration = playerLoader.item.duration;
+
             if (!playerLocation.pressed && onlinePlayerViewModel.lastMovedPosition === 0) playerLocation.value = position;
 
             onlinePlayerViewModel.changeVideoPosition(duration, position);
@@ -430,16 +462,16 @@ Page {
 
             Slider {
                 id: playerLocation
-                visible: player.duration > 0
+                visible: playerLoader.item.duration > 0
                 height: 20
                 width: controlPanel.width
                 from: 1
                 value: 1
-                to: player.duration
+                to: playerLoader.item.duration
                 onPressedChanged: {
                     if (!pressed && onlinePlayerViewModel.lastMovedPosition > 0) {
-                        player.seek(onlinePlayerViewModel.lastMovedPosition);
-                        onlinePlayerViewModel.broadcastVideoPosition(onlinePlayerViewModel.lastMovedPosition.toString() + `/` + player.duration.toString());
+                        playerLoader.item.seek(onlinePlayerViewModel.lastMovedPosition);
+                        onlinePlayerViewModel.broadcastVideoPosition(onlinePlayerViewModel.lastMovedPosition.toString() + `/` + playerLoader.item.duration.toString());
                         onlinePlayerViewModel.lastMovedPosition = 0;
                     }
                     controlPanel.forceActiveFocus();
@@ -454,7 +486,7 @@ Page {
                 width: 2
                 height: 20
                 color: "transparent"
-                visible: player.duration === 0
+                visible: playerLoader.item.duration === 0
             }
 
             Item {
@@ -473,10 +505,10 @@ Page {
                         height: 20
                         width: 60
                         text: "1080p"
-                        visible: player.duration > 0 && onlinePlayerViewModel.isFullHdAllowed
+                        visible: playerLoader.item.duration > 0 && onlinePlayerViewModel.isFullHdAllowed
                         isChecked: onlinePlayerViewModel.videoQuality === `fullhd`
                         onButtonClicked: {
-                            onlinePlayerViewModel.restorePosition = player.position;
+                            onlinePlayerViewModel.restorePosition = playerLoader.item.position;
                             onlinePlayerViewModel.changeVideoQuality(`fullhd`);
                             localStorage.setVideoQuality(2);
                         }
@@ -484,11 +516,11 @@ Page {
                     ToggleButton {
                         height: 20
                         width: 60
-                        visible: player.duration > 0
+                        visible: playerLoader.item.duration > 0
                         text: "720p"
                         isChecked: onlinePlayerViewModel.videoQuality === `hd`
                         onButtonClicked: {
-                            onlinePlayerViewModel.restorePosition = player.position;
+                            onlinePlayerViewModel.restorePosition = playerLoader.item.position;
                             onlinePlayerViewModel.changeVideoQuality(`hd`);
                             localStorage.setVideoQuality(1);
                         }
@@ -496,11 +528,11 @@ Page {
                     ToggleButton {
                         height: 20
                         width: 60
-                        visible: player.duration > 0
+                        visible: playerLoader.item.duration > 0
                         text: "480p"
                         isChecked: onlinePlayerViewModel.videoQuality === `sd`
                         onButtonClicked: {
-                            onlinePlayerViewModel.restorePosition = player.position;
+                            onlinePlayerViewModel.restorePosition = playerLoader.item.position;
                             onlinePlayerViewModel.changeVideoQuality(`sd`);
                             localStorage.setVideoQuality(0);
                         }
@@ -508,7 +540,7 @@ Page {
                     Rectangle {
                         width: 20
                         height: 20
-                        visible: player.duration > 0
+                        visible: playerLoader.item.duration > 0
                         color: "transparent"
                         PlainText {
                             anchors.centerIn: parent
@@ -519,7 +551,7 @@ Page {
                     ToggleButton {
                         height: 20
                         width: 40
-                        visible: player.duration > 0
+                        visible: playerLoader.item.duration > 0
                         text: "x0.25"
                         isChecked: onlinePlayerViewModel.playbackRate === 0.25
                         onButtonClicked: {
@@ -529,7 +561,7 @@ Page {
                     ToggleButton {
                         height: 20
                         width: 40
-                        visible: player.duration > 0
+                        visible: playerLoader.item.duration > 0
                         text: "x0.5"
                         isChecked: onlinePlayerViewModel.playbackRate === 0.5
                         onButtonClicked: {
@@ -539,7 +571,7 @@ Page {
                     ToggleButton {
                         height: 20
                         width: 40
-                        visible: player.duration > 0
+                        visible: playerLoader.item.duration > 0
                         text: "x0.75"
                         isChecked: onlinePlayerViewModel.playbackRate === 0.75
                         onButtonClicked: {
@@ -549,7 +581,7 @@ Page {
                     ToggleButton {
                         height: 20
                         width: 40
-                        visible: player.duration > 0
+                        visible: playerLoader.item.duration > 0
                         text: "x1"
                         isChecked: onlinePlayerViewModel.playbackRate === 1
                         onButtonClicked: {
@@ -559,7 +591,7 @@ Page {
                     ToggleButton {
                         height: 20
                         width: 40
-                        visible: player.duration > 0
+                        visible: playerLoader.item.duration > 0
                         text: "x1.25"
                         isChecked: onlinePlayerViewModel.playbackRate === 1.1
                         onButtonClicked: {
@@ -569,7 +601,7 @@ Page {
                     ToggleButton {
                         height: 20
                         width: 40
-                        visible: player.duration > 0
+                        visible: playerLoader.item.duration > 0
                         text: "x1.5"
                         isChecked: onlinePlayerViewModel.playbackRate === 1.2
                         onButtonClicked: {
@@ -579,7 +611,7 @@ Page {
                     ToggleButton {
                         height: 20
                         width: 40
-                        visible: player.duration > 0
+                        visible: playerLoader.item.duration > 0
                         text: "x1.75"
                         isChecked: onlinePlayerViewModel.playbackRate === 1.3
                         onButtonClicked: {
@@ -589,7 +621,7 @@ Page {
                     ToggleButton {
                         height: 20
                         width: 40
-                        visible: player.duration > 0
+                        visible: playerLoader.item.duration > 0
                         text: "x2"
                         isChecked: onlinePlayerViewModel.playbackRate === 1.5
                         onButtonClicked: {
@@ -599,7 +631,7 @@ Page {
                     ToggleButton {
                         height: 20
                         width: 40
-                        visible: player.duration > 0
+                        visible: playerLoader.item.duration > 0
                         text: "x3"
                         isChecked: onlinePlayerViewModel.playbackRate === 2
                         onButtonClicked: {
@@ -640,13 +672,13 @@ Page {
                     IconButton {
                         width: 40
                         height: 40
-                        iconColor: player.muted ? ApplicationTheme.filterIconButtonGreenColor : ApplicationTheme.filterIconButtonColor
+                        iconColor: playerLoader.item.muted ? ApplicationTheme.filterIconButtonGreenColor : ApplicationTheme.filterIconButtonColor
                         hoverColor: ApplicationTheme.filterIconButtonHoverColor
                         iconPath: "../Assets/Icons/speaker.svg"
                         iconWidth: 24
                         iconHeight: 24
                         onButtonPressed: {
-                            player.muted = !player.muted;
+                            playerLoader.item.muted = !playerLoader.item.muted;
                         }
                     }
                     Slider {
@@ -658,12 +690,12 @@ Page {
                         to: 100
                         onPressedChanged: {
                             if (!pressed) {
-                                localStorage.setVolume(player.volume);
+                                localStorage.setVolume(playerLoader.item.volume);
                             }
                             controlPanel.forceActiveFocus();
                         }
                         onMoved: {
-                            player.volume = value / 100;
+                            playerLoader.item.volume = value / 100;
                         }
                     }
                     IconButton {
@@ -718,14 +750,14 @@ Page {
                     IconButton {
                         width: 40
                         height: 40
-                        visible: player.duration > 0
+                        visible: playerLoader.item.duration > 0
                         iconColor: ApplicationTheme.filterIconButtonColor
                         hoverColor: ApplicationTheme.filterIconButtonHoverColor
                         iconPath: "../Assets/Icons/previous10.svg"
                         iconWidth: 24
                         iconHeight: 24
                         onButtonPressed: {
-                            player.seek(onlinePlayerViewModel.jumpInPlayer(jumpMinuteComboBox.currentIndex, jumpSecondComboBox.currentIndex, true))
+                            playerLoader.item.seek(onlinePlayerViewModel.jumpInPlayer(jumpMinuteComboBox.currentIndex, jumpSecondComboBox.currentIndex, true))
                         }
                     }
                     IconButton {
@@ -755,7 +787,7 @@ Page {
                         iconWidth: 24
                         iconHeight: 24
                         onButtonPressed: {
-                            player.play();
+                            playerLoader.item.play();
                         }
                     }
                     IconButton {
@@ -769,7 +801,7 @@ Page {
                         iconWidth: 24
                         iconHeight: 24
                         onButtonPressed: {
-                            player.pause();
+                            playerLoader.item.pause();
                         }
                     }
                     IconButton {
@@ -791,14 +823,14 @@ Page {
                     IconButton {
                         width: 40
                         height: 40
-                        visible: player.duration > 0
+                        visible: playerLoader.item.duration > 0
                         iconColor: ApplicationTheme.filterIconButtonColor
                         hoverColor: ApplicationTheme.filterIconButtonHoverColor
                         iconPath: "../Assets/Icons/next30.svg"
                         iconWidth: 24
                         iconHeight: 24
                         onButtonPressed: {
-                            player.seek(onlinePlayerViewModel.jumpInPlayer(jumpMinuteComboBox.currentIndex, jumpSecondComboBox.currentIndex, false));
+                            playerLoader.item.seek(onlinePlayerViewModel.jumpInPlayer(jumpMinuteComboBox.currentIndex, jumpSecondComboBox.currentIndex, false));
                         }
                     }
                 }
@@ -818,13 +850,10 @@ Page {
                         iconPath: "../Assets/Icons/topmostwindow.svg"
                         iconWidth: 29
                         iconHeight: 29
+                        tooltipMessage: windowSettings.isTopMost ? "Выключить режим поверх всех окон (T)" : "Включить режим поверх всех окон (T)"
                         onButtonPressed: {
                             windowSettings.toggleStayOnTopMode();
                         }
-
-                        ToolTip.delay: 1000
-                        ToolTip.visible: topmostButton.hovered
-                        ToolTip.text: windowSettings.isTopMost ? "Выключить режим поверх всех окон (T)" : "Включить режим поверх всех окон (T)"
                     }
 
                     IconButton {
@@ -962,9 +991,9 @@ Page {
                         Popup {
                             id: optionsPopup
                             x: optionsButton.width - 300
-                            y: optionsButton.height - 340
+                            y: optionsButton.height - 430
                             width: 300
-                            height: 340
+                            height: 430
 
                             modal: true
                             focus: true
@@ -1074,6 +1103,19 @@ Page {
                                         if (!checked) releasePosterArea.visible = false;
                                     }
                                 }
+
+                                PlainText {
+                                    width: optionsPopup.width - 20
+                                    fontPointSize: 10
+                                    text: "Показывать видео превью"
+                                }
+
+                                Switch {
+                                    id: showVideoPreview
+                                    onCheckedChanged: {
+                                        localStorage.setShowVideoPreview(checked);
+                                    }
+                                }
                             }
                         }
 
@@ -1092,12 +1134,12 @@ Page {
                         iconWidth: 29
                         iconHeight: 29
                         onButtonPressed: {
-                            switch (player.fillMode) {
+                            switch (playerLoader.item.fillMode) {
                                 case VideoOutput.PreserveAspectFit:
-                                    player.fillMode = VideoOutput.PreserveAspectCrop;
+                                    playerLoader.item.fillMode = VideoOutput.PreserveAspectCrop;
                                     break;
                                 case VideoOutput.PreserveAspectCrop:
-                                    player.fillMode = VideoOutput.PreserveAspectFit;
+                                    playerLoader.item.fillMode = VideoOutput.PreserveAspectFit;
                                     break;
                             }
                         }
@@ -1249,7 +1291,7 @@ Page {
     }
 
     Component.onCompleted: {
-        volumeSlider.value = player.volume * 100;
+        volumeSlider.value = playerLoader.item.volume * 100;
     }
 
 }

@@ -97,6 +97,7 @@ SOURCES += \
     Classes/ViewModels/authorizationviewmodel.cpp \
     Classes/ViewModels/notificationviewmodel.cpp \
     Classes/ViewModels/onlineplayerviewmodel.cpp \
+    Classes/ViewModels/onlineplayerwindowviewmodel.cpp \
     Classes/ViewModels/youtubeviewmodel.cpp \
     Classes/globalconstant.cpp \
     Classes/ListModels/alphabetlistmodel.cpp \
@@ -159,5 +160,6 @@ HEADERS += \
     Classes/ViewModels/authorizationviewmodel.h \
     Classes/ViewModels/notificationviewmodel.h \
     Classes/ViewModels/onlineplayerviewmodel.h \
+    Classes/ViewModels/onlineplayerwindowviewmodel.h \
     Classes/ViewModels/youtubeviewmodel.h \
     globalconstants.h

@@ -30,6 +30,7 @@ Item {
     property bool hovered: false
     property alias showCrossIcon: crossIcon.visible
     property color backgroundColor: "transparent"
+    property string tooltipMessage: ""
 
     signal buttonPressed()
     signal buttonHoverEnter()
@@ -51,6 +52,7 @@ Item {
         }
         onClicked: {
             _button.buttonPressed();
+            focus = true;
         }
     }
 
@@ -99,6 +101,9 @@ Item {
                 ctx.closePath();
                 ctx.stroke();
             }
-        }
+        }        
     }
+    ToolTip.delay: 1000
+    ToolTip.visible: tooltipMessage && hovered
+    ToolTip.text: tooltipMessage
 }

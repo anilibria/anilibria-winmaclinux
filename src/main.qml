@@ -55,6 +55,8 @@ ApplicationWindow {
 
     onClosing: {
         analyticsService.sendEvent("Session", "End");
+        onlinePlayerWindow.closeWindow();
+        onlinePlayerWindow.hide();
     }
 
     onActiveChanged: {
@@ -1149,10 +1151,15 @@ ApplicationWindow {
         onIsFullScreenChanged: {
             if (isFullScreen) {
                 window.showFullScreen();
-                toolBar.visible = false;
+                if (applicationSettings.useCustomToolbar) toolBar.visible = false;
             } else {
-                window.showNormal();
-                toolBar.visible = true;
+                if (window.isShowFullScreenSize) {
+                    window.showMaximized();
+                } else {
+                    window.showNormal();
+                }
+
+                if (applicationSettings.useCustomToolbar) toolBar.visible = true;
             }
         }
         onNeedScrollSeriaPosition: {
@@ -1223,6 +1230,9 @@ ApplicationWindow {
             visible: false
             onReturnToReleasesPage: {
                 window.showPage("release");
+            }
+            onPlayerCreated: {
+                onlinePlayerWindow.loadPlayer();
             }
         }
 
@@ -1508,6 +1518,21 @@ ApplicationWindow {
                 }
             }
         }
+    }
+
+    OnlinePlayerWindowViewModel {
+        id: onlinePlayerWindowViewModel
+    }
+
+    OnlinePlayerWindow {
+        id: onlinePlayerWindow
+        videoSource: videoplayer.videoPlayerSource
+        videoOutput: videoplayer.videoOutputSource
+    }
+
+    Item {
+        id: assetsLocation
+        property string path: Qt.resolvedUrl("../Assets/")
     }
 
 }
