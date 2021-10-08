@@ -58,7 +58,7 @@ void PopupNotificationVideoList::addNewNotification(const int &type, const QStri
     model->setType(type);
     model->setMessage(message);
 
-    m_popupNotifications->insert(0, model);
+    m_popupNotifications->append(model);
 
     if (!m_timer->isActive()) m_timer->start();
 

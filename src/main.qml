@@ -1387,21 +1387,29 @@ ApplicationWindow {
             rotation: 180
             width: 250
             height: 80
-            radius: 8
-            border.color: ApplicationTheme.selectedItem
-            border.width: 2
-            color: ApplicationTheme.notificationCenterItemBackground
+            color: "transparent"
 
-            LinkedText {
-                padding: 10
-                maximumLineCount: 3
-                fontPointSize: 8
-                width: parent.width
-                wrapMode: Text.WordWrap
-                elide: Text.ElideRight
-                text: message
-                anchors.verticalCenter: parent.verticalCenter
+            Rectangle {
+                anchors.fill: parent
+                anchors.topMargin: 4
+                anchors.bottomMargin: 4
+                border.color: ApplicationTheme.selectedItem
+                border.width: 2
+                radius: 8
+                color: ApplicationTheme.notificationCenterItemBackground
+
+                LinkedText {
+                    padding: 8
+                    maximumLineCount: 3
+                    fontPointSize: 8
+                    width: parent.width
+                    wrapMode: Text.WordWrap
+                    elide: Text.ElideRight
+                    text: message
+                    anchors.verticalCenter: parent.verticalCenter
+                }
             }
+
         }
     }
 
