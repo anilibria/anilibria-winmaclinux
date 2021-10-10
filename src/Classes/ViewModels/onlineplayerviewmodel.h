@@ -63,6 +63,7 @@ class OnlinePlayerViewModel : public QObject
     Q_PROPERTY(int videoDuration READ videoDuration WRITE setVideoDuration NOTIFY videoDurationChanged)
     Q_PROPERTY(bool sendVolumeToRemote READ sendVolumeToRemote WRITE setSendVolumeToRemote NOTIFY sendVolumeToRemoteChanged)
     Q_PROPERTY(bool isMultipleRelease READ isMultipleRelease WRITE setIsMultipleRelease NOTIFY isMultipleReleaseChanged)
+    Q_PROPERTY(bool isFromNavigated READ isFromNavigated WRITE setIsFromNavigated NOTIFY isFromNavigatedChanged)
 
 private:
     bool m_isFullScreen;
@@ -104,6 +105,7 @@ private:
     int m_videoDuration;
     bool m_sendVolumeToRemote;
     bool m_isMultipleRelease;
+    bool m_isFromNavigated;
 
 public:
     explicit OnlinePlayerViewModel(QObject *parent = nullptr);
@@ -199,6 +201,9 @@ public:
     bool isMultipleRelease() const { return m_isMultipleRelease; }
     void setIsMultipleRelease(bool isMultipleRelease) noexcept;
 
+    bool isFromNavigated() const noexcept { return m_isFromNavigated; }
+    void setIsFromNavigated(const bool& isFromNavigated) noexcept;
+
     Q_INVOKABLE void toggleFullScreen();
     Q_INVOKABLE void changeVideoPosition(int duration, int position) noexcept;
     Q_INVOKABLE QString checkExistingVideoQuality(int index);    
@@ -287,6 +292,7 @@ signals:
     void videoDurationChanged();
     void sendVolumeToRemoteChanged();
     void isMultipleReleaseChanged();
+    void isFromNavigatedChanged();
 
 };
 

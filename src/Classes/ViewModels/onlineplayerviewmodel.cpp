@@ -58,7 +58,8 @@ OnlinePlayerViewModel::OnlinePlayerViewModel(QObject *parent) : QObject(parent),
     m_seenMarkModels(new QHash<QString, bool>()),
     m_videoPosition(0),
     m_videoDuration(0),
-    m_sendVolumeToRemote(false)
+    m_sendVolumeToRemote(false),
+    m_isFromNavigated(false)
 {
     createIfNotExistsFile(getSeensCachePath(), "[]");
 
@@ -303,6 +304,14 @@ void OnlinePlayerViewModel::setIsMultipleRelease(bool isMultipleRelease) noexcep
 
     m_isMultipleRelease = isMultipleRelease;
     emit isMultipleReleaseChanged();
+}
+
+void OnlinePlayerViewModel::setIsFromNavigated(const bool &isFromNavigated) noexcept
+{
+    if (m_isFromNavigated == isFromNavigated) return;
+
+    m_isFromNavigated = isFromNavigated;
+    emit isFromNavigatedChanged();
 }
 
 void OnlinePlayerViewModel::toggleFullScreen()

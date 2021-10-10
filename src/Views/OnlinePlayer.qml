@@ -29,7 +29,6 @@ Page {
     id: _page
     property var seenVideo: ({})
     property var seenMarks: ({})
-    property bool isFromNavigated: false
     property var videoPlayerSource
     property var videoOutputSource
 
@@ -113,7 +112,7 @@ Page {
 
     onNavigateTo: {
         if (onlinePlayerWindowViewModel.opened) onlinePlayerWindow.hideWindow(false);
-        _page.isFromNavigated = true;
+        onlinePlayerViewModel.isFromNavigated = true;
         const userSettings = JSON.parse(localStorage.getUserSettings());
         playerLoader.item.volume = userSettings.volume;
         autoNextVideo.checked = userSettings.autoNextVideo;
@@ -264,13 +263,18 @@ Page {
             if (status === MediaPlayer.Buffered) {
                 onlinePlayerViewModel.isBuffering = false;
                 if (onlinePlayerViewModel.restorePosition > 0){
+                    console.log('Seek in player', onlinePlayerViewModel.restorePosition);
                     playerLoader.item.seek(onlinePlayerViewModel.restorePosition);
                     if (playerLoader.item.position >= onlinePlayerViewModel.restorePosition) onlinePlayerViewModel.restorePosition = 0;
+                    console.log('Changed restoreposition', onlinePlayerViewModel.restorePosition);
                 } else {
-                    if (_page.isFromNavigated) {
+                    if (onlinePlayerViewModel.isFromNavigated) {
+                        onlinePlayerViewModel.isFromNavigated = false;
                         const videoPosition = onlinePlayerViewModel.getCurrentVideoSeenVideoPosition()
-                        if (videoPosition > 0) playerLoader.item.seek(videoPosition);
-                        _page.isFromNavigated = false;
+                        if (videoPosition > 0) {
+                            console.log('Changed isFromNavigated restoreposition', onlinePlayerViewModel.restorePosition);
+                            playerLoader.item.seek(videoPosition);
+                        }
                     }
                 }
             }
