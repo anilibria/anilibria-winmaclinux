@@ -47,7 +47,7 @@ Page {
                     height: 45
                     width: 40
                     iconColor: "white"
-                    iconPath: "../Assets/Icons/menu.svg"
+                    iconPath: assetsLocation.iconsPath + "menu.svg"
                     iconWidth: 29
                     iconHeight: 29
                     onButtonPressed: {
@@ -98,7 +98,7 @@ Page {
                         Image {
                             anchors.verticalCenter: parent.verticalCenter
                             anchors.horizontalCenter: parent.horizontalCenter
-                            source: "../Assets/Icons/anilibrialogodefault.svg"
+                            source: assetsLocation.iconsPath + "anilibrialogodefault.svg"
                             mipmap: true
                             width: 200
                             height: 200
@@ -316,7 +316,7 @@ Page {
                         color: "transparent"
                         width: 100
                         Layout.alignment: Qt.AlignCenter
-                        Layout.topMargin: 4
+                        Layout.topMargin: 10
                         Layout.bottomMargin: 10
                         Layout.fillWidth: true
                         Layout.preferredHeight: 20
