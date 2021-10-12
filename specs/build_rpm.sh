@@ -1,0 +1,17 @@
+#!/usr/bin/bash -e
+
+# setup source code
+cd ~/anilibria-winmaclinux
+git pull
+sed -i 's/\/opt\/\$\$[{]TARGET[}]/\/usr\/local/g' AniLibria.pro
+
+# refresh spec file
+#cp ../spec/anilibria.spec ~/rpmbuild/SPECS
+
+# create tarball
+tar -czvf anilibria-winmaclinux-1.0.3.tar.gz .
+mv anilibria-winmaclinux-1.0.3.tar.gz ~/rpmbuild/SOURCES
+
+# build rpm
+cd ~/rpmbuild/SPECS
+rpmbuild -ba -vv anilibria.spec
