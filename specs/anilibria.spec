@@ -33,7 +33,16 @@ Application for watching anime from AniLibria website.
 %make_build
  
 %install
-%make_install
+mkdir -p $RPM_BUILD_ROOT/usr/{bin, share}
+mkdir -p $RPM_BUILD_ROOT/usr/bin/%{name}
+#mkdir -p $RPM_BUILD_ROOT/usr/bin/%{name}/platforms
+mkdir -p $RPM_BUILD_ROOT/usr/share/{applications,pixmaps}
+cp AniLibria $RPM_BUILD_ROOT/usr/bin
+
+%post
+
+%postun
 
 %files
 %defattr(-,root,root, -)
+%{_bindir}/AniLibria
