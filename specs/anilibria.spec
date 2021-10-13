@@ -1,5 +1,5 @@
 Name: anilibria-winmaclinux
-Version: 1.0.3
+Version: 1.0.4
 License: GPLv3+
 Release: 1%{?dist}
 Summary: Application for watching anime from AniLibria website
@@ -38,6 +38,8 @@ mkdir -p $RPM_BUILD_ROOT/usr/bin/%{name}
 #mkdir -p $RPM_BUILD_ROOT/usr/bin/%{name}/platforms
 mkdir -p $RPM_BUILD_ROOT/usr/share/{applications,pixmaps}
 cp AniLibria $RPM_BUILD_ROOT/usr/bin
+cp ../specs/AniLibria.desktop $RPM_BUILD_ROOT/usr/share/applications
+cp ../specs/AniLibria.png $RPM_BUILD_ROOT/usr/share/pixmaps
 
 %post
 
@@ -46,3 +48,10 @@ cp AniLibria $RPM_BUILD_ROOT/usr/bin
 %files
 %defattr(-,root,root, -)
 %{_bindir}/AniLibria
+%{_datadir}/applications/AniLibria.desktop
+%{_datadir}/pixmaps/AniLibria.png
+
+%changelog
+ - Few bug fixes
+ - Added video preview in separate window
+ - Added popup notification over all content
