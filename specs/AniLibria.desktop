@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=AniLibria
+Comment=AniLibria desktop client
+Exec=/usr/bin/AniLibria
+Icon=/usr/share/pixmaps/AniLibria.png
+Type=Application
+Version=1.0.4
+Terminal=false
+Categories=Qt;AudioVideo;Player;
+Keywords=anime;
