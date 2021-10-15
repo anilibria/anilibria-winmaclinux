@@ -52,18 +52,25 @@ int main(int argc, char *argv[])
         AttachConsole(GetCurrentProcessId());
 
         // reopen the std I/O streams to redirect I/O to the new console
-        freopen("CON", "w", stdout);
-        freopen("CON", "w", stderr);
-        freopen("CON", "r", stdin);
+        FILE *newstdin = nullptr;
+        FILE *newstdout = nullptr;
+        FILE *newstderr = nullptr;
+
+        freopen_s(&newstdin, "CONIN$", "r", stdin);
+        freopen_s(&newstdout, "CONOUT$", "w", stdout);
+        freopen_s(&newstderr, "CONOUT$", "w", stderr);
     }
 #endif
     if (argc >= 2 && QString(argv[1]) == "portable") {
         IsPortable = true;
     }
-
-    QGuiApplication app(argc, argv);    
+#if QT_VERSION >= QT_VERSION_CHECK(5, 15, 0)
     QtWebEngine::initialize();
-
+#endif
+    QGuiApplication app(argc, argv);
+#if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
+    QtWebEngine::initialize();
+#endif
     qmlRegisterType<SynchronizationService>("Anilibria.Services", 1, 0, "SynchronizationService");
     qmlRegisterType<LocalStorageService>("Anilibria.Services", 1, 0, "LocalStorage");
     qmlRegisterType<ApplicationSettings>("Anilibria.Services", 1, 0, "ApplicationSettings");    
