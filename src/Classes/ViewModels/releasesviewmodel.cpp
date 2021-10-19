@@ -40,7 +40,7 @@ void ReleasesViewModel::copyImageToClipboard(const QString &imagePath) const
     auto pathToImage = imagePath;
 #ifdef Q_OS_WIN
     pathToImage = pathToImage.replace("file:///", "");
-#elif
+#else
     pathToImage = pathToImage.replace("file://", "");
 #endif
 
