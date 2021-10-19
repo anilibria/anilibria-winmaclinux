@@ -1219,6 +1219,10 @@ ApplicationWindow {
         anchors.bottom: parent.bottom
     }
 
+    ReleasesViewModel {
+        id: releasesViewModel
+    }
+
     Rectangle {
         color: "transparent"
         anchors.fill: parent

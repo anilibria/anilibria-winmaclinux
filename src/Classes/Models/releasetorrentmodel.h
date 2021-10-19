@@ -29,7 +29,7 @@ private:
     QString m_Hash;
     QString m_Quality;
     QString m_Series;
-    long m_Size;
+    long long m_Size;
     QString m_Url;
 public:
     ReleaseTorrentModel();
@@ -50,8 +50,8 @@ public:
     QString series() const { return m_Series; }
     void setSeries(const QString &series) noexcept;
 
-    long size() const { return m_Size; }
-    void setSize(const long size) noexcept;
+    long long size() const { return m_Size; }
+    void setSize(const long long size) noexcept;
 
     QString url() const { return m_Url; }
     void setUrl(const QString &url) noexcept;

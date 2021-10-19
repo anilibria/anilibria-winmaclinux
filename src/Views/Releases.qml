@@ -23,7 +23,6 @@ import QtWebEngine 1.8
 import QtQuick.Controls.Styles 1.4
 import QtQuick.Dialogs 1.2
 import QtGraphicalEffects 1.0
-import Anilibria.Services 1.0
 import "../Controls"
 import "../Theme"
 
@@ -138,10 +137,6 @@ Page {
     ListModel {
         id: releasesModel
         property int updateCounter: 0
-    }
-
-    ListModel {
-        id: torrentsModel
     }
 
     Rectangle {
@@ -1753,7 +1748,7 @@ Page {
                             fontPointSize: 10
                             leftPadding: 8
                             topPadding: 4
-                            text: qsTr("<b>В расписании:</b> ") + (page.openedRelease && page.scheduledReleases[page.openedRelease.id] ? getScheduleDay(page.scheduledReleases[page.openedRelease.id]) : '')
+                            text: qsTr("<b>В расписании:</b> ") + (page.openedRelease && page.scheduledReleases[page.openedRelease.id] ? releasesViewModel.getScheduleDay(page.scheduledReleases[page.openedRelease.id]) : '')
                         }
 
                         PlainText {
@@ -1907,27 +1902,35 @@ Page {
                                 CommonMenuItem {
                                     text: "Копировать название"
                                     onPressed: {
-                                        copyToClipboard(page.openedRelease.title);
+                                        releasesViewModel.copyToClipboard(page.openedRelease.title);
                                     }
                                 }
                                 CommonMenuItem {
                                     text: "Копировать оригинальное название"
                                     onPressed: {
-                                        copyToClipboard(page.openedRelease.originalName);
+                                        releasesViewModel.copyToClipboard(page.openedRelease.originalName);
                                     }
                                 }
                                 CommonMenuItem {
                                     text: "Копировать оба названия"
                                     onPressed: {
-                                        copyToClipboard(page.openedRelease.title + ", " + page.openedRelease.originalName);
+                                        releasesViewModel.copyToClipboard(page.openedRelease.title + ", " + page.openedRelease.originalName);
                                     }
                                 }
                                 CommonMenuItem {
                                     text: "Копировать описание"
                                     onPressed: {
-                                        copyToClipboard(page.openedRelease.description);
+                                        releasesViewModel.copyToClipboard(page.openedRelease.description);
                                     }
                                 }
+                                CommonMenuItem {
+                                    text: "Копировать постер"
+                                    onPressed: {
+                                        const currentOpened = page.openedRelease;
+                                        releasesViewModel.copyImageToClipboard(localStorage.getReleasePosterPath(currentOpened.id, currentOpened.poster));
+                                    }
+                                }
+
                             }
                         }
                         IconButton {
@@ -2185,18 +2188,18 @@ Page {
 
                         CommonMenu {
                             id: dowloadTorrent
-                            y: parent.height - parent.height - (torrentsModel.count * 40)
-                            width: 320
+                            y: parent.height - parent.height
+                            width: 380
                             onClosed: {
                                 if (Qt.platform.os !== "windows") webView.visible = true;
                             }
 
                             Repeater {
-                                model: torrentsModel
+                                model: releasesViewModel.openedCardTorrents
                                 CommonMenuItem {
-                                    text: "Скачать " + modelData.quality + " [" + modelData.series + "]"
+                                    text: "Скачать " + quality + " [" + series + "] " + size
                                     onPressed: {
-                                        const torrentUri = synchronizationService.combineWithWebSiteUrl(modelData.url);
+                                        const torrentUri = synchronizationService.combineWithWebSiteUrl(url);
                                         synchronizationService.downloadTorrent(torrentUri);
                                     }
                                 }
@@ -2434,30 +2437,10 @@ Page {
         if (schedule) page.scheduledReleases = JSON.parse(schedule);
     }
 
-    function getScheduleDay(dayNumber) {
-        const day = parseInt(dayNumber);
-        switch (day){
-            case 1: return "понедельник";
-            case 2: return "вторник";
-            case 3: return "среда";
-            case 4: return "четверг";
-            case 5: return "пятница";
-            case 6: return "суббота";
-            case 7: return "воскресенье";
-        }
-        return "---";
-    }
-
     function showReleaseCard(release) {
         if (release.id === -1) return;
 
-        torrentsModel.clear();
-
-        const torrents = JSON.parse(release.torrents);
-
-        for (const torrent of torrents) {
-            torrentsModel.append({ model: torrent });
-        }
+        releasesViewModel.openedCardTorrents.loadTorrentsFromJson(release.torrents);
 
         page.openedRelease = release;
         localStorage.setToReleaseHistory(release.id, 0);
@@ -2467,12 +2450,6 @@ Page {
         page.changesCounts = localStorage.getChangesCounts();
 
         webView.url = getVkontakteCommentPage();
-    }
-
-    function copyToClipboard(text) {
-        hiddenTextField.text = text;
-        hiddenTextField.selectAll();
-        hiddenTextField.copy();
     }
 
     function openInExternalPlayer(url) {

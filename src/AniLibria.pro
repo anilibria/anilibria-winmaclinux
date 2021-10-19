@@ -65,6 +65,7 @@ DEFINES += USE_VERSION_CHECK
 SOURCES += \
     Classes/ListModels/onlineplayervideolist.cpp \
     Classes/ListModels/popupnotificationvideolist.cpp \
+    Classes/ListModels/releasetorrentslist.cpp \
     Classes/Models/changesmodel.cpp \
     Classes/Models/downloaditemmodel.cpp \
     Classes/Models/externalplaylistvideo.cpp \
@@ -98,6 +99,7 @@ SOURCES += \
     Classes/ViewModels/notificationviewmodel.cpp \
     Classes/ViewModels/onlineplayerviewmodel.cpp \
     Classes/ViewModels/onlineplayerwindowviewmodel.cpp \
+    Classes/ViewModels/releasesviewmodel.cpp \
     Classes/ViewModels/youtubeviewmodel.cpp \
     Classes/globalconstant.cpp \
     Classes/ListModels/alphabetlistmodel.cpp \
@@ -127,6 +129,7 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 HEADERS += \
     Classes/ListModels/onlineplayervideolist.h \
     Classes/ListModels/popupnotificationvideolist.h \
+    Classes/ListModels/releasetorrentslist.h \
     Classes/Models/changesmodel.h \
     Classes/Models/downloaditemmodel.h \
     Classes/Models/externalplaylistvideo.h \
@@ -161,5 +164,6 @@ HEADERS += \
     Classes/ViewModels/notificationviewmodel.h \
     Classes/ViewModels/onlineplayerviewmodel.h \
     Classes/ViewModels/onlineplayerwindowviewmodel.h \
+    Classes/ViewModels/releasesviewmodel.h \
     Classes/ViewModels/youtubeviewmodel.h \
     globalconstants.h

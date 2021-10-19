@@ -275,7 +275,7 @@ Rectangle {
                         leftPadding: 8
                         topPadding: 1
                         fontPointSize: 11
-                        text: page.scheduledReleases[releaseModel.id] ? getScheduleDay(page.scheduledReleases[releaseModel.id]) : ''
+                        text: page.scheduledReleases[releaseModel.id] ? releasesViewModel.getScheduleDay(page.scheduledReleases[releaseModel.id]) : ''
                     }
                 }
             }

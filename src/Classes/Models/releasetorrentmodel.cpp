@@ -30,7 +30,7 @@ void ReleaseTorrentModel::readFromApiModel(const QJsonObject &jsonObject)
     m_Quality = jsonObject.value("quality").toString();
     m_Series = jsonObject.value("series").toString();
     m_Url = jsonObject.value("url").toString();
-    m_Size = jsonObject.value("size").toInt();
+    m_Size = jsonObject.value("size").toVariant().toLongLong();
 }
 
 void ReleaseTorrentModel::writeToJson(QJsonObject &json) const noexcept
@@ -40,7 +40,7 @@ void ReleaseTorrentModel::writeToJson(QJsonObject &json) const noexcept
     json["quality"] = m_Quality;
     json["series"] = m_Series;
     json["url"] = m_Url;
-    json["size"] = static_cast<int>(m_Size);
+    json["size"] = m_Size;
 }
 
 void ReleaseTorrentModel::setId(const int id) noexcept
@@ -63,7 +63,7 @@ void ReleaseTorrentModel::setSeries(const QString &series) noexcept
     m_Series = series;
 }
 
-void ReleaseTorrentModel::setSize(const long size) noexcept
+void ReleaseTorrentModel::setSize(const long long size) noexcept
 {
     m_Size = size;
 }
