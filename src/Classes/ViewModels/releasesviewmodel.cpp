@@ -38,7 +38,11 @@ void ReleasesViewModel::copyImageToClipboard(const QString &imagePath) const
 {
     if (imagePath.isEmpty()) return;
     auto pathToImage = imagePath;
-    pathToImage = pathToImage.replace("file:///", "").replace("file://", "");
+#ifdef Q_OS_WIN
+    pathToImage = pathToImage.replace("file:///", "");
+#elif
+    pathToImage = pathToImage.replace("file://", "");
+#endif
 
     QPixmap pixmap;
     if (!pixmap.load(pathToImage, "jpg")) return;
