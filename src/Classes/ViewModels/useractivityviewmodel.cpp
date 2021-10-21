@@ -3,6 +3,7 @@
 #include <QStandardPaths>
 #include <QJsonDocument>
 #include <QJsonObject>
+#include <QVariant>
 #include <QDateTime>
 #include <QTime>
 #include "useractivityviewmodel.h"
