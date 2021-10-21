@@ -1180,6 +1180,18 @@ ApplicationWindow {
         onStopInPlayer: {
             videoplayer.stopInPlayer();
         }
+        onWatchedMinuteInPlayer: {
+            userActivityViewModel.addWatchDurationMinute();
+        }
+        onPlayerPlaybackStateChanged: {
+            //I'm using hardcode constant because multimedia module loading dynamically
+            const playingState = 1;
+            if (playerPlaybackState === playingState) {
+                osExtras.startPreventSleepMode();
+            } else {
+                osExtras.stopPreventSleepMode();
+            }
+        }
     }
 
     YoutubeViewModel {
@@ -1529,6 +1541,17 @@ ApplicationWindow {
                     }
                 }
             }
+        }
+    }
+
+    OsExtras {
+        id: osExtras
+    }
+
+    UserActivityViewModel {
+        id : userActivityViewModel
+        Component.onDestruction: {
+            userActivityViewModel.saveUsingApplication();
         }
     }
 

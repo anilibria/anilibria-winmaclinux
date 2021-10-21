@@ -321,6 +321,16 @@ void OnlinePlayerViewModel::toggleFullScreen()
 
 void OnlinePlayerViewModel::changeVideoPosition(int duration, int position) noexcept
 {
+    if (position == m_videoPosition && duration == m_videoDuration) return;
+
+    m_watchedTimes += position > m_videoPosition ? position - m_videoPosition : m_videoPosition - position;
+
+    //save for every minute
+    if (m_watchedTimes > 60000) {
+        emit watchedMinuteInPlayer();
+        m_watchedTimes = 0;
+    }
+
     QString start = getDisplayTimeFromSeconds(position / 1000);
     QString end = getDisplayTimeFromSeconds(duration / 1000);
 

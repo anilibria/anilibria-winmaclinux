@@ -106,6 +106,7 @@ private:
     bool m_sendVolumeToRemote;
     bool m_isMultipleRelease;
     bool m_isFromNavigated;
+    int m_watchedTimes { 0 };
 
 public:
     explicit OnlinePlayerViewModel(QObject *parent = nullptr);
@@ -293,6 +294,7 @@ signals:
     void sendVolumeToRemoteChanged();
     void isMultipleReleaseChanged();
     void isFromNavigatedChanged();
+    void watchedMinuteInPlayer();
 
 };
 

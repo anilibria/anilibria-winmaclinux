@@ -4,6 +4,7 @@ CONFIG += c++11
 windows {
     QT += av
     Debug:CONFIG += qml_debug
+    LIBS += -lKernel32
 }
 
 unix {
@@ -91,6 +92,7 @@ SOURCES += \
     Classes/Services/imageloader.cpp \
     Classes/Services/localstorageservice.cpp \
     Classes/Services/offlineimagecacheservice.cpp \
+    Classes/Services/osextras.cpp \
     Classes/Services/proxyconfigurator.cpp \
     Classes/Services/releaselinkedseries.cpp \
     Classes/Services/synchronizationservice.cpp \
@@ -100,6 +102,7 @@ SOURCES += \
     Classes/ViewModels/onlineplayerviewmodel.cpp \
     Classes/ViewModels/onlineplayerwindowviewmodel.cpp \
     Classes/ViewModels/releasesviewmodel.cpp \
+    Classes/ViewModels/useractivityviewmodel.cpp \
     Classes/ViewModels/youtubeviewmodel.cpp \
     Classes/globalconstant.cpp \
     Classes/ListModels/alphabetlistmodel.cpp \
@@ -155,6 +158,7 @@ HEADERS += \
     Classes/Services/imageloader.h \
     Classes/Services/localstorageservice.h \
     Classes/Services/offlineimagecacheservice.h \
+    Classes/Services/osextras.h \
     Classes/Services/proxyconfigurator.h \
     Classes/Services/releaselinkedseries.h \
     Classes/Services/synchronizationservice.h \
@@ -165,5 +169,6 @@ HEADERS += \
     Classes/ViewModels/onlineplayerviewmodel.h \
     Classes/ViewModels/onlineplayerwindowviewmodel.h \
     Classes/ViewModels/releasesviewmodel.h \
+    Classes/ViewModels/useractivityviewmodel.h \
     Classes/ViewModels/youtubeviewmodel.h \
     globalconstants.h

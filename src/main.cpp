@@ -40,6 +40,8 @@
 #include "Classes/ViewModels/notificationviewmodel.h"
 #include "Classes/ViewModels/onlineplayerwindowviewmodel.h"
 #include "Classes/ViewModels/releasesviewmodel.h"
+#include "Classes/ViewModels/useractivityviewmodel.h"
+#include "Classes/Services/osextras.h"
 
 int main(int argc, char *argv[])
 {
@@ -82,6 +84,7 @@ int main(int argc, char *argv[])
     qmlRegisterType<ProxyConfigurator>("Anilibria.Services", 1, 0, "ProxyConfigurator");
     qmlRegisterType<RemotePlayer>("Anilibria.RemotePlayer", 1, 0, "RemotePlayer");
     qmlRegisterType<ReleaseLinkedSeries>("Anilibria.Services", 1, 0, "ReleaseLinkedSeries");
+    qmlRegisterType<OsExtras>("Anilibria.Services", 1, 0, "OsExtras");
     qmlRegisterType<AlphabetListModel>("Anilibria.ListModels", 1, 0, "AlphabetListModel");
     qmlRegisterType<OnlinePlayerViewModel>("Anilibria.ViewModels", 1, 0, "OnlinePlayerViewModel");
     qmlRegisterType<YoutubeViewModel>("Anilibria.ViewModels", 1, 0, "YoutubeViewModel");
@@ -89,6 +92,7 @@ int main(int argc, char *argv[])
     qmlRegisterType<NotificationViewModel>("Anilibria.ViewModels", 1, 0, "NotificationViewModel");
     qmlRegisterType<OnlinePlayerWindowViewModel>("Anilibria.ViewModels", 1, 0, "OnlinePlayerWindowViewModel");
     qmlRegisterType<ReleasesViewModel>("Anilibria.ViewModels", 1, 0, "ReleasesViewModel");
+    qmlRegisterType<UserActivityViewModel>("Anilibria.ViewModels", 1, 0, "UserActivityViewModel");
 
     QCoreApplication::setOrganizationDomain("anilibria.tv");
     QCoreApplication::setOrganizationName("EmptyFlow");

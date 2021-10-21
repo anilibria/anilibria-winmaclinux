@@ -31,6 +31,7 @@ Page {
     property var seenMarks: ({})
     property var videoPlayerSource
     property var videoOutputSource
+    property var lastPlayerPosition
 
     signal navigateFrom()
     signal setReleaseVideo()
@@ -475,8 +476,8 @@ Page {
                 onPressedChanged: {
                     if (!pressed && onlinePlayerViewModel.lastMovedPosition > 0) {
                         playerLoader.item.seek(onlinePlayerViewModel.lastMovedPosition);
-                        onlinePlayerViewModel.broadcastVideoPosition(onlinePlayerViewModel.lastMovedPosition.toString() + `/` + playerLoader.item.duration.toString());
                         onlinePlayerViewModel.lastMovedPosition = 0;
+                        onlinePlayerViewModel.broadcastVideoPosition(onlinePlayerViewModel.lastMovedPosition.toString() + `/` + playerLoader.item.duration.toString());                        
                     }
                     controlPanel.forceActiveFocus();
                 }
