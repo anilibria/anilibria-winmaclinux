@@ -6,6 +6,7 @@
 #include <QVariant>
 #include <QDateTime>
 #include <QTime>
+#include <math.h>
 #include "useractivityviewmodel.h"
 
 UserActivityViewModel::UserActivityViewModel(QObject *parent) : QObject(parent)
