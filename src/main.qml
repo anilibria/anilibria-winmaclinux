@@ -1555,6 +1555,13 @@ ApplicationWindow {
         }
     }
 
+    UserConfigurationViewModel {
+        id: userConfigurationViewModel
+        Component.onDestruction: {
+            userConfigurationViewModel.saveSettingsToFile();
+        }
+    }
+
     OnlinePlayerWindowViewModel {
         id: onlinePlayerWindowViewModel
     }

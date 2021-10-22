@@ -103,9 +103,11 @@ SOURCES += \
     Classes/ViewModels/onlineplayerwindowviewmodel.cpp \
     Classes/ViewModels/releasesviewmodel.cpp \
     Classes/ViewModels/useractivityviewmodel.cpp \
+    Classes/ViewModels/userconfigurationviewmodel.cpp \
     Classes/ViewModels/youtubeviewmodel.cpp \
     Classes/globalconstant.cpp \
     Classes/ListModels/alphabetlistmodel.cpp \
+    globalhelpers.cpp \
     main.cpp
 
 RESOURCES += qml.qrc
@@ -170,5 +172,7 @@ HEADERS += \
     Classes/ViewModels/onlineplayerwindowviewmodel.h \
     Classes/ViewModels/releasesviewmodel.h \
     Classes/ViewModels/useractivityviewmodel.h \
+    Classes/ViewModels/userconfigurationviewmodel.h \
     Classes/ViewModels/youtubeviewmodel.h \
-    globalconstants.h
+    globalconstants.h \
+    globalhelpers.h

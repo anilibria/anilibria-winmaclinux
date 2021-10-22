@@ -996,9 +996,9 @@ Page {
                         Popup {
                             id: optionsPopup
                             x: optionsButton.width - 300
-                            y: optionsButton.height - 430
+                            y: optionsButton.height - 500
                             width: 300
-                            height: 430
+                            height: 500
 
                             modal: true
                             focus: true
@@ -1119,6 +1119,30 @@ Page {
                                     id: showVideoPreview
                                     onCheckedChanged: {
                                         localStorage.setShowVideoPreview(checked);
+                                    }
+                                }
+
+                                PlainText {
+                                    width: optionsPopup.width - 20
+                                    fontPointSize: 10
+                                    text: "Прозрачность панели"
+                                }
+                                Slider {
+                                    width: optionsPopup.width - 20
+                                    height: 40
+                                    id: opacitySlider
+                                    from: 0
+                                    to: 100
+                                    onPressedChanged: {
+                                        controlPanel.forceActiveFocus();
+                                    }
+                                    onMoved: {
+                                        controlPanel.color.a = value / 100;
+                                        userConfigurationViewModel.opacityPlayerPanel = value;
+                                    }
+                                    Component.onCompleted: {
+                                        value = userConfigurationViewModel.opacityPlayerPanel;
+                                        controlPanel.color.a = value / 100;
                                     }
                                 }
                             }

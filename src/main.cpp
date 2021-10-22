@@ -42,6 +42,7 @@
 #include "Classes/ViewModels/releasesviewmodel.h"
 #include "Classes/ViewModels/useractivityviewmodel.h"
 #include "Classes/Services/osextras.h"
+#include "Classes/ViewModels/userconfigurationviewmodel.h"
 
 int main(int argc, char *argv[])
 {
@@ -93,6 +94,7 @@ int main(int argc, char *argv[])
     qmlRegisterType<OnlinePlayerWindowViewModel>("Anilibria.ViewModels", 1, 0, "OnlinePlayerWindowViewModel");
     qmlRegisterType<ReleasesViewModel>("Anilibria.ViewModels", 1, 0, "ReleasesViewModel");
     qmlRegisterType<UserActivityViewModel>("Anilibria.ViewModels", 1, 0, "UserActivityViewModel");
+    qmlRegisterType<UserConfigurationViewModel>("Anilibria.ViewModels", 1, 0, "UserConfigurationViewModel");
 
     QCoreApplication::setOrganizationDomain("anilibria.tv");
     QCoreApplication::setOrganizationName("EmptyFlow");
