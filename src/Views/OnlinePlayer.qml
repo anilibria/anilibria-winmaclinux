@@ -273,7 +273,7 @@ Page {
                         onlinePlayerViewModel.isFromNavigated = false;
                         const videoPosition = onlinePlayerViewModel.getCurrentVideoSeenVideoPosition()
                         if (videoPosition > 0) {
-                            console.log('Changed isFromNavigated restoreposition', onlinePlayerViewModel.restorePosition);
+                            console.log('Changed isFromNavigated restoreposition', onlinePlayerViewModel.restorePosition, videoPosition);
                             playerLoader.item.seek(videoPosition);
                         }
                     }

@@ -84,6 +84,8 @@ Page {
     property bool hideFilterButton: false
     property bool showAlpabeticalCharaters: false
     property bool toggler: false
+    property alias backgroundImageWidth: itemsContainer.width
+    property alias backgroundImageHeight: itemsContainer.height
 
     signal navigateFrom()
     signal watchSingleRelease(int releaseId, string videos, int startSeria, string poster)
@@ -1083,7 +1085,7 @@ Page {
                         x: 40
                         y: -390
                         width: 370
-                        height: 530
+                        height: 560
                         modal: true
                         focus: true
                         closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
@@ -1218,6 +1220,21 @@ Page {
                             ToolTip.visible: hovered
                             ToolTip.text: "Если настройка включена будет использоваться кастомный тулбар окна с дополнительным функционалом"
                         }
+
+                        RoundedActionButton {
+                            text: "Настроить фон"
+                            anchors.top: useCustomToolbarSwitch.bottom
+                            onClicked: {
+                                releaseSettingsPopup.close();
+                                backgroundImagePopup.open();
+                            }
+                        }
+                    }
+
+                    BackgroundImagePopup {
+                        id: backgroundImagePopup
+                        x: 40
+                        y: -390
                     }
                 }
 
@@ -1508,9 +1525,22 @@ Page {
             }
 
             Rectangle {
+                id: itemsContainer
                 color: "transparent"
                 Layout.fillHeight: true
                 Layout.fillWidth: true
+
+                Image {
+                    id: backgroundFile
+                    visible: releasesViewModel.imageBackgroundViewModel.isHasImage
+                    fillMode: releasesViewModel.imageBackgroundViewModel.imageMode
+                    source: releasesViewModel.imageBackgroundViewModel.imagePath
+                    opacity: releasesViewModel.imageBackgroundViewModel.opacity / 100
+                    width: releasesViewModel.imageBackgroundViewModel.imageWidth
+                    height: releasesViewModel.imageBackgroundViewModel.imageHeight
+                    x: releasesViewModel.imageBackgroundViewModel.imageX
+                    y: releasesViewModel.imageBackgroundViewModel.imageY
+                }
 
                 MouseArea {
                     anchors.fill: parent

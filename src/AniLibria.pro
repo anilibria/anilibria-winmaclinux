@@ -64,6 +64,7 @@ DEFINES += USE_VERSION_CHECK
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    Classes/ListModels/commoncomboboxlistmodel.cpp \
     Classes/ListModels/onlineplayervideolist.cpp \
     Classes/ListModels/popupnotificationvideolist.cpp \
     Classes/ListModels/releasetorrentslist.cpp \
@@ -98,6 +99,7 @@ SOURCES += \
     Classes/Services/synchronizationservice.cpp \
     Classes/Services/versionchecker.cpp \
     Classes/ViewModels/authorizationviewmodel.cpp \
+    Classes/ViewModels/imagebackgroundviewmodel.cpp \
     Classes/ViewModels/notificationviewmodel.cpp \
     Classes/ViewModels/onlineplayerviewmodel.cpp \
     Classes/ViewModels/onlineplayerwindowviewmodel.cpp \
@@ -132,6 +134,7 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 }
 
 HEADERS += \
+    Classes/ListModels/commoncomboboxlistmodel.h \
     Classes/ListModels/onlineplayervideolist.h \
     Classes/ListModels/popupnotificationvideolist.h \
     Classes/ListModels/releasetorrentslist.h \
@@ -167,6 +170,7 @@ HEADERS += \
     Classes/Services/versionchecker.h \
     Classes/ListModels/alphabetlistmodel.h \
     Classes/ViewModels/authorizationviewmodel.h \
+    Classes/ViewModels/imagebackgroundviewmodel.h \
     Classes/ViewModels/notificationviewmodel.h \
     Classes/ViewModels/onlineplayerviewmodel.h \
     Classes/ViewModels/onlineplayerwindowviewmodel.h \

@@ -1233,6 +1233,13 @@ ApplicationWindow {
 
     ReleasesViewModel {
         id: releasesViewModel
+
+        imageBackgroundViewModel.containerWidth: releases.backgroundImageWidth
+        imageBackgroundViewModel.containerHeight: releases.backgroundImageHeight
+
+        Component.onCompleted: {
+            console.log(`image type`, imageBackgroundViewModel.toString());
+        }
     }
 
     Rectangle {
@@ -1291,7 +1298,7 @@ ApplicationWindow {
             onRequestSynchronizeReleases: {
                 window.synchronizationEnabled = true;
                 synchronizationService.synchronizeReleases();
-            }
+            }            
         }
 
         Authorization {

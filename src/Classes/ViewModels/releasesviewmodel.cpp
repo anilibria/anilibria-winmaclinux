@@ -6,7 +6,7 @@
 
 ReleasesViewModel::ReleasesViewModel(QObject *parent) : QObject(parent)
 {
-
+    m_imageBackgroundViewModel->setOptionFilePath("releasesbackground");
 }
 
 QString ReleasesViewModel::getScheduleDay(const QString &dayNumber) const noexcept
