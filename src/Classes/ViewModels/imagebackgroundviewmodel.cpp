@@ -39,6 +39,7 @@ void ImageBackgroundViewModel::setImagePath(const QString &imagePath) noexcept
 
     m_imagePath = imagePath;
     emit imagePathChanged();
+    emit processedImagePathChanged();
 }
 
 void ImageBackgroundViewModel::setImageMode(int imageMode) noexcept
@@ -119,6 +120,17 @@ int ImageBackgroundViewModel::imageY() const noexcept
         default:
             return 0;
     }
+}
+
+QString ImageBackgroundViewModel::processedImagePath()
+{
+    if (m_imagePath.startsWith("http")) return m_imagePath;
+
+#ifdef Q_OS_WIN
+    return "file:///" + m_imagePath;
+#else
+    return "file://" + m_imagePath;
+#endif
 }
 
 void ImageBackgroundViewModel::restoreToSavedState()

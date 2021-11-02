@@ -1534,7 +1534,7 @@ Page {
                     id: backgroundFile
                     visible: releasesViewModel.imageBackgroundViewModel.isHasImage
                     fillMode: releasesViewModel.imageBackgroundViewModel.imageMode
-                    source: releasesViewModel.imageBackgroundViewModel.imagePath
+                    source: releasesViewModel.imageBackgroundViewModel.processedImagePath
                     opacity: releasesViewModel.imageBackgroundViewModel.opacity / 100
                     width: releasesViewModel.imageBackgroundViewModel.imageWidth
                     height: releasesViewModel.imageBackgroundViewModel.imageHeight

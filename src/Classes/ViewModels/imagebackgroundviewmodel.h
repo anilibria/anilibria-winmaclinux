@@ -23,6 +23,7 @@ class ImageBackgroundViewModel : public QObject
     Q_PROPERTY(int imageHeight READ imageHeight NOTIFY imageHeightChanged)
     Q_PROPERTY(int imageX READ imageX NOTIFY imageXChanged)
     Q_PROPERTY(int imageY READ imageY NOTIFY imageYChanged)
+    Q_PROPERTY(QString processedImagePath READ processedImagePath NOTIFY processedImagePathChanged)
 
 private:
     CommonComboBoxListModel* m_imageModes { new CommonComboBoxListModel(this) };
@@ -74,6 +75,8 @@ public:
     CommonComboBoxListModel* imageModes() { return m_imageModes; }
     CommonComboBoxListModel* alignmentModes() { return m_alignmentModes; }
 
+    QString processedImagePath();
+
     Q_INVOKABLE void restoreToSavedState();
     Q_INVOKABLE void saveCurrentState();
 
@@ -99,6 +102,7 @@ signals:
     void imageHeightChanged();
     void imageXChanged();
     void imageYChanged();
+    void processedImagePathChanged();
 
 };
 
