@@ -1236,10 +1236,6 @@ ApplicationWindow {
 
         imageBackgroundViewModel.containerWidth: releases.backgroundImageWidth
         imageBackgroundViewModel.containerHeight: releases.backgroundImageHeight
-
-        Component.onCompleted: {
-            console.log(`image type`, imageBackgroundViewModel.toString());
-        }
     }
 
     Rectangle {

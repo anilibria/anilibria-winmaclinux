@@ -22,6 +22,7 @@
 #include <QtSvg>
 #include <QQmlContext>
 #include <QString>
+#include <QQmlFileSelector>
 #include "Classes/Services/synchronizationservice.h"
 #include "Classes/Services/localstorageservice.h"
 #include "Classes/Services/applicationsettings.h"
@@ -106,6 +107,13 @@ int main(int argc, char *argv[])
 
     QQmlApplicationEngine engine;
     engine.rootContext()->setContextProperty("ApplicationVersion", ApplicationVersion);
+
+#if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
+    auto selector = QQmlFileSelector::get(&engine);
+    QStringList qtOldVersionSelector;
+    qtOldVersionSelector.append("qtless515");
+    selector->setExtraSelectors(qtOldVersionSelector);
+#endif
 
     const QUrl url(QStringLiteral("qrc:/main.qml"));
     QObject::connect(

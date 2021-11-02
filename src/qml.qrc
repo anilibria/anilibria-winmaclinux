@@ -114,5 +114,7 @@
         <file>Views/Videoplayer/QtVideoOutput.qml</file>
         <file>Controls/BackgroundImagePopup.qml</file>
         <file>Controls/DictionaryComboBox.qml</file>
+        <file>Controls/+qtless515/DictionaryComboBox.qml</file>
+        <file>Controls/+qtless515/BackgroundImagePopup.qml</file>
     </qresource>
 </RCC>
