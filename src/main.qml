@@ -43,7 +43,6 @@ ApplicationWindow {
     property string currentPageId: "release"
     property string currentPageDisplayName: "Каталог релизов"
     property bool synchronizationEnabled: false
-    property bool notVisibleSignin: false
     property var userModel: ({})
     property string tempTorrentPath: ""
     property bool isShowFullScreenSize: false
@@ -770,14 +769,14 @@ ApplicationWindow {
 
             if (window.userModel.avatar) {
                 synchronizationService.synchronizeUserFavorites(applicationSettings.userToken);
-                window.notVisibleSignin = true;
+                mainViewModel.notVisibleSignin = true;
             }
         }
 
         onUserSignouted: {
             applicationSettings.userToken = "";
             window.userModel = {};
-            window.notVisibleSignin = false;
+            mainViewModel.notVisibleSignin = false;
 
             localStorage.clearFavorites();
             releases.refreshFavorites();
@@ -820,7 +819,7 @@ ApplicationWindow {
         width: 300
         dragMargin: 0
         height: window.height
-        background:  LinearGradient {
+        background: LinearGradient {
             anchors.fill: parent
             start: Qt.point(0, 0)
             end: Qt.point(0, 300)
@@ -837,7 +836,7 @@ ApplicationWindow {
             anchors.fill: parent
 
             Item {
-                visible: notVisibleSignin
+                visible: mainViewModel.notVisibleSignin
                 width: drawer.width
                 height: 64
 
@@ -886,212 +885,41 @@ ApplicationWindow {
                 }
             }
 
-            ItemDelegate {
-                contentItem: Item {
-                    Row {
-                        spacing: 10
-                        Image {
-                            source: "Assets/Icons/menu.svg"
-                            sourceSize.width: 30
-                            sourceSize.height: 30
-                        }
-                        Label {
-                            anchors.leftMargin: 10
-                            anchors.verticalCenter: parent.verticalCenter
-                            color: "white"
-                            text: qsTr("Каталог релизов")
-                        }
-                    }
-                }
-                width: parent.width
-                onClicked: {
-                    showPage("release");
-                }
-            }
-            ItemDelegate {
-                contentItem: Item {
-                    Row {
-                        spacing: 10
-                        Image {
-                            source: "Assets/Icons/videoplayer.svg"
-                            sourceSize.width: 30
-                            sourceSize.height: 30
-                            mipmap: true
-                        }
-                        Label {
-                            anchors.leftMargin: 10
-                            anchors.verticalCenter: parent.verticalCenter
-                            color: "white"
-                            text: qsTr("Видеоплеер")
+            Column {
+                Repeater {
+                    model: mainViewModel.mainMenuListModel
+                    delegate: Control {
+                        id: mainMenuControl
+                        width: drawer.width
+                        height: 50
+                        Rectangle {
+                            id: mainMenuDelegate
+                            color: mainMenuControl.hovered ?  Qt.rgba(0, 0, 0, .1) : "transparent"
+                            anchors.fill: parent
+                            MouseArea {
+                                anchors.fill: parent
+                                onClicked: {
+                                    mainViewModel.mainMenuListModel.selectItem(pageIndex);
+                                }
+                            }
+                            Row {
+                                anchors.leftMargin: 16
+                                anchors.fill: parent
+                                spacing: 10
+                                Image {
+                                    anchors.verticalCenter: parent.verticalCenter
+                                    source: assetsLocation.iconsPath + icon
+                                    sourceSize.width: 30
+                                    sourceSize.height: 30
+                                }
+                                Label {
+                                    anchors.verticalCenter: parent.verticalCenter
+                                    color: "white"
+                                    text: title
+                                }
+                            }
                         }
                     }
-                }
-                width: parent.width
-                onClicked: {
-                    showPage("videoplayer");
-                }
-            }
-            ItemDelegate {
-                contentItem: Item {
-                    Row {
-                        spacing: 10
-                        Image {
-                            source: "Assets/Icons/youtube.svg"
-                            sourceSize.width: 30
-                            sourceSize.height: 30
-                            mipmap: true
-                        }
-                        Label {
-                            anchors.leftMargin: 10
-                            anchors.verticalCenter: parent.verticalCenter
-                            color: "white"
-                            text: qsTr("Youtube")
-                        }
-                    }
-                }
-                width: parent.width
-                onClicked: {
-                    showPage("youtube");
-                }
-            }
-            ItemDelegate {
-                contentItem: Item {
-                    Row {
-                        spacing: 10
-                        Image {
-                            source: "Assets/Icons/popcorn.svg"
-                            sourceSize.width: 30
-                            sourceSize.height: 30
-                            mipmap: true
-                        }
-                        Label {
-                            anchors.leftMargin: 10
-                            anchors.verticalCenter: parent.verticalCenter
-                            color: "white"
-                            text: qsTr("Кинозал")
-                        }
-                    }
-                }
-                width: parent.width
-                onClicked: {
-                    showPage("cinemahall");
-                }
-            }
-            ItemDelegate {
-                contentItem: Item {
-                    Row {
-                        spacing: 10
-                        Image {
-                            source: "Assets/Icons/series.svg"
-                            sourceSize.width: 30
-                            sourceSize.height: 30
-                            mipmap: true
-                        }
-                        Label {
-                            anchors.leftMargin: 10
-                            anchors.verticalCenter: parent.verticalCenter
-                            color: "white"
-                            text: qsTr("Связанные релизы")
-                        }
-                    }
-                }
-                width: parent.width
-                onClicked: {
-                    showPage("releaseseries");
-                }
-            }
-            ItemDelegate {
-                contentItem: Item {
-                    Row {
-                        spacing: 10
-                        Image {
-                            source: "Assets/Icons/downloadcircle.svg"
-                            sourceSize.width: 30
-                            sourceSize.height: 30
-                            mipmap: true
-                        }
-                        Label {
-                            anchors.leftMargin: 10
-                            anchors.verticalCenter: parent.verticalCenter
-                            color: "white"
-                            text: qsTr("Менеджер загрузок")
-                        }
-                    }
-                }
-                width: parent.width
-                onClicked: {
-                    showPage("download");
-                }
-            }
-            ItemDelegate {
-                contentItem: Item {
-                    Row {
-                        spacing: 10
-                        Image {
-                            source: "Assets/Icons/maintenance.svg"
-                            sourceSize.width: 30
-                            sourceSize.height: 30
-                            mipmap: true
-                        }
-                        Label {
-                            anchors.leftMargin: 10
-                            anchors.verticalCenter: parent.verticalCenter
-                            color: "white"
-                            text: qsTr("Обслуживание")
-                        }
-                    }
-                }
-                width: parent.width
-                onClicked: {
-                    showPage("maintenance");
-                }
-            }
-            ItemDelegate {
-                contentItem: Item {
-                    Row {
-                        spacing: 10
-                        Image {
-                            source: "Assets/Icons/donate.svg"
-                            sourceSize.width: 30
-                            sourceSize.height: 30
-                            mipmap: true
-                        }
-                        Label {
-                            anchors.leftMargin: 10
-                            anchors.verticalCenter: parent.verticalCenter
-                            color: "white"
-                            text: qsTr("Поддержать проект")
-                        }
-                    }
-                }
-                width: parent.width
-                onClicked: {
-                    Qt.openUrlExternally("https://www.anilibria.tv/pages/donate.php");
-                    drawer.close();
-                }
-            }
-            ItemDelegate {
-                visible: !notVisibleSignin
-                contentItem: Item {
-                    Row {
-                        spacing: 10
-                        Image {
-                            source: "Assets/Icons/user.svg"
-                            sourceSize.width: 30
-                            sourceSize.height: 30
-                            mipmap: true
-                        }
-                        Label {
-                            anchors.leftMargin: 10
-                            anchors.verticalCenter: parent.verticalCenter
-                            color: "white"
-                            text: qsTr("Войти")
-                        }
-                    }
-                }
-                width: parent.width
-                onClicked: {
-                    showPage("authorization");
                 }
             }
         }
@@ -1191,24 +1019,6 @@ ApplicationWindow {
             } else {
                 osExtras.stopPreventSleepMode();
             }
-        }
-    }
-
-    YoutubeViewModel {
-        id: youtubeViewModel
-        Component.onCompleted: {
-            youtubeViewModel.synchronize();
-        }
-    }
-
-    AuthorizationViewModel {
-        id: authorizationViewModel
-        onSuccessAuthentificated: {
-            applicationSettings.userToken = token;
-            if (window.currentPageId === "authorization") showPage("release");
-
-            synchronizationService.getUserData(applicationSettings.userToken);
-            notificationViewModel.sendInfoNotification(`Вы успешно вошли в аккаунт. Ваше избранное будет синхронизовано автоматически.`);
         }
     }
 
@@ -1544,6 +1354,31 @@ ApplicationWindow {
                     }
                 }
             }
+        }
+    }
+
+    YoutubeViewModel {
+        id: youtubeViewModel
+        Component.onCompleted: {
+            youtubeViewModel.synchronize();
+        }
+    }
+
+    AuthorizationViewModel {
+        id: authorizationViewModel
+        onSuccessAuthentificated: {
+            applicationSettings.userToken = token;
+            if (window.currentPageId === "authorization") showPage("release");
+
+            synchronizationService.getUserData(applicationSettings.userToken);
+            notificationViewModel.sendInfoNotification(`Вы успешно вошли в аккаунт. Ваше избранное будет синхронизовано автоматически.`);
+        }
+    }
+
+    MainViewModel {
+        id: mainViewModel
+        onPageShowed: {
+            showPage(pageName);
         }
     }
 

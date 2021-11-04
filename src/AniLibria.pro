@@ -65,6 +65,7 @@ DEFINES += USE_VERSION_CHECK
 
 SOURCES += \
     Classes/ListModels/commoncomboboxlistmodel.cpp \
+    Classes/ListModels/mainmenulistmodel.cpp \
     Classes/ListModels/onlineplayervideolist.cpp \
     Classes/ListModels/popupnotificationvideolist.cpp \
     Classes/ListModels/releasetorrentslist.cpp \
@@ -73,6 +74,7 @@ SOURCES += \
     Classes/Models/externalplaylistvideo.cpp \
     Classes/Models/fullreleasemodel.cpp \
     Classes/Models/historymodel.cpp \
+    Classes/Models/mainmenuitemmodel.cpp \
     Classes/Models/notificationmodel.cpp \
     Classes/Models/onlinevideomodel.cpp \
     Classes/Models/releasemodel.cpp \
@@ -100,6 +102,7 @@ SOURCES += \
     Classes/Services/versionchecker.cpp \
     Classes/ViewModels/authorizationviewmodel.cpp \
     Classes/ViewModels/imagebackgroundviewmodel.cpp \
+    Classes/ViewModels/mainviewmodel.cpp \
     Classes/ViewModels/notificationviewmodel.cpp \
     Classes/ViewModels/onlineplayerviewmodel.cpp \
     Classes/ViewModels/onlineplayerwindowviewmodel.cpp \
@@ -135,6 +138,7 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 
 HEADERS += \
     Classes/ListModels/commoncomboboxlistmodel.h \
+    Classes/ListModels/mainmenulistmodel.h \
     Classes/ListModels/onlineplayervideolist.h \
     Classes/ListModels/popupnotificationvideolist.h \
     Classes/ListModels/releasetorrentslist.h \
@@ -143,6 +147,7 @@ HEADERS += \
     Classes/Models/externalplaylistvideo.h \
     Classes/Models/fullreleasemodel.h \
     Classes/Models/historymodel.h \
+    Classes/Models/mainmenuitemmodel.h \
     Classes/Models/notificationmodel.h \
     Classes/Models/onlinevideomodel.h \
     Classes/Models/releasemodel.h \
@@ -171,6 +176,7 @@ HEADERS += \
     Classes/ListModels/alphabetlistmodel.h \
     Classes/ViewModels/authorizationviewmodel.h \
     Classes/ViewModels/imagebackgroundviewmodel.h \
+    Classes/ViewModels/mainviewmodel.h \
     Classes/ViewModels/notificationviewmodel.h \
     Classes/ViewModels/onlineplayerviewmodel.h \
     Classes/ViewModels/onlineplayerwindowviewmodel.h \

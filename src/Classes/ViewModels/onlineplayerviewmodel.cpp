@@ -354,6 +354,7 @@ void OnlinePlayerViewModel::nextVideo()
 {
     setRestorePosition(0);
     setPositionIterator(0);
+    setIsFromNavigated(false);
 
     OnlineVideoModel* video;
     if (m_isCinemahall) {
@@ -406,6 +407,7 @@ void OnlinePlayerViewModel::previousVideo()
 {
     if (m_selectedVideo == 0 && !m_isMultipleRelease) return;
     setRestorePosition(0);
+    setIsFromNavigated(false);
 
     OnlineVideoModel* video;
 
@@ -727,6 +729,7 @@ void OnlinePlayerViewModel::selectVideo(int releaseId, int videoId)
 {
     setSelectedVideo(videoId);
     setSelectedRelease(releaseId);
+    setIsFromNavigated(false);
 
     auto video = m_videos->getFirstReleaseWithPredicate(
         [releaseId, videoId](OnlineVideoModel* video) {

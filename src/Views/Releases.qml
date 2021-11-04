@@ -1992,7 +1992,7 @@ Page {
                                 CommonMenuItem {
                                     text: "Переоткрыть комментарии"
                                     onPressed: {
-                                        webView.url = getVkontakteCommentPage();
+                                        webView.url = releasesViewModel.getVkontakteCommentPage(page.openedRelease.code);
                                     }
                                 }
                             }
@@ -2194,6 +2194,9 @@ Page {
                                         text: "Серия " + (index + 1)
                                         onPressed: {
                                             watchSingleRelease(page.openedRelease.id, page.openedRelease.videos, index, page.openedRelease.poster);
+
+                                            page.openedRelease = null;
+                                            if (Qt.platform.os !== "windows") webView.visible = true;
                                         }
                                     }
                                 }
@@ -2347,10 +2350,6 @@ Page {
         refreshAllReleases(true);
     }
 
-    function getVkontakteCommentPage() {
-        return "https://vk.com/widget_comments.php?app=5315207&width=100%&_ver=1&limit=8&norealtime=0&url=https://www.anilibria.tv/release/" + page.openedRelease.code + ".html";
-    }
-
     function selectItem(item) {
         if (page.selectMode) {
             if (page.openedRelease) page.openedRelease = null;
@@ -2479,7 +2478,7 @@ Page {
         localStorage.resetReleaseChanges(release.id);
         page.changesCounts = localStorage.getChangesCounts();
 
-        webView.url = getVkontakteCommentPage();
+        webView.url = releasesViewModel.getVkontakteCommentPage(page.openedRelease.code);
     }
 
     function openInExternalPlayer(url) {

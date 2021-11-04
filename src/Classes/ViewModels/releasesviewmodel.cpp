@@ -50,3 +50,8 @@ void ReleasesViewModel::copyImageToClipboard(const QString &imagePath) const
     QClipboard *clipboard = QGuiApplication::clipboard();
     clipboard->setPixmap(pixmap);
 }
+
+QString ReleasesViewModel::getVkontakteCommentPage(const QString &code) const noexcept
+{
+    return "https://vk.com/widget_comments.php?app=5315207&width=100%&_ver=1&limit=8&norealtime=0&url=https://www.anilibria.tv/release/" + code + ".html";
+}

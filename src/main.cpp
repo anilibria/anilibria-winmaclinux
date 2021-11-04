@@ -46,6 +46,8 @@
 #include "Classes/ViewModels/userconfigurationviewmodel.h"
 #include "Classes/ViewModels/imagebackgroundviewmodel.h"
 #include "Classes/ListModels/commoncomboboxlistmodel.h"
+#include "Classes/ListModels/mainmenulistmodel.h"
+#include "Classes/ViewModels/mainviewmodel.h"
 
 int main(int argc, char *argv[])
 {
@@ -100,6 +102,8 @@ int main(int argc, char *argv[])
     qmlRegisterType<UserConfigurationViewModel>("Anilibria.ViewModels", 1, 0, "UserConfigurationViewModel");
     qmlRegisterType<ImageBackgroundViewModel>("Anilibria.ViewModels", 1, 0, "ImageBackgroundViewModel");
     qmlRegisterType<CommonComboBoxListModel>("Anilibria.ListModels", 1, 0, "CommonComboBoxListModel");
+    qmlRegisterType<MainViewModel>("Anilibria.ViewModels", 1, 0, "MainViewModel");
+    qmlRegisterType<MainMenuListModel>("Anilibria.ListModels", 1, 0, "MainMenuListModel");
 
     QCoreApplication::setOrganizationDomain("anilibria.tv");
     QCoreApplication::setOrganizationName("EmptyFlow");
