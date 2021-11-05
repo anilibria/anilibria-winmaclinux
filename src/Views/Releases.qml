@@ -1532,6 +1532,7 @@ Page {
 
                 Image {
                     id: backgroundFile
+                    asynchronous: true
                     visible: releasesViewModel.imageBackgroundViewModel.isHasImage
                     fillMode: releasesViewModel.imageBackgroundViewModel.imageMode
                     source: releasesViewModel.imageBackgroundViewModel.processedImagePath
