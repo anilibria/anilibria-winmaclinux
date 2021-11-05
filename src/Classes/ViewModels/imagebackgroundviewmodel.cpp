@@ -40,6 +40,7 @@ void ImageBackgroundViewModel::setImagePath(const QString &imagePath) noexcept
     m_imagePath = imagePath;
     emit imagePathChanged();
     emit processedImagePathChanged();
+    emit isHasImageChanged();
 }
 
 void ImageBackgroundViewModel::setImageMode(int imageMode) noexcept
@@ -124,6 +125,7 @@ int ImageBackgroundViewModel::imageY() const noexcept
 
 QString ImageBackgroundViewModel::processedImagePath()
 {
+    if (m_imagePath.isEmpty()) return "";
     if (m_imagePath.startsWith("http")) return m_imagePath;
 
 #ifdef Q_OS_WIN
