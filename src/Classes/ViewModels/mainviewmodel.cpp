@@ -6,6 +6,7 @@
 MainViewModel::MainViewModel(QObject *parent) : QObject(parent)
 {
     connect(m_mainMenuListModel, &MainMenuListModel::selectedItem, this, &MainViewModel::selectedItemInMainMenu);
+    m_mainMenuListModel->setAuthorizeItemVisible(false);
 }
 
 void MainViewModel::setNotVisibleSignin(bool notVisibleSignin)
