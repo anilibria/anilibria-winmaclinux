@@ -40,8 +40,6 @@ ApplicationWindow {
     title: qsTr("AniLibria")
     font.capitalization: Font.MixedCase
     flags: Qt.FramelessWindowHint | Qt.Window | Qt.WindowMinimizeButtonHint
-    property string currentPageId: "release"
-    property string currentPageDisplayName: "Каталог релизов"
     property bool synchronizationEnabled: false
     property var userModel: ({})
     property string tempTorrentPath: ""
@@ -134,7 +132,7 @@ ApplicationWindow {
                 anchors.left: taskbarTitle.right
                 anchors.verticalCenter: parent.verticalCenter
                 fontPointSize: 12
-                text: window.currentPageDisplayName
+                text: mainViewModel.currentPageDisplayName
             }
         }
         IconButton {
@@ -508,7 +506,7 @@ ApplicationWindow {
     }
 
     function showPage(pageId) {
-        if (currentPageId === pageId){
+        if (mainViewModel.currentPageId === pageId){
             drawer.close();
             return;
         }
@@ -525,7 +523,7 @@ ApplicationWindow {
             "releaseseries": releaseseries
         };
 
-        const currentPage = pages[currentPageId];
+        const currentPage = pages[mainViewModel.currentPageId];
         currentPage.navigateFrom();
 
         currentPage.visible = false;
@@ -535,40 +533,11 @@ ApplicationWindow {
         newPage.visible = true;
         newPage.focus = true;
         newPage.navigateTo();
-        currentPageId = pageId;
+        mainViewModel.currentPageId = pageId;
 
         windowFooter.visible = pageId !== "videoplayer";
 
         analyticsService.sendView("Pages", "ChangePage", "%2F" + pageId);
-
-        switch (pageId) {
-            case "videoplayer":
-                window.currentPageDisplayName = "Видеоплеер"
-                break;
-            case "release":
-                window.currentPageDisplayName = "Каталог релизов"
-                break;
-            case "youtube":
-                window.currentPageDisplayName = "Youtube"
-                break;
-            case "about":
-                window.currentPageDisplayName = "О Программе"
-                break;
-            case "cinemahall":
-                window.currentPageDisplayName = "Кинозал"
-                break;
-            case "download":
-                window.currentPageDisplayName = "Менеджер загрузок"
-                break;
-            case "maintenance":
-                window.currentPageDisplayName = "Обслуживание"
-                break;
-            case "releaseseries":
-                window.currentPageDisplayName = "Связанные релизы"
-                break;
-        }
-
-
 
         drawer.close();
     }
