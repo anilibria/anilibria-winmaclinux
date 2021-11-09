@@ -148,9 +148,7 @@ ApplicationWindow {
             iconPath: "Assets/Icons/releasepage.svg"
             iconWidth: 20
             iconHeight: 20
-            ToolTip.delay: 1000
-            ToolTip.visible: goToReleasePage.hovered
-            ToolTip.text: "Перейти на страницу Каталог Релизов"
+            tooltipMessage: "Перейти на страницу Каталог Релизов"
             onButtonPressed: {
                 showPage("release");
             }
@@ -167,9 +165,7 @@ ApplicationWindow {
             iconPath: "Assets/Icons/videoplayer.svg"
             iconWidth: 20
             iconHeight: 20
-            ToolTip.delay: 1000
-            ToolTip.visible: goToOnlineVideoPage.hovered
-            ToolTip.text: "Перейти на страницу Видеоплеер"
+            tooltipMessage: "Перейти на страницу Видеоплеер"
             onButtonPressed: {
                 showPage("videoplayer");
             }
@@ -186,9 +182,7 @@ ApplicationWindow {
             iconPath: "Assets/Icons/popcorn.svg"
             iconWidth: 20
             iconHeight: 20
-            ToolTip.delay: 1000
-            ToolTip.visible: goToCinemaHall.hovered
-            ToolTip.text: "Перейти на страницу Кинозал"
+            tooltipMessage: "Перейти на страницу Кинозал"
             onButtonPressed: {
                 showPage("cinemahall");
             }
@@ -205,9 +199,7 @@ ApplicationWindow {
             iconPath: "Assets/Icons/series.svg"
             iconWidth: 20
             iconHeight: 20
-            ToolTip.delay: 1000
-            ToolTip.visible: goToReleaseSeries.hovered
-            ToolTip.text: "Перейти на страницу Связанные релизы"
+            tooltipMessage: "Перейти на страницу Связанные релизы"
             onButtonPressed: {
                 showPage("releaseseries");
             }
@@ -224,9 +216,7 @@ ApplicationWindow {
             iconPath: "Assets/Icons/lefthalf.svg"
             iconWidth: 18
             iconHeight: 18
-            ToolTip.delay: 1000
-            ToolTip.visible: leftHalfScreenWindow.hovered
-            ToolTip.text: "Выставить размер окна - левая половина экрана"
+            tooltipMessage: "Выставить размер окна - левая половина экрана"
             onButtonPressed: {
                 let currentScreen = getCurrentScreen();
                 if (!currentScreen) return;
@@ -249,9 +239,7 @@ ApplicationWindow {
             iconPath: "Assets/Icons/righthalf.svg"
             iconWidth: 18
             iconHeight: 18
-            ToolTip.delay: 1000
-            ToolTip.visible: rightHalfScreenWindow.hovered
-            ToolTip.text: "Выставить размер окна - правая половина экрана"
+            tooltipMessage: "Выставить размер окна - правая половина экрана"
             onButtonPressed: {
                 let currentScreen = getCurrentScreen();
                 if (!currentScreen) return;
@@ -274,9 +262,7 @@ ApplicationWindow {
             iconPath: "Assets/Icons/minimize.svg"
             iconWidth: 15
             iconHeight: 15
-            ToolTip.delay: 1000
-            ToolTip.visible: minimizeWindow.hovered
-            ToolTip.text: "Минимизировать окно в панель задач"
+            tooltipMessage: "Минимизировать окно в панель задач"
             onButtonPressed: {
                 window.showMinimized();
             }
@@ -293,9 +279,7 @@ ApplicationWindow {
             iconPath: window.isShowFullScreenSize ? "Assets/Icons/windowsize.svg" : "Assets/Icons/fullscreensize.svg"
             iconWidth: 15
             iconHeight: 15
-            ToolTip.delay: 1000
-            ToolTip.visible: windowOrFullScreenSize.hovered
-            ToolTip.text: window.isShowFullScreenSize ? "Вернуть окну нормальный размер" : "Открыть окно на полный экран"
+            tooltipMessage: window.isShowFullScreenSize ? "Вернуть окну нормальный размер" : "Открыть окно на полный экран"
             onButtonPressed: {
                 if (window.isShowFullScreenSize) {
                     window.isShowFullScreenSize = false;
@@ -319,9 +303,7 @@ ApplicationWindow {
             iconPath: "Assets/Icons/closewindow.svg"
             iconWidth: 15
             iconHeight: 15
-            ToolTip.delay: 1000
-            ToolTip.visible: closeWindow.hovered
-            ToolTip.text: "Выйти из приложения"
+            tooltipMessage: "Выйти из приложения"
             onButtonPressed: {
                 window.close();
             }
