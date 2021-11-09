@@ -41,8 +41,6 @@
 #include "../Models/seenmarkmodel.h"
 #include "../Models/externalplaylistvideo.h"
 
-using namespace std;
-
 const int FavoriteSection = 1;
 const int NewReleasesSection = 2;
 const int NewOnlineSeriesSection = 3;
@@ -83,18 +81,6 @@ LocalStorageService::LocalStorageService(QObject *parent) : QObject(parent),
         qDebug() << "Cache location: " << QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation);
     }
 
-#ifdef Q_OS_WIN
-    //WORKAROUND: sorry guys for it, I move this code to another place shortly
-    //run installer for xaudio in first application start for windows 7
-    auto osVersion = QOperatingSystemVersion::current();
-    if (!QFile::exists(getReleasesCachePath()) && osVersion < QOperatingSystemVersion(QOperatingSystemVersion::Windows8)) {
-        QProcess audioPorcess(this);
-        QStringList arguments;
-        audioPorcess.start(QCoreApplication::applicationDirPath() + "/codecpacks/DXSETUP.exe", arguments);
-    }
-#endif
-
-    createIfNotExistsFile(getReleasesCachePath(), "[]");
     createIfNotExistsFile(getScheduleCachePath(), "{}");
     createIfNotExistsFile(getFavoritesCachePath(), "[]");
     createIfNotExistsFile(getSeenMarksCachePath(), "[]");

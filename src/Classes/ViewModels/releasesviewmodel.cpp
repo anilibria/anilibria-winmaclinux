@@ -3,10 +3,23 @@
 #include <QPixmap>
 #include <QImageReader>
 #include "releasesviewmodel.h"
+#include "../../globalhelpers.h"
 
 ReleasesViewModel::ReleasesViewModel(QObject *parent) : QObject(parent)
 {
+    m_items = new ReleasesListModel(m_releases, this);
+
     m_imageBackgroundViewModel->setOptionFilePath("releasesbackground");
+
+    createIfNotExistsFile(getCachePath(releasesCacheFileName), "[]");
+}
+
+void ReleasesViewModel::setCountReleases(int countReleases) noexcept
+{
+    if (countReleases == m_countReleases) return;
+
+    m_countReleases = countReleases;
+    emit countReleasesChanged();
 }
 
 QString ReleasesViewModel::getScheduleDay(const QString &dayNumber) const noexcept
@@ -54,4 +67,26 @@ void ReleasesViewModel::copyImageToClipboard(const QString &imagePath) const
 QString ReleasesViewModel::getVkontakteCommentPage(const QString &code) const noexcept
 {
     return "https://vk.com/widget_comments.php?app=5315207&width=100%&_ver=1&limit=8&norealtime=0&url=https://www.anilibria.tv/release/" + code + ".html";
+}
+
+void ReleasesViewModel::loadReleases()
+{
+    m_releases->clear();
+
+    QFile releasesCacheFile(getCachePath(releasesCacheFileName));
+
+    releasesCacheFile.open(QFile::ReadOnly | QFile::Text);
+
+    QString releasesJson = releasesCacheFile.readAll();
+    releasesCacheFile.close();
+    auto releasesArray = QJsonDocument::fromJson(releasesJson.toUtf8()).array();
+
+    foreach (auto release, releasesArray) {
+        FullReleaseModel* jsonRelease = new FullReleaseModel();
+        jsonRelease->readFromJson(release);
+
+        m_releases->append(jsonRelease);
+    }
+
+    setCountReleases(m_releases->count());
 }
