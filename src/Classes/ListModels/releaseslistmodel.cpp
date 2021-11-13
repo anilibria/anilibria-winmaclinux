@@ -13,9 +13,14 @@ const int SeeningHistorySection = 10;
 const int NotSeeningHistorySection = 11;
 const int HiddenReleasesSection = 12;
 
-ReleasesListModel::ReleasesListModel(QList<FullReleaseModel*>* releases, QObject *parent) : QAbstractListModel(parent)
+ReleasesListModel::ReleasesListModel(QList<FullReleaseModel*>* releases, QMap<int, int>* schedules, QVector<int>* userFavorites, QVector<int>* hidedReleases, QHash<QString, bool>* seenMarks, QHash<int, HistoryModel*>* historyItems, QObject *parent) : QAbstractListModel(parent)
 {
     m_releases = releases;
+    m_scheduleReleases = schedules;
+    m_userFavorites = userFavorites;
+    m_hiddenReleases = hidedReleases;
+    m_seenMarkModels = seenMarks;
+    m_historyModels = historyItems;
 }
 
 int ReleasesListModel::rowCount(const QModelIndex &parent) const
@@ -38,6 +43,42 @@ QVariant ReleasesListModel::data(const QModelIndex &index, int role) const
         case TitleRole: {
             return QVariant(release->title());
         }
+        case StatusRole: {
+            return QVariant(release->status());
+        }
+        case SeasonRole: {
+            return QVariant(release->season());
+        }
+        case YearRole: {
+            return QVariant(release->year());
+        }
+        case TypeRole: {
+            return QVariant(release->type());
+        }
+        case GenresRole: {
+            return QVariant(release->genres());
+        }
+        case CountVideosRole: {
+            return QVariant(release->countOnlineVideos());
+        }
+        case CountSeensMarksRole: {
+            return QVariant(getReleaseSeenMarkCount(release->id()));
+        }
+        case DescriptionRole: {
+            return QVariant(release->description());
+        }
+        case PosterRole: {
+            return QVariant(release->poster());
+        }
+        case CountTorrentRole: {
+            return QVariant(release->countTorrents());
+        }
+        case VideosRole: {
+            return QVariant(release->videos());
+        }
+        case InFavoritesRole: {
+            return QVariant(m_userFavorites->contains(release->id()));
+        }
     }
 
     return QVariant();
@@ -53,6 +94,62 @@ QHash<int, QByteArray> ReleasesListModel::roleNames() const
         {
             TitleRole,
             "title"
+        },
+        {
+            StatusRole,
+            "status"
+        },
+        {
+            SeasonRole,
+            "season"
+        },
+        {
+            YearRole,
+            "year"
+        },
+        {
+            TypeRole,
+            "type"
+        },
+        {
+            GenresRole,
+            "genres"
+        },
+        {
+            VoicesRole,
+            "voices"
+        },
+        {
+            CountVideosRole,
+            "countVideos"
+        },
+        {
+            CountSeensMarksRole,
+            "countSeensSeries"
+        },
+        {
+            DescriptionRole,
+            "description"
+        },
+        {
+            PosterRole,
+            "poster"
+        },
+        {
+            CountTorrentRole,
+            "countTorrents"
+        },
+        {
+            VideosRole,
+            "videos"
+        },
+        {
+            RatingRole,
+            "rating"
+        },
+        {
+            InFavoritesRole,
+            "inFavorites"
         }
     };
 }
@@ -372,6 +469,23 @@ QHash<int, int> &&ReleasesListModel::getAllSeenMarkCount(QHash<int, int>&& resul
         }
     }
     return std::move(result);
+}
+
+int ReleasesListModel::getReleaseSeenMarkCount(int releaseId) const noexcept
+{
+    auto result = 0;
+    QHashIterator<QString, bool> iterator(*m_seenMarkModels);
+    while(iterator.hasNext()) {
+        iterator.next();
+
+        QString key = iterator.key();
+        auto id = QString::number(releaseId);
+        if (!key.startsWith(id)) continue;
+
+        result += 1;
+    }
+
+    return result;
 }
 
 static bool compareTimeStamp(const FullReleaseModel* first, const FullReleaseModel* second)

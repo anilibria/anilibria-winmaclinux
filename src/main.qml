@@ -37,7 +37,7 @@ ApplicationWindow {
     minimumWidth: 800
     minimumHeight: 600
     height: 600
-    title: qsTr("AniLibria")
+    title: qsTr("AniLibria.Qt")
     font.capitalization: Font.MixedCase
     flags: Qt.FramelessWindowHint | Qt.Window | Qt.WindowMinimizeButtonHint
     property bool synchronizationEnabled: false
@@ -125,7 +125,7 @@ ApplicationWindow {
                 id: taskbarTitle
                 anchors.centerIn: parent
                 fontPointSize: 12
-                text: "AniLibria - "
+                text: "AniLibria.Qt - "
             }
             AccentText {
                 id: currentPageTitle
@@ -396,7 +396,7 @@ ApplicationWindow {
             anchors.right: notificationCounter.left
             anchors.verticalCenter: parent.verticalCenter
             fontPointSize: 10
-            text: "Релизов " + localStorage.countReleases + " В избранном " + releases.favoriteReleases.length + " Просмотрено " + localStorage.countSeens + " В кинозале " + localStorage.countCinemahall + " "
+            text: "Релизов " + releasesViewModel.countReleases + " В избранном " + releasesViewModel.countFavorites + " Просмотрено " + releasesViewModel.countSeens + " В кинозале " + localStorage.countCinemahall + " "
         }
 
         Row {

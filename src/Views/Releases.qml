@@ -30,7 +30,6 @@ Page {
     id: page
     property bool selectMode
     property var selectedReleases: []
-    property var displayedReleases: []
     property var favoriteReleases: []
     property var scheduledReleases: ({})
     property int pageIndex: 1
@@ -42,21 +41,6 @@ Page {
     property bool fillingReleases: false
     property int startedSection: 0
     property string releaseDescription: ""
-    property var sections: [
-        "Все релизы",
-        "Избранное",
-        "Новые релизы",
-        "Релизы с новыми сериями",
-        "Релизы с новыми торрентами",
-        "Расписание",
-        "Релизы с обновленными торрентами",
-        "История",
-        "История просмотра",
-        "Просмотренные",
-        "Просматриваемые",
-        "Не просмотренные",
-        "Скрытые релизы"
-    ]
     property var sectionSortings: {
         0: { field: 0, direction: 1 },
         1: { field: 0, direction: 1 },
@@ -72,8 +56,6 @@ Page {
         11: { field: 0, direction: 1 },
         12: { field: 0, direction: 1 },
     }
-    property var changesCounts: []
-    property bool showSidePanel: false
     property bool showButtonVisibleChanger: false
     property bool hideCinemahallButton: false
     property bool hideDownloadButton: false
@@ -162,8 +144,8 @@ Page {
         hoverEnabled: true
         onPositionChanged: {
             if (!compactModeSwitch.checked) return;
-            if (mouse.x < 80) page.showSidePanel = true;
-            if (mouse.x > 100) page.showSidePanel = false;
+            if (mouse.x < 80) releasesViewModel.showSidePanel = true;
+            if (mouse.x > 100) releasesViewModel.showSidePanel = false;
         }
     }
 
@@ -174,12 +156,12 @@ Page {
         enabled: !page.openedRelease
         Rectangle {
             color: ApplicationTheme.pageVerticalPanel
-            Layout.preferredWidth: compactModeSwitch.checked && !page.showSidePanel ? 0 : 40
+            Layout.preferredWidth: compactModeSwitch.checked && !releasesViewModel.showSidePanel ? 0 : 40
             Layout.fillHeight: true
 
             Column {
-                visible: !compactModeSwitch.checked || page.showSidePanel
-                width: compactModeSwitch.checked && !page.showSidePanel ? 0 : 40
+                visible: !compactModeSwitch.checked || releasesViewModel.showSidePanel
+                width: compactModeSwitch.checked && !releasesViewModel.showSidePanel ? 0 : 40
 
                 LeftPanelIconButton {
                     iconPath: "../Assets/Icons/menu.svg"
@@ -917,13 +899,12 @@ Page {
                             page.hideNotificationButton = !page.hideNotificationButton;
                             localStorage.setHideNotificationButton(page.hideNotificationButton);
                         } else {
-                            page.changesCounts = localStorage.getChangesCounts();
                             notificationPopup.open();
                         }
                     }
 
                     Rectangle {
-                        visible: localStorage.isChangesExists
+                        visible: releasesViewModel.isChangesExists
                         anchors.top: parent.top
                         anchors.right: parent.right
                         anchors.rightMargin: 6
@@ -945,7 +926,7 @@ Page {
                         closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
 
                         Rectangle {
-                            visible: !localStorage.isChangesExists
+                            visible: !releasesViewModel.isChangesExists
                             width: parent.width
                             height: parent.height
                             PlainText {
@@ -956,22 +937,21 @@ Page {
                         }
 
                         Rectangle {
-                            visible: localStorage.isChangesExists
+                            visible: releasesViewModel.isChangesExists
                             width: parent.width
                             RoundedActionButton {
                                 id: resetNotificationButton
                                 anchors.right: parent.right
                                 text: "Отметить все как прочитанное"
                                 onClicked: {
-                                    localStorage.resetAllChanges();
-                                    page.changesCounts = [0, 0, 0, 0];
+                                    releasesViewModel.resetAllChanges();
                                 }
                             }
                             Column {
                                 spacing: 4
                                 anchors.top: resetNotificationButton.bottom
                                 Rectangle {
-                                    visible: page.changesCounts[0] > 0
+                                    visible: releasesViewModel.newReleasesCount > 0
                                     color: ApplicationTheme.panelBackground
                                     border.width: 3
                                     border.color: ApplicationTheme.selectedItem
@@ -981,7 +961,7 @@ Page {
                                     PlainText {
                                         anchors.centerIn: parent
                                         fontPointSize: 11
-                                        text: "Новых релизов: " + page.changesCounts[0]
+                                        text: "Новых релизов: " + releasesViewModel.newReleasesCount
                                     }
                                     MouseArea {
                                         anchors.fill: parent
@@ -991,7 +971,7 @@ Page {
                                     }
                                 }
                                 Rectangle {
-                                    visible: page.changesCounts[1] > 0
+                                    visible: releasesViewModel.newOnlineSeriesCount > 0
                                     color: ApplicationTheme.panelBackground
                                     border.width: 3
                                     border.color: ApplicationTheme.selectedItem
@@ -1001,7 +981,7 @@ Page {
                                     PlainText {
                                         anchors.centerIn: parent
                                         fontPointSize: 11
-                                        text: "Релизов с новыми сериями: " + page.changesCounts[1]
+                                        text: "Релизов с новыми сериями: " + releasesViewModel.newOnlineSeriesCount
                                     }
                                     MouseArea {
                                         anchors.fill: parent
@@ -1011,7 +991,7 @@ Page {
                                     }
                                 }
                                 Rectangle {
-                                    visible: page.changesCounts[2] > 0
+                                    visible: releasesViewModel.newTorrentsCount > 0
                                     color: ApplicationTheme.panelBackground
                                     border.width: 3
                                     border.color: ApplicationTheme.selectedItem
@@ -1021,7 +1001,7 @@ Page {
                                     PlainText {
                                         anchors.centerIn: parent
                                         fontPointSize: 11
-                                        text: "Новые торренты: " + page.changesCounts[2]
+                                        text: "Новые торренты: " + releasesViewModel.newTorrentsCount
                                     }
                                     MouseArea {
                                         anchors.fill: parent
@@ -1031,7 +1011,7 @@ Page {
                                     }
                                 }
                                 Rectangle {
-                                    visible: page.changesCounts[3] > 0
+                                    visible: releasesViewModel.newTorrentSeriesCount > 0
                                     color: ApplicationTheme.panelBackground
                                     border.width: 3
                                     border.color: ApplicationTheme.selectedItem
@@ -1041,7 +1021,7 @@ Page {
                                     PlainText {
                                         anchors.centerIn: parent
                                         fontPointSize: 11
-                                        text: "Релизы с обновленными торрентами: " + page.changesCounts[3]
+                                        text: "Релизы с обновленными торрентами: " + releasesViewModel.newTorrentSeriesCount
                                     }
                                     MouseArea {
                                         anchors.fill: parent
@@ -1118,6 +1098,7 @@ Page {
                             anchors.top: notificationForFavoritesLabel.bottom
                             onCheckedChanged: {
                                 localStorage.setNotificationForFavorites(checked);
+                                releasesViewModel.notificationForFavorites = checked;
                             }
                         }
 
@@ -1361,7 +1342,7 @@ Page {
 
                 PlainText {
                     id: displaySection
-                    text: page.sections[page.selectedSection]
+                    text: releasesViewModel.sectionNames[page.selectedSection]
                     anchors.verticalCenter: parent.verticalCenter
                     anchors.right: parent.right
                     anchors.rightMargin: 8
@@ -1415,25 +1396,25 @@ Page {
                             y: parent.height
 
                             CommonMenuItem {
-                                text: page.sections[2]
+                                text: releasesViewModel.sectionNames[2]
                                 onPressed: {
                                     page.changeSection(2);
                                 }
                             }
                             CommonMenuItem {
-                                text: page.sections[3]
+                                text: releasesViewModel.sectionNames[3]
                                 onPressed: {
                                     page.changeSection(3);
                                 }
                             }
                             CommonMenuItem {
-                                text: page.sections[4]
+                                text: releasesViewModel.sectionNames[4]
                                 onPressed: {
                                     page.changeSection(4);
                                 }
                             }
                             CommonMenuItem {
-                                text: page.sections[6]
+                                text: releasesViewModel.sectionNames[6]
                                 onPressed: {
                                     page.changeSection(6);
                                 }
@@ -1462,13 +1443,13 @@ Page {
                             y: parent.height
 
                             CommonMenuItem {
-                                text: page.sections[7]
+                                text: releasesViewModel.sectionNames[7]
                                 onPressed: {
                                     page.changeSection(7);
                                 }
                             }
                             CommonMenuItem {
-                                text: page.sections[8]
+                                text: releasesViewModel.sectionNames[8]
                                 onPressed: {
                                     page.changeSection(8);
                                 }
@@ -1489,25 +1470,25 @@ Page {
                             y: parent.height
 
                             CommonMenuItem {
-                                text: page.sections[9]
+                                text: releasesViewModel.sectionNames[9]
                                 onPressed: {
                                     page.changeSection(9);
                                 }
                             }
                             CommonMenuItem {
-                                text: page.sections[10]
+                                text: releasesViewModel.sectionNames[10]
                                 onPressed: {
                                     page.changeSection(10);
                                 }
                             }
                             CommonMenuItem {
-                                text: page.sections[11]
+                                text: releasesViewModel.sectionNames[11]
                                 onPressed: {
                                     page.changeSection(11);
                                 }
                             }
                             CommonMenuItem {
-                                text: page.sections[12]
+                                text: releasesViewModel.sectionNames[12]
                                 onPressed: {
                                     page.changeSection(12);
                                 }
@@ -1564,7 +1545,7 @@ Page {
                         anchors.centerIn: parent
                         fontPointSize: 14
                         horizontalAlignment: Text.AlignHCenter
-                        text: localStorage.countReleases > 0 ? "По текущему фильтру ничего не найдено\nПопробуйте указать другие фильтры или раздел и повторить поиск" : "Релизы еще не загружены\nПожалуйста подождите пока они загрузятся"
+                        text: releasesViewModel.countReleases > 0 ? "По текущему фильтру ничего не найдено\nПопробуйте указать другие фильтры или раздел и повторить поиск" : "Релизы еще не загружены\nПожалуйста подождите пока они загрузятся"
                     }
                 }
 
@@ -2477,7 +2458,6 @@ Page {
         analyticsService.sendView("releasecard", "show", "%2Freleases");
 
         localStorage.resetReleaseChanges(release.id);
-        page.changesCounts = localStorage.getChangesCounts();
 
         webView.url = releasesViewModel.getVkontakteCommentPage(page.openedRelease.code);
     }

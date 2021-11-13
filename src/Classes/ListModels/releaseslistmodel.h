@@ -35,7 +35,7 @@ private:
     QVector<int>* m_hiddenReleases { nullptr };
     ChangesModel* m_changesModel { nullptr };
     QMap<int, int>* m_scheduleReleases { nullptr };
-    QHash<int, HistoryModel*>* m_historyModels;
+    QHash<int, HistoryModel*>* m_historyModels { nullptr };
     QString m_titleFilter { "" };
     QString m_descriptionFilter { "" };
     QString m_typeFilter { "" };
@@ -55,6 +55,20 @@ private:
     enum FullReleaseRoles {
         ReleaseIdRole = Qt::UserRole + 1,
         TitleRole,
+        StatusRole,
+        SeasonRole,
+        YearRole,
+        TypeRole,
+        GenresRole,
+        VoicesRole,
+        CountVideosRole,
+        CountSeensMarksRole,
+        DescriptionRole,
+        PosterRole,
+        CountTorrentRole,
+        VideosRole,
+        RatingRole,
+        InFavoritesRole
     };
 
     enum FilterSortingField {
@@ -73,7 +87,7 @@ private:
     };
 
 public:
-    explicit ReleasesListModel(QList<FullReleaseModel*>* releases, QObject *parent = nullptr);
+    explicit ReleasesListModel(QList<FullReleaseModel*>* releases, QMap<int, int>* schedules, QVector<int>* userFavorites, QVector<int>* hidedReleases, QHash<QString, bool>* seenMarks, QHash<int, HistoryModel*>* historyItems, QObject *parent = nullptr);
 
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
 
@@ -136,6 +150,7 @@ private:
     bool checkOrCondition(const QStringList& source, const QStringList& target);
     bool checkAllCondition(const QStringList& source, const QStringList& target);
     QHash<int, int>&& getAllSeenMarkCount(QHash<int, int>&& result) noexcept;
+    int getReleaseSeenMarkCount(int releaseId) const noexcept;
     void sortingFilteringReleases(QHash<int, int>&& seenMarks);
 
 signals:

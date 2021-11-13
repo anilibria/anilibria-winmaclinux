@@ -81,15 +81,15 @@ LocalStorageService::LocalStorageService(QObject *parent) : QObject(parent),
         qDebug() << "Cache location: " << QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation);
     }
 
-    createIfNotExistsFile(getScheduleCachePath(), "{}");
-    createIfNotExistsFile(getFavoritesCachePath(), "[]");
-    createIfNotExistsFile(getSeenMarksCachePath(), "[]");
-    createIfNotExistsFile(getHistoryCachePath(), "[]");
+    //createIfNotExistsFile(getScheduleCachePath(), "{}");
+    //createIfNotExistsFile(getFavoritesCachePath(), "[]");
+    //createIfNotExistsFile(getSeenMarksCachePath(), "[]");
+    //createIfNotExistsFile(getHistoryCachePath(), "[]");
     createIfNotExistsFile(getUserSettingsCachePath(), "{}");
-    createIfNotExistsFile(getNotificationCachePath(), "{ \"newReleases\": [], \"newOnlineSeries\": [], \"newTorrents\": [], \"newTorrentSeries\": [] }");
+    //createIfNotExistsFile(getNotificationCachePath(), "{ \"newReleases\": [], \"newOnlineSeries\": [], \"newTorrents\": [], \"newTorrentSeries\": [] }");
     createIfNotExistsFile(getCinemahallCachePath(), "[]");
     createIfNotExistsFile(getDownloadsCachePath(), "[]");
-    createIfNotExistsFile(getHidedReleasesCachePath(), "[]");
+    //createIfNotExistsFile(getHidedReleasesCachePath(), "[]");
 
     updateReleasesInnerCache();
 
