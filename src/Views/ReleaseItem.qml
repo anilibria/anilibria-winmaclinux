@@ -28,7 +28,7 @@ Rectangle {
     height: 280
     radius: 10
     border.color: ApplicationTheme.selectedItem
-    border.width: releaseItem.isSelected ? 3 : 0
+    border.width: inSelected ? 3 : 0
     color: !compactModeSwitch.checked ? ApplicationTheme.panelBackground : "transparent"
     layer.enabled: !compactModeSwitch.checked
     layer.effect: DropShadow {
@@ -72,16 +72,16 @@ Rectangle {
             }
         }
         onEntered: {
-            let description = releaseModel.description.replace(`\n`,` `).replace(`\r`,``).replace(/\&quot\;/g,``);
-            const tagIndex = description.indexOf(`<`);
+            let processedDescription = description.replace(`\n`,` `).replace(`\r`,``).replace(/\&quot\;/g,``);
+            const tagIndex = processedDescription.indexOf(`<`);
             if (tagIndex > -1) {
-                description = description.substring(0, tagIndex);
+                processedDescription = processedDescription.substring(0, tagIndex);
             }
 
-            if (description.length > 350) {
-                page.releaseDescription = description.substring(0, 340) + "...";
+            if (processedDescription.length > 350) {
+                page.releaseDescription = processedDescription.substring(0, 340) + "...";
             } else {
-                page.releaseDescription = description;
+                page.releaseDescription = processedDescription;
             }
         }
         onExited: {
@@ -100,7 +100,7 @@ Rectangle {
         rightPadding: 4
 
         Rectangle {
-            visible: releaseModel.id > -1 && !compactModeSwitch.checked
+            visible: id > -1 && !compactModeSwitch.checked
             width: 182
             height: 272
             border.color: "#adadad"
@@ -110,7 +110,7 @@ Rectangle {
 
             Image {
                 anchors.centerIn: parent
-                source: localStorage.getReleasePosterPath(releaseModel.id, releaseModel.poster)
+                source: localStorage.getReleasePosterPath(id, poster)
                 sourceSize: Qt.size(350, 500)
                 fillMode: Image.PreserveAspectCrop
                 width: 180
@@ -129,7 +129,7 @@ Rectangle {
             color: "transparent"
 
             Rectangle {
-                visible: releaseModel.id > -1
+                visible: id > -1
                 anchors.horizontalCenter: parent.horizontalCenter
                 width: 152
                 height: 232
@@ -139,7 +139,7 @@ Rectangle {
 
                 Image {
                     anchors.centerIn: parent
-                    source: localStorage.getReleasePosterPath(releaseModel.id, releaseModel.poster)
+                    source: localStorage.getReleasePosterPath(id, poster)
                     sourceSize: Qt.size(350, 500)
                     fillMode: Image.PreserveAspectCrop
                     width: 150
@@ -167,7 +167,7 @@ Rectangle {
                 topPadding: 6
                 wrapMode: Text.WordWrap
                 maximumLineCount: 2
-                text: releaseModel.title
+                text: title
             }
         }
 
@@ -189,20 +189,20 @@ Rectangle {
                     topPadding: 6
                     wrapMode: Text.WordWrap
                     maximumLineCount: 3
-                    text: qsTr(releaseModel.title)
+                    text: qsTr(title)
                 }
                 PlainText {
                     enabled: false
-                    visible: releaseModel.id > -1
+                    visible: id > -1
                     textFormat: Text.RichText
                     fontPointSize: 10
                     leftPadding: 8
                     topPadding: 4
-                    text: qsTr(releaseModel.status) + ' - ' + releaseModel.season + " " + releaseModel.year
+                    text: qsTr(status) + ' - ' + season + " " + year
                 }
                 PlainText {
                     enabled: false
-                    visible: releaseModel.id > -1
+                    visible: id > -1
                     textFormat: Text.RichText
                     fontPointSize: 10
                     leftPadding: 8
@@ -210,32 +210,32 @@ Rectangle {
                     width: 280
                     wrapMode: Text.WordWrap
                     maximumLineCount: 2
-                    text: qsTr("<b>Тип:</b> ") + qsTr(releaseModel.type)
+                    text: qsTr("<b>Тип:</b> ") + type
                 }
                 PlainText {
                     enabled: false
-                    visible: releaseModel.id > -1
+                    visible: id > -1
                     fontPointSize: 10
                     leftPadding: 8
                     topPadding: 4
                     width: 280
                     wrapMode: Text.WordWrap
                     maximumLineCount: 2
-                    text: qsTr("<b>Жанры:</b> ") + qsTr(releaseModel.genres)
+                    text: qsTr("<b>Жанры:</b> ") + genres
                 }
                 PlainText {
                     enabled: false
-                    visible: releaseModel.id > -1
+                    visible: id > -1
                     fontPointSize: 10
                     leftPadding: 8
                     topPadding: 4
                     width: 280
                     wrapMode: Text.WordWrap
                     maximumLineCount: 2
-                    text: qsTr("<b>Озвучка:</b> ") + qsTr(releaseModel.voices)
+                    text: qsTr("<b>Озвучка:</b> ") + voices
                 }
                 Row {
-                    visible: releaseModel.id > -1
+                    visible: id > -1
                     leftPadding: 8
                     topPadding: 4
                     ColoredIcon {
@@ -249,7 +249,7 @@ Rectangle {
                         rightPadding: 8
                         fontPointSize: 12
                         enabled: false
-                        text: '' + releaseModel.countVideos + (releaseModel.countSeensSeries > 0 ? " <font color='" + (ApplicationTheme.isDarkTheme ? "white" : "green") + "'>(" + releaseModel.countSeensSeries + ")</font>  " : "")
+                        text: '' + countVideos + (countSeensSeries > 0 ? " <font color='" + (ApplicationTheme.isDarkTheme ? "white" : "green") + "'>(" + countSeensSeries + ")</font>  " : "")
                     }
                     ColoredIcon {
                         iconSource: '../Assets/Icons/utorrent.svg'
@@ -261,26 +261,26 @@ Rectangle {
                         leftPadding: 4
                         rightPadding: 8
                         fontPointSize: 12
-                        text: '' + releaseModel.countTorrents
+                        text: '' + countTorrents
                     }
                     ColoredIcon {
-                        visible: releaseModel.id in page.scheduledReleases
+                        visible: id in page.scheduledReleases
                         iconSource: '../Assets/Icons/calendar.svg'
                         iconWidth: 22
                         iconHeight: 22
                         iconColor: ApplicationTheme.plainTextColor
                     }
                     PlainText {
-                        visible: releaseModel.id in page.scheduledReleases
+                        visible: id in page.scheduledReleases
                         leftPadding: 8
                         topPadding: 1
                         fontPointSize: 11
-                        text: page.scheduledReleases[releaseModel.id] ? releasesViewModel.getScheduleDay(page.scheduledReleases[releaseModel.id]) : ''
+                        text: page.scheduledReleases[id] ? releasesViewModel.getScheduleDay(page.scheduledReleases[id]) : ''
                     }
                 }
             }
             Rectangle {
-                visible: releaseModel.id > -1
+                visible: id > -1
                 color: "transparent"
                 height: 272 - gridItemtextContainer.height
                 width: 280
@@ -297,26 +297,26 @@ Rectangle {
                         width: 320
 
                         CommonMenuItem {
-                            enabled: applicationSettings.userToken && !releaseItem.favoriteReleases.filter(a => a === releaseModel.id).length
+                            enabled: applicationSettings.userToken && !inFavorites
                             text: "Добавить в избранное"
                             onPressed: {
                                 quickActions.close();
-                                releaseItem.addToFavorite(releaseModel.id);
+                                releaseItem.addToFavorite(id);
                             }
                         }
                         CommonMenuItem {
-                            enabled: applicationSettings.userToken && releaseItem.favoriteReleases.filter(a => a === releaseModel.id).length
+                            enabled: applicationSettings.userToken && inFavorites
                             text: "Удалить из избранного"
                             onPressed: {
                                 quickActions.close();
-                                releaseItem.removeFromFavorite(releaseModel.id);
+                                releaseItem.removeFromFavorite(id);
                             }
                         }
                         CommonMenuItem {
                             text: "Смотреть"
                             onPressed: {
                                 quickActions.close();
-                                releaseItem.watchRelease(releaseModel.id, releaseModel.videos, releaseModel.poster);
+                                releaseItem.watchRelease(id, videos, poster);
                             }
                         }
                     }
@@ -335,17 +335,17 @@ Rectangle {
                         leftPadding: 4
                         rightPadding: 4
                         fontPointSize: 12
-                        text: releaseModel.rating
+                        text: rating
                     }
                     ColoredIcon {
-                        visible: releaseItem.favoriteReleases.filter(a => a === releaseModel.id).length
+                        visible: inFavorites
                         iconSource: '../Assets/Icons/favorite.svg'
                         iconWidth: 20
                         iconHeight: 20
                         iconColor: ApplicationTheme.headerTextColor
                     }
                     PlainText {
-                        visible: releaseItem.favoriteReleases.filter(a => a === releaseModel.id).length
+                        visible: inFavorites
                         leftPadding: 4
                         color: ApplicationTheme.headerTextColor
                         fontPointSize: 12

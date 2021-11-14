@@ -28,7 +28,6 @@ import "../Theme"
 
 Page {
     id: page
-    property bool selectMode
     property var selectedReleases: []
     property var favoriteReleases: []
     property var scheduledReleases: ({})
@@ -865,6 +864,9 @@ Page {
                                         text: "Признак просмотра"
                                     }
                                 }
+                                onCurrentIndexChanged: {
+                                    releasesViewModel.items.sortingField = currentIndex;
+                                }
                             }
 
                             PlainText {
@@ -882,6 +884,9 @@ Page {
                                 model: ListModel {
                                     ListElement { text: "Восходящем" }
                                     ListElement { text: "Нисходящем" }
+                                }
+                                onCurrentIndexChanged: {
+                                    releasesViewModel.items.sortingDescending = currentIndex === 1 ? true : false;
                                 }
                             }
                         }
@@ -1294,7 +1299,7 @@ Page {
                     id: multupleMode
                     anchors.left: parent.left
                     onCheckedChanged: {
-                        page.selectMode = checked;
+                        releasesViewModel.selectMode = checked;
                         if (!checked) {
                             page.selectedReleases = [];
                         } else {
@@ -1329,20 +1334,20 @@ Page {
 
                 RoundedActionButton {
                     id: setToStartedSectionButton
-                    visible: page.startedSection !== page.selectedSection
+                    visible: page.startedSection !== releasesViewModel.items.section
                     text: "Сделать стартовым"
                     anchors.verticalCenter: parent.verticalCenter
                     anchors.right: displaySection.left
                     anchors.rightMargin: 8
                     onClicked: {
-                        localStorage.setStartedSection(page.selectedSection);
-                        page.startedSection = page.selectedSection;
+                        localStorage.setStartedSection(releasesViewModel.items.section);
+                        page.startedSection = releasesViewModel.items.section;
                     }
                 }
 
                 PlainText {
                     id: displaySection
-                    text: releasesViewModel.sectionNames[page.selectedSection]
+                    text: releasesViewModel.sectionNames[releasesViewModel.items.section]
                     anchors.verticalCenter: parent.verticalCenter
                     anchors.right: parent.right
                     anchors.rightMargin: 8
@@ -1539,7 +1544,7 @@ Page {
                 Rectangle {
                     color: "transparent"
                     anchors.fill: parent
-                    visible: releasesModel.count === 0
+                    visible: releasesViewModel.countReleases === 0 || !releasesViewModel.items.isHasReleases
 
                     PlainText {
                         anchors.centerIn: parent
@@ -1551,27 +1556,17 @@ Page {
 
                 GridView {
                     id: scrollview
-                    visible: releasesModel.count > 0
+                    visible: releasesViewModel.items.isHasReleases
                     anchors.horizontalCenter: parent.horizontalCenter
                     height: parent.height
-                    width: parent.width//Math.floor(window.width / 490) * 490
+                    width: parent.width
                     cellWidth: parent.width / Math.floor(parent.width / 490)
                     cellHeight: 290
                     delegate: releaseDelegate
-                    model: releasesModel
+                    model: releasesViewModel.items
                     clip: true
                     ScrollBar.vertical: ScrollBar {
                         active: true
-                    }
-                    onContentYChanged: {
-                        if (page.fillingReleases) return;
-
-                        if (scrollview.atYEnd) {
-                            page.fillingReleases = true;
-                            fillNextReleases();
-                            page.fillingReleases = false;
-                        }
-
                     }
 
                     Component {
@@ -1583,25 +1578,24 @@ Page {
 
                             ReleaseItem {
                                 anchors.centerIn: parent
-                                releaseModel: modelData
                                 favoriteReleases: page.favoriteReleases
                                 isSelected: page.selectedReleases.filter(a => a === releaseModel.id).length
 
                                 onLeftClicked: {
                                     if (page.openedRelease) return;
 
-                                    page.selectItem(modelData);
+                                    releasesViewModel.selectRelease(id);
                                 }
                                 onRightClicked: {
                                     multupleMode.checked = !multupleMode.checked;
                                 }
                                 onAddToFavorite: {
-                                    synchronizationService.addUserFavorites(applicationSettings.userToken, modelData.id.toString());
-                                    page.selectedReleases = [];
+                                    releasesViewModel.addReleaseToFavorites(id);
+                                    releasesViewModel.clearSelectedReleases();
                                 }
                                 onRemoveFromFavorite: {
-                                    synchronizationService.removeUserFavorites(applicationSettings.userToken, modelData.id.toString());
-                                    page.selectedReleases = [];
+                                    releasesViewModel.removeReleaseFromFavorites(id);
+                                    releasesViewModel.clearSelectedReleases();
                                 }
                                 onWatchRelease: {
                                     page.watchSingleRelease(id, videos, -1, poster);
@@ -2332,48 +2326,6 @@ Page {
         refreshAllReleases(true);
     }
 
-    function selectItem(item) {
-        if (page.selectMode) {
-            if (page.openedRelease) page.openedRelease = null;
-            if (page.selectedReleases.find(a => a === item.id)) {
-                page.selectedReleases = page.selectedReleases.filter(a => a !== item.id);
-            } else {
-                page.selectedReleases.push(item.id);
-            }
-
-            //WORKAROUND: fix refresh list
-            const oldSelectedReleases = page.selectedReleases;
-            page.selectedReleases = [];
-            page.selectedReleases = oldSelectedReleases;
-        } else {
-            showReleaseCard(item);
-        }
-    }
-
-    function getReleasesByFilter() {
-        return JSON.parse(
-            localStorage.getReleasesByFilter(
-                page.pageIndex,
-                filterByTitle.textContent,
-                page.selectedSection,
-                descriptionSearchField.text,
-                typeSearchField.text,
-                genresSearchField.text,
-                orAndGenresSearchField.checked,
-                voicesSearchField.text,
-                orAndVoicesSearchField.checked,
-                yearsSearchField.text,
-                seasonesSearchField.text,
-                statusesSearchField.text,
-                sortingComboBox.currentIndex,
-                sortingDirectionComboBox.currentIndex == 1 ? true : false,
-                favoriteMarkSearchField.currentIndex,
-                seenMarkSearchField.currentIndex,
-                alphabetListModel.getSelectedCharacters()
-            )
-        );
-    }
-
     function refreshSeenMarks() {
         page.seenMarks = JSON.parse(onlinePlayerViewModel.getSeenMarks());
     }
@@ -2387,27 +2339,14 @@ Page {
         }
     }
 
-    function fillNextReleases() {
-        if (releasesModel.count < 12) return;
-        if (page.pageIndex === -1) return;
-
-        page.pageIndex += 1;
-
-        const nextPageReleases = getReleasesByFilter();
-        setSeensCounts(nextPageReleases);
-        for (const displayRelease of nextPageReleases) releasesModel.append({ model: displayRelease });
-
-        if (nextPageReleases.length < 12) page.pageIndex = -1;
-    }
-
     function refreshAllReleases(notResetScroll) {
-        if (Object.keys(page.seenMarks).length === 0) refreshSeenMarks();
+        /*if (Object.keys(page.seenMarks).length === 0) refreshSeenMarks();
         page.pageIndex = 1;
         releasesModel.clear();
         const displayReleases = getReleasesByFilter();
         setSeensCounts(displayReleases);
         for (const displayRelease of displayReleases) releasesModel.append({ model: displayRelease });
-        if (!notResetScroll) scrollview.contentY = 0;
+        if (!notResetScroll) scrollview.contentY = 0;*/
     }
 
     function clearAdditionalFilters() {
@@ -2426,21 +2365,21 @@ Page {
     }
 
     function changeSection(section) {
-        if (section === page.selectedSection) return;
+        if (releasesViewModel.items.section === section) return;
 
         if (clearFilterAfterChangeSectionSwitch.checked) {
             filterByTitle.textContent = "";
             page.clearAdditionalFilters();
         }
 
-        page.selectedSection = section;
+        releasesViewModel.items.section = section;
         if (section in page.sectionSortings) {
             const defaultSorting = page.sectionSortings[section];
             sortingComboBox.currentIndex = defaultSorting.field;
             sortingDirectionComboBox.currentIndex = defaultSorting.direction;
         }
 
-        refreshAllReleases(false);
+        releasesViewModel.items.refresh();
     }
 
     function refreshSchedule() {
@@ -2515,5 +2454,7 @@ Page {
         const startedSection = userSettings.startedSection;
         if (startedSection) changeSection(startedSection);
         page.startedSection = startedSection;
+
+        releasesViewModel.items.refresh();
     }
 }

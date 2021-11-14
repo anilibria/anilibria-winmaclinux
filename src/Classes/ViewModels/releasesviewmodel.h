@@ -8,6 +8,8 @@
 #include "../ListModels/releaseslistmodel.h"
 #include "../Models/historymodel.h"
 #include "../Models/changesmodel.h"
+#include "../Services/synchronizationservice.h"
+#include "../Services/applicationsettings.h"
 
 class ReleasesViewModel : public QObject
 {
@@ -26,6 +28,9 @@ class ReleasesViewModel : public QObject
     Q_PROPERTY(int newTorrentSeriesCount READ newTorrentSeriesCount NOTIFY newTorrentSeriesCountChanged)
     Q_PROPERTY(bool notificationForFavorites READ notificationForFavorites WRITE setNotificationForFavorites NOTIFY notificationForFavoritesChanged)
     Q_PROPERTY(bool showSidePanel READ showSidePanel WRITE setShowSidePanel NOTIFY showSidePanelChanged)
+    Q_PROPERTY(bool selectMode READ selectMode WRITE setSelectMode NOTIFY selectModeChanged)
+    Q_PROPERTY(SynchronizationService* synchronizationService READ synchronizationService WRITE setSynchronizationService NOTIFY synchronizationServiceChanged)
+    Q_PROPERTY(ApplicationSettings* applicationSettings READ applicationSettings WRITE setApplicationSettings NOTIFY applicationSettingsChanged)
 
 private:
     const QString releasesCacheFileName { "releases.cache" };
@@ -48,10 +53,13 @@ private:
     QVector<int>* m_userFavorites { new QVector<int>() };
     QVector<int>* m_hiddenReleases { new QVector<int>() };
     QHash<QString, bool>* m_seenMarks { new QHash<QString, bool>() };
-    QHash<int, HistoryModel*>* m_historyItems { new QHash<int, HistoryModel*>() };
+    QSharedPointer<QHash<int, HistoryModel*>> m_historyItems { new QHash<int, HistoryModel*>() };
     ChangesModel* m_releaseChanges { new ChangesModel() };
+    SynchronizationService* m_synchronizationService { nullptr };
+    ApplicationSettings* m_applicationSettings { nullptr };
     bool m_notificationForFavorites { false };
     bool m_showSidePanel { false };
+    bool m_selectMode { false };
 
 public:
     explicit ReleasesViewModel(QObject *parent = nullptr);
@@ -86,11 +94,24 @@ public:
     bool showSidePanel() const noexcept { return m_showSidePanel; }
     void setShowSidePanel(bool showSidePanel) noexcept;
 
+    bool selectMode() const noexcept { return m_selectMode; }
+    void setSelectMode(bool selectMode) noexcept;
+
+    SynchronizationService* synchronizationService() const noexcept { return m_synchronizationService; }
+    void setSynchronizationService(SynchronizationService* synchronizationService) noexcept;
+
+    ApplicationSettings* applicationSettings() const noexcept { return m_applicationSettings; }
+    void setApplicationSettings(ApplicationSettings* applicationSettings) noexcept;
+
     Q_INVOKABLE QString getScheduleDay(const QString& dayNumber) const noexcept;
     Q_INVOKABLE void copyToClipboard(const QString& text) const noexcept;
     Q_INVOKABLE void copyImageToClipboard(const QString& imagePath) const;
     Q_INVOKABLE QString getVkontakteCommentPage(const QString& code) const noexcept;
     Q_INVOKABLE void resetAllChanges() noexcept;
+    Q_INVOKABLE void selectRelease(int id) noexcept;
+    Q_INVOKABLE void clearSelectedReleases() noexcept;
+    Q_INVOKABLE void addReleaseToFavorites(int id) noexcept;
+    Q_INVOKABLE void removeReleaseFromFavorites(int id) noexcept;
 
 private:
     void loadReleases();
@@ -131,6 +152,9 @@ signals:
     void newTorrentSeriesCountChanged();
     void notificationForFavoritesChanged();
     void showSidePanelChanged();
+    void selectModeChanged();
+    void synchronizationServiceChanged();
+    void applicationSettingsChanged();
 
 };
 

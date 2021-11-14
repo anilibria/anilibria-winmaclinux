@@ -48,6 +48,7 @@
 #include "Classes/ListModels/commoncomboboxlistmodel.h"
 #include "Classes/ListModels/mainmenulistmodel.h"
 #include "Classes/ViewModels/mainviewmodel.h"
+#include "Classes/ListModels/releaseslistmodel.h"
 
 int main(int argc, char *argv[])
 {
@@ -104,6 +105,7 @@ int main(int argc, char *argv[])
     qmlRegisterType<CommonComboBoxListModel>("Anilibria.ListModels", 1, 0, "CommonComboBoxListModel");
     qmlRegisterType<MainViewModel>("Anilibria.ViewModels", 1, 0, "MainViewModel");
     qmlRegisterType<MainMenuListModel>("Anilibria.ListModels", 1, 0, "MainMenuListModel");
+    qmlRegisterType<ReleasesListModel>("Anilibria.ListModels", 1, 0, "ReleasesListModel");
 
     QCoreApplication::setOrganizationDomain("anilibria.tv");
     QCoreApplication::setOrganizationName("EmptyFlow");

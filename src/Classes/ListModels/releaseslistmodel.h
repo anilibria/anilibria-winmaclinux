@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QAbstractListModel>
+#include <QSet>
 #include "../Models/fullreleasemodel.h"
 #include "../Models/changesmodel.h"
 #include "../Models/historymodel.h"
@@ -26,16 +27,17 @@ class ReleasesListModel : public QAbstractListModel
     Q_PROPERTY(int section READ section WRITE setSection NOTIFY sectionChanged)
     Q_PROPERTY(int sortingField READ sortingField WRITE setSortingField NOTIFY sortingFieldChanged)
     Q_PROPERTY(bool sortingDescending READ sortingDescending WRITE setSortingDescending NOTIFY sortingDescendingChanged)
+    Q_PROPERTY(bool isHasReleases READ isHasReleases NOTIFY isHasReleasesChanged)
 
 private:
     QList<FullReleaseModel*>* m_releases;
-    QList<FullReleaseModel*>* m_filteredReleases { new QList<FullReleaseModel*>() };
+    QScopedPointer<QList<FullReleaseModel*>> m_filteredReleases { new QList<FullReleaseModel*>() };
     QVector<int>* m_userFavorites { nullptr };
     QHash<QString, bool>* m_seenMarkModels { nullptr };
     QVector<int>* m_hiddenReleases { nullptr };
     ChangesModel* m_changesModel { nullptr };
     QMap<int, int>* m_scheduleReleases { nullptr };
-    QHash<int, HistoryModel*>* m_historyModels { nullptr };
+    QSharedPointer<QHash<int, HistoryModel*>> m_historyModels { nullptr };
     QString m_titleFilter { "" };
     QString m_descriptionFilter { "" };
     QString m_typeFilter { "" };
@@ -51,7 +53,9 @@ private:
     int m_seenMarkFilter { 0 };
     int m_section { 0 };
     int m_sortingField { 0 };
-    bool m_sortingDescending { false };
+    bool m_sortingDescending { true };
+    bool m_isHasReleases { false };
+    QScopedPointer<QSet<int>> m_selectedReleases { new QSet<int>() };
     enum FullReleaseRoles {
         ReleaseIdRole = Qt::UserRole + 1,
         TitleRole,
@@ -68,7 +72,8 @@ private:
         CountTorrentRole,
         VideosRole,
         RatingRole,
-        InFavoritesRole
+        InFavoritesRole,
+        SelectedRole
     };
 
     enum FilterSortingField {
@@ -87,7 +92,9 @@ private:
     };
 
 public:
-    explicit ReleasesListModel(QList<FullReleaseModel*>* releases, QMap<int, int>* schedules, QVector<int>* userFavorites, QVector<int>* hidedReleases, QHash<QString, bool>* seenMarks, QHash<int, HistoryModel*>* historyItems, QObject *parent = nullptr);
+    explicit ReleasesListModel(QObject *parent = nullptr);
+
+    void setup(QList<FullReleaseModel*>* releases, QMap<int, int>* schedules, QVector<int>* userFavorites, QVector<int>* hidedReleases, QHash<QString, bool>* seenMarks, QSharedPointer<QHash<int, HistoryModel*>> historyItems);
 
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
 
@@ -143,7 +150,15 @@ public:
     int sortingDescending() const noexcept { return m_sortingDescending; }
     void setSortingDescending(bool sortingDescending) noexcept;
 
+    bool isHasReleases() const noexcept { return m_isHasReleases; }
+    void setIsHasReleases(bool isHasReleases) noexcept;
+
+    void refreshItem(int id);
+
     Q_INVOKABLE void refresh();
+    Q_INVOKABLE void selectItem(int id);
+    Q_INVOKABLE void deselectItem(int id);
+    Q_INVOKABLE void clearSelected();
 
 private:
     void removeTrimsInStringCollection(const QStringList& list);
@@ -152,6 +167,7 @@ private:
     QHash<int, int>&& getAllSeenMarkCount(QHash<int, int>&& result) noexcept;
     int getReleaseSeenMarkCount(int releaseId) const noexcept;
     void sortingFilteringReleases(QHash<int, int>&& seenMarks);
+    void refreshFilteredReleaseById(int id);
 
 signals:
     void titleFilterChanged();
@@ -170,6 +186,7 @@ signals:
     void sectionChanged();
     void sortingFieldChanged();
     void sortingDescendingChanged();
+    void isHasReleasesChanged();
 
 };
 

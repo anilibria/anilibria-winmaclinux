@@ -13,7 +13,11 @@ const int SeeningHistorySection = 10;
 const int NotSeeningHistorySection = 11;
 const int HiddenReleasesSection = 12;
 
-ReleasesListModel::ReleasesListModel(QList<FullReleaseModel*>* releases, QMap<int, int>* schedules, QVector<int>* userFavorites, QVector<int>* hidedReleases, QHash<QString, bool>* seenMarks, QHash<int, HistoryModel*>* historyItems, QObject *parent) : QAbstractListModel(parent)
+ReleasesListModel::ReleasesListModel(QObject *parent) : QAbstractListModel(parent)
+{
+}
+
+void ReleasesListModel::setup(QList<FullReleaseModel *> *releases, QMap<int, int> *schedules, QVector<int> *userFavorites, QVector<int> *hidedReleases, QHash<QString, bool> *seenMarks, QSharedPointer<QHash<int, HistoryModel *> > historyItems)
 {
     m_releases = releases;
     m_scheduleReleases = schedules;
@@ -78,6 +82,15 @@ QVariant ReleasesListModel::data(const QModelIndex &index, int role) const
         }
         case InFavoritesRole: {
             return QVariant(m_userFavorites->contains(release->id()));
+        }
+        case VoicesRole: {
+            return QVariant(release->voicers());
+        }
+        case RatingRole: {
+            return QVariant(release->rating());
+        }
+        case SelectedRole:{
+            return QVariant(m_selectedReleases->contains(release->id()));
         }
     }
 
@@ -150,6 +163,10 @@ QHash<int, QByteArray> ReleasesListModel::roleNames() const
         {
             InFavoritesRole,
             "inFavorites"
+        },
+        {
+            SelectedRole,
+            "inSelected"
         }
     };
 }
@@ -280,6 +297,19 @@ void ReleasesListModel::setSortingDescending(bool sortingDescending) noexcept
 
     m_sortingDescending = sortingDescending;
     emit sortingDescendingChanged();
+}
+
+void ReleasesListModel::setIsHasReleases(bool isHasReleases) noexcept
+{
+    if (m_isHasReleases == isHasReleases) return;
+
+    m_isHasReleases = isHasReleases;
+    emit isHasReleasesChanged();
+}
+
+void ReleasesListModel::refreshItem(int id)
+{
+    refreshFilteredReleaseById(id);
 }
 
 void ReleasesListModel::refresh()
@@ -420,6 +450,32 @@ void ReleasesListModel::refresh()
     sortingFilteringReleases(std::move(seenMarks));
 
     endResetModel();
+
+    setIsHasReleases(m_filteredReleases->count() > 0);
+}
+
+void ReleasesListModel::selectItem(int id)
+{
+    m_selectedReleases->insert(id);
+
+    refreshFilteredReleaseById(id);
+}
+
+void ReleasesListModel::deselectItem(int id)
+{
+    m_selectedReleases->remove(id);
+
+    refreshFilteredReleaseById(id);
+}
+
+void ReleasesListModel::clearSelected()
+{
+    QSet<int> oldSelectedReleases(*m_selectedReleases);
+    m_selectedReleases->clear();
+
+    foreach (auto releaseId, oldSelectedReleases) {
+        refreshFilteredReleaseById(releaseId);
+    }
 }
 
 void ReleasesListModel::removeTrimsInStringCollection(const QStringList &list)
@@ -728,4 +784,21 @@ void ReleasesListModel::sortingFilteringReleases(QHash<int, int>&& seenMarks)
             break;
     }
 
+}
+
+void ReleasesListModel::refreshFilteredReleaseById(int id)
+{
+    auto iterator = std::find_if(
+        m_filteredReleases->begin(),
+        m_filteredReleases->end(),
+        [id](FullReleaseModel* item)
+        {
+            return item->id() == id;
+        }
+    );
+
+    if(iterator == m_filteredReleases->end()) return;
+
+    int itemIndex = m_filteredReleases->indexOf(*iterator);
+    emit dataChanged(index(itemIndex), index(itemIndex));
 }

@@ -994,7 +994,8 @@ ApplicationWindow {
 
     ReleasesViewModel {
         id: releasesViewModel
-
+        synchronizationService: synchronizationService
+        applicationSettings: applicationSettings
         imageBackgroundViewModel.containerWidth: releases.backgroundImageWidth
         imageBackgroundViewModel.containerHeight: releases.backgroundImageHeight
     }

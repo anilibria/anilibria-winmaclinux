@@ -7,7 +7,8 @@
 
 ReleasesViewModel::ReleasesViewModel(QObject *parent) : QObject(parent)
 {
-    m_items = new ReleasesListModel(m_releases, m_scheduleReleases, m_userFavorites, m_hiddenReleases, m_seenMarks, m_historyItems, this);
+    m_items = new ReleasesListModel(this);
+    m_items->setup(m_releases, m_scheduleReleases, m_userFavorites, m_hiddenReleases, m_seenMarks, m_historyItems);
 
     m_imageBackgroundViewModel->setOptionFilePath("releasesbackground");
 
@@ -129,6 +130,32 @@ void ReleasesViewModel::setShowSidePanel(bool showSidePanel) noexcept
     emit showSidePanelChanged();
 }
 
+void ReleasesViewModel::setSelectMode(bool selectMode) noexcept
+{
+    if (m_selectMode == selectMode) return;
+
+    m_selectMode = selectMode;
+    emit selectModeChanged();
+
+    if (!selectMode) m_items->clearSelected();
+}
+
+void ReleasesViewModel::setSynchronizationService(SynchronizationService *synchronizationService) noexcept
+{
+    if (m_synchronizationService == synchronizationService) return;
+
+    m_synchronizationService = synchronizationService;
+    emit synchronizationServiceChanged();
+}
+
+void ReleasesViewModel::setApplicationSettings(ApplicationSettings *applicationSettings) noexcept
+{
+    if (m_applicationSettings == applicationSettings) return;
+
+    m_applicationSettings = applicationSettings;
+    emit applicationSettingsChanged();
+}
+
 QString ReleasesViewModel::getScheduleDay(const QString &dayNumber) const noexcept
 {
     if (dayNumber.isEmpty()) return "";
@@ -184,6 +211,39 @@ void ReleasesViewModel::resetAllChanges() noexcept
     m_releaseChanges->newTorrentSeries()->clear();
 
     saveChanges();
+}
+
+void ReleasesViewModel::selectRelease(int id) noexcept
+{
+    if (m_selectMode) {
+        //if (page.openedRelease) page.openedRelease = null;
+        m_items->selectItem(id);
+    } else {
+        //showReleaseCard(item);
+    }
+}
+
+void ReleasesViewModel::clearSelectedReleases() noexcept
+{
+    m_items->clearSelected();
+}
+
+void ReleasesViewModel::addReleaseToFavorites(int id) noexcept
+{
+    if (!m_userFavorites->contains(id)) {
+        m_userFavorites->append(id);
+        m_synchronizationService->addUserFavorites(m_applicationSettings->userToken(), QString::number(id));
+        m_items->refreshItem(id);
+    }
+}
+
+void ReleasesViewModel::removeReleaseFromFavorites(int id) noexcept
+{
+    if (m_userFavorites->contains(id)) {
+        m_userFavorites->removeOne(id);
+        m_synchronizationService->removeUserFavorites(m_applicationSettings->userToken(), QString::number(id));
+        m_items->refreshItem(id);
+    }
 }
 
 void ReleasesViewModel::loadReleases()
