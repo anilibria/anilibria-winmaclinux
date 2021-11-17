@@ -29,7 +29,6 @@
         <file>Assets/Icons/step-forward.svg</file>
         <file>Assets/Icons/resize.svg</file>
         <file>Controls/ToggleButton.qml</file>
-        <file>parseReleases.js</file>
         <file>Assets/Icons/rating.svg</file>
         <file>Assets/Icons/favorite.svg</file>
         <file>Assets/Icons/emptyfavorite.svg</file>

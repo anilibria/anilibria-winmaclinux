@@ -17,7 +17,7 @@ ReleasesListModel::ReleasesListModel(QObject *parent) : QAbstractListModel(paren
 {
 }
 
-void ReleasesListModel::setup(QList<FullReleaseModel *> *releases, QMap<int, int> *schedules, QVector<int> *userFavorites, QVector<int> *hidedReleases, QHash<QString, bool> *seenMarks, QSharedPointer<QHash<int, HistoryModel *> > historyItems)
+void ReleasesListModel::setup(QSharedPointer<QList<FullReleaseModel *>> releases, QMap<int, int> *schedules, QVector<int> *userFavorites, QVector<int> *hidedReleases, QHash<QString, bool> *seenMarks, QSharedPointer<QHash<int, HistoryModel *>> historyItems, QSharedPointer<ChangesModel> changes)
 {
     m_releases = releases;
     m_scheduleReleases = schedules;
@@ -25,6 +25,9 @@ void ReleasesListModel::setup(QList<FullReleaseModel *> *releases, QMap<int, int
     m_hiddenReleases = hidedReleases;
     m_seenMarkModels = seenMarks;
     m_historyModels = historyItems;
+    m_changesModel = changes;
+
+    refresh();
 }
 
 int ReleasesListModel::rowCount(const QModelIndex &parent) const
@@ -39,6 +42,7 @@ QVariant ReleasesListModel::data(const QModelIndex &index, int role) const
     if (!index.isValid()) return QVariant();
 
     auto release = m_filteredReleases->at(index.row());
+    if (release == nullptr) return QVariant();
 
     switch (role) {
         case ReleaseIdRole: {
@@ -91,6 +95,12 @@ QVariant ReleasesListModel::data(const QModelIndex &index, int role) const
         }
         case SelectedRole:{
             return QVariant(m_selectedReleases->contains(release->id()));
+        }
+        case InScheduleRole: {
+            return QVariant(m_scheduleReleases->contains(release->id()));
+        }
+        case ScheduledDayRole: {
+            return m_scheduleReleases->contains(release->id()) ? QVariant(getScheduleDay(m_scheduleReleases->value(release->id()))) : QVariant("");
         }
     }
 
@@ -167,6 +177,14 @@ QHash<int, QByteArray> ReleasesListModel::roleNames() const
         {
             SelectedRole,
             "inSelected"
+        },
+        {
+            InScheduleRole,
+            "inSchedule"
+        },
+        {
+            ScheduledDayRole,
+            "scheduledDay"
         }
     };
 }
@@ -299,7 +317,7 @@ void ReleasesListModel::setSortingDescending(bool sortingDescending) noexcept
     emit sortingDescendingChanged();
 }
 
-void ReleasesListModel::setIsHasReleases(bool isHasReleases) noexcept
+void ReleasesListModel::setIsHasReleases(const bool& isHasReleases) noexcept
 {
     if (m_isHasReleases == isHasReleases) return;
 
@@ -310,6 +328,37 @@ void ReleasesListModel::setIsHasReleases(bool isHasReleases) noexcept
 void ReleasesListModel::refreshItem(int id)
 {
     refreshFilteredReleaseById(id);
+}
+
+int ReleasesListModel::getReleaseSeenMarkCount(int releaseId) const noexcept
+{
+    auto result = 0;
+    QHashIterator<QString, bool> iterator(*m_seenMarkModels);
+    while(iterator.hasNext()) {
+        iterator.next();
+
+        QString key = iterator.key();
+        auto id = QString::number(releaseId);
+        if (!key.startsWith(id)) continue;
+
+        result += 1;
+    }
+
+    return result;
+}
+
+QString ReleasesListModel::getScheduleDay(int dayNumber) const noexcept
+{
+    switch (dayNumber){
+        case 1: return QString("понедельник");
+        case 2: return QString("вторник");
+        case 3: return QString("среда");
+        case 4: return QString("четверг");
+        case 5: return QString("пятница");
+        case 6: return QString("суббота");
+        case 7: return QString("воскресенье");
+        default: return "";
+    }
 }
 
 void ReleasesListModel::refresh()
@@ -525,23 +574,6 @@ QHash<int, int> &&ReleasesListModel::getAllSeenMarkCount(QHash<int, int>&& resul
         }
     }
     return std::move(result);
-}
-
-int ReleasesListModel::getReleaseSeenMarkCount(int releaseId) const noexcept
-{
-    auto result = 0;
-    QHashIterator<QString, bool> iterator(*m_seenMarkModels);
-    while(iterator.hasNext()) {
-        iterator.next();
-
-        QString key = iterator.key();
-        auto id = QString::number(releaseId);
-        if (!key.startsWith(id)) continue;
-
-        result += 1;
-    }
-
-    return result;
 }
 
 static bool compareTimeStamp(const FullReleaseModel* first, const FullReleaseModel* second)

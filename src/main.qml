@@ -40,7 +40,6 @@ ApplicationWindow {
     title: qsTr("AniLibria.Qt")
     font.capitalization: Font.MixedCase
     flags: Qt.FramelessWindowHint | Qt.Window | Qt.WindowMinimizeButtonHint
-    property bool synchronizationEnabled: false
     property var userModel: ({})
     property string tempTorrentPath: ""
     property bool isShowFullScreenSize: false
@@ -609,24 +608,6 @@ ApplicationWindow {
 
     LocalStorage {
         id: localStorage
-
-        onAllReleasesFinished: {
-            releases.refreshAllReleases();
-
-            synchronizationService.synchronizeSchedule();            
-            if (applicationSettings.userToken) synchronizationService.synchronizeUserFavorites(applicationSettings.userToken);
-
-            window.synchronizationEnabled = false;
-
-            notificationViewModel.sendInfoNotification("Синхронизация релизов успешно завершена в " + new Date().toLocaleTimeString());
-
-            if (localStorage.newEntities) {
-                notificationViewModel.sendInfoNotification(localStorage.newEntities);
-            }
-
-            releaseLinkedSeries.refreshSeries();
-        }
-
     }
 
     AnalyticsService {
@@ -639,14 +620,6 @@ ApplicationWindow {
 
     ReleaseLinkedSeries {
         id: releaseLinkedSeries
-    }
-
-    WorkerScript {
-       id: parseReleasesWorker
-       source: "parseReleases.js"
-       onMessage: {
-           localStorage.updateAllReleases(messageObject.releases);
-       }
     }
 
     FileDialog {
@@ -666,48 +639,15 @@ ApplicationWindow {
         selectExisting: true
         nameFilters: [ "Releases (*.releases)" ]
         onAccepted: {
-            localStorage.importReleasesFromExternalFile(importReleasesFileDialog.fileUrl);
+            releasesViewModel.importReleasesFromFile(importReleasesFileDialog.fileUrl);
         }
     }
 
     SynchronizationService {
         id: synchronizationService
         Component.onCompleted: {
-            window.synchronizationEnabled = true;
-            synchronizationService.synchronizeReleases();
-        }
-
-        onSynchronizedReleases: {
-            if (!data || !data.length) {
-                window.synchronizationEnabled = false;
-                notificationViewModel.sendErrorNotification(`Не удалось синхронизовать релизы. Попробуйте повторить синхронизацию через некоторое время.`);
-            }
-
-            parseReleasesWorker.sendMessage({ releasesJson: data });
-        }
-
-        onSynchronizedFromDL: {
-            localStorage.updateAllReleases(data);
-        }
-
-        onSynchronizedSchedule: {
-            const jsonData = JSON.parse(data);
-
-            if (!jsonData.status) {
-                //TODO: handle error situation
-            }
-
-            const scheduleItems = jsonData.data;
-            const scheduleResult = {};
-            for (const scheduleItem of scheduleItems) {
-                for (const dayitem of scheduleItem.items) {
-                    scheduleResult[dayitem.id] = scheduleItem.day;
-                }
-            }
-
-            localStorage.setSchedule(JSON.stringify(scheduleResult));
-
-            releases.refreshReleaseSchedules();
+            releasesViewModel.synchronizationEnabled = true;
+            synchronizeReleases();
         }
 
         onUserDataReceived: {
@@ -729,21 +669,9 @@ ApplicationWindow {
             window.userModel = {};
             mainViewModel.notVisibleSignin = false;
 
-            localStorage.clearFavorites();
-            releases.refreshFavorites();
+            releasesViewModel.clearAccountFavorites();
 
             notificationViewModel.sendInfoNotification(`Вы успешно вышли из аккаунта. Чтобы войти обратно перейдите на страницу Войти.`)
-        }
-
-        onUserFavoritesReceived:  {
-            const favoritesObject = JSON.parse(data);
-            const favorites = [];
-            for (const favorite of favoritesObject.data.items) {
-                favorites.push(favorite.id);
-            }
-
-            localStorage.updateFavorites(JSON.stringify(favorites));
-            releases.refreshFavorites();
         }
 
         onUserFavoritesEdited: {
@@ -926,6 +854,7 @@ ApplicationWindow {
 
     OnlinePlayerViewModel {
         id: onlinePlayerViewModel
+        releasesViewModel: releasesViewModel
 
         onIsFullScreenChanged: {
             if (isFullScreen) {
@@ -945,13 +874,10 @@ ApplicationWindow {
             videoplayer.setSerieScrollPosition();
         }
         onSaveToWatchHistory: {
-            localStorage.setToReleaseHistory(releaseId, 1);
+            releasesViewModel.setToReleaseHistory(releaseId, 1);
         }
         onPlayInPlayer: {
             videoplayer.playInPlayer();
-        }
-        onRecalculateSeenCounts: {
-            localStorage.recalculateSeenCountsFromFile();
         }
         onRefreshSeenMarks: {
             videoplayer.refreshSeenMarks();
@@ -996,8 +922,23 @@ ApplicationWindow {
         id: releasesViewModel
         synchronizationService: synchronizationService
         applicationSettings: applicationSettings
+        localStorage: localStorage
         imageBackgroundViewModel.containerWidth: releases.backgroundImageWidth
         imageBackgroundViewModel.containerHeight: releases.backgroundImageHeight
+        onReleaseCardOpened: {
+            analyticsService.sendView("releasecard", "show", "%2Freleases");
+            releases.webView.url = releasesViewModel.getVkontakteCommentPage(releasesViewModel.openedReleaseCode);
+        }
+        onAfterSynchronizedReleases: {
+            notificationViewModel.sendInfoNotification("Синхронизация релизов успешно завершена в " + new Date().toLocaleTimeString());
+
+            if (releasesViewModel.newEntities) notificationViewModel.sendInfoNotification(releasesViewModel.newEntities);
+
+            releaseLinkedSeries.refreshSeries();
+        }
+        onErrorWhileReleaseSynchronization: {
+            notificationViewModel.sendErrorNotification(`Не удалось синхронизовать релизы. Попробуйте повторить синхронизацию через некоторое время.`);
+        }
     }
 
     Rectangle {
@@ -1021,7 +962,7 @@ ApplicationWindow {
             id: releases
             visible: true
             focus: true
-            synchronizeEnabled: window.synchronizationEnabled
+            synchronizeEnabled: releasesViewModel.synchronizationEnabled
             onWatchSingleRelease: {
                 onlinePlayerViewModel.customPlaylistPosition = startSeria;
                 onlinePlayerViewModel.navigateReleaseId = releaseId;
@@ -1052,11 +993,6 @@ ApplicationWindow {
 
                 onlinePlayerViewModel.setupForMultipleRelease(allVideos, allIds, allPosters, allNames);
             }
-
-            onRequestSynchronizeReleases: {
-                window.synchronizationEnabled = true;
-                synchronizationService.synchronizeReleases();
-            }            
         }
 
         Authorization {

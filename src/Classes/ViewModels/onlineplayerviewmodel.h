@@ -26,6 +26,7 @@
 #include "../RemotePlayer/remoteplayer.h"
 #include "../Models/seenmodel.h"
 #include "../../globalconstants.h"
+#include "../ViewModels/releasesviewmodel.h"
 
 class OnlinePlayerViewModel : public QObject
 {
@@ -64,6 +65,7 @@ class OnlinePlayerViewModel : public QObject
     Q_PROPERTY(bool sendVolumeToRemote READ sendVolumeToRemote WRITE setSendVolumeToRemote NOTIFY sendVolumeToRemoteChanged)
     Q_PROPERTY(bool isMultipleRelease READ isMultipleRelease WRITE setIsMultipleRelease NOTIFY isMultipleReleaseChanged)
     Q_PROPERTY(bool isFromNavigated READ isFromNavigated WRITE setIsFromNavigated NOTIFY isFromNavigatedChanged)
+    Q_PROPERTY(ReleasesViewModel* releasesViewModel READ releasesViewModel WRITE setReleasesViewModel NOTIFY releasesViewModelChanged)
 
 private:
     bool m_isFullScreen;
@@ -100,13 +102,13 @@ private:
     int m_customPlaylistPosition;
     QString m_navigateVideos;
     QString m_navigatePoster;
-    QHash<QString, bool>* m_seenMarkModels;
     int m_videoPosition;
     int m_videoDuration;
     bool m_sendVolumeToRemote;
     bool m_isMultipleRelease;
     bool m_isFromNavigated;
     int m_watchedTimes { 0 };
+    ReleasesViewModel* m_releasesViewModel;
 
 public:
     explicit OnlinePlayerViewModel(QObject *parent = nullptr);
@@ -205,6 +207,9 @@ public:
     bool isFromNavigated() const noexcept { return m_isFromNavigated; }
     void setIsFromNavigated(const bool& isFromNavigated) noexcept;
 
+    ReleasesViewModel* releasesViewModel() const noexcept { return m_releasesViewModel; }
+    void setReleasesViewModel(ReleasesViewModel* releasesViewModel) noexcept;
+
     Q_INVOKABLE void toggleFullScreen();
     Q_INVOKABLE void changeVideoPosition(int duration, int position) noexcept;
     Q_INVOKABLE QString checkExistingVideoQuality(int index);    
@@ -218,13 +223,7 @@ public:
     Q_INVOKABLE void setupForMultipleRelease(const QStringList &json, const QList<int> &releases, const QStringList &posters, const QStringList& names);
     Q_INVOKABLE void setupForCinemahall(const QStringList &json, const QList<int> &releases, const QStringList &posters, const QStringList& names);
     Q_INVOKABLE void setSeenMark(int id, int seriaId, bool marked);
-    Q_INVOKABLE void setSeenMarkAllSeries(int id, int countSeries, bool marked);
-    Q_INVOKABLE void setSeenMarkAllSeriesWithoutSave(int id, int countSeries, bool marked);
-    Q_INVOKABLE void saveSeenMarkCacheToFile();
-    Q_INVOKABLE void removeAllSeenMark();
-    Q_INVOKABLE QList<int> getReleseSeenMarks(int id, int count);
     Q_INVOKABLE QString getReleasesSeenMarks(QList<int> ids);
-    Q_INVOKABLE QString getSeenMarks();
     Q_INVOKABLE void selectVideo(int releaseId, int videoId);
     Q_INVOKABLE void changeVideoQuality(const QString& quality) noexcept;
     Q_INVOKABLE void setVideoSpeed(double speed) noexcept;
@@ -245,10 +244,6 @@ private:
     void loadSeens();
     QString getSeensCachePath();
     void createIfNotExistsFile(QString path, QString defaultContent);
-    void loadSeenMarks();
-    QString getSeenMarksCachePath() const;
-    void saveSeenMarks();
-    void setSeenMarkForRelease(int id, int countSeries, bool marked);
     void receiveRemotePort();
     void receiveCountUsers();
 
@@ -295,6 +290,7 @@ signals:
     void isMultipleReleaseChanged();
     void isFromNavigatedChanged();
     void watchedMinuteInPlayer();
+    void releasesViewModelChanged();
 
 };
 

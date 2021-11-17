@@ -100,9 +100,15 @@ void SynchronizationService::synchronizeDL()
     m_dlService->synchronize();
 }
 
+QString &&SynchronizationService::getSynchronizedReleases()
+{
+    return std::move(m_synchronizedReleases);
+}
+
 void SynchronizationService::saveReleasesToCache(QString data)
 {
-    emit synchronizedReleases(data);
+    m_synchronizedReleases = std::move(data);
+    emit synchronizedReleases();
 }
 
 void SynchronizationService::saveReleasesFromDLToCache()

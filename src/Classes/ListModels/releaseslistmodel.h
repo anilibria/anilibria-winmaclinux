@@ -30,12 +30,12 @@ class ReleasesListModel : public QAbstractListModel
     Q_PROPERTY(bool isHasReleases READ isHasReleases NOTIFY isHasReleasesChanged)
 
 private:
-    QList<FullReleaseModel*>* m_releases;
+    QSharedPointer<QList<FullReleaseModel*>> m_releases;
     QScopedPointer<QList<FullReleaseModel*>> m_filteredReleases { new QList<FullReleaseModel*>() };
     QVector<int>* m_userFavorites { nullptr };
     QHash<QString, bool>* m_seenMarkModels { nullptr };
     QVector<int>* m_hiddenReleases { nullptr };
-    ChangesModel* m_changesModel { nullptr };
+    QSharedPointer<ChangesModel> m_changesModel { nullptr };
     QMap<int, int>* m_scheduleReleases { nullptr };
     QSharedPointer<QHash<int, HistoryModel*>> m_historyModels { nullptr };
     QString m_titleFilter { "" };
@@ -73,7 +73,9 @@ private:
         VideosRole,
         RatingRole,
         InFavoritesRole,
-        SelectedRole
+        SelectedRole,
+        InScheduleRole,
+        ScheduledDayRole
     };
 
     enum FilterSortingField {
@@ -94,7 +96,7 @@ private:
 public:
     explicit ReleasesListModel(QObject *parent = nullptr);
 
-    void setup(QList<FullReleaseModel*>* releases, QMap<int, int>* schedules, QVector<int>* userFavorites, QVector<int>* hidedReleases, QHash<QString, bool>* seenMarks, QSharedPointer<QHash<int, HistoryModel*>> historyItems);
+    void setup(QSharedPointer<QList<FullReleaseModel*>> releases, QMap<int, int>* schedules, QVector<int>* userFavorites, QVector<int>* hidedReleases, QHash<QString, bool>* seenMarks, QSharedPointer<QHash<int, HistoryModel*>> historyItems, QSharedPointer<ChangesModel> changes);
 
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
 
@@ -151,9 +153,12 @@ public:
     void setSortingDescending(bool sortingDescending) noexcept;
 
     bool isHasReleases() const noexcept { return m_isHasReleases; }
-    void setIsHasReleases(bool isHasReleases) noexcept;
+    void setIsHasReleases(const bool& isHasReleases) noexcept;
 
     void refreshItem(int id);
+    int getReleaseSeenMarkCount(int releaseId) const noexcept;
+
+    QString getScheduleDay(int dayNumber) const noexcept;
 
     Q_INVOKABLE void refresh();
     Q_INVOKABLE void selectItem(int id);
@@ -165,7 +170,6 @@ private:
     bool checkOrCondition(const QStringList& source, const QStringList& target);
     bool checkAllCondition(const QStringList& source, const QStringList& target);
     QHash<int, int>&& getAllSeenMarkCount(QHash<int, int>&& result) noexcept;
-    int getReleaseSeenMarkCount(int releaseId) const noexcept;
     void sortingFilteringReleases(QHash<int, int>&& seenMarks);
     void refreshFilteredReleaseById(int id);
 

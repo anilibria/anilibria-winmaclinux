@@ -26,8 +26,6 @@
 #include "../Models/fullreleasemodel.h"
 #include "../Models/changesmodel.h"
 #include "../Models/seenmodel.h"
-#include "../Models/seenmarkmodel.h"
-#include "../Models/historymodel.h"
 #include "../Models/usersettingsmodel.h"
 #include "../Models/downloaditemmodel.h"
 #include "../../globalconstants.h"
@@ -37,103 +35,37 @@ class LocalStorageService : public QObject
 {
     Q_OBJECT
 
-    Q_PROPERTY(bool isChangesExists READ isChangesExists WRITE setIsChangesExists NOTIFY isChangesExistsChanged)
-    Q_PROPERTY(int countReleases READ countReleases WRITE setCountReleases NOTIFY countReleasesChanged)
-    Q_PROPERTY(int countSeens READ countSeens WRITE setCountSeens NOTIFY countSeensChanged)
     Q_PROPERTY(int countCinemahall READ countCinemahall WRITE setCountCinemahall NOTIFY countCinemahallChanged)
-    Q_PROPERTY(QString newEntities READ newEntities WRITE setNewEntities NOTIFY newEntitiesChanged)
 
 private:
-    QFutureWatcher<void>* m_AllReleaseUpdatedWatcher;
-    QList<FullReleaseModel*>* m_CachedReleases;
-    ChangesModel* m_ChangesModel;
-    QHash<QString, bool>* m_SeenMarkModels;
-    QHash<int, HistoryModel*>* m_HistoryModels;
     UserSettingsModel* m_UserSettingsModel;    
-    bool m_IsChangesExists;
     OfflineImageCacheService* m_OfflineImageCacheService;
-    int m_CountReleases;
     QVector<int>* m_CinemaHall;
-    QVector<int>* m_HidedReleases;
-    int m_CountSeens;
     QVector<DownloadItemModel*>* m_Downloads;
     int m_CountCinemahall;
-    QString m_newEntities;
+    QSharedPointer<QList<FullReleaseModel *>> m_releases;
 
-    QString videosToJson(QList<OnlineVideoModel>& videos);
-    QString torrentsToJson(QList<ReleaseTorrentModel>& torrents);
     FullReleaseModel* getReleaseFromCache(int id);
-    FullReleaseModel* mapToFullReleaseModel(ReleaseModel& releaseModel);
-    void saveCachedReleasesToFile();
-    QStringList getAllFavorites();
-    QMap<int, int> getScheduleAsMap();
-    bool checkOrCondition(QStringList source, QStringList target);
-    bool checkAllCondition(QStringList source, QStringList target);
-    void removeTrimsInStringCollection(QStringList& list);
-    int randomBetween(int low, int high);
-    QString getReleasesCachePath() const;
-    QString getFavoritesCachePath() const;
-    QString getScheduleCachePath() const;
-    QString getSeenMarksCachePath() const;
-    QString getHistoryCachePath() const;
     QString getUserSettingsCachePath() const;
-    QString getNotificationCachePath() const;
     QString getCinemahallCachePath() const;
     QString getDownloadsCachePath() const;
-    QString getHidedReleasesCachePath() const;
-    QString newEntities() const { return m_newEntities; }
     void createIfNotExistsFile(QString path, QString defaultContent);
-    void saveChanges();
-    void resetChanges();
-    void loadSeenMarks();
-    void loadHistory();
-    void saveHistory();
     void loadSettings();
     void saveSettings();
     void loadDownloads();
     void loadCinemahall();
-    void loadHidedReleases();
     void saveDownloads();
     void saveCinemahall();
-    void saveHidedReleases();
-    QHash<int, int> getAllSeenMarkCount();
-    int countOnlyFavorites(QList<int>* changes, QSet<int>* favorites);
-    void setSeenMarkForRelease(int id, int countSeries, bool marked);
-    void recalculateSeenCounts();    
     bool importReleasesFromFile(QString path);
     void afterSynchronizedReleases();
-    void setNewEntities(const QString& newEntities);
 public:
     explicit LocalStorageService(QObject *parent = nullptr);
 
-    bool isChangesExists();
-    void setIsChangesExists(bool isChangesExists);
-
-    int countReleases() { return m_CountReleases; }
-    void setCountReleases(int countReleases) noexcept;
-
-    int countSeens() { return m_CountSeens; }
-    void setCountSeens(int countSeens) noexcept;
-
+    void setup(QSharedPointer<QList<FullReleaseModel *>> releases);
+    void invalidateReleasePoster(int id);
     int countCinemahall() { return m_CountCinemahall; }
     void setCountCinemahall(int countCinemahall) noexcept;
 
-    Q_INVOKABLE void updateAllReleases(const QString& releases);
-    Q_INVOKABLE QString getRelease(int id);
-    Q_INVOKABLE QString getReleaseByCode(const QString& code);
-    Q_INVOKABLE QString getRandomRelease();
-    Q_INVOKABLE QString getChanges();    
-    Q_INVOKABLE QString getReleasesByFilter(int page, QString title, int section, QString description, QString type, QString genres, bool genresOr, QString voices, bool voicesOr, QString years, QString seasones, QString statuses, int sortingField, bool soringDescending, int favoriteMark, int seenMark, const QStringList& alphabets);
-    Q_INVOKABLE void setSchedule(QString schedule);
-    Q_INVOKABLE QString getSchedule();
-    Q_INVOKABLE void updateFavorites(QString data);
-    Q_INVOKABLE QList<int> getFavorites();
-    Q_INVOKABLE void clearFavorites();
-    Q_INVOKABLE void updateReleasesInnerCache();
-    Q_INVOKABLE QList<int> getChangesCounts();
-    Q_INVOKABLE void resetAllChanges();
-    Q_INVOKABLE void resetReleaseChanges(int releaseId);
-    Q_INVOKABLE void setToReleaseHistory(int id, int type);
     Q_INVOKABLE void setVolume(double volume);
     Q_INVOKABLE void setVideoQuality(int quality);
     Q_INVOKABLE void setAutoNextVideo(bool autoNextVideo);
@@ -173,24 +105,9 @@ public:
     Q_INVOKABLE QList<QString> getDownloadsReleases();
     Q_INVOKABLE QString getDownloads();
     Q_INVOKABLE void clearPostersCache();
-    Q_INVOKABLE bool importReleasesFromExternalFile(QString path);
-    Q_INVOKABLE void addToHidedReleases(const QList<int>& ids);
-    Q_INVOKABLE void removeFromHidedReleases(const QList<int>& ids);
-    Q_INVOKABLE void removeAllHidedReleases();
-    Q_INVOKABLE bool isReleaseInHided(int id);
-    Q_INVOKABLE void recalculateSeenCountsFromFile();
 
 signals:
-    void allReleasesFinished();
-    void isChangesExistsChanged();
-    void countReleasesChanged(int countReleases);
-    void countSeensChanged(int countSeens);
     void countCinemahallChanged();
-    void newEntitiesChanged();
-
-public slots:
-    void allReleasesUpdated();    
-
 };
 
 #endif // LOCALSTORAGESERVICE_H

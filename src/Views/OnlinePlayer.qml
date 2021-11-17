@@ -145,12 +145,10 @@ Page {
             const lastSeenReleaseId = onlinePlayerViewModel.getLastVideoSeen();
             if (lastSeenReleaseId === 0) return;
 
-            const release = JSON.parse(localStorage.getRelease(lastSeenReleaseId));
-            
             onlinePlayerViewModel.customPlaylistPosition = -1;
             onlinePlayerViewModel.navigateReleaseId = lastSeenReleaseId;
-            onlinePlayerViewModel.navigateVideos = release.videos;
-            onlinePlayerViewModel.navigatePoster = release.poster;
+            onlinePlayerViewModel.navigateVideos = releasesViewModel.getReleaseVideos(lastSeenReleaseId);
+            onlinePlayerViewModel.navigatePoster = releasesViewModel.getReleasePoster(lastSeenReleaseId);
 
             onlinePlayerViewModel.setupForSingleRelease();
         }

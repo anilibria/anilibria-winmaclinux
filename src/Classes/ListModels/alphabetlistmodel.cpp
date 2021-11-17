@@ -72,7 +72,8 @@ void AlphabetListModel::selectCharacter(const QString &character)
 
     auto index = m_alphabet.indexOf(character);
     auto topLeft = createIndex(index,0);
-    emit dataChanged(topLeft, topLeft);}
+    emit dataChanged(topLeft, topLeft);
+}
 
 void AlphabetListModel::clearCharacters()
 {
@@ -93,4 +94,9 @@ void AlphabetListModel::clearCharacters()
 QStringList AlphabetListModel::getSelectedCharacters()
 {
     return QStringList(m_selectedCharacters->values());
+}
+
+QString AlphabetListModel::getSelectedCharactersAsString()
+{
+    return QStringList(m_selectedCharacters->values()).join("");
 }

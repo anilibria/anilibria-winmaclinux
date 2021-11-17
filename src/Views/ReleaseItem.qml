@@ -264,18 +264,18 @@ Rectangle {
                         text: '' + countTorrents
                     }
                     ColoredIcon {
-                        visible: id in page.scheduledReleases
+                        visible: inSchedule
                         iconSource: '../Assets/Icons/calendar.svg'
                         iconWidth: 22
                         iconHeight: 22
                         iconColor: ApplicationTheme.plainTextColor
                     }
                     PlainText {
-                        visible: id in page.scheduledReleases
+                        visible: inSchedule
                         leftPadding: 8
                         topPadding: 1
                         fontPointSize: 11
-                        text: page.scheduledReleases[id] ? releasesViewModel.getScheduleDay(page.scheduledReleases[id]) : ''
+                        text: scheduledDay
                     }
                 }
             }
