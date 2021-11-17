@@ -192,7 +192,7 @@ void ReleasesViewModel::setSynchronizationService(SynchronizationService *synchr
     connect(m_synchronizationService, &SynchronizationService::synchronizedReleases, this, &ReleasesViewModel::synchronizedReleases);
     connect(m_synchronizationService, &SynchronizationService::synchronizedFromDL, this, &ReleasesViewModel::synchronizedFromDL);
     connect(m_synchronizationService, &SynchronizationService::synchronizedSchedule, this, &ReleasesViewModel::synchronizedSchedule);
-    connect(m_synchronizationService, &SynchronizationService::userFavoritesReceived, this,&ReleasesViewModel::synchronizedSchedule);
+    connect(m_synchronizationService, &SynchronizationService::userFavoritesReceived, this,&ReleasesViewModel::userFavoritesReceived);
 
 }
 
