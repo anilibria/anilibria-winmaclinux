@@ -28,6 +28,7 @@ class ReleasesListModel : public QAbstractListModel
     Q_PROPERTY(int sortingField READ sortingField WRITE setSortingField NOTIFY sortingFieldChanged)
     Q_PROPERTY(bool sortingDescending READ sortingDescending WRITE setSortingDescending NOTIFY sortingDescendingChanged)
     Q_PROPERTY(bool isHasReleases READ isHasReleases NOTIFY isHasReleasesChanged)
+    Q_PROPERTY(bool isHasSelectRelease READ isHasSelectRelease NOTIFY isHasSelectReleaseChanged)
 
 private:
     QSharedPointer<QList<FullReleaseModel*>> m_releases;
@@ -55,7 +56,7 @@ private:
     int m_sortingField { 0 };
     bool m_sortingDescending { true };
     bool m_isHasReleases { false };
-    QScopedPointer<QSet<int>> m_selectedReleases { new QSet<int>() };
+    QSharedPointer<QSet<int>> m_selectedReleases { new QSet<int>() };
     enum FullReleaseRoles {
         ReleaseIdRole = Qt::UserRole + 1,
         TitleRole,
@@ -158,7 +159,11 @@ public:
     void refreshItem(int id);
     int getReleaseSeenMarkCount(int releaseId) const noexcept;
 
+    bool isHasSelectRelease() const noexcept { return !m_selectedReleases->isEmpty(); }
+
     QString getScheduleDay(int dayNumber) const noexcept;
+
+    QSharedPointer<QSet<int>> getSelectedReleases();
 
     Q_INVOKABLE void refresh();
     Q_INVOKABLE void selectItem(int id);
@@ -191,6 +196,7 @@ signals:
     void sortingFieldChanged();
     void sortingDescendingChanged();
     void isHasReleasesChanged();
+    void isHasSelectReleaseChanged();
 
 };
 

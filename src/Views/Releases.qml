@@ -184,7 +184,7 @@ Page {
                     iconHeight: 29
                     tooltipMessage: "Добавить или удалить релизы из избранного"
                     onButtonPressed: {
-                        if (!page.selectedReleases.length) {
+                        if (!releasesViewModel.items.isHasSelectRelease) {
                             favoritePopupHeader.text = "Избранное не доступно";
                             favoritePopupMessage.text = "Выберите релизы в списке путем изменения переключателя выше списка на множественный режим и нажатием ЛКМ на интересующих релизах в списке. Выбранные релизы подсвечиваются красной рамкой. Чтобы увидеть свое избранное нажмите на такую же кнопку выше списка релизов.";
                             messagePopup.open();
@@ -209,15 +209,13 @@ Page {
                         CommonMenuItem {
                             text: "Добавить в избранное"
                             onPressed: {
-                                synchronizationService.addUserFavorites(applicationSettings.userToken, page.selectedReleases.join(','));
-                                page.selectedReleases = [];
+                                releasesViewModel.addSelectedReleaseToFavorites();
                             }
                         }
                         CommonMenuItem {
                             text: "Удалить из избранного"
                             onPressed: {
-                                synchronizationService.removeUserFavorites(applicationSettings.userToken, page.selectedReleases.join(','));
-                                page.selectedReleases = [];
+                                releasesViewModel.removeSelectedReleaseFromFavorites();
                             }
                         }
                     }

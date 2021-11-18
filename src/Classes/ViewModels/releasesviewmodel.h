@@ -186,6 +186,8 @@ public:
     Q_INVOKABLE void clearSelectedReleases() noexcept;
     Q_INVOKABLE void addReleaseToFavorites(int id) noexcept;
     Q_INVOKABLE void removeReleaseFromFavorites(int id) noexcept;
+    Q_INVOKABLE void addSelectedReleaseToFavorites() noexcept;
+    Q_INVOKABLE void removeSelectedReleaseFromFavorites() noexcept;
     Q_INVOKABLE void closeReleaseCard() noexcept;
     Q_INVOKABLE void openDescriptionLink(const QString& link) noexcept;
     Q_INVOKABLE void showReleaseCard(int id) noexcept;

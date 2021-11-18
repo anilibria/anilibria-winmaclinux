@@ -361,6 +361,11 @@ QString ReleasesListModel::getScheduleDay(int dayNumber) const noexcept
     }
 }
 
+QSharedPointer<QSet<int>> ReleasesListModel::getSelectedReleases()
+{
+    return m_selectedReleases;
+}
+
 void ReleasesListModel::refresh()
 {
     beginResetModel();
@@ -529,6 +534,7 @@ void ReleasesListModel::selectItem(int id)
     m_selectedReleases->insert(id);
 
     refreshFilteredReleaseById(id);
+    emit isHasSelectReleaseChanged();
 }
 
 void ReleasesListModel::deselectItem(int id)
@@ -536,6 +542,7 @@ void ReleasesListModel::deselectItem(int id)
     m_selectedReleases->remove(id);
 
     refreshFilteredReleaseById(id);
+    emit isHasSelectReleaseChanged();
 }
 
 void ReleasesListModel::clearSelected()
@@ -546,6 +553,8 @@ void ReleasesListModel::clearSelected()
     foreach (auto releaseId, oldSelectedReleases) {
         refreshFilteredReleaseById(releaseId);
     }
+
+    emit isHasSelectReleaseChanged();
 }
 
 void ReleasesListModel::removeTrimsInStringCollection(QStringList &list)

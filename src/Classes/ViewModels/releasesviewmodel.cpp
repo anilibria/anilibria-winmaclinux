@@ -340,6 +340,40 @@ void ReleasesViewModel::removeReleaseFromFavorites(int id) noexcept
     if (m_openedRelease != nullptr) emit openedReleaseInFavoritesChanged();
 }
 
+void ReleasesViewModel::addSelectedReleaseToFavorites() noexcept
+{
+    auto selectedReleases = m_items->getSelectedReleases();
+    bool needSave = false;
+    foreach (auto selectedRelease, *selectedReleases) {
+        if (!m_userFavorites->contains(selectedRelease)) {
+            m_userFavorites->append(selectedRelease);
+            m_synchronizationService->addUserFavorites(m_applicationSettings->userToken(), QString::number(selectedRelease));
+            m_items->refreshItem(selectedRelease);
+            needSave = true;
+        }
+    }
+
+    if (needSave) saveFavorites();
+    clearSelectedReleases();
+}
+
+void ReleasesViewModel::removeSelectedReleaseFromFavorites() noexcept
+{
+    auto selectedReleases = m_items->getSelectedReleases();
+    bool needSave = false;
+    foreach (auto selectedRelease, *selectedReleases) {
+        if (m_userFavorites->contains(selectedRelease)) {
+            m_userFavorites->removeOne(selectedRelease);
+            m_synchronizationService->removeUserFavorites(m_applicationSettings->userToken(), QString::number(selectedRelease));
+            m_items->refreshItem(selectedRelease);
+            needSave = true;
+        }
+    }
+
+    if (needSave) saveFavorites();
+    clearSelectedReleases();
+}
+
 void ReleasesViewModel::closeReleaseCard() noexcept
 {
     m_openedRelease = nullptr;
