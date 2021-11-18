@@ -369,6 +369,36 @@ void ReleasesListModel::refresh()
 
     QHash<int, int> hash1;
     auto seenMarks = getAllSeenMarkCount(std::move(hash1));
+    QStringList yearsFilters;
+    if (!m_yearsFilter.isEmpty()) {
+        yearsFilters = m_yearsFilter.split(",");
+        removeTrimsInStringCollection(yearsFilters);
+    }
+
+    QStringList statusesFilter;
+    if (!m_statusesFilter.isEmpty()) {
+        statusesFilter = m_statusesFilter.split(",");
+        removeTrimsInStringCollection(statusesFilter);
+    }
+
+    QStringList seasonesFilter;
+    if (!m_seasonesFilter.isEmpty()) {
+        seasonesFilter = m_seasonesFilter.split(",");
+        removeTrimsInStringCollection(seasonesFilter);
+    }
+
+    QStringList genresFilter;
+    if (!m_genresFilter.isEmpty()) {
+        genresFilter = m_genresFilter.split(",");
+        removeTrimsInStringCollection(genresFilter);
+    }
+
+    QStringList voicesFilter;
+    if (!m_voicesFilter.isEmpty()) {
+        voicesFilter = m_voicesFilter.split(",");
+        removeTrimsInStringCollection(voicesFilter);
+    }
+
 
     foreach (auto release, *m_releases) {
         if (m_hiddenReleases->contains(release->id()) && m_section != HiddenReleasesSection) continue;
@@ -382,57 +412,48 @@ void ReleasesListModel::refresh()
         if (!m_typeFilter.isEmpty() && !release->type().toLower().contains(m_typeFilter.toLower())) continue;
 
         //years
-        if (!m_yearsFilter.isEmpty()) {
-            QStringList yearsList = m_yearsFilter.split(",");
-            removeTrimsInStringCollection(yearsList);
+        if (!yearsFilters.isEmpty()) {
             int year = release->year().toInt();
             QStringList singleYear;
             singleYear.append(QString::number(year));
 
-            if (!checkOrCondition(yearsList, singleYear)) continue;
+            if (!checkOrCondition(yearsFilters, singleYear)) continue;
         }
 
         //statuses
-        if (!m_statusesFilter.isEmpty()) {
-            QStringList statusesList = m_statusesFilter.split(",");
-            removeTrimsInStringCollection(statusesList);
+        if (!statusesFilter.isEmpty()) {
             QStringList singleStatus;
             singleStatus.append(release->status());
 
-            if (!checkOrCondition(statusesList, singleStatus)) continue;
+            if (!checkOrCondition(statusesFilter, singleStatus)) continue;
         }
 
         //seasons
-        if (!m_seasonesFilter.isEmpty()) {
-            QStringList seasonesList = m_seasonesFilter.split(",");
-            removeTrimsInStringCollection(seasonesList);
+        if (!seasonesFilter.isEmpty()) {
             auto season = release->season();
             QStringList singleSeason;
             singleSeason.append(season);
 
-            if (!checkOrCondition(seasonesList, singleSeason)) continue;
+            if (!checkOrCondition(seasonesFilter, singleSeason)) continue;
         }
 
         //genres
-        if (!m_genresFilter.isEmpty()) {
-            QStringList genresList = m_genresFilter.split(",");
-            removeTrimsInStringCollection(genresList);
+        if (!genresFilter.isEmpty()) {
             QStringList releaseGenresList = release->genres().split(",");
             if (m_genresFilterOr) {
-                if (!checkAllCondition(genresList, releaseGenresList)) continue;
+                if (!checkAllCondition(genresFilter, releaseGenresList)) continue;
             } else {
-                if (!checkOrCondition(genresList, releaseGenresList)) continue;
+                if (!checkOrCondition(genresFilter, releaseGenresList)) continue;
             }
         }
 
         //voices
-        if (!m_voicesFilter.isEmpty()) {
-            QStringList voicesList = m_voicesFilter.split(",");
+        if (!voicesFilter.isEmpty()) {
             QStringList releaseVoicesList = release->voicers().split(",");
             if (m_voicesFilterOr) {
-                if (!checkAllCondition(voicesList, releaseVoicesList)) continue;
+                if (!checkAllCondition(voicesFilter, releaseVoicesList)) continue;
             } else {
-                if (!checkOrCondition(voicesList, releaseVoicesList)) continue;
+                if (!checkOrCondition(voicesFilter, releaseVoicesList)) continue;
             }
         }
 
@@ -527,13 +548,11 @@ void ReleasesListModel::clearSelected()
     }
 }
 
-void ReleasesListModel::removeTrimsInStringCollection(const QStringList &list)
+void ReleasesListModel::removeTrimsInStringCollection(QStringList &list)
 {
-    auto stringList = list;
-    QMutableStringListIterator iterator(stringList);
-    while (iterator.hasNext()) {
-        QString value = iterator.next();
-        iterator.setValue(value.trimmed());
+    for (auto i = 0; i < list.count();i++) {
+        auto value = list[i];
+        list[i] = value.trimmed();
     }
 }
 

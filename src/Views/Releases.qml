@@ -775,7 +775,7 @@ Page {
                                         text: "Не в избранном"
                                     }
                                 }
-                                onAccepted: {
+                                onCurrentIndexChanged: {
                                     releasesViewModel.items.favoriteMarkFilter = currentIndex;
                                 }
                             }
@@ -798,7 +798,7 @@ Page {
                                         text: "Не просмотренные"
                                     }
                                 }
-                                onAccepted: {
+                                onCurrentIndexChanged: {
                                     releasesViewModel.items.seenMarkFilter = currentIndex;
                                 }
                             }

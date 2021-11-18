@@ -674,10 +674,6 @@ ApplicationWindow {
             notificationViewModel.sendInfoNotification(`Вы успешно вышли из аккаунта. Чтобы войти обратно перейдите на страницу Войти.`)
         }
 
-        onUserFavoritesEdited: {
-            if (applicationSettings.userToken) synchronizationService.synchronizeUserFavorites(applicationSettings.userToken);
-        }
-
         onTorrentDownloaded: {
             const userSettings = JSON.parse(localStorage.getUserSettings());
             if (userSettings.torrentDownloadMode === 0) {

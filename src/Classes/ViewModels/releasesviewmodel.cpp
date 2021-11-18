@@ -323,6 +323,7 @@ void ReleasesViewModel::addReleaseToFavorites(int id) noexcept
         m_userFavorites->append(id);
         m_synchronizationService->addUserFavorites(m_applicationSettings->userToken(), QString::number(id));
         m_items->refreshItem(id);
+        saveFavorites();
     }
     if (m_openedRelease != nullptr) emit openedReleaseInFavoritesChanged();
 }
@@ -333,6 +334,7 @@ void ReleasesViewModel::removeReleaseFromFavorites(int id) noexcept
         m_userFavorites->removeOne(id);
         m_synchronizationService->removeUserFavorites(m_applicationSettings->userToken(), QString::number(id));
         m_items->refreshItem(id);
+        saveFavorites();
     }
 
     if (m_openedRelease != nullptr) emit openedReleaseInFavoritesChanged();
@@ -731,9 +733,33 @@ void ReleasesViewModel::saveSchedule(QString json)
 
 void ReleasesViewModel::saveFavoritesFromJson(QString data)
 {
+    if (data.isEmpty()) return;
+
+    auto jsonDocument = QJsonDocument::fromJson(data.toUtf8());
+    auto root = jsonDocument.object();
+    if (!root.contains("data")) return;
+    if (!root["data"].isObject()) return;
+    auto responseData = root["data"].toObject();
+    if (!responseData.contains("items")) return;
+    if (!responseData["items"].isArray()) return;
+    auto items = responseData["items"].toArray();
+
+    QVector<int> ids;
+    foreach (auto item, items) {
+        ids.append(item["id"].toInt());
+    }
+
+    QJsonArray array;
+    foreach (auto item, ids) {
+        QJsonValue value(item);
+        array.append(value);
+    }
+
+    QJsonDocument document(array);
+
     QFile favoritesCacheFile(getCachePath(favoriteCacheFileName));
     favoritesCacheFile.open(QFile::WriteOnly | QFile::Text);
-    favoritesCacheFile.write(data.toUtf8());
+    favoritesCacheFile.write(document.toJson());
     favoritesCacheFile.close();
 }
 
@@ -761,8 +787,7 @@ void ReleasesViewModel::loadFavorites()
     QString favoritesJson = favoritesCacheFile.readAll();
     favoritesCacheFile.close();
 
-    QJsonParseError jsonError;
-    QJsonDocument jsonDocument = QJsonDocument::fromJson(favoritesJson.toUtf8(), &jsonError);
+    auto jsonDocument = QJsonDocument::fromJson(favoritesJson.toUtf8());
     auto favorites = jsonDocument.array();
     m_userFavorites->clear();
     foreach (auto favorite, favorites) m_userFavorites->append(favorite.toInt());

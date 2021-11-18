@@ -166,7 +166,7 @@ public:
     Q_INVOKABLE void clearSelected();
 
 private:
-    void removeTrimsInStringCollection(const QStringList& list);
+    void removeTrimsInStringCollection(QStringList& list);
     bool checkOrCondition(const QStringList& source, const QStringList& target);
     bool checkAllCondition(const QStringList& source, const QStringList& target);
     QHash<int, int>&& getAllSeenMarkCount(QHash<int, int>&& result) noexcept;
