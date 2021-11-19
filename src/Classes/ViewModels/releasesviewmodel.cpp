@@ -45,6 +45,8 @@ ReleasesViewModel::ReleasesViewModel(QObject *parent) : QObject(parent)
     loadHistory();
     loadChanges();
 
+    m_items->refresh();
+
     connect(m_releasesUpdateWatcher, &QFutureWatcher<bool>::finished, this, &ReleasesViewModel::releasesUpdated);
 }
 
@@ -739,6 +741,14 @@ bool ReleasesViewModel::importReleasesFromFile(QString path)
     return true;
 }
 
+void ReleasesViewModel::addToCinemahallSelectedReleases()
+{
+    auto selectedReleases = m_items->getSelectedReleases();
+
+    QList<int> items(selectedReleases->begin(), selectedReleases->end());
+    m_localStorage->addToCinemahall(items);
+}
+
 void ReleasesViewModel::loadReleases()
 {
     m_releases->clear();
@@ -772,8 +782,7 @@ void ReleasesViewModel::loadSchedules()
     QString scheduleJson = scheduleCacheFile.readAll();
     scheduleCacheFile.close();
 
-    QJsonParseError jsonError;
-    QJsonDocument jsonDocument = QJsonDocument::fromJson(scheduleJson.toUtf8(), &jsonError);
+    QJsonDocument jsonDocument = QJsonDocument::fromJson(scheduleJson.toUtf8());
     auto schedule = jsonDocument.object();
     auto keys = schedule.keys();
     foreach (auto key, keys) {
@@ -784,12 +793,32 @@ void ReleasesViewModel::loadSchedules()
 
 void ReleasesViewModel::saveSchedule(QString json)
 {
+    if (json.isEmpty()) return;
+
+    auto jsonDocument = QJsonDocument::fromJson(json.toUtf8());
+    auto root = jsonDocument.object();
+    if (!root.contains("data")) return;
+    if (!root["data"].isArray()) return;
+    auto data = root["data"].toArray();
+
+    QJsonObject savedObject;
+
+    foreach (auto dataItem, data) {
+        auto day = dataItem["day"].toString();
+        auto items = dataItem["items"].toArray();
+        foreach (auto item, items) {
+            auto key = QString::number(item["id"].toInt());
+            savedObject[key] = day;
+        }
+    }
+
+    QJsonDocument document(savedObject);
+
     QFile scheduleCacheFile(getCachePath(scheduleCacheFileName));
     scheduleCacheFile.open(QFile::WriteOnly | QFile::Text);
-    scheduleCacheFile.write(json.toUtf8());
+    scheduleCacheFile.write(document.toJson());
     scheduleCacheFile.close();
 
-    //reload schedules after saving
     loadSchedules();
 }
 

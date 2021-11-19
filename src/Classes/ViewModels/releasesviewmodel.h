@@ -209,6 +209,7 @@ public:
     Q_INVOKABLE void removeFromHidedSelectedReleases() noexcept;
     Q_INVOKABLE void removeAllHidedReleases() noexcept;
     Q_INVOKABLE bool importReleasesFromFile(QString path);
+    Q_INVOKABLE void addToCinemahallSelectedReleases();
 
     void setSeenMark(int id, int seriaId, bool marked);
     QHash<QString, bool>* getSeenMarks();

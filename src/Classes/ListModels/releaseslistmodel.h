@@ -29,6 +29,7 @@ class ReleasesListModel : public QAbstractListModel
     Q_PROPERTY(bool sortingDescending READ sortingDescending WRITE setSortingDescending NOTIFY sortingDescendingChanged)
     Q_PROPERTY(bool isHasReleases READ isHasReleases NOTIFY isHasReleasesChanged)
     Q_PROPERTY(bool isHasSelectRelease READ isHasSelectRelease NOTIFY isHasSelectReleaseChanged)
+    Q_PROPERTY(int countFilteredReleases READ countFilteredReleases NOTIFY countFilteredReleasesChanged)
 
 private:
     QSharedPointer<QList<FullReleaseModel*>> m_releases;
@@ -160,6 +161,7 @@ public:
     int getReleaseSeenMarkCount(int releaseId) const noexcept;
 
     bool isHasSelectRelease() const noexcept { return !m_selectedReleases->isEmpty(); }
+    int countFilteredReleases() const noexcept { return m_filteredReleases->count(); }
 
     QString getScheduleDay(int dayNumber) const noexcept;
 
@@ -199,6 +201,7 @@ signals:
     void sortingDescendingChanged();
     void isHasReleasesChanged();
     void isHasSelectReleaseChanged();
+    void countFilteredReleasesChanged();
 
 };
 

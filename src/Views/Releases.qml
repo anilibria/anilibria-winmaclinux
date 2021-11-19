@@ -419,10 +419,10 @@ Page {
 
                         CommonMenuItem {
                             text: "Добавить в кинозал"
-                            enabled: page.selectedReleases.length
+                            enabled: releasesViewModel.items.isHasSelectRelease
                             onPressed: {
-                                localStorage.addToCinemahall(page.selectedReleases);
-                                page.selectedReleases = [];
+                                releasesViewModel.addToCinemahallSelectedReleases();
+                                releasesViewModel.clearSelectedReleases();
                                 cinemahallMenuPanel.close();
                             }
                         }
@@ -1381,156 +1381,180 @@ Page {
             }
 
             Rectangle {
-                id: filtersContainer
-                Layout.preferredWidth: 380
-                Layout.alignment: Qt.AlignHCenter
+                Layout.fillWidth: true
                 Layout.preferredHeight: 36
                 color: "transparent"
 
-                Row {
-                    width: filtersContainer.width
-                    spacing: 8
-                    RoundedTextBox {
-                        id: filterByTitle
-                        width: 250
-                        height: 40
-                        placeholder: "Введите название релиза"
-                        onCompleteEditing: {
-                            releasesViewModel.items.titleFilter = textContent;
-                            releasesViewModel.items.refresh();
-                        }
-                    }
-                    FilterPanelIconButton {
-                        iconPath: "../Assets/Icons/allreleases.svg"
-                        tooltipMessage: "Все релизы"
-                        onButtonPressed: {
-                            changeSection(0);
-                        }
-                    }
-                    FilterPanelIconButton {
-                        iconPath: "../Assets/Icons/favorite.svg"
-                        tooltipMessage: "Избранное"
-                        onButtonPressed: {
-                            changeSection(1);
-                        }
-                    }
-                    FilterPanelIconButton {
-                        iconPath: "../Assets/Icons/notification.svg"
-                        tooltipMessage: "Показать меню с фильтрами по уведомлениям"
-                        onButtonPressed: {
-                            notificationsMenuSections.open();
-                        }
+                PlainText {
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.left: parent.left
+                    anchors.leftMargin: 14
+                    visible: releasesViewModel.items.isHasReleases
+                    text: "Найдено: " + releasesViewModel.items.countFilteredReleases
+                    fontPointSize: 10
+                }
 
-                        CommonMenu {
-                            id: notificationsMenuSections
-                            width: 350
-                            y: parent.height
+                Rectangle {
+                    id: filtersContainer
+                    anchors.centerIn: parent
+                    width: 380
+                    height: parent.height
+                    color: "transparent"
 
-                            CommonMenuItem {
-                                text: releasesViewModel.sectionNames[2]
-                                onPressed: {
-                                    page.changeSection(2);
-                                }
-                            }
-                            CommonMenuItem {
-                                text: releasesViewModel.sectionNames[3]
-                                onPressed: {
-                                    page.changeSection(3);
-                                }
-                            }
-                            CommonMenuItem {
-                                text: releasesViewModel.sectionNames[4]
-                                onPressed: {
-                                    page.changeSection(4);
-                                }
-                            }
-                            CommonMenuItem {
-                                text: releasesViewModel.sectionNames[6]
-                                onPressed: {
-                                    page.changeSection(6);
-                                }
+                    Row {
+                        width: filtersContainer.width
+                        spacing: 8
+                        RoundedTextBox {
+                            id: filterByTitle
+                            width: 250
+                            height: 40
+                            placeholder: "Введите название релиза"
+                            onCompleteEditing: {
+                                releasesViewModel.items.titleFilter = textContent;
+                                releasesViewModel.items.refresh();
                             }
                         }
-                    }
-                    FilterPanelIconButton {
-                        iconPath: "../Assets/Icons/calendar.svg"
-                        iconWidth: 26
-                        iconHeight: 26
-                        tooltipMessage: "Расписание релизов"
-                        onButtonPressed: {
-                            changeSection(5);
+                        FilterPanelIconButton {
+                            iconPath: assetsLocation.iconsPath + "allreleases.svg"
+                            tooltipMessage: "Все релизы"
+                            onButtonPressed: {
+                                changeSection(0);
+                            }
                         }
-                    }
-                    FilterPanelIconButton {
-                        iconPath: "../Assets/Icons/history.svg"
-                        tooltipMessage: "Показать меню с фильтрами по истории и истории просмотра"
-                        onButtonPressed: {
-                            historyMenuSections.open();
+                        FilterPanelIconButton {
+                            iconPath: assetsLocation.iconsPath + "favorite.svg"
+                            tooltipMessage: "Избранное"
+                            onButtonPressed: {
+                                changeSection(1);
+                            }
                         }
+                        FilterPanelIconButton {
+                            iconPath: assetsLocation.iconsPath + "notification.svg"
+                            tooltipMessage: "Показать меню с фильтрами по уведомлениям"
+                            onButtonPressed: {
+                                notificationsMenuSections.open();
+                            }
 
-                        CommonMenu {
-                            id: historyMenuSections
-                            width: 300
-                            y: parent.height
+                            CommonMenu {
+                                id: notificationsMenuSections
+                                width: 350
+                                y: parent.height
 
-                            CommonMenuItem {
-                                text: releasesViewModel.sectionNames[7]
-                                onPressed: {
-                                    page.changeSection(7);
+                                CommonMenuItem {
+                                    text: releasesViewModel.sectionNames[2]
+                                    onPressed: {
+                                        page.changeSection(2);
+                                    }
                                 }
-                            }
-                            CommonMenuItem {
-                                text: releasesViewModel.sectionNames[8]
-                                onPressed: {
-                                    page.changeSection(8);
+                                CommonMenuItem {
+                                    text: releasesViewModel.sectionNames[3]
+                                    onPressed: {
+                                        page.changeSection(3);
+                                    }
+                                }
+                                CommonMenuItem {
+                                    text: releasesViewModel.sectionNames[4]
+                                    onPressed: {
+                                        page.changeSection(4);
+                                    }
+                                }
+                                CommonMenuItem {
+                                    text: releasesViewModel.sectionNames[6]
+                                    onPressed: {
+                                        page.changeSection(6);
+                                    }
                                 }
                             }
                         }
-                    }
-                    FilterPanelIconButton {
-                        id: seenMenuButton
-                        iconPath: "../Assets/Icons/seenmarkpanel.svg"
-                        tooltipMessage: "Показать меню с фильтрами по состоянию просмотра"
-                        onButtonPressed: {
-                            seenMenuSections.open();
+                        FilterPanelIconButton {
+                            iconPath: assetsLocation.iconsPath + "calendar.svg"
+                            iconWidth: 26
+                            iconHeight: 26
+                            tooltipMessage: "Расписание релизов"
+                            onButtonPressed: {
+                                changeSection(5);
+                            }
                         }
+                        FilterPanelIconButton {
+                            iconPath: assetsLocation.iconsPath + "history.svg"
+                            tooltipMessage: "Показать меню с фильтрами по истории и истории просмотра"
+                            onButtonPressed: {
+                                historyMenuSections.open();
+                            }
 
-                        CommonMenu {
-                            id: seenMenuSections
-                            width: 300
-                            y: parent.height
+                            CommonMenu {
+                                id: historyMenuSections
+                                width: 300
+                                y: parent.height
 
-                            CommonMenuItem {
-                                text: releasesViewModel.sectionNames[9]
-                                onPressed: {
-                                    page.changeSection(9);
+                                CommonMenuItem {
+                                    text: releasesViewModel.sectionNames[7]
+                                    onPressed: {
+                                        page.changeSection(7);
+                                    }
                                 }
-                            }
-                            CommonMenuItem {
-                                text: releasesViewModel.sectionNames[10]
-                                onPressed: {
-                                    page.changeSection(10);
-                                }
-                            }
-                            CommonMenuItem {
-                                text: releasesViewModel.sectionNames[11]
-                                onPressed: {
-                                    page.changeSection(11);
-                                }
-                            }
-                            CommonMenuItem {
-                                text: releasesViewModel.sectionNames[12]
-                                onPressed: {
-                                    page.changeSection(12);
+                                CommonMenuItem {
+                                    text: releasesViewModel.sectionNames[8]
+                                    onPressed: {
+                                        page.changeSection(8);
+                                    }
                                 }
                             }
                         }
-                    }
-                    FilterPanelIconButton {
-                        iconPath: "../Assets/Icons/alphabet.svg"
-                        tooltipMessage: "Показать фильтр для выбора букв алфавита для поиска по первой букве релиза"
-                        onButtonPressed: {
-                            page.showAlpabeticalCharaters = true;
+                        FilterPanelIconButton {
+                            id: seenMenuButton
+                            iconPath: assetsLocation.iconsPath + "seenmarkpanel.svg"
+                            tooltipMessage: "Показать меню с фильтрами по состоянию просмотра"
+                            onButtonPressed: {
+                                seenMenuSections.open();
+                            }
+
+                            CommonMenu {
+                                id: seenMenuSections
+                                width: 300
+                                y: parent.height
+
+                                CommonMenuItem {
+                                    text: releasesViewModel.sectionNames[9]
+                                    onPressed: {
+                                        page.changeSection(9);
+                                    }
+                                }
+                                CommonMenuItem {
+                                    text: releasesViewModel.sectionNames[10]
+                                    onPressed: {
+                                        page.changeSection(10);
+                                    }
+                                }
+                                CommonMenuItem {
+                                    text: releasesViewModel.sectionNames[11]
+                                    onPressed: {
+                                        page.changeSection(11);
+                                    }
+                                }
+                                CommonMenuItem {
+                                    text: releasesViewModel.sectionNames[12]
+                                    onPressed: {
+                                        page.changeSection(12);
+                                    }
+                                }
+                            }
+                        }
+                        FilterPanelIconButton {
+                            iconPath: assetsLocation.iconsPath + "alphabet.svg"
+                            tooltipMessage: "Показать фильтр для выбора букв алфавита для поиска по первой букве релиза"
+                            onButtonPressed: {
+                                page.showAlpabeticalCharaters = true;
+                            }
+                        }
+                        FilterPanelIconButton {
+                            iconPath: assetsLocation.iconsPath + "listcustom.svg"
+                            iconWidth: 20
+                            iconHeight: 20
+                            tooltipMessage: "Показать фильтр для выбора букв алфавита для поиска по первой букве релиза"
+                            onButtonPressed: {
+                                //TODO: added
+                            }
                         }
                     }
                 }

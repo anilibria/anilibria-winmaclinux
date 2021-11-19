@@ -26,8 +26,6 @@ void ReleasesListModel::setup(QSharedPointer<QList<FullReleaseModel *>> releases
     m_seenMarkModels = seenMarks;
     m_historyModels = historyItems;
     m_changesModel = changes;
-
-    refresh();
 }
 
 int ReleasesListModel::rowCount(const QModelIndex &parent) const
@@ -527,6 +525,7 @@ void ReleasesListModel::refresh()
     endResetModel();
 
     setIsHasReleases(m_filteredReleases->count() > 0);
+    emit countFilteredReleasesChanged();
 }
 
 void ReleasesListModel::selectItem(int id)
