@@ -194,7 +194,7 @@ public:
     Q_INVOKABLE void showRandomRelease() noexcept;
     Q_INVOKABLE void hideReleaseCard() noexcept;
     Q_INVOKABLE void setSeenMarkAllSeries(int id, int countSeries, bool marked);
-    Q_INVOKABLE void setSeenMarkAllSeriesMulti(QList<int> ids, bool marked);
+    Q_INVOKABLE void setSeenMarkAllSeriesSelectedReleases(bool marked);
     Q_INVOKABLE void setSeenMarkForRelease(int id, int countSeries, bool marked);
     Q_INVOKABLE void refreshOpenedReleaseCard();
     Q_INVOKABLE void removeAllSeenMark();
@@ -204,7 +204,9 @@ public:
     Q_INVOKABLE QString getReleaseVideos(int id) const noexcept;
     Q_INVOKABLE QString getReleasePoster(int id) const noexcept;
     Q_INVOKABLE void addToHidedReleases(const QList<int>& ids) noexcept;
+    Q_INVOKABLE void addToHidedSelectedReleases() noexcept;
     Q_INVOKABLE void removeFromHidedReleases(const QList<int>& ids) noexcept;
+    Q_INVOKABLE void removeFromHidedSelectedReleases() noexcept;
     Q_INVOKABLE void removeAllHidedReleases() noexcept;
     Q_INVOKABLE bool importReleasesFromFile(QString path);
 

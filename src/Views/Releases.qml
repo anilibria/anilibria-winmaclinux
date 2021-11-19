@@ -272,16 +272,16 @@ Page {
 
                         CommonMenuItem {
                             text: "Отметить как просмотренное"
-                            enabled: page.selectedReleases.length
+                            enabled: releasesViewModel.items.isHasSelectRelease
                             onPressed: {
-                                setSeenStateForRelease(true, page.selectedReleases);
+                                setSeenStateForRelease(true);
                             }
                         }
                         CommonMenuItem {
                             text: "Отметить как не просмотренное"
-                            enabled: page.selectedReleases.length
+                            enabled: releasesViewModel.items.isHasSelectRelease
                             onPressed: {
-                                setSeenStateForRelease(false, page.selectedReleases);
+                                setSeenStateForRelease(false);
                             }
                         }
                         CommonMenuItem {
@@ -293,19 +293,19 @@ Page {
                         }
                         CommonMenuItem {
                             text: "Скрыть выбранные релизы"
-                            enabled: page.selectedReleases.length
+                            enabled: releasesViewModel.items.isHasSelectRelease
                             onPressed: {
                                 seenMarkMenuPanel.close();
                                 addToHidedReleasesConfirm.open();
                             }
                         }
                         CommonMenuItem {
-                            enabled: page.selectedReleases.length
+                            enabled: releasesViewModel.items.isHasSelectRelease
                             text: "Убрать из скрытых выбранные релизы"
                             onPressed: {
                                 seenMarkMenuPanel.close();
-                                releasesViewModel.removeFromHidedReleases(page.selectedReleases);
-                                page.selectedReleases = [];
+                                releasesViewModel.removeFromHidedSelectedReleases();
+                                releasesViewModel.clearSelectedReleases();
                             }
                         }
                         CommonMenuItem {
@@ -329,9 +329,9 @@ Page {
                                 text: "Ок"
                                 width: 100
                                 onClicked: {
-                                    releasesViewModel.addToHidedReleases(page.selectedReleases);
+                                    releasesViewModel.addToHidedSelectedReleases();
                                     addToHidedReleasesConfirm.close();
-                                    page.selectedReleases = [];
+                                    releasesViewModel.clearSelectedReleases();
                                 }
                             }
                             RoundedActionButton {
@@ -356,8 +356,9 @@ Page {
                                 text: "Ок"
                                 width: 100
                                 onClicked: {
-                                    releasesViewModel.removeAllHidedReleases();
+                                    releasesViewModel.removeFromHidedSelectedReleases();
                                     removeAllHidedReleasesConfirm.close();
+                                    releasesViewModel.clearSelectedReleases();
                                 }
                             }
                             RoundedActionButton {
@@ -2322,12 +2323,14 @@ Page {
     function setSeenStateForOpenedRelease(newState) {
         releasesViewModel.setSeenMarkAllSeries(releasesViewModel.openedReleaseId, releasesViewModel.openedReleaseCountVideos, newState);
         releasesViewModel.refreshOpenedReleaseCard();
+        releasesViewModel.items.refreshSingleItem(releasesViewModel.openedReleaseId);
     }
 
     function setSeenStateForRelease(newState, releases) {
-        releasesViewModel.setSeenMarkAllSeriesMulti(releases, newState);
+        releasesViewModel.setSeenMarkAllSeriesSelectedReleases(newState);
+        releasesViewModel.items.refreshSelectedItems();
         releasesViewModel.clearSelectedReleases();
-        refreshSeenMarks();
+        seenMarkMenuPanel.close();
     }
 
     function refreshSeenMarks() {

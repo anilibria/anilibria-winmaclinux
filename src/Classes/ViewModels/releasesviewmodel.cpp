@@ -438,19 +438,17 @@ void ReleasesViewModel::setSeenMarkAllSeries(int id, int countSeries, bool marke
     m_items->refreshItem(id);
 }
 
-void ReleasesViewModel::setSeenMarkAllSeriesMulti(QList<int> ids, bool marked)
+void ReleasesViewModel::setSeenMarkAllSeriesSelectedReleases(bool marked)
 {
-    foreach (auto id, ids) {
-        auto release = getReleaseById(id);
+    auto selectedReleases = m_items->getSelectedReleases();
+    foreach (auto selectedRelease, *selectedReleases) {
+        auto release = getReleaseById(selectedRelease);
 
-        setSeenMarkForRelease(id, release->countOnlineVideos(), marked);
+        setSeenMarkForRelease(selectedRelease, release->countOnlineVideos(), marked);
+        m_items->refreshItem(selectedRelease);
     }
 
     saveSeenMarks();
-
-    foreach (auto id, ids) {
-        m_items->refreshItem(id);
-    }
 }
 
 void ReleasesViewModel::setSeenMarkForRelease(int id, int countSeries, bool marked)
@@ -612,6 +610,7 @@ void ReleasesViewModel::removeAllSeenMark()
     m_seenMarks->clear();
 
     saveSeenMarks();
+    m_items->refresh();
 }
 
 void ReleasesViewModel::reloadReleases()
@@ -678,10 +677,35 @@ void ReleasesViewModel::addToHidedReleases(const QList<int> &ids) noexcept
     saveHidedReleases();
 }
 
+void ReleasesViewModel::addToHidedSelectedReleases() noexcept
+{
+    auto selectedReleases = m_items->getSelectedReleases();
+    foreach(auto selectedRelease, *selectedReleases) {
+        if (m_hiddenReleases->contains(selectedRelease)) continue;
+
+        m_hiddenReleases->append(selectedRelease);
+    }
+
+    saveHidedReleases();
+}
+
 void ReleasesViewModel::removeFromHidedReleases(const QList<int> &ids) noexcept
 {
     foreach (auto id, ids) {
         auto index = m_hiddenReleases->indexOf(id);
+        if (index == -1) continue;
+
+        m_hiddenReleases->remove(index);
+    }
+
+    saveHidedReleases();
+}
+
+void ReleasesViewModel::removeFromHidedSelectedReleases() noexcept
+{
+    auto selectedReleases = m_items->getSelectedReleases();
+    foreach(auto selectedRelease, *selectedReleases) {
+        auto index = m_hiddenReleases->indexOf(selectedRelease);
         if (index == -1) continue;
 
         m_hiddenReleases->remove(index);
@@ -695,6 +719,7 @@ void ReleasesViewModel::removeAllHidedReleases() noexcept
     m_hiddenReleases->clear();
 
     saveHidedReleases();
+    m_items->refresh();
 }
 
 bool ReleasesViewModel::importReleasesFromFile(QString path)

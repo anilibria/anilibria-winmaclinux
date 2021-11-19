@@ -562,6 +562,15 @@ void ReleasesListModel::refreshSingleItem(int id)
     refreshItem(id);
 }
 
+void ReleasesListModel::refreshSelectedItems()
+{
+    if (m_selectedReleases->isEmpty()) return;
+
+    foreach (auto selectedRelease, *m_selectedReleases) {
+        refreshItem(selectedRelease);
+    }
+}
+
 void ReleasesListModel::removeTrimsInStringCollection(QStringList &list)
 {
     for (auto i = 0; i < list.count();i++) {

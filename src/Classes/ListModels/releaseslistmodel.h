@@ -170,6 +170,7 @@ public:
     Q_INVOKABLE void deselectItem(int id);
     Q_INVOKABLE void clearSelected();
     Q_INVOKABLE void refreshSingleItem(int id);
+    Q_INVOKABLE void refreshSelectedItems();
 
 private:
     void removeTrimsInStringCollection(QStringList& list);
