@@ -557,6 +557,11 @@ void ReleasesListModel::clearSelected()
     emit isHasSelectReleaseChanged();
 }
 
+void ReleasesListModel::refreshSingleItem(int id)
+{
+    refreshItem(id);
+}
+
 void ReleasesListModel::removeTrimsInStringCollection(QStringList &list)
 {
     for (auto i = 0; i < list.count();i++) {
@@ -646,12 +651,12 @@ static bool compareRatingDescending(const FullReleaseModel* first, const FullRel
 
 static bool compareStatus(const FullReleaseModel* first, const FullReleaseModel* second)
 {
-    return first->status() < second->status();
+    return first->status().toLower() < second->status().toLower();
 }
 
 static bool compareStatusDescending(const FullReleaseModel* first, const FullReleaseModel* second)
 {
-    return first->status() > second->status();
+    return first->status().toLower() > second->status().toLower();
 }
 
 static bool compareOriginalName(const FullReleaseModel* first, const FullReleaseModel* second)
@@ -666,12 +671,12 @@ static bool compareOriginalNameDescending(const FullReleaseModel* first, const F
 
 static bool compareSeason(const FullReleaseModel* first, const FullReleaseModel* second)
 {
-    return first->season() < second->season();
+    return first->season().toLower() < second->season().toLower();
 }
 
 static bool compareSeasonDescending(const FullReleaseModel* first, const FullReleaseModel* second)
 {
-    return first->season() > second->season();
+    return first->season().toLower() > second->season().toLower();
 }
 
 void ReleasesListModel::sortingFilteringReleases(QHash<int, int>&& seenMarks)

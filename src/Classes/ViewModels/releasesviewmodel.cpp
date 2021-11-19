@@ -490,6 +490,9 @@ void ReleasesViewModel::refreshOpenedReleaseCard()
     emit openedReleaseCodeChanged();
     emit openedReleaseCountTorrentsChanged();
     emit openedReleaseCountVideosChanged();
+    emit openedReleaseInFavoritesChanged();
+    emit openedReleaseInHidedChanged();
+    emit openedReleaseVideosChanged();
 }
 
 void ReleasesViewModel::setSeenMark(int id, int seriaId, bool marked)

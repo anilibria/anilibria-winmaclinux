@@ -303,6 +303,7 @@ Page {
                         const obj = _page.seenMarks;
                         _page.seenMarks = obj;
                         onlinePlayerViewModel.setSeenMark(onlinePlayerViewModel.selectedRelease, onlinePlayerViewModel.selectedVideo, true);
+                        releasesViewModel.items.refreshSingleItem(onlinePlayerViewModel.selectedRelease);
                     }
                 }
             }
@@ -413,6 +414,7 @@ Page {
                                         _page.seenMarks = oldSeenMarks;
 
                                         onlinePlayerViewModel.setSeenMark(releaseId, order, newState);
+                                        releasesViewModel.items.refreshSingleItem(releaseId);
                                     }
                                 }
 
