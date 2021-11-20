@@ -98,6 +98,7 @@ private:
     QFutureWatcher<bool>* m_releasesUpdateWatcher { new QFutureWatcher<bool>(this) };
     bool m_synchronizationEnabled { false };
     QString m_newEntities { "" };
+    QScopedPointer<QList<std::tuple<int, int>>> m_sectionSorting { new QList<std::tuple<int, int>>() };
 
 public:
     explicit ReleasesViewModel(QObject *parent = nullptr);
@@ -203,6 +204,7 @@ public:
     Q_INVOKABLE void setToReleaseHistory(int id, int type) noexcept;
     Q_INVOKABLE QString getReleaseVideos(int id) const noexcept;
     Q_INVOKABLE QString getReleasePoster(int id) const noexcept;
+    Q_INVOKABLE QString getReleaseTitle(int id) const noexcept;
     Q_INVOKABLE void addToHidedReleases(const QList<int>& ids) noexcept;
     Q_INVOKABLE void addToHidedSelectedReleases() noexcept;
     Q_INVOKABLE void removeFromHidedReleases(const QList<int>& ids) noexcept;
@@ -210,6 +212,7 @@ public:
     Q_INVOKABLE void removeAllHidedReleases() noexcept;
     Q_INVOKABLE bool importReleasesFromFile(QString path);
     Q_INVOKABLE void addToCinemahallSelectedReleases();
+    Q_INVOKABLE void setupSortingForSection() const noexcept;
 
     void setSeenMark(int id, int seriaId, bool marked);
     QHash<QString, bool>* getSeenMarks();

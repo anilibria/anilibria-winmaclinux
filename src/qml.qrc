@@ -116,5 +116,7 @@
         <file>Controls/+qtless515/DictionaryComboBox.qml</file>
         <file>Controls/+qtless515/BackgroundImagePopup.qml</file>
         <file>Assets/Icons/listcustom.svg</file>
+        <file>Assets/Icons/sortascending.svg</file>
+        <file>Assets/Icons/sortdescending.svg</file>
     </qresource>
 </RCC>

@@ -29,6 +29,21 @@ ReleasesViewModel::ReleasesViewModel(QObject *parent) : QObject(parent)
     m_sectionNames.append("Не просмотренные");
     m_sectionNames.append("Скрытые релизы");
 
+
+    m_sectionSorting->append(std::make_tuple<int, int>(0, 1));
+    m_sectionSorting->append(std::make_tuple<int, int>(0, 1));
+    m_sectionSorting->append(std::make_tuple<int, int>(0, 1));
+    m_sectionSorting->append(std::make_tuple<int, int>(0, 1));
+    m_sectionSorting->append(std::make_tuple<int, int>(0, 1));
+    m_sectionSorting->append(std::make_tuple<int, int>(1, 0));
+    m_sectionSorting->append(std::make_tuple<int, int>(0, 1));
+    m_sectionSorting->append(std::make_tuple<int, int>(7, 1));
+    m_sectionSorting->append(std::make_tuple<int, int>(8, 1));
+    m_sectionSorting->append(std::make_tuple<int, int>(0, 1));
+    m_sectionSorting->append(std::make_tuple<int, int>(0, 1));
+    m_sectionSorting->append(std::make_tuple<int, int>(0, 1));
+    m_sectionSorting->append(std::make_tuple<int, int>(0, 1));
+
     createIfNotExistsFile(getCachePath(releasesCacheFileName), "[]");
     createIfNotExistsFile(getCachePath(scheduleCacheFileName), "{}");
     createIfNotExistsFile(getCachePath(favoriteCacheFileName), "[]");
@@ -668,6 +683,14 @@ QString ReleasesViewModel::getReleasePoster(int id) const noexcept
     return release->poster();
 }
 
+QString ReleasesViewModel::getReleaseTitle(int id) const noexcept
+{
+    auto release = getReleaseById(id);
+    if (release == nullptr) return "";
+
+    return release->title();
+}
+
 void ReleasesViewModel::addToHidedReleases(const QList<int> &ids) noexcept
 {
     foreach(auto id, ids) {
@@ -747,6 +770,19 @@ void ReleasesViewModel::addToCinemahallSelectedReleases()
 
     QList<int> items(selectedReleases->begin(), selectedReleases->end());
     m_localStorage->addToCinemahall(items);
+}
+
+void ReleasesViewModel::setupSortingForSection() const noexcept
+{
+    auto currentSection = m_items->section();
+    if (currentSection >= m_sectionSorting->count()) return;
+    auto sortings = *m_sectionSorting;
+    auto tuple = sortings[currentSection];
+    auto sortingField = std::get<0>(tuple);
+    auto sortingDescending = std::get<1>(tuple);
+
+    m_items->setSortingField(sortingField);
+    m_items->setSortingDescending(sortingDescending);
 }
 
 void ReleasesViewModel::loadReleases()

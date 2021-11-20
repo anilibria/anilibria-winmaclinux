@@ -559,8 +559,22 @@ void OnlinePlayerViewModel::setupForSingleRelease()
     emit needScrollSeriaPosition();
 }
 
-void OnlinePlayerViewModel::setupForMultipleRelease(const QStringList &json, const QList<int> &releases, const QStringList &posters, const QStringList& names)
+void OnlinePlayerViewModel::setupForMultipleRelease()
 {
+    auto selectedReleases = m_releasesViewModel->items()->getSelectedReleases();
+
+    QStringList json;
+    QList<int> releases;
+    QStringList posters;
+    QStringList names;
+
+    foreach (auto selectedRelease, *selectedReleases) {
+        json.append(m_releasesViewModel->getReleaseVideos(selectedRelease));
+        releases.append(selectedRelease);
+        posters.append(m_releasesViewModel->getReleasePoster(selectedRelease));
+        names.append(m_releasesViewModel->getReleaseTitle(selectedRelease));
+    }
+
     setIsCinemahall(false);
     setIsMultipleRelease(true);
 

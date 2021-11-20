@@ -285,8 +285,9 @@ Page {
                                                 enabled: !!window.userModel.login
                                                 text: "Добавить в избранное"
                                                 onPressed: {
-                                                    const ids = releaseIds.join(`,`);
-                                                    synchronizationService.addUserFavorites(applicationSettings.userToken, ids);
+                                                    for (const releaseId of releaseIds) {
+                                                        releasesViewModel.addReleaseToFavorites(releaseId);
+                                                    }
 
                                                     favoriteSeriesMenu.close();
                                                 }
@@ -295,8 +296,9 @@ Page {
                                                 enabled: !!window.userModel.login
                                                 text: "Удалить из избранного"
                                                 onPressed: {
-                                                    const ids = releaseIds.join(`,`);
-                                                    synchronizationService.removeUserFavorites(applicationSettings.userToken, ids);
+                                                    for (const releaseId of releaseIds) {
+                                                        releasesViewModel.removeReleaseFromFavorites(releaseId);
+                                                    }
 
                                                     favoriteSeriesMenu.close();
                                                 }

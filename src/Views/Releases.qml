@@ -40,21 +40,6 @@ Page {
     property bool fillingReleases: false
     property int startedSection: 0
     property string releaseDescription: ""
-    property var sectionSortings: {
-        0: { field: 0, direction: 1 },
-        1: { field: 0, direction: 1 },
-        2: { field: 0, direction: 1 },
-        3: { field: 0, direction: 1 },
-        4: { field: 0, direction: 1 },
-        5: { field: 1, direction: 0 },
-        6: { field: 0, direction: 1 },
-        7: { field: 7, direction: 1 },
-        8: { field: 8, direction: 1 },
-        9: { field: 0, direction: 1 },
-        10: { field: 0, direction: 1 },
-        11: { field: 0, direction: 1 },
-        12: { field: 0, direction: 1 },
-    }
     property bool showButtonVisibleChanger: false
     property bool hideCinemahallButton: false
     property bool hideDownloadButton: false
@@ -76,7 +61,7 @@ Page {
     signal refreshReleaseSchedules()
     signal navigateTo()
     signal watchCinemahall()
-    signal watchMultipleReleases(var ids)
+    signal watchMultipleReleases()
 
     Keys.onPressed: {
         if (event.key === Qt.Key_Escape) {
@@ -498,31 +483,17 @@ Page {
 
                         CommonMenuItem {
                             text: "Скачать все серии в HD"
-                            enabled: page.selectedReleases.length
+                            enabled: releasesViewModel.items.isHasSelectRelease
                             onPressed: {
-                                for (const releaseId of page.selectedReleases) {
-                                    const release = findReleaseById(releaseId);
-                                    for (let videoId = 0; videoId < release.countVideos; videoId++) {
-                                        localStorage.addDownloadItem(release.id, videoId, 1);
-                                    }
-                                }
-
-                                page.selectedReleases = [];
+                                releasesViewModel.clearSelectedReleases();
                                 downloadsMenuPanel.close();
                             }
                         }
                         CommonMenuItem {
                             text: "Скачать все серии в SD"
-                            enabled: page.selectedReleases.length
+                            enabled: releasesViewModel.items.isHasSelectRelease
                             onPressed: {
-                                for (const releaseId of page.selectedReleases) {
-                                    const release = findReleaseById(releaseId);
-                                    for (let videoId = 0; videoId < release.countVideos; videoId++) {
-                                        localStorage.addDownloadItem(release.id, videoId, 2);
-                                    }
-                                }
-
-                                page.selectedReleases = [];
+                                releasesViewModel.clearSelectedReleases();
                                 downloadsMenuPanel.close();
                             }
                         }
@@ -799,120 +770,6 @@ Page {
                                 }
                                 onCurrentIndexChanged: {
                                     releasesViewModel.items.seenMarkFilter = currentIndex;
-                                }
-                            }
-                        }
-                    }
-                }
-                LeftPanelIconButton {
-                    iconPath: "../Assets/Icons/sort.svg"
-                    iconWidth: 29
-                    iconHeight: 29
-                    tooltipMessage: "Указать сортировку списка по одному из полей а также направление сортировки"
-                    showCrossIcon: page.showButtonVisibleChanger && page.hideSortButton
-                    visible: page.showButtonVisibleChanger || !page.hideSortButton
-                    onButtonPressed: {
-                        if (page.showButtonVisibleChanger) {
-                            page.hideSortButton = !page.hideSortButton;
-                            localStorage.setHideSortButton(page.hideSortButton);
-                        } else {
-                            sortingPopup.open();
-                        }
-                    }
-
-                    Popup {
-                        id: sortingPopup
-                        x: 40
-                        y: parent.height - 100
-                        width: 450
-                        height: 200
-                        modal: true
-                        focus: true
-                        closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
-
-                        Rectangle {
-                            width: parent.width
-                            RoundedActionButton {
-                                id: startSortingButton
-                                anchors.right: parent.right
-                                text: "Сортировать"
-                                onClicked: {
-                                    releasesViewModel.items.refresh();
-                                }
-                            }
-
-                            PlainText {
-                                id: labelSortingField
-                                anchors.top: startSortingButton.bottom
-                                fontPointSize: 11
-                                text: qsTr("Сортировать по")
-                            }
-                            CommonComboBox {
-                                id: sortingComboBox
-                                anchors.top: labelSortingField.bottom
-                                anchors.right: parent.right
-                                anchors.left: parent.left
-                                model: ListModel {
-                                    ListElement {
-                                        text: "Дате последнего обновления"
-                                    }
-                                    ListElement {
-                                        text: "Дню в расписании"
-                                    }
-                                    ListElement {
-                                        text: "Имени"
-                                    }
-                                    ListElement {
-                                        text: "Году"
-                                    }
-                                    ListElement {
-                                        text: "Рейтингу"
-                                    }
-                                    ListElement {
-                                        text: "Статусу"
-                                    }
-                                    ListElement {
-                                        text: "Оригинальному имени"
-                                    }
-                                    ListElement {
-                                        text: "История"
-                                    }
-                                    ListElement {
-                                        text: "История просмотра"
-                                    }
-                                    ListElement {
-                                        text: "Сезону"
-                                    }
-                                    ListElement {
-                                        text: "Признак избранности"
-                                    }
-                                    ListElement {
-                                        text: "Признак просмотра"
-                                    }
-                                }
-                                onCurrentIndexChanged: {
-                                    releasesViewModel.items.sortingField = currentIndex;
-                                }
-                            }
-
-                            PlainText {
-                                id: labelSortingDirection
-                                anchors.top: sortingComboBox.bottom
-                                fontPointSize: 11
-                                text: qsTr("В порядке")
-                            }
-                            CommonComboBox {
-                                id: sortingDirectionComboBox
-                                anchors.top: labelSortingDirection.bottom
-                                anchors.right: parent.right
-                                anchors.left: parent.left
-                                currentIndex: 1
-                                model: ListModel {
-                                    ListElement { text: "Восходящем" }
-                                    ListElement { text: "Нисходящем" }
-                                }
-                                onCurrentIndexChanged: {
-                                    releasesViewModel.items.sortingDescending = currentIndex;
                                 }
                             }
                         }
@@ -1397,7 +1254,7 @@ Page {
                 Rectangle {
                     id: filtersContainer
                     anchors.centerIn: parent
-                    width: 380
+                    width: 520
                     height: parent.height
                     color: "transparent"
 
@@ -1406,7 +1263,7 @@ Page {
                         spacing: 8
                         RoundedTextBox {
                             id: filterByTitle
-                            width: 250
+                            width: 210
                             height: 40
                             placeholder: "Введите название релиза"
                             onCompleteEditing: {
@@ -1558,6 +1415,74 @@ Page {
                         }
                     }
                 }
+
+                CommonComboBox {
+                    id: sortingComboBox
+                    width: 160
+                    height: parent.height + 2
+                    fontPointSize: 9
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.right: sortingDirectionButton.left
+                    anchors.rightMargin: 2
+                    model: ListModel {
+                        ListElement {
+                            text: "Дате обновления"
+                        }
+                        ListElement {
+                            text: "Дню в расписании"
+                        }
+                        ListElement {
+                            text: "Имени"
+                        }
+                        ListElement {
+                            text: "Году"
+                        }
+                        ListElement {
+                            text: "Рейтингу"
+                        }
+                        ListElement {
+                            text: "Статусу"
+                        }
+                        ListElement {
+                            text: "Оригинальному имени"
+                        }
+                        ListElement {
+                            text: "История"
+                        }
+                        ListElement {
+                            text: "История просмотра"
+                        }
+                        ListElement {
+                            text: "Сезону"
+                        }
+                        ListElement {
+                            text: "Признак избранности"
+                        }
+                        ListElement {
+                            text: "Признак просмотра"
+                        }
+                    }
+                    onActivated: {
+                        releasesViewModel.items.refresh();
+                    }
+
+                    onCurrentIndexChanged: {
+                        releasesViewModel.items.sortingField = currentIndex;
+                    }
+                }
+
+                FilterPanelIconButton {
+                    id: sortingDirectionButton
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.right: parent.right
+                    anchors.rightMargin: 14
+                    iconPath: assetsLocation.iconsPath + (releasesViewModel.items.sortingDescending ? "sortdescending.svg" : "sortascending.svg")
+                    tooltipMessage: "Направление сортировки списка"
+                    onButtonPressed: {
+                        releasesViewModel.items.sortingDescending = !releasesViewModel.items.sortingDescending;
+                        releasesViewModel.items.refresh();
+                    }
+                }
             }
 
             Rectangle {
@@ -1629,7 +1554,6 @@ Page {
                             ReleaseItem {
                                 anchors.centerIn: parent
                                 favoriteReleases: page.favoriteReleases
-                                isSelected: page.selectedReleases.filter(a => a === releaseModel.id).length
 
                                 onLeftClicked: {
                                     if (releasesViewModel.isOpenedCard) return;
@@ -1672,15 +1596,13 @@ Page {
 
         RoundedActionButton {
             id: watchMultipleButton
-            visible: page.selectedReleases.length
+            visible: releasesViewModel.items.isHasSelectRelease
             text: qsTr("Смотреть выбранное")
             anchors.verticalCenter: parent.verticalCenter
             anchors.left: parent.left
             opacity: 0.8
             onClicked: {
-                watchMultipleReleases(page.selectedReleases);
-
-                page.selectedReleases = [];
+                watchMultipleReleases();
             }
         }
         IconButton {
@@ -2394,11 +2316,8 @@ Page {
         }
 
         releasesViewModel.items.section = section;
-        if (section in page.sectionSortings) {
-            const defaultSorting = page.sectionSortings[section];
-            sortingComboBox.currentIndex = defaultSorting.field;
-            sortingDirectionComboBox.currentIndex = defaultSorting.direction;
-        }
+        releasesViewModel.setupSortingForSection();
+        sortingComboBox.currentIndex = releasesViewModel.items.sortingField;
 
         releasesViewModel.items.refresh();
     }
