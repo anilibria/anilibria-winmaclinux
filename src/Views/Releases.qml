@@ -1246,7 +1246,7 @@ Page {
                     anchors.verticalCenter: parent.verticalCenter
                     anchors.left: parent.left
                     anchors.leftMargin: 14
-                    visible: releasesViewModel.items.isHasReleases
+                    visible: releasesViewModel.items.isHasReleases && window.width > 970
                     text: "Найдено: " + releasesViewModel.items.countFilteredReleases
                     fontPointSize: 10
                 }
@@ -1408,9 +1408,40 @@ Page {
                             iconPath: assetsLocation.iconsPath + "listcustom.svg"
                             iconWidth: 20
                             iconHeight: 20
-                            tooltipMessage: "Показать фильтр для выбора букв алфавита для поиска по первой букве релиза"
+                            tooltipMessage: "Показать тематические фильтры"
                             onButtonPressed: {
-                                //TODO: added
+                                customListMenuSections.open();
+                            }
+
+                            CommonMenu {
+                                id: customListMenuSections
+                                width: 350
+                                y: parent.height
+
+                                CommonMenuItem {
+                                    text: releasesViewModel.sectionNames[14]
+                                    onPressed: {
+                                        page.changeSection(14);
+                                    }
+                                }
+                                CommonMenuItem {
+                                    text: releasesViewModel.sectionNames[15]
+                                    onPressed: {
+                                        page.changeSection(15);
+                                    }
+                                }
+                                CommonMenuItem {
+                                    text: releasesViewModel.sectionNames[16]
+                                    onPressed: {
+                                        page.changeSection(16);
+                                    }
+                                }
+                                CommonMenuItem {
+                                    text: releasesViewModel.sectionNames[17]
+                                    onPressed: {
+                                        page.changeSection(17);
+                                    }
+                                }
                             }
                         }
                     }
@@ -1418,6 +1449,7 @@ Page {
 
                 CommonComboBox {
                     id: sortingComboBox
+                    visible: window.width > 970
                     width: 160
                     height: parent.height + 2
                     fontPointSize: 9
@@ -1460,6 +1492,9 @@ Page {
                         }
                         ListElement {
                             text: "Признак просмотра"
+                        }
+                        ListElement {
+                            text: "Связанным релизам"
                         }
                     }
                     onActivated: {

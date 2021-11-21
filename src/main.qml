@@ -921,6 +921,7 @@ ApplicationWindow {
         localStorage: localStorage
         imageBackgroundViewModel.containerWidth: releases.backgroundImageWidth
         imageBackgroundViewModel.containerHeight: releases.backgroundImageHeight
+        items.releaseLinkedSeries: releaseLinkedSeries
         onReleaseCardOpened: {
             analyticsService.sendView("releasecard", "show", "%2Freleases");
             releases.webView.url = releasesViewModel.getVkontakteCommentPage(releasesViewModel.openedReleaseCode);

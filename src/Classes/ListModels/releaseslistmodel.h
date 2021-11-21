@@ -7,6 +7,7 @@
 #include "../Models/fullreleasemodel.h"
 #include "../Models/changesmodel.h"
 #include "../Models/historymodel.h"
+#include "../Services/releaselinkedseries.h"
 
 class ReleasesListModel : public QAbstractListModel
 {
@@ -30,6 +31,7 @@ class ReleasesListModel : public QAbstractListModel
     Q_PROPERTY(bool isHasReleases READ isHasReleases NOTIFY isHasReleasesChanged)
     Q_PROPERTY(bool isHasSelectRelease READ isHasSelectRelease NOTIFY isHasSelectReleaseChanged)
     Q_PROPERTY(int countFilteredReleases READ countFilteredReleases NOTIFY countFilteredReleasesChanged)
+    Q_PROPERTY(ReleaseLinkedSeries* releaseLinkedSeries READ releaseLinkedSeries WRITE setReleaseLinkedSeries NOTIFY releaseLinkedSeriesChanged)
 
 private:
     QSharedPointer<QList<FullReleaseModel*>> m_releases;
@@ -40,6 +42,7 @@ private:
     QSharedPointer<ChangesModel> m_changesModel { nullptr };
     QMap<int, int>* m_scheduleReleases { nullptr };
     QSharedPointer<QHash<int, HistoryModel*>> m_historyModels { nullptr };
+    ReleaseLinkedSeries* m_releaseLinkedSeries { nullptr };
     QString m_titleFilter { "" };
     QString m_descriptionFilter { "" };
     QString m_typeFilter { "" };
@@ -92,7 +95,8 @@ private:
         ReleaseWatchHistory,
         ReleaseSeason,
         ReleaseFavoriteMark,
-        ReleaseSeenMark
+        ReleaseSeenMark,
+        ReleaseSeriesMark,
     };
 
 public:
@@ -163,6 +167,9 @@ public:
     bool isHasSelectRelease() const noexcept { return !m_selectedReleases->isEmpty(); }
     int countFilteredReleases() const noexcept { return m_filteredReleases->count(); }
 
+    ReleaseLinkedSeries* releaseLinkedSeries() const noexcept { return m_releaseLinkedSeries; }
+    void setReleaseLinkedSeries(ReleaseLinkedSeries* releaseLinkedSeries) noexcept;
+
     QString getScheduleDay(int dayNumber) const noexcept;
 
     QSharedPointer<QSet<int>> getSelectedReleases();
@@ -202,6 +209,7 @@ signals:
     void isHasReleasesChanged();
     void isHasSelectReleaseChanged();
     void countFilteredReleasesChanged();
+    void releaseLinkedSeriesChanged();
 
 };
 

@@ -12,6 +12,10 @@ const int SeenHistorySection = 9;
 const int SeeningHistorySection = 10;
 const int NotSeeningHistorySection = 11;
 const int HiddenReleasesSection = 12;
+const int OnlyMoviesSection = 14;
+const int MostPopularSection = 15;
+const int WithinSeriesSection = 16;
+const int MostPopular2021Section = 17;
 
 ReleasesListModel::ReleasesListModel(QObject *parent) : QAbstractListModel(parent)
 {
@@ -345,6 +349,14 @@ int ReleasesListModel::getReleaseSeenMarkCount(int releaseId) const noexcept
     return result;
 }
 
+void ReleasesListModel::setReleaseLinkedSeries(ReleaseLinkedSeries *releaseLinkedSeries) noexcept
+{
+    if (m_releaseLinkedSeries == releaseLinkedSeries) return;
+
+    m_releaseLinkedSeries = releaseLinkedSeries;
+    emit releaseLinkedSeriesChanged();
+}
+
 QString ReleasesListModel::getScheduleDay(int dayNumber) const noexcept
 {
     switch (dayNumber){
@@ -369,6 +381,9 @@ void ReleasesListModel::refresh()
     beginResetModel();
 
     m_filteredReleases->clear();
+
+    QSharedPointer<QList<int>> linkedReleases = nullptr;
+    if (m_releaseLinkedSeries != nullptr) linkedReleases = m_releaseLinkedSeries->getAllLinkedReleases();
 
     QHash<int, int> hash1;
     auto seenMarks = getAllSeenMarkCount(std::move(hash1));
@@ -514,6 +529,14 @@ void ReleasesListModel::refresh()
         if (m_section == SeeningHistorySection && !(countReleaseSeenVideos > 0 && !isAllSeens)) continue;
 
         if (m_section == NotSeeningHistorySection && !(countReleaseSeenVideos == 0)) continue;
+
+        if (m_section == OnlyMoviesSection && !(release->title().toLower().contains("фильм") || release->type().toLower().contains("фильм"))) continue;
+
+        if (m_section == MostPopularSection && !(release->rating() > 1000)) continue;
+
+        if (m_section == WithinSeriesSection && linkedReleases != nullptr && !(linkedReleases->contains(release->id()))) continue;
+
+        if (m_section == MostPopular2021Section && !(release->year() == "2021" && release->rating() > 0)) continue;
 
         if (m_section == HiddenReleasesSection && !m_hiddenReleases->contains(release->id())) continue;
 
@@ -818,6 +841,24 @@ void ReleasesListModel::sortingFilteringReleases(QHash<int, int>&& seenMarks)
         return leftIndex > rightIndex;
     };
 
+    std::function<bool (const FullReleaseModel*, const FullReleaseModel*)> releaseSeriesComparer = [this](const FullReleaseModel* first, const FullReleaseModel* second) {
+        if (m_releaseLinkedSeries == nullptr) return false;
+
+        auto leftOrder = m_releaseLinkedSeries->getSortedOrder(first->id());
+        auto rightOrder = m_releaseLinkedSeries->getSortedOrder(second->id());
+
+        return leftOrder < rightOrder;
+    };
+
+    std::function<bool (const FullReleaseModel*, const FullReleaseModel*)> releaseSeriesDescendingComparer = [this](const FullReleaseModel* first, const FullReleaseModel* second) {
+        if (m_releaseLinkedSeries == nullptr) return false;
+
+        auto leftOrder = m_releaseLinkedSeries->getSortedOrder(first->id());
+        auto rightOrder = m_releaseLinkedSeries->getSortedOrder(second->id());
+
+        return leftOrder > rightOrder;
+    };
+
     switch (m_sortingField) {
         case ReleaseTimestamp:
             std::sort(m_filteredReleases->begin(), m_filteredReleases->end(), m_sortingDescending ? compareTimeStampDescending : compareTimeStamp);
@@ -855,6 +896,10 @@ void ReleasesListModel::sortingFilteringReleases(QHash<int, int>&& seenMarks)
         case ReleaseSeenMark:
             std::sort(m_filteredReleases->begin(), m_filteredReleases->end(), m_sortingDescending ? seenComparer : seenDescendingComparer);
             break;
+        case ReleaseSeriesMark: {
+            std::sort(m_filteredReleases->begin(), m_filteredReleases->end(), m_sortingDescending ? releaseSeriesComparer : releaseSeriesDescendingComparer);
+            break;
+        }
     }
 
 }

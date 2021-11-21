@@ -43,9 +43,9 @@ QVariant ReleaseLinkedSeries::data(const QModelIndex &index, int role) const
 {
     if (!index.isValid()) return QVariant();
 
-    auto series = m_filtering ? m_filteredSeries : m_series;
+    auto series = m_filtering ? *m_filteredSeries : *m_series;
 
-    auto element = series->at(index.row());
+    auto element = series.at(index.row());
 
     switch (role) {
         case CountReleasesRole: {
@@ -65,10 +65,10 @@ QVariant ReleaseLinkedSeries::data(const QModelIndex &index, int role) const
             }
         }
         case ReleaseIds: {
-            return QVariant(*series->at(index.row())->releaseIds());
+            return QVariant(*series.at(index.row())->releaseIds());
         }
         case Posters: {
-            return QVariant(*series->at(index.row())->posters());
+            return QVariant(*series.at(index.row())->posters());
         }
         case FirstPosterRole: {
             return QVariant(element->posters()->first().toString());
@@ -84,7 +84,7 @@ QVariant ReleaseLinkedSeries::data(const QModelIndex &index, int role) const
             }
         }
         case OtherReleasesRole: {
-            auto count = series->at(index.row())->countReleases();
+            auto count = series.at(index.row())->countReleases();
 
             QString other = "";
             if (count > 3) other += " + еще " + QString::number(count - 3) + " релиза";
@@ -149,6 +149,35 @@ void ReleaseLinkedSeries::setNameFilter(const QString& nameFilter) noexcept
 
     m_nameFilter = nameFilter;
     emit nameFilterChanged();
+}
+
+QSharedPointer<QList<int>> ReleaseLinkedSeries::getAllLinkedReleases() const noexcept
+{
+    auto allReleases = QSharedPointer<QList<int>>(new QList<int>());
+
+    foreach (auto serie, *m_series) {
+        auto ids = serie->releaseIds();
+        foreach (auto id, *ids) {
+            allReleases->append(id.toInt());
+        }
+    }
+
+    return allReleases;
+}
+
+int ReleaseLinkedSeries::getSortedOrder(int id) const noexcept
+{
+    int iterator = 0;
+    foreach (auto item, *m_series) {
+        if (!item->releaseIds()->contains(id)) {
+            iterator += 100;
+            continue;
+        }
+
+        return iterator + item->releaseIds()->indexOf(id);
+    }
+
+    return 0;
 }
 
 void ReleaseLinkedSeries::refreshSeries()
