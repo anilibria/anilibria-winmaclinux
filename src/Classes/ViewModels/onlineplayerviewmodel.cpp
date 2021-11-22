@@ -318,6 +318,32 @@ void OnlinePlayerViewModel::setReleasesViewModel(ReleasesViewModel *releasesView
 
     m_releasesViewModel = releasesViewModel;
     emit releasesViewModelChanged();
+
+    m_videos->setup(releasesViewModel);
+}
+
+void OnlinePlayerViewModel::setShowNextPosterRelease(bool showNextPosterRelease) noexcept
+{
+    if (m_showNextPosterRelease == showNextPosterRelease) return;
+
+    m_showNextPosterRelease = showNextPosterRelease;
+    emit showNextPosterReleaseChanged();
+}
+
+void OnlinePlayerViewModel::setNextReleasePoster(QString nextReleasePoster) noexcept
+{
+    if (m_nextReleasePoster == nextReleasePoster) return;
+
+    m_nextReleasePoster = nextReleasePoster;
+    emit nextReleasePosterChanged();
+}
+
+void OnlinePlayerViewModel::setSeenMarkedAtEnd(bool seenMarkedAtEnd) noexcept
+{
+    if (m_seenMarkedAtEnd == seenMarkedAtEnd) return;
+
+    m_seenMarkedAtEnd = seenMarkedAtEnd;
+    emit seenMarkedAtEndChanged();
 }
 
 void OnlinePlayerViewModel::toggleFullScreen()
@@ -358,6 +384,8 @@ QString OnlinePlayerViewModel::checkExistingVideoQuality(int index)
 
 void OnlinePlayerViewModel::nextVideo()
 {
+    setShowNextPosterRelease(false);
+    setSeenMarkedAtEnd(false);
     setRestorePosition(0);
     setPositionIterator(0);
     setIsFromNavigated(false);
@@ -412,6 +440,8 @@ void OnlinePlayerViewModel::nextVideo()
 void OnlinePlayerViewModel::previousVideo()
 {
     if (m_selectedVideo == 0 && !m_isMultipleRelease) return;
+    setShowNextPosterRelease(false);
+    setSeenMarkedAtEnd(false);
     setRestorePosition(0);
     setIsFromNavigated(false);
 
@@ -529,6 +559,8 @@ void OnlinePlayerViewModel::setVideoSeens(int id, int videoId, double videoPosit
 
 void OnlinePlayerViewModel::setupForSingleRelease()
 {
+    setShowNextPosterRelease(false);
+    setSeenMarkedAtEnd(false);
     setIsCinemahall(false);
     setIsMultipleRelease(false);
 
@@ -574,7 +606,8 @@ void OnlinePlayerViewModel::setupForMultipleRelease()
         posters.append(m_releasesViewModel->getReleasePoster(selectedRelease));
         names.append(m_releasesViewModel->getReleaseTitle(selectedRelease));
     }
-
+    setSeenMarkedAtEnd(false);
+    setShowNextPosterRelease(false);
     setIsCinemahall(false);
     setIsMultipleRelease(true);
 
@@ -606,6 +639,8 @@ void OnlinePlayerViewModel::setupForMultipleRelease()
 
 void OnlinePlayerViewModel::setupForCinemahall(const QStringList &json, const QList<int> &releases, const QStringList &posters, const QStringList& names)
 {
+    setSeenMarkedAtEnd(false);
+    setShowNextPosterRelease(false);
     setIsCinemahall(true);
     setIsMultipleRelease(false);
 
@@ -634,11 +669,6 @@ void OnlinePlayerViewModel::setupForCinemahall(const QStringList &json, const QL
     emit playInPlayer();
     emit needScrollSeriaPosition();
     emit saveToWatchHistory(video->releaseId());
-}
-
-void OnlinePlayerViewModel::setSeenMark(int id, int seriaId, bool marked)
-{
-    m_releasesViewModel->setSeenMark(id, seriaId, marked);
 }
 
 QString OnlinePlayerViewModel::getReleasesSeenMarks(QList<int> ids)
@@ -675,6 +705,8 @@ QString OnlinePlayerViewModel::getReleasesSeenMarks(QList<int> ids)
 
 void OnlinePlayerViewModel::selectVideo(int releaseId, int videoId)
 {
+    setShowNextPosterRelease(false);
+    setSeenMarkedAtEnd(false);
     setSelectedVideo(videoId);
     setSelectedRelease(releaseId);
     setIsFromNavigated(false);
@@ -749,6 +781,19 @@ int OnlinePlayerViewModel::jumpInPlayer(int minutes, int seconds, bool direction
     if (seekPosition > duration) seekPosition = duration - 100;
 
     return seekPosition;
+}
+
+bool OnlinePlayerViewModel::isLastSeriaIsSingleRelease() const noexcept
+{
+    if (m_isCinemahall || m_isMultipleRelease) return false;
+
+    auto videoCount = m_videos->getReleaseVideosCount(m_selectedRelease);
+    return m_selectedVideo == videoCount - 1;
+}
+
+void OnlinePlayerViewModel::refreshSingleVideo(int releaseId, int videoId) noexcept
+{
+    m_videos->refreshSingleVideo(releaseId, videoId);
 }
 
 void OnlinePlayerViewModel::saveVideoSeens()

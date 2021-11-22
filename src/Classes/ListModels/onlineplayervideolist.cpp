@@ -50,7 +50,7 @@ QVariant OnlinePlayerVideoList::data(const QModelIndex &index, int role) const
             return QVariant(video->releasePoster());
         }
         case IsSeenRole: {
-            return QVariant(false);
+            return QVariant(m_releaseViewModel->getSeriaSeenMark(video->releaseId(), video->order()));
         }
         case IsGroupRole: {
             return QVariant(video->isGroup());
@@ -312,4 +312,24 @@ QList<int> OnlinePlayerVideoList::getReleaseIds() noexcept
 
     return set.values();
 #endif
+}
+
+void OnlinePlayerVideoList::setup(ReleasesViewModel* releaseViewModel)
+{
+    m_releaseViewModel = releaseViewModel;
+}
+
+void OnlinePlayerVideoList::refreshSingleVideo(int releaseId, int videoId) noexcept
+{
+    auto iterator = std::find_if(
+        m_videos->begin(),
+        m_videos->end(),
+        [releaseId, videoId](OnlineVideoModel * video) {
+            return video->releaseId() == releaseId && video->order() == videoId;
+        }
+    );
+    if (iterator == m_videos->end()) return;
+
+    auto videoIndex = m_videos->indexOf(*iterator);
+    emit dataChanged(index(videoIndex), index(videoIndex));
 }

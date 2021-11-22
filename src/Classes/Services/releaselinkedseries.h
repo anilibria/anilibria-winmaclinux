@@ -64,6 +64,7 @@ public:
     QSharedPointer<QList<int>> getAllLinkedReleases() const noexcept;
     int getSortedOrder(int id) const noexcept;
 
+    Q_INVOKABLE int getNextLinkedRelease(const int currentRelease);
     Q_INVOKABLE void refreshSeries();
     Q_INVOKABLE bool isReleaseInSeries(int id);
     Q_INVOKABLE void filterSeries();

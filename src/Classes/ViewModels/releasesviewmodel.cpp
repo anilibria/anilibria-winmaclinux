@@ -530,6 +530,31 @@ void ReleasesViewModel::setSeenMark(int id, int seriaId, bool marked)
     saveSeenMarks();
 }
 
+bool ReleasesViewModel::toggleSeenMark(int id, int seriaId) noexcept
+{
+    auto key = QString::number(id) + "." + QString::number(seriaId);
+
+    if (m_seenMarks->contains(key)) {
+        m_seenMarks->remove(key);
+        saveSeenMarks();
+        return false;
+    }
+
+    if (!m_seenMarks->contains(key)) {
+        m_seenMarks->insert(key, true);
+        saveSeenMarks();
+        return true;
+    }
+
+    return false;
+}
+
+bool ReleasesViewModel::getSeriaSeenMark(int id, int seriaId) const noexcept
+{
+    auto key = QString::number(id) + "." + QString::number(seriaId);
+    return m_seenMarks->contains(key);
+}
+
 QHash<QString, bool> *ReleasesViewModel::getSeenMarks()
 {
     return m_seenMarks;

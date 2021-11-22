@@ -180,6 +180,18 @@ int ReleaseLinkedSeries::getSortedOrder(int id) const noexcept
     return 0;
 }
 
+int ReleaseLinkedSeries::getNextLinkedRelease(const int currentRelease)
+{
+    foreach (auto item, *m_series) {
+        if (!item->releaseIds()->contains(currentRelease)) continue;
+
+        auto index = item->releaseIds()->indexOf(currentRelease);
+        return index < item->releaseIds()->count() - 1 ? item->releaseIds()->value(index + 1).toInt() : 0;
+    }
+
+    return 0;
+}
+
 void ReleaseLinkedSeries::refreshSeries()
 {
     QFile releasesCacheFile(getReleasesCachePath());

@@ -519,7 +519,8 @@ Page {
                         id: filtersExistsMark
                         visible: descriptionSearchField.text || typeSearchField.text || genresSearchField.text ||
                                  voicesSearchField.text || yearsSearchField.text || seasonesSearchField.text ||
-                                 statusesSearchField.text || favoriteMarkSearchField.currentIndex > 0 || seenMarkSearchField.currentIndex > 0
+                                 statusesSearchField.text || favoriteMarkSearchField.currentIndex > 0 || seenMarkSearchField.currentIndex > 0 ||
+                                 releaseSeriesFilterField.checked
                         anchors.top: parent.top
                         anchors.right: parent.right
                         anchors.rightMargin: 6
@@ -533,9 +534,9 @@ Page {
                     Popup {
                         id: filtersPopup
                         x: 40
-                        y: -200
+                        y: -220
                         width: 450
-                        height: 440
+                        height: 490
                         modal: true
                         focus: true
                         closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
@@ -770,6 +771,22 @@ Page {
                                 }
                                 onCurrentIndexChanged: {
                                     releasesViewModel.items.seenMarkFilter = currentIndex;
+                                }
+                            }
+
+                            PlainText {
+                                id: labelReleaseSeriesFilterField
+                                anchors.top: favoriteMarkSearchField.bottom
+                                anchors.rightMargin: 10
+                                fontPointSize: 11
+                                text: "Часть связанного релиза"
+                            }
+
+                            Switch {
+                                id: releaseSeriesFilterField
+                                anchors.top: labelReleaseSeriesFilterField.bottom
+                                onCheckedChanged: {
+                                    releasesViewModel.items.hasReleaseSeriesFilter = checked;
                                 }
                             }
                         }
@@ -2339,6 +2356,7 @@ Page {
         statusesSearchField.text = "";
         favoriteMarkSearchField.currentIndex = 0;
         seenMarkSearchField.currentIndex = 0;
+        releaseSeriesFilterField.checked = false;
         alphabetListModel.clearCharacters();
     }
 

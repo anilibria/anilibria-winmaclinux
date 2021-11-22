@@ -875,9 +875,6 @@ ApplicationWindow {
         onPlayInPlayer: {
             videoplayer.playInPlayer();
         }
-        onRefreshSeenMarks: {
-            videoplayer.refreshSeenMarks();
-        }
         onStopInPlayer: {
             videoplayer.stopInPlayer();
         }

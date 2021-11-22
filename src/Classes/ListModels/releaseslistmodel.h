@@ -25,6 +25,7 @@ class ReleasesListModel : public QAbstractListModel
     Q_PROPERTY(QString alphabetsFilter READ alphabetsFilter WRITE setAlphabetsFilter NOTIFY alphabetsFilterChanged)
     Q_PROPERTY(int favoriteMarkFilter READ favoriteMarkFilter WRITE setFavoriteMarkFilter NOTIFY favoriteMarkFilterChanged)
     Q_PROPERTY(int seenMarkFilter READ seenMarkFilter WRITE setSeenMarkFilter NOTIFY seenMarkFilterChanged)
+    Q_PROPERTY(bool hasReleaseSeriesFilter READ hasReleaseSeriesFilter WRITE setHasReleaseSeriesFilter NOTIFY hasReleaseSeriesFilterChanged)
     Q_PROPERTY(int section READ section WRITE setSection NOTIFY sectionChanged)
     Q_PROPERTY(int sortingField READ sortingField WRITE setSortingField NOTIFY sortingFieldChanged)
     Q_PROPERTY(bool sortingDescending READ sortingDescending WRITE setSortingDescending NOTIFY sortingDescendingChanged)
@@ -60,6 +61,7 @@ private:
     int m_sortingField { 0 };
     bool m_sortingDescending { true };
     bool m_isHasReleases { false };
+    bool m_hasReleaseSeriesFilter { false };
     QSharedPointer<QSet<int>> m_selectedReleases { new QSet<int>() };
     enum FullReleaseRoles {
         ReleaseIdRole = Qt::UserRole + 1,
@@ -167,6 +169,9 @@ public:
     bool isHasSelectRelease() const noexcept { return !m_selectedReleases->isEmpty(); }
     int countFilteredReleases() const noexcept { return m_filteredReleases->count(); }
 
+    bool hasReleaseSeriesFilter() const noexcept { return m_hasReleaseSeriesFilter; }
+    void setHasReleaseSeriesFilter(bool hasReleaseSeriesFilter) noexcept;
+
     ReleaseLinkedSeries* releaseLinkedSeries() const noexcept { return m_releaseLinkedSeries; }
     void setReleaseLinkedSeries(ReleaseLinkedSeries* releaseLinkedSeries) noexcept;
 
@@ -210,6 +215,7 @@ signals:
     void isHasSelectReleaseChanged();
     void countFilteredReleasesChanged();
     void releaseLinkedSeriesChanged();
+    void hasReleaseSeriesFilterChanged();
 
 };
 

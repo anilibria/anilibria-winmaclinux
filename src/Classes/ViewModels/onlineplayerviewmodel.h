@@ -66,6 +66,9 @@ class OnlinePlayerViewModel : public QObject
     Q_PROPERTY(bool isMultipleRelease READ isMultipleRelease WRITE setIsMultipleRelease NOTIFY isMultipleReleaseChanged)
     Q_PROPERTY(bool isFromNavigated READ isFromNavigated WRITE setIsFromNavigated NOTIFY isFromNavigatedChanged)
     Q_PROPERTY(ReleasesViewModel* releasesViewModel READ releasesViewModel WRITE setReleasesViewModel NOTIFY releasesViewModelChanged)
+    Q_PROPERTY(bool showNextPosterRelease READ showNextPosterRelease WRITE setShowNextPosterRelease NOTIFY showNextPosterReleaseChanged)
+    Q_PROPERTY(QString nextReleasePoster READ nextReleasePoster WRITE setNextReleasePoster NOTIFY nextReleasePosterChanged)
+    Q_PROPERTY(bool seenMarkedAtEnd READ seenMarkedAtEnd WRITE setSeenMarkedAtEnd NOTIFY seenMarkedAtEndChanged)
 
 private:
     bool m_isFullScreen;
@@ -109,6 +112,9 @@ private:
     bool m_isFromNavigated;
     int m_watchedTimes { 0 };
     ReleasesViewModel* m_releasesViewModel;
+    bool m_showNextPosterRelease { false };
+    QString m_nextReleasePoster { "" };
+    bool m_seenMarkedAtEnd { false };
 
 public:
     explicit OnlinePlayerViewModel(QObject *parent = nullptr);
@@ -210,6 +216,15 @@ public:
     ReleasesViewModel* releasesViewModel() const noexcept { return m_releasesViewModel; }
     void setReleasesViewModel(ReleasesViewModel* releasesViewModel) noexcept;
 
+    bool showNextPosterRelease() const noexcept { return m_showNextPosterRelease; }
+    void setShowNextPosterRelease(bool showNextPosterRelease) noexcept;
+
+    QString nextReleasePoster() const noexcept { return m_nextReleasePoster; }
+    void setNextReleasePoster(QString nextReleasePoster) noexcept;
+
+    bool seenMarkedAtEnd() const noexcept { return m_seenMarkedAtEnd; }
+    void setSeenMarkedAtEnd(bool seenMarkedAtEnd) noexcept;
+
     Q_INVOKABLE void toggleFullScreen();
     Q_INVOKABLE void changeVideoPosition(int duration, int position) noexcept;
     Q_INVOKABLE QString checkExistingVideoQuality(int index);    
@@ -222,7 +237,6 @@ public:
     Q_INVOKABLE void setupForSingleRelease();
     Q_INVOKABLE void setupForMultipleRelease();
     Q_INVOKABLE void setupForCinemahall(const QStringList &json, const QList<int> &releases, const QStringList &posters, const QStringList& names);
-    Q_INVOKABLE void setSeenMark(int id, int seriaId, bool marked);
     Q_INVOKABLE QString getReleasesSeenMarks(QList<int> ids);
     Q_INVOKABLE void selectVideo(int releaseId, int videoId);
     Q_INVOKABLE void changeVideoQuality(const QString& quality) noexcept;
@@ -232,6 +246,8 @@ public:
     Q_INVOKABLE void broadcastVideoPosition(const QString& position) noexcept;
     Q_INVOKABLE QList<int> getReleaseIds() noexcept;
     Q_INVOKABLE int jumpInPlayer(int minutes, int seconds, bool direction) noexcept;
+    Q_INVOKABLE bool isLastSeriaIsSingleRelease() const noexcept;
+    Q_INVOKABLE void refreshSingleVideo(int releaseId, int videoId) noexcept;
 
 private:
     void saveVideoSeens();
@@ -291,6 +307,9 @@ signals:
     void isFromNavigatedChanged();
     void watchedMinuteInPlayer();
     void releasesViewModelChanged();
+    void showNextPosterReleaseChanged();
+    void nextReleasePosterChanged();
+    void seenMarkedAtEndChanged();
 
 };
 

@@ -349,6 +349,14 @@ int ReleasesListModel::getReleaseSeenMarkCount(int releaseId) const noexcept
     return result;
 }
 
+void ReleasesListModel::setHasReleaseSeriesFilter(bool hasReleaseSeriesFilter) noexcept
+{
+    if (m_hasReleaseSeriesFilter == hasReleaseSeriesFilter) return;
+
+    m_hasReleaseSeriesFilter = hasReleaseSeriesFilter;
+    emit hasReleaseSeriesFilterChanged();
+}
+
 void ReleasesListModel::setReleaseLinkedSeries(ReleaseLinkedSeries *releaseLinkedSeries) noexcept
 {
     if (m_releaseLinkedSeries == releaseLinkedSeries) return;
@@ -485,6 +493,9 @@ void ReleasesListModel::refresh()
             }
             if (!startWithAlphabetsCharacters) continue;
         }
+
+        // part of releases series
+        if (m_hasReleaseSeriesFilter && linkedReleases != nullptr && !(linkedReleases->contains(release->id()))) continue;
 
         //favorite mark
         if (m_favoriteMarkFilter == 1 && !m_userFavorites->contains(release->id())) continue;

@@ -213,8 +213,9 @@ public:
     Q_INVOKABLE bool importReleasesFromFile(QString path);
     Q_INVOKABLE void addToCinemahallSelectedReleases();
     Q_INVOKABLE void setupSortingForSection() const noexcept;
-
-    void setSeenMark(int id, int seriaId, bool marked);
+    Q_INVOKABLE bool getSeriaSeenMark(int id, int seriaId) const noexcept;
+    Q_INVOKABLE bool toggleSeenMark(int id, int seriaId) noexcept;
+    Q_INVOKABLE void setSeenMark(int id, int seriaId, bool marked);
     QHash<QString, bool>* getSeenMarks();
     void updateAllReleases(const QString &releases, bool insideData);
 
