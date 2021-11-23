@@ -159,6 +159,7 @@ Page {
                     onButtonPressed: {
                         if (releasesViewModel.synchronizationEnabled) return;
 
+                        releasesViewModel.synchronizationEnabled = true;
                         synchronizationService.synchronizeReleases();
                     }
                 }
@@ -1226,7 +1227,7 @@ Page {
                 PlainText {
                     anchors.verticalCenter: parent.verticalCenter
                     anchors.horizontalCenter: parent.horizontalCenter
-                    visible: page.synchronizeEnabled
+                    visible: releasesViewModel.synchronizationEnabled
                     fontPointSize: 12
                     text: "Выполняется синхронизация..."
                 }
