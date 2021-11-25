@@ -218,6 +218,7 @@ public:
     Q_INVOKABLE void setSeenMark(int id, int seriaId, bool marked);
     QHash<QString, bool>* getSeenMarks();
     void updateAllReleases(const QString &releases, bool insideData);
+    Q_INVOKABLE void openInExternalPlayer(const QString& url);
 
 private:
     void loadReleases();

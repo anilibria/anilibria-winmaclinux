@@ -28,16 +28,7 @@ import "../Theme"
 
 Page {
     id: page
-    property var selectedReleases: []
-    property var favoriteReleases: []
-    property var scheduledReleases: ({})
-    property int pageIndex: 1
-    property var openedRelease: null
-    property bool runRefreshFavorties: false
-    property bool synchronizeEnabled: false
     property int selectedSection: 0
-    property var seenMarks: ({})
-    property bool fillingReleases: false
     property int startedSection: 0
     property string releaseDescription: ""
     property bool showButtonVisibleChanger: false
@@ -46,7 +37,6 @@ Page {
     property bool hideRandomReleaseButton: false
     property bool hideNotificationButton: false
     property bool hideInfoButton: false
-    property bool hideSortButton: false
     property bool hideFilterButton: false
     property bool showAlpabeticalCharaters: false
     property bool toggler: false
@@ -84,10 +74,6 @@ Page {
     }
 
     onRefreshReleaseSchedules: {
-    }
-
-    onNavigateTo: {
-        refreshSeenMarks();
     }
 
     background: Rectangle {
@@ -170,13 +156,6 @@ Page {
                     iconHeight: 29
                     tooltipMessage: "Добавить или удалить релизы из избранного"
                     onButtonPressed: {
-                        if (!releasesViewModel.items.isHasSelectRelease) {
-                            favoritePopupHeader.text = "Избранное не доступно";
-                            favoritePopupMessage.text = "Выберите релизы в списке путем изменения переключателя выше списка на множественный режим и нажатием ЛКМ на интересующих релизах в списке. Выбранные релизы подсвечиваются красной рамкой. Чтобы увидеть свое избранное нажмите на такую же кнопку выше списка релизов.";
-                            messagePopup.open();
-                            return;
-                        }
-
                         if (!window.userModel.login) {
                             favoritePopupHeader.text = "Избранное не доступно";
                             favoritePopupMessage.text = "Чтобы добавлять в избранное нужно вначале авторизоваться. Для этого перейдите на страницу Войти в меню и войдите под данными своего аккаунта. Если вы не зарегистрированы то необходимо сделать это на сайте, ссылка на сайт будет на странице Войти.";
@@ -194,12 +173,14 @@ Page {
 
                         CommonMenuItem {
                             text: "Добавить в избранное"
+                            enabled: releasesViewModel.items.isHasSelectRelease
                             onPressed: {
                                 releasesViewModel.addSelectedReleaseToFavorites();
                             }
                         }
                         CommonMenuItem {
                             text: "Удалить из избранного"
+                            enabled: releasesViewModel.items.isHasSelectRelease
                             onPressed: {
                                 releasesViewModel.removeSelectedReleaseFromFavorites();
                             }
@@ -370,7 +351,7 @@ Page {
                                 width: 100
                                 onClicked: {
                                     releasesViewModel.removeAllSeenMark();
-                                    refreshSeenMarks();
+                                    releasesViewModel.items.refresh();
                                     removeAllSeenMark.close();
                                 }
                             }
@@ -1606,7 +1587,6 @@ Page {
 
                             ReleaseItem {
                                 anchors.centerIn: parent
-                                favoriteReleases: page.favoriteReleases
 
                                 onLeftClicked: {
                                     if (releasesViewModel.isOpenedCard) return;
@@ -2113,21 +2093,21 @@ Page {
                                 CommonMenuItem {
                                     text: "Открыть во внешнем плеере в HD качестве"
                                     onPressed: {
-                                        openInExternalPlayer(localStorage.packAsM3UAndOpen(releasesViewModel.openedReleaseId, "hd"));
+                                        releasesViewModel.openInExternalPlayer(localStorage.packAsM3UAndOpen(releasesViewModel.openedReleaseId, "hd"));
                                         externalPlayerMenu.close();
                                     }
                                 }
                                 CommonMenuItem {
                                     text: "Открыть во внешнем плеере в SD качестве"
                                     onPressed: {
-                                        openInExternalPlayer(localStorage.packAsM3UAndOpen(releasesViewModel.openedReleaseId, "sd"));
+                                        releasesViewModel.openInExternalPlayer(localStorage.packAsM3UAndOpen(releasesViewModel.openedReleaseId, "sd"));
                                         externalPlayerMenu.close();
                                     }
                                 }
                                 CommonMenuItem {
                                     text: "Открыть во внешнем плеере в FullHD качестве"
                                     onPressed: {
-                                        openInExternalPlayer(localStorage.packAsM3UAndOpen(releasesViewModel.openedReleaseId, "fullhd"));
+                                        releasesViewModel.openInExternalPlayer(localStorage.packAsM3UAndOpen(releasesViewModel.openedReleaseId, "fullhd"));
                                         externalPlayerMenu.close();
                                     }
                                 }
@@ -2136,7 +2116,7 @@ Page {
                                     notVisible: Qt.platform.os !== "windows"
                                     text: "Открыть в плеере MPC в HD качестве"
                                     onPressed: {
-                                        openInExternalPlayer(localStorage.packAsMPCPLAndOpen(releasesViewModel.openedReleaseId, "hd"));
+                                        releasesViewModel.openInExternalPlayer(localStorage.packAsMPCPLAndOpen(releasesViewModel.openedReleaseId, "hd"));
                                         externalPlayerMenu.close();
                                     }
                                 }
@@ -2144,7 +2124,7 @@ Page {
                                     notVisible: Qt.platform.os !== "windows"
                                     text: "Открыть в плеере MPC в SD качестве"
                                     onPressed: {
-                                        openInExternalPlayer(localStorage.packAsMPCPLAndOpen(releasesViewModel.openedReleaseId, "sd"));
+                                        releasesViewModel.openInExternalPlayer(localStorage.packAsMPCPLAndOpen(releasesViewModel.openedReleaseId, "sd"));
                                         externalPlayerMenu.close();
                                     }
                                 }
@@ -2152,7 +2132,7 @@ Page {
                                     notVisible: Qt.platform.os !== "windows"
                                     text: "Открыть в плеере MPC в FullHD качестве"
                                     onPressed: {
-                                        openInExternalPlayer(localStorage.packAsMPCPLAndOpen(releasesViewModel.openedReleaseId, "fullhd"));
+                                        releasesViewModel.openInExternalPlayer(localStorage.packAsMPCPLAndOpen(releasesViewModel.openedReleaseId, "fullhd"));
                                         externalPlayerMenu.close();
                                     }
                                 }
@@ -2332,19 +2312,6 @@ Page {
         seenMarkMenuPanel.close();
     }
 
-    function refreshSeenMarks() {
-        //TODO: refresh seen marks direct in grid
-    }
-
-    function setSeensCounts(releases) {
-        for (const release of releases) {
-            release.countSeensSeries = 0;
-            if (release.id in page.seenMarks) {
-                release.countSeensSeries = page.seenMarks[release.id];
-            }
-        }
-    }
-
     function clearAdditionalFilters() {
         descriptionSearchField.text = "";
         typeSearchField.text = "";
@@ -2376,21 +2343,6 @@ Page {
         releasesViewModel.items.refresh();
     }
 
-    function openInExternalPlayer(url) {
-        if (!url) return;
-
-        Qt.openUrlExternally(url);
-    }
-
-    function findReleaseById(id) {
-        for (let i = 0; i < releasesModel.count; i++) {
-            const release = releasesModel.get(i).model;
-            if (release.id === id) return release;
-        }
-
-        return null;
-    }
-
     Component.onCompleted: {
         const userSettings = JSON.parse(localStorage.getUserSettings());
         downloadTorrentMode.currentIndex = userSettings.torrentDownloadMode;
@@ -2403,7 +2355,6 @@ Page {
         page.hideRandomReleaseButton = userSettings.hideRandomReleaseButton;
         page.hideNotificationButton = userSettings.hideNotificationButton;
         page.hideInfoButton = userSettings.hideInfoButton;
-        page.hideSortButton = userSettings.hideSortButton;
         page.hideFilterButton = userSettings.hideFilterButton;
         showReleaseDescriptionSwitch.checked = userSettings.showReleaseDescription;
         useCustomToolbarSwitch.checked = applicationSettings.useCustomToolbar;

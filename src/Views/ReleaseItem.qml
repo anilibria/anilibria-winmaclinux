@@ -41,7 +41,6 @@ Rectangle {
     }
 
     property var releaseModel: ({})
-    property var favoriteReleases: []
 
     signal leftClicked()
     signal rightClicked()

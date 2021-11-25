@@ -956,7 +956,6 @@ ApplicationWindow {
             id: releases
             visible: true
             focus: true
-            synchronizeEnabled: releasesViewModel.synchronizationEnabled
             onWatchSingleRelease: {
                 onlinePlayerViewModel.customPlaylistPosition = startSeria;
                 onlinePlayerViewModel.navigateReleaseId = releaseId;
@@ -1246,7 +1245,8 @@ ApplicationWindow {
         id: authorizationViewModel
         onSuccessAuthentificated: {
             applicationSettings.userToken = token;
-            if (window.currentPageId === "authorization") showPage("release");
+
+            if (mainViewModel.currentPageId === "authorization") showPage("release");
 
             synchronizationService.getUserData(applicationSettings.userToken);
             notificationViewModel.sendInfoNotification(`Вы успешно вошли в аккаунт. Ваше избранное будет синхронизовано автоматически.`);

@@ -656,6 +656,13 @@ void ReleasesViewModel::updateAllReleases(const QString &releases, bool insideDa
     m_releasesUpdateWatcher->setFuture(future);
 }
 
+void ReleasesViewModel::openInExternalPlayer(const QString &url)
+{
+    if (url.isEmpty()) return;
+
+    QDesktopServices::openUrl(QUrl(url));
+}
+
 void ReleasesViewModel::removeAllSeenMark()
 {
     m_seenMarks->clear();
