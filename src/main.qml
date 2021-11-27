@@ -890,6 +890,7 @@ ApplicationWindow {
                 osExtras.stopPreventSleepMode();
             }
         }
+
     }
 
     Rectangle {
@@ -922,6 +923,7 @@ ApplicationWindow {
         onReleaseCardOpened: {
             analyticsService.sendView("releasecard", "show", "%2Freleases");
             releases.webView.url = releasesViewModel.getVkontakteCommentPage(releasesViewModel.openedReleaseCode);
+            userActivityViewModel.addOpenedCardToCounter();
         }
         onAfterSynchronizedReleases: {
             notificationViewModel.sendInfoNotification("Синхронизация релизов успешно завершена в " + new Date().toLocaleTimeString());

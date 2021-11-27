@@ -2206,6 +2206,7 @@ Page {
                                     onPressed: {
                                         const torrentUri = synchronizationService.combineWithWebSiteUrl(url);
                                         synchronizationService.downloadTorrent(torrentUri);
+                                        userActivityViewModel.addDownloadedTorrentToCounter();
                                     }
                                 }
                             }
