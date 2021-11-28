@@ -28,74 +28,30 @@ import "../Theme"
 
 Page {
     id: page
-    property bool selectMode
-    property var selectedReleases: []
-    property var displayedReleases: []
-    property var favoriteReleases: []
-    property var scheduledReleases: ({})
-    property int pageIndex: 1
-    property var openedRelease: null
-    property bool runRefreshFavorties: false
-    property bool synchronizeEnabled: false
     property int selectedSection: 0
-    property var seenMarks: ({})
-    property bool fillingReleases: false
     property int startedSection: 0
     property string releaseDescription: ""
-    property var sections: [
-        "Все релизы",
-        "Избранное",
-        "Новые релизы",
-        "Релизы с новыми сериями",
-        "Релизы с новыми торрентами",
-        "Расписание",
-        "Релизы с обновленными торрентами",
-        "История",
-        "История просмотра",
-        "Просмотренные",
-        "Просматриваемые",
-        "Не просмотренные",
-        "Скрытые релизы"
-    ]
-    property var sectionSortings: {
-        0: { field: 0, direction: 1 },
-        1: { field: 0, direction: 1 },
-        2: { field: 0, direction: 1 },
-        3: { field: 0, direction: 1 },
-        4: { field: 0, direction: 1 },
-        5: { field: 1, direction: 0 },
-        6: { field: 0, direction: 1 },
-        7: { field: 7, direction: 1 },
-        8: { field: 8, direction: 1 },
-        9: { field: 0, direction: 1 },
-        10: { field: 0, direction: 1 },
-        11: { field: 0, direction: 1 },
-        12: { field: 0, direction: 1 },
-    }
-    property var changesCounts: []
-    property bool showSidePanel: false
     property bool showButtonVisibleChanger: false
     property bool hideCinemahallButton: false
     property bool hideDownloadButton: false
     property bool hideRandomReleaseButton: false
     property bool hideNotificationButton: false
     property bool hideInfoButton: false
-    property bool hideSortButton: false
     property bool hideFilterButton: false
     property bool showAlpabeticalCharaters: false
     property bool toggler: false
     property alias backgroundImageWidth: itemsContainer.width
     property alias backgroundImageHeight: itemsContainer.height
+    property alias webView: webView
 
     signal navigateFrom()
     signal watchSingleRelease(int releaseId, string videos, int startSeria, string poster)
     signal refreshReleases()
     signal refreshFavorites()
     signal refreshReleaseSchedules()
-    signal requestSynchronizeReleases()
     signal navigateTo()
     signal watchCinemahall()
-    signal watchMultipleReleases(var ids)
+    signal watchMultipleReleases()
 
     Keys.onPressed: {
         if (event.key === Qt.Key_Escape) {
@@ -103,7 +59,7 @@ Page {
                 releasePosterPreview.isVisible = false;
                 if (Qt.platform.os !== "windows") webView.visible = true;
             } else {
-                page.openedRelease = null;
+                releasesViewModel.hideReleaseCard();
                 page.showAlpabeticalCharaters = false;
             }
         }
@@ -114,20 +70,10 @@ Page {
     }
 
     onRefreshReleases: {
-        refreshAllReleases(false);
+        releasesViewModel.items.refresh();
     }
 
     onRefreshReleaseSchedules: {
-        refreshSchedule();
-    }
-
-    onRefreshFavorites: {
-        page.favoriteReleases = localStorage.getFavorites().map(a => a);
-    }
-
-    onNavigateTo: {
-        refreshSeenMarks();
-        refreshAllReleases(true);
     }
 
     background: Rectangle {
@@ -162,8 +108,8 @@ Page {
         hoverEnabled: true
         onPositionChanged: {
             if (!compactModeSwitch.checked) return;
-            if (mouse.x < 80) page.showSidePanel = true;
-            if (mouse.x > 100) page.showSidePanel = false;
+            if (mouse.x < 80) releasesViewModel.showSidePanel = true;
+            if (mouse.x > 100) releasesViewModel.showSidePanel = false;
         }
     }
 
@@ -171,15 +117,15 @@ Page {
         id: panelContainer
         anchors.fill: parent
         spacing: 0
-        enabled: !page.openedRelease
+        enabled: !releasesViewModel.isOpenedCard
         Rectangle {
             color: ApplicationTheme.pageVerticalPanel
-            Layout.preferredWidth: compactModeSwitch.checked && !page.showSidePanel ? 0 : 40
+            Layout.preferredWidth: compactModeSwitch.checked && !releasesViewModel.showSidePanel ? 0 : 40
             Layout.fillHeight: true
 
             Column {
-                visible: !compactModeSwitch.checked || page.showSidePanel
-                width: compactModeSwitch.checked && !page.showSidePanel ? 0 : 40
+                visible: !compactModeSwitch.checked || releasesViewModel.showSidePanel
+                width: compactModeSwitch.checked && !releasesViewModel.showSidePanel ? 0 : 40
 
                 LeftPanelIconButton {
                     iconPath: "../Assets/Icons/menu.svg"
@@ -197,9 +143,10 @@ Page {
                     iconHeight: 34
                     tooltipMessage: "Выполнить синхронизацию релизов"
                     onButtonPressed: {
-                        if (page.synchronizeEnabled) return;
+                        if (releasesViewModel.synchronizationEnabled) return;
 
-                        page.requestSynchronizeReleases();
+                        releasesViewModel.synchronizationEnabled = true;
+                        synchronizationService.synchronizeReleases();
                     }
                 }
 
@@ -209,13 +156,6 @@ Page {
                     iconHeight: 29
                     tooltipMessage: "Добавить или удалить релизы из избранного"
                     onButtonPressed: {
-                        if (!page.selectedReleases.length) {
-                            favoritePopupHeader.text = "Избранное не доступно";
-                            favoritePopupMessage.text = "Выберите релизы в списке путем изменения переключателя выше списка на множественный режим и нажатием ЛКМ на интересующих релизах в списке. Выбранные релизы подсвечиваются красной рамкой. Чтобы увидеть свое избранное нажмите на такую же кнопку выше списка релизов.";
-                            messagePopup.open();
-                            return;
-                        }
-
                         if (!window.userModel.login) {
                             favoritePopupHeader.text = "Избранное не доступно";
                             favoritePopupMessage.text = "Чтобы добавлять в избранное нужно вначале авторизоваться. Для этого перейдите на страницу Войти в меню и войдите под данными своего аккаунта. Если вы не зарегистрированы то необходимо сделать это на сайте, ссылка на сайт будет на странице Войти.";
@@ -233,16 +173,16 @@ Page {
 
                         CommonMenuItem {
                             text: "Добавить в избранное"
+                            enabled: releasesViewModel.items.isHasSelectRelease
                             onPressed: {
-                                synchronizationService.addUserFavorites(applicationSettings.userToken, page.selectedReleases.join(','));
-                                page.selectedReleases = [];
+                                releasesViewModel.addSelectedReleaseToFavorites();
                             }
                         }
                         CommonMenuItem {
                             text: "Удалить из избранного"
+                            enabled: releasesViewModel.items.isHasSelectRelease
                             onPressed: {
-                                synchronizationService.removeUserFavorites(applicationSettings.userToken, page.selectedReleases.join(','));
-                                page.selectedReleases = [];
+                                releasesViewModel.removeSelectedReleaseFromFavorites();
                             }
                         }
                     }
@@ -299,16 +239,16 @@ Page {
 
                         CommonMenuItem {
                             text: "Отметить как просмотренное"
-                            enabled: page.selectedReleases.length
+                            enabled: releasesViewModel.items.isHasSelectRelease
                             onPressed: {
-                                setSeenStateForRelease(true, page.selectedReleases);
+                                setSeenStateForRelease(true);
                             }
                         }
                         CommonMenuItem {
                             text: "Отметить как не просмотренное"
-                            enabled: page.selectedReleases.length
+                            enabled: releasesViewModel.items.isHasSelectRelease
                             onPressed: {
-                                setSeenStateForRelease(false, page.selectedReleases);
+                                setSeenStateForRelease(false);
                             }
                         }
                         CommonMenuItem {
@@ -320,19 +260,19 @@ Page {
                         }
                         CommonMenuItem {
                             text: "Скрыть выбранные релизы"
-                            enabled: page.selectedReleases.length
+                            enabled: releasesViewModel.items.isHasSelectRelease
                             onPressed: {
                                 seenMarkMenuPanel.close();
                                 addToHidedReleasesConfirm.open();
                             }
                         }
                         CommonMenuItem {
-                            enabled: page.selectedReleases.length
+                            enabled: releasesViewModel.items.isHasSelectRelease
                             text: "Убрать из скрытых выбранные релизы"
                             onPressed: {
                                 seenMarkMenuPanel.close();
-                                localStorage.removeFromHidedReleases(page.selectedReleases);
-                                page.selectedReleases = [];
+                                releasesViewModel.removeFromHidedSelectedReleases();
+                                releasesViewModel.clearSelectedReleases();
                             }
                         }
                         CommonMenuItem {
@@ -356,9 +296,9 @@ Page {
                                 text: "Ок"
                                 width: 100
                                 onClicked: {
-                                    localStorage.addToHidedReleases(page.selectedReleases);
+                                    releasesViewModel.addToHidedSelectedReleases();
                                     addToHidedReleasesConfirm.close();
-                                    page.selectedReleases = [];
+                                    releasesViewModel.clearSelectedReleases();
                                 }
                             }
                             RoundedActionButton {
@@ -383,8 +323,9 @@ Page {
                                 text: "Ок"
                                 width: 100
                                 onClicked: {
-                                    localStorage.removeAllHidedReleases(page.selectedReleases);
+                                    releasesViewModel.removeFromHidedSelectedReleases();
                                     removeAllHidedReleasesConfirm.close();
+                                    releasesViewModel.clearSelectedReleases();
                                 }
                             }
                             RoundedActionButton {
@@ -409,9 +350,8 @@ Page {
                                 text: "Ок"
                                 width: 100
                                 onClicked: {
-                                    onlinePlayerViewModel.removeAllSeenMark();
-                                    refreshSeenMarks();
-                                    refreshAllReleases(true);
+                                    releasesViewModel.removeAllSeenMark();
+                                    releasesViewModel.items.refresh();
                                     removeAllSeenMark.close();
                                 }
                             }
@@ -446,10 +386,10 @@ Page {
 
                         CommonMenuItem {
                             text: "Добавить в кинозал"
-                            enabled: page.selectedReleases.length
+                            enabled: releasesViewModel.items.isHasSelectRelease
                             onPressed: {
-                                localStorage.addToCinemahall(page.selectedReleases);
-                                page.selectedReleases = [];
+                                releasesViewModel.addToCinemahallSelectedReleases();
+                                releasesViewModel.clearSelectedReleases();
                                 cinemahallMenuPanel.close();
                             }
                         }
@@ -525,31 +465,17 @@ Page {
 
                         CommonMenuItem {
                             text: "Скачать все серии в HD"
-                            enabled: page.selectedReleases.length
+                            enabled: releasesViewModel.items.isHasSelectRelease
                             onPressed: {
-                                for (const releaseId of page.selectedReleases) {
-                                    const release = findReleaseById(releaseId);
-                                    for (let videoId = 0; videoId < release.countVideos; videoId++) {
-                                        localStorage.addDownloadItem(release.id, videoId, 1);
-                                    }
-                                }
-
-                                page.selectedReleases = [];
+                                releasesViewModel.clearSelectedReleases();
                                 downloadsMenuPanel.close();
                             }
                         }
                         CommonMenuItem {
                             text: "Скачать все серии в SD"
-                            enabled: page.selectedReleases.length
+                            enabled: releasesViewModel.items.isHasSelectRelease
                             onPressed: {
-                                for (const releaseId of page.selectedReleases) {
-                                    const release = findReleaseById(releaseId);
-                                    for (let videoId = 0; videoId < release.countVideos; videoId++) {
-                                        localStorage.addDownloadItem(release.id, videoId, 2);
-                                    }
-                                }
-
-                                page.selectedReleases = [];
+                                releasesViewModel.clearSelectedReleases();
                                 downloadsMenuPanel.close();
                             }
                         }
@@ -575,7 +501,8 @@ Page {
                         id: filtersExistsMark
                         visible: descriptionSearchField.text || typeSearchField.text || genresSearchField.text ||
                                  voicesSearchField.text || yearsSearchField.text || seasonesSearchField.text ||
-                                 statusesSearchField.text || favoriteMarkSearchField.currentIndex > 0 || seenMarkSearchField.currentIndex > 0
+                                 statusesSearchField.text || favoriteMarkSearchField.currentIndex > 0 || seenMarkSearchField.currentIndex > 0 ||
+                                 releaseSeriesFilterField.checked
                         anchors.top: parent.top
                         anchors.right: parent.right
                         anchors.rightMargin: 6
@@ -589,9 +516,9 @@ Page {
                     Popup {
                         id: filtersPopup
                         x: 40
-                        y: -200
+                        y: -220
                         width: 450
-                        height: 440
+                        height: 490
                         modal: true
                         focus: true
                         closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
@@ -603,7 +530,7 @@ Page {
                                 anchors.left: parent.left
                                 text: "Фильтровать"
                                 onClicked: {
-                                    page.refreshAllReleases(false);
+                                    releasesViewModel.items.refresh();
                                 }
                             }
                             RoundedActionButton {
@@ -612,7 +539,7 @@ Page {
                                 text: "Очистить фильтры"
                                 onClicked: {
                                     page.clearAdditionalFilters();
-                                    page.refreshAllReleases(false);
+                                    releasesViewModel.items.refresh();
                                 }
                             }
                             PlainText {
@@ -634,6 +561,9 @@ Page {
                                 anchors.top: labelDescriptionSearchField.bottom
                                 anchors.rightMargin: 10
                                 placeholderText: "Описание"
+                                onTextChanged: {
+                                    releasesViewModel.items.descriptionFilter = text;
+                                }
                             }
                             TextField {
                                 id: typeSearchField
@@ -641,6 +571,10 @@ Page {
                                 anchors.top: labelTypeSearchField.bottom
                                 anchors.right: parent.right
                                 placeholderText: "Тип"
+                                onTextChanged: {
+                                    releasesViewModel.items.typeFilter = text;
+                                }
+
                             }
 
                             PlainText {
@@ -655,6 +589,9 @@ Page {
                                 width: parent.width * 0.7
                                 anchors.top: labelGenresSearchField.bottom
                                 placeholderText: "Вводите жанры через запятую"
+                                onTextChanged: {
+                                    releasesViewModel.items.genresFilter = text;
+                                }
                             }
                             PlainText {
                                 id: labelOrAndGenresSearchField
@@ -669,6 +606,9 @@ Page {
                                 id: orAndGenresSearchField
                                 anchors.top: labelGenresSearchField.bottom
                                 anchors.left: labelOrAndGenresSearchField.right
+                                onCheckedChanged: {
+                                    releasesViewModel.items.genresFilterOr = checked;
+                                }
                             }
 
                             PlainText {
@@ -683,6 +623,9 @@ Page {
                                 width: parent.width * 0.7
                                 anchors.top: labelVoicesSearchField.bottom
                                 placeholderText: "Вводите войсеров через запятую"
+                                onTextChanged: {
+                                    releasesViewModel.items.voicesFilter = text;
+                                }
                             }
                             PlainText {
                                 id: labelOrAndVoicesSearchField
@@ -697,13 +640,16 @@ Page {
                                 id: orAndVoicesSearchField
                                 anchors.top: labelVoicesSearchField.bottom
                                 anchors.left: labelOrAndVoicesSearchField.right
+                                onCheckedChanged: {
+                                    releasesViewModel.items.voicesFilterOr = checked;
+                                }
                             }
 
                             PlainText {
                                 id: labelYearsSearchField
                                 anchors.top: voicesSearchField.bottom
                                 fontPointSize: 11
-                                text: qsTr("Года")
+                                text: qsTr("Года")                                
                             }
                             PlainText {
                                 id: labelSeasonsSearchField
@@ -718,6 +664,9 @@ Page {
                                 anchors.top: labelYearsSearchField.bottom
                                 anchors.rightMargin: 10
                                 placeholderText: "Вводите через запятую"
+                                onTextChanged: {
+                                    releasesViewModel.items.yearsFilter = text;
+                                }
                             }
                             TextField {
                                 id: seasonesSearchField
@@ -725,6 +674,9 @@ Page {
                                 anchors.top: labelSeasonsSearchField.bottom
                                 anchors.right: parent.right
                                 placeholderText: "Вводите через запятую"
+                                onTextChanged: {
+                                    releasesViewModel.items.seasonesFilter = text;
+                                }
                             }
                             PlainText {
                                 id: labelStatusesSearchField
@@ -739,6 +691,9 @@ Page {
                                 anchors.right: parent.right
                                 anchors.left: parent.left
                                 placeholderText: "Вводите статусы через запятую"
+                                onTextChanged: {
+                                    releasesViewModel.items.statusesFilter = text;
+                                }
                             }
 
                             PlainText {
@@ -773,6 +728,9 @@ Page {
                                         text: "Не в избранном"
                                     }
                                 }
+                                onCurrentIndexChanged: {
+                                    releasesViewModel.items.favoriteMarkFilter = currentIndex;
+                                }
                             }
                             CommonComboBox {
                                 id: seenMarkSearchField
@@ -793,113 +751,24 @@ Page {
                                         text: "Не просмотренные"
                                     }
                                 }
-                            }
-                        }
-                    }
-                }
-                LeftPanelIconButton {
-                    iconPath: "../Assets/Icons/sort.svg"
-                    iconWidth: 29
-                    iconHeight: 29
-                    tooltipMessage: "Указать сортировку списка по одному из полей а также направление сортировки"
-                    showCrossIcon: page.showButtonVisibleChanger && page.hideSortButton
-                    visible: page.showButtonVisibleChanger || !page.hideSortButton
-                    onButtonPressed: {
-                        if (page.showButtonVisibleChanger) {
-                            page.hideSortButton = !page.hideSortButton;
-                            localStorage.setHideSortButton(page.hideSortButton);
-                        } else {
-                            sortingPopup.open();
-                        }
-                    }
-
-                    Popup {
-                        id: sortingPopup
-                        x: 40
-                        y: parent.height - 100
-                        width: 450
-                        height: 200
-                        modal: true
-                        focus: true
-                        closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
-
-                        Rectangle {
-                            width: parent.width
-                            RoundedActionButton {
-                                id: startSortingButton
-                                anchors.right: parent.right
-                                text: "Сортировать"
-                                onClicked: {
-                                    page.refreshAllReleases(false);
+                                onCurrentIndexChanged: {
+                                    releasesViewModel.items.seenMarkFilter = currentIndex;
                                 }
                             }
 
                             PlainText {
-                                id: labelSortingField
-                                anchors.top: startSortingButton.bottom
+                                id: labelReleaseSeriesFilterField
+                                anchors.top: favoriteMarkSearchField.bottom
+                                anchors.rightMargin: 10
                                 fontPointSize: 11
-                                text: qsTr("Сортировать по")
-                            }
-                            CommonComboBox {
-                                id: sortingComboBox
-                                anchors.top: labelSortingField.bottom
-                                anchors.right: parent.right
-                                anchors.left: parent.left
-                                model: ListModel {
-                                    ListElement {
-                                        text: "Дате последнего обновления"
-                                    }
-                                    ListElement {
-                                        text: "Дню в расписании"
-                                    }
-                                    ListElement {
-                                        text: "Имени"
-                                    }
-                                    ListElement {
-                                        text: "Году"
-                                    }
-                                    ListElement {
-                                        text: "Рейтингу"
-                                    }
-                                    ListElement {
-                                        text: "Статусу"
-                                    }
-                                    ListElement {
-                                        text: "Оригинальному имени"
-                                    }
-                                    ListElement {
-                                        text: "История"
-                                    }
-                                    ListElement {
-                                        text: "История просмотра"
-                                    }
-                                    ListElement {
-                                        text: "Сезону"
-                                    }
-                                    ListElement {
-                                        text: "Признак избранности"
-                                    }
-                                    ListElement {
-                                        text: "Признак просмотра"
-                                    }
-                                }
+                                text: "Часть связанного релиза"
                             }
 
-                            PlainText {
-                                id: labelSortingDirection
-                                anchors.top: sortingComboBox.bottom
-                                fontPointSize: 11
-                                text: qsTr("В порядке")
-                            }
-                            CommonComboBox {
-                                id: sortingDirectionComboBox
-                                anchors.top: labelSortingDirection.bottom
-                                anchors.right: parent.right
-                                anchors.left: parent.left
-                                currentIndex: 1
-                                model: ListModel {
-                                    ListElement { text: "Восходящем" }
-                                    ListElement { text: "Нисходящем" }
+                            Switch {
+                                id: releaseSeriesFilterField
+                                anchors.top: labelReleaseSeriesFilterField.bottom
+                                onCheckedChanged: {
+                                    releasesViewModel.items.hasReleaseSeriesFilter = checked;
                                 }
                             }
                         }
@@ -917,13 +786,12 @@ Page {
                             page.hideNotificationButton = !page.hideNotificationButton;
                             localStorage.setHideNotificationButton(page.hideNotificationButton);
                         } else {
-                            page.changesCounts = localStorage.getChangesCounts();
                             notificationPopup.open();
                         }
                     }
 
                     Rectangle {
-                        visible: localStorage.isChangesExists
+                        visible: releasesViewModel.isChangesExists
                         anchors.top: parent.top
                         anchors.right: parent.right
                         anchors.rightMargin: 6
@@ -945,7 +813,7 @@ Page {
                         closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
 
                         Rectangle {
-                            visible: !localStorage.isChangesExists
+                            visible: !releasesViewModel.isChangesExists
                             width: parent.width
                             height: parent.height
                             PlainText {
@@ -956,22 +824,21 @@ Page {
                         }
 
                         Rectangle {
-                            visible: localStorage.isChangesExists
+                            visible: releasesViewModel.isChangesExists
                             width: parent.width
                             RoundedActionButton {
                                 id: resetNotificationButton
                                 anchors.right: parent.right
                                 text: "Отметить все как прочитанное"
                                 onClicked: {
-                                    localStorage.resetAllChanges();
-                                    page.changesCounts = [0, 0, 0, 0];
+                                    releasesViewModel.resetAllChanges();
                                 }
                             }
                             Column {
                                 spacing: 4
                                 anchors.top: resetNotificationButton.bottom
                                 Rectangle {
-                                    visible: page.changesCounts[0] > 0
+                                    visible: releasesViewModel.newReleasesCount > 0
                                     color: ApplicationTheme.panelBackground
                                     border.width: 3
                                     border.color: ApplicationTheme.selectedItem
@@ -981,7 +848,7 @@ Page {
                                     PlainText {
                                         anchors.centerIn: parent
                                         fontPointSize: 11
-                                        text: "Новых релизов: " + page.changesCounts[0]
+                                        text: "Новых релизов: " + releasesViewModel.newReleasesCount
                                     }
                                     MouseArea {
                                         anchors.fill: parent
@@ -991,7 +858,7 @@ Page {
                                     }
                                 }
                                 Rectangle {
-                                    visible: page.changesCounts[1] > 0
+                                    visible: releasesViewModel.newOnlineSeriesCount > 0
                                     color: ApplicationTheme.panelBackground
                                     border.width: 3
                                     border.color: ApplicationTheme.selectedItem
@@ -1001,7 +868,7 @@ Page {
                                     PlainText {
                                         anchors.centerIn: parent
                                         fontPointSize: 11
-                                        text: "Релизов с новыми сериями: " + page.changesCounts[1]
+                                        text: "Релизов с новыми сериями: " + releasesViewModel.newOnlineSeriesCount
                                     }
                                     MouseArea {
                                         anchors.fill: parent
@@ -1011,7 +878,7 @@ Page {
                                     }
                                 }
                                 Rectangle {
-                                    visible: page.changesCounts[2] > 0
+                                    visible: releasesViewModel.newTorrentsCount > 0
                                     color: ApplicationTheme.panelBackground
                                     border.width: 3
                                     border.color: ApplicationTheme.selectedItem
@@ -1021,7 +888,7 @@ Page {
                                     PlainText {
                                         anchors.centerIn: parent
                                         fontPointSize: 11
-                                        text: "Новые торренты: " + page.changesCounts[2]
+                                        text: "Новые торренты: " + releasesViewModel.newTorrentsCount
                                     }
                                     MouseArea {
                                         anchors.fill: parent
@@ -1031,7 +898,7 @@ Page {
                                     }
                                 }
                                 Rectangle {
-                                    visible: page.changesCounts[3] > 0
+                                    visible: releasesViewModel.newTorrentSeriesCount > 0
                                     color: ApplicationTheme.panelBackground
                                     border.width: 3
                                     border.color: ApplicationTheme.selectedItem
@@ -1041,7 +908,7 @@ Page {
                                     PlainText {
                                         anchors.centerIn: parent
                                         fontPointSize: 11
-                                        text: "Релизы с обновленными торрентами: " + page.changesCounts[3]
+                                        text: "Релизы с обновленными торрентами: " + releasesViewModel.newTorrentSeriesCount
                                     }
                                     MouseArea {
                                         anchors.fill: parent
@@ -1066,8 +933,7 @@ Page {
                             page.hideRandomReleaseButton = !page.hideRandomReleaseButton;
                             localStorage.setHideRandomReleaseButton(page.hideRandomReleaseButton);
                         } else {
-                            const randomRelease = JSON.parse(localStorage.getRandomRelease());
-                            showReleaseCard(randomRelease);
+                            releasesViewModel.showRandomRelease();
                         }
                     }
                 }
@@ -1118,6 +984,7 @@ Page {
                             anchors.top: notificationForFavoritesLabel.bottom
                             onCheckedChanged: {
                                 localStorage.setNotificationForFavorites(checked);
+                                releasesViewModel.notificationForFavorites = checked;
                             }
                         }
 
@@ -1313,11 +1180,11 @@ Page {
                     id: multupleMode
                     anchors.left: parent.left
                     onCheckedChanged: {
-                        page.selectMode = checked;
+                        releasesViewModel.selectMode = checked;
                         if (!checked) {
-                            page.selectedReleases = [];
+                            releasesViewModel.clearSelectedReleases();
                         } else {
-                            page.openedRelease = null;
+                            releasesViewModel.hideReleaseCard();
                         }
                     }
                     ToolTip.delay: 1000
@@ -1341,27 +1208,27 @@ Page {
                 PlainText {
                     anchors.verticalCenter: parent.verticalCenter
                     anchors.horizontalCenter: parent.horizontalCenter
-                    visible: page.synchronizeEnabled
+                    visible: releasesViewModel.synchronizationEnabled
                     fontPointSize: 12
                     text: "Выполняется синхронизация..."
                 }
 
                 RoundedActionButton {
                     id: setToStartedSectionButton
-                    visible: page.startedSection !== page.selectedSection
+                    visible: page.startedSection !== releasesViewModel.items.section
                     text: "Сделать стартовым"
                     anchors.verticalCenter: parent.verticalCenter
                     anchors.right: displaySection.left
                     anchors.rightMargin: 8
                     onClicked: {
-                        localStorage.setStartedSection(page.selectedSection);
-                        page.startedSection = page.selectedSection;
+                        localStorage.setStartedSection(releasesViewModel.items.section);
+                        page.startedSection = releasesViewModel.items.section;
                     }
                 }
 
                 PlainText {
                     id: displaySection
-                    text: page.sections[page.selectedSection]
+                    text: releasesViewModel.sectionNames[releasesViewModel.items.section]
                     anchors.verticalCenter: parent.verticalCenter
                     anchors.right: parent.right
                     anchors.rightMargin: 8
@@ -1370,156 +1237,284 @@ Page {
             }
 
             Rectangle {
-                id: filtersContainer
-                Layout.preferredWidth: 380
-                Layout.alignment: Qt.AlignHCenter
+                Layout.fillWidth: true
                 Layout.preferredHeight: 36
                 color: "transparent"
 
-                Row {
-                    width: filtersContainer.width
-                    spacing: 8
-                    RoundedTextBox {
-                        id: filterByTitle
-                        width: 250
-                        height: 40
-                        placeholder: "Введите название релиза"
-                        onCompleteEditing: {
-                            refreshAllReleases(false);
-                        }
-                    }
-                    FilterPanelIconButton {
-                        iconPath: "../Assets/Icons/allreleases.svg"
-                        tooltipMessage: "Все релизы"
-                        onButtonPressed: {
-                            changeSection(0);
-                        }
-                    }
-                    FilterPanelIconButton {
-                        iconPath: "../Assets/Icons/favorite.svg"
-                        tooltipMessage: "Избранное"
-                        onButtonPressed: {
-                            changeSection(1);
-                        }
-                    }
-                    FilterPanelIconButton {
-                        iconPath: "../Assets/Icons/notification.svg"
-                        tooltipMessage: "Показать меню с фильтрами по уведомлениям"
-                        onButtonPressed: {
-                            notificationsMenuSections.open();
-                        }
+                PlainText {
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.left: parent.left
+                    anchors.leftMargin: 14
+                    visible: releasesViewModel.items.isHasReleases && window.width > 970
+                    text: "Найдено: " + releasesViewModel.items.countFilteredReleases
+                    fontPointSize: 10
+                }
 
-                        CommonMenu {
-                            id: notificationsMenuSections
-                            width: 350
-                            y: parent.height
+                Rectangle {
+                    id: filtersContainer
+                    anchors.centerIn: parent
+                    width: 520
+                    height: parent.height
+                    color: "transparent"
 
-                            CommonMenuItem {
-                                text: page.sections[2]
-                                onPressed: {
-                                    page.changeSection(2);
+                    Row {
+                        width: filtersContainer.width
+                        spacing: 8
+                        RoundedTextBox {
+                            id: filterByTitle
+                            width: 210
+                            height: 40
+                            placeholder: "Введите название релиза"
+                            onCompleteEditing: {
+                                releasesViewModel.items.titleFilter = textContent;
+                                releasesViewModel.items.refresh();
+                            }
+                        }
+                        FilterPanelIconButton {
+                            iconPath: assetsLocation.iconsPath + "allreleases.svg"
+                            tooltipMessage: "Все релизы"
+                            onButtonPressed: {
+                                changeSection(0);
+                            }
+                        }
+                        FilterPanelIconButton {
+                            iconPath: assetsLocation.iconsPath + "favorite.svg"
+                            tooltipMessage: "Избранное"
+                            onButtonPressed: {
+                                changeSection(1);
+                            }
+                        }
+                        FilterPanelIconButton {
+                            iconPath: assetsLocation.iconsPath + "notification.svg"
+                            tooltipMessage: "Показать меню с фильтрами по уведомлениям"
+                            onButtonPressed: {
+                                notificationsMenuSections.open();
+                            }
+
+                            CommonMenu {
+                                id: notificationsMenuSections
+                                width: 350
+                                y: parent.height
+
+                                CommonMenuItem {
+                                    text: releasesViewModel.sectionNames[2]
+                                    onPressed: {
+                                        page.changeSection(2);
+                                    }
+                                }
+                                CommonMenuItem {
+                                    text: releasesViewModel.sectionNames[3]
+                                    onPressed: {
+                                        page.changeSection(3);
+                                    }
+                                }
+                                CommonMenuItem {
+                                    text: releasesViewModel.sectionNames[4]
+                                    onPressed: {
+                                        page.changeSection(4);
+                                    }
+                                }
+                                CommonMenuItem {
+                                    text: releasesViewModel.sectionNames[6]
+                                    onPressed: {
+                                        page.changeSection(6);
+                                    }
                                 }
                             }
-                            CommonMenuItem {
-                                text: page.sections[3]
-                                onPressed: {
-                                    page.changeSection(3);
+                        }
+                        FilterPanelIconButton {
+                            iconPath: assetsLocation.iconsPath + "calendar.svg"
+                            iconWidth: 26
+                            iconHeight: 26
+                            tooltipMessage: "Расписание релизов"
+                            onButtonPressed: {
+                                changeSection(5);
+                            }
+                        }
+                        FilterPanelIconButton {
+                            iconPath: assetsLocation.iconsPath + "history.svg"
+                            tooltipMessage: "Показать меню с фильтрами по истории и истории просмотра"
+                            onButtonPressed: {
+                                historyMenuSections.open();
+                            }
+
+                            CommonMenu {
+                                id: historyMenuSections
+                                width: 300
+                                y: parent.height
+
+                                CommonMenuItem {
+                                    text: releasesViewModel.sectionNames[7]
+                                    onPressed: {
+                                        page.changeSection(7);
+                                    }
+                                }
+                                CommonMenuItem {
+                                    text: releasesViewModel.sectionNames[8]
+                                    onPressed: {
+                                        page.changeSection(8);
+                                    }
                                 }
                             }
-                            CommonMenuItem {
-                                text: page.sections[4]
-                                onPressed: {
-                                    page.changeSection(4);
+                        }
+                        FilterPanelIconButton {
+                            id: seenMenuButton
+                            iconPath: assetsLocation.iconsPath + "seenmarkpanel.svg"
+                            tooltipMessage: "Показать меню с фильтрами по состоянию просмотра"
+                            onButtonPressed: {
+                                seenMenuSections.open();
+                            }
+
+                            CommonMenu {
+                                id: seenMenuSections
+                                width: 300
+                                y: parent.height
+
+                                CommonMenuItem {
+                                    text: releasesViewModel.sectionNames[9]
+                                    onPressed: {
+                                        page.changeSection(9);
+                                    }
+                                }
+                                CommonMenuItem {
+                                    text: releasesViewModel.sectionNames[10]
+                                    onPressed: {
+                                        page.changeSection(10);
+                                    }
+                                }
+                                CommonMenuItem {
+                                    text: releasesViewModel.sectionNames[11]
+                                    onPressed: {
+                                        page.changeSection(11);
+                                    }
+                                }
+                                CommonMenuItem {
+                                    text: releasesViewModel.sectionNames[12]
+                                    onPressed: {
+                                        page.changeSection(12);
+                                    }
                                 }
                             }
-                            CommonMenuItem {
-                                text: page.sections[6]
-                                onPressed: {
-                                    page.changeSection(6);
+                        }
+                        FilterPanelIconButton {
+                            iconPath: assetsLocation.iconsPath + "alphabet.svg"
+                            tooltipMessage: "Показать фильтр для выбора букв алфавита для поиска по первой букве релиза"
+                            onButtonPressed: {
+                                page.showAlpabeticalCharaters = true;
+                            }
+                        }
+                        FilterPanelIconButton {
+                            iconPath: assetsLocation.iconsPath + "listcustom.svg"
+                            iconWidth: 20
+                            iconHeight: 20
+                            tooltipMessage: "Показать тематические фильтры"
+                            onButtonPressed: {
+                                customListMenuSections.open();
+                            }
+
+                            CommonMenu {
+                                id: customListMenuSections
+                                width: 350
+                                y: parent.height
+
+                                CommonMenuItem {
+                                    text: releasesViewModel.sectionNames[14]
+                                    onPressed: {
+                                        page.changeSection(14);
+                                    }
+                                }
+                                CommonMenuItem {
+                                    text: releasesViewModel.sectionNames[15]
+                                    onPressed: {
+                                        page.changeSection(15);
+                                    }
+                                }
+                                CommonMenuItem {
+                                    text: releasesViewModel.sectionNames[16]
+                                    onPressed: {
+                                        page.changeSection(16);
+                                    }
+                                }
+                                CommonMenuItem {
+                                    text: releasesViewModel.sectionNames[17]
+                                    onPressed: {
+                                        page.changeSection(17);
+                                    }
                                 }
                             }
                         }
                     }
-                    FilterPanelIconButton {
-                        iconPath: "../Assets/Icons/calendar.svg"
-                        iconWidth: 26
-                        iconHeight: 26
-                        tooltipMessage: "Расписание релизов"
-                        onButtonPressed: {
-                            changeSection(5);
+                }
+
+                CommonComboBox {
+                    id: sortingComboBox
+                    visible: window.width > 970
+                    width: 160
+                    height: parent.height + 2
+                    fontPointSize: 9
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.right: sortingDirectionButton.left
+                    anchors.rightMargin: 2
+                    model: ListModel {
+                        ListElement {
+                            text: "Дате обновления"
+                        }
+                        ListElement {
+                            text: "Дню в расписании"
+                        }
+                        ListElement {
+                            text: "Имени"
+                        }
+                        ListElement {
+                            text: "Году"
+                        }
+                        ListElement {
+                            text: "Рейтингу"
+                        }
+                        ListElement {
+                            text: "Статусу"
+                        }
+                        ListElement {
+                            text: "Оригинальному имени"
+                        }
+                        ListElement {
+                            text: "История"
+                        }
+                        ListElement {
+                            text: "История просмотра"
+                        }
+                        ListElement {
+                            text: "Сезону"
+                        }
+                        ListElement {
+                            text: "Признак избранности"
+                        }
+                        ListElement {
+                            text: "Признак просмотра"
+                        }
+                        ListElement {
+                            text: "Связанным релизам"
                         }
                     }
-                    FilterPanelIconButton {
-                        iconPath: "../Assets/Icons/history.svg"
-                        tooltipMessage: "Показать меню с фильтрами по истории и истории просмотра"
-                        onButtonPressed: {
-                            historyMenuSections.open();
-                        }
-
-                        CommonMenu {
-                            id: historyMenuSections
-                            width: 300
-                            y: parent.height
-
-                            CommonMenuItem {
-                                text: page.sections[7]
-                                onPressed: {
-                                    page.changeSection(7);
-                                }
-                            }
-                            CommonMenuItem {
-                                text: page.sections[8]
-                                onPressed: {
-                                    page.changeSection(8);
-                                }
-                            }
-                        }
+                    onActivated: {
+                        releasesViewModel.items.refresh();
                     }
-                    FilterPanelIconButton {
-                        id: seenMenuButton
-                        iconPath: "../Assets/Icons/seenmarkpanel.svg"
-                        tooltipMessage: "Показать меню с фильтрами по состоянию просмотра"
-                        onButtonPressed: {
-                            seenMenuSections.open();
-                        }
 
-                        CommonMenu {
-                            id: seenMenuSections
-                            width: 300
-                            y: parent.height
-
-                            CommonMenuItem {
-                                text: page.sections[9]
-                                onPressed: {
-                                    page.changeSection(9);
-                                }
-                            }
-                            CommonMenuItem {
-                                text: page.sections[10]
-                                onPressed: {
-                                    page.changeSection(10);
-                                }
-                            }
-                            CommonMenuItem {
-                                text: page.sections[11]
-                                onPressed: {
-                                    page.changeSection(11);
-                                }
-                            }
-                            CommonMenuItem {
-                                text: page.sections[12]
-                                onPressed: {
-                                    page.changeSection(12);
-                                }
-                            }
-                        }
+                    onCurrentIndexChanged: {
+                        releasesViewModel.items.sortingField = currentIndex;
                     }
-                    FilterPanelIconButton {
-                        iconPath: "../Assets/Icons/alphabet.svg"
-                        tooltipMessage: "Показать фильтр для выбора букв алфавита для поиска по первой букве релиза"
-                        onButtonPressed: {
-                            page.showAlpabeticalCharaters = true;
-                        }
+                }
+
+                FilterPanelIconButton {
+                    id: sortingDirectionButton
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.right: parent.right
+                    anchors.rightMargin: 14
+                    iconPath: assetsLocation.iconsPath + (releasesViewModel.items.sortingDescending ? "sortdescending.svg" : "sortascending.svg")
+                    tooltipMessage: "Направление сортировки списка"
+                    onButtonPressed: {
+                        releasesViewModel.items.sortingDescending = !releasesViewModel.items.sortingDescending;
+                        releasesViewModel.items.refresh();
                     }
                 }
             }
@@ -1558,39 +1553,29 @@ Page {
                 Rectangle {
                     color: "transparent"
                     anchors.fill: parent
-                    visible: releasesModel.count === 0
+                    visible: releasesViewModel.countReleases === 0 || !releasesViewModel.items.isHasReleases
 
                     PlainText {
                         anchors.centerIn: parent
                         fontPointSize: 14
                         horizontalAlignment: Text.AlignHCenter
-                        text: localStorage.countReleases > 0 ? "По текущему фильтру ничего не найдено\nПопробуйте указать другие фильтры или раздел и повторить поиск" : "Релизы еще не загружены\nПожалуйста подождите пока они загрузятся"
+                        text: releasesViewModel.countReleases > 0 ? "По текущему фильтру ничего не найдено\nПопробуйте указать другие фильтры или раздел и повторить поиск" : "Релизы еще не загружены\nПожалуйста подождите пока они загрузятся"
                     }
                 }
 
                 GridView {
                     id: scrollview
-                    visible: releasesModel.count > 0
+                    visible: releasesViewModel.items.isHasReleases
                     anchors.horizontalCenter: parent.horizontalCenter
                     height: parent.height
-                    width: parent.width//Math.floor(window.width / 490) * 490
+                    width: parent.width
                     cellWidth: parent.width / Math.floor(parent.width / 490)
                     cellHeight: 290
                     delegate: releaseDelegate
-                    model: releasesModel
+                    model: releasesViewModel.items
                     clip: true
                     ScrollBar.vertical: ScrollBar {
                         active: true
-                    }
-                    onContentYChanged: {
-                        if (page.fillingReleases) return;
-
-                        if (scrollview.atYEnd) {
-                            page.fillingReleases = true;
-                            fillNextReleases();
-                            page.fillingReleases = false;
-                        }
-
                     }
 
                     Component {
@@ -1602,25 +1587,22 @@ Page {
 
                             ReleaseItem {
                                 anchors.centerIn: parent
-                                releaseModel: modelData
-                                favoriteReleases: page.favoriteReleases
-                                isSelected: page.selectedReleases.filter(a => a === releaseModel.id).length
 
                                 onLeftClicked: {
-                                    if (page.openedRelease) return;
+                                    if (releasesViewModel.isOpenedCard) return;
 
-                                    page.selectItem(modelData);
+                                    releasesViewModel.selectRelease(id);
                                 }
                                 onRightClicked: {
                                     multupleMode.checked = !multupleMode.checked;
                                 }
                                 onAddToFavorite: {
-                                    synchronizationService.addUserFavorites(applicationSettings.userToken, modelData.id.toString());
-                                    page.selectedReleases = [];
+                                    releasesViewModel.addReleaseToFavorites(id);
+                                    releasesViewModel.clearSelectedReleases();
                                 }
                                 onRemoveFromFavorite: {
-                                    synchronizationService.removeUserFavorites(applicationSettings.userToken, modelData.id.toString());
-                                    page.selectedReleases = [];
+                                    releasesViewModel.removeReleaseFromFavorites(id);
+                                    releasesViewModel.clearSelectedReleases();
                                 }
                                 onWatchRelease: {
                                     page.watchSingleRelease(id, videos, -1, poster);
@@ -1647,15 +1629,13 @@ Page {
 
         RoundedActionButton {
             id: watchMultipleButton
-            visible: page.selectedReleases.length
+            visible: releasesViewModel.items.isHasSelectRelease
             text: qsTr("Смотреть выбранное")
             anchors.verticalCenter: parent.verticalCenter
             anchors.left: parent.left
             opacity: 0.8
             onClicked: {
-                watchMultipleReleases(page.selectedReleases);
-
-                page.selectedReleases = [];
+                watchMultipleReleases();
             }
         }
         IconButton {
@@ -1682,7 +1662,7 @@ Page {
 
     ColumnLayout {
         id: cardContainer
-        visible: page.openedRelease ? true : false
+        visible: releasesViewModel.isOpenedCard
         anchors.fill: parent
         spacing: 0
         Rectangle {
@@ -1700,7 +1680,7 @@ Page {
                     rightPadding: 4
                     Image {
                         id: cardPoster
-                        source: page.openedRelease ? localStorage.getReleasePosterPath(page.openedRelease.id, page.openedRelease.poster) : '../Assets/Icons/donate.jpg'
+                        source: localStorage.getReleasePosterPath(releasesViewModel.openedReleaseId, releasesViewModel.openedReleasePoster)
                         fillMode: Image.PreserveAspectCrop
                         width: 280
                         height: 390
@@ -1719,7 +1699,6 @@ Page {
                     }
                     Column {
                         width: page.width - cardButtons.width - cardPoster.width
-                        enabled: !!page.openedRelease
                         AccentText {
                             textFormat: Text.RichText
                             fontPointSize: 12
@@ -1728,7 +1707,7 @@ Page {
                             topPadding: 6
                             wrapMode: Text.WordWrap
                             maximumLineCount: 3
-                            text: qsTr(page.openedRelease ? page.openedRelease.title : '')
+                            text: releasesViewModel.openedReleaseTitle
                         }
                         PlainText {
                             textFormat: Text.RichText
@@ -1738,17 +1717,17 @@ Page {
                             wrapMode: Text.WordWrap
                             width: parent.width
                             maximumLineCount: 2
-                            text: qsTr(page.openedRelease ? page.openedRelease.originalName : '')
+                            text: releasesViewModel.openedReleaseOriginalName
                         }
                         PlainText {
                             fontPointSize: 10
                             leftPadding: 8
                             topPadding: 4
-                            text: qsTr("<b>Статус:</b> ") + qsTr(page.openedRelease ? `<a href="http://years">${page.openedRelease.status}</a>` : '')
+                            text: releasesViewModel.openedReleaseStatusDisplay
                             onLinkActivated: {
-                                statusesSearchField.text = page.openedRelease.status;
-                                page.openedRelease = null;
-                                page.refreshAllReleases(false);
+                                statusesSearchField.text = releasesViewModel.openedReleaseStatus;
+                                releasesViewModel.closeReleaseCard();
+                                releasesViewModel.items.refresh();
                             }
 
                             MouseArea {
@@ -1761,11 +1740,11 @@ Page {
                             fontPointSize: 10
                             leftPadding: 8
                             topPadding: 4
-                            text: qsTr("<b>Год:</b> ") + qsTr(page.openedRelease ?  `<a href="http://years">${page.openedRelease.year}</a>` : '')
+                            text: releasesViewModel.openedReleaseYearDisplay
                             onLinkActivated: {
-                                yearsSearchField.text = page.openedRelease.year;
-                                page.openedRelease = null;
-                                page.refreshAllReleases(false);
+                                yearsSearchField.text = releasesViewModel.openedReleaseYear;
+                                releasesViewModel.closeReleaseCard();
+                                releasesViewModel.items.refresh();
                             }
 
                             MouseArea {
@@ -1775,22 +1754,22 @@ Page {
                             }
                         }
                         PlainText {
-                            visible: page.openedRelease && page.openedRelease.id && !!page.scheduledReleases[page.openedRelease.id]
+                            visible: releasesViewModel.openedReleaseInSchedule
                             fontPointSize: 10
                             leftPadding: 8
                             topPadding: 4
-                            text: qsTr("<b>В расписании:</b> ") + (page.openedRelease && page.scheduledReleases[page.openedRelease.id] ? releasesViewModel.getScheduleDay(page.scheduledReleases[page.openedRelease.id]) : '')
+                            text: releasesViewModel.openedReleaseInScheduleDisplay
                         }
 
                         PlainText {
                             fontPointSize: 10
                             leftPadding: 8
                             topPadding: 4
-                            text: qsTr("<b>Сезон:</b> ") + qsTr(page.openedRelease ? `<a href="http://seasons">${page.openedRelease.season}</a>` : '')
+                            text: releasesViewModel.openedReleaseSeasonDisplay
                             onLinkActivated: {
-                                seasonesSearchField.text = page.openedRelease.season;
-                                page.openedRelease = null;
-                                page.refreshAllReleases(false);
+                                seasonesSearchField.text = releasesViewModel.openedReleaseSeason;
+                                releasesViewModel.closeReleaseCard();
+                                releasesViewModel.items.refresh();
                             }
 
                             MouseArea {
@@ -1807,7 +1786,7 @@ Page {
                             width: parent.width
                             wrapMode: Text.WordWrap
                             maximumLineCount: 2
-                            text: qsTr("<b>Тип:</b> ") + qsTr(page.openedRelease ? page.openedRelease.type : '')
+                            text: releasesViewModel.openedReleaseTypeDisplay
                         }
                         PlainText {
                             fontPointSize: 10
@@ -1816,15 +1795,15 @@ Page {
                             width: parent.width
                             wrapMode: Text.WordWrap
                             maximumLineCount: 2
-                            text: qsTr("<b>Жанры:</b> ") + qsTr(page.openedRelease ? getMultipleLinks(page.openedRelease.genres) : '')
+                            text: releasesViewModel.openedReleaseGenresDisplay
                             onLinkActivated: {
                                 if (genresSearchField.text.length) {
                                     genresSearchField.text += ", " + link;
                                 } else {
                                     genresSearchField.text = link;
                                 }
-                                page.openedRelease = null;
-                                page.refreshAllReleases(false);
+                                releasesViewModel.closeReleaseCard();
+                                releasesViewModel.items.refresh();
                             }
 
                             MouseArea {
@@ -1840,15 +1819,15 @@ Page {
                             width: parent.width
                             wrapMode: Text.WordWrap
                             maximumLineCount: 2
-                            text: qsTr("<b>Озвучка:</b> ") + qsTr(page.openedRelease ? getMultipleLinks(page.openedRelease.voices) : '')
+                            text: releasesViewModel.openedReleaseVoicesDisplay
                             onLinkActivated: {
                                 if (voicesSearchField.text.length) {
                                     voicesSearchField.text += ", " + link;
                                 } else {
                                     voicesSearchField.text = link;
                                 }
-                                page.openedRelease = null;
-                                page.refreshAllReleases(false);
+                                releasesViewModel.closeReleaseCard();
+                                releasesViewModel.items.refresh();
                             }
 
                             MouseArea {
@@ -1861,7 +1840,7 @@ Page {
                             fontPointSize: 10
                             leftPadding: 8
                             topPadding: 4
-                            visible: page.openedRelease ? page.openedRelease.countSeensSeries === page.openedRelease.countVideos : false
+                            visible: releasesViewModel.openedReleaseIsAllSeen
                             width: parent.width
                             text: qsTr("<b>Все серии просмотрены</b>")
                         }
@@ -1871,16 +1850,9 @@ Page {
                             topPadding: 4
                             width: parent.width
                             wrapMode: Text.WordWrap
-                            text: qsTr("<b>Описание:</b> ") + qsTr(page.openedRelease ? page.openedRelease.description : '')
+                            text: qsTr("<b>Описание:</b> ") + releasesViewModel.openedReleaseDescription
                             onLinkActivated: {
-                                if (link.indexOf("https://www.anilibria.tv/release/") === 0 || link.indexOf("http://www.anilibria.tv/release/") === 0) {
-                                    let code = link.replace("https://www.anilibria.tv/release/", "").replace("http://www.anilibria.tv/release/", "").replace(".html", "")
-                                    if (code.indexOf(`?`) > -1) code = code.substring( 0, code.indexOf(`?`));
-                                    const release = JSON.parse(localStorage.getReleaseByCode(code));
-                                    showReleaseCard(release);
-                                } else {
-                                    Qt.openUrlExternally(link);
-                                }
+                                releasesViewModel.openDescriptionLink(link);
                             }
 
                             MouseArea {
@@ -1902,7 +1874,7 @@ Page {
                             iconWidth: 28
                             iconHeight: 28
                             onButtonPressed: {
-                                page.openedRelease = null;
+                                releasesViewModel.closeReleaseCard();
                             }
                         }
                         IconButton {
@@ -1933,32 +1905,31 @@ Page {
                                 CommonMenuItem {
                                     text: "Копировать название"
                                     onPressed: {
-                                        releasesViewModel.copyToClipboard(page.openedRelease.title);
+                                        releasesViewModel.copyToClipboard(releasesViewModel.openedReleaseTitle);
                                     }
                                 }
                                 CommonMenuItem {
                                     text: "Копировать оригинальное название"
                                     onPressed: {
-                                        releasesViewModel.copyToClipboard(page.openedRelease.originalName);
+                                        releasesViewModel.copyToClipboard(releasesViewModel.openedReleaseOriginalName);
                                     }
                                 }
                                 CommonMenuItem {
                                     text: "Копировать оба названия"
                                     onPressed: {
-                                        releasesViewModel.copyToClipboard(page.openedRelease.title + ", " + page.openedRelease.originalName);
+                                        releasesViewModel.copyToClipboard(releasesViewModel.openedReleaseTitle + ", " + releasesViewModel.openedReleaseOriginalName);
                                     }
                                 }
                                 CommonMenuItem {
                                     text: "Копировать описание"
                                     onPressed: {
-                                        releasesViewModel.copyToClipboard(page.openedRelease.description);
+                                        releasesViewModel.copyToClipboard(releasesViewModel.openedReleaseDescription);
                                     }
                                 }
                                 CommonMenuItem {
                                     text: "Копировать постер"
                                     onPressed: {
-                                        const currentOpened = page.openedRelease;
-                                        releasesViewModel.copyImageToClipboard(localStorage.getReleasePosterPath(currentOpened.id, currentOpened.poster));
+                                        releasesViewModel.copyImageToClipboard(localStorage.getReleasePosterPath(releasesViewModel.openedReleaseId, releasesViewModel.openedReleasePoster));
                                     }
                                 }
 
@@ -1993,7 +1964,7 @@ Page {
                                 CommonMenuItem {
                                     text: "Переоткрыть комментарии"
                                     onPressed: {
-                                        webView.url = releasesViewModel.getVkontakteCommentPage(page.openedRelease.code);
+                                        webView.url = releasesViewModel.getVkontakteCommentPage(releasesViewModel.openedReleaseCode);
                                     }
                                 }
                             }
@@ -2032,10 +2003,10 @@ Page {
                                 }                                
                                 CommonMenuItem {
                                     id: hideReleaseCardMenu
-                                    enabled: page.openedRelease && !localStorage.isReleaseInHided(page.openedRelease.id)
+                                    enabled: releasesViewModel.isOpenedCard && !releasesViewModel.openedReleaseInHided
                                     text: "Скрыть релиз"
                                     onPressed: {
-                                        localStorage.addToHidedReleases([page.openedRelease.id]);
+                                        releasesViewModel.addToHidedReleases([releasesViewModel.openedReleaseId]);
                                         hideReleaseCardMenu.enabled = false;
                                         removeFromHideReleaseCardMenu.enabled = true;
                                         seenMarkMenu.close();
@@ -2043,10 +2014,10 @@ Page {
                                 }
                                 CommonMenuItem {
                                     id: removeFromHideReleaseCardMenu
-                                    enabled: page.openedRelease && localStorage.isReleaseInHided(page.openedRelease.id)
+                                    enabled: releasesViewModel.isOpenedCard && releasesViewModel.openedReleaseInHided
                                     text: "Убрать релиз из скрытых"
                                     onPressed: {
-                                        localStorage.removeFromHidedReleases([page.openedRelease.id]);
+                                        releasesViewModel.removeFromHidedReleases([releasesViewModel.openedReleaseId]);
                                         hideReleaseCardMenu.enabled = true;
                                         removeFromHideReleaseCardMenu.enabled = false;
                                         seenMarkMenu.close();
@@ -2057,7 +2028,7 @@ Page {
                         IconButton {
                             height: 40
                             width: 40
-                            iconColor: page.openedRelease && page.favoriteReleases.filter(a => a === page.openedRelease.id).length ? ApplicationTheme.selectedFavorite : ApplicationTheme.filterIconButtonColor
+                            iconColor: releasesViewModel.openedReleaseInFavorites ? ApplicationTheme.selectedFavorite : ApplicationTheme.filterIconButtonColor
                             hoverColor: ApplicationTheme.filterIconButtonHoverColor
                             iconPath: "../Assets/Icons/favorite.svg"
                             iconWidth: 26
@@ -2082,19 +2053,19 @@ Page {
                                 }
 
                                 CommonMenuItem {
-                                    enabled: page.openedRelease && !page.favoriteReleases.filter(a => a === page.openedRelease.id).length
+                                    enabled: !releasesViewModel.openedReleaseInFavorites
                                     text: "Добавить в избранное"
                                     onPressed: {
-                                        synchronizationService.addUserFavorites(applicationSettings.userToken, page.openedRelease.id.toString());
-                                        page.selectedReleases = [];
+                                        releasesViewModel.addReleaseToFavorites(releasesViewModel.openedReleaseId);
+                                        cardFavoritesMenu.close();
                                     }
                                 }
                                 CommonMenuItem {
-                                    enabled: page.openedRelease && page.favoriteReleases.filter(a => a === page.openedRelease.id).length
+                                    enabled: releasesViewModel.openedReleaseInFavorites
                                     text: "Удалить из избранного"
                                     onPressed: {
-                                        synchronizationService.removeUserFavorites(applicationSettings.userToken, page.openedRelease.id.toString());
-                                        page.selectedReleases = [];
+                                        releasesViewModel.removeReleaseFromFavorites(releasesViewModel.openedReleaseId);
+                                        cardFavoritesMenu.close();
                                     }
                                 }
                             }
@@ -2122,21 +2093,21 @@ Page {
                                 CommonMenuItem {
                                     text: "Открыть во внешнем плеере в HD качестве"
                                     onPressed: {
-                                        openInExternalPlayer(localStorage.packAsM3UAndOpen(page.openedRelease.id, "hd"));
+                                        releasesViewModel.openInExternalPlayer(localStorage.packAsM3UAndOpen(releasesViewModel.openedReleaseId, "hd"));
                                         externalPlayerMenu.close();
                                     }
                                 }
                                 CommonMenuItem {
                                     text: "Открыть во внешнем плеере в SD качестве"
                                     onPressed: {
-                                        openInExternalPlayer(localStorage.packAsM3UAndOpen(page.openedRelease.id, "sd"));
+                                        releasesViewModel.openInExternalPlayer(localStorage.packAsM3UAndOpen(releasesViewModel.openedReleaseId, "sd"));
                                         externalPlayerMenu.close();
                                     }
                                 }
                                 CommonMenuItem {
                                     text: "Открыть во внешнем плеере в FullHD качестве"
                                     onPressed: {
-                                        openInExternalPlayer(localStorage.packAsM3UAndOpen(page.openedRelease.id, "fullhd"));
+                                        releasesViewModel.openInExternalPlayer(localStorage.packAsM3UAndOpen(releasesViewModel.openedReleaseId, "fullhd"));
                                         externalPlayerMenu.close();
                                     }
                                 }
@@ -2145,7 +2116,7 @@ Page {
                                     notVisible: Qt.platform.os !== "windows"
                                     text: "Открыть в плеере MPC в HD качестве"
                                     onPressed: {
-                                        openInExternalPlayer(localStorage.packAsMPCPLAndOpen(page.openedRelease.id, "hd"));
+                                        releasesViewModel.openInExternalPlayer(localStorage.packAsMPCPLAndOpen(releasesViewModel.openedReleaseId, "hd"));
                                         externalPlayerMenu.close();
                                     }
                                 }
@@ -2153,7 +2124,7 @@ Page {
                                     notVisible: Qt.platform.os !== "windows"
                                     text: "Открыть в плеере MPC в SD качестве"
                                     onPressed: {
-                                        openInExternalPlayer(localStorage.packAsMPCPLAndOpen(page.openedRelease.id, "sd"));
+                                        releasesViewModel.openInExternalPlayer(localStorage.packAsMPCPLAndOpen(releasesViewModel.openedReleaseId, "sd"));
                                         externalPlayerMenu.close();
                                     }
                                 }
@@ -2161,7 +2132,7 @@ Page {
                                     notVisible: Qt.platform.os !== "windows"
                                     text: "Открыть в плеере MPC в FullHD качестве"
                                     onPressed: {
-                                        openInExternalPlayer(localStorage.packAsMPCPLAndOpen(page.openedRelease.id, "fullhd"));
+                                        releasesViewModel.openInExternalPlayer(localStorage.packAsMPCPLAndOpen(releasesViewModel.openedReleaseId, "fullhd"));
                                         externalPlayerMenu.close();
                                     }
                                 }
@@ -2189,14 +2160,14 @@ Page {
                                 }
 
                                 Repeater {
-                                    model: page.openedRelease ? page.openedRelease.countVideos : 0
+                                    model: releasesViewModel.isOpenedCard ? releasesViewModel.openedReleaseCountVideos : 0
 
                                     CommonMenuItem {
                                         text: "Серия " + (index + 1)
                                         onPressed: {
-                                            watchSingleRelease(page.openedRelease.id, page.openedRelease.videos, index, page.openedRelease.poster);
+                                            watchSingleRelease(releasesViewModel.openedReleaseId, releasesViewModel.openedReleaseVideos, index, releasesViewModel.openedReleasePoster);
 
-                                            page.openedRelease = null;
+                                            releasesViewModel.hideReleaseCard();
                                             if (Qt.platform.os !== "windows") webView.visible = true;
                                         }
                                     }
@@ -2235,6 +2206,7 @@ Page {
                                     onPressed: {
                                         const torrentUri = synchronizationService.combineWithWebSiteUrl(url);
                                         synchronizationService.downloadTorrent(torrentUri);
+                                        userActivityViewModel.addDownloadedTorrentToCounter();
                                     }
                                 }
                             }
@@ -2246,7 +2218,7 @@ Page {
                         anchors.left: parent.left
                         anchors.leftMargin: 100
                         fontPointSize: 11
-                        text: "Доступно "+ (page.openedRelease ? page.openedRelease.countTorrents : "0" ) + " торрентов"
+                        text: "Доступно "+ releasesViewModel.openedReleaseCountTorrents + " торрентов"
                     }
 
                     PlainText {
@@ -2254,7 +2226,7 @@ Page {
                         anchors.right: watchButton.left
                         anchors.rightMargin: 10
                         fontPointSize: 11
-                        text: "Доступно "+ (page.openedRelease ? page.openedRelease.countVideos : "0" ) + " серий онлайн"
+                        text: "Доступно "+ releasesViewModel.openedReleaseCountVideos + " серий онлайн"
                     }
 
                     RoundedActionButton {
@@ -2264,9 +2236,9 @@ Page {
                         anchors.right: parent.right
                         anchors.rightMargin: 10
                         onClicked: {
-                            watchSingleRelease(page.openedRelease.id, page.openedRelease.videos, -1, page.openedRelease.poster)
+                            watchSingleRelease(releasesViewModel.openedReleaseId, releasesViewModel.openedReleaseVideos, -1, releasesViewModel.openedReleasePoster)
 
-                            page.openedRelease = null;
+                            releasesViewModel.hideReleaseCard();
                             releasePosterPreview.isVisible = false;
                             if (Qt.platform.os !== "windows") webView.visible = true;
                         }
@@ -2288,7 +2260,7 @@ Page {
                 }
                 WebEngineView {
                     id: webView
-                    visible: page.openedRelease ? true : false
+                    visible: releasesViewModel.isOpenedCard
                     width: cardContainer.width
                     height: cardContainer.height - releaseInfo.height - 60
                 }
@@ -2329,104 +2301,16 @@ Page {
     }
 
     function setSeenStateForOpenedRelease(newState) {
-        onlinePlayerViewModel.setSeenMarkAllSeries(page.openedRelease.id, page.openedRelease.countVideos, newState);
-        page.openedRelease.countSeensSeries = newState ? page.openedRelease.countVideos : 0;
-        const oldRelease = page.openedRelease;
-        page.openedRelease = null;
-        page.openedRelease = oldRelease;
-        refreshSeenMarks();
-        refreshAllReleases(true);
+        releasesViewModel.setSeenMarkAllSeries(releasesViewModel.openedReleaseId, releasesViewModel.openedReleaseCountVideos, newState);
+        releasesViewModel.refreshOpenedReleaseCard();
+        releasesViewModel.items.refreshSingleItem(releasesViewModel.openedReleaseId);
     }
 
     function setSeenStateForRelease(newState, releases) {
-        for (const releaseId of releases) {
-            const release = JSON.parse(localStorage.getRelease(releaseId));
-            const videos = JSON.parse(release.videos);
-            onlinePlayerViewModel.setSeenMarkAllSeriesWithoutSave(releaseId, videos.length, newState);
-        }
-        onlinePlayerViewModel.saveSeenMarkCacheToFile();
-
-        page.selectedReleases = [];
-        refreshSeenMarks();
-        refreshAllReleases(true);
-    }
-
-    function selectItem(item) {
-        if (page.selectMode) {
-            if (page.openedRelease) page.openedRelease = null;
-            if (page.selectedReleases.find(a => a === item.id)) {
-                page.selectedReleases = page.selectedReleases.filter(a => a !== item.id);
-            } else {
-                page.selectedReleases.push(item.id);
-            }
-
-            //WORKAROUND: fix refresh list
-            const oldSelectedReleases = page.selectedReleases;
-            page.selectedReleases = [];
-            page.selectedReleases = oldSelectedReleases;
-        } else {
-            showReleaseCard(item);
-        }
-    }
-
-    function getReleasesByFilter() {
-        return JSON.parse(
-            localStorage.getReleasesByFilter(
-                page.pageIndex,
-                filterByTitle.textContent,
-                page.selectedSection,
-                descriptionSearchField.text,
-                typeSearchField.text,
-                genresSearchField.text,
-                orAndGenresSearchField.checked,
-                voicesSearchField.text,
-                orAndVoicesSearchField.checked,
-                yearsSearchField.text,
-                seasonesSearchField.text,
-                statusesSearchField.text,
-                sortingComboBox.currentIndex,
-                sortingDirectionComboBox.currentIndex == 1 ? true : false,
-                favoriteMarkSearchField.currentIndex,
-                seenMarkSearchField.currentIndex,
-                alphabetListModel.getSelectedCharacters()
-            )
-        );
-    }
-
-    function refreshSeenMarks() {
-        page.seenMarks = JSON.parse(onlinePlayerViewModel.getSeenMarks());
-    }
-
-    function setSeensCounts(releases) {
-        for (const release of releases) {
-            release.countSeensSeries = 0;
-            if (release.id in page.seenMarks) {
-                release.countSeensSeries = page.seenMarks[release.id];
-            }
-        }
-    }
-
-    function fillNextReleases() {
-        if (releasesModel.count < 12) return;
-        if (page.pageIndex === -1) return;
-
-        page.pageIndex += 1;
-
-        const nextPageReleases = getReleasesByFilter();
-        setSeensCounts(nextPageReleases);
-        for (const displayRelease of nextPageReleases) releasesModel.append({ model: displayRelease });
-
-        if (nextPageReleases.length < 12) page.pageIndex = -1;
-    }
-
-    function refreshAllReleases(notResetScroll) {
-        if (Object.keys(page.seenMarks).length === 0) refreshSeenMarks();
-        page.pageIndex = 1;
-        releasesModel.clear();
-        const displayReleases = getReleasesByFilter();
-        setSeensCounts(displayReleases);
-        for (const displayRelease of displayReleases) releasesModel.append({ model: displayRelease });
-        if (!notResetScroll) scrollview.contentY = 0;
+        releasesViewModel.setSeenMarkAllSeriesSelectedReleases(newState);
+        releasesViewModel.items.refreshSelectedItems();
+        releasesViewModel.clearSelectedReleases();
+        seenMarkMenuPanel.close();
     }
 
     function clearAdditionalFilters() {
@@ -2441,81 +2325,26 @@ Page {
         statusesSearchField.text = "";
         favoriteMarkSearchField.currentIndex = 0;
         seenMarkSearchField.currentIndex = 0;
+        releaseSeriesFilterField.checked = false;
         alphabetListModel.clearCharacters();
     }
 
     function changeSection(section) {
-        if (section === page.selectedSection) return;
+        if (releasesViewModel.items.section === section) return;
 
         if (clearFilterAfterChangeSectionSwitch.checked) {
             filterByTitle.textContent = "";
             page.clearAdditionalFilters();
         }
 
-        page.selectedSection = section;
-        if (section in page.sectionSortings) {
-            const defaultSorting = page.sectionSortings[section];
-            sortingComboBox.currentIndex = defaultSorting.field;
-            sortingDirectionComboBox.currentIndex = defaultSorting.direction;
-        }
+        releasesViewModel.items.section = section;
+        releasesViewModel.setupSortingForSection();
+        sortingComboBox.currentIndex = releasesViewModel.items.sortingField;
 
-        refreshAllReleases(false);
-    }
-
-    function refreshSchedule() {
-        const schedule = localStorage.getSchedule();
-        if (schedule) page.scheduledReleases = JSON.parse(schedule);
-    }
-
-    function showReleaseCard(release) {
-        if (release.id === -1) return;
-
-        releasesViewModel.openedCardTorrents.loadTorrentsFromJson(release.torrents);
-
-        page.openedRelease = release;
-        localStorage.setToReleaseHistory(release.id, 0);
-        analyticsService.sendView("releasecard", "show", "%2Freleases");
-
-        localStorage.resetReleaseChanges(release.id);
-        page.changesCounts = localStorage.getChangesCounts();
-
-        webView.url = releasesViewModel.getVkontakteCommentPage(page.openedRelease.code);
-    }
-
-    function openInExternalPlayer(url) {
-        if (!url) return;
-
-        Qt.openUrlExternally(url);
-    }
-
-    function getMultipleLinks(text) {
-        if (!text) return "";
-        let result = "";
-
-        const parts = text.split(",");
-        let isFirst = true;
-        for (const part of parts) {
-            const partData = part.trim();
-            result += (!isFirst ? ", " : "") + `<a href="${partData}">${partData}</a>`;
-            isFirst = false;
-        }
-
-        return result;
-    }
-
-    function findReleaseById(id) {
-        for (let i = 0; i < releasesModel.count; i++) {
-            const release = releasesModel.get(i).model;
-            if (release.id === id) return release;
-        }
-
-        return null;
+        releasesViewModel.items.refresh();
     }
 
     Component.onCompleted: {
-        refreshAllReleases(false);
-        refreshSchedule();
-
         const userSettings = JSON.parse(localStorage.getUserSettings());
         downloadTorrentMode.currentIndex = userSettings.torrentDownloadMode;
         notificationForFavorites.checked = userSettings.notificationForFavorites;
@@ -2527,7 +2356,6 @@ Page {
         page.hideRandomReleaseButton = userSettings.hideRandomReleaseButton;
         page.hideNotificationButton = userSettings.hideNotificationButton;
         page.hideInfoButton = userSettings.hideInfoButton;
-        page.hideSortButton = userSettings.hideSortButton;
         page.hideFilterButton = userSettings.hideFilterButton;
         showReleaseDescriptionSwitch.checked = userSettings.showReleaseDescription;
         useCustomToolbarSwitch.checked = applicationSettings.useCustomToolbar;
@@ -2535,5 +2363,7 @@ Page {
         const startedSection = userSettings.startedSection;
         if (startedSection) changeSection(startedSection);
         page.startedSection = startedSection;
+
+        releasesViewModel.items.refresh();
     }
 }

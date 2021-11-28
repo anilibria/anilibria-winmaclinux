@@ -68,6 +68,7 @@ SOURCES += \
     Classes/ListModels/mainmenulistmodel.cpp \
     Classes/ListModels/onlineplayervideolist.cpp \
     Classes/ListModels/popupnotificationvideolist.cpp \
+    Classes/ListModels/releaseslistmodel.cpp \
     Classes/ListModels/releasetorrentslist.cpp \
     Classes/Models/changesmodel.cpp \
     Classes/Models/downloaditemmodel.cpp \
@@ -141,6 +142,7 @@ HEADERS += \
     Classes/ListModels/mainmenulistmodel.h \
     Classes/ListModels/onlineplayervideolist.h \
     Classes/ListModels/popupnotificationvideolist.h \
+    Classes/ListModels/releaseslistmodel.h \
     Classes/ListModels/releasetorrentslist.h \
     Classes/Models/changesmodel.h \
     Classes/Models/downloaditemmodel.h \

@@ -41,38 +41,12 @@
 #include "../Models/seenmarkmodel.h"
 #include "../Models/externalplaylistvideo.h"
 
-using namespace std;
-
-const int FavoriteSection = 1;
-const int NewReleasesSection = 2;
-const int NewOnlineSeriesSection = 3;
-const int NewTorrentsSection = 4;
-const int ScheduleSection = 5;
-const int NewTorrentSeriesSection = 6;
-const int HistorySection = 7;
-const int WatchHistorySection = 8;
-const int SeenHistorySection = 9;
-const int SeeningHistorySection = 10;
-const int NotSeeningHistorySection = 11;
-const int HiddenReleasesSection = 12;
-
 LocalStorageService::LocalStorageService(QObject *parent) : QObject(parent),
-    m_CachedReleases(new QList<FullReleaseModel*>()),
-    m_ChangesModel(new ChangesModel()),
-    m_SeenMarkModels(new QHash<QString, bool>()),
-    m_HistoryModels(new QHash<int, HistoryModel*>()),
     m_UserSettingsModel(new UserSettingsModel()),
-    m_IsChangesExists(false),
-    m_CountReleases(0),
     m_CinemaHall(new QVector<int>()),
-    m_HidedReleases(new QVector<int>()),
-    m_CountSeens(0),
     m_Downloads(new QVector<DownloadItemModel*>()),
-    m_CountCinemahall(0),
-    m_newEntities("")
+    m_CountCinemahall(0)
 {
-    m_AllReleaseUpdatedWatcher = new QFutureWatcher<void>(this);
-
     if (IsPortable) {
         auto cachePath = QDir::currentPath() + "/imagecache";
         QDir().mkpath(cachePath);
@@ -83,74 +57,25 @@ LocalStorageService::LocalStorageService(QObject *parent) : QObject(parent),
         qDebug() << "Cache location: " << QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation);
     }
 
-#ifdef Q_OS_WIN
-    //WORKAROUND: sorry guys for it, I move this code to another place shortly
-    //run installer for xaudio in first application start for windows 7
-    auto osVersion = QOperatingSystemVersion::current();
-    if (!QFile::exists(getReleasesCachePath()) && osVersion < QOperatingSystemVersion(QOperatingSystemVersion::Windows8)) {
-        QProcess audioPorcess(this);
-        QStringList arguments;
-        audioPorcess.start(QCoreApplication::applicationDirPath() + "/codecpacks/DXSETUP.exe", arguments);
-    }
-#endif
-
-    createIfNotExistsFile(getReleasesCachePath(), "[]");
-    createIfNotExistsFile(getScheduleCachePath(), "{}");
-    createIfNotExistsFile(getFavoritesCachePath(), "[]");
-    createIfNotExistsFile(getSeenMarksCachePath(), "[]");
-    createIfNotExistsFile(getHistoryCachePath(), "[]");
     createIfNotExistsFile(getUserSettingsCachePath(), "{}");
-    createIfNotExistsFile(getNotificationCachePath(), "{ \"newReleases\": [], \"newOnlineSeries\": [], \"newTorrents\": [], \"newTorrentSeries\": [] }");
     createIfNotExistsFile(getCinemahallCachePath(), "[]");
     createIfNotExistsFile(getDownloadsCachePath(), "[]");
-    createIfNotExistsFile(getHidedReleasesCachePath(), "[]");
 
-    updateReleasesInnerCache();
-
-    auto changesJson = getChanges();
-    m_ChangesModel->fromJson(changesJson);
-
-    loadSeenMarks();
-    loadHistory();
     loadSettings();
     loadDownloads();
     loadCinemahall();
-    loadHidedReleases();
-
-    resetChanges();
 
     m_OfflineImageCacheService = new OfflineImageCacheService(this);
-
-    connect(m_AllReleaseUpdatedWatcher, SIGNAL(finished()), this, SLOT(allReleasesUpdated()));
 }
 
-bool LocalStorageService::isChangesExists()
+void LocalStorageService::setup(QSharedPointer<QList<FullReleaseModel*>> releases)
 {
-    return m_IsChangesExists;
+    m_releases = releases;
 }
 
-void LocalStorageService::setIsChangesExists(bool isChangesExists)
+void LocalStorageService::invalidateReleasePoster(int id)
 {
-    if (m_IsChangesExists == isChangesExists) return;
-
-    m_IsChangesExists = isChangesExists;
-    emit isChangesExistsChanged();
-}
-
-void LocalStorageService::setCountReleases(int countReleases) noexcept
-{
-    if (m_CountReleases == countReleases) return;
-
-    m_CountReleases = countReleases;
-    emit countReleasesChanged(countReleases);
-}
-
-void LocalStorageService::setCountSeens(int countSeens) noexcept
-{
-    if (m_CountSeens == countSeens) return;
-
-    m_CountSeens = countSeens;
-    emit countSeensChanged(countSeens);
+    m_OfflineImageCacheService->invalidateReleasePoster(id);
 }
 
 void LocalStorageService::setCountCinemahall(int countCinemahall) noexcept
@@ -161,7 +86,7 @@ void LocalStorageService::setCountCinemahall(int countCinemahall) noexcept
     emit countCinemahallChanged();
 }
 
-void LocalStorageService::updateAllReleases(const QString &releases)
+/*void LocalStorageService::updateAllReleases(const QString &releases)
 {
     QFuture<void> future = QtConcurrent::run(
         [=] {
@@ -214,7 +139,7 @@ void LocalStorageService::updateAllReleases(const QString &releases)
             }
 
             saveCachedReleasesToFile();
-            updateReleasesInnerCache();
+            //updateReleasesInnerCache();
             saveChanges();
 
             QString newEntities;
@@ -226,212 +151,15 @@ void LocalStorageService::updateAllReleases(const QString &releases)
         }
     );
     m_AllReleaseUpdatedWatcher->setFuture(future);
-}
-
-QString LocalStorageService::videosToJson(QList<OnlineVideoModel> &videos)
-{
-    QJsonArray videosArray;
-    foreach (auto video, videos) {
-        QJsonObject jsonObject;
-        video.writeToJson(jsonObject);
-        videosArray.append(jsonObject);
-    }
-    QJsonDocument videoDocument(videosArray);
-    QString videosJson(videoDocument.toJson());
-    return videosJson;
-}
-
-QString LocalStorageService::torrentsToJson(QList<ReleaseTorrentModel> &torrents)
-{
-    QJsonArray torrentsArray;
-    foreach (auto torrent, torrents) {
-        QJsonObject jsonObject;
-        torrent.writeToJson(jsonObject);
-        torrentsArray.append(jsonObject);
-    }
-    QJsonDocument torrentDocument(torrentsArray);
-    QString torrentJson(torrentDocument.toJson());
-    return torrentJson;
-}
+}*/
 
 FullReleaseModel* LocalStorageService::getReleaseFromCache(int id)
 {
-    foreach (auto cacheRelease, *m_CachedReleases) if (cacheRelease->id() == id) return cacheRelease;
+    foreach (auto cacheRelease, *m_releases) if (cacheRelease->id() == id) return cacheRelease;
 
     FullReleaseModel* nullObject = new FullReleaseModel();
     nullObject->setId(-1);
     return nullObject;
-}
-
-FullReleaseModel* LocalStorageService::mapToFullReleaseModel(ReleaseModel &releaseModel)
-{
-    FullReleaseModel* model = new FullReleaseModel();
-
-    auto torrents = releaseModel.torrents();
-    auto torrentJson = torrentsToJson(torrents);
-
-    auto videos = releaseModel.videos();
-    auto videosJson = videosToJson(videos);
-
-    auto voices = releaseModel.voices().join(", ");
-    if (voices.length() == 0) voices = "Не указано";
-
-    auto genres = releaseModel.genres().join(", ");
-    if (genres.length() == 0) genres = "Не указано";
-
-    model->setId(releaseModel.id());
-    model->setTitle(releaseModel.title());
-    model->setCode(releaseModel.code());
-    auto names = releaseModel.names();
-    auto last = names.last();
-    model->setOriginalName(last);
-    model->setRating(releaseModel.rating());
-    model->setSeries(releaseModel.series());
-    model->setStatus(releaseModel.status());
-    model->setType(releaseModel.type());
-    model->setTimestamp(releaseModel.timestamp().toInt());
-    model->setYear(releaseModel.year());
-    model->setSeason(releaseModel.season());
-    model->setCountTorrents(torrents.count());
-    model->setCountOnlineVideos(videos.count());
-    model->setDescription(releaseModel.description());
-    model->setAnnounce(releaseModel.announce());
-    model->setVoicers(voices);
-    model->setGenres(genres);
-    model->setVideos(videosJson);
-    model->setTorrents(torrentJson);
-    model->setPoster(releaseModel.poster());
-
-    return model;
-}
-
-void LocalStorageService::saveCachedReleasesToFile()
-{
-    QJsonArray releasesArray;
-    foreach (auto release, *m_CachedReleases) {
-        QJsonObject jsonObject;
-        release->writeToJson(jsonObject);
-        releasesArray.append(jsonObject);
-    }
-    QJsonDocument document(releasesArray);
-
-    QFile file(getReleasesCachePath());
-    file.open(QFile::WriteOnly | QFile::Text | QFile::Truncate);
-    file.write(document.toJson());
-    file.close();
-}
-
-QStringList LocalStorageService::getAllFavorites()
-{
-    QFile favoritesCacheFile(getFavoritesCachePath());
-    favoritesCacheFile.open(QFile::ReadOnly | QFile::Text);
-    QString favoritesJson = favoritesCacheFile.readAll();
-    favoritesCacheFile.close();
-
-    QJsonParseError jsonError;
-    QJsonDocument jsonDocument = QJsonDocument::fromJson(favoritesJson.toUtf8(), &jsonError);
-    auto favorites = jsonDocument.array();
-    QStringList result;
-    foreach (auto favorite, favorites) result.append(QString::number(favorite.toInt()));
-
-    return result;
-}
-
-QMap<int, int> LocalStorageService::getScheduleAsMap()
-{
-    QFile scheduleCacheFile(getScheduleCachePath());
-    scheduleCacheFile.open(QFile::ReadOnly | QFile::Text);
-    QString scheduleJson = scheduleCacheFile.readAll();
-    scheduleCacheFile.close();
-
-    QJsonParseError jsonError;
-    QJsonDocument jsonDocument = QJsonDocument::fromJson(scheduleJson.toUtf8(), &jsonError);
-    auto schedule = jsonDocument.object();
-    auto keys = schedule.keys();
-    QMap<int, int> result;
-    foreach (auto key, keys) {
-        auto scheduleDay = schedule.value(key).toString();
-        result[key.toInt()] = scheduleDay.toInt();
-    }
-
-    return result;
-}
-
-bool LocalStorageService::checkOrCondition(QStringList source, QStringList target)
-{
-    foreach(QString sourceItem, source) {
-        if (target.filter(sourceItem, Qt::CaseInsensitive).count() > 0) return true;
-    }
-
-    return false;
-}
-
-bool LocalStorageService::checkAllCondition(QStringList source, QStringList target)
-{
-    int counter = 0;
-    foreach(QString sourceItem, source) {
-        if (target.filter(sourceItem, Qt::CaseInsensitive).count() > 0) counter++;
-    }
-
-    return counter == source.count();
-}
-
-void LocalStorageService::removeTrimsInStringCollection(QStringList& list) {
-    QMutableStringListIterator iterator(list);
-    while (iterator.hasNext()) {
-        QString value = iterator.next();
-        iterator.setValue(value.trimmed());
-    }
-}
-
-int LocalStorageService::randomBetween(int low, int high)
-{
-    return QRandomGenerator::global()->bounded(low, high);
-}
-
-QString LocalStorageService::getReleasesCachePath() const
-{
-    if (IsPortable) {
-        return QDir::currentPath() + "/releases.cache";
-    } else {
-        return QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation) + "/releases.cache";
-    }
-}
-
-QString LocalStorageService::getFavoritesCachePath() const
-{
-    if (IsPortable) {
-        return QDir::currentPath() + "/favorites.cache";
-    } else {
-        return QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation) + "/favorites.cache";
-    }
-}
-
-QString LocalStorageService::getScheduleCachePath() const
-{
-    if (IsPortable) {
-        return QDir::currentPath() + "/schedule.cache";
-    } else {
-        return QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation) + "/schedule.cache";
-    }
-}
-
-QString LocalStorageService::getSeenMarksCachePath() const
-{
-    if (IsPortable) {
-        return QDir::currentPath() + "/seenmark.cache";
-    } else {
-        return QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation) + "/seenmark.cache";
-    }
-}
-
-QString LocalStorageService::getHistoryCachePath() const
-{
-    if (IsPortable) {
-        return QDir::currentPath() + "/history.cache";
-    } else {
-        return QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation) + "/history.cache";
-    }
 }
 
 QString LocalStorageService::getUserSettingsCachePath() const
@@ -440,15 +168,6 @@ QString LocalStorageService::getUserSettingsCachePath() const
         return QDir::currentPath() + "/usersettings.cache";
     } else {
         return QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation) + "/usersettings.cache";
-    }
-}
-
-QString LocalStorageService::getNotificationCachePath() const
-{
-    if (IsPortable) {
-        return QDir::currentPath() + "/notification.cache";
-    } else {
-        return QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation) + "/notification.cache";
     }
 }
 
@@ -470,15 +189,6 @@ QString LocalStorageService::getDownloadsCachePath() const
     }
 }
 
-QString LocalStorageService::getHidedReleasesCachePath() const
-{
-    if (IsPortable) {
-        return QDir::currentPath() + "/hidedreleases.cache";
-    } else {
-        return QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation) + "/hidedreleases.cache";
-    }
-}
-
 void LocalStorageService::createIfNotExistsFile(QString path, QString defaultContent)
 {
     if (!QFile::exists(path)) {
@@ -487,95 +197,6 @@ void LocalStorageService::createIfNotExistsFile(QString path, QString defaultCon
         createReleasesCacheFile.write(defaultContent.toUtf8());
         createReleasesCacheFile.close();
     }
-}
-
-void LocalStorageService::saveChanges()
-{
-    QFile notificationFile(getNotificationCachePath());
-    if (!notificationFile.open(QFile::WriteOnly | QFile::Text)) {
-        //TODO: handle this situation
-    }
-    notificationFile.write(m_ChangesModel->toJson().toUtf8());
-    notificationFile.close();
-
-    resetChanges();
-}
-
-void LocalStorageService::resetChanges()
-{
-    bool isChanges = false;
-    if (m_ChangesModel->newReleases()->count() > 0) isChanges = true;
-    if (m_ChangesModel->newOnlineSeries()->count() > 0) isChanges = true;
-    if (m_ChangesModel->newTorrents()->count() > 0) isChanges = true;
-    if (m_ChangesModel->newTorrentSeries()->count() > 0) isChanges = true;
-
-    setIsChangesExists(isChanges);
-}
-
-void LocalStorageService::loadSeenMarks()
-{
-    QFile seenMarkFile(getSeenMarksCachePath());
-    if (!seenMarkFile.open(QFile::ReadOnly | QFile::Text)) {
-        //TODO: handle this situation
-    }
-    auto seenMarkJson = seenMarkFile.readAll();
-    seenMarkFile.close();
-
-    auto document = QJsonDocument::fromJson(seenMarkJson);
-    auto jsonSeenMarks = document.array();
-
-    m_SeenMarkModels->clear();
-
-    foreach (auto item, jsonSeenMarks) {
-        m_SeenMarkModels->insert(item.toString(), true);
-    }
-
-    recalculateSeenCounts();
-}
-
-void LocalStorageService::loadHistory()
-{
-    QFile historyCacheFile(getHistoryCachePath());
-    if (!historyCacheFile.open(QFile::ReadOnly | QFile::Text)) {
-        //TODO: handle this situation
-    }
-    auto historyJson = historyCacheFile.readAll();
-    historyCacheFile.close();
-
-    auto document = QJsonDocument::fromJson(historyJson);
-    auto historyItems = document.array();
-
-    foreach (auto item, historyItems) {
-        HistoryModel* historyModel = new HistoryModel();
-        historyModel->readFromJson(item);
-
-        m_HistoryModels->insert(historyModel->id(), historyModel);
-    }
-}
-
-void LocalStorageService::saveHistory()
-{
-    QJsonArray historyItems;
-
-    QHashIterator<int, HistoryModel*> iterator(*m_HistoryModels);
-    while(iterator.hasNext()) {
-        iterator.next();
-
-        QJsonObject jsonObject;
-        HistoryModel* historyModel = iterator.value();
-        historyModel->writeToJson(jsonObject);
-        historyItems.append(jsonObject);
-    }
-
-    QFile historyFile(getHistoryCachePath());
-    if (!historyFile.open(QFile::WriteOnly | QFile::Text)) {
-        //TODO: handle this situation
-    }
-
-    auto document = QJsonDocument(historyItems);
-    historyFile.write(document.toJson());
-
-    historyFile.close();
 }
 
 void LocalStorageService::loadSettings()
@@ -640,22 +261,6 @@ void LocalStorageService::loadCinemahall()
     setCountCinemahall(m_CinemaHall->count());
 }
 
-void LocalStorageService::loadHidedReleases()
-{
-    QFile hidedReleasesFile(getHidedReleasesCachePath());
-    if (!hidedReleasesFile.open(QFile::ReadOnly | QFile::Text)) {
-        //TODO: handle this situation
-    }
-    auto json = hidedReleasesFile.readAll();
-    hidedReleasesFile.close();
-
-    auto document = QJsonDocument::fromJson(json);
-    auto jsonArray = document.array();
-
-    m_HidedReleases->clear();
-    foreach (auto item, jsonArray) m_HidedReleases->append(item.toInt());
-}
-
 void LocalStorageService::saveDownloads()
 {
     QJsonArray downloadsArray;
@@ -699,701 +304,10 @@ void LocalStorageService::saveCinemahall()
     setCountCinemahall(m_CinemaHall->count());
 }
 
-void LocalStorageService::saveHidedReleases()
-{
-    QJsonArray hidedReleasesArray;
-
-    foreach (auto releaseId, *m_HidedReleases) {
-        QJsonValue value(releaseId);
-        hidedReleasesArray.append(value);
-    }
-
-    QFile hidedReleasesFile(getHidedReleasesCachePath());
-    if (!hidedReleasesFile.open(QFile::WriteOnly | QFile::Text)) {
-        //TODO: handle this situation
-    }
-
-    auto document = QJsonDocument(hidedReleasesArray);
-    hidedReleasesFile.write(document.toJson());
-
-    hidedReleasesFile.close();
-}
-
-QHash<int, int> LocalStorageService::getAllSeenMarkCount()
-{
-    QHash<int, int> result;
-    QHashIterator<QString, bool> iterator(*m_SeenMarkModels);
-    while(iterator.hasNext()) {
-        iterator.next();
-
-        QString key = iterator.key();
-        auto keyParts = key.split(".");
-        auto releaseId = keyParts.first().toInt();
-        if (!result.contains(releaseId)) {
-            result[releaseId] = 1;
-        } else {
-            result[releaseId] += 1;
-        }
-    }
-    return result;
-}
-
-int LocalStorageService::countOnlyFavorites(QList<int>* changes, QSet<int>* favorites)
-{
-    int count = 0;
-    foreach (auto changeId, *changes) {
-        if (favorites->contains(changeId)) count++;
-    }
-    return count;
-}
-
-void LocalStorageService::setSeenMarkForRelease(int id, int countSeries, bool marked)
-{
-    for (int i = 0; i < countSeries; i++) {
-        auto key = QString::number(id) + "." + QString::number(i);
-        if (marked) {
-            if (!m_SeenMarkModels->contains(key)) m_SeenMarkModels->insert(key, true);
-        } else {
-            if (m_SeenMarkModels->contains(key)) m_SeenMarkModels->remove(key);
-        }
-    }
-}
-
-void LocalStorageService::recalculateSeenCounts()
-{
-    auto allSeenMarks = getAllSeenMarkCount();
-    QHashIterator<int, int> seenIterator(allSeenMarks);
-    int countSeens = 0;
-    while (seenIterator.hasNext()) {
-        seenIterator.next();
-
-        auto release = getReleaseFromCache(seenIterator.key());
-        if (release->countOnlineVideos() == seenIterator.value()) countSeens += 1;
-    }
-
-    setCountSeens(countSeens);
-}
-
-void LocalStorageService::recalculateSeenCountsFromFile()
-{
-    loadSeenMarks();
-
-    recalculateSeenCounts();
-}
-
-bool LocalStorageService::importReleasesFromFile(QString path)
-{
-    auto filePath = path.replace("file:///", "").replace("file://", "");
-    QFile importFile(filePath);
-    if (!importFile.open(QFile::ReadOnly | QFile::Text)) {
-        qInfo() << "Error while import releases from file";
-        return false;
-    }
-
-    auto json = importFile.readAll();
-    importFile.close();
-
-    updateAllReleases(json);
-
-    return true;
-}
-
-void LocalStorageService::setNewEntities(const QString &newEntities)
-{
-    if (m_newEntities == newEntities) return;
-
-    m_newEntities = newEntities;
-    emit newEntitiesChanged();
-}
-
-QString LocalStorageService::getRelease(int id)
-{
-    QListIterator<FullReleaseModel*> i(*m_CachedReleases);
-
-    while(i.hasNext()) {
-        auto release = i.next();
-        if (release->id() == id) {
-            QJsonObject jsonValue;
-            release->writeToJson(jsonValue);
-
-            QJsonDocument saveDoc(jsonValue);
-            return saveDoc.toJson();
-        }
-    }
-
-    return "{}";
-}
-
-QString LocalStorageService::getReleaseByCode(const QString& code)
-{
-    QListIterator<FullReleaseModel*> i(*m_CachedReleases);
-
-    while(i.hasNext()) {
-        auto release = i.next();
-        if (release->code() == code) {
-            QJsonObject jsonValue;
-            release->writeToJson(jsonValue);
-
-            QJsonDocument saveDoc(jsonValue);
-            return saveDoc.toJson();
-        }
-    }
-
-    return "{}";
-}
-
-QString LocalStorageService::getRandomRelease()
-{
-    auto count = m_CachedReleases->count() - 1;
-
-    auto position = randomBetween(1, count);
-
-    auto release = m_CachedReleases->at(position);
-
-    QJsonObject jsonValue;
-    release->writeToJson(jsonValue);
-
-    QJsonDocument saveDoc(jsonValue);
-    return saveDoc.toJson();
-}
-
-QString LocalStorageService::getChanges()
-{
-    QFile notificationFile(getNotificationCachePath());
-    if (!notificationFile.open(QFile::ReadOnly | QFile::Text)) {
-        //TODO: handle this situation
-    }
-    auto changes = notificationFile.readAll();
-    notificationFile.close();
-
-    return changes;
-}
-
-static bool compareTimeStamp(const FullReleaseModel* first, const FullReleaseModel* second)
-{
-    return first->timestamp() < second->timestamp();
-}
-
-static bool compareTimeStampDescending(const FullReleaseModel* first, const FullReleaseModel* second)
-{
-    return first->timestamp() > second->timestamp();
-}
-
-static bool compareName(const FullReleaseModel* first, const FullReleaseModel* second)
-{
-    return first->title() < second->title();
-}
-
-static bool compareNameDescending(const FullReleaseModel* first, const FullReleaseModel* second)
-{
-    return first->title() > second->title();
-}
-
-static bool compareYear(const FullReleaseModel* first, const FullReleaseModel* second)
-{
-    return first->year() < second->year();
-}
-
-static bool compareYearDescending(const FullReleaseModel* first, const FullReleaseModel* second)
-{
-    return first->year() > second->year();
-}
-
-static bool compareRating(const FullReleaseModel* first, const FullReleaseModel* second)
-{
-    return first->rating() < second->rating();
-}
-
-static bool compareRatingDescending(const FullReleaseModel* first, const FullReleaseModel* second)
-{
-    return first->rating() > second->rating();
-}
-
-static bool compareStatus(const FullReleaseModel* first, const FullReleaseModel* second)
-{
-    return first->status() < second->status();
-}
-
-static bool compareStatusDescending(const FullReleaseModel* first, const FullReleaseModel* second)
-{
-    return first->status() > second->status();
-}
-
-static bool compareOriginalName(const FullReleaseModel* first, const FullReleaseModel* second)
-{
-    return first->originalName() < second->originalName();
-}
-
-static bool compareOriginalNameDescending(const FullReleaseModel* first, const FullReleaseModel* second)
-{
-    return first->originalName() > second->originalName();
-}
-
-static bool compareSeason(const FullReleaseModel* first, const FullReleaseModel* second)
-{
-    return first->season() < second->season();
-}
-
-static bool compareSeasonDescending(const FullReleaseModel* first, const FullReleaseModel* second)
-{
-    return first->season() > second->season();
-}
-
-QString LocalStorageService::getReleasesByFilter(int page, QString title, int section, QString description, QString type, QString genres, bool genresOr, QString voices, bool voicesOr, QString years, QString seasones, QString statuses, int sortingField, bool sortingDescending, int favoriteMark, int seenMark, const QStringList& alphabets)
-{
-    int pageSize = 12;
-    int startIndex = (page - 1) * pageSize;
-
-    QStringList userFavorites = getAllFavorites();
-    QSet<int> favoriteIds;
-    foreach (auto favorite, userFavorites) favoriteIds.insert(favorite.toInt());
-
-    QMap<int, int> scheduled = getScheduleAsMap();
-    auto seenMarks = getAllSeenMarkCount();
-
-    std::function<bool (const FullReleaseModel*, const FullReleaseModel*)> scheduleComparer = [scheduled](const FullReleaseModel* first, const FullReleaseModel* second) {
-        auto firstId = first->id();
-        auto firstScheduled = scheduled.contains(firstId) ? scheduled[firstId] : 9;
-
-        auto secondId = second->id();
-        auto secondScheduled = scheduled.contains(secondId) ? scheduled[secondId] : 9;
-
-        return firstScheduled < secondScheduled;
-    };
-
-    std::function<bool (const FullReleaseModel*, const FullReleaseModel*)> scheduleDescendingComparer = [scheduled](const FullReleaseModel* first, const FullReleaseModel* second) {
-        auto firstId = first->id();
-        auto firstScheduled = scheduled.contains(firstId) ? scheduled[firstId] : 9;
-
-        auto secondId = second->id();
-        auto secondScheduled = scheduled.contains(secondId) ? scheduled[secondId] : 9;
-
-        return firstScheduled > secondScheduled;
-    };
-
-    std::function<bool (const FullReleaseModel*, const FullReleaseModel*)> historyComparer = [this](const FullReleaseModel* first, const FullReleaseModel* second) {
-        int leftTimestamp = 0;
-        int firstId = first->id();
-        if (m_HistoryModels->contains(first->id())) {
-            auto historyItem = m_HistoryModels->value(firstId);
-            leftTimestamp = historyItem->timestamp();
-        }
-
-        int rightTimestamp = 0;
-        int secondId = second->id();
-        if (m_HistoryModels->contains(second->id())) {
-            auto historyItem = m_HistoryModels->value(secondId);
-            rightTimestamp = historyItem->timestamp();
-        }
-
-        return leftTimestamp < rightTimestamp;
-    };
-
-    std::function<bool (const FullReleaseModel*, const FullReleaseModel*)> historyDescendingComparer = [this](const FullReleaseModel* first, const FullReleaseModel* second) {
-        int leftTimestamp = 0;
-        int firstId = first->id();
-        if (m_HistoryModels->contains(firstId)) {
-           auto historyItem = m_HistoryModels->value(firstId);
-           leftTimestamp = historyItem->timestamp();
-        }
-
-        int rightTimestamp = 0;
-        int secondId = second->id();
-        if (m_HistoryModels->contains(secondId)) {
-            auto historyItem = m_HistoryModels->value(secondId);
-            rightTimestamp = historyItem->timestamp();
-        }
-
-        return leftTimestamp > rightTimestamp;
-    };
-
-    std::function<bool (const FullReleaseModel*, const FullReleaseModel*)> watchHistoryComparer = [this](const FullReleaseModel* first, const FullReleaseModel* second) {
-        int leftTimestamp = 0;
-        int firstId = first->id();
-        if (m_HistoryModels->contains(first->id())) {
-           auto historyItem = m_HistoryModels->value(firstId);
-           leftTimestamp = historyItem->watchTimestamp();
-        }
-
-        int rightTimestamp = 0;
-        int secondId = second->id();
-        if (m_HistoryModels->contains(second->id())) {
-           auto historyItem = m_HistoryModels->value(secondId);
-           rightTimestamp = historyItem->watchTimestamp();
-        }
-
-        return leftTimestamp < rightTimestamp;
-    };
-
-    std::function<bool (const FullReleaseModel*, const FullReleaseModel*)> watchHistoryDescendingComparer = [this](const FullReleaseModel* first, const FullReleaseModel* second) {
-        int leftTimestamp = 0;
-        int firstId = first->id();
-        if (m_HistoryModels->contains(first->id())) {
-            auto historyItem = m_HistoryModels->value(firstId);
-           leftTimestamp = historyItem->watchTimestamp();
-        }
-
-        int rightTimestamp = 0;
-        int secondId = second->id();
-        if (m_HistoryModels->contains(second->id())) {
-            auto historyItem = m_HistoryModels->value(secondId);
-           rightTimestamp = historyItem->watchTimestamp();
-        }
-
-        return leftTimestamp > rightTimestamp;
-    };
-
-    std::function<bool (const FullReleaseModel*, const FullReleaseModel*)> favoriteComparer = [userFavorites](const FullReleaseModel* first, const FullReleaseModel* second) {
-
-        bool left = userFavorites.contains(QString::number(first->id()));
-
-        bool right = userFavorites.contains(QString::number(second->id()));
-
-        return left < right;
-    };
-
-    std::function<bool (const FullReleaseModel*, const FullReleaseModel*)> favoriteDescendingComparer = [userFavorites](const FullReleaseModel* first, const FullReleaseModel* second) {
-        bool left = userFavorites.contains(QString::number(first->id()));
-
-        bool right = userFavorites.contains(QString::number(second->id()));
-
-        return left > right;
-    };
-
-    std::function<bool (const FullReleaseModel*, const FullReleaseModel*)> seenComparer = [seenMarks](const FullReleaseModel* first, const FullReleaseModel* second) {
-        auto leftCountSeenVideos = seenMarks.contains(first->id()) ? seenMarks.value(first->id()) : 0;
-        int leftIndex = leftCountSeenVideos == first->countOnlineVideos() ? 0 : (leftCountSeenVideos > 0 ? 1 : 2);
-
-        auto rightCountSeenVideos = seenMarks.contains(second->id()) ? seenMarks.value(second->id()) : 0;
-        int rightIndex = rightCountSeenVideos == second->countOnlineVideos() ? 0 : (rightCountSeenVideos > 0 ? 1 : 2);
-
-        return leftIndex < rightIndex;
-    };
-
-    std::function<bool (const FullReleaseModel*, const FullReleaseModel*)> seenDescendingComparer = [seenMarks](const FullReleaseModel* first, const FullReleaseModel* second) {
-        auto leftCountSeenVideos = seenMarks.contains(first->id()) ? seenMarks.value(first->id()) : 0;
-        int leftIndex = leftCountSeenVideos == first->countOnlineVideos() ? 0 : (leftCountSeenVideos > 0 ? 1 : 2);
-
-        auto rightCountSeenVideos = seenMarks.contains(second->id()) ? seenMarks.value(second->id()) : 0;
-        int rightIndex = rightCountSeenVideos == second->countOnlineVideos() ? 0 : (rightCountSeenVideos > 0 ? 1 : 2);
-
-        return leftIndex > rightIndex;
-    };
-
-    QJsonArray releases;
-
-    switch (sortingField) {
-        case 0:
-            std::sort(m_CachedReleases->begin(), m_CachedReleases->end(), sortingDescending ? compareTimeStampDescending : compareTimeStamp);
-            break;
-        case 1: //Дню в расписании
-            std::sort(m_CachedReleases->begin(), m_CachedReleases->end(), sortingDescending ? scheduleDescendingComparer : scheduleComparer);
-            break;
-        case 2: //Имени
-            std::sort(m_CachedReleases->begin(), m_CachedReleases->end(), sortingDescending ? compareNameDescending : compareName);
-            break;
-        case 3: //Году
-            std::sort(m_CachedReleases->begin(), m_CachedReleases->end(), sortingDescending ? compareYearDescending : compareYear);
-            break;
-        case 4: //Рейтингу
-            std::sort(m_CachedReleases->begin(), m_CachedReleases->end(), sortingDescending ? compareRatingDescending : compareRating);
-            break;
-        case 5: //Статусу
-            std::sort(m_CachedReleases->begin(), m_CachedReleases->end(), sortingDescending ? compareStatusDescending : compareStatus);
-            break;
-        case 6: //Оригинальному имени
-            std::sort(m_CachedReleases->begin(), m_CachedReleases->end(), sortingDescending ? compareOriginalNameDescending : compareOriginalName);
-            break;
-        case 7: //История
-            std::sort(m_CachedReleases->begin(), m_CachedReleases->end(), sortingDescending ? historyDescendingComparer : historyComparer);
-            break;
-        case 8: //История просмотра
-            std::sort(m_CachedReleases->begin(), m_CachedReleases->end(), sortingDescending ? watchHistoryDescendingComparer : watchHistoryComparer);
-            break;
-        case 9: //Сезону
-            std::sort(m_CachedReleases->begin(), m_CachedReleases->end(), sortingDescending ? compareSeasonDescending : compareSeason);
-            break;
-        case 10: //Признак избранности
-            std::sort(m_CachedReleases->begin(), m_CachedReleases->end(), sortingDescending ? favoriteComparer : favoriteDescendingComparer);
-            break;
-        case 11: //Признак просмотра
-            std::sort(m_CachedReleases->begin(), m_CachedReleases->end(), sortingDescending ? seenComparer : seenDescendingComparer);
-            break;
-    }
-
-    foreach (auto releaseItem, *m_CachedReleases) {
-        if (m_HidedReleases->contains(releaseItem->id()) && section != HiddenReleasesSection) continue;
-        if (!title.isEmpty()) {
-            auto filteredTitle = title.toLower().replace("ё", "е").trimmed();
-            auto inTitle = releaseItem->title().toLower().replace("ё", "е").contains(filteredTitle);
-            auto inOriginalTitle = releaseItem->originalName().toLower().replace("ё", "е").contains(filteredTitle);
-            if (!(inTitle || inOriginalTitle)) continue;
-        }
-        if (!description.isEmpty() && !releaseItem->description().toLower().contains(description.toLower())) continue;
-        if (!type.isEmpty() && !releaseItem->type().toLower().contains(type.toLower())) continue;
-
-        //years
-        if (!years.isEmpty()) {
-            QStringList yearsList = years.split(",");
-            removeTrimsInStringCollection(yearsList);
-            int year = releaseItem->year().toInt();
-            QStringList singleYear;
-            singleYear.append(QString::number(year));
-
-            if (!checkOrCondition(yearsList, singleYear)) continue;
-        }
-
-        //statuses
-        if (!statuses.isEmpty()) {
-            QStringList statusesList = statuses.split(",");
-            removeTrimsInStringCollection(statusesList);
-            QStringList singleStatus;
-            singleStatus.append(releaseItem->status());
-
-            if (!checkOrCondition(statusesList, singleStatus)) continue;
-        }
-
-        //seasons
-        if (!seasones.isEmpty()) {
-            QStringList seasonesList = seasones.split(",");
-            removeTrimsInStringCollection(seasonesList);
-            auto season = releaseItem->season();
-            QStringList singleSeason;
-            singleSeason.append(season);
-
-            if (!checkOrCondition(seasonesList, singleSeason)) continue;
-        }
-
-        //genres
-        if (!genres.isEmpty()) {
-            QStringList genresList = genres.split(",");
-            removeTrimsInStringCollection(genresList);
-            QStringList releaseGenresList = releaseItem->genres().split(",");
-            if (genresOr) {
-                if (!checkAllCondition(genresList, releaseGenresList)) continue;
-            } else {
-                if (!checkOrCondition(genresList, releaseGenresList)) continue;
-            }
-        }
-
-        //voices
-        if (!voices.isEmpty()) {
-            QStringList voicesList = voices.split(",");
-            QStringList releaseVoicesList = releaseItem->voicers().split(",");
-            if (voicesOr) {
-                if (!checkAllCondition(voicesList, releaseVoicesList)) continue;
-            } else {
-                if (!checkOrCondition(voicesList, releaseVoicesList)) continue;
-            }
-        }
-
-        if (!alphabets.empty()) {
-            bool startWithAlphabetsCharacters = false;
-            foreach (auto alphabetCharacter, alphabets) {
-                if (releaseItem->title().startsWith(alphabetCharacter)) {
-                    startWithAlphabetsCharacters = true;
-                }
-            }
-            if (!startWithAlphabetsCharacters) continue;
-        }
-
-        //favorite mark
-
-        if (favoriteMark == 1 && !userFavorites.contains(QString::number(releaseItem->id()))) continue;
-        if (favoriteMark == 2 && userFavorites.contains(QString::number(releaseItem->id()))) continue;
-
-        //seen mark
-        auto countVideos = seenMarks.contains(releaseItem->id()) ? seenMarks.value(releaseItem->id()) : 0;
-        int seenState = countVideos == releaseItem->countOnlineVideos() ? 0 : (countVideos > 0 ? 1 : 2);
-        if (seenMark == 1 && !(seenState == 0)) continue;
-        if (seenMark == 2 && !(seenState == 1)) continue;
-        if (seenMark == 3 && !(seenState == 2)) continue;
-
-        //favorites section
-        if (section == FavoriteSection) {
-            auto releaseId = releaseItem->id();
-            if (!userFavorites.contains(QString::number(releaseId))) continue;
-        }
-
-        if (section == ScheduleSection && !scheduled.contains(releaseItem->id())) continue;
-
-        if (section == NewReleasesSection && !m_ChangesModel->newReleases()->contains(releaseItem->id())) continue;
-
-        if (section == NewOnlineSeriesSection && !m_ChangesModel->newOnlineSeries()->contains(releaseItem->id())) continue;
-
-        if (section == NewTorrentsSection && !m_ChangesModel->newTorrents()->contains(releaseItem->id())) continue;
-
-        if (section == NewTorrentSeriesSection && !m_ChangesModel->newTorrentSeries()->contains(releaseItem->id())) continue;
-
-        auto notificationForFavorites = m_UserSettingsModel->notificationForFavorites();
-        bool isInFavorites = favoriteIds.contains(releaseItem->id());
-
-        if ((section == NewOnlineSeriesSection ||
-           section == NewTorrentsSection ||
-           section == NewTorrentSeriesSection) && notificationForFavorites && !isInFavorites) continue;
-
-        if (section == HistorySection && !(m_HistoryModels->contains(releaseItem->id()) && m_HistoryModels->value(releaseItem->id())->timestamp() > 0)) continue;
-
-        if (section == WatchHistorySection && !(m_HistoryModels->contains(releaseItem->id()) && m_HistoryModels->value(releaseItem->id())->watchTimestamp() > 0)) continue;
-
-        auto countReleaseSeenVideos = seenMarks.contains(releaseItem->id()) ? seenMarks.value(releaseItem->id()) : 0;
-        auto isAllSeens = countReleaseSeenVideos == releaseItem->countOnlineVideos() && releaseItem->countOnlineVideos() > 0;
-        if (section == SeenHistorySection && !isAllSeens) continue;
-
-        if (section == SeeningHistorySection && !(countReleaseSeenVideos > 0 && !isAllSeens)) continue;
-
-        if (section == NotSeeningHistorySection && !(countReleaseSeenVideos == 0)) continue;
-
-        if (section == HiddenReleasesSection && !m_HidedReleases->contains(releaseItem->id())) continue;
-
-        if (startIndex > 0) {
-            startIndex--;
-            continue;
-        }
-
-        QJsonObject jsonValue;
-        releaseItem->writeToJson(jsonValue);
-        releases.append(jsonValue);
-
-        if (releases.count() >= pageSize) break;
-    }
-
-    QJsonDocument saveDoc(releases);
-    return saveDoc.toJson();
-}
-
-void LocalStorageService::setSchedule(QString schedule)
-{
-    QFile scheduleCacheFile(getScheduleCachePath());
-    scheduleCacheFile.open(QFile::WriteOnly | QFile::Text);
-    scheduleCacheFile.write(schedule.toUtf8());
-    scheduleCacheFile.close();
-}
-
-QString LocalStorageService::getSchedule()
-{
-    QFile scheduleCacheFile(getScheduleCachePath());
-    scheduleCacheFile.open(QFile::ReadOnly | QFile::Text);
-    QString scheduleJson = scheduleCacheFile.readAll();
-    scheduleCacheFile.close();
-    return scheduleJson;
-}
-
-void LocalStorageService::updateFavorites(QString data)
-{
-    QFile favoritesCacheFile(getFavoritesCachePath());
-    favoritesCacheFile.open(QFile::WriteOnly | QFile::Text);
-    favoritesCacheFile.write(data.toUtf8());
-    favoritesCacheFile.close();
-}
-
-QList<int> LocalStorageService::getFavorites()
-{
-    auto favorites = getAllFavorites();
-    QList<int> ids;
-    foreach(auto favorite, favorites) ids.append(favorite.toInt());
-
-    return ids;
-}
-
-void LocalStorageService::clearFavorites()
-{
-    updateFavorites("[]");
-}
-
-void LocalStorageService::updateReleasesInnerCache()
-{
-    m_CachedReleases->clear();
-
-    QFile releasesCacheFile(getReleasesCachePath());
-
-    releasesCacheFile.open(QFile::ReadOnly | QFile::Text);
-
-    QString releasesJson = releasesCacheFile.readAll();
-    releasesCacheFile.close();
-    auto releasesArray = QJsonDocument::fromJson(releasesJson.toUtf8()).array();
-
-    foreach (auto release, releasesArray) {
-        FullReleaseModel* jsonRelease = new FullReleaseModel();
-        jsonRelease->readFromJson(release);
-
-        m_CachedReleases->append(jsonRelease);
-    }
-
-    setCountReleases(m_CachedReleases->count());
-}
-
-QList<int> LocalStorageService::getChangesCounts()
-{
-    QList<int> result;
-
-    result.append(m_ChangesModel->newReleases()->count());
-
-    if (m_UserSettingsModel->notificationForFavorites()) {
-        auto favorites = getAllFavorites();
-        QSet<int> favoriteIds;
-        foreach (auto favorite, favorites) favoriteIds.insert(favorite.toInt());
-
-        result.append(countOnlyFavorites(m_ChangesModel->newOnlineSeries(), &favoriteIds));
-        result.append(countOnlyFavorites(m_ChangesModel->newTorrents(), &favoriteIds));
-        result.append(countOnlyFavorites(m_ChangesModel->newTorrentSeries(), &favoriteIds));
-    } else {
-        result.append(m_ChangesModel->newOnlineSeries()->count());
-        result.append(m_ChangesModel->newTorrents()->count());
-        result.append(m_ChangesModel->newTorrentSeries()->count());
-    }
-
-    return result;
-}
-
-void LocalStorageService::resetAllChanges()
-{
-    m_ChangesModel->newReleases()->clear();
-    m_ChangesModel->newOnlineSeries()->clear();
-    m_ChangesModel->newTorrents()->clear();
-    m_ChangesModel->newTorrentSeries()->clear();
-
-    saveChanges();
-}
-
-void LocalStorageService::resetReleaseChanges(int releaseId)
-{
-    if (m_ChangesModel->newReleases()->contains(releaseId)) m_ChangesModel->newReleases()->removeOne(releaseId);
-    if (m_ChangesModel->newOnlineSeries()->contains(releaseId)) m_ChangesModel->newOnlineSeries()->removeOne(releaseId);
-    if (m_ChangesModel->newTorrents()->contains(releaseId)) m_ChangesModel->newTorrents()->removeOne(releaseId);
-    if (m_ChangesModel->newTorrentSeries()->contains(releaseId)) m_ChangesModel->newTorrentSeries()->removeOne(releaseId);
-
-    saveChanges();
-}
-
-void LocalStorageService::setToReleaseHistory(int id, int type)
-{
-    HistoryModel* item;
-    if (m_HistoryModels->contains(id)) {
-        item = m_HistoryModels->value(id);
-    } else {
-        item = new HistoryModel();
-        item->setId(id);
-        m_HistoryModels->insert(id, item);
-    }
-
-    QDateTime now = QDateTime::currentDateTime();
-    int timestamp = static_cast<int>(now.toTime_t());
-
-    switch (type) {
-        case HistoryReleaseCardMode:
-            item->setTimestamp(timestamp);
-            break;
-        case HistoryWatchReleaseCardMode:
-            item->setWatchTimestamp(timestamp);
-            break;
-    }
-
-    saveHistory();
-}
-
 void LocalStorageService::setVolume(double volume)
 {
+    if (volume < 0) return;
+
     m_UserSettingsModel->setVolume(volume);
 
     saveSettings();
@@ -1644,7 +558,7 @@ QString LocalStorageService::getCinemahallReleases()
 {
     QVector<FullReleaseModel*> cinemahallReleases(m_CinemaHall->count());
 
-    foreach (auto releaseItem, *m_CachedReleases) {
+    foreach (auto releaseItem, *m_releases) {
         if (!m_CinemaHall->contains(releaseItem->id())) continue;
 
         cinemahallReleases[m_CinemaHall->indexOf(releaseItem->id())] = releaseItem;
@@ -1667,7 +581,7 @@ QString LocalStorageService::getReleases(const QList<int> &ids)
 {
     QVector<FullReleaseModel*> resultReleases;
 
-    foreach (auto releaseItem, *m_CachedReleases) {
+    foreach (auto releaseItem, *m_releases) {
         if (!ids.contains(releaseItem->id())) continue;
 
         resultReleases.append(releaseItem);
@@ -1775,13 +689,13 @@ QList<QString> LocalStorageService::getDownloadsReleases()
         releaseIds.insert(downloadItem->releaseId());
 
         auto iterator = std::find_if(
-            m_CachedReleases->begin(),
-            m_CachedReleases->end(),
+            m_releases->begin(),
+            m_releases->end(),
             [downloadItem](FullReleaseModel* release) -> bool {
                 return release->id() == downloadItem->releaseId();
             }
         );
-        if (iterator == m_CachedReleases->end()) continue;
+        if (iterator == m_releases->end()) continue;
 
         QJsonObject jsonValue;
         (*iterator)->writeToJson(jsonValue);
@@ -1810,49 +724,4 @@ QString LocalStorageService::getDownloads()
 void LocalStorageService::clearPostersCache()
 {
     m_OfflineImageCacheService->clearPosterCache();
-}
-
-bool LocalStorageService::importReleasesFromExternalFile(QString path)
-{
-    return importReleasesFromFile(path);
-}
-
-void LocalStorageService::addToHidedReleases(const QList<int>& ids)
-{
-    foreach(auto id, ids) {
-        if (m_HidedReleases->contains(id)) continue;
-
-        m_HidedReleases->append(id);
-    }
-
-    saveHidedReleases();
-}
-
-void LocalStorageService::removeFromHidedReleases(const QList<int>& ids)
-{
-    foreach (auto id, ids) {       
-        auto index = m_HidedReleases->indexOf(id);
-        if (index == -1) continue;
-
-        m_HidedReleases->remove(index);
-    }
-
-    saveHidedReleases();
-}
-
-void LocalStorageService::removeAllHidedReleases()
-{
-    m_HidedReleases->clear();
-
-    saveHidedReleases();
-}
-
-bool LocalStorageService::isReleaseInHided(int id)
-{
-    return m_HidedReleases->indexOf(id) > -1;
-}
-
-void LocalStorageService::allReleasesUpdated()
-{
-    emit allReleasesFinished();
 }

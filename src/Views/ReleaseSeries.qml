@@ -52,69 +52,12 @@ Page {
             Layout.fillHeight: true
             Column {
                 LeftPanelIconButton {
-                    iconPath: "../Assets/Icons/menu.svg"
+                    iconPath: assetsLocation.iconsPath + "menu.svg"
                     tooltipMessage: "Открыть меню приложения"
                     iconWidth: 29
                     iconHeight: 29
                     onButtonPressed: {
                         drawer.open();
-                    }
-                }
-                LeftPanelIconButton {
-                    iconPath: "../Assets/Icons/search.svg"
-                    tooltipMessage: "Открыть всплывающее окно с фильтрами"
-                    iconWidth: 29
-                    iconHeight: 29
-                    onButtonPressed: {
-                        seriesFiltersPopup.open();
-                    }
-
-                    Popup {
-                        id: seriesFiltersPopup
-                        x: 40
-                        y: parent.height - 45
-                        width: 450
-                        height: 200
-                        modal: true
-                        focus: true
-                        closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
-
-                        Rectangle {
-                            width: parent.width
-                            RoundedActionButton {
-                                id: startFilterButton
-                                anchors.left: parent.left
-                                text: "Фильтровать"
-                                onClicked: {
-                                    releaseLinkedSeries.filterSeries();
-                                }
-                            }
-                            RoundedActionButton {
-                                id: clearFiltersButton
-                                anchors.right: parent.right
-                                text: "Очистить фильтры"
-                                onClicked: {
-                                    releaseLinkedSeries.clearFilters();
-                                }
-                            }
-                            PlainText {
-                                id: labelNameSearchField
-                                anchors.top: clearFiltersButton.bottom
-                                fontPointSize: 11
-                                text: qsTr("Наименование")
-                            }
-                            TextField {
-                                id: nameSearchField
-                                width: parent.width - 5
-                                anchors.top: labelNameSearchField.bottom
-                                anchors.rightMargin: 10
-                                placeholderText: "Введите часть или полное наименование релиза"
-                                text: releaseLinkedSeries.nameFilter
-                                onTextChanged: {
-                                    releaseLinkedSeries.nameFilter = text;
-                                }
-                            }
-                        }
                     }
                 }
             }
@@ -131,6 +74,18 @@ Page {
                 Layout.preferredHeight: 45
                 height: 45
                 color: ApplicationTheme.pageUpperPanel
+
+                RoundedTextBox {
+                    id: filterByTitle
+                    anchors.centerIn: parent
+                    width: 310
+                    height: 40
+                    placeholder: "Введите название релиза"
+                    onCompleteEditing: {
+                        releaseLinkedSeries.nameFilter = textContent;
+                        releaseLinkedSeries.filterSeries();
+                    }
+                }
             }
 
             ListView {
@@ -285,8 +240,9 @@ Page {
                                                 enabled: !!window.userModel.login
                                                 text: "Добавить в избранное"
                                                 onPressed: {
-                                                    const ids = releaseIds.join(`,`);
-                                                    synchronizationService.addUserFavorites(applicationSettings.userToken, ids);
+                                                    for (const releaseId of releaseIds) {
+                                                        releasesViewModel.addReleaseToFavorites(releaseId);
+                                                    }
 
                                                     favoriteSeriesMenu.close();
                                                 }
@@ -295,8 +251,9 @@ Page {
                                                 enabled: !!window.userModel.login
                                                 text: "Удалить из избранного"
                                                 onPressed: {
-                                                    const ids = releaseIds.join(`,`);
-                                                    synchronizationService.removeUserFavorites(applicationSettings.userToken, ids);
+                                                    for (const releaseId of releaseIds) {
+                                                        releasesViewModel.removeReleaseFromFavorites(releaseId);
+                                                    }
 
                                                     favoriteSeriesMenu.close();
                                                 }

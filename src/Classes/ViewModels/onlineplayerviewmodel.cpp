@@ -55,7 +55,6 @@ OnlinePlayerViewModel::OnlinePlayerViewModel(QObject *parent) : QObject(parent),
     m_customPlaylistPosition(-1),
     m_navigateVideos(""),
     m_navigatePoster(""),
-    m_seenMarkModels(new QHash<QString, bool>()),
     m_videoPosition(0),
     m_videoDuration(0),
     m_sendVolumeToRemote(false),
@@ -64,7 +63,6 @@ OnlinePlayerViewModel::OnlinePlayerViewModel(QObject *parent) : QObject(parent),
     createIfNotExistsFile(getSeensCachePath(), "[]");
 
     loadSeens();
-    loadSeenMarks();
 
     m_jumpMinutes->append(0);
     m_jumpMinutes->append(1);
@@ -314,6 +312,40 @@ void OnlinePlayerViewModel::setIsFromNavigated(const bool &isFromNavigated) noex
     emit isFromNavigatedChanged();
 }
 
+void OnlinePlayerViewModel::setReleasesViewModel(ReleasesViewModel *releasesViewModel) noexcept
+{
+    if (m_releasesViewModel == releasesViewModel) return;
+
+    m_releasesViewModel = releasesViewModel;
+    emit releasesViewModelChanged();
+
+    m_videos->setup(releasesViewModel);
+}
+
+void OnlinePlayerViewModel::setShowNextPosterRelease(bool showNextPosterRelease) noexcept
+{
+    if (m_showNextPosterRelease == showNextPosterRelease) return;
+
+    m_showNextPosterRelease = showNextPosterRelease;
+    emit showNextPosterReleaseChanged();
+}
+
+void OnlinePlayerViewModel::setNextReleasePoster(QString nextReleasePoster) noexcept
+{
+    if (m_nextReleasePoster == nextReleasePoster) return;
+
+    m_nextReleasePoster = nextReleasePoster;
+    emit nextReleasePosterChanged();
+}
+
+void OnlinePlayerViewModel::setSeenMarkedAtEnd(bool seenMarkedAtEnd) noexcept
+{
+    if (m_seenMarkedAtEnd == seenMarkedAtEnd) return;
+
+    m_seenMarkedAtEnd = seenMarkedAtEnd;
+    emit seenMarkedAtEndChanged();
+}
+
 void OnlinePlayerViewModel::toggleFullScreen()
 {
     setIsFullScreen(!m_isFullScreen);
@@ -352,6 +384,8 @@ QString OnlinePlayerViewModel::checkExistingVideoQuality(int index)
 
 void OnlinePlayerViewModel::nextVideo()
 {
+    setShowNextPosterRelease(false);
+    setSeenMarkedAtEnd(false);
     setRestorePosition(0);
     setPositionIterator(0);
     setIsFromNavigated(false);
@@ -406,6 +440,8 @@ void OnlinePlayerViewModel::nextVideo()
 void OnlinePlayerViewModel::previousVideo()
 {
     if (m_selectedVideo == 0 && !m_isMultipleRelease) return;
+    setShowNextPosterRelease(false);
+    setSeenMarkedAtEnd(false);
     setRestorePosition(0);
     setIsFromNavigated(false);
 
@@ -523,6 +559,8 @@ void OnlinePlayerViewModel::setVideoSeens(int id, int videoId, double videoPosit
 
 void OnlinePlayerViewModel::setupForSingleRelease()
 {
+    setShowNextPosterRelease(false);
+    setSeenMarkedAtEnd(false);
     setIsCinemahall(false);
     setIsMultipleRelease(false);
 
@@ -553,8 +591,23 @@ void OnlinePlayerViewModel::setupForSingleRelease()
     emit needScrollSeriaPosition();
 }
 
-void OnlinePlayerViewModel::setupForMultipleRelease(const QStringList &json, const QList<int> &releases, const QStringList &posters, const QStringList& names)
+void OnlinePlayerViewModel::setupForMultipleRelease()
 {
+    auto selectedReleases = m_releasesViewModel->items()->getSelectedReleases();
+
+    QStringList json;
+    QList<int> releases;
+    QStringList posters;
+    QStringList names;
+
+    foreach (auto selectedRelease, *selectedReleases) {
+        json.append(m_releasesViewModel->getReleaseVideos(selectedRelease));
+        releases.append(selectedRelease);
+        posters.append(m_releasesViewModel->getReleasePoster(selectedRelease));
+        names.append(m_releasesViewModel->getReleaseTitle(selectedRelease));
+    }
+    setSeenMarkedAtEnd(false);
+    setShowNextPosterRelease(false);
     setIsCinemahall(false);
     setIsMultipleRelease(true);
 
@@ -586,12 +639,14 @@ void OnlinePlayerViewModel::setupForMultipleRelease(const QStringList &json, con
 
 void OnlinePlayerViewModel::setupForCinemahall(const QStringList &json, const QList<int> &releases, const QStringList &posters, const QStringList& names)
 {
+    setSeenMarkedAtEnd(false);
+    setShowNextPosterRelease(false);
     setIsCinemahall(true);
     setIsMultipleRelease(false);
 
     m_videos->setVideosFromCinemahall(json, releases, posters, names);
     emit refreshSeenMarks();
-    auto seenMarks = m_seenMarkModels;
+    auto seenMarks = m_releasesViewModel->getSeenMarks();
     auto video = m_videos->getFirstReleaseWithPredicate(
         [seenMarks](OnlineVideoModel* video) {
             if (video->isGroup()) return false;
@@ -616,57 +671,10 @@ void OnlinePlayerViewModel::setupForCinemahall(const QStringList &json, const QL
     emit saveToWatchHistory(video->releaseId());
 }
 
-void OnlinePlayerViewModel::setSeenMark(int id, int seriaId, bool marked)
-{
-    auto key = QString::number(id) + "." + QString::number(seriaId);
-    if (marked) {
-        if (!m_seenMarkModels->contains(key)) m_seenMarkModels->insert(key, true);
-    } else {
-        if (m_seenMarkModels->contains(key)) m_seenMarkModels->remove(key);
-    }
-    saveSeenMarks();
-}
-
-void OnlinePlayerViewModel::setSeenMarkAllSeries(int id, int countSeries, bool marked)
-{
-    setSeenMarkForRelease(id, countSeries, marked);
-
-    saveSeenMarks();
-}
-
-void OnlinePlayerViewModel::setSeenMarkAllSeriesWithoutSave(int id, int countSeries, bool marked)
-{
-    setSeenMarkForRelease(id, countSeries, marked);
-}
-
-void OnlinePlayerViewModel::saveSeenMarkCacheToFile()
-{
-    saveSeenMarks();
-}
-
-void OnlinePlayerViewModel::removeAllSeenMark()
-{
-    m_seenMarkModels->clear();
-
-    saveSeenMarks();
-}
-
-QList<int> OnlinePlayerViewModel::getReleseSeenMarks(int id, int count)
-{
-    QList<int> result;
-    for (int i=0; i < count; i++) {
-        auto key = QString::number(id) + "." + QString::number(i);
-        if (m_seenMarkModels->contains(key)) {
-            result.append(i);
-        }
-    }
-    return result;
-}
-
 QString OnlinePlayerViewModel::getReleasesSeenMarks(QList<int> ids)
 {
     QJsonObject result;
-    QHashIterator<QString, bool> iterator(*m_seenMarkModels);
+    QHashIterator<QString, bool> iterator(*m_releasesViewModel->getSeenMarks());
 
     while(iterator.hasNext()) {
         auto seenMark = iterator.next();
@@ -695,38 +703,10 @@ QString OnlinePlayerViewModel::getReleasesSeenMarks(QList<int> ids)
     return document.toJson();
 }
 
-QString OnlinePlayerViewModel::getSeenMarks()
-{
-    QHash<int, int> counts;
-    QHashIterator<QString, bool> iterator(*m_seenMarkModels);
-    while (iterator.hasNext()) {
-        iterator.next();
-
-        auto item = iterator.key();
-        auto parts = item.split(".");
-        int id = parts[0].toInt();
-        if (counts.contains(id)) {
-            counts[id] += 1;
-        } else {
-            counts.insert(id, 1);
-        }
-    }
-
-    QJsonObject object;
-    QHashIterator<int, int> countIterator(counts);
-    while (countIterator.hasNext()) {
-        countIterator.next();
-
-        auto key = QString::number(countIterator.key());
-        object[key] = countIterator.value();
-    }
-
-    QJsonDocument document(object);
-    return document.toJson();
-}
-
 void OnlinePlayerViewModel::selectVideo(int releaseId, int videoId)
 {
+    setShowNextPosterRelease(false);
+    setSeenMarkedAtEnd(false);
     setSelectedVideo(videoId);
     setSelectedRelease(releaseId);
     setIsFromNavigated(false);
@@ -801,6 +781,19 @@ int OnlinePlayerViewModel::jumpInPlayer(int minutes, int seconds, bool direction
     if (seekPosition > duration) seekPosition = duration - 100;
 
     return seekPosition;
+}
+
+bool OnlinePlayerViewModel::isLastSeriaIsSingleRelease() const noexcept
+{
+    if (m_isCinemahall || m_isMultipleRelease) return false;
+
+    auto videoCount = m_videos->getReleaseVideosCount(m_selectedRelease);
+    return m_selectedVideo == videoCount - 1;
+}
+
+void OnlinePlayerViewModel::refreshSingleVideo(int releaseId, int videoId) noexcept
+{
+    m_videos->refreshSingleVideo(releaseId, videoId);
 }
 
 void OnlinePlayerViewModel::saveVideoSeens()
@@ -881,7 +874,7 @@ OnlineVideoModel* OnlinePlayerViewModel::nextNotSeenVideo()
 {
     auto selectedRelease = m_selectedRelease;
     auto selectedVideo = m_selectedVideo;
-    auto seenMarks = m_seenMarkModels;
+    auto seenMarks = m_releasesViewModel->getSeenMarks();
     auto videos = m_videos;
 
     auto currentVideo = m_videos->getFirstReleaseWithPredicate(
@@ -910,7 +903,7 @@ OnlineVideoModel *OnlinePlayerViewModel::previousNotSeenVideo()
 {
     auto selectedRelease = m_selectedRelease;
     auto selectedVideo = m_selectedVideo;
-    auto seenMarks = m_seenMarkModels;
+    auto seenMarks = m_releasesViewModel->getSeenMarks();
     auto videos = m_videos;
     auto currentVideo = m_videos->getFirstReleaseWithPredicate(
         [selectedRelease, selectedVideo](OnlineVideoModel* video) {
@@ -994,67 +987,5 @@ void OnlinePlayerViewModel::createIfNotExistsFile(QString path, QString defaultC
         file.open(QFile::WriteOnly | QFile::Text);
         file.write(defaultContent.toUtf8());
         file.close();
-    }
-}
-
-void OnlinePlayerViewModel::loadSeenMarks()
-{
-    QFile seenMarkFile(getSeenMarksCachePath());
-    if (!seenMarkFile.open(QFile::ReadOnly | QFile::Text)) {
-        //TODO: handle this situation
-    }
-    auto seenMarkJson = seenMarkFile.readAll();
-    seenMarkFile.close();
-
-    auto document = QJsonDocument::fromJson(seenMarkJson);
-    auto jsonSeenMarks = document.array();
-
-    foreach (auto item, jsonSeenMarks) {
-        m_seenMarkModels->insert(item.toString(), true);
-    }
-}
-
-QString OnlinePlayerViewModel::getSeenMarksCachePath() const
-{
-    if (IsPortable) {
-        return QDir::currentPath() + "/seenmark.cache";
-    } else {
-        return QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation) + "/seenmark.cache";
-    }
-}
-
-void OnlinePlayerViewModel::saveSeenMarks()
-{
-    QJsonArray array;
-
-    QHashIterator<QString, bool> iterator(*m_seenMarkModels);
-    while (iterator.hasNext()) {
-        iterator.next();
-
-        QJsonValue value(iterator.key());
-        array.append(value);
-    }
-
-    QJsonDocument seenDocument(array);
-    QString seenMarkJson(seenDocument.toJson());
-
-    QFile seenMarkFile(getSeenMarksCachePath());
-    if (!seenMarkFile.open(QFile::WriteOnly | QFile::Text)) return;
-
-    seenMarkFile.write(seenMarkJson.toUtf8());
-    seenMarkFile.close();
-
-    emit recalculateSeenCounts();
-}
-
-void OnlinePlayerViewModel::setSeenMarkForRelease(int id, int countSeries, bool marked)
-{
-    for (int i = 0; i < countSeries; i++) {
-        auto key = QString::number(id) + "." + QString::number(i);
-        if (marked) {
-            if (!m_seenMarkModels->contains(key)) m_seenMarkModels->insert(key, true);
-        } else {
-            if (m_seenMarkModels->contains(key)) m_seenMarkModels->remove(key);
-        }
     }
 }

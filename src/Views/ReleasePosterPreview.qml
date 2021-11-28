@@ -50,7 +50,7 @@ Item {
         visible: root.isVisible
         enabled: root.isVisible
         anchors.centerIn: parent
-        source: page.openedRelease ? localStorage.getReleasePosterPath(page.openedRelease.id, page.openedRelease.poster) : '../Assets/Icons/donate.jpg'
+        source: releasesViewModel.isOpenedCard ? localStorage.getReleasePosterPath(releasesViewModel.openedReleaseId, releasesViewModel.openedReleasePoster) : ""
         width: 350
         height: 500
     }

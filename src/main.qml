@@ -37,12 +37,9 @@ ApplicationWindow {
     minimumWidth: 800
     minimumHeight: 600
     height: 600
-    title: qsTr("AniLibria")
+    title: qsTr("AniLibria.Qt")
     font.capitalization: Font.MixedCase
     flags: Qt.FramelessWindowHint | Qt.Window | Qt.WindowMinimizeButtonHint
-    property string currentPageId: "release"
-    property string currentPageDisplayName: "Каталог релизов"
-    property bool synchronizationEnabled: false
     property var userModel: ({})
     property string tempTorrentPath: ""
     property bool isShowFullScreenSize: false
@@ -127,14 +124,14 @@ ApplicationWindow {
                 id: taskbarTitle
                 anchors.centerIn: parent
                 fontPointSize: 12
-                text: "AniLibria - "
+                text: "AniLibria.Qt - "
             }
             AccentText {
                 id: currentPageTitle
                 anchors.left: taskbarTitle.right
                 anchors.verticalCenter: parent.verticalCenter
                 fontPointSize: 12
-                text: window.currentPageDisplayName
+                text: mainViewModel.currentPageDisplayName
             }
         }
         IconButton {
@@ -150,9 +147,7 @@ ApplicationWindow {
             iconPath: "Assets/Icons/releasepage.svg"
             iconWidth: 20
             iconHeight: 20
-            ToolTip.delay: 1000
-            ToolTip.visible: goToReleasePage.hovered
-            ToolTip.text: "Перейти на страницу Каталог Релизов"
+            tooltipMessage: "Перейти на страницу Каталог Релизов"
             onButtonPressed: {
                 showPage("release");
             }
@@ -169,9 +164,7 @@ ApplicationWindow {
             iconPath: "Assets/Icons/videoplayer.svg"
             iconWidth: 20
             iconHeight: 20
-            ToolTip.delay: 1000
-            ToolTip.visible: goToOnlineVideoPage.hovered
-            ToolTip.text: "Перейти на страницу Видеоплеер"
+            tooltipMessage: "Перейти на страницу Видеоплеер"
             onButtonPressed: {
                 showPage("videoplayer");
             }
@@ -188,9 +181,7 @@ ApplicationWindow {
             iconPath: "Assets/Icons/popcorn.svg"
             iconWidth: 20
             iconHeight: 20
-            ToolTip.delay: 1000
-            ToolTip.visible: goToCinemaHall.hovered
-            ToolTip.text: "Перейти на страницу Кинозал"
+            tooltipMessage: "Перейти на страницу Кинозал"
             onButtonPressed: {
                 showPage("cinemahall");
             }
@@ -207,9 +198,7 @@ ApplicationWindow {
             iconPath: "Assets/Icons/series.svg"
             iconWidth: 20
             iconHeight: 20
-            ToolTip.delay: 1000
-            ToolTip.visible: goToReleaseSeries.hovered
-            ToolTip.text: "Перейти на страницу Связанные релизы"
+            tooltipMessage: "Перейти на страницу Связанные релизы"
             onButtonPressed: {
                 showPage("releaseseries");
             }
@@ -226,9 +215,7 @@ ApplicationWindow {
             iconPath: "Assets/Icons/lefthalf.svg"
             iconWidth: 18
             iconHeight: 18
-            ToolTip.delay: 1000
-            ToolTip.visible: leftHalfScreenWindow.hovered
-            ToolTip.text: "Выставить размер окна - левая половина экрана"
+            tooltipMessage: "Выставить размер окна - левая половина экрана"
             onButtonPressed: {
                 let currentScreen = getCurrentScreen();
                 if (!currentScreen) return;
@@ -251,9 +238,7 @@ ApplicationWindow {
             iconPath: "Assets/Icons/righthalf.svg"
             iconWidth: 18
             iconHeight: 18
-            ToolTip.delay: 1000
-            ToolTip.visible: rightHalfScreenWindow.hovered
-            ToolTip.text: "Выставить размер окна - правая половина экрана"
+            tooltipMessage: "Выставить размер окна - правая половина экрана"
             onButtonPressed: {
                 let currentScreen = getCurrentScreen();
                 if (!currentScreen) return;
@@ -276,9 +261,7 @@ ApplicationWindow {
             iconPath: "Assets/Icons/minimize.svg"
             iconWidth: 15
             iconHeight: 15
-            ToolTip.delay: 1000
-            ToolTip.visible: minimizeWindow.hovered
-            ToolTip.text: "Минимизировать окно в панель задач"
+            tooltipMessage: "Минимизировать окно в панель задач"
             onButtonPressed: {
                 window.showMinimized();
             }
@@ -295,9 +278,7 @@ ApplicationWindow {
             iconPath: window.isShowFullScreenSize ? "Assets/Icons/windowsize.svg" : "Assets/Icons/fullscreensize.svg"
             iconWidth: 15
             iconHeight: 15
-            ToolTip.delay: 1000
-            ToolTip.visible: windowOrFullScreenSize.hovered
-            ToolTip.text: window.isShowFullScreenSize ? "Вернуть окну нормальный размер" : "Открыть окно на полный экран"
+            tooltipMessage: window.isShowFullScreenSize ? "Вернуть окну нормальный размер" : "Открыть окно на полный экран"
             onButtonPressed: {
                 if (window.isShowFullScreenSize) {
                     window.isShowFullScreenSize = false;
@@ -321,9 +302,7 @@ ApplicationWindow {
             iconPath: "Assets/Icons/closewindow.svg"
             iconWidth: 15
             iconHeight: 15
-            ToolTip.delay: 1000
-            ToolTip.visible: closeWindow.hovered
-            ToolTip.text: "Выйти из приложения"
+            tooltipMessage: "Выйти из приложения"
             onButtonPressed: {
                 window.close();
             }
@@ -416,7 +395,7 @@ ApplicationWindow {
             anchors.right: notificationCounter.left
             anchors.verticalCenter: parent.verticalCenter
             fontPointSize: 10
-            text: "Релизов " + localStorage.countReleases + " В избранном " + releases.favoriteReleases.length + " Просмотрено " + localStorage.countSeens + " В кинозале " + localStorage.countCinemahall + " "
+            text: "Релизов " + releasesViewModel.countReleases + " В избранном " + releasesViewModel.countFavorites + " Просмотрено " + releasesViewModel.countSeens + " В кинозале " + localStorage.countCinemahall + " "
         }
 
         Row {
@@ -508,7 +487,7 @@ ApplicationWindow {
     }
 
     function showPage(pageId) {
-        if (currentPageId === pageId){
+        if (mainViewModel.currentPageId === pageId){
             drawer.close();
             return;
         }
@@ -525,7 +504,7 @@ ApplicationWindow {
             "releaseseries": releaseseries
         };
 
-        const currentPage = pages[currentPageId];
+        const currentPage = pages[mainViewModel.currentPageId];
         currentPage.navigateFrom();
 
         currentPage.visible = false;
@@ -535,40 +514,11 @@ ApplicationWindow {
         newPage.visible = true;
         newPage.focus = true;
         newPage.navigateTo();
-        currentPageId = pageId;
+        mainViewModel.currentPageId = pageId;
 
         windowFooter.visible = pageId !== "videoplayer";
 
         analyticsService.sendView("Pages", "ChangePage", "%2F" + pageId);
-
-        switch (pageId) {
-            case "videoplayer":
-                window.currentPageDisplayName = "Видеоплеер"
-                break;
-            case "release":
-                window.currentPageDisplayName = "Каталог релизов"
-                break;
-            case "youtube":
-                window.currentPageDisplayName = "Youtube"
-                break;
-            case "about":
-                window.currentPageDisplayName = "О Программе"
-                break;
-            case "cinemahall":
-                window.currentPageDisplayName = "Кинозал"
-                break;
-            case "download":
-                window.currentPageDisplayName = "Менеджер загрузок"
-                break;
-            case "maintenance":
-                window.currentPageDisplayName = "Обслуживание"
-                break;
-            case "releaseseries":
-                window.currentPageDisplayName = "Связанные релизы"
-                break;
-        }
-
-
 
         drawer.close();
     }
@@ -658,24 +608,6 @@ ApplicationWindow {
 
     LocalStorage {
         id: localStorage
-
-        onAllReleasesFinished: {
-            releases.refreshAllReleases();
-
-            synchronizationService.synchronizeSchedule();            
-            if (applicationSettings.userToken) synchronizationService.synchronizeUserFavorites(applicationSettings.userToken);
-
-            window.synchronizationEnabled = false;
-
-            notificationViewModel.sendInfoNotification("Синхронизация релизов успешно завершена в " + new Date().toLocaleTimeString());
-
-            if (localStorage.newEntities) {
-                notificationViewModel.sendInfoNotification(localStorage.newEntities);
-            }
-
-            releaseLinkedSeries.refreshSeries();
-        }
-
     }
 
     AnalyticsService {
@@ -688,14 +620,6 @@ ApplicationWindow {
 
     ReleaseLinkedSeries {
         id: releaseLinkedSeries
-    }
-
-    WorkerScript {
-       id: parseReleasesWorker
-       source: "parseReleases.js"
-       onMessage: {
-           localStorage.updateAllReleases(messageObject.releases);
-       }
     }
 
     FileDialog {
@@ -715,48 +639,15 @@ ApplicationWindow {
         selectExisting: true
         nameFilters: [ "Releases (*.releases)" ]
         onAccepted: {
-            localStorage.importReleasesFromExternalFile(importReleasesFileDialog.fileUrl);
+            releasesViewModel.importReleasesFromFile(importReleasesFileDialog.fileUrl);
         }
     }
 
     SynchronizationService {
         id: synchronizationService
         Component.onCompleted: {
-            window.synchronizationEnabled = true;
-            synchronizationService.synchronizeReleases();
-        }
-
-        onSynchronizedReleases: {
-            if (!data || !data.length) {
-                window.synchronizationEnabled = false;
-                notificationViewModel.sendErrorNotification(`Не удалось синхронизовать релизы. Попробуйте повторить синхронизацию через некоторое время.`);
-            }
-
-            parseReleasesWorker.sendMessage({ releasesJson: data });
-        }
-
-        onSynchronizedFromDL: {
-            localStorage.updateAllReleases(data);
-        }
-
-        onSynchronizedSchedule: {
-            const jsonData = JSON.parse(data);
-
-            if (!jsonData.status) {
-                //TODO: handle error situation
-            }
-
-            const scheduleItems = jsonData.data;
-            const scheduleResult = {};
-            for (const scheduleItem of scheduleItems) {
-                for (const dayitem of scheduleItem.items) {
-                    scheduleResult[dayitem.id] = scheduleItem.day;
-                }
-            }
-
-            localStorage.setSchedule(JSON.stringify(scheduleResult));
-
-            releases.refreshReleaseSchedules();
+            releasesViewModel.synchronizationEnabled = true;
+            synchronizeReleases();
         }
 
         onUserDataReceived: {
@@ -778,25 +669,9 @@ ApplicationWindow {
             window.userModel = {};
             mainViewModel.notVisibleSignin = false;
 
-            localStorage.clearFavorites();
-            releases.refreshFavorites();
+            releasesViewModel.clearAccountFavorites();
 
             notificationViewModel.sendInfoNotification(`Вы успешно вышли из аккаунта. Чтобы войти обратно перейдите на страницу Войти.`)
-        }
-
-        onUserFavoritesReceived:  {
-            const favoritesObject = JSON.parse(data);
-            const favorites = [];
-            for (const favorite of favoritesObject.data.items) {
-                favorites.push(favorite.id);
-            }
-
-            localStorage.updateFavorites(JSON.stringify(favorites));
-            releases.refreshFavorites();
-        }
-
-        onUserFavoritesEdited: {
-            if (applicationSettings.userToken) synchronizationService.synchronizeUserFavorites(applicationSettings.userToken);
         }
 
         onTorrentDownloaded: {
@@ -890,16 +765,26 @@ ApplicationWindow {
                     model: mainViewModel.mainMenuListModel
                     delegate: Control {
                         id: mainMenuControl
+
+                        property bool isHovered
+
                         width: drawer.width
                         height: 50
                         Rectangle {
                             id: mainMenuDelegate
-                            color: mainMenuControl.hovered ?  Qt.rgba(0, 0, 0, .1) : "transparent"
+                            color: mainMenuControl.isHovered ?  Qt.rgba(0, 0, 0, .1) : "transparent"
                             anchors.fill: parent
                             MouseArea {
+                                hoverEnabled: true
                                 anchors.fill: parent
                                 onClicked: {
                                     mainViewModel.mainMenuListModel.selectItem(pageIndex);
+                                }
+                                onEntered: {
+                                    mainMenuControl.isHovered = true;
+                                }
+                                onExited: {
+                                    mainMenuControl.isHovered = false;
                                 }
                             }
                             Row {
@@ -975,6 +860,7 @@ ApplicationWindow {
 
     OnlinePlayerViewModel {
         id: onlinePlayerViewModel
+        releasesViewModel: releasesViewModel
 
         onIsFullScreenChanged: {
             if (isFullScreen) {
@@ -994,16 +880,10 @@ ApplicationWindow {
             videoplayer.setSerieScrollPosition();
         }
         onSaveToWatchHistory: {
-            localStorage.setToReleaseHistory(releaseId, 1);
+            releasesViewModel.setToReleaseHistory(releaseId, 1);
         }
         onPlayInPlayer: {
             videoplayer.playInPlayer();
-        }
-        onRecalculateSeenCounts: {
-            localStorage.recalculateSeenCountsFromFile();
-        }
-        onRefreshSeenMarks: {
-            videoplayer.refreshSeenMarks();
         }
         onStopInPlayer: {
             videoplayer.stopInPlayer();
@@ -1020,6 +900,7 @@ ApplicationWindow {
                 osExtras.stopPreventSleepMode();
             }
         }
+
     }
 
     Rectangle {
@@ -1043,9 +924,27 @@ ApplicationWindow {
 
     ReleasesViewModel {
         id: releasesViewModel
-
+        synchronizationService: synchronizationService
+        applicationSettings: applicationSettings
+        localStorage: localStorage
         imageBackgroundViewModel.containerWidth: releases.backgroundImageWidth
         imageBackgroundViewModel.containerHeight: releases.backgroundImageHeight
+        items.releaseLinkedSeries: releaseLinkedSeries
+        onReleaseCardOpened: {
+            analyticsService.sendView("releasecard", "show", "%2Freleases");
+            releases.webView.url = releasesViewModel.getVkontakteCommentPage(releasesViewModel.openedReleaseCode);
+            userActivityViewModel.addOpenedCardToCounter();
+        }
+        onAfterSynchronizedReleases: {
+            notificationViewModel.sendInfoNotification("Синхронизация релизов успешно завершена в " + new Date().toLocaleTimeString());
+
+            if (releasesViewModel.newEntities) notificationViewModel.sendInfoNotification(releasesViewModel.newEntities);
+
+            releaseLinkedSeries.refreshSeries();
+        }
+        onErrorWhileReleaseSynchronization: {
+            notificationViewModel.sendErrorNotification(`Не удалось синхронизовать релизы. Попробуйте повторить синхронизацию через некоторое время.`);
+        }
     }
 
     Rectangle {
@@ -1069,7 +968,6 @@ ApplicationWindow {
             id: releases
             visible: true
             focus: true
-            synchronizeEnabled: window.synchronizationEnabled
             onWatchSingleRelease: {
                 onlinePlayerViewModel.customPlaylistPosition = startSeria;
                 onlinePlayerViewModel.navigateReleaseId = releaseId;
@@ -1092,19 +990,10 @@ ApplicationWindow {
             onWatchMultipleReleases: {
                 window.showPage("videoplayer");
 
-                const releases = JSON.parse(localStorage.getReleases(ids));
-                const allVideos = releases.map(a => a.videos);
-                const allPosters = releases.map(a => a.poster);
-                const allNames = releases.map(a => a.title);
-                const allIds = releases.map(a => a.id);
+                onlinePlayerViewModel.setupForMultipleRelease();
 
-                onlinePlayerViewModel.setupForMultipleRelease(allVideos, allIds, allPosters, allNames);
+                releasesViewModel.clearSelectedReleases();
             }
-
-            onRequestSynchronizeReleases: {
-                window.synchronizationEnabled = true;
-                synchronizationService.synchronizeReleases();
-            }            
         }
 
         Authorization {
@@ -1368,7 +1257,8 @@ ApplicationWindow {
         id: authorizationViewModel
         onSuccessAuthentificated: {
             applicationSettings.userToken = token;
-            if (window.currentPageId === "authorization") showPage("release");
+
+            if (mainViewModel.currentPageId === "authorization") showPage("release");
 
             synchronizationService.getUserData(applicationSettings.userToken);
             notificationViewModel.sendInfoNotification(`Вы успешно вошли в аккаунт. Ваше избранное будет синхронизовано автоматически.`);

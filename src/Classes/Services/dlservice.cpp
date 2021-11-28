@@ -110,7 +110,7 @@ void DLService::downloadedReleasePage(QNetworkReply *reply)
 
     data = data.replace("\n", "");
 
-    QRegExp releasePageRegexp("tv1.darklibria.it\\/release\\/[a-z0-9\\-]{0,}");
+    QRegExp releasePageRegexp("(tv1|adult0|tv3|tv2).darklibria.it\\/release\\/[a-z0-9\\-]{0,}");
     int pos = 0;
 
     while ((pos = releasePageRegexp.indexIn(data, pos)) != -1) {

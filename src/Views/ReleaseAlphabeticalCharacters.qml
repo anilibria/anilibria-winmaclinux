@@ -56,7 +56,9 @@ Item {
                 onButtonClicked: {
                     alphabetListModel.selectCharacter(alphabetCharacter)
 
-                    refreshAllReleases(false);
+                    releasesViewModel.items.alphabetsFilter = alphabetListModel.getSelectedCharactersAsString();
+
+                    releasesViewModel.items.refresh();
                 }
             }
         }

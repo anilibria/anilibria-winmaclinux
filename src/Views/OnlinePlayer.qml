@@ -145,12 +145,10 @@ Page {
             const lastSeenReleaseId = onlinePlayerViewModel.getLastVideoSeen();
             if (lastSeenReleaseId === 0) return;
 
-            const release = JSON.parse(localStorage.getRelease(lastSeenReleaseId));
-            
             onlinePlayerViewModel.customPlaylistPosition = -1;
             onlinePlayerViewModel.navigateReleaseId = lastSeenReleaseId;
-            onlinePlayerViewModel.navigateVideos = release.videos;
-            onlinePlayerViewModel.navigatePoster = release.poster;
+            onlinePlayerViewModel.navigateVideos = releasesViewModel.getReleaseVideos(lastSeenReleaseId);
+            onlinePlayerViewModel.navigatePoster = releasesViewModel.getReleasePoster(lastSeenReleaseId);
 
             onlinePlayerViewModel.setupForSingleRelease();
         }
@@ -267,13 +265,11 @@ Page {
                     console.log('Seek in player', onlinePlayerViewModel.restorePosition);
                     playerLoader.item.seek(onlinePlayerViewModel.restorePosition);
                     if (playerLoader.item.position >= onlinePlayerViewModel.restorePosition) onlinePlayerViewModel.restorePosition = 0;
-                    console.log('Changed restoreposition', onlinePlayerViewModel.restorePosition);
                 } else {
                     if (onlinePlayerViewModel.isFromNavigated) {
                         onlinePlayerViewModel.isFromNavigated = false;
                         const videoPosition = onlinePlayerViewModel.getCurrentVideoSeenVideoPosition()
                         if (videoPosition > 0) {
-                            console.log('Changed isFromNavigated restoreposition', onlinePlayerViewModel.restorePosition, videoPosition);
                             playerLoader.item.seek(videoPosition);
                         }
                     }
@@ -296,15 +292,21 @@ Page {
                 onlinePlayerViewModel.setVideoSeens(onlinePlayerViewModel.selectedRelease, onlinePlayerViewModel.selectedVideo, position);
             }
 
-            if (!(onlinePlayerViewModel.selectedRelease in _page.seenMarks && onlinePlayerViewModel.selectedVideo in _page.seenMarks[onlinePlayerViewModel.selectedRelease])) {
+            if (!releasesViewModel.getSeriaSeenMark(onlinePlayerViewModel.selectedRelease, onlinePlayerViewModel.selectedVideo)) {
                 if (duration > 0 && position > 0) {
                     const positionPercent = position / duration * 100;
-                    if (positionPercent >= 90) {
-                        let seenMarks = getReleaseSeens(onlinePlayerViewModel.selectedRelease);
-                        seenMarks[onlinePlayerViewModel.selectedVideo] = true;
-                        const obj = _page.seenMarks;
-                        _page.seenMarks = obj;
-                        onlinePlayerViewModel.setSeenMark(onlinePlayerViewModel.selectedRelease, onlinePlayerViewModel.selectedVideo, true);
+                    if (positionPercent >= 90 && !onlinePlayerViewModel.seenMarkedAtEnd) {
+                        releasesViewModel.setSeenMark(onlinePlayerViewModel.selectedRelease, onlinePlayerViewModel.selectedVideo, true);
+                        onlinePlayerViewModel.seenMarkedAtEnd = true;
+                        onlinePlayerViewModel.refreshSingleVideo(onlinePlayerViewModel.selectedRelease, onlinePlayerViewModel.selectedVideo);
+                        releasesViewModel.items.refreshSingleItem(onlinePlayerViewModel.selectedRelease);
+                        if (onlinePlayerViewModel.isLastSeriaIsSingleRelease()) {
+                            const nextReleaseId = releaseLinkedSeries.getNextLinkedRelease(onlinePlayerViewModel.selectedRelease);
+                            if (nextReleaseId > 0) {
+                                onlinePlayerViewModel.showNextPosterRelease = true;
+                                onlinePlayerViewModel.nextReleasePoster = releasesViewModel.getReleasePoster(nextReleaseId);
+                            }
+                        }
                     }
                 }
             }
@@ -389,32 +391,18 @@ Page {
                                     height: 36
                                     width: 36
                                     visible: !isGroup
-                                    iconColor: _page.seenMarks && releaseId in _page.seenMarks && order in _page.seenMarks[releaseId] ? ApplicationTheme.filterIconButtonGreenColor : ApplicationTheme.filterIconButtonColor
+                                    iconColor: isSeen ? ApplicationTheme.filterIconButtonGreenColor : ApplicationTheme.filterIconButtonColor
                                     hoverColor: ApplicationTheme.filterIconButtonHoverColor
-                                    iconPath: _page.seenMarks && releaseId in _page.seenMarks && order in _page.seenMarks[releaseId] ? "../Assets/Icons/seenmarkselected.svg" : "../Assets/Icons/seenmark.svg"
+                                    iconPath: isSeen ? "../Assets/Icons/seenmarkselected.svg" : "../Assets/Icons/seenmark.svg"
                                     iconWidth: 22
                                     iconHeight: 22
                                     onButtonHoverEnter: {
                                         if (playerTimer.running) playerTimer.stop();
                                     }
                                     onButtonPressed: {
-                                        let newState = false;
-                                        let seenMarks = getReleaseSeens(releaseId);
-
-                                        if (seenMarks[order]) {
-                                            delete seenMarks[order];
-                                            newState = false;
-                                        } else {
-                                            seenMarks[order] = true;
-                                            newState = true;
-
-                                        }
-
-                                        const oldSeenMarks = _page.seenMarks;
-                                        _page.seenMarks = {};
-                                        _page.seenMarks = oldSeenMarks;
-
-                                        onlinePlayerViewModel.setSeenMark(releaseId, order, newState);
+                                        releasesViewModel.toggleSeenMark(releaseId, order);
+                                        onlinePlayerViewModel.refreshSingleVideo(releaseId, order);
+                                        releasesViewModel.items.refreshSingleItem(releaseId);
                                     }
                                 }
 
@@ -1259,6 +1247,63 @@ Page {
     }
 
     Rectangle {
+        anchors.right: parent.right
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: 100
+        color: ApplicationTheme.playerControlBackground
+        visible: onlinePlayerViewModel.showNextPosterRelease
+        width: 220
+        height: 300
+        radius: 12
+        MouseArea {
+            anchors.fill: parent
+            onPressed: {
+                const nextReleaseId = releaseLinkedSeries.getNextLinkedRelease(onlinePlayerViewModel.selectedRelease);
+                if (nextReleaseId > 0) {
+                    onlinePlayerViewModel.customPlaylistPosition = -1;
+                    onlinePlayerViewModel.navigateReleaseId = nextReleaseId;
+                    onlinePlayerViewModel.navigateVideos = releasesViewModel.getReleaseVideos(nextReleaseId);
+                    onlinePlayerViewModel.navigatePoster = releasesViewModel.getReleasePoster(nextReleaseId);
+
+                    onlinePlayerViewModel.setupForSingleRelease();
+                }
+            }
+        }
+
+        PlainText {
+            anchors.top: parent.top
+            anchors.topMargin: 2
+            anchors.horizontalCenter: parent.horizontalCenter
+            text: "Нажмите чтобы перейти к"
+            fontPointSize: 10
+            wrapMode: Text.WordWrap
+        }
+
+        Rectangle {
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: 2
+            width: 182
+            height: 272
+            border.color: "#adadad"
+            border.width: 1
+            radius: 12
+            Image {
+                anchors.centerIn: parent
+                source: onlinePlayerViewModel.nextReleasePoster
+                fillMode: Image.PreserveAspectCrop
+                width: 180
+                height: 270
+                layer.enabled: true
+                layer.effect: OpacityMask {
+                    maskSource: mask
+                }
+            }
+        }
+    }
+
+
+    Rectangle {
         width: 80
         height: 80
         color: "white"
@@ -1275,36 +1320,11 @@ Page {
         }
     }
 
-    function getReleaseSeens(releaseId) {
-        let seenMarks = [];
-        if (releaseId in _page.seenMarks) {
-            seenMarks = _page.seenMarks[releaseId];
-        } else {
-            _page.seenMarks[releaseId] = seenMarks;
-        }
-
-        return seenMarks;
-    }
-
     function setSerieScrollPosition() {
         let newPosition = onlinePlayerViewModel.selectedVideo * 40 - serieScrollContainer.height;
         newPosition += 40;
         if (newPosition < 0) newPosition = 0;
         serieScrollContainer.contentY = newPosition;
-    }
-
-    function refreshSeenMarks() {
-        let releaseIds = [];
-
-        if (onlinePlayerViewModel.isMultipleRelease) {
-            releaseIds = onlinePlayerViewModel.getReleaseIds();
-        } else if (onlinePlayerViewModel.isCinemahall) {
-            releaseIds = JSON.parse(localStorage.getCinemahallReleases()).map(a => a.id);
-        } else {
-            releaseIds.push(onlinePlayerViewModel.selectedRelease);
-        }
-
-        _page.seenMarks = JSON.parse(onlinePlayerViewModel.getReleasesSeenMarks(releaseIds));
     }
 
     function setControlVisible(visible) {

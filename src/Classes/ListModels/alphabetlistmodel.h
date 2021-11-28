@@ -47,6 +47,7 @@ public:
     Q_INVOKABLE void selectCharacter(const QString& character);
     Q_INVOKABLE void clearCharacters();
     Q_INVOKABLE QStringList getSelectedCharacters();
+    Q_INVOKABLE QString getSelectedCharactersAsString();
 
 private:
 };

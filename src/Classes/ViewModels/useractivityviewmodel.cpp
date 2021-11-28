@@ -49,6 +49,20 @@ void UserActivityViewModel::saveUsingApplication() noexcept
     writeUserActivity();
 }
 
+void UserActivityViewModel::addOpenedCardToCounter() noexcept
+{
+    m_countOpenedReleaseCard++;
+    emit countOpenedReleaseCardChanged();
+    writeUserActivity();
+}
+
+void UserActivityViewModel::addDownloadedTorrentToCounter() noexcept
+{
+    m_countDownloadTorrent++;
+    emit countDownloadTorrentChanged();
+    writeUserActivity();
+}
+
 void UserActivityViewModel::createIfNotExistsFile(const QString& path, const QString& defaultContent) const noexcept
 {
     if (QFile::exists(path)) return;
@@ -82,6 +96,9 @@ void UserActivityViewModel::readUserActivity() noexcept
     m_watchDurationMinutes = static_cast<uint64_t>(watchDuration);
     auto watchUsingApplication = object.contains("watchUsingApplication") ? object["watchUsingApplication"].toVariant().toULongLong() : 0;
     m_watchUsingApplicationMinutes = static_cast<uint64_t>(watchUsingApplication);
+
+    m_countOpenedReleaseCard = object.contains("countOpenedReleaseCard") ? object["countOpenedReleaseCard"].toInt() : 0;
+    m_countDownloadTorrent = object.contains("countDownloadTorrent") ? object["countDownloadTorrent"].toInt() : 0;
 }
 
 void UserActivityViewModel::writeUserActivity() noexcept
@@ -89,6 +106,8 @@ void UserActivityViewModel::writeUserActivity() noexcept
     QJsonObject object;
     object["watchDuration"] = static_cast<long long>(m_watchDurationMinutes);
     object["watchUsingApplication"] = static_cast<long long>(m_watchUsingApplicationMinutes);
+    object["countOpenedReleaseCard"] = m_countOpenedReleaseCard;
+    object["countDownloadTorrent"] = m_countDownloadTorrent;
 
     QFile file(getCachePath());
     file.open(QFile::WriteOnly | QFile::Text);

@@ -13,6 +13,7 @@
 #include <QJsonObject>
 #include <QJsonValue>
 #include "../Models/onlinevideomodel.h"
+#include "../ViewModels/releasesviewmodel.h"
 
 class OnlinePlayerVideoList : public QAbstractListModel
 {
@@ -22,6 +23,7 @@ private:
     QVector<OnlineVideoModel*>* m_videos;
     int m_selectedReleaseId;
     int m_selectedVideoId;
+    ReleasesViewModel* m_releaseViewModel { nullptr };
 
     enum PlayListRoles {
         IdRole = Qt::UserRole + 1,
@@ -57,6 +59,8 @@ public:
     void selectVideo(int releaseId, int videoId) noexcept;
     int getVideoIndex(OnlineVideoModel* video) noexcept;
     QList<int> getReleaseIds() noexcept;
+    void setup(ReleasesViewModel* releaseViewModel);
+    void refreshSingleVideo(int releaseId, int videoId) noexcept;
 
 signals:    
 

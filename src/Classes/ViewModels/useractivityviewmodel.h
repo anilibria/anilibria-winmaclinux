@@ -11,10 +11,14 @@ class UserActivityViewModel : public QObject
 
     Q_PROPERTY(QString watchDuration READ watchDuration NOTIFY watchDurationChanged)
     Q_PROPERTY(QString watchUsingApplication READ watchUsingApplication NOTIFY watchUsingApplicationChanged)
+    Q_PROPERTY(int countOpenedReleaseCard READ countOpenedReleaseCard NOTIFY countOpenedReleaseCardChanged)
+    Q_PROPERTY(int countDownloadTorrent READ countDownloadTorrent NOTIFY countDownloadTorrentChanged)
 
 private:
     uint64_t m_watchDurationMinutes { 0 };
     uint64_t m_watchUsingApplicationMinutes { 0 };
+    int m_countOpenedReleaseCard { 0 };
+    int m_countDownloadTorrent { 0 };
     QDateTime m_watchUsingApplicationStart { QDateTime::currentDateTime() };
 
 public:
@@ -25,6 +29,12 @@ public:
 
     QString watchUsingApplication() const noexcept;
     Q_INVOKABLE void saveUsingApplication() noexcept;
+
+    int countOpenedReleaseCard() const noexcept { return m_countOpenedReleaseCard; }
+    Q_INVOKABLE void addOpenedCardToCounter() noexcept;
+
+    int countDownloadTorrent() const noexcept { return m_countDownloadTorrent; }
+    Q_INVOKABLE void addDownloadedTorrentToCounter() noexcept;
 
 private:
     void createIfNotExistsFile(const QString& path, const QString& defaultContent) const noexcept;
@@ -37,6 +47,8 @@ private:
 signals:
     void watchDurationChanged();
     void watchUsingApplicationChanged();
+    void countOpenedReleaseCardChanged();
+    void countDownloadTorrentChanged();
 
 };
 

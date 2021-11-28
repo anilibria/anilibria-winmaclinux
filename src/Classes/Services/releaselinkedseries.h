@@ -23,6 +23,7 @@
 #include <QObject>
 #include <QAbstractListModel>
 #include <QVariant>
+#include <QScopedPointer>
 #include "../Models/fullreleasemodel.h"
 #include "../Models/releaseseriesmodel.h"
 
@@ -33,8 +34,8 @@ class ReleaseLinkedSeries : public QAbstractListModel
     Q_PROPERTY(QString nameFilter READ nameFilter WRITE setNameFilter NOTIFY nameFilterChanged)
 private:
     QString m_nameFilter;
-    QVector<ReleaseSeriesModel*>* m_series;
-    QVector<ReleaseSeriesModel*>* m_filteredSeries;
+    QScopedPointer<QVector<ReleaseSeriesModel*>> m_series;
+    QScopedPointer<QVector<ReleaseSeriesModel*>> m_filteredSeries;
     bool m_filtering = false;
 
     enum ItemRoles {
@@ -59,10 +60,15 @@ public:
 
     QString nameFilter() const { return m_nameFilter; }
     void setNameFilter(const QString& nameFilter) noexcept;
+
+    QSharedPointer<QList<int>> getAllLinkedReleases() const noexcept;
+    int getSortedOrder(int id) const noexcept;
+
+    Q_INVOKABLE int getNextLinkedRelease(const int currentRelease);
     Q_INVOKABLE void refreshSeries();
     Q_INVOKABLE bool isReleaseInSeries(int id);
     Q_INVOKABLE void filterSeries();
-    Q_INVOKABLE void clearFilters();
+    Q_INVOKABLE void clearFilters();    
 
 private:
     QString getSeriesCachePath() const noexcept;

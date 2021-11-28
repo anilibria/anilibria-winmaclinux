@@ -22,12 +22,26 @@ import QtQuick.Controls.Material 2.0
 import "../Theme"
 
 Button {
-    id: _button
-    Material.foreground: ApplicationTheme.roundedButtonForeground // "white"
+    id: root
+    Material.foreground: ApplicationTheme.roundedButtonForeground
+
+    property bool buttonHovered: false
+
     background: Rectangle {
-        color: _button.hovered || _button.down ? ApplicationTheme.roundedButtonHovered /*"#881919"*/ : ApplicationTheme.roundedButtonBackground //"#b32121"
+        color: root.buttonHovered || root.down ? ApplicationTheme.roundedButtonHovered : ApplicationTheme.roundedButtonBackground
         border.color: "transparent"
         border.width: 1
         radius: 18
+
+        MouseArea {
+            hoverEnabled: true
+            anchors.fill: parent
+            onEntered: {
+                buttonHovered = true;
+            }
+            onExited: {
+                buttonHovered = false;
+            }
+        }
     }
 }

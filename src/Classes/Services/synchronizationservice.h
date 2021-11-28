@@ -32,6 +32,7 @@ class SynchronizationService : public QObject
 private:
     AnilibriaApiService* m_AnilibriaApiService;
     DLService* m_dlService;
+    QString m_synchronizedReleases;
 public:    
     explicit SynchronizationService(QObject *parent = nullptr);
 
@@ -47,8 +48,10 @@ public:
     Q_INVOKABLE void downloadTorrent(QString torrentPath);
     Q_INVOKABLE void synchronizeYoutube();
     Q_INVOKABLE void synchronizeDL();
+
+    QString&& getSynchronizedReleases();
 signals:
-    void synchronizedReleases(QString data);
+    void synchronizedReleases();
     void synchronizationCompleted();
     void synchronizationFailed();
     void synchronizedSchedule(QString data);

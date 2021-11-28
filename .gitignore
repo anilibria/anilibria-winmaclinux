@@ -60,6 +60,7 @@ deploy
 /.vs/anilibria-winmaclinux/config/applicationhost.config
 /src/debug
 /src/release
+src/.vs/AniLibria
 /src/.vs/AniLibria/v16
 /src/cpp.hint
 /src/AniLibria_resource.rc
@@ -68,3 +69,4 @@ deploy
 /src/AniLibria.vcxproj
 /src/AniLibria.sln
 /src/.qmake.stash
+

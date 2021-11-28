@@ -29,7 +29,6 @@
         <file>Assets/Icons/step-forward.svg</file>
         <file>Assets/Icons/resize.svg</file>
         <file>Controls/ToggleButton.qml</file>
-        <file>parseReleases.js</file>
         <file>Assets/Icons/rating.svg</file>
         <file>Assets/Icons/favorite.svg</file>
         <file>Assets/Icons/emptyfavorite.svg</file>
@@ -116,5 +115,8 @@
         <file>Controls/DictionaryComboBox.qml</file>
         <file>Controls/+qtless515/DictionaryComboBox.qml</file>
         <file>Controls/+qtless515/BackgroundImagePopup.qml</file>
+        <file>Assets/Icons/listcustom.svg</file>
+        <file>Assets/Icons/sortascending.svg</file>
+        <file>Assets/Icons/sortdescending.svg</file>
     </qresource>
 </RCC>
