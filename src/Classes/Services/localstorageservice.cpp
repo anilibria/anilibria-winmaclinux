@@ -306,6 +306,8 @@ void LocalStorageService::saveCinemahall()
 
 void LocalStorageService::setVolume(double volume)
 {
+    if (volume < 0) return;
+
     m_UserSettingsModel->setVolume(volume);
 
     saveSettings();

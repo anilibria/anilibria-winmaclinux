@@ -765,16 +765,26 @@ ApplicationWindow {
                     model: mainViewModel.mainMenuListModel
                     delegate: Control {
                         id: mainMenuControl
+
+                        property bool isHovered
+
                         width: drawer.width
                         height: 50
                         Rectangle {
                             id: mainMenuDelegate
-                            color: mainMenuControl.hovered ?  Qt.rgba(0, 0, 0, .1) : "transparent"
+                            color: mainMenuControl.isHovered ?  Qt.rgba(0, 0, 0, .1) : "transparent"
                             anchors.fill: parent
                             MouseArea {
+                                hoverEnabled: true
                                 anchors.fill: parent
                                 onClicked: {
                                     mainViewModel.mainMenuListModel.selectItem(pageIndex);
+                                }
+                                onEntered: {
+                                    mainMenuControl.isHovered = true;
+                                }
+                                onExited: {
+                                    mainMenuControl.isHovered = false;
                                 }
                             }
                             Row {
