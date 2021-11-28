@@ -21,27 +21,46 @@ import QtQuick.Controls 2.12
 import QtQuick.Controls.Material 2.0
 import "../Theme"
 
-Button {
+Rectangle {
     id: root
-    Material.foreground: ApplicationTheme.roundedButtonForeground
-
+    color: "transparent"
+    width: buttonTitle.width + 18
+    height: 34
+    property alias text: buttonTitle.text
     property bool buttonHovered: false
 
-    background: Rectangle {
-        color: root.buttonHovered || root.down ? ApplicationTheme.roundedButtonHovered : ApplicationTheme.roundedButtonBackground
+    signal clicked()
+
+    Rectangle {
+
+        anchors.fill: parent
+        anchors.margins: 4
+        color: root.buttonHovered ? ApplicationTheme.roundedButtonHovered : ApplicationTheme.roundedButtonBackground
         border.color: "transparent"
         border.width: 1
         radius: 18
+
+        PlainText {
+            id: buttonTitle
+            fontPointSize: 11
+            anchors.centerIn: parent
+            color: ApplicationTheme.roundedButtonForeground
+        }
 
         MouseArea {
             hoverEnabled: true
             anchors.fill: parent
             onEntered: {
-                buttonHovered = true;
+                root.buttonHovered = true;
             }
             onExited: {
-                buttonHovered = false;
+                root.buttonHovered = false;
+            }
+            onPressed: {
+                root.clicked();
             }
         }
     }
+
 }
+

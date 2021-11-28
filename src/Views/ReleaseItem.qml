@@ -287,7 +287,7 @@ Rectangle {
                     anchors.bottom: parent.bottom
                     anchors.bottomMargin: 20
                     text: "Быстрые действия"
-                    onPressed: {
+                    onClicked: {
                         quickActions.open();
                     }
                     CommonMenu {
