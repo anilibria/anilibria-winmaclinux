@@ -809,7 +809,11 @@ void ReleasesViewModel::addToCinemahallSelectedReleases()
 {
     auto selectedReleases = m_items->getSelectedReleases();
 
+#if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
+    auto items = selectedReleases->toList();
+#else
     QList<int> items(selectedReleases->begin(), selectedReleases->end());
+#endif
     m_localStorage->addToCinemahall(items);
 }
 
