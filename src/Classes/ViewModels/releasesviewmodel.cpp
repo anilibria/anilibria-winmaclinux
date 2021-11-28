@@ -1025,7 +1025,11 @@ void ReleasesViewModel::recalculateSeenCounts()
     QMap<int, int> seenMap;
     auto keys = m_seenMarks->keys();
     foreach(auto item, keys) {
+#if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
+        auto parts = item.splitRef(".");
+#else
         auto parts = item.splitRef(".", Qt::SkipEmptyParts);
+#endif
         auto key = parts[0].toInt();
         if (seenMap.contains(key)) {
             seenMap[key] += 1;
@@ -1152,8 +1156,11 @@ int ReleasesViewModel::getCountOnlyFavorites(QList<int> *changes) const noexcept
 QString ReleasesViewModel::getMultipleLinks(QString text) const noexcept
 {
     if (text.isEmpty()) return "";
-
+#if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
+    auto parts = text.split(",");
+#else
     auto parts = text.split(",", Qt::SkipEmptyParts);
+#endif
     for (int i = 0; i < parts.count(); i++) {
         auto value = parts[i];
         parts[i] = "<a href=\"" + value + "\">" + value + "</a>";
