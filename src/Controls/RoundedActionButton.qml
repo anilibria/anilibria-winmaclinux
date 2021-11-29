@@ -24,7 +24,7 @@ import "../Theme"
 Rectangle {
     id: root
     color: "transparent"
-    width: buttonTitle.width + 18
+    width: buttonTitle.width + 34
     height: 34
     property alias text: buttonTitle.text
     property bool buttonHovered: false
@@ -34,7 +34,10 @@ Rectangle {
     Rectangle {
 
         anchors.fill: parent
-        anchors.margins: 4
+        anchors.leftMargin: 8
+        anchors.rightMargin: 8
+        anchors.topMargin: 4
+        anchors.bottomMargin: 4
         color: root.buttonHovered ? ApplicationTheme.roundedButtonHovered : ApplicationTheme.roundedButtonBackground
         border.color: "transparent"
         border.width: 1
