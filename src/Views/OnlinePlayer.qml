@@ -1247,6 +1247,13 @@ Page {
                 maskSource: mask
             }
         }
+        MouseArea {
+            anchors.fill: parent
+            onPressed: {
+                releasesViewModel.showReleaseCard(onlinePlayerViewModel.selectedRelease);
+                window.showPage("release");
+            }
+        }
     }
 
     Rectangle {
