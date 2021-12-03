@@ -173,6 +173,9 @@ Page {
         id: mainPlayerMouseArea
         anchors.fill: parent
         hoverEnabled: true
+        onClicked: {
+            if (playerLoader.item.playbackState === MediaPlayer.PlayingState) _page.setControlVisible(false);
+        }
         onDoubleClicked: {
             onlinePlayerViewModel.toggleFullScreen();
         }
