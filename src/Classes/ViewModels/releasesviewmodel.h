@@ -64,6 +64,7 @@ class ReleasesViewModel : public QObject
     Q_PROPERTY(QString openedReleaseVideos READ openedReleaseVideos NOTIFY openedReleaseVideosChanged)
     Q_PROPERTY(bool synchronizationEnabled READ synchronizationEnabled WRITE setSynchronizationEnabled NOTIFY synchronizationEnabledChanged)
     Q_PROPERTY(QString newEntities READ newEntities WRITE setNewEntities NOTIFY newEntitiesChanged)
+    Q_PROPERTY(bool notCloseReleaseCardAfterWatch READ notCloseReleaseCardAfterWatch WRITE setNotCloseReleaseCardAfterWatch NOTIFY notCloseReleaseCardAfterWatchChanged)
 
 private:
     const QString releasesCacheFileName { "releases.cache" };
@@ -99,6 +100,7 @@ private:
     bool m_synchronizationEnabled { false };
     QString m_newEntities { "" };
     QScopedPointer<QList<std::tuple<int, int>>> m_sectionSorting { new QList<std::tuple<int, int>>() };
+    bool m_notCloseReleaseCardAfterWatch { false };
 
 public:
     explicit ReleasesViewModel(QObject *parent = nullptr);
@@ -151,6 +153,9 @@ public:
     ApplicationSettings* applicationSettings() const noexcept { return m_applicationSettings; }
     void setApplicationSettings(ApplicationSettings* applicationSettings) noexcept;
 
+    bool notCloseReleaseCardAfterWatch() const noexcept { return m_notCloseReleaseCardAfterWatch; }
+    void setNotCloseReleaseCardAfterWatch(const bool notCloseReleaseCardAfterWatch) noexcept;
+
     bool isOpenedCard() const noexcept { return m_openedRelease != nullptr; }
     int openedReleaseId() const noexcept { return m_openedRelease != nullptr ? m_openedRelease->id() : 0; }
     QString openedReleasePoster() const noexcept { return m_openedRelease != nullptr ? m_openedRelease->poster() : ""; }
@@ -194,6 +199,7 @@ public:
     Q_INVOKABLE void showReleaseCard(int id) noexcept;
     Q_INVOKABLE void showRandomRelease() noexcept;
     Q_INVOKABLE void hideReleaseCard() noexcept;
+    Q_INVOKABLE void hideAfterWatchReleaseCard() noexcept;
     Q_INVOKABLE void setSeenMarkAllSeries(int id, int countSeries, bool marked);
     Q_INVOKABLE void setSeenMarkAllSeriesSelectedReleases(bool marked);
     Q_INVOKABLE void setSeenMarkForRelease(int id, int countSeries, bool marked);
@@ -313,6 +319,8 @@ signals:
     void localStorageChanged();
     void openedReleaseInFavoritesChanged();
     void openedReleaseVideosChanged();
+    void notCloseReleaseCardAfterWatchChanged();
+
 };
 
 #endif // RELEASESVIEWMODEL_H

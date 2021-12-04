@@ -230,6 +230,14 @@ void ReleasesViewModel::setApplicationSettings(ApplicationSettings *applicationS
     emit applicationSettingsChanged();
 }
 
+void ReleasesViewModel::setNotCloseReleaseCardAfterWatch(const bool notCloseReleaseCardAfterWatch) noexcept
+{
+    if (m_notCloseReleaseCardAfterWatch == notCloseReleaseCardAfterWatch) return;
+
+    m_notCloseReleaseCardAfterWatch = notCloseReleaseCardAfterWatch;
+    emit notCloseReleaseCardAfterWatchChanged();
+}
+
 QString ReleasesViewModel::openedReleaseStatusDisplay() const noexcept
 {
     if (m_openedRelease == nullptr) return "";
@@ -451,6 +459,14 @@ void ReleasesViewModel::showRandomRelease() noexcept
 
 void ReleasesViewModel::hideReleaseCard() noexcept
 {
+    m_openedRelease = nullptr;
+    emit isOpenedCardChanged();
+}
+
+void ReleasesViewModel::hideAfterWatchReleaseCard() noexcept
+{
+    if (m_notCloseReleaseCardAfterWatch) return;
+
     m_openedRelease = nullptr;
     emit isOpenedCardChanged();
 }

@@ -900,7 +900,6 @@ ApplicationWindow {
                 osExtras.stopPreventSleepMode();
             }
         }
-
     }
 
     Rectangle {
@@ -927,6 +926,7 @@ ApplicationWindow {
         synchronizationService: synchronizationService
         applicationSettings: applicationSettings
         localStorage: localStorage
+        notCloseReleaseCardAfterWatch: userConfigurationViewModel.notCloseReleaseCardAfterWatch
         imageBackgroundViewModel.containerWidth: releases.backgroundImageWidth
         imageBackgroundViewModel.containerHeight: releases.backgroundImageHeight
         items.releaseLinkedSeries: releaseLinkedSeries

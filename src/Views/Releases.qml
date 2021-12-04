@@ -949,9 +949,9 @@ Page {
                     Popup {
                         id: releaseSettingsPopup
                         x: 40
-                        y: -390
+                        y: -410
                         width: 370
-                        height: 560
+                        height: 630
                         modal: true
                         focus: true
                         closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
@@ -1088,9 +1088,29 @@ Page {
                             ToolTip.text: "Если настройка включена будет использоваться кастомный тулбар окна с дополнительным функционалом"
                         }
 
+                        PlainText {
+                            id: notCloseReleaseCardAfterWatchLabel
+                            anchors.top: useCustomToolbarSwitch.bottom
+                            anchors.topMargin: 4
+                            fontPointSize: 11
+                            text: "Не закрывать карточку релиза после просмотра"
+                        }
+                        Switch {
+                            id: notCloseReleaseCardAfterWatchSwitch
+                            anchors.top: notCloseReleaseCardAfterWatchLabel.bottom
+                            checked: userConfigurationViewModel.notCloseReleaseCardAfterWatch
+                            onCheckedChanged: {
+                                userConfigurationViewModel.notCloseReleaseCardAfterWatch = checked;
+                            }
+                            ToolTip.delay: 1000
+                            ToolTip.visible: hovered
+                            ToolTip.text: "Если настройка включена при нажатии на кнопку Смотреть из карточки сама карточка релизов не будет закрыта"
+                        }
+
+
                         RoundedActionButton {
                             text: "Настроить фон"
-                            anchors.top: useCustomToolbarSwitch.bottom
+                            anchors.top: notCloseReleaseCardAfterWatchSwitch.bottom
                             onClicked: {
                                 releaseSettingsPopup.close();
                                 backgroundImagePopup.open();
@@ -2167,7 +2187,7 @@ Page {
                                         onPressed: {
                                             watchSingleRelease(releasesViewModel.openedReleaseId, releasesViewModel.openedReleaseVideos, index, releasesViewModel.openedReleasePoster);
 
-                                            releasesViewModel.hideReleaseCard();
+                                            releasesViewModel.hideAfterWatchReleaseCard();
                                             if (Qt.platform.os !== "windows") webView.visible = true;
                                         }
                                     }
@@ -2238,7 +2258,7 @@ Page {
                         onClicked: {
                             watchSingleRelease(releasesViewModel.openedReleaseId, releasesViewModel.openedReleaseVideos, -1, releasesViewModel.openedReleasePoster)
 
-                            releasesViewModel.hideReleaseCard();
+                            releasesViewModel.hideAfterWatchReleaseCard();
                             releasePosterPreview.isVisible = false;
                             if (Qt.platform.os !== "windows") webView.visible = true;
                         }

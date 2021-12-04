@@ -10,6 +10,14 @@ UserConfigurationViewModel::UserConfigurationViewModel(QObject *parent) : QObjec
     readSettingsFromFile();
 }
 
+void UserConfigurationViewModel::setNotCloseReleaseCardAfterWatch(const bool notCloseReleaseCardAfterWatch) noexcept
+{
+    if (m_notCloseReleaseCardAfterWatch == notCloseReleaseCardAfterWatch) return;
+
+    m_notCloseReleaseCardAfterWatch = notCloseReleaseCardAfterWatch;
+    emit notCloseReleaseCardAfterWatchChanged();
+}
+
 void UserConfigurationViewModel::setOpacityPlayerPanel(int opacityPlayerPanel) noexcept
 {
     if (m_opacityPlayerPanel == opacityPlayerPanel) return;
@@ -22,6 +30,7 @@ void UserConfigurationViewModel::saveSettingsToFile()
 {
     QJsonObject object;
     object[m_opacityPlayerPanelField] = m_opacityPlayerPanel;
+    object[m_notCloseReleaseCardAfterWatchField] = m_notCloseReleaseCardAfterWatch;
 
     QFile file(getCachePath(m_cacheFileName));
     file.open(QFile::WriteOnly | QFile::Text);
@@ -39,4 +48,5 @@ void UserConfigurationViewModel::readSettingsFromFile()
     auto document = QJsonDocument::fromJson(json);
     auto object = document.object();
     m_opacityPlayerPanel = object.contains(m_opacityPlayerPanelField) ? object[m_opacityPlayerPanelField].toInt() : 50;
+    m_notCloseReleaseCardAfterWatch =  object.contains(m_notCloseReleaseCardAfterWatchField) ? object[m_notCloseReleaseCardAfterWatchField].toBool() : false;
 }
