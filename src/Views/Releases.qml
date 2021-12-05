@@ -1985,6 +1985,15 @@ Page {
                                     text: "Переоткрыть комментарии"
                                     onPressed: {
                                         webView.url = releasesViewModel.getVkontakteCommentPage(releasesViewModel.openedReleaseCode);
+                                        if (vkCommentsWindow.opened) vkCommentsWindow.refreshComments();
+                                    }
+                                }
+                                CommonMenuItem {
+                                    enabled: !vkCommentsWindow.opened
+                                    text: "Открыть в отдельном окне"
+                                    onPressed: {
+                                        vkCommentsWindow.setModalVisible(true);
+                                        vkontakteMenu.close();
                                     }
                                 }
                             }
@@ -2280,9 +2289,9 @@ Page {
                 }
                 WebEngineView {
                     id: webView
-                    visible: releasesViewModel.isOpenedCard
+                    visible: releasesViewModel.isOpenedCard && !vkCommentsWindow.opened
                     width: cardContainer.width
-                    height: cardContainer.height - releaseInfo.height - 60
+                    height: vkCommentsWindow.opened ? 0 : cardContainer.height - releaseInfo.height - 60
                 }
             }
         }

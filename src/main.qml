@@ -933,6 +933,7 @@ ApplicationWindow {
         onReleaseCardOpened: {
             analyticsService.sendView("releasecard", "show", "%2Freleases");
             releases.webView.url = releasesViewModel.getVkontakteCommentPage(releasesViewModel.openedReleaseCode);
+            vkCommentsWindow.refreshComments();
             userActivityViewModel.addOpenedCardToCounter();
         }
         onAfterSynchronizedReleases: {
@@ -1298,6 +1299,10 @@ ApplicationWindow {
         id: onlinePlayerWindow
         videoSource: videoplayer.videoPlayerSource
         videoOutput: videoplayer.videoOutputSource
+    }
+
+    VkCommentsWindow {
+        id: vkCommentsWindow
     }
 
     Item {

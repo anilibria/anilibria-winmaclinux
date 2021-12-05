@@ -118,5 +118,6 @@
         <file>Assets/Icons/listcustom.svg</file>
         <file>Assets/Icons/sortascending.svg</file>
         <file>Assets/Icons/sortdescending.svg</file>
+        <file>Views/VkCommentsWindow.qml</file>
     </qresource>
 </RCC>
