@@ -22,7 +22,7 @@ import QtWebEngine 1.8
 
 ApplicationWindow {
     id: root
-    title: `Комментарии ` + (webView.loading ? `загружаются...` : ``)
+    title: `Комментарии ` + (webViewLoader.item.loading ? `загружаются...` : ``)
     width: 400
     height: 550
     flags: Qt.Dialog
@@ -42,8 +42,9 @@ ApplicationWindow {
 
     onSetModalVisible: {
         if (visible && !opened) {
-            showComments();
+            webViewLoader.sourceComponent = webView
             show();
+            showComments();
             opened = true;
         }
         if (!visible && opened) {
@@ -54,15 +55,23 @@ ApplicationWindow {
 
     onClosing: {
         opened = false;
+        webViewLoader.sourceComponent = null;
     }
 
     function showComments() {
-        webView.url = releasesViewModel.getVkontakteCommentPage(releasesViewModel.openedReleaseCode);
+        if (webViewLoader.status === Loader.Ready) webViewLoader.item.url = releasesViewModel.getVkontakteCommentPage(releasesViewModel.openedReleaseCode);
     }
 
-    WebEngineView {
-        id: webView
+    Loader {
+        id: webViewLoader
         anchors.fill: parent
     }
 
+    Component {
+        id: webView
+
+        WebEngineView {
+            anchors.fill: parent
+        }
+    }
 }
