@@ -42,7 +42,6 @@ Page {
     property bool toggler: false
     property alias backgroundImageWidth: itemsContainer.width
     property alias backgroundImageHeight: itemsContainer.height
-    property alias webView: webView
 
     signal navigateFrom()
     signal watchSingleRelease(int releaseId, string videos, int startSeria, string poster)
@@ -52,12 +51,13 @@ Page {
     signal navigateTo()
     signal watchCinemahall()
     signal watchMultipleReleases()
+    signal setWebViewUrl()
 
     Keys.onPressed: {
         if (event.key === Qt.Key_Escape) {
             if (releasePosterPreview.isVisible) {
                 releasePosterPreview.isVisible = false;
-                if (Qt.platform.os !== "windows") webView.visible = true;
+                if (Qt.platform.os !== "windows") webView.item.visible = true;
             } else {
                 releasesViewModel.hideReleaseCard();
                 page.showAlpabeticalCharaters = false;
@@ -74,6 +74,10 @@ Page {
     }
 
     onRefreshReleaseSchedules: {
+    }
+
+    onSetWebViewUrl: {
+        if (webView.status === Loader.Ready) webView.item.url = releasesViewModel.getVkontakteCommentPage(releasesViewModel.openedReleaseCode);
     }
 
     background: Rectangle {
@@ -1713,7 +1717,7 @@ Page {
                             anchors.fill: parent
                             onPressed: {
                                 releasePosterPreview.isVisible = true;
-                                if (Qt.platform.os !== "windows") webView.visible = false;
+                                if (Qt.platform.os !== "windows") webView.item.visible = false;
                             }
                         }
                     }
@@ -1906,7 +1910,7 @@ Page {
                             iconWidth: 26
                             iconHeight: 26
                             onButtonPressed: {
-                                if (Qt.platform.os !== "windows") webView.visible = false;
+                                if (Qt.platform.os !== "windows") webView.item.visible = false;
                                 cardCopyMenu.open();
                             }
 
@@ -1919,7 +1923,7 @@ Page {
                                 id: cardCopyMenu
                                 width: 350
                                 onClosed: {
-                                    if (Qt.platform.os !== "windows") webView.visible = true;
+                                    if (Qt.platform.os !== "windows") webView.item.visible = true;
                                 }
 
                                 CommonMenuItem {
@@ -1964,7 +1968,7 @@ Page {
                             iconWidth: 26
                             iconHeight: 26
                             onButtonPressed: {
-                                if (Qt.platform.os !== "windows") webView.visible = false;
+                                if (Qt.platform.os !== "windows") webView.item.visible = false;
                                 vkontakteMenu.open();
                             }
 
@@ -1972,19 +1976,19 @@ Page {
                                 id: vkontakteMenu
                                 width: 350
                                 onClosed: {
-                                    if (Qt.platform.os !== "windows") webView.visible = true;
+                                    if (Qt.platform.os !== "windows") webView.item.visible = true;
                                 }
 
                                 CommonMenuItem {
                                     text: "Авторизоваться для комментариев"
                                     onPressed: {
-                                        webView.url = "https://oauth.vk.com/authorize?client_id=-1&display=widget&widget=4&redirect_uri=https://vk.com/";
+                                        webView.item.url = "https://oauth.vk.com/authorize?client_id=-1&display=widget&widget=4&redirect_uri=https://vk.com/";
                                     }
                                 }
                                 CommonMenuItem {
                                     text: "Переоткрыть комментарии"
                                     onPressed: {
-                                        webView.url = releasesViewModel.getVkontakteCommentPage(releasesViewModel.openedReleaseCode);
+                                        webView.item.url = releasesViewModel.getVkontakteCommentPage(releasesViewModel.openedReleaseCode);
                                         if (vkCommentsWindow.opened) vkCommentsWindow.refreshComments();
                                     }
                                 }
@@ -2007,7 +2011,7 @@ Page {
                             iconWidth: 26
                             iconHeight: 26
                             onButtonPressed: {
-                                if (Qt.platform.os !== "windows") webView.visible = false;
+                                if (Qt.platform.os !== "windows") webView.item.visible = false;
                                 seenMarkMenu.open();
                             }
 
@@ -2015,7 +2019,7 @@ Page {
                                 id: seenMarkMenu
                                 width: 350
                                 onClosed: {
-                                    if (Qt.platform.os !== "windows") webView.visible = true;
+                                    if (Qt.platform.os !== "windows") webView.item.visible = true;
                                 }
 
                                 CommonMenuItem {
@@ -2070,7 +2074,7 @@ Page {
                                     return;
                                 }
 
-                                if (Qt.platform.os !== "windows") webView.visible = false;
+                                if (Qt.platform.os !== "windows") webView.item.visible = false;
                                 cardFavoritesMenu.open();
                             }
 
@@ -2078,7 +2082,7 @@ Page {
                                 id: cardFavoritesMenu
                                 width: 350
                                 onClosed: {
-                                    if (Qt.platform.os !== "windows") webView.visible = true;
+                                    if (Qt.platform.os !== "windows") webView.item.visible = true;
                                 }
 
                                 CommonMenuItem {
@@ -2108,7 +2112,7 @@ Page {
                             iconWidth: 26
                             iconHeight: 26
                             onButtonPressed: {
-                                if (Qt.platform.os !== "windows") webView.visible = false;
+                                if (Qt.platform.os !== "windows") webView.item.visible = false;
                                 externalPlayerMenu.open();
                             }
 
@@ -2116,7 +2120,7 @@ Page {
                                 id: externalPlayerMenu
                                 width: 380
                                 onClosed: {
-                                    if (Qt.platform.os !== "windows") webView.visible = true;
+                                    if (Qt.platform.os !== "windows") webView.item.visible = true;
                                 }
 
                                 CommonMenuItem {
@@ -2177,7 +2181,7 @@ Page {
                             iconWidth: 26
                             iconHeight: 26
                             onButtonPressed: {
-                                if (Qt.platform.os !== "windows") webView.visible = false;
+                                if (Qt.platform.os !== "windows") webView.item.visible = false;
                                 setSeriesMenu.open();
                             }
 
@@ -2185,7 +2189,7 @@ Page {
                                 id: setSeriesMenu
                                 width: 330
                                 onClosed: {
-                                    if (Qt.platform.os !== "windows") webView.visible = true;
+                                    if (Qt.platform.os !== "windows") webView.item.visible = true;
                                 }
 
                                 Repeater {
@@ -2197,7 +2201,7 @@ Page {
                                             watchSingleRelease(releasesViewModel.openedReleaseId, releasesViewModel.openedReleaseVideos, index, releasesViewModel.openedReleasePoster);
 
                                             releasesViewModel.hideAfterWatchReleaseCard();
-                                            if (Qt.platform.os !== "windows") webView.visible = true;
+                                            if (Qt.platform.os !== "windows") webView.item.visible = true;
                                         }
                                     }
                                 }
@@ -2216,7 +2220,7 @@ Page {
                         anchors.left: parent.left
                         text: qsTr("Скачать")
                         onClicked: {
-                            if (Qt.platform.os !== "windows") webView.visible = false;
+                            if (Qt.platform.os !== "windows") webView.item.visible = false;
                             dowloadTorrent.open();
                         }
 
@@ -2225,7 +2229,7 @@ Page {
                             y: parent.height - parent.height
                             width: 380
                             onClosed: {
-                                if (Qt.platform.os !== "windows") webView.visible = true;
+                                if (Qt.platform.os !== "windows") webView.item.visible = true;
                             }
 
                             Repeater {
@@ -2269,7 +2273,7 @@ Page {
 
                             releasesViewModel.hideAfterWatchReleaseCard();
                             releasePosterPreview.isVisible = false;
-                            if (Qt.platform.os !== "windows") webView.visible = true;
+                            if (Qt.platform.os !== "windows") webView.item.visible = true;
                         }
                     }
 
@@ -2282,16 +2286,22 @@ Page {
                     PlainText {
                         anchors.verticalCenter: parent.verticalCenter
                         anchors.centerIn: parent
-                        visible: webView.loading
+                        visible: webView.item && webView.item.loading
                         fontPointSize: 11
                         text: "Загрузка комментариев..."
                     }
                 }
-                WebEngineView {
+                Loader {
                     id: webView
-                    visible: releasesViewModel.isOpenedCard && !vkCommentsWindow.opened
-                    width: cardContainer.width
-                    height: vkCommentsWindow.opened ? 0 : cardContainer.height - releaseInfo.height - 60
+                    sourceComponent: releasesViewModel.isOpenedCard && !vkCommentsWindow.opened ? webViewComponent : null
+                }
+                Component {
+                    id: webViewComponent
+
+                    WebEngineView {
+                        width: cardContainer.width
+                        height: cardContainer.height - releaseInfo.height - 60
+                    }
                 }
             }
         }

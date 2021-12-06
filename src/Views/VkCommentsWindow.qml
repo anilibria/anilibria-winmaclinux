@@ -22,7 +22,7 @@ import QtWebEngine 1.8
 
 ApplicationWindow {
     id: root
-    title: `Комментарии ` + (webViewLoader.item.loading ? `загружаются...` : ``)
+    title: `Комментарии ` + (webViewLoader.item && webViewLoader.item.loading ? `загружаются...` : ``)
     width: 400
     height: 550
     flags: Qt.Dialog

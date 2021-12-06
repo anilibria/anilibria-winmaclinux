@@ -932,7 +932,7 @@ ApplicationWindow {
         items.releaseLinkedSeries: releaseLinkedSeries
         onReleaseCardOpened: {
             analyticsService.sendView("releasecard", "show", "%2Freleases");
-            releases.webView.url = releasesViewModel.getVkontakteCommentPage(releasesViewModel.openedReleaseCode);
+            releases.setWebViewUrl();
             vkCommentsWindow.refreshComments();
             userActivityViewModel.addOpenedCardToCounter();
         }
