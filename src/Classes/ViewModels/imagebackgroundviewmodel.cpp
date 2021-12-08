@@ -19,8 +19,6 @@ ImageBackgroundViewModel::ImageBackgroundViewModel(QObject *parent) : QObject(pa
     m_alignmentModes->addItem(3, "Левый нижний угол");
     m_alignmentModes->addItem(4, "Правый нижний угол");
 
-    createIfNotExistsFile(getCachePath(m_optionFilePath + ".cache"), "{}");
-
     connect(m_imageModes, &CommonComboBoxListModel::selectedItemChanged, this, &ImageBackgroundViewModel::imageModesItemsChanged);
     connect(m_alignmentModes, &CommonComboBoxListModel::selectedItemChanged, this, &ImageBackgroundViewModel::aligmentModeChanged);
 }
@@ -30,6 +28,8 @@ void ImageBackgroundViewModel::setOptionFilePath(const QString &optionFilePath)
     if (!m_optionFilePath.isEmpty()) return;
 
     m_optionFilePath = optionFilePath;
+
+    createIfNotExistsFile(getCachePath(m_optionFilePath + ".cache"), "{}");
     loadOptions();
 }
 
