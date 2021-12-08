@@ -20,6 +20,8 @@
 #include <QDebug>
 #include <QVector>
 #include <QRegExp>
+#include <QtConcurrent>
+#include <QFuture>
 #include "releaselinkedseries.h"
 #include "globalconstants.h"
 
@@ -30,6 +32,9 @@ ReleaseLinkedSeries::ReleaseLinkedSeries(QObject *parent) : QAbstractListModel(p
 {
     createCacheFileIfNotExists();
     loadSeries();
+
+    auto watcher = m_cacheUpdateWatcher.get();
+    connect(watcher, &QFutureWatcher<bool>::finished, this, &ReleaseLinkedSeries::cacheUpdated);
 }
 
 int ReleaseLinkedSeries::rowCount(const QModelIndex &parent) const
@@ -194,34 +199,40 @@ int ReleaseLinkedSeries::getNextLinkedRelease(const int currentRelease)
 
 void ReleaseLinkedSeries::refreshSeries()
 {
-    QFile releasesCacheFile(getReleasesCachePath());
-    if (!releasesCacheFile.open(QFile::ReadOnly | QFile::Text)) {
-        qInfo() << "Can't read release cache file !";
-        return;
-    }
+    QFuture<bool> future = QtConcurrent::run(
+        [=] {
 
-    QString releasesJson = releasesCacheFile.readAll();
-    releasesCacheFile.close();
-    auto releasesArray = QJsonDocument::fromJson(releasesJson.toUtf8()).array();
-    QMap<QString, FullReleaseModel*> releases;
+            QFile releasesCacheFile(getReleasesCachePath());
+            if (!releasesCacheFile.open(QFile::ReadOnly | QFile::Text)) return false;
 
-    foreach (auto release, releasesArray) {
-        auto jsonRelease = new FullReleaseModel();
-        jsonRelease->readFromJson(release);
+            QString releasesJson = releasesCacheFile.readAll();
+            releasesCacheFile.close();
+            auto releasesArray = QJsonDocument::fromJson(releasesJson.toUtf8()).array();
+            QMap<QString, FullReleaseModel*> releases;
 
-        releases.insert(jsonRelease->code(), jsonRelease);
-    }
+            foreach (auto release, releasesArray) {
+                auto jsonRelease = new FullReleaseModel();
+                jsonRelease->readFromJson(release);
 
-    m_series->clear();
+                releases.insert(jsonRelease->code(), jsonRelease);
+            }
 
-    foreach (auto release, releases) {
-        auto description = release->description();
-        processReleasesFromDescription(description, releases, release->id(), release->title(), release->poster());
-    }
+            while (m_series->count()) delete m_series->takeLast();
 
-    saveSeries();
+            m_series->clear();
+            m_series->squeeze();
 
-    filterSeries(); // update data in UI
+            foreach (auto release, releases) {
+                auto description = release->description();
+                processReleasesFromDescription(description, releases, release->id(), release->title(), release->poster());
+            }
+
+            saveSeries();
+
+            return true;
+        }
+    );
+    m_cacheUpdateWatcher->setFuture(future);
 }
 
 bool ReleaseLinkedSeries::isReleaseInSeries(int id)
@@ -406,4 +417,11 @@ void ReleaseLinkedSeries::saveSeries()
     }
     file.write(document.toJson());
     file.close();
+}
+
+void ReleaseLinkedSeries::cacheUpdated()
+{
+    if (!m_cacheUpdateWatcher->result()) return;
+
+    filterSeries();
 }

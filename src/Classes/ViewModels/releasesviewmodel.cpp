@@ -666,6 +666,8 @@ void ReleasesViewModel::updateAllReleases(const QString &releases, bool insideDa
             if (newTorrentSeries->count() > newTorrentSeriesCount) newEntities += "Новых серий в торрентах " + QString::number(newTorrentSeries->count() - newTorrentSeriesCount);
             setNewEntities(newEntities);
 
+            loadReleasesWithoutReactive();
+
             return true;
         }
     );
@@ -848,6 +850,14 @@ void ReleasesViewModel::setupSortingForSection() const noexcept
 
 void ReleasesViewModel::loadReleases()
 {
+    loadReleasesWithoutReactive();
+
+    setCountReleases(m_releases->count());
+}
+
+void ReleasesViewModel::loadReleasesWithoutReactive()
+{
+    while (m_releases->count()) delete m_releases->takeLast();
     m_releases->clear();
     m_releasesMap->clear();
 
@@ -866,8 +876,6 @@ void ReleasesViewModel::loadReleases()
         m_releases->append(jsonRelease);
         m_releasesMap->insert(jsonRelease->id(), jsonRelease);
     }
-
-    setCountReleases(m_releases->count());
 }
 
 void ReleasesViewModel::loadSchedules()
@@ -1323,7 +1331,8 @@ void ReleasesViewModel::releasesUpdated()
 {
     if (!m_releasesUpdateWatcher->result()) return;
 
-    reloadReleases();
+    setCountReleases(m_releases->count());
+    m_items->refresh();
 
     m_synchronizationService->synchronizeSchedule();
     if (!m_applicationSettings->userToken().isEmpty()) m_synchronizationService->synchronizeUserFavorites(m_applicationSettings->userToken());

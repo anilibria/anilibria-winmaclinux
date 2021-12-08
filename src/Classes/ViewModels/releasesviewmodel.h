@@ -228,6 +228,7 @@ public:
 
 private:
     void loadReleases();
+    void loadReleasesWithoutReactive();
 
     void loadSchedules();
     void saveSchedule(QString json);

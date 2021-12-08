@@ -24,6 +24,7 @@
 #include <QAbstractListModel>
 #include <QVariant>
 #include <QScopedPointer>
+#include <QFutureWatcher>
 #include "../Models/fullreleasemodel.h"
 #include "../Models/releaseseriesmodel.h"
 
@@ -37,6 +38,7 @@ private:
     QScopedPointer<QVector<ReleaseSeriesModel*>> m_series;
     QScopedPointer<QVector<ReleaseSeriesModel*>> m_filteredSeries;
     bool m_filtering = false;
+    QScopedPointer<QFutureWatcher<bool>> m_cacheUpdateWatcher { new QFutureWatcher<bool>(this) };
 
     enum ItemRoles {
         CountReleasesRole = Qt::UserRole + 1,
@@ -77,6 +79,9 @@ private:
     void createCacheFileIfNotExists() const noexcept;
     void processReleasesFromDescription(const QString& description, const QMap<QString, FullReleaseModel*>& releases, int currentRelease, const QString currentReleaseTitle, const QString& poster) noexcept;
     void saveSeries();
+
+private slots:
+    void cacheUpdated();
 
 signals:
     void nameFilterChanged();

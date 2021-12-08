@@ -10,6 +10,13 @@ ReleaseSeriesModel::ReleaseSeriesModel() :
 
 }
 
+ReleaseSeriesModel::~ReleaseSeriesModel()
+{
+    m_releaseIds->clear();
+    m_posters->clear();
+    m_titles->clear();
+}
+
 void ReleaseSeriesModel::recalculateCountReleases()
 {
     m_countReleases = m_releaseIds->length();

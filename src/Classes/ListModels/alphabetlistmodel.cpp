@@ -98,5 +98,10 @@ QStringList AlphabetListModel::getSelectedCharacters()
 
 QString AlphabetListModel::getSelectedCharactersAsString()
 {
-    return QStringList(m_selectedCharacters->values()).join("");
+    QString result;
+    auto values = m_selectedCharacters->values();
+    foreach (auto value, values) {
+        result.append(value);
+    }
+    return result;
 }

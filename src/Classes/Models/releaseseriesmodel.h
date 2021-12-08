@@ -16,6 +16,7 @@ private:
 
 public:
     explicit ReleaseSeriesModel();
+    ~ReleaseSeriesModel();
 
     QList<QVariant>* releaseIds() const { return m_releaseIds; }
     QList<QVariant>* posters() const { return m_posters; }
