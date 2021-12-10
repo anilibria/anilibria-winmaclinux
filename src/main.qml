@@ -1141,6 +1141,15 @@ ApplicationWindow {
         border.color: ApplicationTheme.selectedItem
         border.width: 1
         visible: false
+
+        MouseArea {
+            anchors.fill: parent
+            hoverEnabled: true
+            acceptedButtons: Qt.LeftButton | Qt.RightButton
+            onPressed: {
+            }
+        }
+
         ColumnLayout {
             anchors.fill: parent
 
