@@ -358,6 +358,7 @@ void ReleasesViewModel::addReleaseToFavorites(int id) noexcept
         m_synchronizationService->addUserFavorites(m_applicationSettings->userToken(), QString::number(id));
         m_items->refreshItem(id);
         saveFavorites();
+        setCountFavorites(m_userFavorites->count());
     }
     if (m_openedRelease != nullptr) emit openedReleaseInFavoritesChanged();
 }
@@ -369,6 +370,7 @@ void ReleasesViewModel::removeReleaseFromFavorites(int id) noexcept
         m_synchronizationService->removeUserFavorites(m_applicationSettings->userToken(), QString::number(id));
         m_items->refreshItem(id);
         saveFavorites();
+        setCountFavorites(m_userFavorites->count());
     }
 
     if (m_openedRelease != nullptr) emit openedReleaseInFavoritesChanged();
@@ -387,7 +389,10 @@ void ReleasesViewModel::addSelectedReleaseToFavorites() noexcept
         }
     }
 
-    if (needSave) saveFavorites();
+    if (needSave) {
+        saveFavorites();
+        setCountFavorites(m_userFavorites->count());
+    }
     clearSelectedReleases();
 }
 
@@ -404,7 +409,10 @@ void ReleasesViewModel::removeSelectedReleaseFromFavorites() noexcept
         }
     }
 
-    if (needSave) saveFavorites();
+    if (needSave) {
+        saveFavorites();
+        setCountFavorites(m_userFavorites->count());
+    }
     clearSelectedReleases();
 }
 
@@ -693,11 +701,6 @@ void ReleasesViewModel::reloadReleases()
 {
     loadReleases();
     m_items->refresh();
-}
-
-void ReleasesViewModel::clearAccountFavorites()
-{
-    clearFavorites();
 }
 
 void ReleasesViewModel::setToReleaseHistory(int id, int type) noexcept
@@ -1361,4 +1364,5 @@ void ReleasesViewModel::userFavoritesReceived(const QString &data)
 {
     saveFavoritesFromJson(data);
     loadFavorites();
+    m_items->refresh();
 }

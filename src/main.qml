@@ -669,8 +669,6 @@ ApplicationWindow {
             window.userModel = {};
             mainViewModel.notVisibleSignin = false;
 
-            releasesViewModel.clearAccountFavorites();
-
             notificationViewModel.sendInfoNotification(`Вы успешно вышли из аккаунта. Чтобы войти обратно перейдите на страницу Войти.`)
         }
 

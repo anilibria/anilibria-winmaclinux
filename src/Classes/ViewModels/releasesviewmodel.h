@@ -206,7 +206,6 @@ public:
     Q_INVOKABLE void refreshOpenedReleaseCard();
     Q_INVOKABLE void removeAllSeenMark();
     Q_INVOKABLE void reloadReleases();
-    Q_INVOKABLE void clearAccountFavorites();
     Q_INVOKABLE void setToReleaseHistory(int id, int type) noexcept;
     Q_INVOKABLE QString getReleaseVideos(int id) const noexcept;
     Q_INVOKABLE QString getReleasePoster(int id) const noexcept;
