@@ -37,7 +37,7 @@ ApplicationWindow {
     minimumWidth: 800
     minimumHeight: 600
     height: 600
-    title: qsTr("AniLibria.Qt")
+    title: qsTr("AniLibria.Qt CE")
     font.capitalization: Font.MixedCase
     flags: Qt.FramelessWindowHint | Qt.Window | Qt.WindowMinimizeButtonHint
     property var userModel: ({})
@@ -57,6 +57,7 @@ ApplicationWindow {
 
     onActiveChanged: {
         if (!active) videoplayer.windowNotActived();
+        if (mainViewModel.currentPageId !== `videoplayer`) winterTimer.running = active;
     }
 
     Component.onCompleted: {
@@ -87,6 +88,13 @@ ApplicationWindow {
         width: window.width
         height: 35
         color: ApplicationTheme.notificationCenterBackground
+
+        Image {
+            anchors.fill: parent
+            opacity: .3
+            source: assetsLocation.iconsPath + "snowbackground.png"
+            fillMode: Image.TileHorizontally
+        }
 
         Rectangle {
             color: "black"
@@ -124,14 +132,23 @@ ApplicationWindow {
                 id: taskbarTitle
                 anchors.centerIn: parent
                 fontPointSize: 12
-                text: "AniLibria.Qt - "
+                text: "AniLibria."
+            }
+            Image {
+                id: christmassballImage
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.left: taskbarTitle.right
+                source: assetsLocation.iconsPath + "christmasball.svg"
+                width: 24
+                height: 24
+                mipmap: true
             }
             AccentText {
                 id: currentPageTitle
-                anchors.left: taskbarTitle.right
+                anchors.left: christmassballImage.right
                 anchors.verticalCenter: parent.verticalCenter
                 fontPointSize: 12
-                text: mainViewModel.currentPageDisplayName
+                text: "t CE - " + mainViewModel.currentPageDisplayName
             }
         }
         IconButton {
@@ -521,6 +538,13 @@ ApplicationWindow {
         analyticsService.sendView("Pages", "ChangePage", "%2F" + pageId);
 
         drawer.close();
+
+        if (pageId === `videoplayer`) {
+            winterTimer.running = false;
+            winterTimer.resetCreation();
+        } else {
+            winterTimer.running = true;
+        }
     }
 
     function getCurrentScreen() {
@@ -1316,6 +1340,29 @@ ApplicationWindow {
         id: assetsLocation
         property string path: Qt.resolvedUrl("../Assets/")
         property string iconsPath: Qt.resolvedUrl("../Assets/Icons/")
+    }
+
+    Timer {
+        id: winterTimer
+        property bool needCreated: true
+
+        signal resetCreation()
+
+        onResetCreation: {
+            needCreated = false;
+        }
+
+        interval: 2000
+        running: true
+        repeat: true
+        onTriggered: {
+            var component = Qt.createComponent(`snowflake.qml`);
+            if (component.status === Component.Ready) {
+               const createdComponent = component.createObject(window);
+               createdComponent.x = Math.random() * (window.width - 40);
+               createdComponent.startRotating();
+            }
+        }
     }
 
 }

@@ -33,6 +33,8 @@ ReleasesViewModel::ReleasesViewModel(QObject *parent) : QObject(parent)
     m_sectionNames.append("Самые популярные");
     m_sectionNames.append("Часть серии");
     m_sectionNames.append("Популярное в 2021");
+    m_sectionNames.append("Просмотренные до конца");
+    m_sectionNames.append("Просмотренные не до конца");
 
     m_sectionSorting->append(std::make_tuple<int, int>(0, 1));
     m_sectionSorting->append(std::make_tuple<int, int>(0, 1));
@@ -52,6 +54,8 @@ ReleasesViewModel::ReleasesViewModel(QObject *parent) : QObject(parent)
     m_sectionSorting->append(std::make_tuple<int, int>(4, 1));
     m_sectionSorting->append(std::make_tuple<int, int>(12, 1));
     m_sectionSorting->append(std::make_tuple<int, int>(4, 1));
+    m_sectionSorting->append(std::make_tuple<int, int>(0, 1));
+    m_sectionSorting->append(std::make_tuple<int, int>(0, 1));
 
     createIfNotExistsFile(getCachePath(releasesCacheFileName), "[]");
     createIfNotExistsFile(getCachePath(scheduleCacheFileName), "{}");

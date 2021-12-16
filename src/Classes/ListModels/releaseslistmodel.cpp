@@ -16,6 +16,8 @@ const int OnlyMoviesSection = 14;
 const int MostPopularSection = 15;
 const int WithinSeriesSection = 16;
 const int MostPopular2021Section = 17;
+const int FinishedSeenSection = 18;
+const int NotFinishedSeenSection = 19;
 
 ReleasesListModel::ReleasesListModel(QObject *parent) : QAbstractListModel(parent)
 {
@@ -550,6 +552,10 @@ void ReleasesListModel::refresh()
         if (m_section == MostPopular2021Section && !(release->year() == "2021" && release->rating() > 0)) continue;
 
         if (m_section == HiddenReleasesSection && !m_hiddenReleases->contains(release->id())) continue;
+
+        if (m_section == FinishedSeenSection && !(isAllSeens && release->status().toLower() == "завершен")) continue;
+
+        if (m_section == NotFinishedSeenSection && !(isAllSeens && release->status().toLower() != "завершен")) continue;
 
         m_filteredReleases->append(release);
     }

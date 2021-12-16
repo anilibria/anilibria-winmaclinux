@@ -1418,6 +1418,18 @@ Page {
                                         page.changeSection(12);
                                     }
                                 }
+                                CommonMenuItem {
+                                    text: releasesViewModel.sectionNames[18]
+                                    onPressed: {
+                                        page.changeSection(18);
+                                    }
+                                }
+                                CommonMenuItem {
+                                    text: releasesViewModel.sectionNames[19]
+                                    onPressed: {
+                                        page.changeSection(19);
+                                    }
+                                }
                             }
                         }
                         FilterPanelIconButton {

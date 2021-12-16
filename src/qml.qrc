@@ -119,5 +119,9 @@
         <file>Assets/Icons/sortascending.svg</file>
         <file>Assets/Icons/sortdescending.svg</file>
         <file>Views/VkCommentsWindow.qml</file>
+        <file>Assets/Icons/christmasball.svg</file>
+        <file>Assets/Icons/snowflake.svg</file>
+        <file>snowflake.qml</file>
+        <file>Assets/Icons/snowbackground.png</file>
     </qresource>
 </RCC>
