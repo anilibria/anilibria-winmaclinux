@@ -359,7 +359,9 @@ void ReleasesViewModel::addReleaseToFavorites(int id) noexcept
 {
     if (!m_userFavorites->contains(id)) {
         m_userFavorites->append(id);
-        m_synchronizationService->addUserFavorites(m_applicationSettings->userToken(), QString::number(id));
+        if (!m_applicationSettings->userToken().isEmpty()) {
+            m_synchronizationService->addUserFavorites(m_applicationSettings->userToken(), QString::number(id));
+        }
         m_items->refreshItem(id);
         saveFavorites();
         setCountFavorites(m_userFavorites->count());
@@ -371,7 +373,9 @@ void ReleasesViewModel::removeReleaseFromFavorites(int id) noexcept
 {
     if (m_userFavorites->contains(id)) {
         m_userFavorites->removeOne(id);
-        m_synchronizationService->removeUserFavorites(m_applicationSettings->userToken(), QString::number(id));
+        if (!m_applicationSettings->userToken().isEmpty()) {
+            m_synchronizationService->removeUserFavorites(m_applicationSettings->userToken(), QString::number(id));
+        }
         m_items->refreshItem(id);
         saveFavorites();
         setCountFavorites(m_userFavorites->count());
@@ -384,10 +388,11 @@ void ReleasesViewModel::addSelectedReleaseToFavorites() noexcept
 {
     auto selectedReleases = m_items->getSelectedReleases();
     bool needSave = false;
+    bool needSynchronize = !m_applicationSettings->userToken().isEmpty();
     foreach (auto selectedRelease, *selectedReleases) {
         if (!m_userFavorites->contains(selectedRelease)) {
             m_userFavorites->append(selectedRelease);
-            m_synchronizationService->addUserFavorites(m_applicationSettings->userToken(), QString::number(selectedRelease));
+            if (needSynchronize) m_synchronizationService->addUserFavorites(m_applicationSettings->userToken(), QString::number(selectedRelease));
             m_items->refreshItem(selectedRelease);
             needSave = true;
         }
@@ -404,10 +409,11 @@ void ReleasesViewModel::removeSelectedReleaseFromFavorites() noexcept
 {
     auto selectedReleases = m_items->getSelectedReleases();
     bool needSave = false;
+    bool needSynchronize = !m_applicationSettings->userToken().isEmpty();
     foreach (auto selectedRelease, *selectedReleases) {
         if (m_userFavorites->contains(selectedRelease)) {
             m_userFavorites->removeOne(selectedRelease);
-            m_synchronizationService->removeUserFavorites(m_applicationSettings->userToken(), QString::number(selectedRelease));
+            if (needSynchronize) m_synchronizationService->removeUserFavorites(m_applicationSettings->userToken(), QString::number(selectedRelease));
             m_items->refreshItem(selectedRelease);
             needSave = true;
         }

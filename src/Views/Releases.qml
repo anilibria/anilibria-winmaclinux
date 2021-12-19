@@ -160,13 +160,6 @@ Page {
                     iconHeight: 29
                     tooltipMessage: "Добавить или удалить релизы из избранного"
                     onButtonPressed: {
-                        if (!window.userModel.login) {
-                            favoritePopupHeader.text = "Избранное не доступно";
-                            favoritePopupMessage.text = "Чтобы добавлять в избранное нужно вначале авторизоваться. Для этого перейдите на страницу Войти в меню и войдите под данными своего аккаунта. Если вы не зарегистрированы то необходимо сделать это на сайте, ссылка на сайт будет на странице Войти.";
-                            messagePopup.open();
-                            return;
-                        }
-
                         favoriteMenu.open();
                     }
 
@@ -180,6 +173,7 @@ Page {
                             enabled: releasesViewModel.items.isHasSelectRelease
                             onPressed: {
                                 releasesViewModel.addSelectedReleaseToFavorites();
+                                favoriteMenu.close();
                             }
                         }
                         CommonMenuItem {
@@ -187,42 +181,7 @@ Page {
                             enabled: releasesViewModel.items.isHasSelectRelease
                             onPressed: {
                                 releasesViewModel.removeSelectedReleaseFromFavorites();
-                            }
-                        }
-                    }
-
-                    Popup {
-                        id: messagePopup
-                        x: window.width / 2 - 225
-                        y: window.height / 2 - 100
-                        width: 450
-                        height: 150
-                        modal: true
-                        focus: true
-                        closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
-
-                        Column {
-                            width: parent.width
-                            spacing: 10
-                            AccentText {
-                                id: favoritePopupHeader
-                                width: messagePopup.width - 20
-                                fontPointSize: 12
-                                font.bold: true
-                                elide: Text.ElideRight
-                            }
-
-                            Rectangle {
-                                color: "transparent"
-                                width: messagePopup.width - 20
-                                height: messagePopup.height - 50
-                                PlainText {
-                                    id: favoritePopupMessage
-                                    anchors.verticalCenter: parent.verticalCenter
-                                    width: parent.width
-                                    fontPointSize: 10
-                                    wrapMode: Text.WordWrap
-                                }
+                                favoriteMenu.close();
                             }
                         }
                     }
@@ -425,7 +384,7 @@ Page {
                             spacing: 10
                             AccentText {
                                 id: notHaveCinemahallReleasesHeader
-                                width: messagePopup.width - 20
+                                width: notHaveCinemahallReleasesMessagePopup.width - 20
                                 fontPointSize: 12
                                 font.bold: true
                                 elide: Text.ElideRight
@@ -434,8 +393,8 @@ Page {
 
                             Rectangle {
                                 color: "transparent"
-                                width: messagePopup.width - 20
-                                height: messagePopup.height - 50
+                                width: notHaveCinemahallReleasesMessagePopup.width - 20
+                                height: notHaveCinemahallReleasesMessagePopup.height - 50
                                 PlainText {
                                     id: notHaveCinemahallReleasesMessage
                                     anchors.verticalCenter: parent.verticalCenter
@@ -2079,13 +2038,6 @@ Page {
                             iconWidth: 26
                             iconHeight: 26
                             onButtonPressed: {
-                                if (!window.userModel.login) {
-                                    favoritePopupHeader.text = "Избранное не доступно";
-                                    favoritePopupMessage.text = "Чтобы добавлять в избранное нужно вначале авторизоваться. Для этого перейдите на страницу Войти в меню и войдите под данными своего аккаунта. Если вы не зарегистрированы то необходимо сделать это на сайте, ссылка на сайт будет на странице Войти.";
-                                    messagePopup.open();
-                                    return;
-                                }
-
                                 if (Qt.platform.os !== "windows") webView.item.visible = false;
                                 cardFavoritesMenu.open();
                             }
