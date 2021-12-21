@@ -30,6 +30,12 @@ ReleaseModel::ReleaseModel()
     m_Announce = "";
 }
 
+ReleaseModel::~ReleaseModel()
+{
+    m_Videos.clear();
+    m_Torrents.clear();
+}
+
 void ReleaseModel::writeToApiModel(QJsonObject& json) const noexcept
 {
     json["id"] = m_Id;

@@ -57,7 +57,6 @@ ApplicationWindow {
 
     onActiveChanged: {
         if (!active) videoplayer.windowNotActived();
-        if (mainViewModel.currentPageId !== `videoplayer`) winterTimer.running = active;
     }
 
     Component.onCompleted: {
@@ -538,13 +537,6 @@ ApplicationWindow {
         analyticsService.sendView("Pages", "ChangePage", "%2F" + pageId);
 
         drawer.close();
-
-        if (pageId === `videoplayer`) {
-            winterTimer.running = false;
-            winterTimer.resetCreation();
-        } else {
-            winterTimer.running = true;
-        }
     }
 
     function getCurrentScreen() {
@@ -644,6 +636,7 @@ ApplicationWindow {
 
     ReleaseLinkedSeries {
         id: releaseLinkedSeries
+
     }
 
     FileDialog {
@@ -1341,28 +1334,4 @@ ApplicationWindow {
         property string path: Qt.resolvedUrl("../Assets/")
         property string iconsPath: Qt.resolvedUrl("../Assets/Icons/")
     }
-
-    Timer {
-        id: winterTimer
-        property bool needCreated: true
-
-        signal resetCreation()
-
-        onResetCreation: {
-            needCreated = false;
-        }
-
-        interval: 2000
-        running: true
-        repeat: true
-        onTriggered: {
-            var component = Qt.createComponent(`snowflake.qml`);
-            if (component.status === Component.Ready) {
-               const createdComponent = component.createObject(window);
-               createdComponent.x = Math.random() * (window.width - 40);
-               createdComponent.startRotating();
-            }
-        }
-    }
-
 }

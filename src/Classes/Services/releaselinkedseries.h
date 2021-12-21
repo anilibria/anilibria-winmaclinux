@@ -38,6 +38,7 @@ private:
     QScopedPointer<QVector<ReleaseSeriesModel*>> m_series;
     QScopedPointer<QVector<ReleaseSeriesModel*>> m_filteredSeries;
     bool m_filtering = false;
+    QSharedPointer<QList<FullReleaseModel *>> m_releases;
     QScopedPointer<QFutureWatcher<bool>> m_cacheUpdateWatcher { new QFutureWatcher<bool>(this) };
 
     enum ItemRoles {
@@ -59,6 +60,8 @@ public:
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
     QHash<int,QByteArray> roleNames() const override;
+
+    void setup(QSharedPointer<QList<FullReleaseModel *>> releases);
 
     QString nameFilter() const { return m_nameFilter; }
     void setNameFilter(const QString& nameFilter) noexcept;
