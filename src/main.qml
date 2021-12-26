@@ -88,13 +88,6 @@ ApplicationWindow {
         height: 35
         color: ApplicationTheme.notificationCenterBackground
 
-        Image {
-            anchors.fill: parent
-            opacity: .3
-            source: assetsLocation.iconsPath + "snowbackground.png"
-            fillMode: Image.TileHorizontally
-        }
-
         Rectangle {
             color: "black"
             width: 1
@@ -131,23 +124,14 @@ ApplicationWindow {
                 id: taskbarTitle
                 anchors.centerIn: parent
                 fontPointSize: 12
-                text: "AniLibria."
-            }
-            Image {
-                id: christmassballImage
-                anchors.verticalCenter: parent.verticalCenter
-                anchors.left: taskbarTitle.right
-                source: assetsLocation.iconsPath + "christmasball.svg"
-                width: 24
-                height: 24
-                mipmap: true
+                text: "AniLibria.Qt - "
             }
             AccentText {
                 id: currentPageTitle
-                anchors.left: christmassballImage.right
+                anchors.left: taskbarTitle.right
                 anchors.verticalCenter: parent.verticalCenter
                 fontPointSize: 12
-                text: "t CE - " + mainViewModel.currentPageDisplayName
+                text: mainViewModel.currentPageDisplayName
             }
         }
         IconButton {
