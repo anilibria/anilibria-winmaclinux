@@ -635,8 +635,10 @@ void ReleasesViewModel::updateAllReleases(const QString &releases, bool insideDa
             auto newTorrentsCount = m_releaseChanges->newTorrents()->count();
             auto newTorrentSeriesCount = m_releaseChanges->newTorrentSeries()->count();
 
+            auto isFirstStart = m_releases->count() == 0;
+
             foreach (QJsonValue jsonRelease, jsonReleases) {
-                mapToFullReleaseModel(jsonRelease.toObject());
+                mapToFullReleaseModel(jsonRelease.toObject(), isFirstStart);
             }
 
             saveReleasesFromMemoryToFile();
@@ -1238,16 +1240,21 @@ void ReleasesViewModel::saveReleasesFromMemoryToFile()
     file.close();
 }
 
-void ReleasesViewModel::mapToFullReleaseModel(QJsonObject &&jsonObject)
+void ReleasesViewModel::mapToFullReleaseModel(QJsonObject &&jsonObject, const bool isFirstStart)
 {
     auto id = jsonObject.value("id").toInt();
 
-    auto model = getReleaseById(id);
+    FullReleaseModel* model = nullptr;
 
-    auto isNew = model == nullptr;
-    if (isNew) model = new FullReleaseModel();
+    auto isNew = !m_releasesMap->contains(id);
+    if (isNew) {
+        model = new FullReleaseModel();
+        model->setId(id);
+    } else {
+        model = m_releasesMap->value(id);
+    }
 
-    if (m_releases->count() != 0 && isNew && !m_releaseChanges->newReleases()->contains(id)) {
+    if (!isFirstStart && isNew && !m_releaseChanges->newReleases()->contains(id)) {
         m_releaseChanges->newReleases()->append(id);
     }
 
@@ -1268,8 +1275,15 @@ void ReleasesViewModel::mapToFullReleaseModel(QJsonObject &&jsonObject)
         m_releaseChanges->newTorrents()->append(id);
     }
 
-    if (!isNew && torrentJson != model->torrents() && !m_releaseChanges->newTorrentSeries()->contains(id)) {
-        m_releaseChanges->newTorrentSeries()->append(id);
+    if (!isNew && !m_releaseChanges->newTorrentSeries()->contains(id)) {
+        foreach (auto torrentItem, torrents) {
+            auto series = torrentItem.toObject()["series"].toString();
+            if (!model->torrents().contains("series\": \"" + series + "\"")) {
+                qDebug() << series << " " << "series\": \"" + series + "\"" << " " << model->torrents();
+                m_releaseChanges->newTorrentSeries()->append(id);
+                break;
+            }
+        }
     }
 
     auto videos = jsonObject.value("playlist").toArray();    
@@ -1310,6 +1324,11 @@ void ReleasesViewModel::mapToFullReleaseModel(QJsonObject &&jsonObject)
     auto poster = jsonObject.value("poster").toString();
     if (!isNew && poster != model->poster()) m_localStorage->invalidateReleasePoster(id);
     model->setPoster(jsonObject.value("poster").toString());
+
+    if (isNew) {
+        m_releases->append(model);
+        m_releasesMap->insert(model->id(), model);
+    }
 }
 
 QString ReleasesViewModel::videosToJson(QList<OnlineVideoModel> &videos)
