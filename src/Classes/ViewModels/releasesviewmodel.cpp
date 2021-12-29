@@ -1278,6 +1278,7 @@ void ReleasesViewModel::mapToFullReleaseModel(QJsonObject &&jsonObject, const bo
     if (!isNew && !m_releaseChanges->newTorrentSeries()->contains(id)) {
         foreach (auto torrentItem, torrents) {
             auto series = torrentItem.toObject()["series"].toString();
+            series = series.replace("\\", "\\\\");
             if (!model->torrents().contains("series\": \"" + series + "\"")) {
                 qDebug() << series << " " << "series\": \"" + series + "\"" << " " << model->torrents();
                 m_releaseChanges->newTorrentSeries()->append(id);
