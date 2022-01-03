@@ -652,8 +652,6 @@ void ReleasesViewModel::updateAllReleases(const QString &releases, bool insideDa
             if (m_releaseChanges->newTorrentSeries()->count() > newTorrentSeriesCount) newEntities += "Новых серий в торрентах " + QString::number(m_releaseChanges->newTorrentSeries()->count() - newTorrentSeriesCount);
             setNewEntities(newEntities);
 
-            loadReleasesWithoutReactive();
-
             return true;
         }
     );
@@ -1280,7 +1278,6 @@ void ReleasesViewModel::mapToFullReleaseModel(QJsonObject &&jsonObject, const bo
             auto series = torrentItem.toObject()["series"].toString();
             series = series.replace("\\", "\\\\");
             if (!model->torrents().contains("series\": \"" + series + "\"")) {
-                qDebug() << series << " " << "series\": \"" + series + "\"" << " " << model->torrents();
                 m_releaseChanges->newTorrentSeries()->append(id);
                 break;
             }
