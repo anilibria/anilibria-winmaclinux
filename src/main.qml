@@ -136,6 +136,7 @@ ApplicationWindow {
         }
         IconButton {
             id: goToReleasePage
+            overlayVisible: false
             anchors.left: parent.left
             anchors.leftMargin: 1
             anchors.top: parent.top
@@ -144,7 +145,7 @@ ApplicationWindow {
             width: 40
             iconColor: ApplicationTheme.filterIconButtonColor
             hoverColor: ApplicationTheme.filterIconButtonHoverColor
-            iconPath: "Assets/Icons/releasepage.svg"
+            iconPath: "Assets/Icons/catalogmenu.svg"
             iconWidth: 20
             iconHeight: 20
             tooltipMessage: "Перейти на страницу Каталог Релизов"
@@ -154,6 +155,7 @@ ApplicationWindow {
         }
         IconButton {
             id: goToOnlineVideoPage
+            overlayVisible: false
             anchors.left: goToReleasePage.right
             anchors.top: parent.top
             anchors.topMargin: 1
@@ -161,7 +163,7 @@ ApplicationWindow {
             width: 40
             iconColor: ApplicationTheme.filterIconButtonColor
             hoverColor: ApplicationTheme.filterIconButtonHoverColor
-            iconPath: "Assets/Icons/videoplayer.svg"
+            iconPath: "Assets/Icons/videoplayermenu.svg"
             iconWidth: 20
             iconHeight: 20
             tooltipMessage: "Перейти на страницу Видеоплеер"
@@ -171,6 +173,7 @@ ApplicationWindow {
         }
         IconButton {
             id: goToCinemaHall
+            overlayVisible: false
             anchors.left: goToOnlineVideoPage.right
             anchors.top: parent.top
             anchors.topMargin: 1
@@ -178,7 +181,7 @@ ApplicationWindow {
             width: 40
             iconColor: ApplicationTheme.filterIconButtonColor
             hoverColor: ApplicationTheme.filterIconButtonHoverColor
-            iconPath: "Assets/Icons/popcorn.svg"
+            iconPath: "Assets/Icons/cinemahallmenu.svg"
             iconWidth: 20
             iconHeight: 20
             tooltipMessage: "Перейти на страницу Кинозал"
@@ -188,6 +191,7 @@ ApplicationWindow {
         }
         IconButton {
             id: goToReleaseSeries
+            overlayVisible: false
             anchors.left: goToCinemaHall.right
             anchors.top: parent.top
             anchors.topMargin: 1
@@ -195,7 +199,7 @@ ApplicationWindow {
             width: 40
             iconColor: ApplicationTheme.filterIconButtonColor
             hoverColor: ApplicationTheme.filterIconButtonHoverColor
-            iconPath: "Assets/Icons/series.svg"
+            iconPath: "Assets/Icons/seriesmenu.svg"
             iconWidth: 20
             iconHeight: 20
             tooltipMessage: "Перейти на страницу Связанные релизы"
@@ -696,7 +700,7 @@ ApplicationWindow {
         background: LinearGradient {
             anchors.fill: parent
             start: Qt.point(0, 0)
-            end: Qt.point(0, 300)
+            end: Qt.point(0, parent.height)
             gradient: Gradient {
                 GradientStop { position: 0.0; color: ApplicationTheme.drawerGradiendStep0 }
                 GradientStop { position: 0.3; color: ApplicationTheme.drawerGradiendStep1 }
@@ -715,6 +719,7 @@ ApplicationWindow {
                 height: 64
 
                 Image {
+                    id: userAvatarImage
                     anchors.leftMargin: 6
                     anchors.topMargin: 2
                     anchors.left: parent.left
@@ -735,26 +740,33 @@ ApplicationWindow {
                 }
 
                 Text {
-                    anchors.horizontalCenter: parent.horizontalCenter
+                    anchors.left: userAvatarImage.right
+                    anchors.leftMargin: 10
                     anchors.verticalCenter: parent.verticalCenter
-                    text: userModel.login ? userModel.login : ""
+                    text: "Вы авторизованы как:\n" + (userModel.login ? userModel.login : "")
                     color: "white"
+                    elide: Text.ElideRight
+                    antialiasing: true
                     wrapMode: Text.WordWrap
+                    width: drawer.width - userAvatarImage.width - logoutButton.width - 40
+                    maximumLineCount: 2
                 }
 
-                Image {
-                    anchors.rightMargin: 8
-                    anchors.verticalCenter: parent.verticalCenter
+                IconButton {
+                    id: logoutButton
                     anchors.right: parent.right
-                    source: "Assets/Icons/logout.svg"
-                    width: 30
-                    height: 30
-                    mipmap: true
-                    MouseArea {
-                        anchors.fill: parent
-                        onPressed: {
-                            synchronizationService.signout(applicationSettings.userToken);
-                        }
+                    anchors.rightMargin: 1
+                    anchors.verticalCenter: parent.verticalCenter
+                    height: 40
+                    width: 40
+                    hoverColor: Qt.rgba(0, 0, 0, .1)
+                    overlayVisible: false
+                    iconPath: "Assets/Icons/logout.svg"
+                    iconWidth: 28
+                    iconHeight: 28
+                    tooltipMessage: "Выйти из аккаунта"
+                    onButtonPressed: {
+                        synchronizationService.signout(applicationSettings.userToken);
                     }
                 }
             }
