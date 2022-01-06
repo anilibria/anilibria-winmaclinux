@@ -126,5 +126,6 @@
         <file>Assets/Icons/seriesmenu.svg</file>
         <file>Assets/Icons/videoplayermenu.svg</file>
         <file>Assets/Icons/catalogmenu.svg</file>
+        <file>Controls/CommonSwitch.qml</file>
     </qresource>
 </RCC>
