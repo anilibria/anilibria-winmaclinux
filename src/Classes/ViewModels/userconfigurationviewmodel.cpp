@@ -26,11 +26,20 @@ void UserConfigurationViewModel::setOpacityPlayerPanel(int opacityPlayerPanel) n
     emit opacityPlayerPanelChanged();
 }
 
+void UserConfigurationViewModel::setUsingScrollAcceleration(const bool usingScrollAcceleration) noexcept
+{
+    if (m_usingScrollAcceleration == usingScrollAcceleration) return;
+
+    m_usingScrollAcceleration = usingScrollAcceleration;
+    emit usingScrollAccelerationChanged();
+}
+
 void UserConfigurationViewModel::saveSettingsToFile()
 {
     QJsonObject object;
     object[m_opacityPlayerPanelField] = m_opacityPlayerPanel;
     object[m_notCloseReleaseCardAfterWatchField] = m_notCloseReleaseCardAfterWatch;
+    object[m_usingScrollAccelerationField] = m_usingScrollAcceleration;
 
     QFile file(getCachePath(m_cacheFileName));
     file.open(QFile::WriteOnly | QFile::Text);
@@ -48,5 +57,6 @@ void UserConfigurationViewModel::readSettingsFromFile()
     auto document = QJsonDocument::fromJson(json);
     auto object = document.object();
     m_opacityPlayerPanel = object.contains(m_opacityPlayerPanelField) ? object[m_opacityPlayerPanelField].toInt() : 50;
-    m_notCloseReleaseCardAfterWatch =  object.contains(m_notCloseReleaseCardAfterWatchField) ? object[m_notCloseReleaseCardAfterWatchField].toBool() : false;
+    m_notCloseReleaseCardAfterWatch = object.contains(m_notCloseReleaseCardAfterWatchField) ? object[m_notCloseReleaseCardAfterWatchField].toBool() : false;
+    m_usingScrollAcceleration = object.contains(m_usingScrollAccelerationField) ? object[m_usingScrollAccelerationField].toBool() : true;
 }

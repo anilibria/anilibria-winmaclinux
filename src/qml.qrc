@@ -121,7 +121,11 @@
         <file>Views/VkCommentsWindow.qml</file>
         <file>Assets/Icons/christmasball.svg</file>
         <file>Assets/Icons/snowflake.svg</file>
-        <file>snowflake.qml</file>
         <file>Assets/Icons/snowbackground.png</file>
+        <file>Assets/Icons/cinemahallmenu.svg</file>
+        <file>Assets/Icons/seriesmenu.svg</file>
+        <file>Assets/Icons/videoplayermenu.svg</file>
+        <file>Assets/Icons/catalogmenu.svg</file>
+        <file>Controls/CommonSwitch.qml</file>
     </qresource>
 </RCC>

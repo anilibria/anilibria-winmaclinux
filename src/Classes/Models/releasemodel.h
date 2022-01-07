@@ -47,6 +47,7 @@ private:
 
 public:
     ReleaseModel();
+    ~ReleaseModel();
 
     void readFromApiModel(const QJsonObject &jsonObject);
     

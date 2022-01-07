@@ -257,7 +257,7 @@ private:
 
     int randomBetween(int low, int high) const noexcept;
     void saveReleasesFromMemoryToFile();
-    FullReleaseModel* mapToFullReleaseModel(ReleaseModel &releaseModel);
+    void mapToFullReleaseModel(QJsonObject &&jsonObject, const bool isFirstStart);
     QString videosToJson(QList<OnlineVideoModel> &videos);
     QString torrentsToJson(QList<ReleaseTorrentModel> &torrents);
 

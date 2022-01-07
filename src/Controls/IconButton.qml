@@ -26,6 +26,7 @@ Item {
     property alias iconPath: iconImage.source
     property alias iconWidth: iconImage.width
     property alias iconHeight: iconImage.height
+    property alias overlayVisible: colorOverlay.visible
     property var hoverColor: "lightgray"
     property bool hovered: false
     property alias showCrossIcon: crossIcon.visible

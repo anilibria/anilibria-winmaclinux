@@ -913,170 +913,165 @@ Page {
                         id: releaseSettingsPopup
                         x: 40
                         y: -410
-                        width: 370
-                        height: 630
+                        width: 720
+                        height: 400
                         modal: true
                         focus: true
                         closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
 
-                        PlainText {
-                            id: downloadTorrentModeLabel
-                            fontPointSize: 11
-                            text: "Торрент"
-                        }
-                        CommonComboBox {
-                            id: downloadTorrentMode
-                            currentIndex: 0
-                            anchors.top: downloadTorrentModeLabel.bottom
-                            width: 350
-                            model: ["Открыть в торрент клиенте", "Сохранить файл"]
-                            onCurrentIndexChanged: {
-                                localStorage.setTorrentDownloadMode(downloadTorrentMode.currentIndex);
+                        Column {
+                            height: releaseSettingsPopup.height
+                            width: parent.width / 2
+                            spacing: 4
+
+                            PlainText {
+                                id: notificationForFavoritesLabel
+                                fontPointSize: 11
+                                text: "Уведомления по избранным"
                             }
-                        }
-
-                        PlainText {
-                            id: notificationForFavoritesLabel
-                            anchors.top: downloadTorrentMode.bottom
-                            anchors.topMargin: 4
-                            fontPointSize: 11
-                            text: "Уведомления по избранным"
-                        }
-                        Switch {
-                            id: notificationForFavorites
-                            anchors.top: notificationForFavoritesLabel.bottom
-                            onCheckedChanged: {
-                                localStorage.setNotificationForFavorites(checked);
-                                releasesViewModel.notificationForFavorites = checked;
-                            }
-                        }
-
-                        PlainText {
-                            id: darkModeLabel
-                            anchors.top: notificationForFavorites.bottom
-                            anchors.topMargin: 4
-                            fontPointSize: 11
-                            text: "Темная тема"
-                        }
-                        Switch {
-                            id: darkModeSwitch
-                            anchors.top: darkModeLabel.bottom
-                            onCheckedChanged: {
-                                applicationSettings.isDarkTheme = checked;
-                                ApplicationTheme.isDarkTheme = checked;
-                            }
-                        }
-
-                        PlainText {
-                            id: clearFilterAfterChangeSectionLabel
-                            anchors.top: darkModeSwitch.bottom
-                            anchors.topMargin: 4
-                            fontPointSize: 11
-                            text: "Сбрасывать все фильтры после\nсмены раздела"
-                        }
-                        Switch {
-                            id: clearFilterAfterChangeSectionSwitch
-                            anchors.top: clearFilterAfterChangeSectionLabel.bottom
-                            onCheckedChanged: {
-                                localStorage.setClearFiltersAfterChangeSection(checked);
-                            }
-
-                            ToolTip.delay: 1000
-                            ToolTip.visible: hovered
-                            ToolTip.text: "Разделы это кнопки находящиеся по центру выше списка релизов\nДанная настройка влияет на то будут ли сброшены все фильтры при смене раздела или нет"
-                        }
-
-                        PlainText {
-                            id: compactModeLabel
-                            anchors.top: clearFilterAfterChangeSectionSwitch.bottom
-                            anchors.topMargin: 4
-                            fontPointSize: 11
-                            text: "Компактный режим"
-                        }
-                        Switch {
-                            id: compactModeSwitch
-                            anchors.top: compactModeLabel.bottom
-                            onCheckedChanged: {
-                                localStorage.setCompactMode(checked);
-                            }
-
-                            ToolTip.delay: 1000
-                            ToolTip.visible: hovered
-                            ToolTip.text: "Компактный режим позволяет уменьшить количество элементов на странице"
-                        }
-
-                        PlainText {
-                            id: showReleaseDescriptionLabel
-                            anchors.top: compactModeSwitch.bottom
-                            anchors.topMargin: 4
-                            fontPointSize: 11
-                            text: "Показывать описание в списке"
-                        }
-                        Switch {
-                            id: showReleaseDescriptionSwitch
-                            anchors.top: showReleaseDescriptionLabel.bottom
-                            onCheckedChanged: {
-                                localStorage.setShowReleaseDescription(checked);
-                            }
-
-                            ToolTip.delay: 1000
-                            ToolTip.visible: hovered
-                            ToolTip.text: "Если настройка включена при наведении на релизы будет показываться описание в виде небольшой плашки в нижней части окна"
-                        }
-
-                        PlainText {
-                            id: useCustomToolbarLabel
-                            anchors.top: showReleaseDescriptionSwitch.bottom
-                            anchors.topMargin: 4
-                            fontPointSize: 11
-                            text: "Использовать кастомный тулбар"
-                        }
-                        Switch {
-                            id: useCustomToolbarSwitch
-                            anchors.top: useCustomToolbarLabel.bottom
-                            onCheckedChanged: {
-                                applicationSettings.useCustomToolbar = checked;
-
-                                if (applicationSettings.useCustomToolbar) {
-                                    window.flags = Qt.FramelessWindowHint | Qt.Window | Qt.WindowMinimizeButtonHint;
-                                    toolBar.visible = true;
-                                } else {
-                                    window.flags = 1;
-                                    toolBar.visible = false;
+                            Switch {
+                                id: notificationForFavorites
+                                onCheckedChanged: {
+                                    localStorage.setNotificationForFavorites(checked);
+                                    releasesViewModel.notificationForFavorites = checked;
                                 }
                             }
 
-                            ToolTip.delay: 1000
-                            ToolTip.visible: hovered
-                            ToolTip.text: "Если настройка включена будет использоваться кастомный тулбар окна с дополнительным функционалом"
-                        }
-
-                        PlainText {
-                            id: notCloseReleaseCardAfterWatchLabel
-                            anchors.top: useCustomToolbarSwitch.bottom
-                            anchors.topMargin: 4
-                            fontPointSize: 11
-                            text: "Не закрывать карточку релиза после просмотра"
-                        }
-                        Switch {
-                            id: notCloseReleaseCardAfterWatchSwitch
-                            anchors.top: notCloseReleaseCardAfterWatchLabel.bottom
-                            checked: userConfigurationViewModel.notCloseReleaseCardAfterWatch
-                            onCheckedChanged: {
-                                userConfigurationViewModel.notCloseReleaseCardAfterWatch = checked;
+                            PlainText {
+                                id: darkModeLabel
+                                fontPointSize: 11
+                                text: "Темная тема"
                             }
-                            ToolTip.delay: 1000
-                            ToolTip.visible: hovered
-                            ToolTip.text: "Если настройка включена при нажатии на кнопку Смотреть из карточки сама карточка релизов не будет закрыта"
+                            Switch {
+                                id: darkModeSwitch
+                                onCheckedChanged: {
+                                    applicationSettings.isDarkTheme = checked;
+                                    ApplicationTheme.isDarkTheme = checked;
+                                }
+                            }
+
+                            PlainText {
+                                id: compactModeLabel
+                                fontPointSize: 11
+                                text: "Компактный режим"
+                            }
+                            CommonSwitch {
+                                id: compactModeSwitch
+                                tooltipMessage: "Компактный режим позволяет уменьшить количество элементов на странице"
+                                onCheckedChanged: {
+                                    localStorage.setCompactMode(checked);
+                                }
+                            }
+
+                            PlainText {
+                                id: useCustomToolbarLabel
+                                fontPointSize: 11
+                                text: "Использовать кастомный тулбар"
+                            }
+                            CommonSwitch {
+                                id: useCustomToolbarSwitch
+                                tooltipMessage: "Если настройка включена будет использоваться кастомный тулбар окна с дополнительным функционалом"
+                                onCheckedChanged: {
+                                    applicationSettings.useCustomToolbar = checked;
+
+                                    if (applicationSettings.useCustomToolbar) {
+                                        window.flags = Qt.FramelessWindowHint | Qt.Window | Qt.WindowMinimizeButtonHint;
+                                        toolBar.visible = true;
+                                    } else {
+                                        window.flags = 1;
+                                        toolBar.visible = false;
+                                    }
+                                }
+                            }
+
+                            PlainText {
+                                fontPointSize: 11
+                                text: "Включить акселерацию при прокручивании"
+                            }
+                            CommonSwitch {
+                                tooltipMessage: "Если настройка включена то при прокручивании будет включена акселерация которая будет добавляет эффект затухания"
+                                checked: userConfigurationViewModel.usingScrollAcceleration
+                                onCheckedChanged: {
+                                    userConfigurationViewModel.usingScrollAcceleration = checked;
+                                }
+                            }
                         }
 
+                        Column {
+                            height: releaseSettingsPopup.height
+                            width: parent.width / 2
+                            anchors.right: parent.right
+                            spacing: 4
 
-                        RoundedActionButton {
-                            text: "Настроить фон"
-                            anchors.top: notCloseReleaseCardAfterWatchSwitch.bottom
-                            onClicked: {
-                                releaseSettingsPopup.close();
-                                backgroundImagePopup.open();
+                            PlainText {
+                                id: downloadTorrentModeLabel
+                                fontPointSize: 11
+                                text: "Торрент"
+                            }
+                            CommonComboBox {
+                                id: downloadTorrentMode
+                                currentIndex: 0
+                                width: 350
+                                model: ["Открыть в торрент клиенте", "Сохранить файл"]
+                                onCurrentIndexChanged: {
+                                    localStorage.setTorrentDownloadMode(downloadTorrentMode.currentIndex);
+                                }
+                            }
+
+                            PlainText {
+                                id: clearFilterAfterChangeSectionLabel
+                                fontPointSize: 11
+                                text: "Сбрасывать все фильтры после\nсмены раздела"
+                            }
+                            Switch {
+                                id: clearFilterAfterChangeSectionSwitch
+                                onCheckedChanged: {
+                                    localStorage.setClearFiltersAfterChangeSection(checked);
+                                }
+
+                                ToolTip.delay: 1000
+                                ToolTip.visible: hovered
+                                ToolTip.text: "Разделы это кнопки находящиеся по центру выше списка релизов\nДанная настройка влияет на то будут ли сброшены все фильтры при смене раздела или нет"
+                            }
+
+                            PlainText {
+                                id: showReleaseDescriptionLabel
+                                fontPointSize: 11
+                                text: "Показывать описание в списке"
+                            }
+                            Switch {
+                                id: showReleaseDescriptionSwitch
+                                onCheckedChanged: {
+                                    localStorage.setShowReleaseDescription(checked);
+                                }
+
+                                ToolTip.delay: 1000
+                                ToolTip.visible: hovered
+                                ToolTip.text: "Если настройка включена при наведении на релизы будет показываться описание в виде небольшой плашки в нижней части окна"
+                            }
+
+                            PlainText {
+                                id: notCloseReleaseCardAfterWatchLabel
+                                fontPointSize: 11
+                                text: "Не закрывать карточку релиза после просмотра"
+                            }
+                            Switch {
+                                id: notCloseReleaseCardAfterWatchSwitch
+                                checked: userConfigurationViewModel.notCloseReleaseCardAfterWatch
+                                onCheckedChanged: {
+                                    userConfigurationViewModel.notCloseReleaseCardAfterWatch = checked;
+                                }
+                                ToolTip.delay: 1000
+                                ToolTip.visible: hovered
+                                ToolTip.text: "Если настройка включена при нажатии на кнопку Смотреть из карточки сама карточка релизов не будет закрыта"
+                            }
+
+                            RoundedActionButton {
+                                text: "Настроить фон"
+                                onClicked: {
+                                    releaseSettingsPopup.close();
+                                    backgroundImagePopup.open();
+                                }
                             }
                         }
                     }
@@ -1568,6 +1563,7 @@ Page {
                     cellHeight: 290
                     delegate: releaseDelegate
                     model: releasesViewModel.items
+                    flickDeceleration: userConfigurationViewModel.usingScrollAcceleration ? 1000 : 10000
                     clip: true
                     ScrollBar.vertical: ScrollBar {
                         active: true

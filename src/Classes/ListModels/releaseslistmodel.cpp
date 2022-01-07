@@ -365,6 +365,8 @@ void ReleasesListModel::setReleaseLinkedSeries(ReleaseLinkedSeries *releaseLinke
 
     m_releaseLinkedSeries = releaseLinkedSeries;
     emit releaseLinkedSeriesChanged();
+
+    m_releaseLinkedSeries->setup(m_releases);
 }
 
 QString ReleasesListModel::getScheduleDay(int dayNumber) const noexcept

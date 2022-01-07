@@ -148,6 +148,11 @@ QHash<int, QByteArray> ReleaseLinkedSeries::roleNames() const
     };
 }
 
+void ReleaseLinkedSeries::setup(QSharedPointer<QList<FullReleaseModel *> > releases)
+{
+    m_releases = releases;
+}
+
 void ReleaseLinkedSeries::setNameFilter(const QString& nameFilter) noexcept
 {
     if (nameFilter == m_nameFilter) return;
@@ -201,20 +206,9 @@ void ReleaseLinkedSeries::refreshSeries()
 {
     QFuture<bool> future = QtConcurrent::run(
         [=] {
-
-            QFile releasesCacheFile(getReleasesCachePath());
-            if (!releasesCacheFile.open(QFile::ReadOnly | QFile::Text)) return false;
-
-            QString releasesJson = releasesCacheFile.readAll();
-            releasesCacheFile.close();
-            auto releasesArray = QJsonDocument::fromJson(releasesJson.toUtf8()).array();
             QMap<QString, FullReleaseModel*> releases;
-
-            foreach (auto release, releasesArray) {
-                auto jsonRelease = new FullReleaseModel();
-                jsonRelease->readFromJson(release);
-
-                releases.insert(jsonRelease->code(), jsonRelease);
+            foreach (auto release, *m_releases) {
+                releases.insert(release->code(), release);
             }
 
             while (m_series->count()) delete m_series->takeLast();
@@ -226,6 +220,8 @@ void ReleaseLinkedSeries::refreshSeries()
                 auto description = release->description();
                 processReleasesFromDescription(description, releases, release->id(), release->title(), release->poster());
             }
+
+            releases.clear();
 
             saveSeries();
 
