@@ -595,23 +595,19 @@ void OnlinePlayerViewModel::setupForMultipleRelease()
 {
     auto selectedReleases = m_releasesViewModel->items()->getSelectedReleases();
 
-    QStringList json;
-    QList<int> releases;
-    QStringList posters;
-    QStringList names;
+
+
+    QList<FullReleaseModel*> releases;
 
     foreach (auto selectedRelease, *selectedReleases) {
-        json.append(m_releasesViewModel->getReleaseVideos(selectedRelease));
-        releases.append(selectedRelease);
-        posters.append(m_releasesViewModel->getReleasePoster(selectedRelease));
-        names.append(m_releasesViewModel->getReleaseTitle(selectedRelease));
+        releases.append(m_releasesViewModel->getReleaseById(selectedRelease));
     }
     setSeenMarkedAtEnd(false);
     setShowNextPosterRelease(false);
     setIsCinemahall(false);
     setIsMultipleRelease(true);
 
-    m_videos->setVideosFromCinemahall(json, releases, posters, names);
+    m_videos->setVideosFromCinemahall(std::move(releases));
 
     auto video = m_videos->getFirstReleaseWithPredicate(
         [](OnlineVideoModel* video) {
@@ -637,14 +633,17 @@ void OnlinePlayerViewModel::setupForMultipleRelease()
     emit saveToWatchHistory(video->releaseId());
 }
 
-void OnlinePlayerViewModel::setupForCinemahall(const QStringList &json, const QList<int> &releases, const QStringList &posters, const QStringList& names)
+void OnlinePlayerViewModel::setupForCinemahall()
 {
     setSeenMarkedAtEnd(false);
     setShowNextPosterRelease(false);
     setIsCinemahall(true);
     setIsMultipleRelease(false);
 
-    m_videos->setVideosFromCinemahall(json, releases, posters, names);
+    auto fullReleases = m_releasesViewModel->cinemahall()->getCinemahallReleases();
+
+    m_videos->setVideosFromCinemahall(std::move(fullReleases));
+
     emit refreshSeenMarks();
     auto seenMarks = m_releasesViewModel->getSeenMarks();
     auto video = m_videos->getFirstReleaseWithPredicate(

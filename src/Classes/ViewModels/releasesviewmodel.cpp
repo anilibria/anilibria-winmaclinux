@@ -12,6 +12,7 @@ ReleasesViewModel::ReleasesViewModel(QObject *parent) : QObject(parent)
 {
     m_items = new ReleasesListModel(this);
     m_items->setup(m_releases, m_scheduleReleases, m_userFavorites, m_hiddenReleases, m_seenMarks, m_historyItems, m_releaseChanges);
+    m_cinemahall->setup(m_releases);
 
     m_imageBackgroundViewModel->setOptionFilePath("releasesbackground");
 
@@ -665,6 +666,22 @@ void ReleasesViewModel::openInExternalPlayer(const QString &url)
     QDesktopServices::openUrl(QUrl(url));
 }
 
+FullReleaseModel *ReleasesViewModel::getReleaseById(int id) const noexcept
+{
+    auto iterator = std::find_if(
+        m_releases->begin(),
+        m_releases->end(),
+        [id](FullReleaseModel* item)
+        {
+            return item->id() == id;
+        }
+    );
+
+    if(iterator == m_releases->end()) return nullptr;
+
+    return *iterator;
+}
+
 void ReleasesViewModel::removeAllSeenMark()
 {
     m_seenMarks->clear();
@@ -811,7 +828,7 @@ void ReleasesViewModel::addToCinemahallSelectedReleases()
 #else
     QList<int> items(selectedReleases->begin(), selectedReleases->end());
 #endif
-    m_localStorage->addToCinemahall(items);
+    m_cinemahall->addReleases(items);
 }
 
 void ReleasesViewModel::setupSortingForSection() const noexcept
@@ -1175,22 +1192,6 @@ QString ReleasesViewModel::getMultipleLinks(QString text) const noexcept
     return parts.join(", ");
 }
 
-FullReleaseModel *ReleasesViewModel::getReleaseById(int id) const noexcept
-{
-    auto iterator = std::find_if(
-        m_releases->begin(),
-        m_releases->end(),
-        [id](FullReleaseModel* item)
-        {
-            return item->id() == id;
-        }
-    );
-
-    if(iterator == m_releases->end()) return nullptr;
-
-    return *iterator;
-}
-
 FullReleaseModel *ReleasesViewModel::getReleaseByCode(QString code) const noexcept
 {
     auto iterator = std::find_if(
@@ -1320,7 +1321,9 @@ void ReleasesViewModel::mapToFullReleaseModel(QJsonObject &&jsonObject, const bo
     model->setTorrents(torrentJson);
 
     auto poster = jsonObject.value("poster").toString();
-    if (!isNew && poster != model->poster()) m_localStorage->invalidateReleasePoster(id);
+    if (!isNew && poster != model->poster() && !model->poster().endsWith(poster, Qt::CaseInsensitive)) {
+        m_localStorage->invalidateReleasePoster(id);
+    }
     model->setPoster(jsonObject.value("poster").toString());
 
     if (isNew) {

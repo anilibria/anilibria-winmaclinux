@@ -49,6 +49,7 @@
 #include "Classes/ListModels/mainmenulistmodel.h"
 #include "Classes/ViewModels/mainviewmodel.h"
 #include "Classes/ListModels/releaseslistmodel.h"
+#include "Classes/ListModels/cinemahalllistmodel.h"
 
 int main(int argc, char *argv[])
 {
@@ -106,6 +107,7 @@ int main(int argc, char *argv[])
     qmlRegisterType<MainViewModel>("Anilibria.ViewModels", 1, 0, "MainViewModel");
     qmlRegisterType<MainMenuListModel>("Anilibria.ListModels", 1, 0, "MainMenuListModel");
     qmlRegisterType<ReleasesListModel>("Anilibria.ListModels", 1, 0, "ReleasesListModel");
+    qmlRegisterType<CinemahallListModel>("Anilibria.ListModels", 1, 0, "CinemahallListModel");
 
     QCoreApplication::setOrganizationDomain("anilibria.tv");
     QCoreApplication::setOrganizationName("EmptyFlow");

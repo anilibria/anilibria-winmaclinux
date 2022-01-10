@@ -8,6 +8,7 @@
 #include "imagebackgroundviewmodel.h"
 #include "../Models/fullreleasemodel.h"
 #include "../ListModels/releaseslistmodel.h"
+#include "../ListModels/cinemahalllistmodel.h"
 #include "../Models/historymodel.h"
 #include "../Models/changesmodel.h"
 #include "../Services/synchronizationservice.h"
@@ -21,6 +22,7 @@ class ReleasesViewModel : public QObject
     Q_PROPERTY(ImageBackgroundViewModel* imageBackgroundViewModel READ imageBackgroundViewModel NOTIFY imageBackgroundViewModelChanged)
     Q_PROPERTY(int countReleases READ countReleases WRITE setCountReleases NOTIFY countReleasesChanged)
     Q_PROPERTY(ReleasesListModel* items READ items NOTIFY itemsChanged)
+    Q_PROPERTY(CinemahallListModel* cinemahall READ cinemahall NOTIFY cinemahallChanged)
     Q_PROPERTY(int countSeens READ countSeens WRITE setCountSeens NOTIFY countSeensChanged)
     Q_PROPERTY(bool isChangesExists READ isChangesExists NOTIFY isChangesExistsChanged)
     Q_PROPERTY(int countFavorites READ countFavorites WRITE setCountFavorites NOTIFY countFavoritesChanged)
@@ -76,6 +78,7 @@ private:
     const QString notificationCacheFileName { "notification.cache" };
     QStringList m_sectionNames;
     ReleaseTorrentsList* m_releaseTorrentsList { new ReleaseTorrentsList(this) };
+    QScopedPointer<CinemahallListModel> m_cinemahall { new CinemahallListModel() };
     ImageBackgroundViewModel* m_imageBackgroundViewModel { new ImageBackgroundViewModel(this) };
     QSharedPointer<QList<FullReleaseModel*>> m_releases { new QList<FullReleaseModel*>() };
     QScopedPointer<QMap<int, FullReleaseModel*>> m_releasesMap { new QMap<int, FullReleaseModel*>() };
@@ -110,6 +113,8 @@ public:
     ImageBackgroundViewModel* imageBackgroundViewModel() const noexcept { return m_imageBackgroundViewModel; };
 
     ReleasesListModel* items() const noexcept { return m_items; }
+
+    CinemahallListModel* cinemahall() const noexcept { return m_cinemahall.get(); }
 
     int countReleases() const noexcept { return m_countReleases; }
     void setCountReleases(const int& countReleases) noexcept;
@@ -224,6 +229,7 @@ public:
     QHash<QString, bool>* getSeenMarks();
     void updateAllReleases(const QString &releases, bool insideData);
     Q_INVOKABLE void openInExternalPlayer(const QString& url);
+    FullReleaseModel* getReleaseById(int id) const noexcept;
 
 private:
     void loadReleases();
@@ -251,10 +257,8 @@ private:
     void saveChanges();
     int getCountOnlyFavorites(QList<int>* changes) const noexcept;
     QString getMultipleLinks(QString text) const noexcept;
-    FullReleaseModel* getReleaseById(int id) const noexcept;
     FullReleaseModel* getReleaseByCode(QString code) const noexcept;
     void resetReleaseChanges(int releaseId) noexcept;
-
     int randomBetween(int low, int high) const noexcept;
     void saveReleasesFromMemoryToFile();
     void mapToFullReleaseModel(QJsonObject &&jsonObject, const bool isFirstStart);
@@ -320,6 +324,7 @@ signals:
     void openedReleaseInFavoritesChanged();
     void openedReleaseVideosChanged();
     void notCloseReleaseCardAfterWatchChanged();
+    void cinemahallChanged();
 
 };
 

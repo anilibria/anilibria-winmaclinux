@@ -200,7 +200,7 @@ Page {
                             PlainText {
                                 anchors.centerIn: parent
                                 fontPointSize: 15
-                                text: "Клиент для сайта AniLibria.TV"
+                                text: "AniLibria.Qt"
                             }
                         }
 

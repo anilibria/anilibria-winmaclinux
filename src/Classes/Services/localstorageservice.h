@@ -35,14 +35,10 @@ class LocalStorageService : public QObject
 {
     Q_OBJECT
 
-    Q_PROPERTY(int countCinemahall READ countCinemahall WRITE setCountCinemahall NOTIFY countCinemahallChanged)
-
 private:
     UserSettingsModel* m_UserSettingsModel;    
     OfflineImageCacheService* m_OfflineImageCacheService;
-    QVector<int>* m_CinemaHall;
     QVector<DownloadItemModel*>* m_Downloads;
-    int m_CountCinemahall;
     QSharedPointer<QList<FullReleaseModel *>> m_releases;
 
     FullReleaseModel* getReleaseFromCache(int id);
@@ -53,9 +49,7 @@ private:
     void loadSettings();
     void saveSettings();
     void loadDownloads();
-    void loadCinemahall();
     void saveDownloads();
-    void saveCinemahall();
     bool importReleasesFromFile(QString path);
     void afterSynchronizedReleases();
 public:
@@ -63,8 +57,6 @@ public:
 
     void setup(QSharedPointer<QList<FullReleaseModel *>> releases);
     void invalidateReleasePoster(int id);
-    int countCinemahall() { return m_CountCinemahall; }
-    void setCountCinemahall(int countCinemahall) noexcept;
 
     Q_INVOKABLE void setVolume(double volume);
     Q_INVOKABLE void setVideoQuality(int quality);
@@ -93,13 +85,7 @@ public:
     Q_INVOKABLE QString getReleasePosterPath(int id, QString url);   
     Q_INVOKABLE QString packAsM3UAndOpen(int id, QString quality);
     Q_INVOKABLE QString packAsMPCPLAndOpen(int id, QString quality);
-    Q_INVOKABLE void addToCinemahall(const QList<int>& ids);
-    Q_INVOKABLE QString getCinemahallReleases();
     Q_INVOKABLE QString getReleases(const QList<int>& ids);
-    Q_INVOKABLE bool hasCinemahallReleases();
-    Q_INVOKABLE void reorderReleaseInCinemahall(int reorderId, int targetId);
-    Q_INVOKABLE void deleteReleasesFromCinemahall(const QList<int>& ids);
-    Q_INVOKABLE void deleteAllReleasesFromCinemahall();
     Q_INVOKABLE void addDownloadItem(int releaseId, int videoId, int quality);
     Q_INVOKABLE void finishDownloadItem(int releaseId, int videoId, int quality, const QString& downloadedPath);
     Q_INVOKABLE QList<QString> getDownloadsReleases();

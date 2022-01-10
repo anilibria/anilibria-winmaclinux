@@ -43,9 +43,7 @@
 
 LocalStorageService::LocalStorageService(QObject *parent) : QObject(parent),
     m_UserSettingsModel(new UserSettingsModel()),
-    m_CinemaHall(new QVector<int>()),
-    m_Downloads(new QVector<DownloadItemModel*>()),
-    m_CountCinemahall(0)
+    m_Downloads(new QVector<DownloadItemModel*>())
 {
     if (IsPortable) {
         auto cachePath = QDir::currentPath() + "/imagecache";
@@ -58,12 +56,10 @@ LocalStorageService::LocalStorageService(QObject *parent) : QObject(parent),
     }
 
     createIfNotExistsFile(getUserSettingsCachePath(), "{}");
-    createIfNotExistsFile(getCinemahallCachePath(), "[]");
     createIfNotExistsFile(getDownloadsCachePath(), "[]");
 
     loadSettings();
     loadDownloads();
-    loadCinemahall();
 
     m_OfflineImageCacheService = new OfflineImageCacheService(this);
 }
@@ -77,81 +73,6 @@ void LocalStorageService::invalidateReleasePoster(int id)
 {
     m_OfflineImageCacheService->invalidateReleasePoster(id);
 }
-
-void LocalStorageService::setCountCinemahall(int countCinemahall) noexcept
-{
-    if (m_CountCinemahall == countCinemahall) return;
-
-    m_CountCinemahall = countCinemahall;
-    emit countCinemahallChanged();
-}
-
-/*void LocalStorageService::updateAllReleases(const QString &releases)
-{
-    QFuture<void> future = QtConcurrent::run(
-        [=] {
-            QJsonParseError jsonError;
-            QJsonDocument jsonDocument = QJsonDocument::fromJson(releases.toUtf8(), &jsonError);
-            if (jsonError.error != 0) return; //TODO: handle this situation and show message
-
-            auto jsonReleases = jsonDocument.array();
-            auto newReleasesCount = m_ChangesModel->newReleases()->count();
-            auto newOnlineSeriesCount = m_ChangesModel->newOnlineSeries()->count();
-            auto newTorrentsCount = m_ChangesModel->newTorrents()->count();
-            auto newTorrentSeriesCount = m_ChangesModel->newTorrentSeries()->count();
-            auto newReleases = m_ChangesModel->newReleases();
-            auto newOnlineSeries = m_ChangesModel->newOnlineSeries();
-            auto newTorrents = m_ChangesModel->newTorrents();
-            auto newTorrentSeries = m_ChangesModel->newTorrentSeries();
-            bool isEmptyReleases = m_CachedReleases->count() == 0;
-
-            foreach (QJsonValue jsonRelease, jsonReleases) {
-                ReleaseModel releaseModel;
-                releaseModel.readFromApiModel(jsonRelease.toObject());
-
-                FullReleaseModel* currentReleaseCacheModel = getReleaseFromCache(releaseModel.id());
-
-                FullReleaseModel* newReleaseModel = mapToFullReleaseModel(releaseModel);
-
-                if (currentReleaseCacheModel->id() > -1) {
-                    auto releaseId = currentReleaseCacheModel->id();
-                    if (currentReleaseCacheModel->countOnlineVideos() != newReleaseModel->countOnlineVideos()) {
-                        auto isExists = newOnlineSeries->contains(releaseId);
-                        if (!isExists) newOnlineSeries->append(releaseId);
-                    }
-                    if (currentReleaseCacheModel->countTorrents() != newReleaseModel->countTorrents()) {
-                        if (!newTorrents->contains(currentReleaseCacheModel->id())) newTorrents->append(currentReleaseCacheModel->id());
-                    }
-                    if (currentReleaseCacheModel->torrents() != newReleaseModel->torrents()) {
-                        if (!newTorrentSeries->contains(currentReleaseCacheModel->id())) newTorrentSeries->append(currentReleaseCacheModel->id());
-                    }
-                    if (currentReleaseCacheModel->poster() != newReleaseModel->poster()) m_OfflineImageCacheService->invalidateReleasePoster(currentReleaseCacheModel->id());
-
-                    m_CachedReleases->removeOne(currentReleaseCacheModel);
-
-                } else {
-                    if (!isEmptyReleases) {
-                        int newReleaseId = newReleaseModel->id();
-                        if (!newReleases->contains(newReleaseId)) newReleases->append(newReleaseId);
-                    }
-                }
-                m_CachedReleases->append(newReleaseModel);
-            }
-
-            saveCachedReleasesToFile();
-            //updateReleasesInnerCache();
-            saveChanges();
-
-            QString newEntities;
-            if (newReleases->count() > newReleasesCount) newEntities += "Новых релизов " + QString::number(newReleases->count() - newReleasesCount) + " ";
-            if (newOnlineSeries->count() > newOnlineSeriesCount) newEntities += "Новых серий " + QString::number(newOnlineSeries->count() - newOnlineSeriesCount) + " ";
-            if (newTorrents->count() > newTorrentsCount) newEntities += "Новых торрентов " + QString::number(newTorrents->count() - newTorrentsCount) + " ";
-            if (newTorrentSeries->count() > newTorrentSeriesCount) newEntities += "Новых серий в торрентах " + QString::number(newTorrentSeries->count() - newTorrentSeriesCount);
-            setNewEntities(newEntities);
-        }
-    );
-    m_AllReleaseUpdatedWatcher->setFuture(future);
-}*/
 
 FullReleaseModel* LocalStorageService::getReleaseFromCache(int id)
 {
@@ -243,24 +164,6 @@ void LocalStorageService::loadDownloads()
     }
 }
 
-void LocalStorageService::loadCinemahall()
-{
-    QFile cinemahallFile(getCinemahallCachePath());
-    if (!cinemahallFile.open(QFile::ReadOnly | QFile::Text)) {
-        //TODO: handle this situation
-    }
-    auto json = cinemahallFile.readAll();
-    cinemahallFile.close();
-
-    auto document = QJsonDocument::fromJson(json);
-    auto jsonArray = document.array();
-
-    m_CinemaHall->clear();
-    foreach (auto item, jsonArray) m_CinemaHall->append(item.toInt());
-
-    setCountCinemahall(m_CinemaHall->count());
-}
-
 void LocalStorageService::saveDownloads()
 {
     QJsonArray downloadsArray;
@@ -280,28 +183,6 @@ void LocalStorageService::saveDownloads()
     downloadsFile.write(document.toJson());
 
     downloadsFile.close();
-}
-
-void LocalStorageService::saveCinemahall()
-{
-    QJsonArray cinemahallArray;
-
-    foreach (auto releaseId, *m_CinemaHall) {
-        QJsonValue value(releaseId);
-        cinemahallArray.append(value);
-    }
-
-    QFile cinemahallFile(getCinemahallCachePath());
-    if (!cinemahallFile.open(QFile::WriteOnly | QFile::Text)) {
-        //TODO: handle this situation
-    }
-
-    auto document = QJsonDocument(cinemahallArray);
-    cinemahallFile.write(document.toJson());
-
-    cinemahallFile.close();
-
-    setCountCinemahall(m_CinemaHall->count());
 }
 
 void LocalStorageService::setVolume(double volume)
@@ -543,40 +424,6 @@ QString LocalStorageService::packAsMPCPLAndOpen(int id, QString quality)
     return fileName;
 }
 
-void LocalStorageService::addToCinemahall(const QList<int>& ids)
-{
-    foreach(auto id, ids) {
-        if (m_CinemaHall->contains(id)) continue;
-
-        m_CinemaHall->append(id);
-    }
-
-    saveCinemahall();    
-}
-
-QString LocalStorageService::getCinemahallReleases()
-{
-    QVector<FullReleaseModel*> cinemahallReleases(m_CinemaHall->count());
-
-    foreach (auto releaseItem, *m_releases) {
-        if (!m_CinemaHall->contains(releaseItem->id())) continue;
-
-        cinemahallReleases[m_CinemaHall->indexOf(releaseItem->id())] = releaseItem;
-    }
-
-    QJsonArray releases;
-    foreach (auto cinemahallRelease, cinemahallReleases) {
-        if (cinemahallRelease == nullptr) continue; //Remove deplicates
-
-        QJsonObject jsonValue;
-        cinemahallRelease->writeToJson(jsonValue);
-        releases.append(jsonValue);
-    }
-
-    QJsonDocument saveDoc(releases);
-    return saveDoc.toJson();
-}
-
 QString LocalStorageService::getReleases(const QList<int> &ids)
 {
     QVector<FullReleaseModel*> resultReleases;
@@ -598,44 +445,6 @@ QString LocalStorageService::getReleases(const QList<int> &ids)
 
     QJsonDocument saveDoc(releases);
     return saveDoc.toJson();
-}
-
-bool LocalStorageService::hasCinemahallReleases()
-{
-    return m_CinemaHall->count() > 0;
-}
-
-void LocalStorageService::reorderReleaseInCinemahall(int reorderId, int targetId)
-{
-    auto placeIndex = m_CinemaHall->indexOf(targetId);
-    auto oldIndex = m_CinemaHall->indexOf(reorderId);
-
-    if (placeIndex < 0 || placeIndex > m_CinemaHall->count()) return;
-    if (oldIndex < 0 || oldIndex > m_CinemaHall->count()) return;
-
-    m_CinemaHall->remove(oldIndex);
-    m_CinemaHall->insert(placeIndex, reorderId);
-
-    saveCinemahall();
-}
-
-void LocalStorageService::deleteReleasesFromCinemahall(const QList<int> &ids)
-{
-    foreach (auto id, ids) {
-        auto index = m_CinemaHall->indexOf(id);
-        if (index == -1) continue;
-
-        m_CinemaHall->remove(index);
-    }
-
-    saveCinemahall();
-}
-
-void LocalStorageService::deleteAllReleasesFromCinemahall()
-{
-    m_CinemaHall->clear();
-
-    saveCinemahall();
 }
 
 void LocalStorageService::addDownloadItem(int releaseId, int videoId, int quality)

@@ -236,7 +236,7 @@ public:
     Q_INVOKABLE void setVideoSeens(int id, int videoId, double videoPosition);
     Q_INVOKABLE void setupForSingleRelease();
     Q_INVOKABLE void setupForMultipleRelease();
-    Q_INVOKABLE void setupForCinemahall(const QStringList &json, const QList<int> &releases, const QStringList &posters, const QStringList& names);
+    Q_INVOKABLE void setupForCinemahall();
     Q_INVOKABLE QString getReleasesSeenMarks(QList<int> ids);
     Q_INVOKABLE void selectVideo(int releaseId, int videoId);
     Q_INVOKABLE void changeVideoQuality(const QString& quality) noexcept;

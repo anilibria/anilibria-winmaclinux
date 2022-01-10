@@ -359,7 +359,7 @@ Page {
                         CommonMenuItem {
                             text: "Смотреть кинозал"
                             onPressed: {
-                                if (localStorage.hasCinemahallReleases()) {
+                                if (releasesViewModel.cinemahall.hasItems) {
                                     watchCinemahall();
                                 } else {
                                     notHaveCinemahallReleasesMessagePopup.open();

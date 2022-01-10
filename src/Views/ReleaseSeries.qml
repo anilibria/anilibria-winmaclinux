@@ -275,7 +275,7 @@ Page {
                                             CommonMenuItem {
                                                 text: "Добавить в кинозал"
                                                 onPressed: {
-                                                    localStorage.addToCinemahall(releaseIds);
+                                                    releasesViewModel.cinemahall.addReleases(releaseIds);
 
                                                     cinemahallSeriesMenu.close();
                                                 }

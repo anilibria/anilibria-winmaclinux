@@ -10,10 +10,8 @@ Page {
     anchors.fill: parent
 
     property var selectedItems: ({})
-    property int dragRelease: -1
     property var dragReleaseParent
     property bool dragActive: false
-    property int dropRelease: -1
 
     background: Rectangle {
         color: ApplicationTheme.pageBackground
@@ -34,7 +32,7 @@ Page {
             Column {
                 LeftPanelIconButton {
                     tooltipMessage: "Открыть меню приложения"
-                    iconPath: "../Assets/Icons/menu.svg"
+                    iconPath: assetsLocation.iconsPath + "menu.svg"
                     iconWidth: 29
                     iconHeight: 29
                     onButtonPressed: {
@@ -42,7 +40,7 @@ Page {
                     }
                 }
                 LeftPanelIconButton {
-                    iconPath: "../Assets/Icons/popcorn.svg"
+                    iconPath: assetsLocation.iconsPath + "popcorn.svg"
                     tooltipMessage: "Управление кинозалом"
                     onButtonPressed: {
                         cinemahallMenuPanel.open();
@@ -55,28 +53,23 @@ Page {
 
                         CommonMenuItem {
                             text: "Удалить выбранные релизы"
-                            enabled: Object.keys(root.selectedItems).length
+                            enabled: releasesViewModel.cinemahall.hasSelectedItems
                             onPressed: {
-                                localStorage.deleteReleasesFromCinemahall(Object.keys(root.selectedItems));
-                                root.selectedItems = {};
+                                releasesViewModel.cinemahall.deleteSelectedReleases();
                                 cinemahallMenuPanel.close();
-
-                                refreshReleases();
                             }
                         }
                         CommonMenuItem {
                             text: "Удалить все релизы"
                             onPressed: {
-                                localStorage.deleteAllReleasesFromCinemahall()
+                                releasesViewModel.cinemahall.deleteAllReleases();
                                 cinemahallMenuPanel.close();
-
-                                refreshReleases();
                             }
                         }
                     }
                 }
                 LeftPanelIconButton {
-                    iconPath: "../Assets/Icons/cinemaplay.svg"
+                    iconPath: assetsLocation.iconsPath + "cinemaplay.svg"
                     tooltipMessage: "Смотреть кинозал в видеоплеере"
                     iconWidth: 29
                     iconHeight: 29
@@ -102,7 +95,7 @@ Page {
                     id: selectMode
                     anchors.left: parent.left
                     onCheckedChanged: {
-                        root.selectedItems = {};
+                        releasesViewModel.cinemahall.deselectItems();
                     }
                     ToolTip.delay: 1000
                     ToolTip.visible: selectMode.hovered
@@ -124,10 +117,6 @@ Page {
                 }
             }
 
-            ListModel {
-                id: releasesModel
-            }
-
             Rectangle {
                 id: mask
                 width: 180
@@ -138,7 +127,7 @@ Page {
 
             Rectangle {
                 color: "transparent"
-                visible: releasesModel.count === 0
+                visible: !releasesViewModel.cinemahall.hasItems
                 Layout.fillHeight: true
                 Layout.fillWidth: true
 
@@ -152,11 +141,11 @@ Page {
 
             ListView {
                 id: listViewReleases
-                visible: releasesModel.count > 0
+                visible: releasesViewModel.cinemahall.hasItems
                 Layout.fillHeight: true
                 Layout.fillWidth: true
                 orientation: ListView.Horizontal
-                model: releasesModel
+                model: releasesViewModel.cinemahall
                 clip: true
                 ScrollBar.horizontal: ScrollBar {
                     active: true
@@ -181,8 +170,8 @@ Page {
                         height: 280
                         radius: 10
                         border.color: ApplicationTheme.selectedItem
-                        border.width: root.selectedItems[id] ? 3 : 0
-                        color: root.dragRelease !== root.dropRelease && root.dropRelease === id ? "#82000000" : "transparent"
+                        border.width: isSelected ? 3 : 0
+                        color: releasesViewModel.cinemahall.dragRelease !== releasesViewModel.cinemahall.dropRelease && releasesViewModel.cinemahall.dropRelease === id ? "#82000000" : "transparent"
                         Drag.active: itemMouseArea.drag.active
                         Drag.hotSpot.x: width / 2
                         Drag.hotSpot.y: height / 2
@@ -195,31 +184,22 @@ Page {
                             drag.target: selectMode.checked ? parent : undefined
                             drag.onActiveChanged: {
                                 if (itemMouseArea.drag.active) {
-                                    root.dragRelease = id;
-                                    root.dropRelease = -1;
+                                    releasesViewModel.cinemahall.dragRelease = id;
+                                    releasesViewModel.cinemahall.dropRelease = -1;
                                     itemContainer.parent = listViewReleases;
                                     itemContainer.opacity = .7;
                                     itemContainer.showTextHeader = false;
                                 } else {
-                                    if (root.dragRelease > -1 && root.dropRelease > -1) {
-                                        localStorage.reorderReleaseInCinemahall(root.dragRelease, root.dropRelease);
-                                        root.dragRelease = -1;
-                                        root.dropRelease = -1;
-                                    }
-                                    refreshReleases();
+                                    releasesViewModel.cinemahall.reorderRelease();
                                 }
                             }
                             onClicked: {
                                 if(mouse.button & Qt.RightButton) {
                                     selectMode.checked = !selectMode.checked;
-                                } else {
-                                    if (root.selectedItems[id]) {
-                                        delete root.selectedItems[id];
-                                    } else {
-                                        root.selectedItems[id] = true;
-                                    }
-                                    root.selectedItems = root.selectedItems;
+                                    return;
                                 }
+
+                                releasesViewModel.cinemahall.selectItem(id);
                             }
                         }
                         Grid {
@@ -285,22 +265,11 @@ Page {
                     DropArea {
                         anchors.fill: parent
                         onEntered: {
-                            root.dropRelease = id;
+                            releasesViewModel.cinemahall.dropRelease = id;
                         }
                     }
                 }
             }
         }
     }
-
-    onNavigateTo: {
-        refreshReleases();
-    }
-
-    function refreshReleases() {
-        releasesModel.clear();
-        var releases = JSON.parse(localStorage.getCinemahallReleases());
-        for (const release of releases) releasesModel.append(release);
-    }
-
 }
