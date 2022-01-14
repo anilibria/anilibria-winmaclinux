@@ -8,11 +8,6 @@ import "../Controls"
 Page {
     id: root
     anchors.fill: parent
-
-    property var selectedItems: ({})
-    property var dragReleaseParent
-    property bool dragActive: false
-
     background: Rectangle {
         color: ApplicationTheme.pageBackground
     }
@@ -39,44 +34,6 @@ Page {
                         drawer.open();
                     }
                 }
-                LeftPanelIconButton {
-                    iconPath: assetsLocation.iconsPath + "popcorn.svg"
-                    tooltipMessage: "Управление кинозалом"
-                    onButtonPressed: {
-                        cinemahallMenuPanel.open();
-                    }
-
-                    CommonMenu {
-                        id: cinemahallMenuPanel
-                        y: parent.height
-                        width: 300
-
-                        CommonMenuItem {
-                            text: "Удалить выбранные релизы"
-                            enabled: releasesViewModel.cinemahall.hasSelectedItems
-                            onPressed: {
-                                releasesViewModel.cinemahall.deleteSelectedReleases();
-                                cinemahallMenuPanel.close();
-                            }
-                        }
-                        CommonMenuItem {
-                            text: "Удалить все релизы"
-                            onPressed: {
-                                releasesViewModel.cinemahall.deleteAllReleases();
-                                cinemahallMenuPanel.close();
-                            }
-                        }
-                    }
-                }
-                LeftPanelIconButton {
-                    iconPath: assetsLocation.iconsPath + "cinemaplay.svg"
-                    tooltipMessage: "Смотреть кинозал в видеоплеере"
-                    iconWidth: 29
-                    iconHeight: 29
-                    onButtonPressed: {
-                        watchCinemahall();
-                    }
-                }
             }
         }
 
@@ -86,6 +43,7 @@ Page {
             spacing: 2
 
             Rectangle {
+                id: upperPanelContainer
                 Layout.fillWidth: true
                 Layout.preferredHeight: 45
                 height: 45
@@ -113,6 +71,27 @@ Page {
                         onPressed: {
                             selectMode.checked = !selectMode.checked;
                         }
+                    }
+                }
+
+                RoundedActionButton {
+                    anchors.right: deleteAllReleasesButton.left
+                    width: 200
+                    buttonEnabled: releasesViewModel.cinemahall.hasSelectedItems
+                    text: "Удалить выбранное"
+                    onClicked: {
+                        releasesViewModel.cinemahall.deleteSelectedReleases();
+                    }
+                }
+
+                RoundedActionButton {
+                    id: deleteAllReleasesButton
+                    anchors.right: parent.right
+                    width: 200
+                    buttonEnabled: releasesViewModel.cinemahall.hasItems
+                    text: "Удалить все"
+                    onClicked: {
+                        releasesViewModel.cinemahall.deleteAllReleases();
                     }
                 }
             }
@@ -272,4 +251,64 @@ Page {
             }
         }
     }
+
+    Item {
+        anchors.top: parent.top
+        anchors.topMargin: 48
+        anchors.horizontalCenter: parent.horizontalCenter
+        visible: releasesViewModel.cinemahall.hasItems
+        width: 260
+        height: 40
+
+        Rectangle {
+            id: backgroundRectangle
+            color: ApplicationTheme.roundedButtonBackground
+            anchors.fill: parent
+            radius: 10
+        }
+
+        PlainText {
+            anchors.fill: parent
+            verticalAlignment: Qt.AlignVCenter
+            horizontalAlignment: Qt.AlignHCenter
+            fontPointSize: 12
+            color: ApplicationTheme.roundedButtonForeground
+            text: "Смотреть кинозал"
+        }
+
+        Image {
+            anchors.left: parent.left
+            anchors.leftMargin: 8
+            anchors.verticalCenter: parent.verticalCenter
+            mipmap: true
+            width: 32
+            height: 30
+            source: assetsLocation.iconsPath + "cinemahallmenu.svg"
+        }
+
+        Image {
+            anchors.right: parent.right
+            anchors.rightMargin: 8
+            anchors.verticalCenter: parent.verticalCenter
+            mipmap: true
+            width: 32
+            height: 30
+            source: assetsLocation.iconsPath + "cinemahallmenu.svg"
+        }
+
+        MouseArea {
+            anchors.fill: parent
+            hoverEnabled: true
+            onPressed: {
+                watchCinemahall();
+            }
+            onEntered: {
+                backgroundRectangle.color = ApplicationTheme.roundedButtonHovered;
+            }
+            onExited: {
+                backgroundRectangle.color = ApplicationTheme.roundedButtonBackground;
+            }
+        }
+    }
+
 }

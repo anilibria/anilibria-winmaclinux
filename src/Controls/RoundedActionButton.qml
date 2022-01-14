@@ -28,6 +28,7 @@ Rectangle {
     height: 34
     property alias text: buttonTitle.text
     property bool buttonHovered: false
+    property bool buttonEnabled: true
 
     signal clicked()
 
@@ -38,7 +39,7 @@ Rectangle {
         anchors.rightMargin: 8
         anchors.topMargin: 4
         anchors.bottomMargin: 4
-        color: root.buttonHovered ? ApplicationTheme.roundedButtonHovered : ApplicationTheme.roundedButtonBackground
+        color: root.buttonEnabled ? (root.buttonHovered ? ApplicationTheme.roundedButtonHovered : ApplicationTheme.roundedButtonBackground) : ApplicationTheme.roundedButtonBackgroundDisabled
         border.color: "transparent"
         border.width: 1
         radius: 18
@@ -60,6 +61,8 @@ Rectangle {
                 root.buttonHovered = false;
             }
             onPressed: {
+                if (!root.buttonEnabled) return;
+
                 root.clicked();
             }
         }

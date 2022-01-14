@@ -30,6 +30,7 @@ Item {
     readonly property color panelBackground: isDarkTheme ? "#474747" : "#f2f2f2"
     readonly property color panelBackgroundShadow: isDarkTheme ? "#78595959" : "#78808080"
     readonly property color roundedButtonBackground: isDarkTheme ? "white" : "#b32121"
+    readonly property color roundedButtonBackgroundDisabled: isDarkTheme ? "#f2f2f2" : "#eb9393"
     readonly property color roundedButtonForeground: isDarkTheme ? "black" : "white"
     readonly property color roundedButtonHovered: isDarkTheme ? "lightgray" : "#881919"
     readonly property color drawerGradiendStep0: isDarkTheme ? "#1a1a1a" : "#920710"
