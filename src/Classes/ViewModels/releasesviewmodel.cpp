@@ -1307,9 +1307,18 @@ void ReleasesViewModel::mapToFullReleaseModel(QJsonObject &&jsonObject, const bo
     model->setSeries(jsonObject.value("series").toString());
     model->setStatus(jsonObject.value("status").toString());
     model->setType(jsonObject.value("type").toString());
-    auto timestamp = jsonObject.value("last").toString();
-    model->setTimestamp(timestamp.toInt());
-    model->setYear(jsonObject.value("year").toString());
+    if (jsonObject.value("last").isString()) {
+        auto timestamp = jsonObject.value("last").toString();
+        model->setTimestamp(timestamp.toInt());
+    } else {
+        model->setTimestamp(jsonObject.value("last").toInt());
+    }
+    if (jsonObject.value("year").isString()) {
+        model->setYear(jsonObject.value("year").toString());
+    } else {
+        auto yearInt = jsonObject.value("year").toInt();
+        model->setYear(QString::number(yearInt));
+    }
     model->setSeason(jsonObject.value("season").toString());
     model->setCountTorrents(torrents.count());
     model->setCountOnlineVideos(videos.count());
