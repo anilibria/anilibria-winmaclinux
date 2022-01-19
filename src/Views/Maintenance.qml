@@ -248,6 +248,7 @@ Page {
                             }
 
                             Item {
+                                visible: false
                                 width: 220
                                 height: 100
 
@@ -264,6 +265,7 @@ Page {
                             }
 
                             Rectangle {
+                                visible: false
                                 color: "transparent"
                                 Layout.fillWidth: true
                                 Layout.fillHeight: true

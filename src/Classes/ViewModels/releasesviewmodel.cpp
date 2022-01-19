@@ -638,9 +638,13 @@ void ReleasesViewModel::updateAllReleases(const QString &releases, bool insideDa
 
             auto isFirstStart = m_releases->count() == 0;
 
+            QSharedPointer<QSet<int>> hittedMaps = QSharedPointer<QSet<int>>(new QSet<int>());
+
             foreach (QJsonValue jsonRelease, jsonReleases) {
-                mapToFullReleaseModel(jsonRelease.toObject(), isFirstStart);
+                mapToFullReleaseModel(jsonRelease.toObject(), isFirstStart, hittedMaps);
             }
+
+            markDeletedReleases(hittedMaps);
 
             saveReleasesFromMemoryToFile();
             saveChanges();
@@ -1239,9 +1243,11 @@ void ReleasesViewModel::saveReleasesFromMemoryToFile()
     file.close();
 }
 
-void ReleasesViewModel::mapToFullReleaseModel(QJsonObject &&jsonObject, const bool isFirstStart)
+void ReleasesViewModel::mapToFullReleaseModel(QJsonObject &&jsonObject, const bool isFirstStart, QSharedPointer<QSet<int>> hittedIds)
 {
     auto id = jsonObject.value("id").toInt();
+
+    hittedIds->insert(id);
 
     FullReleaseModel* model = nullptr;
 
@@ -1338,6 +1344,17 @@ void ReleasesViewModel::mapToFullReleaseModel(QJsonObject &&jsonObject, const bo
     if (isNew) {
         m_releases->append(model);
         m_releasesMap->insert(model->id(), model);
+    }
+}
+
+void ReleasesViewModel::markDeletedReleases(QSharedPointer<QSet<int> > hittedIds)
+{
+    auto keys = m_releasesMap->keys();
+    foreach(auto key, keys) {
+        if (!hittedIds->contains(key)) {
+            auto release = m_releasesMap->value(key);
+            release->setIsDeleted(true);
+        }
     }
 }
 

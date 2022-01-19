@@ -46,6 +46,7 @@ private:
     QString m_Season;
     QString m_Announce;
     int m_Rating;
+    bool m_isDeleted { false };
 
 public:
     QString title() const { return m_Title; }
@@ -110,6 +111,9 @@ public:
 
     QString type() const { return m_Type; }
     void setType(const QString& type) noexcept;
+
+    bool isDeleted() const noexcept { return m_isDeleted; }
+    void setIsDeleted(const bool isDeleted) noexcept;
 
     void writeToJson(QJsonObject &json) const noexcept;
 

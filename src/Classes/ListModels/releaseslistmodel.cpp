@@ -431,6 +431,10 @@ void ReleasesListModel::refresh()
 
 
     foreach (auto release, *m_releases) {
+#ifdef QT_DEBUG
+#else
+        if (release->isDeleted()) continue;
+#endif
         if (m_hiddenReleases->contains(release->id()) && m_section != HiddenReleasesSection) continue;
         if (!m_titleFilter.isEmpty()) {
             auto filteredTitle = m_titleFilter.toLower().replace("ё", "е").trimmed();

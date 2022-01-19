@@ -131,6 +131,11 @@ void FullReleaseModel::setType(const QString &type) noexcept
     m_Type = type;
 }
 
+void FullReleaseModel::setIsDeleted(const bool isDeleted) noexcept
+{
+    m_isDeleted = isDeleted;
+}
+
 void FullReleaseModel::writeToJson(QJsonObject &json) const noexcept
 {
     json["id"] = m_Id;
@@ -153,6 +158,7 @@ void FullReleaseModel::writeToJson(QJsonObject &json) const noexcept
     json["voices"] = m_Voices;
     json["torrents"] = m_Torrents;
     json["videos"] = m_Videos;
+    json["isDeleted"] = m_isDeleted;
 }
 
 void FullReleaseModel::readFromJson(QJsonValue &json)
@@ -177,6 +183,7 @@ void FullReleaseModel::readFromJson(QJsonValue &json)
     setVoicers(json["voices"].toString());
     setTorrents(json["torrents"].toString());
     setVideos(json["videos"].toString());
+    setIsDeleted(json["isDeleted"].toBool());
 }
 bool FullReleaseModel::operator== (const FullReleaseModel &comparedModel) noexcept
 {

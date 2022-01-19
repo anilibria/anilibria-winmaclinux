@@ -261,7 +261,8 @@ private:
     void resetReleaseChanges(int releaseId) noexcept;
     int randomBetween(int low, int high) const noexcept;
     void saveReleasesFromMemoryToFile();
-    void mapToFullReleaseModel(QJsonObject &&jsonObject, const bool isFirstStart);
+    void mapToFullReleaseModel(QJsonObject &&jsonObject, const bool isFirstStart, QSharedPointer<QSet<int>> hittedIds);
+    void markDeletedReleases(QSharedPointer<QSet<int>> hittedIds);
     QString videosToJson(QList<OnlineVideoModel> &videos);
     QString torrentsToJson(QList<ReleaseTorrentModel> &torrents);
 

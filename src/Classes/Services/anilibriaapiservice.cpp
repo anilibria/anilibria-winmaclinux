@@ -161,7 +161,7 @@ void AnilibriaApiService::getFavorites(QString token)
     params.addQueryItem("query", "favorites");
     params.addQueryItem("filter", "id");
     params.addQueryItem("page", "1");
-    params.addQueryItem("perPage", "1000");
+    params.addQueryItem("perPage", "3000");
 
     networkManager->post(request, params.query().toUtf8());
 }
