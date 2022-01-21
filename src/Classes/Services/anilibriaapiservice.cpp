@@ -186,6 +186,8 @@ void AnilibriaApiService::performAddFavorite(QString token, int id)
 
     connect(networkManager,&QNetworkAccessManager::finished,this,&AnilibriaApiService::editFavoritesResponse);
 
+    request.setHeader(QNetworkRequest::ContentTypeHeader, "application/x-www-form-urlencoded");
+
     auto cookie = "PHPSESSID=" + token;
     request.setRawHeader("Cookie", cookie.toUtf8());
 
@@ -204,6 +206,8 @@ void AnilibriaApiService::performRemoveFavorite(QString token, int id)
     QNetworkRequest request(QUrl(AnilibriaApiPath + "public/api/index.php"));
 
     connect(networkManager,&QNetworkAccessManager::finished,this,&AnilibriaApiService::deleteFavoritesResponse);
+
+    request.setHeader(QNetworkRequest::ContentTypeHeader, "application/x-www-form-urlencoded");
 
     auto cookie = "PHPSESSID=" + token;
     request.setRawHeader("Cookie", cookie.toUtf8());
