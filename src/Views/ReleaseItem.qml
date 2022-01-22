@@ -236,24 +236,72 @@ Rectangle {
                     visible: id > -1
                     leftPadding: 8
                     topPadding: 4
-                    ColoredIcon {
-                        iconSource: '../Assets/Icons/online.svg'
-                        iconWidth: 22
-                        iconHeight: 22
-                        iconColor: ApplicationTheme.plainTextColor
+                    Image {
+                        source: assetsLocation.iconsPath + 'online.svg'
+                        width: 22
+                        height: 22
+                        mipmap: true
+
+                        MouseArea {
+                            anchors.fill: parent
+                            onPressed: {
+                                releaseItem.watchRelease(id, videos, poster);
+                            }
+                        }
                     }
                     PlainText {
                         leftPadding: 4
                         rightPadding: 8
                         fontPointSize: 12
                         enabled: false
-                        text: '' + countVideos + (countSeensSeries > 0 ? " <font color='" + (ApplicationTheme.isDarkTheme ? "white" : "green") + "'>(" + countSeensSeries + ")</font>  " : "")
+                        text: '' + countVideos + (countSeensSeries > 0 ? "<font color='" + (ApplicationTheme.isDarkTheme ? "white" : "green") + "'>/" + countSeensSeries + "</font>  " : "")
                     }
-                    ColoredIcon {
-                        iconSource: '../Assets/Icons/utorrent.svg'
-                        iconWidth: 22
-                        iconHeight: 22
-                        iconColor: ApplicationTheme.plainTextColor
+                    Image {
+                        source: assetsLocation.iconsPath + 'utorrent.svg'
+                        width: 22
+                        height: 22
+                        mipmap: true
+
+                        MouseArea {
+                            anchors.fill: parent
+                            onPressed: {
+                                releasesViewModel.prepareTorrentsForListItem(id);
+                                torrentMenuLoader.sourceComponent = torrentMenuComponent;
+                            }
+                        }
+
+                        Loader {
+                            id: torrentMenuLoader
+                            onLoaded: {
+                                item.open();
+                            }
+                        }
+
+                        Component {
+                            id: torrentMenuComponent
+
+                            CommonMenu {
+                                id: torrentsMenu
+                                width: 320
+
+                                Repeater {
+                                    model: releasesViewModel.itemTorrents
+                                    delegate: CommonMenuItem {
+                                        text: "Скачать " + quality + " [" + series + "] " + size
+                                        onPressed: {
+                                            releasesViewModel.itemTorrents.downloadTorrent(currentIndex);
+                                            torrentsMenu.close();
+
+                                        }
+                                    }
+                                }
+
+                                onClosed: {
+                                    torrentMenuLoader.sourceComponent = null;
+                                }
+                            }
+                        }
+
                     }
                     PlainText {
                         leftPadding: 4
@@ -261,12 +309,12 @@ Rectangle {
                         fontPointSize: 12
                         text: '' + countTorrents
                     }
-                    ColoredIcon {
+                    Image {
                         visible: inSchedule
-                        iconSource: '../Assets/Icons/calendar.svg'
-                        iconWidth: 22
-                        iconHeight: 22
-                        iconColor: ApplicationTheme.plainTextColor
+                        source: assetsLocation.iconsPath + 'calendarcolor.svg'
+                        width: 22
+                        height: 22
+                        mipmap: true
                     }
                     PlainText {
                         visible: inSchedule
@@ -282,73 +330,49 @@ Rectangle {
                 color: "transparent"
                 height: 272 - gridItemtextContainer.height
                 width: 280
-                RoundedActionButton {
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    anchors.bottom: parent.bottom
-                    anchors.bottomMargin: 20
-                    text: "Быстрые действия"
-                    onClicked: {
-                        quickActions.open();
-                    }
-                    CommonMenu {
-                        id: quickActions
-                        width: 320
 
-                        CommonMenuItem {
-                            enabled: applicationSettings.userToken && !inFavorites
-                            text: "Добавить в избранное"
-                            onPressed: {
-                                quickActions.close();
-                                releaseItem.addToFavorite(id);
-                            }
+                Item {
+                    anchors.bottom: parent.bottom
+                    width: 90
+                    height: 20
+
+                    Row {
+                        anchors.left: parent.left
+
+                        Image {
+                            source: assetsLocation.iconsPath + 'ratingcolor.svg'
+                            width: 18
+                            height: 20
+                            mipmap: true
                         }
-                        CommonMenuItem {
-                            enabled: applicationSettings.userToken && inFavorites
-                            text: "Удалить из избранного"
-                            onPressed: {
-                                quickActions.close();
+                        PlainText {
+                            leftPadding: 4
+                            rightPadding: 4
+                            fontPointSize: 12
+                            text: rating
+                        }
+                    }
+
+                    MouseArea {
+                        anchors.fill: parent
+                        onPressed: {
+                            if (inFavorites) {
                                 releaseItem.removeFromFavorite(id);
-                            }
-                        }
-                        CommonMenuItem {
-                            text: "Смотреть"
-                            onPressed: {
-                                quickActions.close();
-                                releaseItem.watchRelease(id, videos, poster);
+                            } else {
+                                releaseItem.addToFavorite(id);
                             }
                         }
                     }
                 }
-                Row {
+
+                PlainText {
+                    visible: inFavorites
                     anchors.bottom: parent.bottom
-                    leftPadding: 8
-                    topPadding: 8
-                    ColoredIcon {
-                        iconSource: '../Assets/Icons/rating.svg'
-                        iconWidth: 18
-                        iconHeight: 20
-                        iconColor: ApplicationTheme.plainTextColor
-                    }
-                    PlainText {
-                        leftPadding: 4
-                        rightPadding: 4
-                        fontPointSize: 12
-                        text: rating
-                    }
-                    ColoredIcon {
-                        visible: inFavorites
-                        iconSource: '../Assets/Icons/favorite.svg'
-                        iconWidth: 20
-                        iconHeight: 20
-                        iconColor: ApplicationTheme.headerTextColor
-                    }
-                    PlainText {
-                        visible: inFavorites
-                        leftPadding: 4
-                        color: ApplicationTheme.headerTextColor
-                        fontPointSize: 12
-                        text: "В избранном"
-                    }
+                    anchors.right: parent.right
+                    anchors.rightMargin: 4
+                    color: ApplicationTheme.headerTextColor
+                    fontPointSize: 12
+                    text: "В избранном"
                 }
             }
         }

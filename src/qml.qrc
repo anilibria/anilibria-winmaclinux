@@ -127,5 +127,7 @@
         <file>Assets/Icons/videoplayermenu.svg</file>
         <file>Assets/Icons/catalogmenu.svg</file>
         <file>Controls/CommonSwitch.qml</file>
+        <file>Assets/Icons/ratingcolor.svg</file>
+        <file>Assets/Icons/calendarcolor.svg</file>
     </qresource>
 </RCC>

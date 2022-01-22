@@ -670,6 +670,12 @@ void ReleasesViewModel::openInExternalPlayer(const QString &url)
     QDesktopServices::openUrl(QUrl(url));
 }
 
+void ReleasesViewModel::prepareTorrentsForListItem(const int id)
+{
+    auto release = m_releasesMap->value(id);
+    m_itemTorrents->loadFromJson(release->torrents());
+}
+
 FullReleaseModel *ReleasesViewModel::getReleaseById(int id) const noexcept
 {
     auto iterator = std::find_if(

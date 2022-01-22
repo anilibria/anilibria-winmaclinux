@@ -50,6 +50,7 @@
 #include "Classes/ViewModels/mainviewmodel.h"
 #include "Classes/ListModels/releaseslistmodel.h"
 #include "Classes/ListModels/cinemahalllistmodel.h"
+#include "Classes/ListModels/releasetorrentcommonlist.h"
 
 int main(int argc, char *argv[])
 {
@@ -108,6 +109,7 @@ int main(int argc, char *argv[])
     qmlRegisterType<MainMenuListModel>("Anilibria.ListModels", 1, 0, "MainMenuListModel");
     qmlRegisterType<ReleasesListModel>("Anilibria.ListModels", 1, 0, "ReleasesListModel");
     qmlRegisterType<CinemahallListModel>("Anilibria.ListModels", 1, 0, "CinemahallListModel");
+    qmlRegisterType<ReleaseTorrentCommonList>("Anilibria.ListModels", 1, 0, "ReleaseTorrentCommonList");
 
     QCoreApplication::setOrganizationDomain("anilibria.tv");
     QCoreApplication::setOrganizationName("EmptyFlow");

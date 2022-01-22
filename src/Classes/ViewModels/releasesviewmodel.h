@@ -9,6 +9,7 @@
 #include "../Models/fullreleasemodel.h"
 #include "../ListModels/releaseslistmodel.h"
 #include "../ListModels/cinemahalllistmodel.h"
+#include "../ListModels/releasetorrentcommonlist.h"
 #include "../Models/historymodel.h"
 #include "../Models/changesmodel.h"
 #include "../Services/synchronizationservice.h"
@@ -19,6 +20,7 @@ class ReleasesViewModel : public QObject
 {
     Q_OBJECT    
     Q_PROPERTY(ReleaseTorrentsList* openedCardTorrents READ openedCardTorrents NOTIFY openedCardTorrentsChanged)
+    Q_PROPERTY(ReleaseTorrentCommonList* itemTorrents READ itemTorrents NOTIFY itemTorrentsChanged)
     Q_PROPERTY(ImageBackgroundViewModel* imageBackgroundViewModel READ imageBackgroundViewModel NOTIFY imageBackgroundViewModelChanged)
     Q_PROPERTY(int countReleases READ countReleases WRITE setCountReleases NOTIFY countReleasesChanged)
     Q_PROPERTY(ReleasesListModel* items READ items NOTIFY itemsChanged)
@@ -78,6 +80,7 @@ private:
     const QString notificationCacheFileName { "notification.cache" };
     QStringList m_sectionNames;
     ReleaseTorrentsList* m_releaseTorrentsList { new ReleaseTorrentsList(this) };
+    QScopedPointer<ReleaseTorrentCommonList> m_itemTorrents { new ReleaseTorrentCommonList(this) };
     QScopedPointer<CinemahallListModel> m_cinemahall { new CinemahallListModel() };
     ImageBackgroundViewModel* m_imageBackgroundViewModel { new ImageBackgroundViewModel(this) };
     QSharedPointer<QList<FullReleaseModel*>> m_releases { new QList<FullReleaseModel*>() };
@@ -109,6 +112,8 @@ public:
     explicit ReleasesViewModel(QObject *parent = nullptr);
 
     ReleaseTorrentsList* openedCardTorrents() const noexcept { return m_releaseTorrentsList; };
+
+    ReleaseTorrentCommonList* itemTorrents() const noexcept { return m_itemTorrents.get(); }
 
     ImageBackgroundViewModel* imageBackgroundViewModel() const noexcept { return m_imageBackgroundViewModel; };
 
@@ -229,6 +234,7 @@ public:
     QHash<QString, bool>* getSeenMarks();
     void updateAllReleases(const QString &releases, bool insideData);
     Q_INVOKABLE void openInExternalPlayer(const QString& url);
+    Q_INVOKABLE void prepareTorrentsForListItem(const int id);
     FullReleaseModel* getReleaseById(int id) const noexcept;
 
 private:
@@ -326,6 +332,7 @@ signals:
     void openedReleaseVideosChanged();
     void notCloseReleaseCardAfterWatchChanged();
     void cinemahallChanged();
+    void itemTorrentsChanged();
 
 };
 
