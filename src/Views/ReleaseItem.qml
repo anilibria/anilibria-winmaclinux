@@ -236,16 +236,35 @@ Rectangle {
                     visible: id > -1
                     leftPadding: 8
                     topPadding: 4
-                    Image {
-                        source: assetsLocation.iconsPath + 'online.svg'
+                    Item {
                         width: 22
                         height: 22
-                        mipmap: true
 
-                        MouseArea {
+                        Rectangle {
+                            id: onlineRectangle
                             anchors.fill: parent
-                            onPressed: {
-                                releaseItem.watchRelease(id, videos, poster);
+                            color: "transparent"
+                            opacity: .5
+                        }
+
+                        Image {
+                            source: assetsLocation.iconsPath + 'online.svg'
+                            width: 22
+                            height: 22
+                            mipmap: true
+
+                            MouseArea {
+                                anchors.fill: parent
+                                hoverEnabled: true
+                                onPressed: {
+                                    releaseItem.watchRelease(id, videos, poster);
+                                }
+                                onEntered: {
+                                    onlineRectangle.color = ApplicationTheme.panelBackgroundShadow;
+                                }
+                                onExited: {
+                                    onlineRectangle.color = "transparent";
+                                }
                             }
                         }
                     }
@@ -256,52 +275,71 @@ Rectangle {
                         enabled: false
                         text: '' + countVideos + (countSeensSeries > 0 ? "<font color='" + (ApplicationTheme.isDarkTheme ? "white" : "green") + "'>/" + countSeensSeries + "</font>  " : "")
                     }
-                    Image {
-                        source: assetsLocation.iconsPath + 'utorrent.svg'
+
+                    Item {
                         width: 22
                         height: 22
-                        mipmap: true
 
-                        MouseArea {
+                        Rectangle {
+                            id: torrentsRectangle
                             anchors.fill: parent
-                            onPressed: {
-                                releasesViewModel.prepareTorrentsForListItem(id);
-                                torrentMenuLoader.sourceComponent = torrentMenuComponent;
-                            }
+                            color: "transparent"
+                            opacity: .5
+                            radius: 8
                         }
 
-                        Loader {
-                            id: torrentMenuLoader
-                            onLoaded: {
-                                item.open();
+                        Image {
+                            anchors.fill: parent
+                            source: assetsLocation.iconsPath + 'utorrent.svg'
+                            mipmap: true
+
+                            MouseArea {
+                                anchors.fill: parent
+                                hoverEnabled: true
+                                onPressed: {
+                                    releasesViewModel.prepareTorrentsForListItem(id);
+                                    torrentMenuLoader.sourceComponent = torrentMenuComponent;
+                                }
+                                onEntered: {
+                                    torrentsRectangle.color = ApplicationTheme.panelBackgroundShadow;
+                                }
+                                onExited: {
+                                    torrentsRectangle.color = "transparent";
+                                }
                             }
-                        }
 
-                        Component {
-                            id: torrentMenuComponent
+                            Loader {
+                                id: torrentMenuLoader
+                                onLoaded: {
+                                    item.open();
+                                }
+                            }
 
-                            CommonMenu {
-                                id: torrentsMenu
-                                width: 320
+                            Component {
+                                id: torrentMenuComponent
 
-                                Repeater {
-                                    model: releasesViewModel.itemTorrents
-                                    delegate: CommonMenuItem {
-                                        text: "Скачать " + quality + " [" + series + "] " + size
-                                        onPressed: {
-                                            releasesViewModel.itemTorrents.downloadTorrent(currentIndex);
-                                            torrentsMenu.close();
+                                CommonMenu {
+                                    id: torrentsMenu
+                                    width: 320
 
+                                    Repeater {
+                                        model: releasesViewModel.itemTorrents
+                                        delegate: CommonMenuItem {
+                                            text: "Скачать " + quality + " [" + series + "] " + size
+                                            onPressed: {
+                                                releasesViewModel.itemTorrents.downloadTorrent(currentIndex);
+                                                torrentsMenu.close();
+
+                                            }
                                         }
                                     }
-                                }
 
-                                onClosed: {
-                                    torrentMenuLoader.sourceComponent = null;
+                                    onClosed: {
+                                        torrentMenuLoader.sourceComponent = null;
+                                    }
                                 }
                             }
                         }
-
                     }
                     PlainText {
                         leftPadding: 4
