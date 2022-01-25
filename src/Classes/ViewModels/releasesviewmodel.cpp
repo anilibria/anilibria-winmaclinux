@@ -1318,7 +1318,8 @@ void ReleasesViewModel::mapToFullReleaseModel(QJsonObject &&jsonObject, const bo
     model->setRating(jsonObject.value("favorite").toObject().value("rating").toInt(0));
     model->setSeries(jsonObject.value("series").toString());
     model->setStatus(jsonObject.value("status").toString());
-    model->setType(jsonObject.value("type").toString());
+    auto releaseType = jsonObject.value("type").toString();
+    model->setType(releaseType.isEmpty() ? "Не указано" : releaseType);
     if (jsonObject.value("last").isString()) {
         auto timestamp = jsonObject.value("last").toString();
         model->setTimestamp(timestamp.toInt());
