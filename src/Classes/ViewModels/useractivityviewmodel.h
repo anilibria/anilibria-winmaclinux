@@ -13,6 +13,7 @@ class UserActivityViewModel : public QObject
     Q_PROPERTY(QString watchUsingApplication READ watchUsingApplication NOTIFY watchUsingApplicationChanged)
     Q_PROPERTY(int countOpenedReleaseCard READ countOpenedReleaseCard NOTIFY countOpenedReleaseCardChanged)
     Q_PROPERTY(int countDownloadTorrent READ countDownloadTorrent NOTIFY countDownloadTorrentChanged)
+    Q_PROPERTY(int countAddedToCinemahall READ countAddedToCinemahall NOTIFY countAddedToCinemahallChanged)
 
 private:
     uint64_t m_watchDurationMinutes { 0 };
@@ -20,6 +21,7 @@ private:
     int m_countOpenedReleaseCard { 0 };
     int m_countDownloadTorrent { 0 };
     QDateTime m_watchUsingApplicationStart { QDateTime::currentDateTime() };
+    int m_countAddedToCinemahall { 0 };
 
 public:
     explicit UserActivityViewModel(QObject *parent = nullptr);
@@ -36,6 +38,9 @@ public:
     int countDownloadTorrent() const noexcept { return m_countDownloadTorrent; }
     Q_INVOKABLE void addDownloadedTorrentToCounter() noexcept;
 
+    int countAddedToCinemahall() const noexcept { return m_countAddedToCinemahall; }
+    Q_INVOKABLE void addCinemahallMarkToCounter(const int count) noexcept;
+
 private:
     void createIfNotExistsFile(const QString& path, const QString& defaultContent) const noexcept;
     QString getCachePath() const noexcept;
@@ -49,6 +54,7 @@ signals:
     void watchUsingApplicationChanged();
     void countOpenedReleaseCardChanged();
     void countDownloadTorrentChanged();
+    void countAddedToCinemahallChanged();
 
 };
 

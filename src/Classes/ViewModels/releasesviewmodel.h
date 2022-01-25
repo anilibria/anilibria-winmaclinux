@@ -15,6 +15,7 @@
 #include "../Services/synchronizationservice.h"
 #include "../Services/applicationsettings.h"
 #include "../Services/localstorageservice.h"
+#include "useractivityviewmodel.h"
 
 class ReleasesViewModel : public QObject
 {
@@ -25,6 +26,7 @@ class ReleasesViewModel : public QObject
     Q_PROPERTY(int countReleases READ countReleases WRITE setCountReleases NOTIFY countReleasesChanged)
     Q_PROPERTY(ReleasesListModel* items READ items NOTIFY itemsChanged)
     Q_PROPERTY(CinemahallListModel* cinemahall READ cinemahall NOTIFY cinemahallChanged)
+    Q_PROPERTY(UserActivityViewModel* userActivity READ userActivity WRITE setUserActivity NOTIFY userActivityChanged)
     Q_PROPERTY(int countSeens READ countSeens WRITE setCountSeens NOTIFY countSeensChanged)
     Q_PROPERTY(bool isChangesExists READ isChangesExists NOTIFY isChangesExistsChanged)
     Q_PROPERTY(int countFavorites READ countFavorites WRITE setCountFavorites NOTIFY countFavoritesChanged)
@@ -80,6 +82,7 @@ private:
     const QString notificationCacheFileName { "notification.cache" };
     QStringList m_sectionNames;
     ReleaseTorrentsList* m_releaseTorrentsList { new ReleaseTorrentsList(this) };
+    UserActivityViewModel* m_userActivity { nullptr };
     QScopedPointer<ReleaseTorrentCommonList> m_itemTorrents { new ReleaseTorrentCommonList(this) };
     QScopedPointer<CinemahallListModel> m_cinemahall { new CinemahallListModel() };
     ImageBackgroundViewModel* m_imageBackgroundViewModel { new ImageBackgroundViewModel(this) };
@@ -120,6 +123,9 @@ public:
     ReleasesListModel* items() const noexcept { return m_items; }
 
     CinemahallListModel* cinemahall() const noexcept { return m_cinemahall.get(); }
+
+    UserActivityViewModel* userActivity() const noexcept { return m_userActivity; }
+    void setUserActivity(const UserActivityViewModel* viewModel) noexcept;
 
     int countReleases() const noexcept { return m_countReleases; }
     void setCountReleases(const int& countReleases) noexcept;
@@ -333,6 +339,7 @@ signals:
     void notCloseReleaseCardAfterWatchChanged();
     void cinemahallChanged();
     void itemTorrentsChanged();
+    void userActivityChanged();
 
 };
 

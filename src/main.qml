@@ -941,6 +941,7 @@ ApplicationWindow {
         imageBackgroundViewModel.containerWidth: releases.backgroundImageWidth
         imageBackgroundViewModel.containerHeight: releases.backgroundImageHeight
         items.releaseLinkedSeries: releaseLinkedSeries
+        userActivity: userActivityViewModel
         onReleaseCardOpened: {
             analyticsService.sendView("releasecard", "show", "%2Freleases");
             releases.setWebViewUrl();

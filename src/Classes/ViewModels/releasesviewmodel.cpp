@@ -79,6 +79,14 @@ ReleasesViewModel::ReleasesViewModel(QObject *parent) : QObject(parent)
     connect(m_releasesUpdateWatcher, &QFutureWatcher<bool>::finished, this, &ReleasesViewModel::releasesUpdated);
 }
 
+void ReleasesViewModel::setUserActivity(const UserActivityViewModel *viewModel) noexcept
+{
+    if (m_userActivity == viewModel) return;
+
+    m_userActivity = const_cast<UserActivityViewModel*>(viewModel);
+    emit userActivityChanged();
+}
+
 void ReleasesViewModel::setCountReleases(const int& countReleases) noexcept
 {
     if (countReleases == m_countReleases) return;
@@ -839,6 +847,8 @@ void ReleasesViewModel::addToCinemahallSelectedReleases()
     QList<int> items(selectedReleases->begin(), selectedReleases->end());
 #endif
     m_cinemahall->addReleases(items);
+
+    m_userActivity->addCinemahallMarkToCounter(selectedReleases->count());
 }
 
 void ReleasesViewModel::setupSortingForSection() const noexcept

@@ -63,6 +63,12 @@ void UserActivityViewModel::addDownloadedTorrentToCounter() noexcept
     writeUserActivity();
 }
 
+void UserActivityViewModel::addCinemahallMarkToCounter(const int count) noexcept
+{
+    m_countAddedToCinemahall += count;
+    emit countAddedToCinemahallChanged();
+}
+
 void UserActivityViewModel::createIfNotExistsFile(const QString& path, const QString& defaultContent) const noexcept
 {
     if (QFile::exists(path)) return;
@@ -99,6 +105,7 @@ void UserActivityViewModel::readUserActivity() noexcept
 
     m_countOpenedReleaseCard = object.contains("countOpenedReleaseCard") ? object["countOpenedReleaseCard"].toInt() : 0;
     m_countDownloadTorrent = object.contains("countDownloadTorrent") ? object["countDownloadTorrent"].toInt() : 0;
+    m_countAddedToCinemahall = object.contains("countAddedToCinemahall") ? object["countAddedToCinemahall"].toInt() : 0;
 }
 
 void UserActivityViewModel::writeUserActivity() noexcept
@@ -108,6 +115,7 @@ void UserActivityViewModel::writeUserActivity() noexcept
     object["watchUsingApplication"] = static_cast<long long>(m_watchUsingApplicationMinutes);
     object["countOpenedReleaseCard"] = m_countOpenedReleaseCard;
     object["countDownloadTorrent"] = m_countDownloadTorrent;
+    object["countAddedToCinemahall"] = m_countAddedToCinemahall;
 
     QFile file(getCachePath());
     file.open(QFile::WriteOnly | QFile::Text);
