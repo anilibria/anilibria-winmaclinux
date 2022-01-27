@@ -75,8 +75,19 @@ Page {
                 }
 
                 RoundedActionButton {
+                    anchors.right: deleteSelectedButton.left
+                    width: 210
+                    buttonEnabled: releasesViewModel.cinemahall.hasItems
+                    text: "Удалить просмотренное"
+                    onClicked: {
+                        releasesViewModel.cinemahall.deletedSeenReleases();
+                    }
+                }
+
+                RoundedActionButton {
+                    id: deleteSelectedButton
                     anchors.right: deleteAllReleasesButton.left
-                    width: 200
+                    width: 210
                     buttonEnabled: releasesViewModel.cinemahall.hasSelectedItems
                     text: "Удалить выбранное"
                     onClicked: {
@@ -87,7 +98,7 @@ Page {
                 RoundedActionButton {
                     id: deleteAllReleasesButton
                     anchors.right: parent.right
-                    width: 200
+                    width: 210
                     buttonEnabled: releasesViewModel.cinemahall.hasItems
                     text: "Удалить все"
                     onClicked: {

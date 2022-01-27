@@ -80,6 +80,23 @@ FullReleaseModel *CinemahallListModel::getReleaseById(int id) const noexcept
 
 }
 
+int CinemahallListModel::getReleaseSeenMarkCount(int releaseId) const noexcept
+{
+    auto result = 0;
+    QHashIterator<QString, bool> iterator(*m_seenMarks);
+    while(iterator.hasNext()) {
+        iterator.next();
+
+        QString key = iterator.key();
+        auto id = QString::number(releaseId);
+        if (!key.startsWith(id)) continue;
+
+        result += 1;
+    }
+
+    return result;
+}
+
 CinemahallListModel::CinemahallListModel(QObject *parent)
     : QAbstractListModel{parent}
 {
@@ -88,9 +105,10 @@ CinemahallListModel::CinemahallListModel(QObject *parent)
     loadItems();
 }
 
-void CinemahallListModel::setup(QSharedPointer<QList<FullReleaseModel *> > releases)
+void CinemahallListModel::setup(QSharedPointer<QList<FullReleaseModel *> > releases, QHash<QString, bool>* seenMarks)
 {
     m_releases = releases;
+    m_seenMarks = seenMarks;
 }
 
 void CinemahallListModel::setDragRelease(const int dragRelease) noexcept
@@ -287,4 +305,16 @@ void CinemahallListModel::deselectItems()
     }
 
     emit hasSelectedItemsChanged();
+}
+
+void CinemahallListModel::deletedSeenReleases()
+{
+    QList<int> ids;
+    auto releases = getCinemahallReleases();
+    foreach (auto release, releases) {
+        if (release->countOnlineVideos() == getReleaseSeenMarkCount(release->id())){
+            ids.append(release->id());
+        }
+    }
+    deleteReleases(ids);
 }

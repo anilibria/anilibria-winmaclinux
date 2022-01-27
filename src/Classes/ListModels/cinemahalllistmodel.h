@@ -20,6 +20,7 @@ private:
     QSharedPointer<QList<FullReleaseModel*>> m_releases { nullptr };
     QScopedPointer<QSet<int>> m_selectedItems { new QSet<int>() };
     QScopedPointer<QList<int>> m_items { new QList<int>() };
+    QHash<QString, bool>* m_seenMarks { nullptr };
     int m_dragRelease { -1 };
     int m_dropRelease { -1 };
 
@@ -36,10 +37,11 @@ private:
     void clearDraggingState() noexcept;
     void refreshItems() noexcept;
     FullReleaseModel* getReleaseById(int id) const noexcept;
+    int getReleaseSeenMarkCount(int releaseId) const noexcept;
 
 public:
     explicit CinemahallListModel(QObject *parent = nullptr);
-    void setup(QSharedPointer<QList<FullReleaseModel*>> releases);
+    void setup(QSharedPointer<QList<FullReleaseModel*>> releases, QHash<QString, bool>* seenMarks);
     int countCinemahall() const noexcept { return m_items->count(); }
     bool hasItems() const noexcept { return !m_items->isEmpty(); }
 
@@ -65,6 +67,7 @@ public:
     Q_INVOKABLE void deleteAllReleases();
     Q_INVOKABLE void selectItem(const int releaseId);
     Q_INVOKABLE void deselectItems();
+    Q_INVOKABLE void deletedSeenReleases();
 
 signals:
     void countCinemahallChanged();

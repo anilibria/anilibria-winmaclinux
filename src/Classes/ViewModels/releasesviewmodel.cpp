@@ -12,7 +12,7 @@ ReleasesViewModel::ReleasesViewModel(QObject *parent) : QObject(parent)
 {
     m_items = new ReleasesListModel(this);
     m_items->setup(m_releases, m_scheduleReleases, m_userFavorites, m_hiddenReleases, m_seenMarks, m_historyItems, m_releaseChanges);
-    m_cinemahall->setup(m_releases);
+    m_cinemahall->setup(m_releases, m_seenMarks);
     connect(m_cinemahall.get(), &CinemahallListModel::hasItemsChanged, this, &ReleasesViewModel::cinemahallItemsChanged);
 
     m_imageBackgroundViewModel->setOptionFilePath("releasesbackground");
