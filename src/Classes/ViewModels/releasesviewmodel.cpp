@@ -13,6 +13,7 @@ ReleasesViewModel::ReleasesViewModel(QObject *parent) : QObject(parent)
     m_items = new ReleasesListModel(this);
     m_items->setup(m_releases, m_scheduleReleases, m_userFavorites, m_hiddenReleases, m_seenMarks, m_historyItems, m_releaseChanges);
     m_cinemahall->setup(m_releases);
+    connect(m_cinemahall.get(), &CinemahallListModel::hasItemsChanged, this, &ReleasesViewModel::cinemahallItemsChanged);
 
     m_imageBackgroundViewModel->setOptionFilePath("releasesbackground");
 
@@ -93,6 +94,16 @@ void ReleasesViewModel::setCountReleases(const int& countReleases) noexcept
 
     m_countReleases = countReleases;
     emit countReleasesChanged();
+}
+
+bool ReleasesViewModel::hasCinemahallNotSeenVideos() const noexcept
+{
+    auto releases = m_cinemahall->getCinemahallReleases();
+    foreach (auto release, releases) {
+        if (m_items->getReleaseSeenMarkCount(release->id()) < release->countOnlineVideos()) return true;
+    }
+
+    return false;
 }
 
 void ReleasesViewModel::setLocalStorage(LocalStorageService *localStorage) noexcept
@@ -849,6 +860,8 @@ void ReleasesViewModel::addToCinemahallSelectedReleases()
     m_cinemahall->addReleases(items);
 
     m_userActivity->addCinemahallMarkToCounter(selectedReleases->count());
+
+    emit hasCinemahallNotSeenVideosChanged();
 }
 
 void ReleasesViewModel::setupSortingForSection() const noexcept
@@ -1094,6 +1107,7 @@ void ReleasesViewModel::recalculateSeenCounts()
     }
 
     setCountSeens(countSeens);
+    emit hasCinemahallNotSeenVideosChanged();
 }
 
 void ReleasesViewModel::saveSeenMarks()
@@ -1436,4 +1450,9 @@ void ReleasesViewModel::userFavoritesReceived(const QString &data)
     saveFavoritesFromJson(data);
     loadFavorites();
     m_items->refresh();
+}
+
+void ReleasesViewModel::cinemahallItemsChanged()
+{
+    emit hasCinemahallNotSeenVideosChanged();
 }

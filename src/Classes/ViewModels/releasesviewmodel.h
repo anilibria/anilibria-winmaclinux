@@ -41,6 +41,7 @@ class ReleasesViewModel : public QObject
     Q_PROPERTY(SynchronizationService* synchronizationService READ synchronizationService WRITE setSynchronizationService NOTIFY synchronizationServiceChanged)
     Q_PROPERTY(ApplicationSettings* applicationSettings READ applicationSettings WRITE setApplicationSettings NOTIFY applicationSettingsChanged)
     Q_PROPERTY(LocalStorageService* localStorage READ localStorage WRITE setLocalStorage NOTIFY localStorageChanged)
+    Q_PROPERTY(bool hasCinemahallNotSeenVideos READ hasCinemahallNotSeenVideos NOTIFY hasCinemahallNotSeenVideosChanged)
     Q_PROPERTY(bool isOpenedCard READ isOpenedCard NOTIFY isOpenedCardChanged)
     Q_PROPERTY(int openedReleaseId READ openedReleaseId NOTIFY openedReleaseIdChanged)
     Q_PROPERTY(QString openedReleasePoster READ openedReleasePoster NOTIFY openedReleasePosterChanged)
@@ -129,6 +130,8 @@ public:
 
     int countReleases() const noexcept { return m_countReleases; }
     void setCountReleases(const int& countReleases) noexcept;
+
+    bool hasCinemahallNotSeenVideos() const noexcept;
 
     LocalStorageService* localStorage() const noexcept { return m_localStorage; }
     void setLocalStorage(LocalStorageService* localStorage) noexcept;
@@ -284,6 +287,7 @@ private slots:
     void synchronizedFromDL(const QString& data);
     void synchronizedSchedule(const QString& data);
     void userFavoritesReceived(const QString& data);
+    void cinemahallItemsChanged();
 
 signals:
     void openedCardTorrentsChanged();
@@ -340,6 +344,7 @@ signals:
     void cinemahallChanged();
     void itemTorrentsChanged();
     void userActivityChanged();
+    void hasCinemahallNotSeenVideosChanged();
 
 };
 

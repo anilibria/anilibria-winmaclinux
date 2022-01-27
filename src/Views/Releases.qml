@@ -342,6 +342,18 @@ Page {
                         }
                     }
 
+                    Rectangle {
+                        visible: releasesViewModel.hasCinemahallNotSeenVideos
+                        anchors.top: parent.top
+                        anchors.right: parent.right
+                        anchors.rightMargin: 6
+                        anchors.topMargin: 10
+                        color: "#4ca2c2"
+                        width: 16
+                        height: 16
+                        radius: 12
+                    }
+
                     CommonMenu {
                         id: cinemahallMenuPanel
                         y: parent.height
