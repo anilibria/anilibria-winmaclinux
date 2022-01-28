@@ -154,6 +154,9 @@ QVariant CinemahallListModel::data(const QModelIndex &index, int role) const
         case SelectedRole: {
             return QVariant(m_selectedItems->contains(releaseId));
         }
+        case NumberRole: {
+            return QVariant(index.row() + 1);
+        }
         default: return QVariant();
     }
 }
@@ -176,6 +179,10 @@ QHash<int, QByteArray> CinemahallListModel::roleNames() const
         {
             SelectedRole,
             "isSelected"
+        },
+        {
+            NumberRole,
+            "releaseNumber"
         }
     };
 }

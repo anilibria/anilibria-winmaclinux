@@ -129,5 +129,6 @@
         <file>Controls/CommonSwitch.qml</file>
         <file>Assets/Icons/ratingcolor.svg</file>
         <file>Assets/Icons/calendarcolor.svg</file>
+        <file>Assets/Icons/numberbookmark.svg</file>
     </qresource>
 </RCC>

@@ -78,6 +78,7 @@ Page {
                     anchors.right: deleteSelectedButton.left
                     width: 210
                     buttonEnabled: releasesViewModel.cinemahall.hasItems
+                    textSize: 10
                     text: "Удалить просмотренное"
                     onClicked: {
                         releasesViewModel.cinemahall.deletedSeenReleases();
@@ -89,6 +90,7 @@ Page {
                     anchors.right: deleteAllReleasesButton.left
                     width: 210
                     buttonEnabled: releasesViewModel.cinemahall.hasSelectedItems
+                    textSize: 10
                     text: "Удалить выбранное"
                     onClicked: {
                         releasesViewModel.cinemahall.deleteSelectedReleases();
@@ -100,6 +102,7 @@ Page {
                     anchors.right: parent.right
                     width: 210
                     buttonEnabled: releasesViewModel.cinemahall.hasItems
+                    textSize: 10
                     text: "Удалить все"
                     onClicked: {
                         releasesViewModel.cinemahall.deleteAllReleases();
@@ -192,23 +195,23 @@ Page {
                                 releasesViewModel.cinemahall.selectItem(id);
                             }
                         }
-                        Grid {
+                        Column {
+                            id: elements
+                            width: 260
                             anchors.topMargin: 10
-                            columnSpacing: 3
-                            rowSpacing: 3
-                            columns: 1
-                            rows: 2
+                            spacing: 3
                             bottomPadding: 4
                             leftPadding: 4
                             topPadding: 4
                             rightPadding: 4
 
                             Rectangle {
-                                width: 260
+                                width: elements.width
                                 height: 236
                                 color: "transparent"
 
                                 Rectangle {
+                                    id: posterContainer
                                     anchors.horizontalCenter: parent.horizontalCenter
                                     width: 152
                                     height: 232
@@ -229,6 +232,27 @@ Page {
                                         }
                                     }
                                 }
+
+                                Image {
+                                    id: bookmarkImage
+                                    anchors.left: posterContainer.left
+                                    anchors.leftMargin: -7
+                                    width: 50
+                                    height: 50
+                                    source: assetsLocation.iconsPath + "numberbookmark.svg"
+                                }
+
+                                PlainText {
+                                    anchors.left: bookmarkImage.left
+                                    anchors.top: bookmarkImage.top
+                                    anchors.topMargin: 22
+                                    width: 40
+                                    horizontalAlignment: Qt.AlignHCenter
+                                    text: releaseNumber
+                                    fontPointSize: 10
+                                    color: "white"
+                                }
+
                             }
 
                             Rectangle {

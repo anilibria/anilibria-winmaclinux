@@ -29,6 +29,7 @@ private:
         TitleRole,
         PosterRole,
         SelectedRole,
+        NumberRole,
     };
 
     void loadItems() noexcept;

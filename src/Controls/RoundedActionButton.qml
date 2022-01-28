@@ -27,6 +27,7 @@ Rectangle {
     width: buttonTitle.width + 34
     height: 34
     property alias text: buttonTitle.text
+    property alias textSize: buttonTitle.fontPointSize
     property bool buttonHovered: false
     property bool buttonEnabled: true
 
