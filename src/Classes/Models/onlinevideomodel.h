@@ -35,6 +35,7 @@ private:
     int m_order;
     QString m_releasePoster;
     bool m_isGroup;
+    QString m_videoPoster { "" };
 
 public:
     OnlineVideoModel();
@@ -54,6 +55,7 @@ public:
     int order() const { return m_order; }
     QString releasePoster() const { return m_releasePoster; }
     bool isGroup() const { return m_isGroup; }
+    QString videoPoster() const { return m_videoPoster; }
 
     void setId(const int id) noexcept;
     void setTitle(const QString &title) noexcept;
@@ -66,6 +68,7 @@ public:
     void setOrder(int order) noexcept;
     void setReleasePoster(QString releasePoster) noexcept;
     void setIsGroup(bool isGroup) noexcept;
+    void setVideoPoster(const QString& poster) noexcept;
 };
 
 #endif // ONLINEVIDEOMODEL_H

@@ -38,7 +38,8 @@ private:
         ReleaseIdRole,
         ReleasePosterRole,
         SelectedRole,
-        OrderRole
+        OrderRole,
+        PosterRole,
     };
 
 public:

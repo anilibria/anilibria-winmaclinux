@@ -61,6 +61,9 @@ QVariant OnlinePlayerVideoList::data(const QModelIndex &index, int role) const
         case OrderRole: {
             return QVariant(video->order());
         }
+        case PosterRole: {
+            return QVariant(AnilibriaImagesPath + video->videoPoster());
+        }
     }
 
     return QVariant();
@@ -120,6 +123,10 @@ QHash<int, QByteArray> OnlinePlayerVideoList::roleNames() const
         {
             OrderRole,
             "order"
+        },
+        {
+            PosterRole,
+            "poster"
         }
     };
 }

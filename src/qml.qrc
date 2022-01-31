@@ -130,5 +130,7 @@
         <file>Assets/Icons/ratingcolor.svg</file>
         <file>Assets/Icons/calendarcolor.svg</file>
         <file>Assets/Icons/numberbookmark.svg</file>
+        <file>Controls/CommonMenuModel.qml</file>
+        <file>Assets/Icons/contextmenu.svg</file>
     </qresource>
 </RCC>

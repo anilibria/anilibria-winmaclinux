@@ -63,23 +63,6 @@ void CinemahallListModel::refreshItems() noexcept
     endResetModel();
 }
 
-FullReleaseModel *CinemahallListModel::getReleaseById(int id) const noexcept
-{
-    auto iterator = std::find_if(
-        m_releases->cbegin(),
-        m_releases->cend(),
-        [id](FullReleaseModel* item)
-        {
-            return item->id() == id;
-        }
-    );
-
-    if(iterator == m_releases->cend()) return nullptr;
-
-    return *iterator;
-
-}
-
 int CinemahallListModel::getReleaseSeenMarkCount(int releaseId) const noexcept
 {
     auto result = 0;
@@ -97,10 +80,31 @@ int CinemahallListModel::getReleaseSeenMarkCount(int releaseId) const noexcept
     return result;
 }
 
+void CinemahallListModel::reorderElements(const int placeIndex, const int oldIndex)
+{
+    if (placeIndex < 0 || placeIndex > m_items->count()) return;
+    if (oldIndex < 0 || oldIndex > m_items->count()) return;
+
+    m_items->removeAt(oldIndex);
+    m_items->insert(placeIndex, m_dragRelease);
+
+    saveItems();
+    clearDraggingState();
+    refreshItems();
+}
+
 CinemahallListModel::CinemahallListModel(QObject *parent)
     : QAbstractListModel{parent}
 {
     createIfNotExistsFile(getCachePath(m_cacheFileName), "[]");
+
+    connect(m_itemMenuList.get(), &CommonMenuListModel::itemSelected, this, &CinemahallListModel::itemMenuSelected);
+
+    QStringList options;
+    options.append("Переместить в начало");
+    options.append("Переместить в конец");
+    options.append("Переместить на позицию");
+    m_itemMenuList->setup(std::move(options));
 
     loadItems();
 }
@@ -125,6 +129,14 @@ void CinemahallListModel::setDropRelease(const int dropRelease) noexcept
 
     m_dropRelease = dropRelease;
     emit dropReleaseChanged();
+}
+
+void CinemahallListModel::setOpenedItemIndex(const int openedItemIndex) noexcept
+{
+    if (openedItemIndex == m_openedItemIndex) return;
+
+    m_openedItemIndex = openedItemIndex;
+    emit openedItemIndexChanged();
 }
 
 int CinemahallListModel::rowCount(const QModelIndex &parent) const
@@ -191,7 +203,7 @@ QList<FullReleaseModel *> CinemahallListModel::getCinemahallReleases() const noe
 {
     QList<FullReleaseModel*> result;
     foreach (auto releaseId, *m_items) {
-        auto fullRelease = getReleaseById(releaseId);
+        auto fullRelease = getRelease(releaseId);
         if (fullRelease == nullptr) continue;
 
         result.append(fullRelease);
@@ -224,18 +236,7 @@ void CinemahallListModel::reorderRelease()
 {
     if (m_dragRelease == -1 || m_dropRelease == -1) return;
 
-    auto placeIndex = m_items->indexOf(m_dropRelease);
-    auto oldIndex = m_items->indexOf(m_dragRelease);
-
-    if (placeIndex < 0 || placeIndex > m_items->count()) return;
-    if (oldIndex < 0 || oldIndex > m_items->count()) return;
-
-    m_items->removeAt(oldIndex);
-    m_items->insert(placeIndex, m_dragRelease);
-
-    saveItems();
-    clearDraggingState();
-    refreshItems();
+    reorderElements(m_items->indexOf(m_dropRelease), m_items->indexOf(m_dragRelease));
 }
 
 void CinemahallListModel::deleteReleases(const QList<int> &ids)
@@ -324,4 +325,27 @@ void CinemahallListModel::deletedSeenReleases()
         }
     }
     deleteReleases(ids);
+}
+
+void CinemahallListModel::itemMenuSelected(const int index)
+{
+    switch (index) {
+        case 0: {// move to start of list
+            if (m_openedItemIndex == 0) return;
+
+            reorderElements(0, m_openedItemIndex);
+            return;
+        }
+        case 1: {// move to end of list
+            auto lastIndex = m_items->count() - 1;
+            if (m_openedItemIndex == lastIndex) return;
+
+            reorderElements(lastIndex, m_openedItemIndex);
+            return;
+        }
+        case 2: {
+            //m_openedItemIndex
+            return;
+        }
+    }
 }

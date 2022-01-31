@@ -205,6 +205,34 @@ Page {
                             topPadding: 4
                             rightPadding: 4
 
+                            Item {
+                                width: elements.width
+                                height: 30
+
+                                IconButton {
+                                    anchors.right: parent.right
+                                    anchors.rightMargin: 20
+                                    width: 30
+                                    height: 30
+                                    iconWidth: 20
+                                    iconHeight: 20
+                                    hoverColor: ApplicationTheme.filterIconButtonHoverColor
+                                    overlayVisible: false
+                                    iconPath: assetsLocation.iconsPath + "contextmenu.svg"
+                                    onButtonPressed: {
+                                        releasesViewModel.cinemahall.openedItemIndex = releaseNumber - 1;
+                                        releasesViewModel.cinemahall.dragRelease = id;
+                                        cinemahallItemContextMenu.open();
+                                    }
+
+                                    CommonMenuModel {
+                                        id: cinemahallItemContextMenu
+                                        width: 300
+                                        menuModel: releasesViewModel.cinemahall.itemMenuList
+                                    }
+                                }
+                            }
+
                             Rectangle {
                                 width: elements.width
                                 height: 236
@@ -316,6 +344,7 @@ Page {
             anchors.leftMargin: 8
             anchors.verticalCenter: parent.verticalCenter
             mipmap: true
+            opacity: .7
             width: 32
             height: 30
             source: assetsLocation.iconsPath + "cinemahallmenu.svg"
@@ -326,6 +355,7 @@ Page {
             anchors.rightMargin: 8
             anchors.verticalCenter: parent.verticalCenter
             mipmap: true
+            opacity: .7
             width: 32
             height: 30
             source: assetsLocation.iconsPath + "cinemahallmenu.svg"

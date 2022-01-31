@@ -66,6 +66,7 @@ DEFINES += USE_VERSION_CHECK
 SOURCES += \
     Classes/ListModels/cinemahalllistmodel.cpp \
     Classes/ListModels/commoncomboboxlistmodel.cpp \
+    Classes/ListModels/commonmenulistmodel.cpp \
     Classes/ListModels/mainmenulistmodel.cpp \
     Classes/ListModels/onlineplayervideolist.cpp \
     Classes/ListModels/popupnotificationvideolist.cpp \
@@ -142,6 +143,7 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 HEADERS += \
     Classes/ListModels/cinemahalllistmodel.h \
     Classes/ListModels/commoncomboboxlistmodel.h \
+    Classes/ListModels/commonmenulistmodel.h \
     Classes/ListModels/mainmenulistmodel.h \
     Classes/ListModels/onlineplayervideolist.h \
     Classes/ListModels/popupnotificationvideolist.h \

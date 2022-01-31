@@ -32,6 +32,7 @@ void OnlineVideoModel::readFromApiModel(const QJsonObject &jsonObject)
     m_FullHD = jsonObject.value("fullhd").toString();
     m_SourceSD = jsonObject.value("srcSd").toString();
     m_SourceHD = jsonObject.value("srcHd").toString();
+    m_videoPoster = jsonObject.value("poster").toString();
 }
 
 void OnlineVideoModel::writeToJson(QJsonObject &json) const noexcept
@@ -43,6 +44,7 @@ void OnlineVideoModel::writeToJson(QJsonObject &json) const noexcept
     json["fullhd"] = m_FullHD;
     json["srcSd"] = m_SourceSD;
     json["srcHd"] = m_SourceHD;
+    json["poster"] = m_videoPoster;
 }
 
 void OnlineVideoModel::setId(const int id) noexcept
@@ -98,4 +100,9 @@ void OnlineVideoModel::setReleasePoster(QString releasePoster) noexcept
 void OnlineVideoModel::setIsGroup(bool isGroup) noexcept
 {
     m_isGroup = isGroup;
+}
+
+void OnlineVideoModel::setVideoPoster(const QString &poster) noexcept
+{
+    m_videoPoster = poster;
 }
