@@ -23,19 +23,21 @@ Popup {
     id: messagePopup
     property alias header: popupHeader.text
     property alias message: popupMessage.text
+    property alias messageHeight: popupMessage.height
     property alias content: innerSlotContainer.children
 
-    x: window.width / 2 - 225
-    y: window.height / 2 - 200
+    x: (window.width / 2) - (width / 2)
+    y: (window.height / 2) - (height / 2)
     width: 450
     height: 150
     modal: true
     focus: true
-    closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
+    closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
 
     Column {
         width: parent.width
         spacing: 10
+
         AccentText {
             id: popupHeader
             width: messagePopup.width - 20
@@ -48,6 +50,7 @@ Popup {
             color: "transparent"
             width: messagePopup.width - 20
             height: messagePopup.height - 40
+
             PlainText {
                 id: popupMessage
                 width: parent.width

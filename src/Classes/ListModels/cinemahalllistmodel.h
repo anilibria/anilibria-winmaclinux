@@ -17,6 +17,9 @@ class CinemahallListModel : public QAbstractListModel
     Q_PROPERTY(bool hasSelectedItems READ hasSelectedItems NOTIFY hasSelectedItemsChanged)
     Q_PROPERTY(CommonMenuListModel* itemMenuList READ itemMenuList NOTIFY itemMenuListChanged)
     Q_PROPERTY(int openedItemIndex READ openedItemIndex WRITE setOpenedItemIndex NOTIFY openedItemIndexChanged)
+    Q_PROPERTY(int movedPositionIndex READ movedPositionIndex WRITE setMovedPositionIndex NOTIFY movedPositionIndexChanged)
+    Q_PROPERTY(QString movedPositionPlaceholder READ movedPositionPlaceholder NOTIFY movedPositionPlaceholderChanged)
+    Q_PROPERTY(bool validMovedPosition READ validMovedPosition NOTIFY validMovedPositionChanged)
 
 private:
     const QString m_cacheFileName { "cinemahall.cache" };
@@ -28,6 +31,7 @@ private:
     int m_dragRelease { -1 };
     int m_dropRelease { -1 };
     int m_openedItemIndex { -1 };
+    int m_movedPositionIndex { -1 };
 
     enum CinemaHallRoles {
         IdRole = Qt::UserRole + 1,
@@ -60,7 +64,14 @@ public:
     int openedItemIndex() const noexcept { return m_openedItemIndex; }
     void setOpenedItemIndex(const int openedItemIndex) noexcept;
 
+    int movedPositionIndex() const noexcept { return m_movedPositionIndex; }
+    void setMovedPositionIndex(const int movedPositionIndex) noexcept;
+
     bool hasSelectedItems() const noexcept { return !m_selectedItems->isEmpty(); }
+
+    QString movedPositionPlaceholder() const noexcept;
+
+    bool validMovedPosition() const noexcept { return m_movedPositionIndex > 0 && m_movedPositionIndex != m_openedItemIndex + 1; }
 
     CommonMenuListModel* itemMenuList() const noexcept { return m_itemMenuList.get(); }
 
@@ -79,6 +90,7 @@ public:
     Q_INVOKABLE void selectItem(const int releaseId);
     Q_INVOKABLE void deselectItems();
     Q_INVOKABLE void deletedSeenReleases();
+    Q_INVOKABLE void moveToTypedNumber();
 
 private slots:
     void itemMenuSelected(const int index);
@@ -91,6 +103,10 @@ signals:
     void hasSelectedItemsChanged();
     void itemMenuListChanged();
     void openedItemIndexChanged();
+    void visibleSetupMovedNumber();
+    void movedPositionIndexChanged();
+    void movedPositionPlaceholderChanged();
+    void validMovedPositionChanged();
 
 };
 

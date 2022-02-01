@@ -137,6 +137,21 @@ void CinemahallListModel::setOpenedItemIndex(const int openedItemIndex) noexcept
 
     m_openedItemIndex = openedItemIndex;
     emit openedItemIndexChanged();
+    emit validMovedPositionChanged();
+}
+
+void CinemahallListModel::setMovedPositionIndex(const int movedPositionIndex) noexcept
+{
+    if (movedPositionIndex == m_movedPositionIndex) return;
+
+    m_movedPositionIndex = movedPositionIndex;
+    emit movedPositionIndexChanged();
+    emit validMovedPositionChanged();
+}
+
+QString CinemahallListModel::movedPositionPlaceholder() const noexcept
+{
+    return "Введите число из диапазона: 1-" + QString::number(m_items->count());
 }
 
 int CinemahallListModel::rowCount(const QModelIndex &parent) const
@@ -327,6 +342,15 @@ void CinemahallListModel::deletedSeenReleases()
     deleteReleases(ids);
 }
 
+void CinemahallListModel::moveToTypedNumber()
+{
+    auto index = m_movedPositionIndex - 1;
+    if (index < 0) return;
+    if (index == m_openedItemIndex) return;
+
+    reorderElements(index, m_openedItemIndex);
+}
+
 void CinemahallListModel::itemMenuSelected(const int index)
 {
     switch (index) {
@@ -344,7 +368,8 @@ void CinemahallListModel::itemMenuSelected(const int index)
             return;
         }
         case 2: {
-            //m_openedItemIndex
+            emit movedPositionPlaceholderChanged();
+            emit visibleSetupMovedNumber();
             return;
         }
     }

@@ -376,4 +376,63 @@ Page {
         }
     }
 
+    Connections {
+        target: releasesViewModel.cinemahall
+        function onVisibleSetupMovedNumber() {
+            setupNumberToMove.open();
+        }
+    }
+
+    MessageModal {
+        id: setupNumberToMove
+        header: "Укажите индекс для перемещения"
+        messageHeight: 0
+        content: Column {
+            id: numbersColumnnContainer
+            width: setupNumberToMove.width - 20
+
+            TextField {
+                id: movedIndexTextField
+                width: numbersColumnnContainer.width
+                placeholderText: releasesViewModel.cinemahall.movedPositionPlaceholder
+                text: ""
+                onTextChanged: {
+                    let number = parseInt(text);
+                    if (isNaN(number)) number = 0;
+                    releasesViewModel.cinemahall.movedPositionIndex = number;
+                }
+            }
+
+            Item {
+                width: numbersColumnnContainer.width
+                height: 40
+
+                RoundedActionButton {
+                    text: "Перейти"
+                    buttonEnabled: releasesViewModel.cinemahall.validMovedPosition
+                    anchors.right: cancelButton.left
+                    width: 100
+                    onClicked: {
+                        releasesViewModel.cinemahall.moveToTypedNumber();
+                        releasesViewModel.cinemahall.movedPositionIndex = 0;
+                        movedIndexTextField.text = "";
+                        setupNumberToMove.close();
+                    }
+                }
+                RoundedActionButton {
+                    id: cancelButton
+                    anchors.right: parent.right
+                    text: "Отмена"
+                    width: 100
+                    onClicked: {
+                        releasesViewModel.cinemahall.movedPositionIndex = 0;
+                        movedIndexTextField.text = "";
+                        setupNumberToMove.close();
+                    }
+                }
+            }
+
+        }
+    }
+
 }

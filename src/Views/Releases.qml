@@ -246,87 +246,6 @@ Page {
                             }
                         }
                     }
-
-                    MessageModal {
-                        id: addToHidedReleasesConfirm
-                        header: "Добавить релизы в скрытые?"
-                        message: "Вы уверены что хотите добавить релизы в скрытые?\nЭти релизы будут скрыты везде кроме раздела Скрытые релизы."
-                        content: Row {
-                            spacing: 6
-                            anchors.right: parent.right
-
-                            RoundedActionButton {
-                                text: "Ок"
-                                width: 100
-                                onClicked: {
-                                    releasesViewModel.addToHidedSelectedReleases();
-                                    addToHidedReleasesConfirm.close();
-                                    releasesViewModel.clearSelectedReleases();
-                                }
-                            }
-                            RoundedActionButton {
-                                text: "Отмена"
-                                width: 100
-                                onClicked: {
-                                    addToHidedReleasesConfirm.close();
-                                }
-                            }
-                        }
-                    }
-
-                    MessageModal {
-                        id: removeAllHidedReleasesConfirm
-                        header: "Сделать все релизы видимыми?"
-                        message: "Вы уверены что хотите удалить все скрытые релизы?\nЭти релизы будут доступны во всех разделах."
-                        content: Row {
-                            spacing: 6
-                            anchors.right: parent.right
-
-                            RoundedActionButton {
-                                text: "Ок"
-                                width: 100
-                                onClicked: {
-                                    releasesViewModel.removeFromHidedSelectedReleases();
-                                    removeAllHidedReleasesConfirm.close();
-                                    releasesViewModel.clearSelectedReleases();
-                                }
-                            }
-                            RoundedActionButton {
-                                text: "Отмена"
-                                width: 100
-                                onClicked: {
-                                    removeAllHidedReleasesConfirm.close();
-                                }
-                            }
-                        }
-                    }
-
-                    MessageModal {
-                        id: removeAllSeenMark
-                        header: "Удаление признаков просмотра"
-                        message: "Вы уверены что хотите удалить все признаки просмотра у всех релизов?"
-                        content: Row {
-                            spacing: 6
-                            anchors.right: parent.right
-
-                            RoundedActionButton {
-                                text: "Ок"
-                                width: 100
-                                onClicked: {
-                                    releasesViewModel.removeAllSeenMark();
-                                    releasesViewModel.items.refresh();
-                                    removeAllSeenMark.close();
-                                }
-                            }
-                            RoundedActionButton {
-                                text: "Отмена"
-                                width: 100
-                                onClicked: {
-                                    removeAllSeenMark.close();
-                                }
-                            }
-                        }
-                    }
                 }
                 LeftPanelIconButton {
                     iconPath: "../Assets/Icons/popcorn.svg"
@@ -2309,6 +2228,87 @@ Page {
 
     ReleasePosterPreview {
         id: releasePosterPreview
+    }
+
+    MessageModal {
+        id: addToHidedReleasesConfirm
+        header: "Добавить релизы в скрытые?"
+        message: "Вы уверены что хотите добавить релизы в скрытые?\nЭти релизы будут скрыты везде кроме раздела Скрытые релизы."
+        content: Row {
+            spacing: 6
+            anchors.right: parent.right
+
+            RoundedActionButton {
+                text: "Ок"
+                width: 100
+                onClicked: {
+                    releasesViewModel.addToHidedSelectedReleases();
+                    addToHidedReleasesConfirm.close();
+                    releasesViewModel.clearSelectedReleases();
+                }
+            }
+            RoundedActionButton {
+                text: "Отмена"
+                width: 100
+                onClicked: {
+                    addToHidedReleasesConfirm.close();
+                }
+            }
+        }
+    }
+
+    MessageModal {
+        id: removeAllHidedReleasesConfirm
+        header: "Сделать все релизы видимыми?"
+        message: "Вы уверены что хотите удалить все скрытые релизы?\nЭти релизы будут доступны во всех разделах."
+        content: Row {
+            spacing: 6
+            anchors.right: parent.right
+
+            RoundedActionButton {
+                text: "Ок"
+                width: 100
+                onClicked: {
+                    releasesViewModel.removeFromHidedSelectedReleases();
+                    removeAllHidedReleasesConfirm.close();
+                    releasesViewModel.clearSelectedReleases();
+                }
+            }
+            RoundedActionButton {
+                text: "Отмена"
+                width: 100
+                onClicked: {
+                    removeAllHidedReleasesConfirm.close();
+                }
+            }
+        }
+    }
+
+    MessageModal {
+        id: removeAllSeenMark
+        header: "Удаление признаков просмотра"
+        message: "Вы уверены что хотите удалить все признаки просмотра у всех релизов?"
+        content: Row {
+            spacing: 6
+            anchors.right: parent.right
+
+            RoundedActionButton {
+                text: "Ок"
+                width: 100
+                onClicked: {
+                    releasesViewModel.removeAllSeenMark();
+                    releasesViewModel.items.refresh();
+                    removeAllSeenMark.close();
+                }
+            }
+            RoundedActionButton {
+                text: "Отмена"
+                width: 100
+                onClicked: {
+                    removeAllSeenMark.close();
+                }
+            }
+        }
     }
 
     function setSeenStateForOpenedRelease(newState) {
