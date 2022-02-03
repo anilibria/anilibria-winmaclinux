@@ -20,6 +20,7 @@ class CinemahallListModel : public QAbstractListModel
     Q_PROPERTY(int movedPositionIndex READ movedPositionIndex WRITE setMovedPositionIndex NOTIFY movedPositionIndexChanged)
     Q_PROPERTY(QString movedPositionPlaceholder READ movedPositionPlaceholder NOTIFY movedPositionPlaceholderChanged)
     Q_PROPERTY(bool validMovedPosition READ validMovedPosition NOTIFY validMovedPositionChanged)
+    Q_PROPERTY(float restoreScrollPosition READ restoreScrollPosition WRITE setRestoreScrollPosition NOTIFY restoreScrollPositionChanged)
 
 private:
     const QString m_cacheFileName { "cinemahall.cache" };
@@ -32,6 +33,7 @@ private:
     int m_dropRelease { -1 };
     int m_openedItemIndex { -1 };
     int m_movedPositionIndex { -1 };
+    float m_restoreScrollPosition { 0 };
 
     enum CinemaHallRoles {
         IdRole = Qt::UserRole + 1,
@@ -66,6 +68,9 @@ public:
 
     int movedPositionIndex() const noexcept { return m_movedPositionIndex; }
     void setMovedPositionIndex(const int movedPositionIndex) noexcept;
+
+    float restoreScrollPosition() const noexcept { return m_restoreScrollPosition; }
+    void setRestoreScrollPosition(const float restoreScrollPosition) noexcept;
 
     bool hasSelectedItems() const noexcept { return !m_selectedItems->isEmpty(); }
 
@@ -107,6 +112,8 @@ signals:
     void movedPositionIndexChanged();
     void movedPositionPlaceholderChanged();
     void validMovedPositionChanged();
+    void restoreScrollPositionChanged();
+    void needRestoreScrollPosition();
 
 };
 

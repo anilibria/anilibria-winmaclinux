@@ -91,6 +91,8 @@ void CinemahallListModel::reorderElements(const int placeIndex, const int oldInd
     saveItems();
     clearDraggingState();
     refreshItems();
+
+    emit needRestoreScrollPosition();
 }
 
 CinemahallListModel::CinemahallListModel(QObject *parent)
@@ -147,6 +149,14 @@ void CinemahallListModel::setMovedPositionIndex(const int movedPositionIndex) no
     m_movedPositionIndex = movedPositionIndex;
     emit movedPositionIndexChanged();
     emit validMovedPositionChanged();
+}
+
+void CinemahallListModel::setRestoreScrollPosition(const float restoreScrollPosition) noexcept
+{
+    if (restoreScrollPosition == m_restoreScrollPosition) return;
+
+    m_restoreScrollPosition = restoreScrollPosition;
+    emit restoreScrollPositionChanged();
 }
 
 QString CinemahallListModel::movedPositionPlaceholder() const noexcept
@@ -268,6 +278,8 @@ void CinemahallListModel::deleteReleases(const QList<int> &ids)
     emit hasSelectedItemsChanged();
     emit hasItemsChanged();
     refreshItems();
+
+    emit needRestoreScrollPosition();
 }
 
 void CinemahallListModel::deleteSelectedReleases()

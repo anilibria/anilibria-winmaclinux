@@ -81,6 +81,7 @@ Page {
                     textSize: 10
                     text: "Удалить просмотренное"
                     onClicked: {
+                        releasesViewModel.cinemahall.restoreScrollPosition = listViewReleases.contentX;
                         releasesViewModel.cinemahall.deletedSeenReleases();
                     }
                 }
@@ -93,6 +94,7 @@ Page {
                     textSize: 10
                     text: "Удалить выбранное"
                     onClicked: {
+                        releasesViewModel.cinemahall.restoreScrollPosition = listViewReleases.contentX;
                         releasesViewModel.cinemahall.deleteSelectedReleases();
                     }
                 }
@@ -138,6 +140,7 @@ Page {
                 Layout.fillHeight: true
                 Layout.fillWidth: true
                 orientation: ListView.Horizontal
+                boundsBehavior: Flickable.StopAtBounds
                 model: releasesViewModel.cinemahall
                 clip: true
                 ScrollBar.horizontal: ScrollBar {
@@ -183,6 +186,7 @@ Page {
                                     itemContainer.opacity = .7;
                                     itemContainer.showTextHeader = false;
                                 } else {
+                                    releasesViewModel.cinemahall.restoreScrollPosition = listViewReleases.contentX;
                                     releasesViewModel.cinemahall.reorderRelease();
                                 }
                             }
@@ -229,6 +233,9 @@ Page {
                                         id: cinemahallItemContextMenu
                                         width: 300
                                         menuModel: releasesViewModel.cinemahall.itemMenuList
+                                        onBeforeAction: {
+                                            releasesViewModel.cinemahall.restoreScrollPosition = listViewReleases.contentX;
+                                        }
                                     }
                                 }
                             }
@@ -380,6 +387,9 @@ Page {
         target: releasesViewModel.cinemahall
         function onVisibleSetupMovedNumber() {
             setupNumberToMove.open();
+        }
+        function onNeedRestoreScrollPosition() {
+            listViewReleases.contentX = releasesViewModel.cinemahall.restoreScrollPosition;
         }
     }
 
