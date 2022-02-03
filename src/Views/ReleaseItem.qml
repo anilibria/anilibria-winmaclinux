@@ -18,6 +18,7 @@
 
 import QtQuick 2.12
 import QtQuick.Layouts 1.3
+import QtQuick.Controls 2.12
 import QtGraphicalEffects 1.0
 import "../Controls"
 import "../Theme"
@@ -253,6 +254,8 @@ Rectangle {
                             height: 22
                             mipmap: true
 
+                            property bool imageHovered: false
+
                             MouseArea {
                                 anchors.fill: parent
                                 hoverEnabled: true
@@ -261,11 +264,17 @@ Rectangle {
                                 }
                                 onEntered: {
                                     onlineRectangle.color = ApplicationTheme.panelBackgroundShadow;
+                                    parent.imageHovered = true;
                                 }
                                 onExited: {
                                     onlineRectangle.color = "transparent";
+                                    parent.imageHovered = false;
                                 }
                             }
+
+                            ToolTip.delay: 2000
+                            ToolTip.visible: imageHovered
+                            ToolTip.text: `Начать просмотр этого релиза`
                         }
                     }
                     PlainText {
@@ -293,6 +302,8 @@ Rectangle {
                             source: assetsLocation.iconsPath + 'utorrent.svg'
                             mipmap: true
 
+                            property bool torrentImageHovered: false
+
                             MouseArea {
                                 anchors.fill: parent
                                 hoverEnabled: true
@@ -302,11 +313,17 @@ Rectangle {
                                 }
                                 onEntered: {
                                     torrentsRectangle.color = ApplicationTheme.panelBackgroundShadow;
+                                    parent.torrentImageHovered = true;
                                 }
                                 onExited: {
                                     torrentsRectangle.color = "transparent";
+                                    parent.torrentImageHovered = false;
                                 }
                             }
+
+                            ToolTip.delay: 2000
+                            ToolTip.visible: torrentImageHovered
+                            ToolTip.text: `Показать все торренты для этого релиза`
 
                             Loader {
                                 id: torrentMenuLoader
@@ -370,9 +387,21 @@ Rectangle {
                 width: 280
 
                 Item {
+                    id: favoritesItem
                     anchors.bottom: parent.bottom
                     width: 90
                     height: 20
+
+                    property bool favoritesImageHovered
+
+                    Rectangle {
+                        anchors.left: parent.left
+                        width: 18 + countFavoritesLabel.width
+                        height: 20
+                        color: favoritesItem.favoritesImageHovered ? ApplicationTheme.panelBackgroundShadow : "transparent"
+                        opacity: .5
+                        radius: 8
+                    }
 
                     Row {
                         anchors.left: parent.left
@@ -382,8 +411,13 @@ Rectangle {
                             width: 18
                             height: 20
                             mipmap: true
+
+                            ToolTip.delay: 2000
+                            ToolTip.visible: favoritesItem.favoritesImageHovered
+                            ToolTip.text: inFavorites ? `Удалить из избранного` : `Добавить в избранное`
                         }
                         PlainText {
+                            id: countFavoritesLabel
                             leftPadding: 4
                             rightPadding: 4
                             fontPointSize: 12
@@ -393,6 +427,13 @@ Rectangle {
 
                     MouseArea {
                         anchors.fill: parent
+                        hoverEnabled: true
+                        onEntered: {
+                            parent.favoritesImageHovered = true;
+                        }
+                        onExited: {
+                            parent.favoritesImageHovered = false;
+                        }
                         onPressed: {
                             if (inFavorites) {
                                 releaseItem.removeFromFavorite(id);
