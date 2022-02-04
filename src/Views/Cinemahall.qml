@@ -213,9 +213,15 @@ Page {
                                 width: elements.width
                                 height: 30
 
+                                PlainText {
+                                    fontPointSize: 10
+                                    anchors.centerIn: parent
+                                    text: seenSeries
+                                }
+
                                 IconButton {
                                     anchors.right: parent.right
-                                    anchors.rightMargin: 20
+                                    anchors.rightMargin: 26
                                     width: 30
                                     height: 30
                                     iconWidth: 20

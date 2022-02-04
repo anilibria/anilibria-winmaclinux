@@ -194,6 +194,10 @@ QVariant CinemahallListModel::data(const QModelIndex &index, int role) const
         case NumberRole: {
             return QVariant(index.row() + 1);
         }
+        case SeenSeries: {
+            auto seenReleases = getReleaseSeenMarkCount(releaseId);
+            return QVariant(QString::number(seenReleases) + " из " + QString::number(release->countOnlineVideos()));
+        }
         default: return QVariant();
     }
 }
@@ -220,6 +224,10 @@ QHash<int, QByteArray> CinemahallListModel::roleNames() const
         {
             NumberRole,
             "releaseNumber"
+        },
+        {
+            SeenSeries,
+            "seenSeries"
         }
     };
 }

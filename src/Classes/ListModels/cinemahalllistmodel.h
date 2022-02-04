@@ -41,6 +41,7 @@ private:
         PosterRole,
         SelectedRole,
         NumberRole,
+        SeenSeries,
     };
 
     void loadItems() noexcept;
