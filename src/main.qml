@@ -150,7 +150,7 @@ ApplicationWindow {
             iconHeight: 20
             tooltipMessage: "Перейти на страницу Каталог Релизов"
             onButtonPressed: {
-                showPage("release");
+                mainViewModel.selectPage("release");
             }
         }
         IconButton {
@@ -168,7 +168,7 @@ ApplicationWindow {
             iconHeight: 20
             tooltipMessage: "Перейти на страницу Видеоплеер"
             onButtonPressed: {
-                showPage("videoplayer");
+                mainViewModel.selectPage("videoplayer");
             }
         }
         IconButton {
@@ -186,7 +186,7 @@ ApplicationWindow {
             iconHeight: 20
             tooltipMessage: "Перейти на страницу Кинозал"
             onButtonPressed: {
-                showPage("cinemahall");
+                mainViewModel.selectPage("cinemahall");
             }
         }
         IconButton {
@@ -204,7 +204,7 @@ ApplicationWindow {
             iconHeight: 20
             tooltipMessage: "Перейти на страницу Связанные релизы"
             onButtonPressed: {
-                showPage("releaseseries");
+                mainViewModel.selectPage("releaseseries");
             }
         }
         IconButton {
@@ -490,43 +490,6 @@ ApplicationWindow {
         }
     }
 
-    function showPage(pageId) {
-        if (mainViewModel.currentPageId === pageId){
-            drawer.close();
-            return;
-        }
-
-        const pages = {
-            "videoplayer": videoplayer,
-            "authorization": authorization,
-            "release": releases,
-            "youtube": youtube,
-            "about": about,
-            "cinemahall": cinemahall,            
-            "download": download,
-            "maintenance": maintenance,
-            "releaseseries": releaseseries
-        };
-
-        const currentPage = pages[mainViewModel.currentPageId];
-        currentPage.navigateFrom();
-
-        currentPage.visible = false;
-        currentPage.focus = false;
-
-        const newPage = pages[pageId];
-        newPage.visible = true;
-        newPage.focus = true;
-        newPage.navigateTo();
-        mainViewModel.currentPageId = pageId;
-
-        windowFooter.visible = pageId !== "videoplayer";
-
-        analyticsService.sendView("Pages", "ChangePage", "%2F" + pageId);
-
-        drawer.close();
-    }
-
     function getCurrentScreen() {
         let currentScreen;
         const countScreens = Qt.application.screens.length;
@@ -767,6 +730,7 @@ ApplicationWindow {
                     tooltipMessage: "Выйти из аккаунта"
                     onButtonPressed: {
                         synchronizationService.signout(applicationSettings.userToken);
+                        drawer.close();
                     }
                 }
             }
@@ -790,6 +754,7 @@ ApplicationWindow {
                                 anchors.fill: parent
                                 onClicked: {
                                     mainViewModel.mainMenuListModel.selectItem(pageIndex);
+                                    drawer.close();
                                 }
                                 onEntered: {
                                     mainMenuControl.isHovered = true;
@@ -829,7 +794,8 @@ ApplicationWindow {
                 MouseArea {
                     anchors.fill: parent
                     onPressed: {
-                        showPage("about");
+                        mainViewModel.selectPage("about");
+                        drawer.close();
                     }
                 }
                 Image {
@@ -848,7 +814,8 @@ ApplicationWindow {
                 MouseArea {
                     anchors.fill: parent
                     onPressed: {
-                        showPage("about");
+                        mainViewModel.selectPage("about");
+                        drawer.close();
                     }
                 }
                 Column {
@@ -968,9 +935,9 @@ ApplicationWindow {
 
         OnlinePlayer {
             id: videoplayer
-            visible: false
+            visible: mainViewModel.isOnlinePlayerPageVisible
             onReturnToReleasesPage: {
-                window.showPage("release");
+                mainViewModel.selectPage("release");
             }
             onPlayerCreated: {
                 onlinePlayerWindow.loadPlayer();
@@ -979,7 +946,7 @@ ApplicationWindow {
 
         Releases {
             id: releases
-            visible: true
+            visible: mainViewModel.isReleasesPageVisible
             focus: true
             onWatchSingleRelease: {
                 onlinePlayerViewModel.customPlaylistPosition = startSeria;
@@ -987,15 +954,15 @@ ApplicationWindow {
                 onlinePlayerViewModel.navigateVideos = videos;
                 onlinePlayerViewModel.navigatePoster = poster;
 
-                window.showPage("videoplayer");
+                mainViewModel.selectPage("videoplayer");
                 onlinePlayerViewModel.setupForSingleRelease();
             }
             onWatchCinemahall: {
-                window.showPage("videoplayer");
+                mainViewModel.selectPage("videoplayer");
                 onlinePlayerViewModel.setupForCinemahall();
             }
             onWatchMultipleReleases: {
-                window.showPage("videoplayer");
+                mainViewModel.selectPage("videoplayer");
 
                 onlinePlayerViewModel.setupForMultipleRelease();
 
@@ -1005,41 +972,41 @@ ApplicationWindow {
 
         Authorization {
             id: authorization
-            visible: false
+            visible: mainViewModel.isAuthorizationPageVisible
         }
 
         Youtube {
             id: youtube
-            visible: false
+            visible: mainViewModel.isYoutubePageVisible
         }
 
         About {
             id: about
-            visible: false
+            visible: mainViewModel.isAboutPageVisible
         }
 
         Downloads {
             id: download
-            visible: false
+            visible: mainViewModel.isDownloadPageVisible
         }
 
         Cinemahall {
             id: cinemahall
-            visible: false
+            visible: mainViewModel.isCinemahallPageVisible
             onWatchCinemahall: {
-                window.showPage("videoplayer");
+                mainViewModel.selectPage("videoplayer");
                 onlinePlayerViewModel.setupForCinemahall();
             }
         }
 
         ReleaseSeries {
             id: releaseseries
-            visible: false
+            visible: mainViewModel.isReleasesSeriesPageVisible
         }
 
         Maintenance {
             id: maintenance
-            visible: false
+            visible: mainViewModel.isMaintenancePageVisible
         }
 
         MouseArea {
@@ -1268,7 +1235,7 @@ ApplicationWindow {
         onSuccessAuthentificated: {
             applicationSettings.userToken = token;
 
-            if (mainViewModel.currentPageId === "authorization") showPage("release");
+            if (mainViewModel.currentPageId === "authorization") mainViewModel.selectPage("release");
 
             synchronizationService.getUserData(applicationSettings.userToken);
             notificationViewModel.sendInfoNotification(`Вы успешно вошли в аккаунт. Ваше избранное будет синхронизовано автоматически.`);
@@ -1277,8 +1244,17 @@ ApplicationWindow {
 
     MainViewModel {
         id: mainViewModel
-        onPageShowed: {
-            showPage(pageName);
+        analyticsService: analyticsService
+        onOnlinePlayerPageFromNavigated: {
+            console.log(`fromnavigated`);
+            videoplayer.navigateFrom();
+            windowFooter.visible = true;
+        }
+        onOnlinePlayerPageNavigated: {
+            console.log(`navigated`);
+            videoplayer.navigateTo();
+            windowFooter.visible = false;
+            console.log(`windowFooter.visible`, windowFooter.visible);
         }
     }
 

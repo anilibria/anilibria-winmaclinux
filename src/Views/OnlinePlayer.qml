@@ -71,7 +71,7 @@ Page {
             event.accepted = true;
         }
         if (event.key === Qt.Key_Escape) {
-            window.showPage("release");
+            mainViewModel.selectPage("release");
         }
         if (event.key === Qt.Key_F11 || event.key === Qt.Key_F || event.key === 1040) {
             onlinePlayerViewModel.toggleFullScreen();
@@ -1251,7 +1251,7 @@ Page {
             anchors.fill: parent
             onPressed: {
                 releasesViewModel.showReleaseCard(onlinePlayerViewModel.selectedRelease);
-                window.showPage("release");
+                mainViewModel.selectPage("release");
             }
         }
     }
