@@ -93,11 +93,12 @@ void MainViewModel::refreshPageVisible() noexcept
     emit isMaintenancePageVisibleChanged();
     emit isReleasesSeriesPageVisibleChanged();
     emit isAuthorizationPageVisibleChanged();
+    emit isMyAnilibriaPageVisibleChanged();
 }
 
 void MainViewModel::selectedItemInMainMenu(int index, QString pageName)
 {
-    int supportProject = 7;
+    int supportProject = 8;
     if (index != supportProject) {
         selectPage(pageName);
         return;

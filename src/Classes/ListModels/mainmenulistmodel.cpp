@@ -5,12 +5,13 @@ MainMenuListModel::MainMenuListModel(QObject *parent) : QAbstractListModel(paren
 {
     m_items->append(new MainMenuItemModel(0, "Каталог релизов", "release", "catalogmenu.svg"));
     m_items->append(new MainMenuItemModel(1, "Видеоплеер", "videoplayer", "videoplayermenu.svg"));
-    m_items->append(new MainMenuItemModel(2, "Youtube", "youtube", "youtube.svg"));
-    m_items->append(new MainMenuItemModel(3, "Кинозал", "cinemahall", "cinemahallmenu.svg"));
-    m_items->append(new MainMenuItemModel(4, "Связанные релизы", "releaseseries", "seriesmenu.svg"));
-    m_items->append(new MainMenuItemModel(5, "Менеджер загрузок", "download", "downloadcircle.svg"));
-    m_items->append(new MainMenuItemModel(6, "Обслуживание", "maintenance", "maintenance.svg"));
-    m_items->append(new MainMenuItemModel(7, "Поддержать проект", "", "donate.svg"));
+    m_items->append(new MainMenuItemModel(2, "Моя Анилибрия", "myanilibria", "house.svg"));
+    m_items->append(new MainMenuItemModel(3, "Youtube", "youtube", "youtube.svg"));
+    m_items->append(new MainMenuItemModel(4, "Кинозал", "cinemahall", "cinemahallmenu.svg"));
+    m_items->append(new MainMenuItemModel(5, "Связанные релизы", "releaseseries", "seriesmenu.svg"));
+    m_items->append(new MainMenuItemModel(6, "Менеджер загрузок", "download", "downloadcircle.svg"));
+    m_items->append(new MainMenuItemModel(7, "Обслуживание", "maintenance", "maintenance.svg"));
+    m_items->append(new MainMenuItemModel(8, "Поддержать проект", "", "donate.svg"));
 }
 
 int MainMenuListModel::rowCount(const QModelIndex &parent) const
@@ -74,7 +75,7 @@ void MainMenuListModel::setAuthorizeItemVisible(bool visible)
             m_items->begin(),
             m_items->end(),
             [] (MainMenuItemModel* mainMenuItem) {
-                return mainMenuItem->index() == 8;
+                return mainMenuItem->index() == 9;
             }
         );
 
@@ -82,7 +83,7 @@ void MainMenuListModel::setAuthorizeItemVisible(bool visible)
             m_items->removeOne(*iterator);
         }
     } else {
-        m_items->append(new MainMenuItemModel(8, "Войти", "authorization", "user.svg"));
+        m_items->append(new MainMenuItemModel(9, "Войти", "authorization", "user.svg"));
     }
 
     endResetModel();

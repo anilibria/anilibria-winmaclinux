@@ -1009,6 +1009,11 @@ ApplicationWindow {
             visible: mainViewModel.isMaintenancePageVisible
         }
 
+        MyAnilibria {
+            id: myAnilibria
+            visible: mainViewModel.isMyAnilibriaPageVisible
+        }
+
         MouseArea {
             id: leftWindowResize
             enabled: applicationSettings.useCustomToolbar
