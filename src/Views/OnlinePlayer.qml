@@ -271,7 +271,8 @@ Page {
                 } else {
                     if (onlinePlayerViewModel.isFromNavigated) {
                         onlinePlayerViewModel.isFromNavigated = false;
-                        const videoPosition = onlinePlayerViewModel.getCurrentVideoSeenVideoPosition()
+
+                        const videoPosition = onlinePlayerViewModel.getCurrentVideoSeenVideoPosition();
                         if (videoPosition > 0) {
                             playerLoader.item.seek(videoPosition);
                         }
@@ -283,15 +284,18 @@ Page {
         function loaderPositionChanged() {
             const position = playerLoader.item.position;
             const duration = playerLoader.item.duration;
+            const playBackState = playerLoader.item.playbackState;
+            const status = playerLoader.item.status;
 
             if (!playerLocation.pressed && onlinePlayerViewModel.lastMovedPosition === 0) playerLocation.value = position;
 
             onlinePlayerViewModel.changeVideoPosition(duration, position);
 
-            if (onlinePlayerViewModel.positionIterator < 20) onlinePlayerViewModel.positionIterator++;
+            if (onlinePlayerViewModel.positionIterator < 20 && playBackState === MediaPlayer.PlayingState && status === MediaPlayer.Buffered) onlinePlayerViewModel.positionIterator++;
 
             if (onlinePlayerViewModel.positionIterator >= 20) {
                 onlinePlayerViewModel.positionIterator = 0;
+                console.log(onlinePlayerViewModel.selectedRelease, onlinePlayerViewModel.selectedVideo);
                 onlinePlayerViewModel.setVideoSeens(onlinePlayerViewModel.selectedRelease, onlinePlayerViewModel.selectedVideo, position);
             }
 

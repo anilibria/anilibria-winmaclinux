@@ -65,7 +65,7 @@ Page {
 
                     Rectangle {
                         width: parent.width
-                        height: 100
+                        height: 200
                         color: "transparent"
                         border.color: "white"
                         border.width: 1
@@ -126,6 +126,27 @@ Page {
                             fontPointSize: 11
                             text: userActivityViewModel.watchDuration
                         }
+
+                        PlainText {
+                            id: countOpenedReleaseCardText
+                            anchors.top: watchDurationText.bottom
+                            anchors.left: parent.left
+                            anchors.leftMargin: 6
+                            anchors.topMargin: 6
+                            fontPointSize: 11
+                            text: "Сколько раз открывалась карточка релиза: "
+                        }
+
+                        PlainText {
+                            id: countOpenedReleaseCardTextValue
+                            anchors.top: watchDurationText.bottom
+                            anchors.right: middleSeparator.right
+                            anchors.leftMargin: 6
+                            anchors.topMargin: 6
+                            fontPointSize: 11
+                            text: userActivityViewModel.countOpenedReleaseCard
+                        }
+
                     }
                 }
             }
