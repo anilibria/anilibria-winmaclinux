@@ -58,6 +58,76 @@ Page {
                     height: 45
                     color: ApplicationTheme.pageUpperPanel
                 }
+
+                Item {
+                    Layout.fillHeight: true
+                    Layout.fillWidth: true
+
+                    Rectangle {
+                        width: parent.width
+                        height: 100
+                        color: "transparent"
+                        border.color: "white"
+                        border.width: 1
+
+                        AccentText {
+                            id: statisticsHeaderText
+                            anchors.top: parent.top
+                            anchors.left: parent.left
+                            anchors.leftMargin: 6
+                            anchors.topMargin: 6
+                            fontPointSize: 12
+                            text: "Статистика"
+                        }
+
+                        Item {
+                            id: middleSeparator
+                            width: 1
+                            height: parent.height
+                            x: parent.width / 2
+                            y: 0
+                        }
+
+                        PlainText {
+                            id: watchUsingApplicationText
+                            anchors.top: statisticsHeaderText.bottom
+                            anchors.left: parent.left
+                            anchors.leftMargin: 6
+                            anchors.topMargin: 6
+                            fontPointSize: 11
+                            text: "Общее время в приложении: "
+                        }
+
+                        PlainText {
+                            id: watchUsingApplicationTextValue
+                            anchors.top: statisticsHeaderText.bottom
+                            anchors.right: middleSeparator.right
+                            anchors.topMargin: 6
+                            fontPointSize: 11
+                            text: userActivityViewModel.watchUsingApplication
+                        }
+
+                        PlainText {
+                            id: watchDurationText
+                            anchors.top: watchUsingApplicationText.bottom
+                            anchors.left: parent.left
+                            anchors.leftMargin: 6
+                            anchors.topMargin: 6
+                            fontPointSize: 11
+                            text: "Общее время просмотра: "
+                        }
+
+                        PlainText {
+                            id: watchDurationTextValue
+                            anchors.top: watchUsingApplicationText.bottom
+                            anchors.right: middleSeparator.right
+                            anchors.leftMargin: 6
+                            anchors.topMargin: 6
+                            fontPointSize: 11
+                            text: userActivityViewModel.watchDuration
+                        }
+                    }
+                }
             }
         }
     }
