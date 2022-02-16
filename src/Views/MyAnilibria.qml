@@ -147,6 +147,45 @@ Page {
                             text: userActivityViewModel.countOpenedReleaseCard
                         }
 
+                        PlainText {
+                            id: countDownloadTorrentText
+                            anchors.top: countOpenedReleaseCardText.bottom
+                            anchors.left: parent.left
+                            anchors.leftMargin: 6
+                            anchors.topMargin: 6
+                            fontPointSize: 11
+                            text: "Сколько раз скачивался торрент: "
+                        }
+
+                        PlainText {
+                            id: countDownloadTorrentTextValue
+                            anchors.top: countOpenedReleaseCardText.bottom
+                            anchors.right: middleSeparator.right
+                            anchors.leftMargin: 6
+                            anchors.topMargin: 6
+                            fontPointSize: 11
+                            text: userActivityViewModel.countDownloadTorrent
+                        }
+
+                        PlainText {
+                            id: countAddedToCinemahallText
+                            anchors.top: countDownloadTorrentText.bottom
+                            anchors.left: parent.left
+                            anchors.leftMargin: 6
+                            anchors.topMargin: 6
+                            fontPointSize: 11
+                            text: "Сколько раз релизы доблялись в кинозал: "
+                        }
+
+                        PlainText {
+                            id: countAddedToCinemahallTextValue
+                            anchors.top: countDownloadTorrentText.bottom
+                            anchors.right: middleSeparator.right
+                            anchors.leftMargin: 6
+                            anchors.topMargin: 6
+                            fontPointSize: 11
+                            text: userActivityViewModel.countAddedToCinemahall
+                        }
                     }
                 }
             }
