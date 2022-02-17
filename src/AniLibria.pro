@@ -107,6 +107,7 @@ SOURCES += \
     Classes/ViewModels/authorizationviewmodel.cpp \
     Classes/ViewModels/imagebackgroundviewmodel.cpp \
     Classes/ViewModels/mainviewmodel.cpp \
+    Classes/ViewModels/myanilibriaviewmodel.cpp \
     Classes/ViewModels/notificationviewmodel.cpp \
     Classes/ViewModels/onlineplayerviewmodel.cpp \
     Classes/ViewModels/onlineplayerwindowviewmodel.cpp \
@@ -185,6 +186,7 @@ HEADERS += \
     Classes/ViewModels/authorizationviewmodel.h \
     Classes/ViewModels/imagebackgroundviewmodel.h \
     Classes/ViewModels/mainviewmodel.h \
+    Classes/ViewModels/myanilibriaviewmodel.h \
     Classes/ViewModels/notificationviewmodel.h \
     Classes/ViewModels/onlineplayerviewmodel.h \
     Classes/ViewModels/onlineplayerwindowviewmodel.h \

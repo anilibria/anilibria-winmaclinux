@@ -186,6 +186,26 @@ Page {
                             fontPointSize: 11
                             text: userActivityViewModel.countAddedToCinemahall
                         }
+
+                        PlainText {
+                            id: mostGenresText
+                            anchors.top: countAddedToCinemahallText.bottom
+                            anchors.left: parent.left
+                            anchors.leftMargin: 6
+                            anchors.topMargin: 6
+                            fontPointSize: 11
+                            text: "Наиболее просматриваемые жанры: "
+                        }
+
+                        PlainText {
+                            id: mostGenresTextValue
+                            anchors.top: countAddedToCinemahallText.bottom
+                            anchors.right: middleSeparator.right
+                            anchors.leftMargin: 6
+                            anchors.topMargin: 6
+                            fontPointSize: 11
+                            text: myAnilibriaViewModel.genres
+                        }
                     }
                 }
             }

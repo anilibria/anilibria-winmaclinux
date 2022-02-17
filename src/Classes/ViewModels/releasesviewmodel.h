@@ -202,6 +202,7 @@ public:
     bool openedReleaseInHided() const noexcept { return m_openedRelease != nullptr ? m_hiddenReleases->contains(m_openedRelease->id()) : false; }
     bool openedReleaseInFavorites() const noexcept { return m_openedRelease != nullptr ? m_userFavorites->contains(m_openedRelease->id()) : false; }
     QString openedReleaseVideos() const noexcept { return m_openedRelease != nullptr ? m_openedRelease->videos() : ""; }
+    QStringList getMostPopularGenres() const noexcept;
 
     Q_INVOKABLE void copyToClipboard(const QString& text) const noexcept;
     Q_INVOKABLE void copyImageToClipboard(const QString& imagePath) const;

@@ -320,6 +320,63 @@ bool ReleasesViewModel::openedReleaseIsAllSeen() const noexcept
     return m_openedRelease->countOnlineVideos() == m_items->getReleaseSeenMarkCount(m_openedRelease->id());
 }
 
+QStringList ReleasesViewModel::getMostPopularGenres() const noexcept
+{
+    QStringList allGenres;
+    QSet<int> alreadyProcessed;
+    QHash<QString, int> genresCount;
+    QHashIterator<QString, bool> iterator(*m_seenMarks);
+
+    while(iterator.hasNext()) {
+        iterator.next();
+
+        QString key = iterator.key();
+        auto parts = key.splitRef(".");
+
+        auto id = parts[0].toInt();
+        if (alreadyProcessed.contains(id)) continue;
+
+        alreadyProcessed.insert(id);
+
+        auto release = getReleaseById(id);
+        if (release == nullptr) continue;
+        auto genres = release->genres().split(",");
+        foreach (auto genre, genres) {
+            genre = genre.trimmed();
+            if (!genresCount.contains(genre)) {
+                allGenres.append(genre);
+                genresCount[genre] = 1;
+            } else {
+                genresCount[genre] += 1;
+            }
+        }
+    }
+
+    std::sort(
+        allGenres.begin(),
+        allGenres.end(),
+        [genresCount](QString left, QString right){
+            return genresCount[left] > genresCount[right];
+        }
+    );
+
+    alreadyProcessed.clear();
+    genresCount.clear();
+
+    if (allGenres.length() <= 3) return allGenres;
+
+    auto iteratorIndex = 0;
+    QStringList result;
+    foreach (auto item, allGenres) {
+        if (iteratorIndex == 3) break;
+
+        result.append(item);
+        iteratorIndex++;
+    }
+
+    return result;
+}
+
 void ReleasesViewModel::copyToClipboard(const QString &text) const noexcept
 {
     if (text.isEmpty()) return;

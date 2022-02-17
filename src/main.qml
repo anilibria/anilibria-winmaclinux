@@ -1295,6 +1295,11 @@ ApplicationWindow {
         id: vkCommentsWindow
     }
 
+    MyAnilibriaViewModel {
+        id: myAnilibriaViewModel
+        releasesViewModel: releasesViewModel
+    }
+
     Item {
         id: assetsLocation
         property string path: Qt.resolvedUrl("../Assets/")
