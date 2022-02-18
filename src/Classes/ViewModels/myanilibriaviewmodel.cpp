@@ -15,5 +15,16 @@ void MyAnilibriaViewModel::setReleasesViewModel(const ReleasesViewModel *viewMod
 
 QString MyAnilibriaViewModel::genres() const noexcept
 {
-    return m_releasesViewModel->getMostPopularGenres().join(", ");
+    auto genres = m_releasesViewModel->getMostPopularGenres();
+    if (genres.isEmpty()) return "Нет данных";
+
+    return genres.join(", ");
+}
+
+QString MyAnilibriaViewModel::voices() const noexcept
+{
+    auto voices = m_releasesViewModel->getMostPopularVoices();
+    if (voices.isEmpty()) return "Нет данных";
+
+    return voices.join(", ");
 }

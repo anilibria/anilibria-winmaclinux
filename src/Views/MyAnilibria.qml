@@ -206,6 +206,27 @@ Page {
                             fontPointSize: 11
                             text: myAnilibriaViewModel.genres
                         }
+
+                        PlainText {
+                            id: mostVoicesText
+                            anchors.top: mostGenresText.bottom
+                            anchors.left: parent.left
+                            anchors.leftMargin: 6
+                            anchors.topMargin: 6
+                            fontPointSize: 11
+                            text: "Наиболее просматриваемые войсеры: "
+                        }
+
+                        PlainText {
+                            id: mostVoicesTextValue
+                            anchors.top: mostGenresText.bottom
+                            anchors.right: middleSeparator.right
+                            anchors.leftMargin: 6
+                            anchors.topMargin: 6
+                            fontPointSize: 11
+                            text: myAnilibriaViewModel.voices
+                        }
+
                     }
                 }
             }

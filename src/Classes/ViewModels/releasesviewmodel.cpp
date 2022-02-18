@@ -377,6 +377,63 @@ QStringList ReleasesViewModel::getMostPopularGenres() const noexcept
     return result;
 }
 
+QStringList ReleasesViewModel::getMostPopularVoices() const noexcept
+{
+    QStringList allVoices;
+    QSet<int> alreadyProcessed;
+    QHash<QString, int> voicesCount;
+    QHashIterator<QString, bool> iterator(*m_seenMarks);
+
+    while(iterator.hasNext()) {
+        iterator.next();
+
+        QString key = iterator.key();
+        auto parts = key.splitRef(".");
+
+        auto id = parts[0].toInt();
+        if (alreadyProcessed.contains(id)) continue;
+
+        alreadyProcessed.insert(id);
+
+        auto release = getReleaseById(id);
+        if (release == nullptr) continue;
+        auto voicers = release->voicers().split(",");
+        foreach (auto voicer, voicers) {
+            voicer = voicer.trimmed();
+            if (!voicesCount.contains(voicer)) {
+                allVoices.append(voicer);
+                voicesCount[voicer] = 1;
+            } else {
+                voicesCount[voicer] += 1;
+            }
+        }
+    }
+
+    std::sort(
+        allVoices.begin(),
+        allVoices.end(),
+        [voicesCount](QString left, QString right){
+            return voicesCount[left] > voicesCount[right];
+        }
+    );
+
+    alreadyProcessed.clear();
+    voicesCount.clear();
+
+    if (allVoices.length() <= 3) return allVoices;
+
+    auto iteratorIndex = 0;
+    QStringList result;
+    foreach (auto item, allVoices) {
+        if (iteratorIndex == 3) break;
+
+        result.append(item);
+        iteratorIndex++;
+    }
+
+    return result;
+}
+
 void ReleasesViewModel::copyToClipboard(const QString &text) const noexcept
 {
     if (text.isEmpty()) return;

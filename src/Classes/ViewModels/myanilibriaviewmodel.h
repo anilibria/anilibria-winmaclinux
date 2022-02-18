@@ -9,6 +9,7 @@ class MyAnilibriaViewModel : public QObject
     Q_OBJECT
     Q_PROPERTY(ReleasesViewModel* releasesViewModel READ releasesViewModel WRITE setReleasesViewModel NOTIFY releasesViewModelChanged)
     Q_PROPERTY(QString genres READ genres NOTIFY genresChanged)
+    Q_PROPERTY(QString voices READ voices NOTIFY voicesChanged)
 
 private:
     ReleasesViewModel* m_releasesViewModel { nullptr };
@@ -20,10 +21,12 @@ public:
     void setReleasesViewModel(const ReleasesViewModel* viewModel) noexcept;
 
     QString genres() const noexcept;
+    QString voices() const noexcept;
 
 signals:
     void releasesViewModelChanged();
     void genresChanged();
+    void voicesChanged();
 
 };
 
