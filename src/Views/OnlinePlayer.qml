@@ -295,7 +295,6 @@ Page {
 
             if (onlinePlayerViewModel.positionIterator >= 20) {
                 onlinePlayerViewModel.positionIterator = 0;
-                console.log(onlinePlayerViewModel.selectedRelease, onlinePlayerViewModel.selectedVideo);
                 onlinePlayerViewModel.setVideoSeens(onlinePlayerViewModel.selectedRelease, onlinePlayerViewModel.selectedVideo, position);
             }
 
