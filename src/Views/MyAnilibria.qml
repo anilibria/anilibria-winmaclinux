@@ -64,21 +64,53 @@ Page {
                     Layout.fillWidth: true
 
                     Rectangle {
-                        width: parent.width
-                        height: 200
+                        id: statisticsHeader
+                        anchors.left: parent.left
+                        anchors.right: parent.right
+                        anchors.margins: 4
+                        height: 30
                         color: "transparent"
                         border.color: "white"
                         border.width: 1
+                        radius: 4
 
                         AccentText {
-                            id: statisticsHeaderText
-                            anchors.top: parent.top
                             anchors.left: parent.left
-                            anchors.leftMargin: 6
-                            anchors.topMargin: 6
-                            fontPointSize: 12
+                            anchors.leftMargin: 4
+                            anchors.verticalCenter: parent.verticalCenter
                             text: "Статистика"
+                            fontPointSize: 12
                         }
+
+                        IconButton {
+                            width: 26
+                            height: parent.height - 4
+                            anchors.verticalCenter: parent.verticalCenter
+                            anchors.right: parent.right
+                            anchors.rightMargin: 4
+                            iconColor: "white"
+                            iconWidth: 22
+                            iconHeight: 22
+                            iconPath: assetsLocation.iconsPath + "arrowup.svg"
+                            transform: Rotation {
+                                angle: userConfigurationViewModel.hideStatistics ? 180 : 0
+                                origin.x: 13
+                                origin.y: 13
+                            }
+                            onButtonPressed: {
+                                userConfigurationViewModel.hideStatistics = !userConfigurationViewModel.hideStatistics;
+                            }
+                        }
+                    }
+
+                    Item {
+                        anchors.top: statisticsHeader.bottom
+                        anchors.topMargin: 10
+                        anchors.left: parent.left
+                        anchors.leftMargin: 10
+                        width: parent.width
+                        height: userConfigurationViewModel.hideStatistics ? 0 : 200
+                        visible: !userConfigurationViewModel.hideStatistics
 
                         Item {
                             id: middleSeparator
