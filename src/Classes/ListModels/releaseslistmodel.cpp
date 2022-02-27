@@ -18,12 +18,14 @@ const int WithinSeriesSection = 16;
 const int MostPopular2021Section = 17;
 const int FinishedSeenSection = 18;
 const int NotFinishedSeenSection = 19;
+const int MostPopular2022Section = 20;
+const int AddedToCinemahall = 21;
 
 ReleasesListModel::ReleasesListModel(QObject *parent) : QAbstractListModel(parent)
 {
 }
 
-void ReleasesListModel::setup(QSharedPointer<QList<FullReleaseModel *>> releases, QMap<int, int> *schedules, QVector<int> *userFavorites, QVector<int> *hidedReleases, QHash<QString, bool> *seenMarks, QSharedPointer<QHash<int, HistoryModel *>> historyItems, QSharedPointer<ChangesModel> changes)
+void ReleasesListModel::setup(QSharedPointer<QList<FullReleaseModel *>> releases, QMap<int, int> *schedules, QVector<int> *userFavorites, QVector<int> *hidedReleases, QHash<QString, bool> *seenMarks, QSharedPointer<QHash<int, HistoryModel *>> historyItems, QSharedPointer<ChangesModel> changes, QSharedPointer<CinemahallListModel> cinemahall)
 {
     m_releases = releases;
     m_scheduleReleases = schedules;
@@ -32,6 +34,7 @@ void ReleasesListModel::setup(QSharedPointer<QList<FullReleaseModel *>> releases
     m_seenMarkModels = seenMarks;
     m_historyModels = historyItems;
     m_changesModel = changes;
+    m_cinemahall = cinemahall;
 }
 
 int ReleasesListModel::rowCount(const QModelIndex &parent) const
@@ -556,6 +559,10 @@ void ReleasesListModel::refresh()
         if (m_section == WithinSeriesSection && linkedReleases != nullptr && !(linkedReleases->contains(release->id()))) continue;
 
         if (m_section == MostPopular2021Section && !(release->year() == "2021" && release->rating() > 0)) continue;
+
+        if (m_section == MostPopular2022Section && !(release->year() == "2022" && release->rating() > 0)) continue;
+
+        if (m_section == AddedToCinemahall && !(m_cinemahall->isReleaseInCinemahall(release->id()))) continue;
 
         if (m_section == HiddenReleasesSection && !m_hiddenReleases->contains(release->id())) continue;
 

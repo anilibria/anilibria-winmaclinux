@@ -86,6 +86,7 @@ public:
     QHash<int, QByteArray> roleNames() const override;
 
     QList<FullReleaseModel*> getCinemahallReleases() const noexcept;
+    bool isReleaseInCinemahall(const int releaseId) const noexcept;
 
     Q_INVOKABLE void addReleases(const QList<int>& ids);
     Q_INVOKABLE bool hasCinemahallReleases();

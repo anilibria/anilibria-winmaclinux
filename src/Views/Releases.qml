@@ -1362,6 +1362,18 @@ Page {
                                         page.changeSection(17);
                                     }
                                 }
+                                CommonMenuItem {
+                                    text: releasesViewModel.sectionNames[20]
+                                    onPressed: {
+                                        page.changeSection(20);
+                                    }
+                                }
+                                CommonMenuItem {
+                                    text: releasesViewModel.sectionNames[21]
+                                    onPressed: {
+                                        page.changeSection(21);
+                                    }
+                                }
                             }
                         }
                     }
