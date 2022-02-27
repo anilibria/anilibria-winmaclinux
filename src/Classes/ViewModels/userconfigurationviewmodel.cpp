@@ -34,12 +34,21 @@ void UserConfigurationViewModel::setUsingScrollAcceleration(const bool usingScro
     emit usingScrollAccelerationChanged();
 }
 
+void UserConfigurationViewModel::setHideStatistics(const bool hideStatistics) noexcept
+{
+    if (m_hideStatistics == hideStatistics) return;
+
+    m_hideStatistics = hideStatistics;
+    emit hideStatisticsChanged();
+}
+
 void UserConfigurationViewModel::saveSettingsToFile()
 {
     QJsonObject object;
     object[m_opacityPlayerPanelField] = m_opacityPlayerPanel;
     object[m_notCloseReleaseCardAfterWatchField] = m_notCloseReleaseCardAfterWatch;
     object[m_usingScrollAccelerationField] = m_usingScrollAcceleration;
+    object[m_hideStatisticsField] = m_hideStatistics;
 
     QFile file(getCachePath(m_cacheFileName));
     file.open(QFile::WriteOnly | QFile::Text);
@@ -59,4 +68,5 @@ void UserConfigurationViewModel::readSettingsFromFile()
     m_opacityPlayerPanel = object.contains(m_opacityPlayerPanelField) ? object[m_opacityPlayerPanelField].toInt() : 50;
     m_notCloseReleaseCardAfterWatch = object.contains(m_notCloseReleaseCardAfterWatchField) ? object[m_notCloseReleaseCardAfterWatchField].toBool() : false;
     m_usingScrollAcceleration = object.contains(m_usingScrollAccelerationField) ? object[m_usingScrollAccelerationField].toBool() : true;
+    m_hideStatistics = object.contains(m_hideStatisticsField) ? object[m_hideStatisticsField].toBool() : false;
 }

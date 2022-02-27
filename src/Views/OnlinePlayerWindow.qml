@@ -71,7 +71,7 @@ ApplicationWindow {
         hoverEnabled: true
         cursorShape: onlinePlayerWindowViewModel.windowCursorShape
         onDoubleClicked: {
-            window.showPage("videoplayer");
+            mainViewModel.selectPage("videoplayer");
             hideWindow(false);
         }
         onPositionChanged: {

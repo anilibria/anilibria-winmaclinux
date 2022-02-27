@@ -132,5 +132,8 @@
         <file>Assets/Icons/numberbookmark.svg</file>
         <file>Controls/CommonMenuModel.qml</file>
         <file>Assets/Icons/contextmenu.svg</file>
+        <file>Views/MyAnilibria.qml</file>
+        <file>Assets/Icons/house.svg</file>
+        <file>Controls/ExpandableHeader.qml</file>
     </qresource>
 </RCC>

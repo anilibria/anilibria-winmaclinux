@@ -10,12 +10,14 @@ MainViewModel::MainViewModel(QObject *parent) : QObject(parent)
 
     m_displayNames->insert("release", "Каталог релизов");
     m_displayNames->insert("videoplayer", "Видеоплеер");
+    m_displayNames->insert("myanilibria", "Моя Анилибрия");
     m_displayNames->insert("youtube", "Youtube");
     m_displayNames->insert("about", "О Программе");
     m_displayNames->insert("cinemahall", "Кинозал");
     m_displayNames->insert("download", "Менеджер загрузок");
     m_displayNames->insert("maintenance", "Обслуживание");
     m_displayNames->insert("releaseseries", "Связанные релизы");
+    m_displayNames->insert("authorization", "Авторизация");
 
     m_currentPageDisplayName = m_displayNames->value(m_currentPageId);
 }
@@ -47,17 +49,60 @@ void MainViewModel::setCurrentPageDisplayName(const QString &currentPageDisplayN
     emit currentPageDisplayNameChanged();
 }
 
+void MainViewModel::setAnalyticsService(const AnalyticsService *service) noexcept
+{
+    if (m_analyticsService == service) return;
+
+    m_analyticsService = const_cast<AnalyticsService *>(service);
+    emit analyticsServiceChanged();
+}
+
+void MainViewModel::selectPage(const QString& pageId)
+{
+    if (pageId == m_currentPageId) return;
+
+    auto alreadyOnVideoPlayer = m_currentPageId == "videoplayer";
+
+    setCurrentPageId(pageId);
+
+    refreshPageVisible();
+
+    if (pageId == "videoplayer"){
+        emit onlinePlayerPageNavigated();
+    }
+    if (alreadyOnVideoPlayer) {
+        emit onlinePlayerPageFromNavigated();
+    }
+
+    m_analyticsService->sendView("Pages", "ChangePage", "%2F" + pageId);
+}
+
 void MainViewModel::setPageDisplayName(const QString &pageId) noexcept
 {
     setCurrentPageDisplayName(m_displayNames->value(pageId, ""));
 }
 
+void MainViewModel::refreshPageVisible() noexcept
+{
+    emit isReleasesPageVisibleChanged();
+    emit isOnlinePlayerPageVisibleChanged();
+    emit isYoutubePageVisibleChanged();
+    emit isAboutPageVisibleChanged();
+    emit isCinemahallPageVisibleChanged();
+    emit isDownloadPageVisibleChanged();
+    emit isMaintenancePageVisibleChanged();
+    emit isReleasesSeriesPageVisibleChanged();
+    emit isAuthorizationPageVisibleChanged();
+    emit isMyAnilibriaPageVisibleChanged();
+}
+
 void MainViewModel::selectedItemInMainMenu(int index, QString pageName)
 {
-    int supportProject = 7;
+    int supportProject = 8;
     if (index != supportProject) {
-        emit pageShowed(pageName);
+        selectPage(pageName);
+        return;
     }
 
-    if (index == supportProject) QDesktopServices::openUrl(QUrl("https://www.anilibria.tv/pages/donate.php"));
+    QDesktopServices::openUrl(QUrl("https://www.anilibria.tv/pages/donate.php"));
 }

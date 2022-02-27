@@ -71,7 +71,7 @@ Page {
             event.accepted = true;
         }
         if (event.key === Qt.Key_Escape) {
-            window.showPage("release");
+            mainViewModel.selectPage("release");
         }
         if (event.key === Qt.Key_F11 || event.key === Qt.Key_F || event.key === 1040) {
             onlinePlayerViewModel.toggleFullScreen();
@@ -271,7 +271,8 @@ Page {
                 } else {
                     if (onlinePlayerViewModel.isFromNavigated) {
                         onlinePlayerViewModel.isFromNavigated = false;
-                        const videoPosition = onlinePlayerViewModel.getCurrentVideoSeenVideoPosition()
+
+                        const videoPosition = onlinePlayerViewModel.getCurrentVideoSeenVideoPosition();
                         if (videoPosition > 0) {
                             playerLoader.item.seek(videoPosition);
                         }
@@ -283,12 +284,14 @@ Page {
         function loaderPositionChanged() {
             const position = playerLoader.item.position;
             const duration = playerLoader.item.duration;
+            const playBackState = playerLoader.item.playbackState;
+            const status = playerLoader.item.status;
 
             if (!playerLocation.pressed && onlinePlayerViewModel.lastMovedPosition === 0) playerLocation.value = position;
 
             onlinePlayerViewModel.changeVideoPosition(duration, position);
 
-            if (onlinePlayerViewModel.positionIterator < 20) onlinePlayerViewModel.positionIterator++;
+            if (onlinePlayerViewModel.positionIterator < 20 && playBackState === MediaPlayer.PlayingState && status === MediaPlayer.Buffered) onlinePlayerViewModel.positionIterator++;
 
             if (onlinePlayerViewModel.positionIterator >= 20) {
                 onlinePlayerViewModel.positionIterator = 0;
@@ -1251,7 +1254,7 @@ Page {
             anchors.fill: parent
             onPressed: {
                 releasesViewModel.showReleaseCard(onlinePlayerViewModel.selectedRelease);
-                window.showPage("release");
+                mainViewModel.selectPage("release");
             }
         }
     }
