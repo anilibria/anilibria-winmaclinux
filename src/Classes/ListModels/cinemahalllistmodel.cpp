@@ -245,6 +245,11 @@ QList<FullReleaseModel *> CinemahallListModel::getCinemahallReleases() const noe
     return result;
 }
 
+bool CinemahallListModel::isReleaseInCinemahall(const int releaseId) const noexcept
+{
+    return m_items->contains(releaseId);
+}
+
 
 void CinemahallListModel::addReleases(const QList<int> &ids)
 {

@@ -8,6 +8,7 @@
 #include "../Models/changesmodel.h"
 #include "../Models/historymodel.h"
 #include "../Services/releaselinkedseries.h"
+#include "cinemahalllistmodel.h"
 
 class ReleasesListModel : public QAbstractListModel
 {
@@ -43,6 +44,7 @@ private:
     QSharedPointer<ChangesModel> m_changesModel { nullptr };
     QMap<int, int>* m_scheduleReleases { nullptr };
     QSharedPointer<QHash<int, HistoryModel*>> m_historyModels { nullptr };
+    QSharedPointer<CinemahallListModel> m_cinemahall { nullptr };
     ReleaseLinkedSeries* m_releaseLinkedSeries { nullptr };
     QString m_titleFilter { "" };
     QString m_descriptionFilter { "" };
@@ -104,7 +106,7 @@ private:
 public:
     explicit ReleasesListModel(QObject *parent = nullptr);
 
-    void setup(QSharedPointer<QList<FullReleaseModel*>> releases, QMap<int, int>* schedules, QVector<int>* userFavorites, QVector<int>* hidedReleases, QHash<QString, bool>* seenMarks, QSharedPointer<QHash<int, HistoryModel*>> historyItems, QSharedPointer<ChangesModel> changes);
+    void setup(QSharedPointer<QList<FullReleaseModel*>> releases, QMap<int, int>* schedules, QVector<int>* userFavorites, QVector<int>* hidedReleases, QHash<QString, bool>* seenMarks, QSharedPointer<QHash<int, HistoryModel*>> historyItems, QSharedPointer<ChangesModel> changes, QSharedPointer<CinemahallListModel> cinemahall);
 
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
 

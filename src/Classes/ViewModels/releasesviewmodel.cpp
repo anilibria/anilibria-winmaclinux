@@ -11,7 +11,7 @@
 ReleasesViewModel::ReleasesViewModel(QObject *parent) : QObject(parent)
 {
     m_items = new ReleasesListModel(this);
-    m_items->setup(m_releases, m_scheduleReleases, m_userFavorites, m_hiddenReleases, m_seenMarks, m_historyItems, m_releaseChanges);
+    m_items->setup(m_releases, m_scheduleReleases, m_userFavorites, m_hiddenReleases, m_seenMarks, m_historyItems, m_releaseChanges, m_cinemahall);
     m_cinemahall->setup(m_releases, m_seenMarks);
     connect(m_cinemahall.get(), &CinemahallListModel::hasItemsChanged, this, &ReleasesViewModel::cinemahallItemsChanged);
 
@@ -37,6 +37,8 @@ ReleasesViewModel::ReleasesViewModel(QObject *parent) : QObject(parent)
     m_sectionNames.append("Популярное в 2021");
     m_sectionNames.append("Просмотренные до конца");
     m_sectionNames.append("Просмотренные не до конца");
+    m_sectionNames.append("Популярное в 2022");
+    m_sectionNames.append("В кинозале");
 
     m_sectionSorting->append(std::make_tuple<int, int>(0, 1));
     m_sectionSorting->append(std::make_tuple<int, int>(0, 1));
@@ -57,6 +59,8 @@ ReleasesViewModel::ReleasesViewModel(QObject *parent) : QObject(parent)
     m_sectionSorting->append(std::make_tuple<int, int>(12, 1));
     m_sectionSorting->append(std::make_tuple<int, int>(4, 1));
     m_sectionSorting->append(std::make_tuple<int, int>(0, 1));
+    m_sectionSorting->append(std::make_tuple<int, int>(0, 1));
+    m_sectionSorting->append(std::make_tuple<int, int>(4, 1));
     m_sectionSorting->append(std::make_tuple<int, int>(0, 1));
 
     createIfNotExistsFile(getCachePath(releasesCacheFileName), "[]");

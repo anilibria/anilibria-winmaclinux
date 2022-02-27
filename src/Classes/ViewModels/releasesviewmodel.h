@@ -85,7 +85,7 @@ private:
     ReleaseTorrentsList* m_releaseTorrentsList { new ReleaseTorrentsList(this) };
     UserActivityViewModel* m_userActivity { nullptr };
     QScopedPointer<ReleaseTorrentCommonList> m_itemTorrents { new ReleaseTorrentCommonList(this) };
-    QScopedPointer<CinemahallListModel> m_cinemahall { new CinemahallListModel() };
+    QSharedPointer<CinemahallListModel> m_cinemahall { new CinemahallListModel() };
     ImageBackgroundViewModel* m_imageBackgroundViewModel { new ImageBackgroundViewModel(this) };
     QSharedPointer<QList<FullReleaseModel*>> m_releases { new QList<FullReleaseModel*>() };
     QScopedPointer<QMap<int, FullReleaseModel*>> m_releasesMap { new QMap<int, FullReleaseModel*>() };
