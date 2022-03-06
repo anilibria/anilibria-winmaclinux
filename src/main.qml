@@ -1251,15 +1251,12 @@ ApplicationWindow {
         id: mainViewModel
         analyticsService: analyticsService
         onOnlinePlayerPageFromNavigated: {
-            console.log(`fromnavigated`);
             videoplayer.navigateFrom();
             windowFooter.visible = true;
         }
         onOnlinePlayerPageNavigated: {
-            console.log(`navigated`);
             videoplayer.navigateTo();
             windowFooter.visible = false;
-            console.log(`windowFooter.visible`, windowFooter.visible);
         }
     }
 
