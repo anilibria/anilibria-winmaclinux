@@ -27,6 +27,7 @@ import "Videoplayer"
 
 Page {
     id: _page
+    focus: true
     property var seenVideo: ({})
     property var seenMarks: ({})
     property var videoPlayerSource
@@ -112,6 +113,7 @@ Page {
     }
 
     onNavigateTo: {
+        _page.forceActiveFocus();
         if (onlinePlayerWindowViewModel.opened) onlinePlayerWindow.hideWindow(false);
         onlinePlayerViewModel.isFromNavigated = true;
         const userSettings = JSON.parse(localStorage.getUserSettings());
@@ -733,6 +735,7 @@ Page {
                                       "Прыжок вправо - Right\n" +
                                       "Поверх всех окон вкл - Home\n" +
                                       "Поверх всех окон выкл - End\n" +
+                                      "Воспроизведение/Пауза - Space\n" +
                                       "Вернуться в каталог релизов - Esc"
                                 fontPointSize: 10
                                 verticalAlignment: Text.AlignVCenter
