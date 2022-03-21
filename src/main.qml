@@ -208,17 +208,34 @@ ApplicationWindow {
             }
         }
         IconButton {
+            id: goToMyAnilibria
+            overlayVisible: false
+            anchors.left: goToReleaseSeries.right
+            anchors.top: parent.top
+            anchors.topMargin: 1
+            height: 34
+            width: 40
+            hoverColor: ApplicationTheme.filterIconButtonHoverColor
+            iconPath: "Assets/Icons/house.svg"
+            iconWidth: 20
+            iconHeight: 20
+            tooltipMessage: "Перейти на страницу Моя Анилибрия"
+            onButtonPressed: {
+                mainViewModel.selectPage("myanilibria");
+            }
+        }
+        IconButton {
             id: leftHalfScreenWindow
             anchors.right: rightHalfScreenWindow.left
             anchors.top: parent.top
             anchors.topMargin: 1
             height: 34
             width: 40
-            iconColor: ApplicationTheme.filterIconButtonColor
+            overlayVisible: false
             hoverColor: ApplicationTheme.filterIconButtonHoverColor
-            iconPath: "Assets/Icons/lefthalf.svg"
-            iconWidth: 18
-            iconHeight: 18
+            iconPath: "Assets/Icons/coloredleftmenu.svg"
+            iconWidth: 24
+            iconHeight: 24
             tooltipMessage: "Выставить размер окна - левая половина экрана"
             onButtonPressed: {
                 let currentScreen = getCurrentScreen();
@@ -237,11 +254,11 @@ ApplicationWindow {
             anchors.topMargin: 1
             height: 34
             width: 40
-            iconColor: ApplicationTheme.filterIconButtonColor
+            overlayVisible: false
             hoverColor: ApplicationTheme.filterIconButtonHoverColor
-            iconPath: "Assets/Icons/righthalf.svg"
-            iconWidth: 18
-            iconHeight: 18
+            iconPath: "Assets/Icons/coloredrightmenu.svg"
+            iconWidth: 24
+            iconHeight: 24
             tooltipMessage: "Выставить размер окна - правая половина экрана"
             onButtonPressed: {
                 let currentScreen = getCurrentScreen();
@@ -260,11 +277,11 @@ ApplicationWindow {
             anchors.topMargin: 1
             height: 34
             width: 40
-            iconColor: ApplicationTheme.filterIconButtonColor
+            overlayVisible: false
             hoverColor: ApplicationTheme.filterIconButtonHoverColor
-            iconPath: "Assets/Icons/minimize.svg"
-            iconWidth: 15
-            iconHeight: 15
+            iconPath: "Assets/Icons/coloredminimize.svg"
+            iconWidth: 24
+            iconHeight: 24
             tooltipMessage: "Минимизировать окно в панель задач"
             onButtonPressed: {
                 window.showMinimized();
@@ -277,11 +294,11 @@ ApplicationWindow {
             anchors.topMargin: 1
             height: 34
             width: 40
-            iconColor: ApplicationTheme.filterIconButtonColor
+            overlayVisible: false
             hoverColor: ApplicationTheme.filterIconButtonHoverColor
-            iconPath: window.isShowFullScreenSize ? "Assets/Icons/windowsize.svg" : "Assets/Icons/fullscreensize.svg"
-            iconWidth: 15
-            iconHeight: 15
+            iconPath: window.isShowFullScreenSize ? "Assets/Icons/gofromfullscreen.svg" : "Assets/Icons/gotofullscreen.svg"
+            iconWidth: 24
+            iconHeight: 24
             tooltipMessage: window.isShowFullScreenSize ? "Вернуть окну нормальный размер" : "Открыть окно на полный экран"
             onButtonPressed: {
                 if (window.isShowFullScreenSize) {
@@ -301,11 +318,11 @@ ApplicationWindow {
             anchors.topMargin: 1
             height: 34
             width: 40
-            iconColor: ApplicationTheme.filterIconButtonColor
+            overlayVisible: false
             hoverColor: ApplicationTheme.filterIconButtonHoverColor
-            iconPath: "Assets/Icons/closewindow.svg"
-            iconWidth: 15
-            iconHeight: 15
+            iconPath: "Assets/Icons/coloredclosewindow.svg"
+            iconWidth: 24
+            iconHeight: 24
             tooltipMessage: "Выйти из приложения"
             onButtonPressed: {
                 window.close();
@@ -315,7 +332,7 @@ ApplicationWindow {
         MouseArea {
             id: windowDraggingArea
             enabled: applicationSettings.useCustomToolbar
-            anchors.left: goToReleaseSeries.right
+            anchors.left: goToMyAnilibria.right
             anchors.right: leftHalfScreenWindow.left
             height: parent.height
             property variant clickPosition: "1,1"

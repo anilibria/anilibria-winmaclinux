@@ -135,5 +135,15 @@
         <file>Views/MyAnilibria.qml</file>
         <file>Assets/Icons/house.svg</file>
         <file>Controls/ExpandableHeader.qml</file>
+        <file>Controls/ReleasesList.qml</file>
+        <file>Assets/Icons/leftarrow.svg</file>
+        <file>Assets/Icons/rightarrow.svg</file>
+        <file>Assets/Icons/coloredclosewindow.svg</file>
+        <file>Assets/Icons/gofromfullscreen.svg</file>
+        <file>Assets/Icons/gotofullscreen.svg</file>
+        <file>Assets/Icons/coloredminimize.svg</file>
+        <file>Assets/Icons/coloredsettings.svg</file>
+        <file>Assets/Icons/coloredleftmenu.svg</file>
+        <file>Assets/Icons/coloredrightmenu.svg</file>
     </qresource>
 </RCC>

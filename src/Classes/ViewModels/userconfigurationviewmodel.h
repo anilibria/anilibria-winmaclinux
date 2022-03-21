@@ -11,6 +11,7 @@ class UserConfigurationViewModel : public QObject
     Q_PROPERTY(bool notCloseReleaseCardAfterWatch READ notCloseReleaseCardAfterWatch WRITE setNotCloseReleaseCardAfterWatch NOTIFY notCloseReleaseCardAfterWatchChanged)
     Q_PROPERTY(bool usingScrollAcceleration READ usingScrollAcceleration WRITE setUsingScrollAcceleration NOTIFY usingScrollAccelerationChanged)
     Q_PROPERTY(bool hideStatistics READ hideStatistics WRITE setHideStatistics NOTIFY hideStatisticsChanged)
+    Q_PROPERTY(bool hideUpdatesByFavorites READ hideUpdatesByFavorites WRITE setHideUpdatesByFavorites NOTIFY hideUpdatesByFavoritesChanged)
 
 private:
     QString m_cacheFileName { "userconfiguration.cache" };
@@ -18,10 +19,12 @@ private:
     QString m_notCloseReleaseCardAfterWatchField { "notCloseReleaseCardAfterWatch" };
     QString m_usingScrollAccelerationField { "usingScrollAcceleration" };
     QString m_hideStatisticsField { "hideStatisticsField" };
+    QString m_hideUpdatesByFavoritesField { "hideUpdatesByFavorites" };
     int m_opacityPlayerPanel { 50 };
     bool m_notCloseReleaseCardAfterWatch { false };
     bool m_usingScrollAcceleration { true };
     bool m_hideStatistics { false };
+    bool m_hideUpdatesByFavorites { false };
 
 public:
     explicit UserConfigurationViewModel(QObject *parent = nullptr);
@@ -38,6 +41,9 @@ public:
     bool hideStatistics() const noexcept { return m_hideStatistics; };
     void setHideStatistics(const bool hideStatistics) noexcept;
 
+    bool hideUpdatesByFavorites() const noexcept { return m_hideUpdatesByFavorites; };
+    void setHideUpdatesByFavorites(const bool hideUpdatesByFavorites) noexcept;
+
     Q_INVOKABLE void saveSettingsToFile();
 
 private:
@@ -49,6 +55,7 @@ signals:
     void notCloseReleaseCardAfterWatchChanged();
     void usingScrollAccelerationChanged();
     void hideStatisticsChanged();
+    void hideUpdatesByFavoritesChanged();
 
 };
 

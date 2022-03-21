@@ -42,6 +42,14 @@ void UserConfigurationViewModel::setHideStatistics(const bool hideStatistics) no
     emit hideStatisticsChanged();
 }
 
+void UserConfigurationViewModel::setHideUpdatesByFavorites(const bool hideUpdatesByFavorites) noexcept
+{
+    if (m_hideUpdatesByFavorites == hideUpdatesByFavorites) return;
+
+    m_hideUpdatesByFavorites = hideUpdatesByFavorites;
+    emit hideUpdatesByFavoritesChanged();
+}
+
 void UserConfigurationViewModel::saveSettingsToFile()
 {
     QJsonObject object;
@@ -49,6 +57,7 @@ void UserConfigurationViewModel::saveSettingsToFile()
     object[m_notCloseReleaseCardAfterWatchField] = m_notCloseReleaseCardAfterWatch;
     object[m_usingScrollAccelerationField] = m_usingScrollAcceleration;
     object[m_hideStatisticsField] = m_hideStatistics;
+    object[m_hideUpdatesByFavoritesField] = m_hideUpdatesByFavorites;
 
     QFile file(getCachePath(m_cacheFileName));
     file.open(QFile::WriteOnly | QFile::Text);
@@ -69,4 +78,5 @@ void UserConfigurationViewModel::readSettingsFromFile()
     m_notCloseReleaseCardAfterWatch = object.contains(m_notCloseReleaseCardAfterWatchField) ? object[m_notCloseReleaseCardAfterWatchField].toBool() : false;
     m_usingScrollAcceleration = object.contains(m_usingScrollAccelerationField) ? object[m_usingScrollAccelerationField].toBool() : true;
     m_hideStatistics = object.contains(m_hideStatisticsField) ? object[m_hideStatisticsField].toBool() : false;
+    m_hideUpdatesByFavorites = object.contains(m_hideUpdatesByFavoritesField) ? object[m_hideUpdatesByFavoritesField].toBool() : false;
 }

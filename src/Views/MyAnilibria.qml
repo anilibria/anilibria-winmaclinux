@@ -73,6 +73,7 @@ Page {
                     }
 
                     Item {
+                        id: statisticsContent
                         anchors.top: statisticsHeader.bottom
                         anchors.topMargin: 0
                         anchors.left: parent.left
@@ -228,6 +229,16 @@ Page {
                             text: myAnilibriaViewModel.voices
                         }
 
+                    }
+
+                    ExpandableHeader {
+                        id: hideUpdatesByFavoritesHeader
+                        anchors.top: statisticsContent.bottom
+                        headerTitle: "Обновления по избранному"
+                        headerHided: userConfigurationViewModel.hideUpdatesByFavorites
+                        onHeaderPressed: {
+                            userConfigurationViewModel.hideUpdatesByFavorites = !userConfigurationViewModel.hideUpdatesByFavorites;
+                        }
                     }
                 }
             }
