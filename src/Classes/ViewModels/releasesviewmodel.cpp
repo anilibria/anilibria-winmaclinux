@@ -438,6 +438,20 @@ QStringList ReleasesViewModel::getMostPopularVoices() const noexcept
     return result;
 }
 
+void ReleasesViewModel::fillNewInFavorites(QList<FullReleaseModel *>* list) const noexcept
+{
+    QSet<int> favorites(m_userFavorites->begin(), m_userFavorites->end());
+
+    foreach (auto release, *m_releases) {
+        if (!favorites.contains(release->id())) continue;
+
+        auto seenVideos = m_items->getReleaseSeenMarkCount(release->id());
+        if (release->countOnlineVideos() > seenVideos) {
+            list->append(release);
+        }
+    }
+}
+
 void ReleasesViewModel::copyToClipboard(const QString &text) const noexcept
 {
     if (text.isEmpty()) return;

@@ -204,6 +204,7 @@ public:
     QString openedReleaseVideos() const noexcept { return m_openedRelease != nullptr ? m_openedRelease->videos() : ""; }
     QStringList getMostPopularGenres() const noexcept;
     QStringList getMostPopularVoices() const noexcept;
+    void fillNewInFavorites(QList<FullReleaseModel*>* list) const noexcept;
 
     Q_INVOKABLE void copyToClipboard(const QString& text) const noexcept;
     Q_INVOKABLE void copyImageToClipboard(const QString& imagePath) const;

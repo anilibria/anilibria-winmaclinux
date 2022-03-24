@@ -240,6 +240,13 @@ Page {
                             userConfigurationViewModel.hideUpdatesByFavorites = !userConfigurationViewModel.hideUpdatesByFavorites;
                         }
                     }
+
+                    ReleasesList {
+                        id: updateInFavorites
+                        visible: !userConfigurationViewModel.hideUpdatesByFavorites
+                        anchors.top: hideUpdatesByFavoritesHeader.bottom
+                        filterMode: "newinfavorites"
+                    }
                 }
             }
         }

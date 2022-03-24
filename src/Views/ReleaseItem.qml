@@ -106,7 +106,6 @@ Rectangle {
             border.width: 1
             radius: 12
 
-
             Image {
                 anchors.centerIn: parent
                 source: localStorage.getReleasePosterPath(id, poster)

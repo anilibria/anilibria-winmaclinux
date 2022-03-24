@@ -132,9 +132,10 @@ Page {
                 width: compactModeSwitch.checked && !releasesViewModel.showSidePanel ? 0 : 40
 
                 LeftPanelIconButton {
-                    iconPath: "../Assets/Icons/menu.svg"
-                    iconWidth: 29
-                    iconHeight: 29
+                    iconPath: "../Assets/Icons/coloreddrawer.svg"
+                    iconWidth: 40
+                    iconHeight: 40
+                    overlayVisible: false
                     tooltipMessage: "Открыть меню приложения"
                     onButtonPressed: {
                         drawer.open();
@@ -142,9 +143,10 @@ Page {
                 }
 
                 LeftPanelIconButton {
-                    iconPath: "../Assets/Icons/refresh.svg"
+                    iconPath: "../Assets/Icons/coloredrefresh.svg"
                     iconWidth: 34
                     iconHeight: 34
+                    overlayVisible: false
                     tooltipMessage: "Выполнить синхронизацию релизов"
                     onButtonPressed: {
                         if (releasesViewModel.synchronizationEnabled) return;
@@ -155,9 +157,10 @@ Page {
                 }
 
                 LeftPanelIconButton {
-                    iconPath: "../Assets/Icons/favorite.svg"
+                    iconPath: "../Assets/Icons/ratingcolor.svg"
                     iconWidth: 29
                     iconHeight: 29
+                    overlayVisible: false
                     tooltipMessage: "Добавить или удалить релизы из избранного"
                     onButtonPressed: {
                         favoriteMenu.open();
@@ -248,7 +251,8 @@ Page {
                     }
                 }
                 LeftPanelIconButton {
-                    iconPath: "../Assets/Icons/popcorn.svg"
+                    iconPath: "../Assets/Icons/cinemahallmenu.svg"
+                    overlayVisible: false
                     showCrossIcon: page.showButtonVisibleChanger && page.hideCinemahallButton
                     visible: page.showButtonVisibleChanger || !page.hideCinemahallButton
                     tooltipMessage: "Управление кинозалом"
@@ -265,7 +269,7 @@ Page {
                         visible: releasesViewModel.hasCinemahallNotSeenVideos
                         anchors.top: parent.top
                         anchors.right: parent.right
-                        anchors.rightMargin: 6
+                        anchors.rightMargin: 4
                         anchors.topMargin: 10
                         color: "#4ca2c2"
                         width: 16
@@ -340,6 +344,7 @@ Page {
                 }
                 LeftPanelIconButton {
                     iconPath: "../Assets/Icons/downloadcircle.svg"
+                    overlayVisible: false
                     tooltipMessage: "Скачивание файлов серий в разных качествах локально"
                     showCrossIcon: page.showButtonVisibleChanger && page.hideDownloadButton
                     visible: page.showButtonVisibleChanger || !page.hideDownloadButton
@@ -669,9 +674,10 @@ Page {
                     }
                 }
                 LeftPanelIconButton {
-                    iconPath: "../Assets/Icons/notification.svg"
+                    iconPath: "../Assets/Icons/coloredbell.svg"
                     iconWidth: 29
                     iconHeight: 29
+                    overlayVisible: false
                     showCrossIcon: page.showButtonVisibleChanger && page.hideNotificationButton
                     tooltipMessage: "Посмотреть уведомления о непросмотренных изменениях в релизах"
                     visible: page.showButtonVisibleChanger || !page.hideNotificationButton
@@ -816,9 +822,10 @@ Page {
                     }
                 }
                 LeftPanelIconButton {
-                    iconPath: "../Assets/Icons/dice.svg"
-                    iconWidth: 29
-                    iconHeight: 29
+                    iconPath: "../Assets/Icons/coloreddice.svg"
+                    iconWidth: 32
+                    iconHeight: 32
+                    overlayVisible: false
                     showCrossIcon: page.showButtonVisibleChanger && page.hideRandomReleaseButton
                     visible: page.showButtonVisibleChanger || !page.hideRandomReleaseButton
                     tooltipMessage: "Открыть карточку релиза выбранного случайным образом"
@@ -832,9 +839,10 @@ Page {
                     }
                 }
                 LeftPanelIconButton {
-                    iconPath: "../Assets/Icons/options.svg"
+                    iconPath: "../Assets/Icons/coloredsettings.svg"
                     iconWidth: 29
                     iconHeight: 29
+                    overlayVisible: false
                     tooltipMessage: "Настройки страницы Каталог релизов"
                     onButtonPressed: {
                         releaseSettingsPopup.open();

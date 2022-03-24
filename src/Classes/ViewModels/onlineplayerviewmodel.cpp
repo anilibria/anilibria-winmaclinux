@@ -557,6 +557,44 @@ void OnlinePlayerViewModel::setVideoSeens(int id, int videoId, double videoPosit
     saveVideoSeens();
 }
 
+void OnlinePlayerViewModel::quickSetupForSingleRelease(int releaseId)
+{
+    setShowNextPosterRelease(false);
+    setSeenMarkedAtEnd(false);
+    setIsCinemahall(false);
+    setIsMultipleRelease(false);
+
+    auto release = m_releasesViewModel->getReleaseById(releaseId);
+    m_navigateReleaseId = releaseId;
+    m_navigatePoster = release->poster();
+    m_navigateVideos = release->videos();
+    m_customPlaylistPosition = -1;
+
+    m_videos->setVideosFromSingleList(m_navigateVideos, m_navigateReleaseId, m_navigatePoster);
+
+    setReleasePoster(m_navigatePoster);
+    setSelectedRelease(m_navigateReleaseId);
+
+    int videoIndex = 0;
+    if (m_seenModels->contains(m_navigateReleaseId)) {
+        auto model = m_seenModels->value(m_navigateReleaseId);
+        videoIndex = model->videoId();
+    }
+
+    auto firstVideo = m_videos->getVideoAtIndex(videoIndex);
+
+    setSelectedVideo(firstVideo->order());
+    setIsFullHdAllowed(!firstVideo->fullhd().isEmpty());
+    setVideoSource(getVideoFromQuality(firstVideo));
+
+    m_videos->selectVideo(m_selectedRelease, m_selectedVideo);
+
+    emit refreshSeenMarks();
+    emit playInPlayer();
+    emit saveToWatchHistory(m_navigateReleaseId);
+    emit needScrollSeriaPosition();
+}
+
 void OnlinePlayerViewModel::setupForSingleRelease()
 {
     setShowNextPosterRelease(false);

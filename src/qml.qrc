@@ -145,5 +145,9 @@
         <file>Assets/Icons/coloredsettings.svg</file>
         <file>Assets/Icons/coloredleftmenu.svg</file>
         <file>Assets/Icons/coloredrightmenu.svg</file>
+        <file>Assets/Icons/coloreddice.svg</file>
+        <file>Assets/Icons/coloredrefresh.svg</file>
+        <file>Assets/Icons/coloredbell.svg</file>
+        <file>Assets/Icons/coloreddrawer.svg</file>
     </qresource>
 </RCC>
