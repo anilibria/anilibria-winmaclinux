@@ -452,6 +452,15 @@ void ReleasesViewModel::fillNewInFavorites(QList<FullReleaseModel *>* list) cons
     }
 }
 
+void ReleasesViewModel::fillNewFromStart(QList<FullReleaseModel *> *list, const int startApplication) const noexcept
+{
+    foreach (auto release, *m_releases) {
+        if (release->timestamp() < startApplication) continue;
+
+        list->append(release);
+    }
+}
+
 void ReleasesViewModel::copyToClipboard(const QString &text) const noexcept
 {
     if (text.isEmpty()) return;

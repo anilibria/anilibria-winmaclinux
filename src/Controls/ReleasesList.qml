@@ -8,10 +8,12 @@ Item {
     height: 330
 
     property alias filterMode: viewModel.filterMode
+    property alias hasItems: viewModel.hasItems
 
     ReleaseSimpleListModel {
         id: viewModel
         releases: releasesViewModel
+        previousApplicationStart: userActivityViewModel.previousApplicationStart
     }
 
     Rectangle {

@@ -13,11 +13,15 @@ class ReleaseSimpleListModel : public QAbstractListModel
     Q_PROPERTY(ReleasesViewModel* releases READ releases WRITE setReleases NOTIFY releasesChanged)
     Q_PROPERTY(QString filterMode READ filterMode WRITE setFilterMode NOTIFY filterModeChanged)
     Q_PROPERTY(QString filterNewInFavorites READ filterNewInFavorites NOTIFY filterNewInFavoritesChanged)
+    Q_PROPERTY(QString filterNewFromStart READ filterNewFromStart NOTIFY filterNewFromStartChanged)
+    Q_PROPERTY(bool hasItems READ hasItems NOTIFY hasItemsChanged)
+    Q_PROPERTY(int previousApplicationStart READ previousApplicationStart WRITE setPreviousApplicationStart NOTIFY previousApplicationStartChanged)
 
 private:
     QScopedPointer<QList<FullReleaseModel*>> m_releases { new QList<FullReleaseModel*>() };
     ReleasesViewModel* m_releasesViewModel { nullptr };
     QString m_filterMode { "" };
+    int m_previousApplicationStart { 0 };
 
 public:
 
@@ -37,11 +41,18 @@ public:
 
     QString filterNewInFavorites() const noexcept { return "newinfavorites"; };
 
+    QString filterNewFromStart() const noexcept { return "newfromstart"; }
+
     ReleasesViewModel* releases() const noexcept { return m_releasesViewModel; }
     void setReleases(const ReleasesViewModel* viewModel) noexcept;
 
     QString filterMode() const noexcept { return m_filterMode; }
     void setFilterMode(const QString& filterMode) noexcept;
+
+    bool hasItems() const noexcept { return !m_releases->isEmpty(); }
+
+    int previousApplicationStart() const noexcept { return m_previousApplicationStart; }
+    void setPreviousApplicationStart(const int previousApplicationStart);
 
 private:
     void refresh();
@@ -50,6 +61,9 @@ signals:
     void releasesChanged();
     void filterModeChanged();
     void filterNewInFavoritesChanged();
+    void hasItemsChanged();
+    void previousApplicationStartChanged();
+    void filterNewFromStartChanged();
 
 };
 

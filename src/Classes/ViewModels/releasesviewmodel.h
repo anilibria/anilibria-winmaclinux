@@ -205,6 +205,7 @@ public:
     QStringList getMostPopularGenres() const noexcept;
     QStringList getMostPopularVoices() const noexcept;
     void fillNewInFavorites(QList<FullReleaseModel*>* list) const noexcept;
+    void fillNewFromStart(QList<FullReleaseModel*>* list, const int startApplication) const noexcept;
 
     Q_INVOKABLE void copyToClipboard(const QString& text) const noexcept;
     Q_INVOKABLE void copyImageToClipboard(const QString& imagePath) const;

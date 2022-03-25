@@ -50,6 +50,14 @@ void UserConfigurationViewModel::setHideUpdatesByFavorites(const bool hideUpdate
     emit hideUpdatesByFavoritesChanged();
 }
 
+void UserConfigurationViewModel::setHideUpdatesFromStart(const bool hideUpdatesFromStart) noexcept
+{
+    if (m_hideUpdatesFromStart == hideUpdatesFromStart) return;
+
+    m_hideUpdatesFromStart = hideUpdatesFromStart;
+    emit hideUpdatesFromStartChanged();
+}
+
 void UserConfigurationViewModel::saveSettingsToFile()
 {
     QJsonObject object;
@@ -58,6 +66,7 @@ void UserConfigurationViewModel::saveSettingsToFile()
     object[m_usingScrollAccelerationField] = m_usingScrollAcceleration;
     object[m_hideStatisticsField] = m_hideStatistics;
     object[m_hideUpdatesByFavoritesField] = m_hideUpdatesByFavorites;
+    object[m_hideUpdatesFromStartField] = m_hideUpdatesFromStart;
 
     QFile file(getCachePath(m_cacheFileName));
     file.open(QFile::WriteOnly | QFile::Text);
@@ -79,4 +88,5 @@ void UserConfigurationViewModel::readSettingsFromFile()
     m_usingScrollAcceleration = object.contains(m_usingScrollAccelerationField) ? object[m_usingScrollAccelerationField].toBool() : true;
     m_hideStatistics = object.contains(m_hideStatisticsField) ? object[m_hideStatisticsField].toBool() : false;
     m_hideUpdatesByFavorites = object.contains(m_hideUpdatesByFavoritesField) ? object[m_hideUpdatesByFavoritesField].toBool() : false;
+    m_hideUpdatesFromStart = object.contains(m_hideUpdatesFromStartField) ? object[m_hideUpdatesFromStartField].toBool() : false;
 }
