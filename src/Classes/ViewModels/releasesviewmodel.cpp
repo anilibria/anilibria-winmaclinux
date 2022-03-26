@@ -452,10 +452,11 @@ void ReleasesViewModel::fillNewInFavorites(QList<FullReleaseModel *>* list) cons
     }
 }
 
-void ReleasesViewModel::fillNewFromStart(QList<FullReleaseModel *> *list, const int startApplication) const noexcept
+void ReleasesViewModel::fillNewFromStart(QList<FullReleaseModel *> *list) const noexcept
 {
+    auto applicationStart = m_userActivity->previousApplicationStart();
     foreach (auto release, *m_releases) {
-        if (release->timestamp() < startApplication) continue;
+        if (release->timestamp() < applicationStart) continue;
 
         list->append(release);
     }

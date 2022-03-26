@@ -4,7 +4,6 @@ ReleaseSimpleListModel::ReleaseSimpleListModel(QObject *parent)
     : QAbstractListModel{parent}
 {
     auto now = QDateTime::currentDateTimeUtc();
-    m_previousApplicationStart = now.toTime_t();
 }
 
 int ReleaseSimpleListModel::rowCount(const QModelIndex &parent) const
@@ -71,14 +70,6 @@ void ReleaseSimpleListModel::setFilterMode(const QString &filterMode) noexcept
     refresh();
 }
 
-void ReleaseSimpleListModel::setPreviousApplicationStart(const int previousApplicationStart)
-{
-    if (m_previousApplicationStart == previousApplicationStart) return;
-
-    m_previousApplicationStart = previousApplicationStart;
-    emit previousApplicationStartChanged();
-}
-
 static bool compareTimeStampDescending(const FullReleaseModel* first, const FullReleaseModel* second)
 {
     return first->timestamp() > second->timestamp();
@@ -99,7 +90,7 @@ void ReleaseSimpleListModel::refresh()
     }
 
     if (m_filterMode == "newfromstart") {
-        m_releasesViewModel->fillNewFromStart(m_releases.get(), m_previousApplicationStart);
+        m_releasesViewModel->fillNewFromStart(m_releases.get());
 
         std::sort(m_releases->begin(), m_releases->end(), compareTimeStampDescending);
     }

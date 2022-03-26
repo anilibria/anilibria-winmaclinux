@@ -15,13 +15,11 @@ class ReleaseSimpleListModel : public QAbstractListModel
     Q_PROPERTY(QString filterNewInFavorites READ filterNewInFavorites NOTIFY filterNewInFavoritesChanged)
     Q_PROPERTY(QString filterNewFromStart READ filterNewFromStart NOTIFY filterNewFromStartChanged)
     Q_PROPERTY(bool hasItems READ hasItems NOTIFY hasItemsChanged)
-    Q_PROPERTY(int previousApplicationStart READ previousApplicationStart WRITE setPreviousApplicationStart NOTIFY previousApplicationStartChanged)
 
 private:
     QScopedPointer<QList<FullReleaseModel*>> m_releases { new QList<FullReleaseModel*>() };
     ReleasesViewModel* m_releasesViewModel { nullptr };
     QString m_filterMode { "" };
-    int m_previousApplicationStart { 0 };
 
 public:
 
@@ -50,9 +48,6 @@ public:
     void setFilterMode(const QString& filterMode) noexcept;
 
     bool hasItems() const noexcept { return !m_releases->isEmpty(); }
-
-    int previousApplicationStart() const noexcept { return m_previousApplicationStart; }
-    void setPreviousApplicationStart(const int previousApplicationStart);
 
 private:
     void refresh();

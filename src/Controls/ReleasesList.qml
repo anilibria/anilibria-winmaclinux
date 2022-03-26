@@ -13,7 +13,6 @@ Item {
     ReleaseSimpleListModel {
         id: viewModel
         releases: releasesViewModel
-        previousApplicationStart: userActivityViewModel.previousApplicationStart
     }
 
     Rectangle {

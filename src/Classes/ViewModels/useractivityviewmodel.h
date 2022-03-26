@@ -23,6 +23,7 @@ private:
     int m_countDownloadTorrent { 0 };
     QDateTime m_watchUsingApplicationStart { QDateTime::currentDateTime() };
     int m_countAddedToCinemahall { 0 };
+    int m_previousApplicationStart { 0 };
 
 public:
     explicit UserActivityViewModel(QObject *parent = nullptr);
@@ -42,7 +43,7 @@ public:
     int countAddedToCinemahall() const noexcept { return m_countAddedToCinemahall; }
     Q_INVOKABLE void addCinemahallMarkToCounter(const int count) noexcept;
 
-    int previousApplicationStart() const noexcept { return m_watchUsingApplicationStart.toTime_t(); }
+    int previousApplicationStart() const noexcept { return m_previousApplicationStart; }
 
 private:
     void createIfNotExistsFile(const QString& path, const QString& defaultContent) const noexcept;
