@@ -73,9 +73,9 @@ Page {
                     Item {
                         id: pageContent
                         width: parent.width
-                        height: statisticsHeader.height + statisticsContent.height +
-                            (updateInFavorites.hasItems ? hideUpdatesByFavoritesHeader.height + updateInFavorites.height : 0) +
-                            (updatesFromStart.hasItems ? hideUpdatesFromStartHeader.height + updatesFromStart.height : 0) + 10
+                        height: statisticsHeader.height + (statisticsContent.visible ? statisticsContent.height : 0) +
+                            (updateInFavorites.hasItems ? hideUpdatesByFavoritesHeader.height + (updateInFavorites.visible ? updateInFavorites.height : 0) : 0) +
+                            (updatesFromStart.hasItems ? hideUpdatesFromStartHeader.height + (updatesFromStart.visible ? updatesFromStart.height : 0 ) : 0) + 10
 
                         ExpandableHeader {
                             id: statisticsHeader
@@ -259,6 +259,7 @@ Page {
                         ReleasesList {
                             id: updateInFavorites
                             visible: updateInFavorites.hasItems && !userConfigurationViewModel.hideUpdatesByFavorites
+                            height: updateInFavorites.visible ? 330 : 0
                             anchors.top: hideUpdatesByFavoritesHeader.bottom
                             filterMode: "newinfavorites"
                         }
@@ -277,6 +278,7 @@ Page {
                         ReleasesList {
                             id: updatesFromStart
                             visible: updatesFromStart.hasItems && !userConfigurationViewModel.hideUpdatesFromStart
+                            height: updatesFromStart.visible ? 330 : 0
                             anchors.top: hideUpdatesFromStartHeader.bottom
                             filterMode: "newfromstart"
                         }
