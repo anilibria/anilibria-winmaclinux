@@ -149,5 +149,6 @@
         <file>Assets/Icons/coloredrefresh.svg</file>
         <file>Assets/Icons/coloredbell.svg</file>
         <file>Assets/Icons/coloreddrawer.svg</file>
+        <file>Assets/Backgrounds/authbackground.jpg</file>
     </qresource>
 </RCC>

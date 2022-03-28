@@ -1317,6 +1317,7 @@ ApplicationWindow {
     Item {
         id: assetsLocation
         property string path: Qt.resolvedUrl("../Assets/")
+        property string backgroundsPath: Qt.resolvedUrl("../Assets/Backgrounds/")
         property string iconsPath: Qt.resolvedUrl("../Assets/Icons/")
     }
 }

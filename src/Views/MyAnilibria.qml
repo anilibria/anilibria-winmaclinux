@@ -79,6 +79,7 @@ Page {
 
                         ExpandableHeader {
                             id: statisticsHeader
+                            height: statisticsHeader.visible ? 30 : 0
                             headerTitle: "Статистика"
                             headerHided: userConfigurationViewModel.hideStatistics
                             onHeaderPressed: {
@@ -248,6 +249,7 @@ Page {
                         ExpandableHeader {
                             id: hideUpdatesByFavoritesHeader
                             visible: updateInFavorites.hasItems
+                            height: statisticsHeader.visible ? 30 : 0
                             anchors.top: statisticsContent.bottom
                             headerTitle: "Обновления по избранному"
                             headerHided: userConfigurationViewModel.hideUpdatesByFavorites
@@ -267,6 +269,7 @@ Page {
                         ExpandableHeader {
                             id: hideUpdatesFromStartHeader
                             visible: updatesFromStart.hasItems
+                            height: statisticsHeader.visible ? 30 : 0
                             anchors.top: updateInFavorites.bottom
                             headerTitle: "Обновления с последнего посещения"
                             headerHided: userConfigurationViewModel.hideUpdatesFromStart

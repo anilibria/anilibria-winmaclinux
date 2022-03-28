@@ -64,6 +64,12 @@ Page {
             Layout.fillHeight: true
             Layout.fillWidth: true
 
+            Image {
+                anchors.fill: parent
+                source: assetsLocation.backgroundsPath + "authbackground.jpg"
+                fillMode: Image.PreserveAspectCrop
+            }
+
             Rectangle {
                 id: fieldsContainer
                 radius: 8
@@ -112,12 +118,13 @@ Page {
                             text: authorizationViewModel.errorMessage
                             fontPointSize: 10
                             anchors.left: parent.left
-                            anchors.leftMargin: 10                            
+                            anchors.leftMargin: 10
                             anchors.verticalCenter: parent.verticalCenter
                             wrapMode: Text.WordWrap
                         }
 
                         RoundedActionButton {
+                            id: saveButton
                             anchors.right: parent.right
                             anchors.rightMargin: 10
                             text: "Войти"
@@ -126,16 +133,18 @@ Page {
                             }
                         }
 
+                        LinkedText {
+                            anchors.top: saveButton.top
+                            anchors.topMargin: 10
+                            anchors.right: saveButton.left
+                            anchors.rightMargin: 6
+                            fontPointSize: 10
+                            text: authorizationViewModel.registerLink
+                        }
+
                     }
 
                 }
-            }
-
-            LinkedText {
-                anchors.top: fieldsContainer.bottom
-                anchors.right: fieldsContainer.right
-                fontPointSize: 10
-                text: authorizationViewModel.registerLink
             }
         }
     }
