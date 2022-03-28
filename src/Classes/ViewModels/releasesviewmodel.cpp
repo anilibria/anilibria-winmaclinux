@@ -440,7 +440,10 @@ QStringList ReleasesViewModel::getMostPopularVoices() const noexcept
 
 void ReleasesViewModel::fillNewInFavorites(QList<FullReleaseModel *>* list) const noexcept
 {
-    QSet<int> favorites(m_userFavorites->begin(), m_userFavorites->end());
+    QSet<int> favorites;
+    foreach (auto favorite, *m_userFavorites) {
+        favorites.insert(favorite);
+    }
 
     foreach (auto release, *m_releases) {
         if (!favorites.contains(release->id())) continue;
