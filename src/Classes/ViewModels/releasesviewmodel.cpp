@@ -840,6 +840,14 @@ void ReleasesViewModel::prepareTorrentsForListItem(const int id)
     m_itemTorrents->loadFromJson(release->torrents());
 }
 
+void ReleasesViewModel::clearDeletedInCacheMarks()
+{
+    foreach (auto release, *m_releases) {
+        release->setIsDeleted(false);
+    }
+    saveReleasesFromMemoryToFile();
+}
+
 FullReleaseModel *ReleasesViewModel::getReleaseById(int id) const noexcept
 {
     auto iterator = std::find_if(

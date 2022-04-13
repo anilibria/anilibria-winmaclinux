@@ -248,6 +248,7 @@ public:
     void updateAllReleases(const QString &releases, bool insideData);
     Q_INVOKABLE void openInExternalPlayer(const QString& url);
     Q_INVOKABLE void prepareTorrentsForListItem(const int id);
+    Q_INVOKABLE void clearDeletedInCacheMarks();
     FullReleaseModel* getReleaseById(int id) const noexcept;
 
 private:

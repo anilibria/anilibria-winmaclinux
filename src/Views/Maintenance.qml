@@ -248,7 +248,6 @@ Page {
                             }
 
                             Item {
-                                visible: false
                                 width: 220
                                 height: 100
 
@@ -257,15 +256,14 @@ Page {
                                     anchors.left: parent.left
                                     anchors.leftMargin: 10
                                     width: parent.width - 10
-                                    text: "Синхронизовать с DL"
+                                    text: "Сбросить удаленные"
                                     onClicked: {
-                                        synchronizationService.synchronizeDL();
+                                        releasesViewModel.clearDeletedInCacheMarks();
                                     }
                                 }
                             }
 
                             Rectangle {
-                                visible: false
                                 color: "transparent"
                                 Layout.fillWidth: true
                                 Layout.fillHeight: true
@@ -276,9 +274,12 @@ Page {
                                     anchors.left: parent.left
                                     width: parent.width
                                     wrapMode: Text.WordWrap
-                                    text: "Позволяет выполнить синхронизацию релизов с DL. Чтобы релизы повторно обновились необходимо нажать эту кнопку снова."
+                                    text: "Если Вы столкнулись с проблемой что каких-то релизов нет в приложении но есть на сайте то Вы можете сбросить удаленные релизы."
                                 }
                             }
+
+
+
                         }
                     }
                 }
