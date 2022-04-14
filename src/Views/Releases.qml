@@ -1063,7 +1063,7 @@ Page {
                             }
                             LinkedText {
                                 fontPointSize: 11
-                                text: "<a href='https://t.me/desktopclientanilibria'>Канал о приложении</a>"
+                                text: "<a href='https://t.me/desktopclientanilibria'>Telegram канал о приложении</a>"
                             }
 
                         }
