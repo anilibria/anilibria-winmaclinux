@@ -74,7 +74,7 @@ void MainViewModel::selectPage(const QString& pageId)
         emit onlinePlayerPageFromNavigated();
     }
 
-    m_analyticsService->sendView("Pages", "ChangePage", "%2F" + pageId);
+    m_analyticsService->sendView("page", "view", "%2F" + pageId);
 }
 
 void MainViewModel::setPageDisplayName(const QString &pageId) noexcept
