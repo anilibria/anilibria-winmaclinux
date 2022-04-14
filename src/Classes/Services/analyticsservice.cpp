@@ -16,11 +16,31 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <QLocale>
+#include <QGuiApplication>
+#include <QScreen>
 #include "analyticsservice.h"
+#include "../../globalconstants.h"
 
-const QString AnalyticsService::googleAnalyticsAddress = "https://www.google-analytics.com/collect";
+const QString AnalyticsService::googleAnalyticsAddress = "https://www.google-analytics.com/g/collect?v=2&tid=G-DRSN62ELJ5&gtm=2oe460&_p=538594933&_z=ccd.IAB&cid=5573181.376415052&sct=1&seg=1";
 
-void AnalyticsService::sendPostEvent(QString type, QString category, QString message, QString page)
+AnalyticsService::AnalyticsService(QObject *parent) : QObject(parent)
+{
+
+}
+
+void AnalyticsService::sendView(QString category, QString message, QString page)
+{
+    sendPostEvent(category, message, page);
+}
+
+void AnalyticsService::sendVersion()
+{
+    auto versionNumber = QString(ApplicationVersion);
+    sendPostEvent("version", versionNumber.replace(".", "_"), "%2Fcommon");
+}
+
+void AnalyticsService::sendPostEvent(QString category, QString message, QString page)
 {
     QString userAgent = "Mozilla/5.0 ";
 
@@ -37,43 +57,39 @@ void AnalyticsService::sendPostEvent(QString type, QString category, QString mes
 #endif
 
 #ifdef QT_DEBUG
-    if (type.isEmpty() || category.isEmpty() || message.isEmpty() || page.isEmpty()) {
+    if (category.isEmpty() || message.isEmpty() || page.isEmpty()) {
 
     }
 #else
+
     auto networkManager = new QNetworkAccessManager(this);
-    auto url = QUrl(AnalyticsService::googleAnalyticsAddress);
+
+    auto language = "&ul=" + QLocale::system().name().toLower();
+
+    QScreen *screen = QGuiApplication::primaryScreen();
+    auto screenGeometry = screen->geometry();
+    auto screenResolution = "&sr=" + QString::number(screenGeometry.width()) + "x" + QString::number(screenGeometry.height());
+
+    auto fullPath = QString(page);
+    auto cutPath = page.replace("%2F", "");
+
+    auto eventName = "&en=" + category.toLower() + "_" + message.toLower();
+
+    auto pageName = "&dl=http%3A%2F%2Fanilibria.tv" + fullPath;
+
+    m_sessionCounter++;
+    auto sessionCounter = "&_s=" + QString::number(m_sessionCounter);
+
+    auto documentTitle = "&dt=Page%20-%20" + cutPath;
+
+    auto sessionStart = "&sid=" + QString::number(m_startTime.toTime_t());
+
+    auto url = QUrl(AnalyticsService::googleAnalyticsAddress + language + screenResolution + eventName + pageName+ sessionCounter + documentTitle + sessionStart);
+
     QNetworkRequest request(url);
     request.setRawHeader("User-Agent", userAgent.toUtf8());
-    request.setHeader(QNetworkRequest::ContentTypeHeader, QVariant("plain/text"));
+    request.setHeader(QNetworkRequest::ContentTypeHeader, QVariant("plain/text;charset=UTF-8"));
 
-    QString returnData;
-    returnData.append("v=1&");
-    returnData.append("tid=UA-152944623-1&");
-    auto uniqueName = QSysInfo::machineUniqueId();//TODO: check if null and replace on something
-    returnData.append("cid=" + uniqueName + "&");
-    returnData.append("t=" + type + "&");
-    returnData.append("an=AniLibriaDesktop&");
-    returnData.append("av=" + ApplicationVersion + "&");
-    if (!page.isEmpty()) returnData.append("dp=" + page + "&");
-    returnData.append("ec=" + category + "&");
-    returnData.append("ea=" + message);
-
-    networkManager->post(request, returnData.toUtf8());
+    networkManager->post(request, eventName.toUtf8());
 #endif
-}
-
-AnalyticsService::AnalyticsService(QObject *parent) : QObject(parent)
-{
-
-}
-
-void AnalyticsService::sendEvent(QString category, QString message)
-{
-    sendPostEvent("event", category, message, "");
-}
-
-void AnalyticsService::sendView(QString category, QString message, QString page)
-{
-    sendPostEvent("pageview", category, message, page);
 }

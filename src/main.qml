@@ -50,7 +50,6 @@ ApplicationWindow {
     Material.theme: ApplicationTheme.isDarkTheme ? Material.Dark : Material.Light
 
     onClosing: {
-        analyticsService.sendEvent("Session", "End");
         onlinePlayerWindow.closeWindow();
         onlinePlayerWindow.hide();
     }
@@ -586,7 +585,7 @@ ApplicationWindow {
 
             synchronizationService.getUserData(applicationSettings.userToken);
 
-            analyticsService.sendEvent("Session", "Start");
+            analyticsService.sendVersion();
         }
     }
 
@@ -927,7 +926,7 @@ ApplicationWindow {
         items.releaseLinkedSeries: releaseLinkedSeries
         userActivity: userActivityViewModel
         onReleaseCardOpened: {
-            analyticsService.sendView("releasecard", "show", "%2Freleases");
+            analyticsService.sendView("releasecard", "open", "%2Frelease");
             releases.setWebViewUrl();
             vkCommentsWindow.refreshComments();
             userActivityViewModel.addOpenedCardToCounter();

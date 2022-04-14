@@ -30,15 +30,19 @@ class AnalyticsService : public QObject
     Q_OBJECT
 
 private:
-    void sendPostEvent(QString type, QString category, QString message, QString page);
+    int m_sessionCounter { 0 };
+    QDateTime m_startTime { QDateTime::currentDateTimeUtc() };
 
 public:
     explicit AnalyticsService(QObject *parent = nullptr);
 
     const static QString googleAnalyticsAddress;
 
-    Q_INVOKABLE void sendEvent(QString category, QString message);
     Q_INVOKABLE void sendView(QString category, QString message, QString page);
+    Q_INVOKABLE void sendVersion();
+
+private:
+    void sendPostEvent(QString category, QString message, QString page);
 
 signals:
 
