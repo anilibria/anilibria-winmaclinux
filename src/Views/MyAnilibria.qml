@@ -75,7 +75,8 @@ Page {
                         width: parent.width
                         height: statisticsHeader.height + (statisticsContent.visible ? statisticsContent.height : 0) +
                             (updateInFavorites.hasItems ? hideUpdatesByFavoritesHeader.height + (updateInFavorites.visible ? updateInFavorites.height : 0) : 0) +
-                            (updatesFromStart.hasItems ? hideUpdatesFromStartHeader.height + (updatesFromStart.visible ? updatesFromStart.height : 0 ) : 0) + 10
+                            (updatesFromStart.hasItems ? hideUpdatesFromStartHeader.height + (updatesFromStart.visible ? updatesFromStart.height : 0 ) : 0) +
+                            (updatesLastTwoDays.hasItems ? headerUpdatesLastTwoDays.height + (updatesLastTwoDays.visible ? updatesLastTwoDays.height : 0 ) : 0) + 10
 
                         ExpandableHeader {
                             id: statisticsHeader
@@ -269,7 +270,7 @@ Page {
                         ExpandableHeader {
                             id: hideUpdatesFromStartHeader
                             visible: updatesFromStart.hasItems
-                            height: statisticsHeader.visible ? 30 : 0
+                            height: updatesFromStart.visible ? 30 : 0
                             anchors.top: updateInFavorites.bottom
                             headerTitle: "Обновления с последнего посещения"
                             headerHided: userConfigurationViewModel.hideUpdatesFromStart
@@ -284,6 +285,26 @@ Page {
                             height: updatesFromStart.visible ? 330 : 0
                             anchors.top: hideUpdatesFromStartHeader.bottom
                             filterMode: "newfromstart"
+                        }
+
+                        ExpandableHeader {
+                            id: headerUpdatesLastTwoDays
+                            visible: updatesLastTwoDays.hasItems
+                            height: statisticsHeader.visible ? 30 : 0
+                            anchors.top: updatesFromStart.bottom
+                            headerTitle: "Последние обновления"
+                            headerHided: userConfigurationViewModel.hideUpdatesLastTwoDays
+                            onHeaderPressed: {
+                                userConfigurationViewModel.hideUpdatesLastTwoDays = !userConfigurationViewModel.hideUpdatesLastTwoDays;
+                            }
+                        }
+
+                        ReleasesList {
+                            id: updatesLastTwoDays
+                            visible: updatesLastTwoDays.hasItems && !userConfigurationViewModel.hideUpdatesLastTwoDays
+                            height: updatesLastTwoDays.visible ? 330 : 0
+                            anchors.top: headerUpdatesLastTwoDays.bottom
+                            filterMode: "lasttwodays"
                         }
                     }
                 }

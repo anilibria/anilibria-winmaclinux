@@ -58,6 +58,14 @@ void UserConfigurationViewModel::setHideUpdatesFromStart(const bool hideUpdatesF
     emit hideUpdatesFromStartChanged();
 }
 
+void UserConfigurationViewModel::setHideUpdatesLastTwoDays(const bool hideUpdatesLastTwoDays) noexcept
+{
+    if (m_hideUpdatesLastTwoDays == hideUpdatesLastTwoDays) return;
+
+    m_hideUpdatesLastTwoDays = hideUpdatesLastTwoDays;
+    emit hideUpdatesLastTwoDaysChanged();
+}
+
 void UserConfigurationViewModel::saveSettingsToFile()
 {
     QJsonObject object;

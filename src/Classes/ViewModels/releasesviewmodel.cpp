@@ -465,6 +465,17 @@ void ReleasesViewModel::fillNewFromStart(QList<FullReleaseModel *> *list) const 
     }
 }
 
+void ReleasesViewModel::fillNewFromLastTwoDays(QList<FullReleaseModel *> *list) const noexcept
+{
+    auto now = QDateTime::currentDateTimeUtc().addDays(-2);
+    auto timestamp = static_cast<int>(now.toTime_t());
+    foreach (auto release, *m_releases) {
+        if (release->timestamp() < timestamp) continue;
+
+        list->append(release);
+    }
+}
+
 void ReleasesViewModel::copyToClipboard(const QString &text) const noexcept
 {
     if (text.isEmpty()) return;
