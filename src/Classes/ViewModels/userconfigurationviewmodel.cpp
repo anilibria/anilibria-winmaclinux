@@ -66,6 +66,14 @@ void UserConfigurationViewModel::setHideUpdatesLastTwoDays(const bool hideUpdate
     emit hideUpdatesLastTwoDaysChanged();
 }
 
+void UserConfigurationViewModel::setHideAbandonedSeens(const bool hideAbandonedSeens) noexcept
+{
+    if (m_hideAbandonedSeens == hideAbandonedSeens) return;
+
+    m_hideAbandonedSeens = hideAbandonedSeens;
+    emit hideAbandonedSeensChanged();
+}
+
 void UserConfigurationViewModel::saveSettingsToFile()
 {
     QJsonObject object;

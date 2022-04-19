@@ -476,6 +476,21 @@ void ReleasesViewModel::fillNewFromLastTwoDays(QList<FullReleaseModel *> *list) 
     }
 }
 
+void ReleasesViewModel::fillAbandonedSeens(QList<FullReleaseModel *> *list) const noexcept
+{
+    auto now = QDateTime::currentDateTimeUtc().addDays(-18);
+    auto timestamp = static_cast<int>(now.toTime_t());
+
+    foreach (auto release, *m_releases) {
+        if (!m_historyItems->contains(release->id())) continue;
+
+        auto seenVideos = m_items->getReleaseSeenMarkCount(release->id());
+        if (seenVideos > 0 && seenVideos < release->countOnlineVideos() && release->timestamp() < timestamp) {
+            list->append(release);
+        }
+    }
+}
+
 void ReleasesViewModel::copyToClipboard(const QString &text) const noexcept
 {
     if (text.isEmpty()) return;

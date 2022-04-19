@@ -14,6 +14,7 @@ class UserConfigurationViewModel : public QObject
     Q_PROPERTY(bool hideUpdatesByFavorites READ hideUpdatesByFavorites WRITE setHideUpdatesByFavorites NOTIFY hideUpdatesByFavoritesChanged)
     Q_PROPERTY(bool hideUpdatesFromStart READ hideUpdatesFromStart WRITE setHideUpdatesFromStart NOTIFY hideUpdatesFromStartChanged)
     Q_PROPERTY(bool hideUpdatesLastTwoDays READ hideUpdatesLastTwoDays WRITE setHideUpdatesLastTwoDays NOTIFY hideUpdatesLastTwoDaysChanged)
+    Q_PROPERTY(bool hideAbandonedSeens READ hideAbandonedSeens WRITE setHideAbandonedSeens NOTIFY hideAbandonedSeensChanged)
 
 private:
     QString m_cacheFileName { "userconfiguration.cache" };
@@ -30,6 +31,7 @@ private:
     bool m_hideUpdatesByFavorites { false };
     bool m_hideUpdatesFromStart { false };
     bool m_hideUpdatesLastTwoDays { false };
+    bool m_hideAbandonedSeens { false };
 
 public:
     explicit UserConfigurationViewModel(QObject *parent = nullptr);
@@ -55,6 +57,9 @@ public:
     bool hideUpdatesLastTwoDays() const noexcept { return m_hideUpdatesLastTwoDays; }
     void setHideUpdatesLastTwoDays(const bool hideUpdatesLastTwoDays) noexcept;
 
+    bool hideAbandonedSeens() const noexcept { return m_hideAbandonedSeens; }
+    void setHideAbandonedSeens(const bool hideAbandonedSeens) noexcept;
+
     Q_INVOKABLE void saveSettingsToFile();
 
 private:
@@ -69,6 +74,7 @@ signals:
     void hideUpdatesByFavoritesChanged();
     void hideUpdatesFromStartChanged();
     void hideUpdatesLastTwoDaysChanged();
+    void hideAbandonedSeensChanged();
 
 };
 

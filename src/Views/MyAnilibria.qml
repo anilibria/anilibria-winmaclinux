@@ -76,7 +76,8 @@ Page {
                         height: statisticsHeader.height + (statisticsContent.visible ? statisticsContent.height : 0) +
                             (updateInFavorites.hasItems ? hideUpdatesByFavoritesHeader.height + (updateInFavorites.visible ? updateInFavorites.height : 0) : 0) +
                             (updatesFromStart.hasItems ? hideUpdatesFromStartHeader.height + (updatesFromStart.visible ? updatesFromStart.height : 0 ) : 0) +
-                            (updatesLastTwoDays.hasItems ? headerUpdatesLastTwoDays.height + (updatesLastTwoDays.visible ? updatesLastTwoDays.height : 0 ) : 0) + 10
+                            (updatesLastTwoDays.hasItems ? headerUpdatesLastTwoDays.height + (updatesLastTwoDays.visible ? updatesLastTwoDays.height : 0 ) : 0) +
+                            (abandonedSeens.hasItems ? headerAbandonedSeens.height + (abandonedSeens.visible ? abandonedSeens.height : 0 ) : 0) + 10
 
                         ExpandableHeader {
                             id: statisticsHeader
@@ -290,7 +291,7 @@ Page {
                         ExpandableHeader {
                             id: headerUpdatesLastTwoDays
                             visible: updatesLastTwoDays.hasItems
-                            height: statisticsHeader.visible ? 30 : 0
+                            height: headerUpdatesLastTwoDays.visible ? 30 : 0
                             anchors.top: updatesFromStart.bottom
                             headerTitle: "Последние обновления"
                             headerHided: userConfigurationViewModel.hideUpdatesLastTwoDays
@@ -305,6 +306,26 @@ Page {
                             height: updatesLastTwoDays.visible ? 330 : 0
                             anchors.top: headerUpdatesLastTwoDays.bottom
                             filterMode: "lasttwodays"
+                        }
+
+                        ExpandableHeader {
+                            id: headerAbandonedSeens
+                            visible: abandonedSeens.hasItems
+                            height: headerAbandonedSeens.visible ? 30 : 0
+                            anchors.top: updatesLastTwoDays.bottom
+                            headerTitle: "Брошенный просмотр"
+                            headerHided: userConfigurationViewModel.hideAbandonedSeens
+                            onHeaderPressed: {
+                                userConfigurationViewModel.hideAbandonedSeens = !userConfigurationViewModel.hideAbandonedSeens;
+                            }
+                        }
+
+                        ReleasesList {
+                            id: abandonedSeens
+                            visible: updatesLastTwoDays.hasItems && !userConfigurationViewModel.hideAbandonedSeens
+                            height: updatesLastTwoDays.visible ? 330 : 0
+                            anchors.top: headerAbandonedSeens.bottom
+                            filterMode: "abondonedseens"
                         }
                     }
                 }
