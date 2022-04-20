@@ -52,10 +52,11 @@ Page {
             Layout.fillHeight: true
             Column {
                 LeftPanelIconButton {
-                    iconPath: assetsLocation.iconsPath + "menu.svg"
+                    iconPath: assetsLocation.iconsPath + "coloreddrawer.svg"
+                    overlayVisible: false
                     tooltipMessage: "Открыть меню приложения"
-                    iconWidth: 29
-                    iconHeight: 29
+                    iconWidth: 40
+                    iconHeight: 40
                     onButtonPressed: {
                         drawer.open();
                     }
@@ -182,23 +183,13 @@ Page {
                                         Layout.fillHeight: true
                                     }
 
-                                    PlainText {
-                                        Layout.preferredHeight: 20
+                                    AccentText {
                                         fontPointSize: 10
-                                        text: firstName
-                                    }
-
-                                    PlainText {
-                                        Layout.preferredHeight: 20
-                                        fontPointSize: 10
-                                        text: secondName
-                                    }
-
-                                    PlainText {
-                                        Layout.preferredHeight: 20
-                                        fontPointSize: 10
-                                        visible: !!thirdName
-                                        text: thirdName
+                                        text: firstThreeNamesRole
+                                        Layout.fillWidth: true
+                                        maximumLineCount: 2
+                                        elide: Text.ElideRight
+                                        wrapMode: Text.Wrap
                                     }
 
                                     PlainText {
@@ -206,6 +197,16 @@ Page {
                                         fontPointSize: 10
                                         visible: !!otherReleases
                                         text: otherReleases
+                                    }
+
+                                    PlainText {
+                                        Layout.preferredHeight: 20
+                                        Layout.fillWidth: true
+                                        maximumLineCount: 2
+                                        elide: Text.ElideRight
+                                        wrapMode: Text.Wrap
+                                        fontPointSize: 10
+                                        text: genres
                                     }
 
                                     Item {
@@ -225,7 +226,8 @@ Page {
                                     anchors.centerIn: parent
 
                                     FilterPanelIconButton {
-                                        iconPath: "../Assets/Icons/favorite.svg"
+                                        iconPath: assetsLocation.iconsPath + "ratingcolor.svg"
+                                        overlayVisible: false
                                         tooltipMessage: "Открыть меню для операций по добавлению/удалению всей группы в избранное"
                                         onButtonPressed: {
                                             favoriteSeriesMenu.open();
@@ -261,7 +263,8 @@ Page {
                                         }
                                     }
                                     FilterPanelIconButton {
-                                        iconPath: "../Assets/Icons/popcorn.svg"
+                                        iconPath: assetsLocation.iconsPath + "cinemahallmenu.svg"
+                                        overlayVisible: false
                                         tooltipMessage: "Открыть меню для операций по добавлению/удалению всей группы в кинозал"
                                         onButtonPressed: {
                                             cinemahallSeriesMenu.open();
@@ -280,6 +283,16 @@ Page {
                                                     cinemahallSeriesMenu.close();
                                                 }
                                             }
+                                        }
+                                    }
+                                    FilterPanelIconButton {
+                                        iconPath: assetsLocation.iconsPath + "videoplayermenu.svg"
+                                        overlayVisible: false
+                                        tooltipMessage: "Начать просмотр всей группы в видеоплеере"
+                                        onButtonPressed: {
+                                            mainViewModel.selectPage("videoplayer");
+
+                                            onlinePlayerViewModel.quickSetupForMultipleRelease(releaseIds);
                                         }
                                     }
                                 }

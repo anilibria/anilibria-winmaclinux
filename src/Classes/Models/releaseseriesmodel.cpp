@@ -4,7 +4,6 @@
 ReleaseSeriesModel::ReleaseSeriesModel() :
     m_releaseIds(new QList<QVariant>()),
     m_posters(new QList<QVariant>()),
-    m_titles(new QList<QVariant>()),
     m_countReleases(0)
 {
 
@@ -37,7 +36,14 @@ void ReleaseSeriesModel::appendPoster(const QString &poster)
 
 void ReleaseSeriesModel::appendTitle(const QString &title)
 {
-    m_titles->append(QVariant(title));
+    m_titles->append(title);
+}
+
+void ReleaseSeriesModel::appendGenre(const QString &genre)
+{
+    if (m_genres->contains(genre)) return;
+
+    m_genres->append(genre);
 }
 
 void ReleaseSeriesModel::readFromJson(const QJsonObject &jsonObject) noexcept
@@ -53,7 +59,13 @@ void ReleaseSeriesModel::readFromJson(const QJsonObject &jsonObject) noexcept
 
     auto titles = jsonObject.value("titles").toArray();
     m_titles->clear();
-    foreach (auto title, titles) m_titles->append(QVariant(title.toString()));
+    foreach (auto title, titles) m_titles->append(title.toString());
+
+    if (jsonObject.contains("genres")) {
+        auto genres = jsonObject.value("genres").toArray();
+        m_genres->clear();
+        foreach (auto genre, genres) m_genres->append(genre.toString());
+    }
 }
 
 void ReleaseSeriesModel::writeToJson(QJsonObject &json) const noexcept
@@ -69,6 +81,10 @@ void ReleaseSeriesModel::writeToJson(QJsonObject &json) const noexcept
     json["posters"] = posters;
 
     QJsonArray titles;
-    foreach (auto title, *m_titles) titles.append(title.toString());
+    foreach (auto title, *m_titles) titles.append(title);
     json["titles"] = titles;
+
+    QJsonArray genres;
+    foreach (auto genre, *m_genres) genres.append(genre);
+    json["genres"] = genres;
 }

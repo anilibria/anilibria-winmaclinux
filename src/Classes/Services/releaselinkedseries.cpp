@@ -56,18 +56,11 @@ QVariant ReleaseLinkedSeries::data(const QModelIndex &index, int role) const
         case CountReleasesRole: {
             return QVariant(element->countReleases());
         }
-        case FirstNameRole: {
-            return QVariant(element->titles()->first().toString());
-        }
-        case SecondNameRole: {
-            return QVariant(element->titles()->at(1).toString());
-        }
-        case ThirdNameRole: {
-            if (element->titles()->length() > 2) {
-                return QVariant(QVariant(element->titles()->at(2).toString()));
-            } else {
-                return QVariant("");
+        case FirstThreeNamesRole: {
+            if (element->titles()->count() > 2) {
+                return QVariant(QStringList(element->titles()->begin(), element->titles()->begin() + 3).join(", "));
             }
+            return element->titles()->join(", ");
         }
         case ReleaseIds: {
             return QVariant(*series.at(index.row())->releaseIds());
@@ -89,12 +82,15 @@ QVariant ReleaseLinkedSeries::data(const QModelIndex &index, int role) const
             }
         }
         case OtherReleasesRole: {
-            auto count = series.at(index.row())->countReleases();
+            auto count = element->countReleases();
 
             QString other = "";
             if (count > 3) other += " + еще " + QString::number(count - 3) + " релиза";
 
             return QVariant(other);
+        }
+        case GenresRole: {
+            return QVariant(element->genresAsString());
         }
     }
 
@@ -109,16 +105,8 @@ QHash<int, QByteArray> ReleaseLinkedSeries::roleNames() const
             "countReleases"
         },
         {
-            FirstNameRole,
-            "firstName"
-        },
-        {
-            SecondNameRole,
-            "secondName"
-        },
-        {
-            ThirdNameRole,
-            "thirdName"
+            FirstThreeNamesRole,
+            "firstThreeNamesRole"
         },
         {
             ReleaseIds,
@@ -144,7 +132,10 @@ QHash<int, QByteArray> ReleaseLinkedSeries::roleNames() const
             OtherReleasesRole,
             "otherReleases"
         },
-
+        {
+            GenresRole,
+            "genres"
+        }
     };
 }
 
@@ -218,7 +209,7 @@ void ReleaseLinkedSeries::refreshSeries()
 
             foreach (auto release, releases) {
                 auto description = release->description();
-                processReleasesFromDescription(description, releases, release->id(), release->title(), release->poster());
+                processReleasesFromDescription(description, releases, release->id(), release->title(), release->poster(), release->genres());
             }
 
             releases.clear();
@@ -330,7 +321,7 @@ void ReleaseLinkedSeries::createCacheFileIfNotExists() const noexcept
     }
 }
 
-void ReleaseLinkedSeries::processReleasesFromDescription(const QString& description, const QMap<QString, FullReleaseModel*>& releases, int currentRelease, const QString currentReleaseTitle, const QString& poster) noexcept
+void ReleaseLinkedSeries::processReleasesFromDescription(const QString& description, const QMap<QString, FullReleaseModel*>& releases, int currentRelease, const QString currentReleaseTitle, const QString& poster, const QString& genres) noexcept
 {
     QString startToken = "Порядок просмотра:";
     int watchOrderIndex = description.indexOf(startToken);
@@ -365,12 +356,18 @@ void ReleaseLinkedSeries::processReleasesFromDescription(const QString& descript
                 if (series->appendReleaseId(release->id())) {
                     series->appendPoster(release->poster());
                     series->appendTitle(release->title());
+                    foreach (auto genre, release->genres().split(",")) {
+                        series->appendGenre(genre.trimmed());
+                    }
                 }
             }
         } else {
             if (series->appendReleaseId(currentRelease)) {
                 series->appendPoster(poster);
                 series->appendTitle(currentReleaseTitle);
+                foreach (auto genre, genres.split(",")) {
+                    series->appendGenre(genre.trimmed());
+                }
             }
         }
     }

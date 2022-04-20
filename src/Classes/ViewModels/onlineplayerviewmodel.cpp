@@ -595,6 +595,39 @@ void OnlinePlayerViewModel::quickSetupForSingleRelease(int releaseId)
     emit needScrollSeriaPosition();
 }
 
+void OnlinePlayerViewModel::quickSetupForMultipleRelease(const QList<int> releaseIds)
+{
+    QList<FullReleaseModel*> releases;
+    foreach (auto releaseId, releaseIds) {
+        releases.append(m_releasesViewModel->getReleaseById(releaseId));
+    }
+
+    m_videos->setVideosFromCinemahall(std::move(releases));
+
+    auto video = m_videos->getFirstReleaseWithPredicate(
+        [](OnlineVideoModel* video) {
+            return !video->isGroup();
+        }
+    );
+
+    if (video == nullptr) {
+        setVideoSource("");
+        return;
+    }
+
+    setSelectedRelease(video->releaseId());
+    setReleasePoster(video->releasePoster());
+    setSelectedVideo(video->order());
+    setIsFullHdAllowed(!video->fullhd().isEmpty());
+    setVideoSource(getVideoFromQuality(video));
+    m_videos->selectVideo(m_selectedRelease, m_selectedVideo);
+
+    emit refreshSeenMarks();
+    emit playInPlayer();
+    emit needScrollSeriaPosition();
+    emit saveToWatchHistory(video->releaseId());
+}
+
 void OnlinePlayerViewModel::setupForSingleRelease()
 {
     setShowNextPosterRelease(false);
@@ -632,8 +665,6 @@ void OnlinePlayerViewModel::setupForSingleRelease()
 void OnlinePlayerViewModel::setupForMultipleRelease()
 {
     auto selectedReleases = m_releasesViewModel->items()->getSelectedReleases();
-
-
 
     QList<FullReleaseModel*> releases;
 

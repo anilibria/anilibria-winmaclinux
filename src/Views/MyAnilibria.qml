@@ -37,9 +37,10 @@ Page {
                         height: 45
                         width: 40
                         iconColor: "white"
-                        iconPath: assetsLocation.iconsPath + "menu.svg"
-                        iconWidth: 29
-                        iconHeight: 29
+                        overlayVisible: false
+                        iconPath: assetsLocation.iconsPath + "coloreddrawer.svg"
+                        iconWidth: 40
+                        iconHeight: 40
                         onButtonPressed: {
                             drawer.open();
                         }
@@ -77,7 +78,7 @@ Page {
                             (updateInFavorites.hasItems ? hideUpdatesByFavoritesHeader.height + (updateInFavorites.visible ? updateInFavorites.height : 0) : 0) +
                             (updatesFromStart.hasItems ? hideUpdatesFromStartHeader.height + (updatesFromStart.visible ? updatesFromStart.height : 0 ) : 0) +
                             (updatesLastTwoDays.hasItems ? headerUpdatesLastTwoDays.height + (updatesLastTwoDays.visible ? updatesLastTwoDays.height : 0 ) : 0) +
-                            (abandonedSeens.hasItems ? headerAbandonedSeens.height + (abandonedSeens.visible ? abandonedSeens.height : 0 ) : 0) + 10
+                            (abandonedSeens.hasItems ? headerAbandonedSeens.height + (abandonedSeens.visible ? abandonedSeens.height : 0 ) : 0) + 20
 
                         ExpandableHeader {
                             id: statisticsHeader

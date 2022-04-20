@@ -27,9 +27,10 @@ Page {
             Column {
                 LeftPanelIconButton {
                     tooltipMessage: "Открыть меню приложения"
-                    iconPath: assetsLocation.iconsPath + "menu.svg"
-                    iconWidth: 29
-                    iconHeight: 29
+                    iconPath: assetsLocation.iconsPath + "coloreddrawer.svg"
+                    overlayVisible: false
+                    iconWidth: 40
+                    iconHeight: 40
                     onButtonPressed: {
                         drawer.open();
                     }

@@ -43,15 +43,14 @@ private:
 
     enum ItemRoles {
         CountReleasesRole = Qt::UserRole + 1,
-        FirstNameRole,
-        SecondNameRole,
-        ThirdNameRole,
+        FirstThreeNamesRole,
         ReleaseIds,
         Posters,
         FirstPosterRole,
         SecondPosterRole,
         ThirdPosterRole,
-        OtherReleasesRole
+        OtherReleasesRole,
+        GenresRole,
     };
 
 public:
@@ -80,7 +79,7 @@ private:
     QString getReleasesCachePath() const noexcept;
     void loadSeries();
     void createCacheFileIfNotExists() const noexcept;
-    void processReleasesFromDescription(const QString& description, const QMap<QString, FullReleaseModel*>& releases, int currentRelease, const QString currentReleaseTitle, const QString& poster) noexcept;
+    void processReleasesFromDescription(const QString& description, const QMap<QString, FullReleaseModel*>& releases, int currentRelease, const QString currentReleaseTitle, const QString& poster, const QString& genres) noexcept;
     void saveSeries();
 
 private slots:
