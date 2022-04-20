@@ -39,8 +39,8 @@ Page {
                         iconColor: "white"
                         overlayVisible: false
                         iconPath: assetsLocation.iconsPath + "coloreddrawer.svg"
-                        iconWidth: 40
-                        iconHeight: 40
+                        iconWidth: 28
+                        iconHeight: 28
                         onButtonPressed: {
                             drawer.open();
                         }

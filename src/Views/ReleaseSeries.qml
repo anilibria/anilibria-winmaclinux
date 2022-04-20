@@ -55,8 +55,8 @@ Page {
                     iconPath: assetsLocation.iconsPath + "coloreddrawer.svg"
                     overlayVisible: false
                     tooltipMessage: "Открыть меню приложения"
-                    iconWidth: 40
-                    iconHeight: 40
+                    iconWidth: 28
+                    iconHeight: 28
                     onButtonPressed: {
                         drawer.open();
                     }

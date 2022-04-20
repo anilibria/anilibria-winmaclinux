@@ -133,8 +133,8 @@ Page {
 
                 LeftPanelIconButton {
                     iconPath: "../Assets/Icons/coloreddrawer.svg"
-                    iconWidth: 40
-                    iconHeight: 40
+                    iconWidth: 28
+                    iconHeight: 28
                     overlayVisible: false
                     tooltipMessage: "Открыть меню приложения"
                     onButtonPressed: {
@@ -190,7 +190,8 @@ Page {
                     }
                 }
                 LeftPanelIconButton {
-                    iconPath: "../Assets/Icons/seenmarkpanel.svg"
+                    iconPath: "../Assets/Icons/coloredeye.svg"
+                    overlayVisible: false
                     iconWidth: 29
                     iconHeight: 29
                     tooltipMessage: "Отметить релизы как просмотренные или не просмотренные"
@@ -382,6 +383,7 @@ Page {
                 }
                 LeftPanelIconButton {
                     iconPath: "../Assets/Icons/search.svg"
+                    overlayVisible: false
                     iconWidth: 29
                     iconHeight: 29
                     showCrossIcon: page.showButtonVisibleChanger && page.hideFilterButton
@@ -1024,6 +1026,7 @@ Page {
 
                 LeftPanelIconButton {
                     iconPath: "../Assets/Icons/information.svg"
+                    overlayVisible: false
                     iconWidth: 29
                     iconHeight: 29
                     showCrossIcon: page.showButtonVisibleChanger && page.hideInfoButton
@@ -1071,6 +1074,7 @@ Page {
                 }
                 LeftPanelIconButton {
                     iconPath: "../Assets/Icons/hidebuttonmenu.svg"
+                    overlayVisible: false
                     iconWidth: 29
                     iconHeight: 29
                     backgroundColor: page.showButtonVisibleChanger ? "#8868b0ab" : "transparent"
@@ -1189,20 +1193,23 @@ Page {
                         }
                         FilterPanelIconButton {
                             iconPath: assetsLocation.iconsPath + "allreleases.svg"
+                            overlayVisible: false
                             tooltipMessage: "Все релизы"
                             onButtonPressed: {
                                 changeSection(0);
                             }
                         }
                         FilterPanelIconButton {
-                            iconPath: assetsLocation.iconsPath + "favorite.svg"
+                            iconPath: assetsLocation.iconsPath + "ratingcolor.svg"
+                            overlayVisible: false
                             tooltipMessage: "Избранное"
                             onButtonPressed: {
                                 changeSection(1);
                             }
                         }
                         FilterPanelIconButton {
-                            iconPath: assetsLocation.iconsPath + "notification.svg"
+                            iconPath: assetsLocation.iconsPath + "coloredbell.svg"
+                            overlayVisible: false
                             tooltipMessage: "Показать меню с фильтрами по уведомлениям"
                             onButtonPressed: {
                                 notificationsMenuSections.open();
@@ -1240,7 +1247,8 @@ Page {
                             }
                         }
                         FilterPanelIconButton {
-                            iconPath: assetsLocation.iconsPath + "calendar.svg"
+                            iconPath: assetsLocation.iconsPath + "calendarcolor.svg"
+                            overlayVisible: false
                             iconWidth: 26
                             iconHeight: 26
                             tooltipMessage: "Расписание релизов"
@@ -1250,6 +1258,7 @@ Page {
                         }
                         FilterPanelIconButton {
                             iconPath: assetsLocation.iconsPath + "history.svg"
+                            overlayVisible: false
                             tooltipMessage: "Показать меню с фильтрами по истории и истории просмотра"
                             onButtonPressed: {
                                 historyMenuSections.open();
@@ -1276,7 +1285,8 @@ Page {
                         }
                         FilterPanelIconButton {
                             id: seenMenuButton
-                            iconPath: assetsLocation.iconsPath + "seenmarkpanel.svg"
+                            iconPath: assetsLocation.iconsPath + "coloredeye.svg"
+                            overlayVisible: false
                             tooltipMessage: "Показать меню с фильтрами по состоянию просмотра"
                             onButtonPressed: {
                                 seenMenuSections.open();
@@ -1327,6 +1337,9 @@ Page {
                         }
                         FilterPanelIconButton {
                             iconPath: assetsLocation.iconsPath + "alphabet.svg"
+                            iconWidth: 24
+                            iconHeight: 24
+                            overlayVisible: false
                             tooltipMessage: "Показать фильтр для выбора букв алфавита для поиска по первой букве релиза"
                             onButtonPressed: {
                                 page.showAlpabeticalCharaters = true;
@@ -1334,8 +1347,9 @@ Page {
                         }
                         FilterPanelIconButton {
                             iconPath: assetsLocation.iconsPath + "listcustom.svg"
-                            iconWidth: 20
-                            iconHeight: 20
+                            overlayVisible: false
+                            iconWidth: 24
+                            iconHeight: 24
                             tooltipMessage: "Показать тематические фильтры"
                             onButtonPressed: {
                                 customListMenuSections.open();
@@ -1822,8 +1836,8 @@ Page {
                         IconButton {
                             height: 40
                             width: 40
-                            iconColor: ApplicationTheme.filterIconButtonColor
                             hoverColor: ApplicationTheme.filterIconButtonHoverColor
+                            overlayVisible: false
                             iconPath: "../Assets/Icons/copy.svg"
                             iconWidth: 26
                             iconHeight: 26
@@ -1880,7 +1894,7 @@ Page {
                         IconButton {
                             height: 40
                             width: 40
-                            iconColor: ApplicationTheme.filterIconButtonColor
+                            overlayVisible: false
                             hoverColor: ApplicationTheme.filterIconButtonHoverColor
                             iconPath: "../Assets/Icons/vk.svg"
                             iconWidth: 26
@@ -1925,7 +1939,8 @@ Page {
                             width: 40
                             iconColor: ApplicationTheme.filterIconButtonColor
                             hoverColor: ApplicationTheme.filterIconButtonHoverColor
-                            iconPath: "../Assets/Icons/seenmarkpanel.svg"
+                            iconPath: assetsLocation.iconsPath + "coloredeye.svg"
+                            overlayVisible: false
                             iconWidth: 26
                             iconHeight: 26
                             onButtonPressed: {
@@ -1979,9 +1994,9 @@ Page {
                         IconButton {
                             height: 40
                             width: 40
-                            iconColor: releasesViewModel.openedReleaseInFavorites ? ApplicationTheme.selectedFavorite : ApplicationTheme.filterIconButtonColor
+                            overlayVisible: false
                             hoverColor: ApplicationTheme.filterIconButtonHoverColor
-                            iconPath: "../Assets/Icons/favorite.svg"
+                            iconPath: assetsLocation.iconsPath + "ratingcolor.svg"
                             iconWidth: 26
                             iconHeight: 26
                             onButtonPressed: {
@@ -2017,9 +2032,9 @@ Page {
                         IconButton {
                             height: 40
                             width: 40
-                            iconColor: ApplicationTheme.filterIconButtonColor
+                            overlayVisible: false
                             hoverColor: ApplicationTheme.filterIconButtonHoverColor
-                            iconPath: "../Assets/Icons/external.svg"
+                            iconPath: assetsLocation.iconsPath + "external.svg"
                             iconWidth: 26
                             iconHeight: 26
                             onButtonPressed: {
@@ -2086,7 +2101,7 @@ Page {
                         IconButton {
                             height: 40
                             width: 40
-                            iconColor: ApplicationTheme.filterIconButtonColor
+                            overlayVisible: false
                             hoverColor: ApplicationTheme.filterIconButtonHoverColor
                             iconPath: "../Assets/Icons/online.svg"
                             iconWidth: 26

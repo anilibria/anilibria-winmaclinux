@@ -150,5 +150,6 @@
         <file>Assets/Icons/coloredbell.svg</file>
         <file>Assets/Icons/coloreddrawer.svg</file>
         <file>Assets/Backgrounds/authbackground.jpg</file>
+        <file>Assets/Icons/coloredeye.svg</file>
     </qresource>
 </RCC>

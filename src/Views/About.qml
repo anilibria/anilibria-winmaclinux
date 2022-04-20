@@ -54,10 +54,10 @@ Page {
                     IconButton {
                         height: 45
                         width: 40
-                        iconColor: "white"
-                        iconPath: assetsLocation.iconsPath + "menu.svg"
-                        iconWidth: 29
-                        iconHeight: 29
+                        overlayVisible: false
+                        iconPath: assetsLocation.iconsPath + "coloreddrawer.svg"
+                        iconWidth: 28
+                        iconHeight: 28
                         onButtonPressed: {
                             drawer.open();
                         }

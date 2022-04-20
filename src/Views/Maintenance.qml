@@ -61,9 +61,10 @@ Page {
                 Layout.fillHeight: true
                 Column {
                     LeftPanelIconButton {
-                        iconPath: "../Assets/Icons/menu.svg"
-                        iconWidth: 29
-                        iconHeight: 29
+                        overlayVisible: false
+                        iconWidth: 28
+                        iconHeight: 28
+                        iconPath: assetsLocation.iconsPath + "coloreddrawer.svg"
                         onButtonPressed: {
                             drawer.open();
                         }
