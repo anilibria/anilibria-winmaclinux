@@ -27,7 +27,7 @@ extern QString AnilibriaApiPath;
 
 extern bool IsPortable;
 
-const QString ApplicationVersion = "1.1.6";
+const QString ApplicationVersion = "1.1.7";
 
 const int HistoryReleaseCardMode = 0;
 
