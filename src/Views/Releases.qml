@@ -303,6 +303,16 @@ Page {
                                 cinemahallMenuPanel.close();
                             }
                         }
+                        CommonMenuItem {
+                            text: "Смотреть кинозал по избранному"
+                            enabled: releasesViewModel.countFavorites
+                            onPressed: {
+                                onlinePlayerViewModel.quickSetupForFavoritesCinemahall();
+                                mainViewModel.selectPage("videoplayer");
+
+                                cinemahallMenuPanel.close();
+                            }
+                        }
                     }
 
                     Popup {

@@ -236,6 +236,7 @@ public:
     Q_INVOKABLE void setVideoSeens(int id, int videoId, double videoPosition);
     Q_INVOKABLE void quickSetupForSingleRelease(int releaseId);
     Q_INVOKABLE void quickSetupForMultipleRelease(QList<int> releaseIds);
+    Q_INVOKABLE void quickSetupForFavoritesCinemahall();
     Q_INVOKABLE void setupForSingleRelease();
     Q_INVOKABLE void setupForMultipleRelease();
     Q_INVOKABLE void setupForCinemahall();

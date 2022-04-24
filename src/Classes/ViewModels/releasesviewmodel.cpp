@@ -494,6 +494,23 @@ void ReleasesViewModel::fillAbandonedSeens(QList<FullReleaseModel *> *list) cons
     }
 }
 
+void ReleasesViewModel::getFavoritesReleases(QList<FullReleaseModel *> *list) const noexcept
+{
+    QSet<int> favorites;
+    foreach (auto favorite, *m_userFavorites) {
+        favorites.insert(favorite);
+    }
+
+    foreach (auto release, *m_releases) {
+        if (!favorites.contains(release->id())) continue;
+
+        auto seenVideos = m_items->getReleaseSeenMarkCount(release->id());
+        if (release->countOnlineVideos() > seenVideos) {
+            list->append(release);
+        }
+    }
+}
+
 void ReleasesViewModel::copyToClipboard(const QString &text) const noexcept
 {
     if (text.isEmpty()) return;

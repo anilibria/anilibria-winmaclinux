@@ -628,6 +628,44 @@ void OnlinePlayerViewModel::quickSetupForMultipleRelease(const QList<int> releas
     emit saveToWatchHistory(video->releaseId());
 }
 
+void OnlinePlayerViewModel::quickSetupForFavoritesCinemahall()
+{
+    setSeenMarkedAtEnd(false);
+    setShowNextPosterRelease(false);
+    setIsCinemahall(true);
+    setIsMultipleRelease(false);
+
+    QList<FullReleaseModel*> fullReleases;
+    m_releasesViewModel->getFavoritesReleases(&fullReleases);
+
+    m_videos->setVideosFromCinemahall(std::move(fullReleases));
+
+    emit refreshSeenMarks();
+    auto seenMarks = m_releasesViewModel->getSeenMarks();
+    auto video = m_videos->getFirstReleaseWithPredicate(
+        [seenMarks](OnlineVideoModel* video) {
+            if (video->isGroup()) return false;
+
+            return !seenMarks->contains(QString::number(video->releaseId()) + "." + QString::number(video->order()));
+        }
+    );
+
+    if (video == nullptr) {
+        setVideoSource("");
+        return;
+    }
+
+    setSelectedRelease(video->releaseId());
+    setReleasePoster(video->releasePoster());
+    setSelectedVideo(video->order());
+    setIsFullHdAllowed(!video->fullhd().isEmpty());
+    setVideoSource(getVideoFromQuality(video));
+    m_videos->selectVideo(m_selectedRelease, m_selectedVideo);
+    emit playInPlayer();
+    emit needScrollSeriaPosition();
+    emit saveToWatchHistory(video->releaseId());
+}
+
 void OnlinePlayerViewModel::setupForSingleRelease()
 {
     setShowNextPosterRelease(false);
