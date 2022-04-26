@@ -22,7 +22,7 @@
 #include "analyticsservice.h"
 #include "../../globalconstants.h"
 
-const QString AnalyticsService::googleAnalyticsAddress = "https://www.google-analytics.com/g/collect?v=2&tid=G-DRSN62ELJ5&gtm=2oe460&_p=538594933&_z=ccd.IAB&cid=5573181.376415052&sct=1&seg=1";
+const QString AnalyticsService::googleAnalyticsAddress = "https://www.google-analytics.com/g/collect?v=2&tid=G-DRSN62ELJ5&sct=1&seg=1";
 
 AnalyticsService::AnalyticsService(QObject *parent) : QObject(parent)
 {
@@ -64,6 +64,25 @@ void AnalyticsService::sendPostEvent(QString category, QString message, QString 
 
     auto networkManager = new QNetworkAccessManager(this);
 
+    auto uniqueName = QSysInfo::machineUniqueId();
+    QString cid;
+    foreach (auto character, uniqueName) {
+        cid.append(QString::number(static_cast<int>(character)));
+    }
+
+    QString clientId;
+
+    if (cid.length() < 15) {
+        clientId = cid + "." + cid;
+    } else {
+        auto leftPart = cid.mid(0, 15);
+        auto rightLength = cid.length() >= 30 ? 15 : cid.length() - 15;
+        auto rightPart = cid.mid(15, rightLength);
+        clientId = leftPart + "." + rightPart;
+    }
+
+    auto uniqueClientId = "&cid=" + clientId;
+
     auto language = "&ul=" + QLocale::system().name().toLower();
 
     QScreen *screen = QGuiApplication::primaryScreen();
@@ -84,7 +103,7 @@ void AnalyticsService::sendPostEvent(QString category, QString message, QString 
 
     auto sessionStart = "&sid=" + QString::number(m_startTime.toTime_t());
 
-    auto url = QUrl(AnalyticsService::googleAnalyticsAddress + language + screenResolution + eventName + pageName+ sessionCounter + documentTitle + sessionStart);
+    auto url = QUrl(AnalyticsService::googleAnalyticsAddress + language + screenResolution + eventName + pageName+ sessionCounter + documentTitle + sessionStart + uniqueClientId);
 
     QNetworkRequest request(url);
     request.setRawHeader("User-Agent", userAgent.toUtf8());
