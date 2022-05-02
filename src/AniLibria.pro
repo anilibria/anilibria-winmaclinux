@@ -68,6 +68,7 @@ SOURCES += \
     Classes/ListModels/commoncomboboxlistmodel.cpp \
     Classes/ListModels/commonmenulistmodel.cpp \
     Classes/ListModels/mainmenulistmodel.cpp \
+    Classes/ListModels/myanilibrialistmodel.cpp \
     Classes/ListModels/onlineplayervideolist.cpp \
     Classes/ListModels/popupnotificationvideolist.cpp \
     Classes/ListModels/releasesimplelistmodel.cpp \
@@ -147,6 +148,7 @@ HEADERS += \
     Classes/ListModels/commoncomboboxlistmodel.h \
     Classes/ListModels/commonmenulistmodel.h \
     Classes/ListModels/mainmenulistmodel.h \
+    Classes/ListModels/myanilibrialistmodel.h \
     Classes/ListModels/onlineplayervideolist.h \
     Classes/ListModels/popupnotificationvideolist.h \
     Classes/ListModels/releasesimplelistmodel.h \

@@ -77,6 +77,7 @@ Page {
 
                 RoundedActionButton {
                     anchors.right: deleteSelectedButton.left
+                    anchors.verticalCenter: parent.verticalCenter
                     width: 210
                     buttonEnabled: releasesViewModel.cinemahall.hasItems
                     textSize: 10
@@ -90,6 +91,7 @@ Page {
                 RoundedActionButton {
                     id: deleteSelectedButton
                     anchors.right: deleteAllReleasesButton.left
+                    anchors.verticalCenter: parent.verticalCenter
                     width: 210
                     buttonEnabled: releasesViewModel.cinemahall.hasSelectedItems
                     textSize: 10
@@ -102,6 +104,7 @@ Page {
 
                 RoundedActionButton {
                     id: deleteAllReleasesButton
+                    anchors.verticalCenter: parent.verticalCenter
                     anchors.right: parent.right
                     width: 210
                     buttonEnabled: releasesViewModel.cinemahall.hasItems

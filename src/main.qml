@@ -1311,6 +1311,7 @@ ApplicationWindow {
     MyAnilibriaViewModel {
         id: myAnilibriaViewModel
         releasesViewModel: releasesViewModel
+        myList.userConfiguration: userConfigurationViewModel
     }
 
     Item {

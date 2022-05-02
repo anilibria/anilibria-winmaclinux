@@ -33,4 +33,18 @@ const int HistoryReleaseCardMode = 0;
 
 const int HistoryWatchReleaseCardMode = 1;
 
+extern QString StatisticsSectionId;
+
+extern QString NewInFavoritesSectionId;
+
+extern QString NewFromStartSectionId;
+
+extern QString LastTwoDaysSectionId;
+
+extern QString AbandonedSeensSectionId;
+
+extern QString StatisticsSectionComponent;
+
+extern QString SimpleListSectionComponent;
+
 #endif // GLOBALCONSTANTS_H

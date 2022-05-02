@@ -15,6 +15,7 @@ class ReleaseSimpleListModel : public QAbstractListModel
     Q_PROPERTY(QString filterNewInFavorites READ filterNewInFavorites NOTIFY filterNewInFavoritesChanged)
     Q_PROPERTY(QString filterNewFromStart READ filterNewFromStart NOTIFY filterNewFromStartChanged)
     Q_PROPERTY(bool hasItems READ hasItems NOTIFY hasItemsChanged)
+    Q_PROPERTY(int countItems READ countItems NOTIFY countItemsChanged)
 
 private:
     QScopedPointer<QList<FullReleaseModel*>> m_releases { new QList<FullReleaseModel*>() };
@@ -49,6 +50,8 @@ public:
 
     bool hasItems() const noexcept { return !m_releases->isEmpty(); }
 
+    int countItems() const noexcept { return m_releases->count(); }
+
 private:
     void refresh();
 
@@ -59,6 +62,7 @@ signals:
     void hasItemsChanged();
     void previousApplicationStartChanged();
     void filterNewFromStartChanged();
+    void countItemsChanged();
 
 };
 

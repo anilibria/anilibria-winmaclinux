@@ -151,5 +151,7 @@
         <file>Assets/Icons/coloreddrawer.svg</file>
         <file>Assets/Backgrounds/authbackground.jpg</file>
         <file>Assets/Icons/coloredeye.svg</file>
+        <file>Views/MyAnilibria/StatisticsSection.qml</file>
+        <file>Views/MyAnilibria/SimpleListSection.qml</file>
     </qresource>
 </RCC>

@@ -1,0 +1,30 @@
+import QtQuick 2.12
+import "../../Controls"
+
+Item {
+    width: scrollview.width
+    height: simpleList.hasItems ? (needHideSection ? 38 : 368) : 0
+
+    ExpandableHeader {
+        id: expandableHeader
+        anchors.top: parent.top
+        anchors.topMargin: 8
+        width: parent.width
+        height: simpleList.hasItems ? 30 : 0
+        visible: simpleList.hasItems
+        headerTitle: title + " (" + simpleList.countItems + ")"
+        headerHided: needHideSection
+        onHeaderPressed: {
+            myAnilibriaViewModel.myList.toggleSectionHideMark(sectionId)
+        }
+    }
+
+    ReleasesList {
+        id: simpleList
+        width: parent.width
+        visible: simpleList.hasItems || !needHideSection
+        height: !simpleList.hasItems || needHideSection ? 0 : 330
+        anchors.top: expandableHeader.bottom
+        filterMode: sectionId
+    }
+}

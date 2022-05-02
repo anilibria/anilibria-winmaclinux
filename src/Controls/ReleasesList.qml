@@ -9,6 +9,7 @@ Item {
 
     property alias filterMode: viewModel.filterMode
     property alias hasItems: viewModel.hasItems
+    property alias countItems: viewModel.countItems
 
     ReleaseSimpleListModel {
         id: viewModel

@@ -21,3 +21,13 @@
 QString AnilibriaImagesPath = "https://static.wwnd.space";
 QString AnilibriaApiPath = "https://wwnd.space/";
 bool IsPortable = false;
+
+QString StatisticsSectionId = "statistics";
+QString NewInFavoritesSectionId = "newinfavorites";
+QString NewFromStartSectionId = "newfromstart";
+QString LastTwoDaysSectionId = "lasttwodays";
+QString AbandonedSeensSectionId = "abondonedseens";
+
+QString StatisticsSectionComponent = "StatisticsSection";
+QString SimpleListSectionComponent = "SimpleListSection";
+
