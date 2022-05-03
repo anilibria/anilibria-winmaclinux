@@ -67,7 +67,7 @@ Item {
 
                 Rectangle {
                     id: blockedContainer
-                    visible: posterImage.buttonHovered || posterImage.posterHovered
+                    visible: posterImage.posterHovered
                     anchors.fill: parent
                     color: "black"
                     opacity: 0.4
@@ -86,7 +86,7 @@ Item {
                 }
 
                 RoundedActionButton {
-                    visible: posterImage.buttonHovered || posterImage.posterHovered
+                    visible: posterImage.posterHovered
                     width: 150
                     anchors.centerIn: parent
                     text: "Смотреть"
@@ -95,7 +95,7 @@ Item {
                         onlinePlayerViewModel.quickSetupForSingleRelease(id);
                     }
                     onButtonHoveredChanged: {
-                        posterImage.buttonHovered = buttonHovered;
+                        posterImage.posterHovered = buttonHovered;
                     }
                 }
             }

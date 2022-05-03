@@ -22,6 +22,7 @@
 #include <QObject>
 #include "./releasesviewmodel.h"
 #include "../ListModels/myanilibrialistmodel.h"
+#include "../ListModels/allmyanilibrialistmodel.h"
 
 class MyAnilibriaViewModel : public QObject
 {
@@ -33,9 +34,13 @@ class MyAnilibriaViewModel : public QObject
 
 private:
     QString m_cacheFileName { "myanilibrialist.cache" };
+    QSharedPointer<QSet<QString>> m_fullSections { new QSet<QString>() };
+    QSharedPointer<QMap<QString, QString>> m_sectionTitles { new QMap<QString, QString>() };
     QString m_pathToCacheFile { "" };
     ReleasesViewModel* m_releasesViewModel { nullptr };
     QScopedPointer<MyAnilibriaListModel> m_myList { new MyAnilibriaListModel() };
+    QScopedPointer<AllMyAnilibriaListModel> m_allList { new AllMyAnilibriaListModel() };
+    QSharedPointer<QSet<QString>> m_selectedSections { new QSet<QString>() };
 
 public:
     explicit MyAnilibriaViewModel(QObject *parent = nullptr);
@@ -47,6 +52,8 @@ public:
 
     QString genres() const noexcept;
     QString voices() const noexcept;
+
+    Q_INVOKABLE void selectSection(const QString& section) noexcept;
 
 private:
     void readFromCache() noexcept;

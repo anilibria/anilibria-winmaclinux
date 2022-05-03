@@ -26,10 +26,24 @@
 MyAnilibriaViewModel::MyAnilibriaViewModel(QObject *parent)
     : QObject{parent}
 {
+    m_fullSections->insert(StatisticsSectionId);
+    m_fullSections->insert(NewInFavoritesSectionId);
+    m_fullSections->insert(NewFromStartSectionId);
+    m_fullSections->insert(LastTwoDaysSectionId);
+    m_fullSections->insert(AbandonedSeensSectionId);
+
+    m_sectionTitles->insert(StatisticsSectionId, "Статистика");
+    m_sectionTitles->insert(NewInFavoritesSectionId, "Обновления по избранному");
+    m_sectionTitles->insert(NewFromStartSectionId, "Обновления с последнего посещения");
+    m_sectionTitles->insert(LastTwoDaysSectionId, "Последние обновления");
+    m_sectionTitles->insert(AbandonedSeensSectionId, "Брошенный просмотр");
+
+    m_myList->setup(m_fullSections, m_sectionTitles);
+    m_allList->setup(m_fullSections, m_sectionTitles, m_selectedSections);
+
     m_pathToCacheFile = getCachePath(m_cacheFileName);
     createIfNotExistsFile(m_pathToCacheFile, "[]");
-
-    connect(m_myList.get(), &MyAnilibriaListModel::needSaveSections, this, &MyAnilibriaViewModel::saveSections);
+    readFromCache();
 }
 
 void MyAnilibriaViewModel::setReleasesViewModel(const ReleasesViewModel *viewModel) noexcept
@@ -55,6 +69,15 @@ QString MyAnilibriaViewModel::voices() const noexcept
     return voices.join(", ");
 }
 
+void MyAnilibriaViewModel::selectSection(const QString &section) noexcept
+{
+    if (m_selectedSections->contains(section)) return;
+
+    m_selectedSections->insert(section);
+
+    m_allList->refreshData();
+}
+
 void MyAnilibriaViewModel::readFromCache() noexcept
 {
     QFile cacheFile(m_pathToCacheFile);
@@ -69,11 +92,11 @@ void MyAnilibriaViewModel::readFromCache() noexcept
 
     if (sectionArray.isEmpty()) return;
 
-    QSet<QString> m_sections;
+    m_selectedSections->clear();
     foreach (auto item, sectionArray) {
-        m_sections.insert(item.toString());
+        m_selectedSections->insert(item.toString());
     }
-    m_myList->fillSections(m_sections);
+    m_myList->fillSections(*m_selectedSections.get());
 }
 
 void MyAnilibriaViewModel::saveSections()

@@ -64,6 +64,7 @@ DEFINES += USE_VERSION_CHECK
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    Classes/ListModels/allmyanilibrialistmodel.cpp \
     Classes/ListModels/cinemahalllistmodel.cpp \
     Classes/ListModels/commoncomboboxlistmodel.cpp \
     Classes/ListModels/commonmenulistmodel.cpp \
@@ -144,6 +145,7 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 }
 
 HEADERS += \
+    Classes/ListModels/allmyanilibrialistmodel.h \
     Classes/ListModels/cinemahalllistmodel.h \
     Classes/ListModels/commoncomboboxlistmodel.h \
     Classes/ListModels/commonmenulistmodel.h \

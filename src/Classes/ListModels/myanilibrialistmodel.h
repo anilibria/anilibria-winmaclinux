@@ -24,6 +24,7 @@
 #include <QMap>
 #include <QList>
 #include <QSet>
+#include <QSharedPointer>
 #include "../ViewModels/userconfigurationviewmodel.h"
 
 class MyAnilibriaListModel : public QAbstractListModel
@@ -33,8 +34,8 @@ class MyAnilibriaListModel : public QAbstractListModel
     Q_PROPERTY(UserConfigurationViewModel* userConfiguration READ userConfiguration WRITE setUserConfiguration NOTIFY userConfigurationChanged)
 private:
     QList<QString> m_sections { QList<QString>() };
-    QSet<QString> m_fullSections { QSet<QString>() };
-    QMap<QString, QString> m_sectionTitles { QMap<QString, QString>() };
+    QSharedPointer<QSet<QString>> m_fullSections { nullptr };
+    QSharedPointer<QMap<QString, QString>> m_sectionTitles { nullptr };
     UserConfigurationViewModel* m_userConfiguration { nullptr };
     enum MyAnilibriaSectionRole {
         SectionIdRole = Qt::UserRole + 1,
@@ -45,6 +46,8 @@ private:
 
 public:
     explicit MyAnilibriaListModel(QObject *parent = nullptr);
+
+    void setup(QSharedPointer<QSet<QString>> fullSections, QSharedPointer<QMap<QString, QString>> sectionTitles);
 
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
 
@@ -68,7 +71,6 @@ private:
 
 signals:
     void userConfigurationChanged();
-    void needSaveSections();
 
 };
 

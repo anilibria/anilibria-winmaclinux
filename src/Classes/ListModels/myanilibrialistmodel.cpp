@@ -22,23 +22,17 @@
 MyAnilibriaListModel::MyAnilibriaListModel(QObject *parent)
     : QAbstractListModel{parent}
 {
-    m_fullSections.insert(StatisticsSectionId);
-    m_fullSections.insert(NewInFavoritesSectionId);
-    m_fullSections.insert(NewFromStartSectionId);
-    m_fullSections.insert(LastTwoDaysSectionId);
-    m_fullSections.insert(AbandonedSeensSectionId);
-
     m_sections.append(StatisticsSectionId);
     m_sections.append(NewInFavoritesSectionId);
     m_sections.append(NewFromStartSectionId);
     m_sections.append(LastTwoDaysSectionId);
     m_sections.append(AbandonedSeensSectionId);
+}
 
-    m_sectionTitles.insert(StatisticsSectionId, "Статистика");
-    m_sectionTitles.insert(NewInFavoritesSectionId, "Обновления по избранному");
-    m_sectionTitles.insert(NewFromStartSectionId, "Обновления с последнего посещения");
-    m_sectionTitles.insert(LastTwoDaysSectionId, "Последние обновления");
-    m_sectionTitles.insert(AbandonedSeensSectionId, "Брошенный просмотр");
+void MyAnilibriaListModel::setup(QSharedPointer<QSet<QString>> fullSections, QSharedPointer<QMap<QString, QString>> sectionTitles)
+{
+    m_fullSections = fullSections;
+    m_sectionTitles = sectionTitles;
 }
 
 int MyAnilibriaListModel::rowCount(const QModelIndex &parent) const
@@ -52,7 +46,7 @@ QVariant MyAnilibriaListModel::data(const QModelIndex &index, int role) const
     if (!index.isValid()) return QVariant();
 
     auto section = m_sections.at(index.row());
-    auto title = m_sectionTitles.value(section);
+    auto title = m_sectionTitles->value(section);
 
     switch (role) {
         case SectionIdRole: {
@@ -111,7 +105,7 @@ void MyAnilibriaListModel::fillSections(const QSet<QString> &sections) noexcept
     m_sections.clear();
 
     foreach (auto section, sections) {
-        if (!m_fullSections.contains(section)) continue;
+        if (!m_fullSections->contains(section)) continue;
 
         m_sections.append(section);
     }
