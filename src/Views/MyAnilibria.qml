@@ -36,7 +36,6 @@ Page {
                     IconButton {
                         height: 45
                         width: 40
-                        iconColor: "white"
                         overlayVisible: false
                         iconPath: assetsLocation.iconsPath + "coloreddrawer.svg"
                         iconWidth: 28
@@ -60,9 +59,8 @@ Page {
                     color: ApplicationTheme.pageUpperPanel
 
                     RoundedActionButton {
-                        id: closedAllButton
                         anchors.verticalCenter: parent.verticalCenter
-                        anchors.right: parent.right
+                        anchors.left: openAllButton.right
                         width: 160
                         textSize: 10
                         text: "Закрыть все"
@@ -72,13 +70,58 @@ Page {
                     }
 
                     RoundedActionButton {
+                        id: openAllButton
                         anchors.verticalCenter: parent.verticalCenter
-                        anchors.right: closedAllButton.left
+                        anchors.left: parent.left
                         width: 160
                         textSize: 10
                         text: "Открыть все"
                         onClicked: {
                             myAnilibriaViewModel.myList.setNotVisibleAllMarks(false);
+                        }
+                    }
+
+                    IconButton {
+                        id: sectionVisibilities
+                        anchors.right: parent.right
+                        height: 45
+                        width: 40
+                        overlayVisible: false
+                        iconPath: assetsLocation.iconsPath + "videos.svg"
+                        iconWidth: 28
+                        iconHeight: 28
+                        tooltipMessage: "Изменить видимость секций станицы"
+                        onButtonPressed: {
+                            sectionVisibilitiesPopup.open();
+                        }
+
+                        Popup {
+                            id: sectionVisibilitiesPopup
+                            x: -420
+                            width: 400
+                            height: 200
+                            modal: true
+                            focus: true
+                            closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
+
+                            ListView {
+                                id: allSectionList
+                                anchors.fill: parent
+                                clip: true
+                                model: myAnilibriaViewModel.allSections
+                                delegate: Item {
+                                    width: allSectionList.width
+                                    height: 40
+
+                                    CheckBox {
+                                        checked: sectionSelected
+                                        text: sectionTitle
+                                    }
+                                }
+                                ScrollBar.vertical: ScrollBar {
+                                    active: true
+                                }
+                            }
                         }
                     }
                 }
@@ -93,6 +136,9 @@ Page {
                         Loader {
                             source: "./MyAnilibria/" + componentId + ".qml"
                         }
+                    }
+                    ScrollBar.vertical: ScrollBar {
+                        active: true
                     }
                 }
             }

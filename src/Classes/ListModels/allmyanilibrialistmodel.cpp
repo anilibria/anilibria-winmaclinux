@@ -35,7 +35,7 @@ int AllMyAnilibriaListModel::rowCount(const QModelIndex &parent) const
 {
     if (parent.isValid()) return 0;
 
-    return m_selectedSections->size();
+    return m_fullSections->size();
 }
 
 QVariant AllMyAnilibriaListModel::data(const QModelIndex &index, int role) const
@@ -70,11 +70,11 @@ QHash<int, QByteArray> AllMyAnilibriaListModel::roleNames() const
         },
         {
             SectionTitleRole,
-            "title"
+            "sectionTitle"
         },
         {
             SectionSelectedRole,
-            "selected"
+            "sectionSelected"
         }
     };
 

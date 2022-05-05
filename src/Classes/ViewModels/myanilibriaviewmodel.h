@@ -29,6 +29,7 @@ class MyAnilibriaViewModel : public QObject
     Q_OBJECT
     Q_PROPERTY(ReleasesViewModel* releasesViewModel READ releasesViewModel WRITE setReleasesViewModel NOTIFY releasesViewModelChanged)
     Q_PROPERTY(MyAnilibriaListModel* myList READ myList NOTIFY myListChanged)
+    Q_PROPERTY(AllMyAnilibriaListModel* allSections READ allSections NOTIFY allSectionsChanged)
     Q_PROPERTY(QString genres READ genres NOTIFY genresChanged)
     Q_PROPERTY(QString voices READ voices NOTIFY voicesChanged)
 
@@ -50,6 +51,8 @@ public:
 
     MyAnilibriaListModel* myList() const noexcept { return m_myList.get(); }
 
+    AllMyAnilibriaListModel* allSections() const noexcept { return m_allList.get(); }
+
     QString genres() const noexcept;
     QString voices() const noexcept;
 
@@ -66,6 +69,7 @@ signals:
     void genresChanged();
     void voicesChanged();
     void myListChanged();
+    void allSectionsChanged();
 
 };
 

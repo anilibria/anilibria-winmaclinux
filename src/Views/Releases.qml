@@ -290,6 +290,7 @@ Page {
                                 releasesViewModel.addToCinemahallSelectedReleases();
                                 releasesViewModel.clearSelectedReleases();
                                 cinemahallMenuPanel.close();
+                                analyticsService.sendView("addtocinemahall", "open", "%2Frelease");
                             }
                         }
                         CommonMenuItem {
@@ -301,6 +302,7 @@ Page {
                                     notHaveCinemahallReleasesMessagePopup.open();
                                 }
                                 cinemahallMenuPanel.close();
+                                analyticsService.sendView("cinemahallwatch", "open", "%2Frelease");
                             }
                         }
                         CommonMenuItem {
@@ -311,6 +313,7 @@ Page {
                                 mainViewModel.selectPage("videoplayer");
 
                                 cinemahallMenuPanel.close();
+                                analyticsService.sendView("cinemahallfav", "open", "%2Frelease");
                             }
                         }
                     }
