@@ -78,6 +78,20 @@ void MyAnilibriaViewModel::selectSection(const QString &section) noexcept
     m_allList->refreshData();
 }
 
+void MyAnilibriaViewModel::deselectSection(const QString &section) noexcept
+{
+    if (!m_selectedSections->contains(section)) return;
+
+    m_selectedSections->remove(section);
+
+    m_allList->refreshData();
+}
+
+void MyAnilibriaViewModel::saveSectionsToFile()
+{
+    saveSections();
+}
+
 void MyAnilibriaViewModel::readFromCache() noexcept
 {
     QFile cacheFile(m_pathToCacheFile);
@@ -90,7 +104,13 @@ void MyAnilibriaViewModel::readFromCache() noexcept
     auto jsonDocument = QJsonDocument::fromJson(data);
     auto sectionArray = jsonDocument.array();
 
-    if (sectionArray.isEmpty()) return;
+    if (sectionArray.isEmpty()) {
+        // if array is empty mark all sections as selected
+        foreach (auto section, *m_fullSections) {
+            m_selectedSections->insert(section);
+        }
+        return;
+    }
 
     m_selectedSections->clear();
     foreach (auto item, sectionArray) {
@@ -101,9 +121,8 @@ void MyAnilibriaViewModel::readFromCache() noexcept
 
 void MyAnilibriaViewModel::saveSections()
 {
-    auto sections = m_myList->getSections();
     QJsonArray array;
-    foreach (auto section, sections) {
+    foreach (auto section, *m_selectedSections) {
         array.append(section);
     }
 

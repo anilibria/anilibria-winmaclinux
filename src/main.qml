@@ -1312,6 +1312,9 @@ ApplicationWindow {
         id: myAnilibriaViewModel
         releasesViewModel: releasesViewModel
         myList.userConfiguration: userConfigurationViewModel
+        Component.onDestruction: {
+            myAnilibriaViewModel.saveSectionsToFile();
+        }
     }
 
     Item {

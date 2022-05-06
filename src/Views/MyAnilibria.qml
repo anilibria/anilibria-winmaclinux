@@ -116,6 +116,13 @@ Page {
                                     CheckBox {
                                         checked: sectionSelected
                                         text: sectionTitle
+                                        onCheckedChanged: {
+                                            if (checked) {
+                                                myAnilibriaViewModel.selectSection(sectionId)
+                                            } else {
+                                                myAnilibriaViewModel.deselectSection(sectionId)
+                                            }
+                                        }
                                     }
                                 }
                                 ScrollBar.vertical: ScrollBar {

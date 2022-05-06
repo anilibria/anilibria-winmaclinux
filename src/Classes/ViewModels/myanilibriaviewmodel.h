@@ -57,6 +57,8 @@ public:
     QString voices() const noexcept;
 
     Q_INVOKABLE void selectSection(const QString& section) noexcept;
+    Q_INVOKABLE void deselectSection(const QString& section) noexcept;
+    Q_INVOKABLE void saveSectionsToFile();
 
 private:
     void readFromCache() noexcept;
