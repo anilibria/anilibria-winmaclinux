@@ -26,11 +26,11 @@
 MyAnilibriaViewModel::MyAnilibriaViewModel(QObject *parent)
     : QObject{parent}
 {
-    m_fullSections->insert(StatisticsSectionId);
-    m_fullSections->insert(NewInFavoritesSectionId);
-    m_fullSections->insert(NewFromStartSectionId);
-    m_fullSections->insert(LastTwoDaysSectionId);
-    m_fullSections->insert(AbandonedSeensSectionId);
+    m_fullSectionsOrders->insert(0, StatisticsSectionId);
+    m_fullSectionsOrders->insert(1, NewInFavoritesSectionId);
+    m_fullSectionsOrders->insert(2, NewFromStartSectionId);
+    m_fullSectionsOrders->insert(3, LastTwoDaysSectionId);
+    m_fullSectionsOrders->insert(4, AbandonedSeensSectionId);
 
     m_sectionTitles->insert(StatisticsSectionId, "Статистика");
     m_sectionTitles->insert(NewInFavoritesSectionId, "Обновления по избранному");
@@ -38,8 +38,8 @@ MyAnilibriaViewModel::MyAnilibriaViewModel(QObject *parent)
     m_sectionTitles->insert(LastTwoDaysSectionId, "Последние обновления");
     m_sectionTitles->insert(AbandonedSeensSectionId, "Брошенный просмотр");
 
-    m_myList->setup(m_fullSections, m_sectionTitles, m_sectionOrders , m_selectedSections);
-    m_allList->setup(m_fullSections, m_sectionTitles, m_selectedSections);
+    m_myList->setup(m_sectionTitles, m_sectionOrders , m_selectedSections);
+    m_allList->setup(m_fullSectionsOrders, m_sectionTitles, m_selectedSections);
 
     m_pathToCacheFile = getCachePath(m_cacheFileName);
     createIfNotExistsFile(m_pathToCacheFile, "[]");
@@ -146,8 +146,9 @@ void MyAnilibriaViewModel::readFromCache() noexcept
     if (sectionArray.isEmpty()) {
         auto currentIndex = -1;
         // if array is empty mark all sections as selected
-        foreach (auto section, *m_fullSections) {
+        while (currentIndex < m_fullSectionsOrders->count()) {
             currentIndex++;
+            auto section = m_fullSectionsOrders->value(currentIndex);
             m_sectionOrders->insert(currentIndex, section);
             m_selectedSections->insert(section);
         }

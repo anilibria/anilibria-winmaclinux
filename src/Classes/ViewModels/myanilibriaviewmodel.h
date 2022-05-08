@@ -35,7 +35,7 @@ class MyAnilibriaViewModel : public QObject
 
 private:
     QString m_cacheFileName { "myanilibrialist.cache" };
-    QSharedPointer<QSet<QString>> m_fullSections { new QSet<QString>() };
+    QSharedPointer<QMap<int, QString>> m_fullSectionsOrders { new QMap<int, QString>() };
     QSharedPointer<QMap<QString, QString>> m_sectionTitles { new QMap<QString, QString>() };
     QSharedPointer<QMap<int, QString>> m_sectionOrders { new QMap<int, QString>() };
     QString m_pathToCacheFile { "" };

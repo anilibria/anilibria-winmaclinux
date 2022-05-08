@@ -17,6 +17,7 @@
 */
 
 #include "allmyanilibrialistmodel.h"
+#include "../../globalconstants.h"
 
 AllMyAnilibriaListModel::AllMyAnilibriaListModel(QObject *parent)
     : QAbstractListModel{parent}
@@ -24,7 +25,7 @@ AllMyAnilibriaListModel::AllMyAnilibriaListModel(QObject *parent)
 
 }
 
-void AllMyAnilibriaListModel::setup(QSharedPointer<QSet<QString> > fullSections, QSharedPointer<QMap<QString, QString>> sectionTitles, QSharedPointer<QSet<QString>> selectedSections)
+void AllMyAnilibriaListModel::setup(QSharedPointer<QMap<int, QString>> fullSections, QSharedPointer<QMap<QString, QString>> sectionTitles, QSharedPointer<QSet<QString>> selectedSections)
 {
     m_fullSections = fullSections;
     m_sectionTitles = sectionTitles;
@@ -42,7 +43,7 @@ QVariant AllMyAnilibriaListModel::data(const QModelIndex &index, int role) const
 {
     if (!index.isValid()) return QVariant();
 
-    auto section = m_fullSections->values().value(index.row());
+    auto section = m_fullSections->value(index.row());
     auto title = m_sectionTitles->value(section);
     auto isSelected = m_selectedSections->contains(section);
     auto indexSection = m_selectedSections->values().indexOf(section);

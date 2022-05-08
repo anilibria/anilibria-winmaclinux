@@ -30,7 +30,7 @@ class AllMyAnilibriaListModel : public QAbstractListModel
     Q_OBJECT
 
 private:
-    QSharedPointer<QSet<QString>> m_fullSections { nullptr };
+    QSharedPointer<QMap<int, QString>> m_fullSections { nullptr };
     QSharedPointer<QMap<QString, QString>> m_sectionTitles  { nullptr };
     QSharedPointer<QSet<QString>> m_selectedSections { nullptr };
     enum AllMyAnilibriaRoles {
@@ -43,7 +43,7 @@ private:
 public:
     explicit AllMyAnilibriaListModel(QObject *parent = nullptr);
 
-    void setup(QSharedPointer<QSet<QString>> fullSections, QSharedPointer<QMap<QString, QString>> sectionTitles, QSharedPointer<QSet<QString>> selectedSections);
+    void setup(QSharedPointer<QMap<int, QString>> fullSections, QSharedPointer<QMap<QString, QString>> sectionTitles, QSharedPointer<QSet<QString>> selectedSections);
 
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;

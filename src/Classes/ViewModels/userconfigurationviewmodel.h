@@ -42,6 +42,8 @@ private:
     QString m_hideStatisticsField { "hideStatisticsField" };
     QString m_hideUpdatesByFavoritesField { "hideUpdatesByFavorites" };
     QString m_hideUpdatesFromStartField { "hideUpdatesFromStart" };
+    QString m_hideUpdatesLastTwoDaysField { "hideUpdatesLastTwoDays" };
+    QString m_hideAbandonedSeensField { "hideAbandonedSeens" };
     int m_opacityPlayerPanel { 50 };
     bool m_notCloseReleaseCardAfterWatch { false };
     bool m_usingScrollAcceleration { true };

@@ -24,9 +24,8 @@ MyAnilibriaListModel::MyAnilibriaListModel(QObject *parent)
 {
 }
 
-void MyAnilibriaListModel::setup(QSharedPointer<QSet<QString>> fullSections, QSharedPointer<QMap<QString, QString>> sectionTitles, QSharedPointer<QMap<int, QString>> sectionOrders, QSharedPointer<QSet<QString>> selectedSections)
+void MyAnilibriaListModel::setup(QSharedPointer<QMap<QString, QString>> sectionTitles, QSharedPointer<QMap<int, QString>> sectionOrders, QSharedPointer<QSet<QString>> selectedSections)
 {
-    m_fullSections = fullSections;
     m_sectionTitles = sectionTitles;
     m_sectionOrders = sectionOrders;
     m_selectedSections = selectedSections;

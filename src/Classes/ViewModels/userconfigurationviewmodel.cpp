@@ -101,6 +101,8 @@ void UserConfigurationViewModel::saveSettingsToFile()
     object[m_hideStatisticsField] = m_hideStatistics;
     object[m_hideUpdatesByFavoritesField] = m_hideUpdatesByFavorites;
     object[m_hideUpdatesFromStartField] = m_hideUpdatesFromStart;
+    object[m_hideUpdatesLastTwoDaysField] = m_hideUpdatesLastTwoDays;
+    object[m_hideAbandonedSeensField] = m_hideAbandonedSeens;
 
     QFile file(getCachePath(m_cacheFileName));
     file.open(QFile::WriteOnly | QFile::Text);
@@ -123,4 +125,6 @@ void UserConfigurationViewModel::readSettingsFromFile()
     m_hideStatistics = object.contains(m_hideStatisticsField) ? object[m_hideStatisticsField].toBool() : false;
     m_hideUpdatesByFavorites = object.contains(m_hideUpdatesByFavoritesField) ? object[m_hideUpdatesByFavoritesField].toBool() : false;
     m_hideUpdatesFromStart = object.contains(m_hideUpdatesFromStartField) ? object[m_hideUpdatesFromStartField].toBool() : false;
+    m_hideUpdatesLastTwoDays = object.contains(m_hideUpdatesLastTwoDaysField) ? object[m_hideUpdatesLastTwoDaysField].toBool() : false;
+    m_hideAbandonedSeens = object.contains(m_hideAbandonedSeensField) ? object[m_hideAbandonedSeensField].toBool() : false;
 }

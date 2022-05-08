@@ -33,7 +33,6 @@ class MyAnilibriaListModel : public QAbstractListModel
 
     Q_PROPERTY(UserConfigurationViewModel* userConfiguration READ userConfiguration WRITE setUserConfiguration NOTIFY userConfigurationChanged)
 private:
-    QSharedPointer<QSet<QString>> m_fullSections { nullptr };
     QSharedPointer<QMap<QString, QString>> m_sectionTitles { nullptr };
     UserConfigurationViewModel* m_userConfiguration { nullptr };
     QSharedPointer<QMap<int, QString>> m_sectionOrders { nullptr };
@@ -51,7 +50,7 @@ private:
 public:
     explicit MyAnilibriaListModel(QObject *parent = nullptr);
 
-    void setup(QSharedPointer<QSet<QString>> fullSections, QSharedPointer<QMap<QString, QString>> sectionTitles, QSharedPointer<QMap<int, QString>> sectionOrders, QSharedPointer<QSet<QString>> selectedSections);
+    void setup(QSharedPointer<QMap<QString, QString>> sectionTitles, QSharedPointer<QMap<int, QString>> sectionOrders, QSharedPointer<QSet<QString>> selectedSections);
 
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
 
