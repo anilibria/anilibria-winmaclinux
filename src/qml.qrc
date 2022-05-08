@@ -154,5 +154,7 @@
         <file>Views/MyAnilibria/StatisticsSection.qml</file>
         <file>Views/MyAnilibria/SimpleListSection.qml</file>
         <file>Assets/Icons/videos.svg</file>
+        <file>Assets/Icons/coloredsortdown.svg</file>
+        <file>Assets/Icons/coloredsortup.svg</file>
     </qresource>
 </RCC>

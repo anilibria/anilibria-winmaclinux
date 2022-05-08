@@ -31,3 +31,6 @@ QString AbandonedSeensSectionId = "abondonedseens";
 QString StatisticsSectionComponent = "StatisticsSection";
 QString SimpleListSectionComponent = "SimpleListSection";
 
+int MovingUp = 1;
+int MovingDown = -1;
+

@@ -37,6 +37,7 @@ private:
     QString m_cacheFileName { "myanilibrialist.cache" };
     QSharedPointer<QSet<QString>> m_fullSections { new QSet<QString>() };
     QSharedPointer<QMap<QString, QString>> m_sectionTitles { new QMap<QString, QString>() };
+    QSharedPointer<QMap<int, QString>> m_sectionOrders { new QMap<int, QString>() };
     QString m_pathToCacheFile { "" };
     ReleasesViewModel* m_releasesViewModel { nullptr };
     QScopedPointer<MyAnilibriaListModel> m_myList { new MyAnilibriaListModel() };
@@ -59,6 +60,7 @@ public:
     Q_INVOKABLE void selectSection(const QString& section) noexcept;
     Q_INVOKABLE void deselectSection(const QString& section) noexcept;
     Q_INVOKABLE void saveSectionsToFile();
+    Q_INVOKABLE void moveSection(const int direction, const int index) noexcept;
 
 private:
     void readFromCache() noexcept;

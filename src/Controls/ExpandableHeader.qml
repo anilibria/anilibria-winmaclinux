@@ -1,6 +1,7 @@
 import QtQuick 2.12
 
 Rectangle {
+    id: root
     anchors.left: parent.left
     anchors.right: parent.right
     anchors.margins: 4
@@ -12,8 +13,11 @@ Rectangle {
 
     property alias headerTitle: titleText.text
     property bool headerHided: false
+    property bool isFirst: false
+    property bool isLast: false
 
     signal headerPressed();
+    signal moveSection(int direction);
 
     AccentText {
         id: titleText
@@ -24,12 +28,13 @@ Rectangle {
     }
 
     IconButton {
+        id: visibleContentButton
         width: 26
         height: parent.height - 4
         anchors.verticalCenter: parent.verticalCenter
         anchors.right: parent.right
         anchors.rightMargin: 4
-        iconColor: "white"
+        overlayVisible: false
         iconWidth: 22
         iconHeight: 22
         iconPath: assetsLocation.iconsPath + "arrowup.svg"
@@ -44,8 +49,44 @@ Rectangle {
         }
     }
 
+    Row {
+        anchors.verticalCenter: parent.verticalCenter
+        anchors.right: visibleContentButton.left
+
+        IconButton {
+            id: sortUpButton
+            visible: !isFirst
+            width: 26
+            height: root.height - 4
+            iconWidth: 22
+            iconHeight: 22
+            overlayVisible: false
+            iconPath: assetsLocation.iconsPath + "coloredsortup.svg"
+            onButtonPressed: {
+                moveSection(1);
+            }
+        }
+
+        IconButton {
+            id: sortDownButton
+            visible: !isLast
+            width: 26
+            height: root.height - 4
+            iconWidth: 22
+            iconHeight: 22
+            overlayVisible: false
+            iconPath: assetsLocation.iconsPath + "coloredsortdown.svg"
+            onButtonPressed: {
+                moveSection(-1);
+            }
+        }
+    }
+
     MouseArea {
-        anchors.fill: parent
+        height: parent.height
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.rightMargin: 84
         onPressed: {
             headerPressed();
         }

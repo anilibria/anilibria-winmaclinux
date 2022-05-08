@@ -12,10 +12,15 @@ Item {
         width: parent.width
         height: simpleList.hasItems ? 30 : 0
         visible: simpleList.hasItems
+        isFirst: firstSection
+        isLast: lastSection
         headerTitle: title + " (" + simpleList.countItems + ")"
         headerHided: needHideSection
         onHeaderPressed: {
-            myAnilibriaViewModel.myList.toggleSectionHideMark(sectionId)
+            myAnilibriaViewModel.myList.toggleSectionHideMark(currentIndex)
+        }
+        onMoveSection: {
+            myAnilibriaViewModel.moveSection(direction, currentIndex);
         }
     }
 

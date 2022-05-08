@@ -33,21 +33,25 @@ class MyAnilibriaListModel : public QAbstractListModel
 
     Q_PROPERTY(UserConfigurationViewModel* userConfiguration READ userConfiguration WRITE setUserConfiguration NOTIFY userConfigurationChanged)
 private:
-    QList<QString> m_sections { QList<QString>() };
     QSharedPointer<QSet<QString>> m_fullSections { nullptr };
     QSharedPointer<QMap<QString, QString>> m_sectionTitles { nullptr };
     UserConfigurationViewModel* m_userConfiguration { nullptr };
+    QSharedPointer<QMap<int, QString>> m_sectionOrders { nullptr };
+    QSharedPointer<QSet<QString>> m_selectedSections { nullptr };
     enum MyAnilibriaSectionRole {
         SectionIdRole = Qt::UserRole + 1,
         SectionTitleRole,
         ComponentIdRole,
-        HeaderVisibleRole
+        HeaderVisibleRole,
+        CurrentIndexRole,
+        IsLastRole,
+        IsFirstRole
     };
 
 public:
     explicit MyAnilibriaListModel(QObject *parent = nullptr);
 
-    void setup(QSharedPointer<QSet<QString>> fullSections, QSharedPointer<QMap<QString, QString>> sectionTitles);
+    void setup(QSharedPointer<QSet<QString>> fullSections, QSharedPointer<QMap<QString, QString>> sectionTitles, QSharedPointer<QMap<int, QString>> sectionOrders, QSharedPointer<QSet<QString>> selectedSections);
 
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
 
@@ -58,12 +62,11 @@ public:
     UserConfigurationViewModel* userConfiguration() const noexcept { return m_userConfiguration; }
     void setUserConfiguration(const UserConfigurationViewModel* userConfiguration) noexcept;
 
-    void fillSections(const QSet<QString>& sections) noexcept;
-    QStringList getSections() const noexcept;
-
     void setSectionHideMark(const QString& section, const bool notVisible) noexcept;
 
-    Q_INVOKABLE void toggleSectionHideMark(const QString& section);
+    void refresh() noexcept;
+
+    Q_INVOKABLE void toggleSectionHideMark(const int elementIndex);
     Q_INVOKABLE void setNotVisibleAllMarks(const bool visible);
 
 private:

@@ -47,4 +47,8 @@ extern QString StatisticsSectionComponent;
 
 extern QString SimpleListSectionComponent;
 
+extern int MovingUp;
+
+extern int MovingDown;
+
 #endif // GLOBALCONSTANTS_H

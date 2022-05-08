@@ -38,7 +38,7 @@ MyAnilibriaViewModel::MyAnilibriaViewModel(QObject *parent)
     m_sectionTitles->insert(LastTwoDaysSectionId, "Последние обновления");
     m_sectionTitles->insert(AbandonedSeensSectionId, "Брошенный просмотр");
 
-    m_myList->setup(m_fullSections, m_sectionTitles);
+    m_myList->setup(m_fullSections, m_sectionTitles, m_sectionOrders , m_selectedSections);
     m_allList->setup(m_fullSections, m_sectionTitles, m_selectedSections);
 
     m_pathToCacheFile = getCachePath(m_cacheFileName);
@@ -74,8 +74,10 @@ void MyAnilibriaViewModel::selectSection(const QString &section) noexcept
     if (m_selectedSections->contains(section)) return;
 
     m_selectedSections->insert(section);
+    m_sectionOrders->insert(m_sectionOrders->count(), section);
 
     m_allList->refreshData();
+    m_myList->refresh();
 }
 
 void MyAnilibriaViewModel::deselectSection(const QString &section) noexcept
@@ -84,12 +86,49 @@ void MyAnilibriaViewModel::deselectSection(const QString &section) noexcept
 
     m_selectedSections->remove(section);
 
+    auto index = m_sectionOrders->values().indexOf(section);
+    m_sectionOrders->remove(index);
+
+    auto changedIndex = index + 1;
+
+    while (true) {
+        if (!m_sectionOrders->contains(changedIndex)) break;
+
+        auto value = m_sectionOrders->value(changedIndex);
+        m_sectionOrders->remove(changedIndex);
+        m_sectionOrders->insert(changedIndex - 1, value);
+
+        changedIndex++;
+    }
+
     m_allList->refreshData();
+    m_myList->refresh();
 }
 
 void MyAnilibriaViewModel::saveSectionsToFile()
 {
     saveSections();
+}
+
+void MyAnilibriaViewModel::moveSection(const int direction, const int index) noexcept
+{
+    if (direction == MovingUp && index == 0) return;
+    if (direction == MovingDown && index >= m_sectionOrders->count() - 1) return;
+
+    if (direction == MovingUp) {
+        auto previous = m_sectionOrders->value(index - 1);
+        auto current = m_sectionOrders->value(index);
+        (*m_sectionOrders)[index] = previous;
+        (*m_sectionOrders)[index - 1] = current;
+    }
+    if (direction == MovingDown) {
+        auto next = m_sectionOrders->value(index + 1);
+        auto current = m_sectionOrders->value(index);
+        (*m_sectionOrders)[index] = next;
+        (*m_sectionOrders)[index + 1] = current;
+    }
+
+    m_myList->refresh();
 }
 
 void MyAnilibriaViewModel::readFromCache() noexcept
@@ -105,25 +144,33 @@ void MyAnilibriaViewModel::readFromCache() noexcept
     auto sectionArray = jsonDocument.array();
 
     if (sectionArray.isEmpty()) {
+        auto currentIndex = -1;
         // if array is empty mark all sections as selected
         foreach (auto section, *m_fullSections) {
+            currentIndex++;
+            m_sectionOrders->insert(currentIndex, section);
             m_selectedSections->insert(section);
         }
         return;
     }
 
-    m_selectedSections->clear();
+    auto currentIndex = -1;
     foreach (auto item, sectionArray) {
-        m_selectedSections->insert(item.toString());
+        auto section = item.toString();
+        if (section.isEmpty()) continue;
+
+        currentIndex++;
+        m_sectionOrders->insert(currentIndex, section);
+        m_selectedSections->insert(section);
     }
-    m_myList->fillSections(*m_selectedSections.get());
+    m_myList->refresh();
 }
 
 void MyAnilibriaViewModel::saveSections()
 {
     QJsonArray array;
-    foreach (auto section, *m_selectedSections) {
-        array.append(section);
+    for (auto i = 0; i < m_sectionOrders->count(); i++) {
+         array.append(m_sectionOrders->value(i));
     }
 
     QJsonDocument jsonDocument(array);

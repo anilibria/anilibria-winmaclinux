@@ -45,6 +45,7 @@ QVariant AllMyAnilibriaListModel::data(const QModelIndex &index, int role) const
     auto section = m_fullSections->values().value(index.row());
     auto title = m_sectionTitles->value(section);
     auto isSelected = m_selectedSections->contains(section);
+    auto indexSection = m_selectedSections->values().indexOf(section);
 
     switch (role) {
         case SectionIdRole: {
@@ -55,6 +56,9 @@ QVariant AllMyAnilibriaListModel::data(const QModelIndex &index, int role) const
         }
         case SectionSelectedRole: {
             return QVariant(isSelected);
+        }
+        case SectionIndexRole: {
+            return QVariant(indexSection);
         }
     }
 
@@ -75,6 +79,10 @@ QHash<int, QByteArray> AllMyAnilibriaListModel::roleNames() const
         {
             SectionSelectedRole,
             "sectionSelected"
+        },
+        {
+            SectionIndexRole,
+            "sectionIndex"
         }
     };
 

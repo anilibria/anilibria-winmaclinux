@@ -12,8 +12,13 @@ Item {
         anchors.topMargin: 4
         headerTitle: title
         headerHided: needHideSection
+        isFirst: firstSection
+        isLast: lastSection
         onHeaderPressed: {
-            myAnilibriaViewModel.myList.toggleSectionHideMark(sectionId)
+            myAnilibriaViewModel.myList.toggleSectionHideMark(currentIndex)
+        }
+        onMoveSection: {
+            myAnilibriaViewModel.moveSection(direction, currentIndex);
         }
     }
 

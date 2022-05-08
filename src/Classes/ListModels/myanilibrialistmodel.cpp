@@ -22,31 +22,29 @@
 MyAnilibriaListModel::MyAnilibriaListModel(QObject *parent)
     : QAbstractListModel{parent}
 {
-    m_sections.append(StatisticsSectionId);
-    m_sections.append(NewInFavoritesSectionId);
-    m_sections.append(NewFromStartSectionId);
-    m_sections.append(LastTwoDaysSectionId);
-    m_sections.append(AbandonedSeensSectionId);
 }
 
-void MyAnilibriaListModel::setup(QSharedPointer<QSet<QString>> fullSections, QSharedPointer<QMap<QString, QString>> sectionTitles)
+void MyAnilibriaListModel::setup(QSharedPointer<QSet<QString>> fullSections, QSharedPointer<QMap<QString, QString>> sectionTitles, QSharedPointer<QMap<int, QString>> sectionOrders, QSharedPointer<QSet<QString>> selectedSections)
 {
     m_fullSections = fullSections;
     m_sectionTitles = sectionTitles;
+    m_sectionOrders = sectionOrders;
+    m_selectedSections = selectedSections;
 }
 
 int MyAnilibriaListModel::rowCount(const QModelIndex &parent) const
 {
     if (parent.isValid()) return 0;
-    return m_sections.size();
+    return m_selectedSections->size();
 }
 
 QVariant MyAnilibriaListModel::data(const QModelIndex &index, int role) const
 {
     if (!index.isValid()) return QVariant();
 
-    auto section = m_sections.at(index.row());
+    auto section = m_sectionOrders->value(index.row());
     auto title = m_sectionTitles->value(section);
+    auto currentIndex = index.row();
 
     switch (role) {
         case SectionIdRole: {
@@ -64,6 +62,15 @@ QVariant MyAnilibriaListModel::data(const QModelIndex &index, int role) const
         }
         case HeaderVisibleRole: {
             return QVariant(getHideSection(section));
+        }
+        case CurrentIndexRole: {
+            return QVariant(currentIndex);
+        }
+        case IsLastRole: {
+            return QVariant(currentIndex == m_sectionOrders->count() - 1);
+        }
+        case IsFirstRole: {
+            return QVariant(currentIndex == 0);
         }
     }
 
@@ -88,6 +95,18 @@ QHash<int, QByteArray> MyAnilibriaListModel::roleNames() const
         {
             HeaderVisibleRole,
             "needHideSection"
+        },
+        {
+            CurrentIndexRole,
+            "currentIndex"
+        },
+        {
+            IsLastRole,
+            "lastSection"
+        },
+        {
+            IsFirstRole,
+            "firstSection"
         }
     };
 }
@@ -100,22 +119,6 @@ void MyAnilibriaListModel::setUserConfiguration(const UserConfigurationViewModel
     emit userConfigurationChanged();
 }
 
-void MyAnilibriaListModel::fillSections(const QSet<QString> &sections) noexcept
-{
-    m_sections.clear();
-
-    foreach (auto section, sections) {
-        if (!m_fullSections->contains(section)) continue;
-
-        m_sections.append(section);
-    }
-}
-
-QStringList MyAnilibriaListModel::getSections() const noexcept
-{
-    return m_sections;
-}
-
 void MyAnilibriaListModel::setSectionHideMark(const QString &section, const bool notVisible) noexcept
 {
     if (section == StatisticsSectionId) m_userConfiguration->setHideStatistics(notVisible);
@@ -125,8 +128,15 @@ void MyAnilibriaListModel::setSectionHideMark(const QString &section, const bool
     if (section == AbandonedSeensSectionId) m_userConfiguration->setHideAbandonedSeens(notVisible);
 }
 
-void MyAnilibriaListModel::toggleSectionHideMark(const QString &section)
+void MyAnilibriaListModel::refresh() noexcept
 {
+    beginResetModel();
+    endResetModel();
+}
+
+void MyAnilibriaListModel::toggleSectionHideMark(const int elementIndex)
+{
+    auto section = m_sectionOrders->value(elementIndex);
     if (section == StatisticsSectionId) {
         auto current = m_userConfiguration->hideStatistics();
         m_userConfiguration->setHideStatistics(!current);
@@ -148,17 +158,14 @@ void MyAnilibriaListModel::toggleSectionHideMark(const QString &section)
         m_userConfiguration->setHideAbandonedSeens(!current);
     }
 
-    auto itemIndex = m_sections.indexOf(section);
-    if (itemIndex == -1) return;
-
-    emit dataChanged(index(itemIndex,0), index(itemIndex,0));
+    emit dataChanged(index(elementIndex,0), index(elementIndex,0));
 }
 
 void MyAnilibriaListModel::setNotVisibleAllMarks(const bool visible)
 {
     beginResetModel();
 
-    foreach (auto section, m_sections) {
+    foreach (auto section, *m_selectedSections) {
         setSectionHideMark(section, visible);
     }
 

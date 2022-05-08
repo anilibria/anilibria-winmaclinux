@@ -37,6 +37,7 @@ private:
         SectionIdRole = Qt::UserRole + 1,
         SectionTitleRole,
         SectionSelectedRole,
+        SectionIndexRole
     };
 
 public:
