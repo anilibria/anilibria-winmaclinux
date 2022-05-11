@@ -868,7 +868,7 @@ Page {
                         x: 40
                         y: -410
                         width: 720
-                        height: 400
+                        height: 470
                         modal: true
                         focus: true
                         closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
@@ -947,6 +947,17 @@ Page {
                                 checked: userConfigurationViewModel.usingScrollAcceleration
                                 onCheckedChanged: {
                                     userConfigurationViewModel.usingScrollAcceleration = checked;
+                                }
+                            }
+                            PlainText {
+                                fontPointSize: 11
+                                text: "После скачивания торрента отметить\nкак просмотренное"
+                            }
+                            CommonSwitch {
+                                tooltipMessage: "Если настройка включена то при прокручивании будет включена акселерация которая будет добавляет эффект затухания"
+                                checked: userConfigurationViewModel.markAsReadAfterDownload
+                                onCheckedChanged: {
+                                    userConfigurationViewModel.markAsReadAfterDownload = checked;
                                 }
                             }
                         }
@@ -2179,6 +2190,8 @@ Page {
                                         const torrentUri = synchronizationService.combineWithWebSiteUrl(url);
                                         synchronizationService.downloadTorrent(torrentUri);
                                         userActivityViewModel.addDownloadedTorrentToCounter();
+
+                                        if (userConfigurationViewModel.markAsReadAfterDownload) setSeenStateForOpenedRelease(true);
                                     }
                                 }
                             }

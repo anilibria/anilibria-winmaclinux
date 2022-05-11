@@ -92,6 +92,14 @@ void UserConfigurationViewModel::setHideAbandonedSeens(const bool hideAbandonedS
     emit hideAbandonedSeensChanged();
 }
 
+void UserConfigurationViewModel::setMarkAsReadAfterDownload(const bool markAsReadAfterDownload) noexcept
+{
+    if (m_markAsReadAfterDownload == markAsReadAfterDownload) return;
+
+    m_markAsReadAfterDownload = markAsReadAfterDownload;
+    emit markAsReadAfterDownloadChanged();
+}
+
 void UserConfigurationViewModel::saveSettingsToFile()
 {
     QJsonObject object;
@@ -103,6 +111,7 @@ void UserConfigurationViewModel::saveSettingsToFile()
     object[m_hideUpdatesFromStartField] = m_hideUpdatesFromStart;
     object[m_hideUpdatesLastTwoDaysField] = m_hideUpdatesLastTwoDays;
     object[m_hideAbandonedSeensField] = m_hideAbandonedSeens;
+    object[m_markAsReadAfterDownloadField] = m_markAsReadAfterDownload;
 
     QFile file(getCachePath(m_cacheFileName));
     file.open(QFile::WriteOnly | QFile::Text);
@@ -127,4 +136,5 @@ void UserConfigurationViewModel::readSettingsFromFile()
     m_hideUpdatesFromStart = object.contains(m_hideUpdatesFromStartField) ? object[m_hideUpdatesFromStartField].toBool() : false;
     m_hideUpdatesLastTwoDays = object.contains(m_hideUpdatesLastTwoDaysField) ? object[m_hideUpdatesLastTwoDaysField].toBool() : false;
     m_hideAbandonedSeens = object.contains(m_hideAbandonedSeensField) ? object[m_hideAbandonedSeensField].toBool() : false;
+    m_markAsReadAfterDownload = object.contains(m_markAsReadAfterDownloadField) ? object[m_markAsReadAfterDownloadField].toBool() : false;
 }

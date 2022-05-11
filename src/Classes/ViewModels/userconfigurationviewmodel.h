@@ -33,6 +33,7 @@ class UserConfigurationViewModel : public QObject
     Q_PROPERTY(bool hideUpdatesFromStart READ hideUpdatesFromStart WRITE setHideUpdatesFromStart NOTIFY hideUpdatesFromStartChanged)
     Q_PROPERTY(bool hideUpdatesLastTwoDays READ hideUpdatesLastTwoDays WRITE setHideUpdatesLastTwoDays NOTIFY hideUpdatesLastTwoDaysChanged)
     Q_PROPERTY(bool hideAbandonedSeens READ hideAbandonedSeens WRITE setHideAbandonedSeens NOTIFY hideAbandonedSeensChanged)
+    Q_PROPERTY(bool markAsReadAfterDownload READ markAsReadAfterDownload WRITE setMarkAsReadAfterDownload NOTIFY markAsReadAfterDownloadChanged)
 
 private:
     QString m_cacheFileName { "userconfiguration.cache" };
@@ -44,6 +45,7 @@ private:
     QString m_hideUpdatesFromStartField { "hideUpdatesFromStart" };
     QString m_hideUpdatesLastTwoDaysField { "hideUpdatesLastTwoDays" };
     QString m_hideAbandonedSeensField { "hideAbandonedSeens" };
+    QString m_markAsReadAfterDownloadField { "markAsReadAfterDownload" };
     int m_opacityPlayerPanel { 50 };
     bool m_notCloseReleaseCardAfterWatch { false };
     bool m_usingScrollAcceleration { true };
@@ -52,6 +54,7 @@ private:
     bool m_hideUpdatesFromStart { false };
     bool m_hideUpdatesLastTwoDays { false };
     bool m_hideAbandonedSeens { false };
+    bool m_markAsReadAfterDownload { false };
 
 public:
     explicit UserConfigurationViewModel(QObject *parent = nullptr);
@@ -80,6 +83,9 @@ public:
     bool hideAbandonedSeens() const noexcept { return m_hideAbandonedSeens; }
     void setHideAbandonedSeens(const bool hideAbandonedSeens) noexcept;
 
+    bool markAsReadAfterDownload() const noexcept { return m_markAsReadAfterDownload; }
+    void setMarkAsReadAfterDownload(const bool markAsReadAfterDownload) noexcept;
+
     Q_INVOKABLE void saveSettingsToFile();
 
 private:
@@ -95,6 +101,7 @@ signals:
     void hideUpdatesFromStartChanged();
     void hideUpdatesLastTwoDaysChanged();
     void hideAbandonedSeensChanged();
+    void markAsReadAfterDownloadChanged();
 
 };
 
