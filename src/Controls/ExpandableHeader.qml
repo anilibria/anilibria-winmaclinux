@@ -1,4 +1,5 @@
 import QtQuick 2.12
+import "../Theme"
 
 Rectangle {
     id: root
@@ -34,7 +35,7 @@ Rectangle {
         anchors.verticalCenter: parent.verticalCenter
         anchors.right: parent.right
         anchors.rightMargin: 4
-        overlayVisible: false
+        iconColor: ApplicationTheme.plainTextColor
         iconWidth: 22
         iconHeight: 22
         iconPath: assetsLocation.iconsPath + "arrowup.svg"
