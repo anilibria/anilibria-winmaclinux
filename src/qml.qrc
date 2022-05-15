@@ -156,5 +156,7 @@
         <file>Assets/Icons/videos.svg</file>
         <file>Assets/Icons/coloredsortdown.svg</file>
         <file>Assets/Icons/coloredsortup.svg</file>
+        <file>Assets/Icons/minus.svg</file>
+        <file>Assets/Icons/plus.svg</file>
     </qresource>
 </RCC>

@@ -86,11 +86,6 @@ Page {
 
     anchors.fill: parent
 
-    ListModel {
-        id: releasesModel
-        property int updateCounter: 0
-    }
-
     Rectangle {
         id: mask
         width: 180
@@ -1036,6 +1031,14 @@ Page {
                                 onClicked: {
                                     releaseSettingsPopup.close();
                                     backgroundImagePopup.open();
+                                }
+                            }
+
+                            RoundedActionButton {
+                                buttonEnabled: userConfigurationViewModel.startPage !==  "release"
+                                text: "Сделай страницу стартовой"
+                                onClicked: {
+                                    userConfigurationViewModel.startPage = "release";
                                 }
                             }
                         }

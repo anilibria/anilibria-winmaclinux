@@ -1266,6 +1266,7 @@ ApplicationWindow {
     MainViewModel {
         id: mainViewModel
         analyticsService: analyticsService
+        currentPageId: userConfigurationViewModel.startPage
         onOnlinePlayerPageFromNavigated: {
             videoplayer.navigateFrom();
             windowFooter.visible = true;

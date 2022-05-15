@@ -59,25 +59,44 @@ Page {
                     color: ApplicationTheme.pageUpperPanel
 
                     RoundedActionButton {
-                        anchors.verticalCenter: parent.verticalCenter
-                        anchors.left: openAllButton.right
-                        width: 160
-                        textSize: 10
-                        text: "Закрыть все"
-                        onClicked: {
-                            myAnilibriaViewModel.myList.setNotVisibleAllMarks(true);
-                        }
-                    }
-
-                    RoundedActionButton {
-                        id: openAllButton
+                        buttonEnabled: userConfigurationViewModel.startPage !== "myanilibria"
                         anchors.verticalCenter: parent.verticalCenter
                         anchors.left: parent.left
                         width: 160
                         textSize: 10
-                        text: "Открыть все"
+                        text: "Сделать стартовой"
                         onClicked: {
+                            userConfigurationViewModel.startPage = "myanilibria";
+                        }
+                    }
+
+                    IconButton {
+                        id: openAllButton
+                        anchors.right: closeAllButton.left
+                        height: 45
+                        width: 40
+                        overlayVisible: false
+                        iconPath: assetsLocation.iconsPath + "plus.svg"
+                        iconWidth: 28
+                        iconHeight: 28
+                        tooltipMessage: "Открыть все секции"
+                        onButtonPressed: {
                             myAnilibriaViewModel.myList.setNotVisibleAllMarks(false);
+                        }
+                    }
+
+                    IconButton {
+                        id: closeAllButton
+                        anchors.right: sectionVisibilities.left
+                        height: 45
+                        width: 40
+                        overlayVisible: false
+                        iconPath: assetsLocation.iconsPath + "minus.svg"
+                        iconWidth: 28
+                        iconHeight: 28
+                        tooltipMessage: "Закрыть все секции"
+                        onButtonPressed: {
+                            myAnilibriaViewModel.myList.setNotVisibleAllMarks(true);
                         }
                     }
 

@@ -34,6 +34,7 @@ class UserConfigurationViewModel : public QObject
     Q_PROPERTY(bool hideUpdatesLastTwoDays READ hideUpdatesLastTwoDays WRITE setHideUpdatesLastTwoDays NOTIFY hideUpdatesLastTwoDaysChanged)
     Q_PROPERTY(bool hideAbandonedSeens READ hideAbandonedSeens WRITE setHideAbandonedSeens NOTIFY hideAbandonedSeensChanged)
     Q_PROPERTY(bool markAsReadAfterDownload READ markAsReadAfterDownload WRITE setMarkAsReadAfterDownload NOTIFY markAsReadAfterDownloadChanged)
+    Q_PROPERTY(QString startPage READ startPage WRITE setStartPage NOTIFY startPageChanged)
 
 private:
     QString m_cacheFileName { "userconfiguration.cache" };
@@ -46,6 +47,7 @@ private:
     QString m_hideUpdatesLastTwoDaysField { "hideUpdatesLastTwoDays" };
     QString m_hideAbandonedSeensField { "hideAbandonedSeens" };
     QString m_markAsReadAfterDownloadField { "markAsReadAfterDownload" };
+    QString m_startPageField { "startPage" };
     int m_opacityPlayerPanel { 50 };
     bool m_notCloseReleaseCardAfterWatch { false };
     bool m_usingScrollAcceleration { true };
@@ -55,6 +57,7 @@ private:
     bool m_hideUpdatesLastTwoDays { false };
     bool m_hideAbandonedSeens { false };
     bool m_markAsReadAfterDownload { false };
+    QString m_startPage { "release" };
 
 public:
     explicit UserConfigurationViewModel(QObject *parent = nullptr);
@@ -86,6 +89,9 @@ public:
     bool markAsReadAfterDownload() const noexcept { return m_markAsReadAfterDownload; }
     void setMarkAsReadAfterDownload(const bool markAsReadAfterDownload) noexcept;
 
+    QString startPage() const noexcept { return m_startPage; }
+    void setStartPage(const QString& startPage) noexcept;
+
     Q_INVOKABLE void saveSettingsToFile();
 
 private:
@@ -102,6 +108,7 @@ signals:
     void hideUpdatesLastTwoDaysChanged();
     void hideAbandonedSeensChanged();
     void markAsReadAfterDownloadChanged();
+    void startPageChanged();
 
 };
 

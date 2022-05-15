@@ -100,6 +100,14 @@ void UserConfigurationViewModel::setMarkAsReadAfterDownload(const bool markAsRea
     emit markAsReadAfterDownloadChanged();
 }
 
+void UserConfigurationViewModel::setStartPage(const QString &startPage) noexcept
+{
+    if (m_startPage == startPage) return;
+
+    m_startPage = startPage;
+    emit startPageChanged();
+}
+
 void UserConfigurationViewModel::saveSettingsToFile()
 {
     QJsonObject object;
@@ -112,6 +120,7 @@ void UserConfigurationViewModel::saveSettingsToFile()
     object[m_hideUpdatesLastTwoDaysField] = m_hideUpdatesLastTwoDays;
     object[m_hideAbandonedSeensField] = m_hideAbandonedSeens;
     object[m_markAsReadAfterDownloadField] = m_markAsReadAfterDownload;
+    object[m_startPageField] = m_startPage;
 
     QFile file(getCachePath(m_cacheFileName));
     file.open(QFile::WriteOnly | QFile::Text);
@@ -137,4 +146,5 @@ void UserConfigurationViewModel::readSettingsFromFile()
     m_hideUpdatesLastTwoDays = object.contains(m_hideUpdatesLastTwoDaysField) ? object[m_hideUpdatesLastTwoDaysField].toBool() : false;
     m_hideAbandonedSeens = object.contains(m_hideAbandonedSeensField) ? object[m_hideAbandonedSeensField].toBool() : false;
     m_markAsReadAfterDownload = object.contains(m_markAsReadAfterDownloadField) ? object[m_markAsReadAfterDownloadField].toBool() : false;
+    m_startPage = object.contains(m_startPageField) ? object[m_startPageField].toString() : "release";
 }
