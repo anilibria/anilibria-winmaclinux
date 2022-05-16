@@ -43,6 +43,8 @@ extern QString LastTwoDaysSectionId;
 
 extern QString AbandonedSeensSectionId;
 
+extern QString RecommendedByGenresSectionId;
+
 extern QString StatisticsSectionComponent;
 
 extern QString SimpleListSectionComponent;

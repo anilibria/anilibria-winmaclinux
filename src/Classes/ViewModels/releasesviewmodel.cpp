@@ -5,6 +5,7 @@
 #include <QDesktopServices>
 #include <QtConcurrent>
 #include <QFuture>
+#include <QMutableStringListIterator>
 #include "releasesviewmodel.h"
 #include "../../globalhelpers.h"
 
@@ -491,6 +492,48 @@ void ReleasesViewModel::fillAbandonedSeens(QList<FullReleaseModel *> *list) cons
         if (seenVideos > 0 && seenVideos < release->countOnlineVideos() && historyItem->watchTimestamp() < timestamp) {
             list->append(release);
         }
+    }
+}
+
+void ReleasesViewModel::fillRecommendsByGenres(QList<FullReleaseModel *> *list) noexcept
+{
+    auto genres = getMostPopularGenres();
+    if (genres.isEmpty()) return;
+
+    QMutableStringListIterator iterator(genres);
+    while (iterator.hasNext()) {
+        auto value = iterator.next();
+        iterator.setValue(value.toLower());
+    }
+
+    foreach (auto release, *m_releases) {
+        auto historyItem = m_historyItems->value(release->id());
+        if (historyItem == nullptr || historyItem->watchTimestamp() != 0) continue; // if you opened release in video player it means it not fit our condition
+
+        auto releaseGenres = release->genres().toLower();
+        foreach (auto genre, genres) {
+            if (releaseGenres.contains(genre)) {
+                list->append(release);
+                break;
+            }
+        }
+    }
+
+    if (list->count() <= 5) return;
+
+    if (randomBetween(0, 10) > 5) std::reverse(list->begin(), list->end());
+
+    m_seedValue += QRandomGenerator::system()->generate();
+    QRandomGenerator generator(m_seedValue);
+
+    auto index = 0;
+    while (list->count() > 5) {
+        if (generator.bounded(0, 1000) % 2 == 0) {
+            list->removeAt(randomBetween(0, list->count() - 1));
+        }
+
+        index++;
+        if (index >= list->count()) index = 0;
     }
 }
 

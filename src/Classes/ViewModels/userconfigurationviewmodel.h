@@ -35,6 +35,7 @@ class UserConfigurationViewModel : public QObject
     Q_PROPERTY(bool hideAbandonedSeens READ hideAbandonedSeens WRITE setHideAbandonedSeens NOTIFY hideAbandonedSeensChanged)
     Q_PROPERTY(bool markAsReadAfterDownload READ markAsReadAfterDownload WRITE setMarkAsReadAfterDownload NOTIFY markAsReadAfterDownloadChanged)
     Q_PROPERTY(QString startPage READ startPage WRITE setStartPage NOTIFY startPageChanged)
+    Q_PROPERTY(bool hideRecommendByGenres READ hideRecommendByGenres WRITE setHideRecommendByGenres NOTIFY hideRecommendByGenresChanged)
 
 private:
     QString m_cacheFileName { "userconfiguration.cache" };
@@ -48,6 +49,7 @@ private:
     QString m_hideAbandonedSeensField { "hideAbandonedSeens" };
     QString m_markAsReadAfterDownloadField { "markAsReadAfterDownload" };
     QString m_startPageField { "startPage" };
+    QString m_hideRecommendByGenresField { "hideRecommendByGenres" };
     int m_opacityPlayerPanel { 50 };
     bool m_notCloseReleaseCardAfterWatch { false };
     bool m_usingScrollAcceleration { true };
@@ -58,6 +60,7 @@ private:
     bool m_hideAbandonedSeens { false };
     bool m_markAsReadAfterDownload { false };
     QString m_startPage { "release" };
+    bool m_hideRecommendByGenres { false };
 
 public:
     explicit UserConfigurationViewModel(QObject *parent = nullptr);
@@ -92,10 +95,12 @@ public:
     QString startPage() const noexcept { return m_startPage; }
     void setStartPage(const QString& startPage) noexcept;
 
+    bool hideRecommendByGenres() const noexcept { return m_hideRecommendByGenres; }
+    void setHideRecommendByGenres(const bool hideRecommendByGenres) noexcept;
+
     Q_INVOKABLE void saveSettingsToFile();
 
 private:
-
     void readSettingsFromFile();
 
 signals:
@@ -109,6 +114,7 @@ signals:
     void hideAbandonedSeensChanged();
     void markAsReadAfterDownloadChanged();
     void startPageChanged();
+    void hideRecommendByGenresChanged();
 
 };
 

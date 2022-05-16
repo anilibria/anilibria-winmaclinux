@@ -27,6 +27,7 @@ QString NewInFavoritesSectionId = "newinfavorites";
 QString NewFromStartSectionId = "newfromstart";
 QString LastTwoDaysSectionId = "lasttwodays";
 QString AbandonedSeensSectionId = "abondonedseens";
+QString RecommendedByGenresSectionId = "recommendbygenres";
 
 QString StatisticsSectionComponent = "StatisticsSection";
 QString SimpleListSectionComponent = "SimpleListSection";

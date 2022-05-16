@@ -33,7 +33,6 @@
 #include <QProcess>
 #include <QCoreApplication>
 #include <QOperatingSystemVersion>
-#include <QRandomGenerator>
 #include "../Models/releasemodel.h"
 #include "../Models/fullreleasemodel.h"
 #include "../Models/changesmodel.h"

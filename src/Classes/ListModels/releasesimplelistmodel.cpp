@@ -17,6 +17,7 @@
 */
 
 #include "releasesimplelistmodel.h"
+#include "../../globalconstants.h"
 
 ReleaseSimpleListModel::ReleaseSimpleListModel(QObject *parent)
     : QAbstractListModel{parent}
@@ -100,26 +101,32 @@ void ReleaseSimpleListModel::refresh()
 
     m_releases->clear();
 
-    if (m_filterMode == "newinfavorites") {
+    if (m_filterMode == NewInFavoritesSectionId) {
         m_releasesViewModel->fillNewInFavorites(m_releases.get());
 
         std::sort(m_releases->begin(), m_releases->end(), compareTimeStampDescending);
     }
 
-    if (m_filterMode == "newfromstart") {
+    if (m_filterMode == NewFromStartSectionId) {
         m_releasesViewModel->fillNewFromStart(m_releases.get());
 
         std::sort(m_releases->begin(), m_releases->end(), compareTimeStampDescending);
     }
 
-    if (m_filterMode == "lasttwodays") {
+    if (m_filterMode == LastTwoDaysSectionId) {
         m_releasesViewModel->fillNewFromLastTwoDays(m_releases.get());
 
         std::sort(m_releases->begin(), m_releases->end(), compareTimeStampDescending);
     }
 
-    if (m_filterMode == "abondonedseens") {
+    if (m_filterMode == AbandonedSeensSectionId) {
         m_releasesViewModel->fillAbandonedSeens(m_releases.get());
+
+        std::sort(m_releases->begin(), m_releases->end(), compareTimeStampDescending);
+    }
+
+    if (m_filterMode == RecommendedByGenresSectionId) {
+        m_releasesViewModel->fillRecommendsByGenres(m_releases.get());
 
         std::sort(m_releases->begin(), m_releases->end(), compareTimeStampDescending);
     }

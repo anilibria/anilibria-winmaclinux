@@ -208,6 +208,7 @@ public:
     void fillNewFromStart(QList<FullReleaseModel*>* list) const noexcept;
     void fillNewFromLastTwoDays(QList<FullReleaseModel*>* list) const noexcept;
     void fillAbandonedSeens(QList<FullReleaseModel*>* list) const noexcept;
+    void fillRecommendsByGenres(QList<FullReleaseModel*>* list) noexcept;
     void getFavoritesReleases(QList<FullReleaseModel*>* list) const noexcept;
 
     Q_INVOKABLE void copyToClipboard(const QString& text) const noexcept;
@@ -253,6 +254,7 @@ public:
     Q_INVOKABLE void prepareTorrentsForListItem(const int id);
     Q_INVOKABLE void clearDeletedInCacheMarks();
     FullReleaseModel* getReleaseById(int id) const noexcept;
+    quint32 m_seedValue { 0 };
 
 private:
     void loadReleases();
