@@ -58,6 +58,14 @@ Page {
                     height: 45
                     color: ApplicationTheme.pageUpperPanel
 
+                    PlainText {
+                        anchors.verticalCenter: parent.verticalCenter
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        visible: releasesViewModel.synchronizationEnabled
+                        fontPointSize: 12
+                        text: "Выполняется синхронизация..."
+                    }
+
                     RoundedActionButton {
                         buttonEnabled: userConfigurationViewModel.startPage !== "myanilibria"
                         anchors.verticalCenter: parent.verticalCenter
