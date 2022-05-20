@@ -1036,7 +1036,7 @@ Page {
 
                             RoundedActionButton {
                                 buttonEnabled: userConfigurationViewModel.startPage !==  "release"
-                                text: "Сделай страницу стартовой"
+                                text: "Сделать страницу стартовой"
                                 onClicked: {
                                     userConfigurationViewModel.startPage = "release";
                                 }
