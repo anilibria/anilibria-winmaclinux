@@ -35,7 +35,7 @@ public:
     QQueue<int>* m_QueuedDeletedFavorites;
     QString m_FavoriteToken;
 
-    void getAllReleases();
+    void getAllReleases(const int count, const int page);
     void getYoutubeVideos();
     void getSchedule();
     void signin(QString email, QString password, QString fa2code);

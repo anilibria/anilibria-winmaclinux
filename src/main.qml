@@ -631,7 +631,7 @@ ApplicationWindow {
         id: synchronizationService
         Component.onCompleted: {
             releasesViewModel.synchronizationEnabled = true;
-            synchronizeReleases();
+            synchronizeReleases(1);
         }
 
         onUserDataReceived: {

@@ -45,7 +45,7 @@ AnilibriaApiService::AnilibriaApiService(QObject *parent) : QObject(parent),
     }
 }
 
-void AnilibriaApiService::getAllReleases()
+void AnilibriaApiService::getAllReleases(const int count, const int page)
 {
     auto networkManager = new QNetworkAccessManager(this);
     QNetworkRequest request(QUrl(AnilibriaApiPath + "public/api/index.php"));
@@ -54,8 +54,8 @@ void AnilibriaApiService::getAllReleases()
 
     QUrlQuery params;
     params.addQueryItem("query", "list");
-    params.addQueryItem("page", "1");
-    params.addQueryItem("perPage", "1500");
+    params.addQueryItem("page", QString::number(page));
+    params.addQueryItem("perPage", QString::number(count));
 
     connect(networkManager,&QNetworkAccessManager::finished,this,&AnilibriaApiService::getAllReleasesResponse);
 

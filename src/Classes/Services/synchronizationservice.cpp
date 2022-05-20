@@ -40,9 +40,9 @@ SynchronizationService::SynchronizationService(QObject *parent) : QObject(parent
     connect(m_dlService, &DLService::allSynchronized, this, &SynchronizationService::saveReleasesFromDLToCache);
 }
 
-void SynchronizationService::synchronizeReleases()
+void SynchronizationService::synchronizeReleases(const int page)
 {
-    m_AnilibriaApiService->getAllReleases();
+    m_AnilibriaApiService->getAllReleases(800, page);
 }
 
 void SynchronizationService::synchronizeSchedule()

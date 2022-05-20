@@ -147,7 +147,7 @@ Page {
                         if (releasesViewModel.synchronizationEnabled) return;
 
                         releasesViewModel.synchronizationEnabled = true;
-                        synchronizationService.synchronizeReleases();
+                        synchronizationService.synchronizeReleases(1);
                     }
                 }
 

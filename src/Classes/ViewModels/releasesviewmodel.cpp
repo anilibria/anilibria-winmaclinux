@@ -897,7 +897,8 @@ void ReleasesViewModel::updateAllReleases(const QString &releases, bool insideDa
                 mapToFullReleaseModel(jsonRelease.toObject(), isFirstStart, hittedMaps);
             }
 
-            markDeletedReleases(hittedMaps);
+            //temporatily disable deleting releases because synchronization diveded on few parts
+            //markDeletedReleases(hittedMaps);
 
             saveReleasesFromMemoryToFile();
             saveChanges();
@@ -1664,11 +1665,14 @@ void ReleasesViewModel::releasesUpdated()
     setCountReleases(m_releases->count());
     m_items->refresh();
 
-    m_synchronizationService->synchronizeSchedule();
-    if (!m_applicationSettings->userToken().isEmpty()) m_synchronizationService->synchronizeUserFavorites(m_applicationSettings->userToken());
+    if (m_synchronizationEnabled) {
+        m_synchronizationService->synchronizeSchedule();
+        if (!m_applicationSettings->userToken().isEmpty()) m_synchronizationService->synchronizeUserFavorites(m_applicationSettings->userToken());
 
-    setSynchronizationEnabled(false);
+        m_synchronizationService->synchronizeReleases(2);
 
+        setSynchronizationEnabled(false);
+    }
     emit afterSynchronizedReleases();
 }
 
