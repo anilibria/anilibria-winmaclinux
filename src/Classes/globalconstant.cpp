@@ -18,8 +18,8 @@
 
 #include "globalconstants.h"
 
-QString AnilibriaImagesPath = "https://static.wwnd.space";
-QString AnilibriaApiPath = "https://wwnd.space/";
+QString AnilibriaImagesPath = "https://static-libria.iss.bond";
+QString AnilibriaApiPath = "https://anilibriaqt.anilib.top/";
 bool IsPortable = false;
 
 QString StatisticsSectionId = "statistics";

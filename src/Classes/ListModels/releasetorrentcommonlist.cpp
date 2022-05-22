@@ -98,7 +98,7 @@ void ReleaseTorrentCommonList::loadFromJson(const QString &json)
 void ReleaseTorrentCommonList::downloadTorrent(const int index)
 {
     auto torrent = m_torrents->at(index);
-    QNetworkRequest request(QUrl(AnilibriaImagesPath + torrent->url()));
+    QNetworkRequest request(QUrl(AnilibriaApiPath + torrent->url()));
 
     m_networkManager->get(request);
 }

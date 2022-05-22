@@ -1665,14 +1665,10 @@ void ReleasesViewModel::releasesUpdated()
     setCountReleases(m_releases->count());
     m_items->refresh();
 
-    if (m_synchronizationEnabled) {
-        m_synchronizationService->synchronizeSchedule();
-        if (!m_applicationSettings->userToken().isEmpty()) m_synchronizationService->synchronizeUserFavorites(m_applicationSettings->userToken());
+    m_synchronizationService->synchronizeSchedule();
+    if (!m_applicationSettings->userToken().isEmpty()) m_synchronizationService->synchronizeUserFavorites(m_applicationSettings->userToken());
 
-        m_synchronizationService->synchronizeReleases(2);
-
-        setSynchronizationEnabled(false);
-    }
+    setSynchronizationEnabled(false);
     emit afterSynchronizedReleases();
 }
 

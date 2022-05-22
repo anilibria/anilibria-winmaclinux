@@ -42,7 +42,7 @@ SynchronizationService::SynchronizationService(QObject *parent) : QObject(parent
 
 void SynchronizationService::synchronizeReleases(const int page)
 {
-    m_AnilibriaApiService->getAllReleases(800, page);
+    m_AnilibriaApiService->getAllReleases(1500, page);
 }
 
 void SynchronizationService::synchronizeSchedule()
@@ -82,7 +82,7 @@ void SynchronizationService::removeUserFavorites(QString token, QString ids)
 
 QString SynchronizationService::combineWithWebSiteUrl(QString path)
 {
-    return AnilibriaImagesPath + path;
+    return AnilibriaApiPath + path;
 }
 
 void SynchronizationService::downloadTorrent(QString torrentPath)
