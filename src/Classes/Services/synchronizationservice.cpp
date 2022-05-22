@@ -82,7 +82,7 @@ void SynchronizationService::removeUserFavorites(QString token, QString ids)
 
 QString SynchronizationService::combineWithWebSiteUrl(QString path)
 {
-    return AnilibriaApiPath + path;
+    return AnilibriaImagesPath + path;
 }
 
 void SynchronizationService::downloadTorrent(QString torrentPath)
