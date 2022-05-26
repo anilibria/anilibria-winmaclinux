@@ -18,7 +18,7 @@
 
 #include "globalconstants.h"
 
-QString AnilibriaImagesPath = "https://static-libria.iss.bond";
+QString AnilibriaImagesPath = "https://anilibriaqt.anilib.top";
 QString AnilibriaApiPath = "https://anilibriaqt.anilib.top/";
 bool IsPortable = false;
 
