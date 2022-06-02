@@ -1089,13 +1089,12 @@ Page {
                             }
                             LinkedText {
                                 fontPointSize: 11
-                                text: "<a href='https://www.anilibria.tv'>Сайт анилибрии</a>"
+                                text: "<a href='https://t.me/desktopclientanilibria'>Telegram канал о приложении</a>"
                             }
                             LinkedText {
                                 fontPointSize: 11
-                                text: "<a href='https://t.me/desktopclientanilibria'>Telegram канал о приложении</a>"
+                                text: "<a href='https://t.me/desktopclientanilibria/259'>Видео для новых пользователей</a>"
                             }
-
                         }
                     }
                 }
