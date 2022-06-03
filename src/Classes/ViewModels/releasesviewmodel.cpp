@@ -689,9 +689,11 @@ void ReleasesViewModel::closeReleaseCard() noexcept
 
 void ReleasesViewModel::openDescriptionLink(const QString &link) noexcept
 {
+    auto httpLink = "http://anilibriaqt.anilib.top/release/";
+    auto httpsLink = "https://anilibriaqt.anilib.top/release/";
     auto descriptionLink = link;
-    if (descriptionLink.indexOf("https://www.anilibria.tv/release/") == 0 || descriptionLink.indexOf("http://www.anilibria.tv/release/") == 0) {
-        auto code = descriptionLink.replace(QString("https://www.anilibria.tv/release/"), QString("")).replace("http://www.anilibria.tv/release/", "").replace(".html", "");
+    if (descriptionLink.indexOf(httpsLink) == 0 || descriptionLink.indexOf(httpLink) == 0) {
+        auto code = descriptionLink.replace(QString(httpsLink), QString("")).replace(httpLink, "").replace(".html", "");
         if (code.indexOf("?") > -1) code = code.mid( 0, code.indexOf("?"));
         auto release = getReleaseByCode(code);
         showReleaseCard(release->id());
