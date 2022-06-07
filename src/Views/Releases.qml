@@ -616,8 +616,8 @@ Page {
                             PlainText {
                                 id: labelSeenMarkSearchField
                                 anchors.top: statusesSearchField.bottom
-                                anchors.left: labelFavoriteMarkSearchField.right
-                                anchors.rightMargin: 10
+                                width: parent.width / 2 - 5
+                                anchors.right: parent.right
                                 fontPointSize: 11
                                 text: qsTr("Признак просмотра")
                             }
@@ -678,6 +678,25 @@ Page {
                                 anchors.top: labelReleaseSeriesFilterField.bottom
                                 onCheckedChanged: {
                                     releasesViewModel.items.hasReleaseSeriesFilter = checked;
+                                }
+                            }
+
+                            PlainText {
+                                id: labelScheduleDayFilterField
+                                width: parent.width / 2 - 5
+                                anchors.top: favoriteMarkSearchField.bottom
+                                anchors.right: parent.right
+                                fontPointSize: 11
+                                text: "День недели"
+                            }
+                            TextField {
+                                id: scheduleDayFilterField
+                                width: parent.width / 2 - 5
+                                anchors.top: labelReleaseSeriesFilterField.bottom
+                                anchors.right: parent.right
+                                placeholderText: "Вводите через запятую"
+                                onTextChanged: {
+                                    releasesViewModel.items.scheduleDayFilter = text;
                                 }
                             }
                         }
@@ -2400,6 +2419,8 @@ Page {
         favoriteMarkSearchField.currentIndex = 0;
         seenMarkSearchField.currentIndex = 0;
         releaseSeriesFilterField.checked = false;
+        scheduleDayFilterField.text = "";
+
         alphabetListModel.clearCharacters();
     }
 

@@ -390,6 +390,14 @@ void ReleasesListModel::setReleaseLinkedSeries(ReleaseLinkedSeries *releaseLinke
     m_releaseLinkedSeries->setup(m_releases);
 }
 
+void ReleasesListModel::setScheduleDayFilter(const QString &scheduleDayFilter) noexcept
+{
+    if (m_scheduleDayFilter == scheduleDayFilter) return;
+
+    m_scheduleDayFilter = scheduleDayFilter;
+    emit scheduleDayFilterChanged();
+}
+
 QString ReleasesListModel::getScheduleDay(int dayNumber) const noexcept
 {
     switch (dayNumber){
@@ -402,6 +410,20 @@ QString ReleasesListModel::getScheduleDay(int dayNumber) const noexcept
         case 7: return QString("воскресенье");
         default: return "";
     }
+}
+
+int ReleasesListModel::getScheduleDayNumber(const QString &day) const noexcept
+{
+    auto loweredDay = day.toLower();
+    if (loweredDay == "понедельник") return 1;
+    if (loweredDay == "вторник") return 2;
+    if (loweredDay == "среда") return 3;
+    if (loweredDay == "четверг") return 4;
+    if (loweredDay == "пятница") return 5;
+    if (loweredDay == "суббота") return 6;
+    if (loweredDay == "воскресенье") return 7;
+
+    return -1;
 }
 
 QSharedPointer<QSet<int>> ReleasesListModel::getSelectedReleases()
@@ -450,12 +472,7 @@ void ReleasesListModel::refresh()
         removeTrimsInStringCollection(voicesFilter);
     }
 
-
     foreach (auto release, *m_releases) {
-#ifdef QT_DEBUG
-#else
-        if (release->isDeleted()) continue;
-#endif
         if (m_hiddenReleases->contains(release->id()) && m_section != HiddenReleasesSection) continue;
         if (!m_titleFilter.isEmpty()) {
             auto filteredTitle = m_titleFilter.toLower().replace("ё", "е").trimmed();
@@ -521,6 +538,17 @@ void ReleasesListModel::refresh()
                 }
             }
             if (!startWithAlphabetsCharacters) continue;
+        }
+
+        //scheduleDays
+        if (!m_scheduleDayFilter.isEmpty()) {
+            auto days = m_scheduleDayFilter.split(",");
+            auto scheduleDays = QSet<int>();
+            foreach (auto day, days) {
+                scheduleDays.insert(getScheduleDayNumber(day.trimmed()));
+            }
+            auto scheduleDay = m_scheduleReleases->value(release->id());
+            if (!scheduleDays.contains(scheduleDay)) continue;
         }
 
         // part of releases series

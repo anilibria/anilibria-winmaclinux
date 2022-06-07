@@ -52,6 +52,7 @@ class ReleasesListModel : public QAbstractListModel
     Q_PROPERTY(bool isHasSelectRelease READ isHasSelectRelease NOTIFY isHasSelectReleaseChanged)
     Q_PROPERTY(int countFilteredReleases READ countFilteredReleases NOTIFY countFilteredReleasesChanged)
     Q_PROPERTY(ReleaseLinkedSeries* releaseLinkedSeries READ releaseLinkedSeries WRITE setReleaseLinkedSeries NOTIFY releaseLinkedSeriesChanged)
+    Q_PROPERTY(QString scheduleDayFilter READ scheduleDayFilter WRITE setScheduleDayFilter NOTIFY scheduleDayFilterChanged)
 
 private:
     QSharedPointer<QList<FullReleaseModel*>> m_releases;
@@ -82,6 +83,7 @@ private:
     bool m_sortingDescending { true };
     bool m_isHasReleases { false };
     bool m_hasReleaseSeriesFilter { false };
+    QString m_scheduleDayFilter { "" };
     QSharedPointer<QSet<int>> m_selectedReleases { new QSet<int>() };
     enum FullReleaseRoles {
         ReleaseIdRole = Qt::UserRole + 1,
@@ -195,7 +197,11 @@ public:
     ReleaseLinkedSeries* releaseLinkedSeries() const noexcept { return m_releaseLinkedSeries; }
     void setReleaseLinkedSeries(ReleaseLinkedSeries* releaseLinkedSeries) noexcept;
 
+    QString scheduleDayFilter() const noexcept { return m_scheduleDayFilter; }
+    void setScheduleDayFilter(const QString& scheduleDayFilter) noexcept;
+
     QString getScheduleDay(int dayNumber) const noexcept;
+    int getScheduleDayNumber(const QString& day) const noexcept;
 
     QSharedPointer<QSet<int>> getSelectedReleases();
 
@@ -236,6 +242,7 @@ signals:
     void countFilteredReleasesChanged();
     void releaseLinkedSeriesChanged();
     void hasReleaseSeriesFilterChanged();
+    void scheduleDayFilterChanged();
 
 };
 
