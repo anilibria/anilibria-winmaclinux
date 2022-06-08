@@ -415,13 +415,13 @@ QString ReleasesListModel::getScheduleDay(int dayNumber) const noexcept
 int ReleasesListModel::getScheduleDayNumber(const QString &day) const noexcept
 {
     auto loweredDay = day.toLower();
-    if (loweredDay == "понедельник") return 1;
-    if (loweredDay == "вторник") return 2;
-    if (loweredDay == "среда") return 3;
-    if (loweredDay == "четверг") return 4;
-    if (loweredDay == "пятница") return 5;
-    if (loweredDay == "суббота") return 6;
-    if (loweredDay == "воскресенье") return 7;
+    if (QString("понедельник").contains(loweredDay)) return 1;
+    if (QString("вторник").contains(loweredDay)) return 2;
+    if (QString("среда").contains(loweredDay)) return 3;
+    if (QString("четверг").contains(loweredDay)) return 4;
+    if (QString("пятница").contains(loweredDay)) return 5;
+    if (QString("суббота").contains(loweredDay)) return 6;
+    if (QString("воскресенье").contains(loweredDay)) return 7;
 
     return -1;
 }
