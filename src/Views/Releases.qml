@@ -411,7 +411,7 @@ Page {
                         visible: descriptionSearchField.text || typeSearchField.text || genresSearchField.text ||
                                  voicesSearchField.text || yearsSearchField.text || seasonesSearchField.text ||
                                  statusesSearchField.text || favoriteMarkSearchField.currentIndex > 0 || seenMarkSearchField.currentIndex > 0 ||
-                                 releaseSeriesFilterField.checked
+                                 releaseSeriesFilterField.checked || scheduleDayFilterField.text
                         anchors.top: parent.top
                         anchors.right: parent.right
                         anchors.rightMargin: 6
