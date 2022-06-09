@@ -82,6 +82,18 @@ QVariant OnlinePlayerVideoList::data(const QModelIndex &index, int role) const
         case PosterRole: {
             return QVariant(AnilibriaImagesPath + video->videoPoster());
         }
+        case EndingStartRole: {
+            return QVariant(video->endingStartSeconds());
+        }
+        case EndingEndRole: {
+            return QVariant(video->endingEndSeconds());
+        }
+        case OpeningStartRole: {
+            return QVariant(video->openingStartSeconds());
+        }
+        case OpeningEndRole: {
+            return QVariant(video->openingEndSeconds());
+        }
     }
 
     return QVariant();
@@ -145,6 +157,22 @@ QHash<int, QByteArray> OnlinePlayerVideoList::roleNames() const
         {
             PosterRole,
             "poster"
+        },
+        {
+            EndingStartRole,
+            "endingStart"
+        },
+        {
+            EndingEndRole,
+            "endingEnd"
+        },
+        {
+            OpeningStartRole,
+            "openingStart"
+        },
+        {
+            OpeningEndRole,
+            "openingEnd"
         }
     };
 }

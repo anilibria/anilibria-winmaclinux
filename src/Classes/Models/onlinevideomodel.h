@@ -36,6 +36,10 @@ private:
     QString m_releasePoster;
     bool m_isGroup;
     QString m_videoPoster { "" };
+    int m_endingStartSeconds { -1 };
+    int m_endingEndSeconds { -1 };
+    int m_openingStartSeconds { -1 };
+    int m_openingEndSeconds { -1 };
 
 public:
     OnlineVideoModel();
@@ -56,6 +60,10 @@ public:
     QString releasePoster() const { return m_releasePoster; }
     bool isGroup() const { return m_isGroup; }
     QString videoPoster() const { return m_videoPoster; }
+    int endingStartSeconds() const noexcept { return m_endingStartSeconds; }
+    int endingEndSeconds() const noexcept { return m_endingEndSeconds; };
+    int openingStartSeconds() const noexcept { return m_openingStartSeconds; };
+    int openingEndSeconds() const noexcept { return m_openingEndSeconds; };
 
     void setId(const int id) noexcept;
     void setTitle(const QString &title) noexcept;

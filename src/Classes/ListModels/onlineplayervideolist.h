@@ -58,6 +58,10 @@ private:
         SelectedRole,
         OrderRole,
         PosterRole,
+        EndingStartRole,
+        EndingEndRole,
+        OpeningStartRole,
+        OpeningEndRole,
     };
 
 public:

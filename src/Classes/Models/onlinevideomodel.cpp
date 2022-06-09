@@ -17,6 +17,8 @@
 */
 
 #include "onlinevideomodel.h"
+#include <QJsonObject>
+#include <QJsonArray>
 
 OnlineVideoModel::OnlineVideoModel()
 {
@@ -33,6 +35,25 @@ void OnlineVideoModel::readFromApiModel(const QJsonObject &jsonObject)
     m_SourceSD = jsonObject.value("srcSd").toString();
     m_SourceHD = jsonObject.value("srcHd").toString();
     m_videoPoster = jsonObject.value("poster").toString();
+    if (jsonObject.contains("skips")) {
+        auto skips = jsonObject.value("skips").toObject();
+
+        if (skips.contains("ending")) {
+            auto endings = skips.value("ending").toArray();
+            if (endings.count() == 2) {
+                m_endingStartSeconds = endings.first().toInt();
+                m_endingEndSeconds = endings.last().toInt();
+            }
+        }
+
+        if (skips.contains("opening")) {
+            auto openings = skips.value("opening").toArray();
+            if (openings.count() == 2) {
+                m_openingStartSeconds = openings.first().toInt();
+                m_openingEndSeconds = openings.last().toInt();
+            }
+        }
+    }
 }
 
 void OnlineVideoModel::writeToJson(QJsonObject &json) const noexcept
@@ -45,6 +66,23 @@ void OnlineVideoModel::writeToJson(QJsonObject &json) const noexcept
     json["srcSd"] = m_SourceSD;
     json["srcHd"] = m_SourceHD;
     json["poster"] = m_videoPoster;
+
+    auto skipsObject = QJsonObject();
+
+    if (m_endingStartSeconds > -1 && m_endingEndSeconds > -1) {
+        auto endings = QJsonArray();
+        endings.append(m_endingStartSeconds);
+        endings.append(m_endingEndSeconds);
+        skipsObject["ending"] = endings;
+    }
+
+    if (m_openingStartSeconds > -1 && m_openingEndSeconds > -1) {
+        auto openings = QJsonArray();
+        openings.append(m_openingStartSeconds);
+        openings.append(m_openingEndSeconds);
+        skipsObject["opening"] = openings;
+    }
+    json["skips"] = skipsObject;
 }
 
 void OnlineVideoModel::setId(const int id) noexcept
