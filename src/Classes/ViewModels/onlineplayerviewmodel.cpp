@@ -346,6 +346,14 @@ void OnlinePlayerViewModel::setSeenMarkedAtEnd(bool seenMarkedAtEnd) noexcept
     emit seenMarkedAtEndChanged();
 }
 
+void OnlinePlayerViewModel::setDisplaySkipOpening(bool displaySkipOpening) noexcept
+{
+    if (m_displaySkipOpening == displaySkipOpening) return;
+
+    m_displaySkipOpening = displaySkipOpening;
+    emit displaySkipOpeningChanged();
+}
+
 void OnlinePlayerViewModel::toggleFullScreen()
 {
     setIsFullScreen(!m_isFullScreen);
@@ -363,7 +371,11 @@ void OnlinePlayerViewModel::changeVideoPosition(int duration, int position) noex
         m_watchedTimes = 0;
     }
 
-    QString start = getDisplayTimeFromSeconds(position / 1000);
+    auto positionInSeconds = position / 1000;
+
+    setDisplaySkipOpening(m_videos->isPositionInOpening(positionInSeconds));
+
+    QString start = getDisplayTimeFromSeconds(positionInSeconds);
     QString end = getDisplayTimeFromSeconds(duration / 1000);
 
     setDisplayVideoPosition(start + " из " + end);
@@ -900,6 +912,18 @@ bool OnlinePlayerViewModel::isLastSeriaIsSingleRelease() const noexcept
 void OnlinePlayerViewModel::refreshSingleVideo(int releaseId, int videoId) noexcept
 {
     m_videos->refreshSingleVideo(releaseId, videoId);
+}
+
+int OnlinePlayerViewModel::skipOpening() noexcept
+{
+    auto releaseId = m_selectedRelease;
+    auto videoId = m_selectedVideo;
+    auto video = m_videos->getFirstReleaseWithPredicate(
+        [releaseId, videoId](OnlineVideoModel* video) {
+            return video->releaseId() == releaseId && video->order() == videoId;
+        }
+    );
+    return video->openingEndSeconds() * 1000;
 }
 
 void OnlinePlayerViewModel::saveVideoSeens()

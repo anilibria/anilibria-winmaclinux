@@ -1277,6 +1277,34 @@ Page {
     }
 
     Rectangle {
+        id: skipOpening
+        visible: onlinePlayerViewModel.displaySkipOpening
+        anchors.bottom: controlPanel.top
+        anchors.horizontalCenter: controlPanel.horizontalCenter
+        anchors.bottomMargin: 4
+        width: 200
+        height: 40
+        color: ApplicationTheme.playerControlBackground
+        border.width: 1
+        border.color: ApplicationTheme.plainTextColor
+
+        PlainText {
+            anchors.centerIn: parent
+            fontPointSize: 12
+            text: "Пропустить опенинг"
+        }
+
+        MouseArea {
+            enabled: skipOpening.visible
+            anchors.fill: parent
+            onPressed: {
+                const position = onlinePlayerViewModel.skipOpening();
+                playerLoader.item.seek(position);
+            }
+        }
+    }
+
+    Rectangle {
         id: releasePosterArea
         anchors.right: parent.right
         anchors.top: parent.top

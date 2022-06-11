@@ -325,6 +325,9 @@ void OnlinePlayerVideoList::selectVideo(int releaseId, int videoId) noexcept
     );
     newIndex = m_videos->indexOf(*newSelected);
 
+    m_openingStart = (*newSelected)->openingStartSeconds();
+    m_openingEnd = (*newSelected)->openingEndSeconds();
+
     m_selectedReleaseId = releaseId;
     m_selectedVideoId = videoId;
 
@@ -382,4 +385,11 @@ void OnlinePlayerVideoList::refreshSingleVideo(int releaseId, int videoId) noexc
 
     auto videoIndex = m_videos->indexOf(*iterator);
     emit dataChanged(index(videoIndex), index(videoIndex));
+}
+
+bool OnlinePlayerVideoList::isPositionInOpening(int position) const noexcept
+{
+    if (m_openingStart == -1) return false;
+
+    return position >= m_openingStart && position < m_openingEnd;
 }

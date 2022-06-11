@@ -69,6 +69,7 @@ class OnlinePlayerViewModel : public QObject
     Q_PROPERTY(bool showNextPosterRelease READ showNextPosterRelease WRITE setShowNextPosterRelease NOTIFY showNextPosterReleaseChanged)
     Q_PROPERTY(QString nextReleasePoster READ nextReleasePoster WRITE setNextReleasePoster NOTIFY nextReleasePosterChanged)
     Q_PROPERTY(bool seenMarkedAtEnd READ seenMarkedAtEnd WRITE setSeenMarkedAtEnd NOTIFY seenMarkedAtEndChanged)
+    Q_PROPERTY(bool displaySkipOpening READ displaySkipOpening WRITE setDisplaySkipOpening NOTIFY displaySkipOpeningChanged)
 
 private:
     bool m_isFullScreen;
@@ -115,6 +116,7 @@ private:
     bool m_showNextPosterRelease { false };
     QString m_nextReleasePoster { "" };
     bool m_seenMarkedAtEnd { false };
+    bool m_displaySkipOpening { false };
 
 public:
     explicit OnlinePlayerViewModel(QObject *parent = nullptr);
@@ -225,6 +227,9 @@ public:
     bool seenMarkedAtEnd() const noexcept { return m_seenMarkedAtEnd; }
     void setSeenMarkedAtEnd(bool seenMarkedAtEnd) noexcept;
 
+    bool displaySkipOpening() const noexcept { return m_displaySkipOpening; }
+    void setDisplaySkipOpening(bool displaySkipOpening) noexcept;
+
     Q_INVOKABLE void toggleFullScreen();
     Q_INVOKABLE void changeVideoPosition(int duration, int position) noexcept;
     Q_INVOKABLE QString checkExistingVideoQuality(int index);    
@@ -251,6 +256,7 @@ public:
     Q_INVOKABLE int jumpInPlayer(int minutes, int seconds, bool direction) noexcept;
     Q_INVOKABLE bool isLastSeriaIsSingleRelease() const noexcept;
     Q_INVOKABLE void refreshSingleVideo(int releaseId, int videoId) noexcept;
+    Q_INVOKABLE int skipOpening() noexcept;
 
 private:
     void saveVideoSeens();
@@ -313,6 +319,7 @@ signals:
     void showNextPosterReleaseChanged();
     void nextReleasePosterChanged();
     void seenMarkedAtEndChanged();
+    void displaySkipOpeningChanged();
 
 };
 

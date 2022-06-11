@@ -42,6 +42,8 @@ private:
     int m_selectedReleaseId;
     int m_selectedVideoId;
     ReleasesViewModel* m_releaseViewModel { nullptr };
+    int m_openingStart { -1 };
+    int m_openingEnd { -1 };
 
     enum PlayListRoles {
         IdRole = Qt::UserRole + 1,
@@ -84,6 +86,7 @@ public:
     QList<int> getReleaseIds() noexcept;
     void setup(ReleasesViewModel* releaseViewModel);
     void refreshSingleVideo(int releaseId, int videoId) noexcept;
+    bool isPositionInOpening(int position) const noexcept;
 
 signals:    
 
