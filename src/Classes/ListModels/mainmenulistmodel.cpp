@@ -24,10 +24,10 @@ MainMenuListModel::MainMenuListModel(QObject *parent) : QAbstractListModel(paren
     m_items->append(new MainMenuItemModel(0, "Каталог релизов", "release", "catalogmenu.svg"));
     m_items->append(new MainMenuItemModel(1, "Видеоплеер", "videoplayer", "videoplayermenu.svg"));
     m_items->append(new MainMenuItemModel(2, "Моя Анилибрия", "myanilibria", "house.svg"));
-    m_items->append(new MainMenuItemModel(3, "Youtube", "youtube", "youtube.svg"));
-    m_items->append(new MainMenuItemModel(4, "Кинозал", "cinemahall", "cinemahallmenu.svg"));
-    m_items->append(new MainMenuItemModel(5, "Связанные релизы", "releaseseries", "seriesmenu.svg"));
-    m_items->append(new MainMenuItemModel(6, "Менеджер загрузок", "download", "downloadcircle.svg"));
+    m_items->append(new MainMenuItemModel(3, "Кинозал", "cinemahall", "cinemahallmenu.svg"));
+    m_items->append(new MainMenuItemModel(4, "Связанные релизы", "releaseseries", "seriesmenu.svg"));
+    m_items->append(new MainMenuItemModel(5, "Менеджер загрузок", "download", "downloadcircle.svg"));
+    m_items->append(new MainMenuItemModel(6, "Youtube", "youtube", "youtube.svg"));
     m_items->append(new MainMenuItemModel(7, "Обслуживание", "maintenance", "maintenance.svg"));
     m_items->append(new MainMenuItemModel(8, "Поддержать проект", "", "donate.svg"));
 }

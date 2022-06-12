@@ -554,6 +554,18 @@ void ReleasesViewModel::getFavoritesReleases(QList<FullReleaseModel *> *list) co
     }
 }
 
+QString ReleasesViewModel::getReleaseCodeFromUrl(const QString &url) const noexcept
+{
+    if (url.indexOf("anilibria.cf") > -1 || url.indexOf("anilib.top") > -1 || url.indexOf("anilibria.tv") > -1) {
+        auto startIndex = url.indexOf("release/") + 8;
+        auto code = url.mid(startIndex).replace(".html", "");
+        if (code.indexOf("?") > -1) code = code.mid(0, code.indexOf("?"));
+        return code;
+    }
+
+    return "";
+}
+
 void ReleasesViewModel::copyToClipboard(const QString &text) const noexcept
 {
     if (text.isEmpty()) return;
@@ -689,13 +701,10 @@ void ReleasesViewModel::closeReleaseCard() noexcept
 
 void ReleasesViewModel::openDescriptionLink(const QString &link) noexcept
 {
-    auto httpLink = "http://anilibriaqt.anilib.top/release/";
-    auto httpsLink = "https://anilibriaqt.anilib.top/release/";
-    auto descriptionLink = link;
-    if (descriptionLink.indexOf(httpsLink) == 0 || descriptionLink.indexOf(httpLink) == 0) {
-        auto code = descriptionLink.replace(QString(httpsLink), QString("")).replace(httpLink, "").replace(".html", "");
-        if (code.indexOf("?") > -1) code = code.mid( 0, code.indexOf("?"));
-        auto release = getReleaseByCode(code);
+    auto codeFromLink = getReleaseCodeFromUrl(link);
+
+    if (!codeFromLink.isEmpty()) {
+        auto release = getReleaseByCode(codeFromLink);
         showReleaseCard(release->id());
     } else {
         QDesktopServices::openUrl(QUrl(link));

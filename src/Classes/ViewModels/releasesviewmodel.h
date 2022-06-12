@@ -210,6 +210,7 @@ public:
     void fillAbandonedSeens(QList<FullReleaseModel*>* list) const noexcept;
     void fillRecommendsByGenres(QList<FullReleaseModel*>* list) noexcept;
     void getFavoritesReleases(QList<FullReleaseModel*>* list) const noexcept;
+    QString getReleaseCodeFromUrl(const QString& url) const noexcept;
 
     Q_INVOKABLE void copyToClipboard(const QString& text) const noexcept;
     Q_INVOKABLE void copyImageToClipboard(const QString& imagePath) const;
