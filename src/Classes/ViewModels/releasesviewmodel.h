@@ -209,6 +209,7 @@ public:
     void fillNewFromLastTwoDays(QList<FullReleaseModel*>* list) const noexcept;
     void fillAbandonedSeens(QList<FullReleaseModel*>* list) const noexcept;
     void fillRecommendsByGenres(QList<FullReleaseModel*>* list) noexcept;
+    void fillWillWatch(QList<FullReleaseModel*>* list) noexcept;
     void getFavoritesReleases(QList<FullReleaseModel*>* list) const noexcept;
     QString getReleaseCodeFromUrl(const QString& url) const noexcept;
 

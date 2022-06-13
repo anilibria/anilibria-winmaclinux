@@ -126,6 +126,7 @@ void MyAnilibriaListModel::setSectionHideMark(const QString &section, const bool
     if (section == LastTwoDaysSectionId) m_userConfiguration->setHideUpdatesLastTwoDays(notVisible);
     if (section == AbandonedSeensSectionId) m_userConfiguration->setHideAbandonedSeens(notVisible);
     if (section == RecommendedByGenresSectionId) m_userConfiguration->setHideRecommendByGenres(notVisible);
+    if (section == WillWatchSectionId) m_userConfiguration->setHideWillWatch(notVisible);
 }
 
 void MyAnilibriaListModel::refresh() noexcept
@@ -161,6 +162,10 @@ void MyAnilibriaListModel::toggleSectionHideMark(const int elementIndex)
         auto current = m_userConfiguration->hideRecommendByGenres();
         m_userConfiguration->setHideRecommendByGenres(!current);
     }
+    if (section == WillWatchSectionId) {
+        auto current = m_userConfiguration->hideWillWatch();
+        m_userConfiguration->setHideWillWatch(!current);
+    }
 
     emit dataChanged(index(elementIndex,0), index(elementIndex,0));
 }
@@ -195,6 +200,9 @@ bool MyAnilibriaListModel::getHideSection(const QString &section) const noexcept
     }
     if (section == RecommendedByGenresSectionId) {
         return m_userConfiguration->hideRecommendByGenres();
+    }
+    if (section == WillWatchSectionId) {
+        return m_userConfiguration->hideWillWatch();
     }
 
     return false;

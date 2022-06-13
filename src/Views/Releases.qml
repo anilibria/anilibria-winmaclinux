@@ -1235,7 +1235,27 @@ Page {
                                 releasesViewModel.items.titleFilter = textContent;
                                 releasesViewModel.items.refresh();
                             }
+
+                            FilterPanelIconButton {
+                                visible: filterByTitle.textContent.length
+                                anchors.right: parent.right
+                                anchors.top: parent.top
+                                anchors.topMargin: 6
+                                width: 20
+                                height: 20
+                                iconPath: assetsLocation.iconsPath + "closewindow.svg"
+                                iconColor: ApplicationTheme.plainTextColor
+                                iconWidth: 16
+                                iconHeight: 16
+                                tooltipMessage: "Очистить фильтр по названию"
+                                onButtonPressed: {
+                                    filterByTitle.textContent = "";
+                                    releasesViewModel.items.titleFilter = "";
+                                    releasesViewModel.items.refresh();
+                                }
+                            }
                         }
+
                         FilterPanelIconButton {
                             iconPath: assetsLocation.iconsPath + "allreleases.svg"
                             overlayVisible: false

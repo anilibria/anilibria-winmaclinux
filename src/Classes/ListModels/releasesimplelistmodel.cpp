@@ -131,6 +131,12 @@ void ReleaseSimpleListModel::refresh()
         std::sort(m_releases->begin(), m_releases->end(), compareTimeStampDescending);
     }
 
+    if (m_filterMode == WillWatchSectionId) {
+        m_releasesViewModel->fillWillWatch(m_releases.get());
+
+        std::sort(m_releases->begin(), m_releases->end(), compareTimeStampDescending);
+    }
+
     endResetModel();
 
     emit hasItemsChanged();

@@ -116,6 +116,14 @@ void UserConfigurationViewModel::setHideRecommendByGenres(const bool hideRecomme
     emit hideRecommendByGenresChanged();
 }
 
+void UserConfigurationViewModel::setHideWillWatch(bool hideWillWatch) noexcept
+{
+    if (m_hideWillWatch == hideWillWatch) return;
+
+    m_hideWillWatch = hideWillWatch;
+    emit hideWillWatchChanged();
+}
+
 void UserConfigurationViewModel::saveSettingsToFile()
 {
     QJsonObject object;
@@ -130,6 +138,7 @@ void UserConfigurationViewModel::saveSettingsToFile()
     object[m_markAsReadAfterDownloadField] = m_markAsReadAfterDownload;
     object[m_startPageField] = m_startPage;
     object[m_hideRecommendByGenresField] = m_hideRecommendByGenres;
+    object[m_hideWillWatchField] = m_hideWillWatch;
 
     QFile file(getCachePath(m_cacheFileName));
     file.open(QFile::WriteOnly | QFile::Text);
@@ -157,4 +166,5 @@ void UserConfigurationViewModel::readSettingsFromFile()
     m_markAsReadAfterDownload = object.contains(m_markAsReadAfterDownloadField) ? object[m_markAsReadAfterDownloadField].toBool() : false;
     m_startPage = object.contains(m_startPageField) ? object[m_startPageField].toString() : "release";
     m_hideRecommendByGenres = object.contains(m_hideRecommendByGenresField) ? object[m_hideRecommendByGenresField].toBool() : false;
+    m_hideWillWatch = object.contains(m_hideWillWatchField) ? object[m_hideWillWatchField].toBool() : false;
 }

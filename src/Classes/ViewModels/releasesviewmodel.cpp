@@ -537,6 +537,23 @@ void ReleasesViewModel::fillRecommendsByGenres(QList<FullReleaseModel *> *list) 
     }
 }
 
+void ReleasesViewModel::fillWillWatch(QList<FullReleaseModel *> *list) noexcept
+{
+    foreach (auto release, *m_releases) {
+        auto releaseId = release->id();
+        if (!m_userFavorites->contains(releaseId)) continue;
+
+        auto seenVideos = m_items->getReleaseSeenMarkCount(releaseId);
+        int watchTimestamp = 0;
+        if (m_historyItems->contains(releaseId)) {
+             auto item = m_historyItems->value(releaseId);
+             watchTimestamp = item->watchTimestamp();
+        }
+
+        if (seenVideos == 0 && watchTimestamp == 0) list->append(release);
+    }
+}
+
 void ReleasesViewModel::getFavoritesReleases(QList<FullReleaseModel *> *list) const noexcept
 {
     QSet<int> favorites;

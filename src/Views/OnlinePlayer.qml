@@ -1319,6 +1319,9 @@ Page {
             fillMode: Image.PreserveAspectCrop
             width: 180
             height: 270
+            mipmap: true
+            sourceSize.width: 180
+            sourceSize.height: 270
             layer.enabled: true
             layer.effect: OpacityMask {
                 maskSource: mask
