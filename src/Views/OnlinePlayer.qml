@@ -176,7 +176,10 @@ Page {
         anchors.fill: parent
         hoverEnabled: true
         onClicked: {
-            if (playerLoader.item.playbackState === MediaPlayer.PlayingState) _page.setControlVisible(false);
+            if (playerLoader.item.playbackState === MediaPlayer.PlayingState) {
+                if (controlPanel.opacity !== 1)playerTimer.restart();
+                _page.setControlVisible(!(controlPanel.opacity === 1));
+            }
         }
         onDoubleClicked: {
             onlinePlayerViewModel.toggleFullScreen();
