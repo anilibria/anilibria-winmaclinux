@@ -40,6 +40,13 @@
 $ yay -S anilibria-winmaclinux-git
 ```
 
+### AltLinux
+Вы можете установить anilibria-winmaclinux через любой графический менеджер пакетов или через консоль:
+
+```console
+$ su - -c 'apt-get install anilibria-winmaclinux'
+```
+
 ### Debian
 Скачайте deb пакет со страницы релизов. Допустим скачали в корень домашней директории.  
 Далее выполните в консоли:  
