@@ -39,6 +39,11 @@
 ```console
 $ yay -S anilibria-winmaclinux-git
 ```
+### Rosa Linux
+
+```console
+$ sudo dnf install anilibria-winmaclinux
+```
 
 ### AltLinux
 Вы можете установить anilibria-winmaclinux через любой графический менеджер пакетов или через консоль:
