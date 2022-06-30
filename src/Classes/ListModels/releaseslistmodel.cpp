@@ -38,6 +38,18 @@ const int FinishedSeenSection = 18;
 const int NotFinishedSeenSection = 19;
 const int MostPopular2022Section = 20;
 const int AddedToCinemahall = 21;
+const int CurrentSeasonSection = 22;
+const int NotCurrentSeasonSection = 23;
+
+const int winter = 0;
+const int autumn = 1;
+const int spring = 2;
+const int summer = 3;
+
+const QString winterValue = "зима";
+const QString autumnValue = "осень";
+const QString springValue = "весна";
+const QString summerValue = "лето";
 
 ReleasesListModel::ReleasesListModel(QObject *parent) : QAbstractListModel(parent)
 {
@@ -437,6 +449,9 @@ void ReleasesListModel::refresh()
 
     m_filteredReleases->clear();
 
+    auto currentYear = QString::number(QDate::currentDate().year());
+    auto currentSeason = getCurrentSeason();
+
     QSharedPointer<QList<int>> linkedReleases = nullptr;
     if (m_releaseLinkedSeries != nullptr) linkedReleases = m_releaseLinkedSeries->getAllLinkedReleases();
 
@@ -615,6 +630,12 @@ void ReleasesListModel::refresh()
         if (m_section == FinishedSeenSection && !(isAllSeens && release->status().toLower() == "завершен")) continue;
 
         if (m_section == NotFinishedSeenSection && !(isAllSeens && release->status().toLower() != "завершен")) continue;
+
+        if (m_section == CurrentSeasonSection &&
+            !(release->year() == currentYear && release->status().toLower() == "в работе" && release->season() == currentSeason)) continue;
+
+        if (m_section == NotCurrentSeasonSection &&
+            !((release->year() != currentYear || (release->year() == currentYear && release->season() != currentSeason)) && release->status().toLower() == "в работе")) continue;
 
         m_filteredReleases->append(release);
     }
@@ -995,4 +1016,37 @@ void ReleasesListModel::refreshFilteredReleaseById(int id)
 
     int itemIndex = m_filteredReleases->indexOf(*iterator);
     emit dataChanged(index(itemIndex), index(itemIndex));
+}
+
+QString ReleasesListModel::getCurrentSeason()
+{
+    QList<int> seasonsCounters;
+    for (int i = 0; i < 4; i++) seasonsCounters.append(0);
+
+    foreach (auto release, *m_releases) {
+        if (!m_scheduleReleases->contains(release->id())) continue;
+
+        auto season = release->season().toLower();
+        if (season == winterValue) seasonsCounters[winter]++;
+        if (season == summerValue) seasonsCounters[summer]++;
+        if (season == autumnValue) seasonsCounters[autumn]++;
+        if (season == springValue) seasonsCounters[spring]++;
+    }
+
+    auto maxIndex = -1;
+    auto maxIndexValue = 0;
+    for (int i = 0; i < 4; i++) {
+        auto value = seasonsCounters.value(i);
+        if (value > maxIndexValue) {
+            maxIndexValue = value;
+            maxIndex = i;
+        }
+    }
+
+    if (maxIndex == winter) return winterValue;
+    if (maxIndex == autumn) return autumnValue;
+    if (maxIndex == spring) return springValue;
+    if (maxIndex == summer) return summerValue;
+
+    return "";
 }

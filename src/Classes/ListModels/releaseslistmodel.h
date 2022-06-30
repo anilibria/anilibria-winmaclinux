@@ -219,6 +219,7 @@ private:
     QHash<int, int>&& getAllSeenMarkCount(QHash<int, int>&& result) noexcept;
     void sortingFilteringReleases(QHash<int, int>&& seenMarks);
     void refreshFilteredReleaseById(int id);
+    QString getCurrentSeason();
 
 signals:
     void titleFilterChanged();
