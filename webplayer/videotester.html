@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<title>Anilibria Web Player Tester</title>
+		<link rel="preconnect" href="https://fonts.gstatic.com">
+		<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap" rel="stylesheet">
+		<script src="https://cdn.jsdelivr.net/npm/@clappr/player@latest/dist/clappr.min.js"></script>
+		<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/clappr-playback-rate-plugin@latest/lib/clappr-playback-rate-plugin.min.js"></script>
+		<script src="https://cdn.jsdelivr.net/npm/vue@2.6.12"></script>
+		<link rel="apple-touch-icon" sizes="180x180" href="https://icon.anilib.sbs/myres/faveicon/apple-touch-icon.png">
+		<link rel="icon" type="image/png" sizes="32x32" href="https://icon.anilib.sbs/myres/faveicon/favicon-32x32.png">
+		<link rel="icon" type="image/png" sizes="192x192" href="https://icon.anilib.sbs/myres/faveicon/android-chrome-192x192.png">
+		<link rel="icon" type="image/png" sizes="16x16" href="https://icon.anilib.sbs/myres/faveicon/favicon-16x16.png">
+		<link rel="mask-icon" href="https://icon.anilib.sbs/myres/faveicon/safari-pinned-tab.svg" color="#5bbad5">
+		<link rel="shortcut icon" href="https://icon.anilib.sbs/myres/faveicon/favicon.ico">
+		<meta name="msapplication-TileColor" content="#da532c">
+		<meta name="msapplication-config" content="https://icon.anilib.sbs/myres/faveicon/browserconfig.xml">
+		<meta name="theme-color" content="#ffffff">
+		<style>
+			html {
+				font-family: 'Roboto', sans-serif;
+			}
+			body {
+				margin: 0px;
+			}
+			#app {
+				height: 100vh;
+			}
+			.video-player {
+				width: 100%;
+				height: 100%;
+				overflow: hidden;
+			}
+			.video-error-image-container {
+				display: flex;
+				justify-content: center;
+				align-items: center;
+			}
+			.video-info-container {
+				margin-top: 0px;
+				display: flex;
+				flex-direction: column;
+				justify-content: center;
+				align-items: center;
+			}
+		</style>
+	</head>
+	
+	<body>
+		<div id="app">
+			<div class="video-player">
+			</div>
+		</div>
+		<script>
+			new Vue(
+				{
+					el: `#app`,
+					data: {
+						videoSource: ``,
+						player: null,
+						firstPlay: true,
+						bufferingItems: [],
+						currentBufferItem: null
+					},
+					mounted() {
+						const parameters = window.location.search.replace(`?`, ``);
+						const parts = parameters.split(`=`);
+						if (parts.length !== 2 || parts[0] !== `video`) return;
+
+						this.setVideoSource(`https://` + parts[1]);
+					},
+					methods: {
+						loadToPlayer(videoSource) {
+							if (this.player) {
+								this.player.load(videoSource);
+								this.player.play();
+							}
+
+							this.player = new Clappr.Player(
+								{
+									source: videoSource,
+									autoPlay: true,
+									parentId: ".video-player",
+									width: '100%',
+        							height: '100%',
+									events: {
+										onPlay: () => {
+											if (this.currentBufferState) {
+												this.currentBufferState.end = new Date(); 
+												this.currentBufferState = null;
+											}
+										}
+									},
+									plugins: [
+										PlaybackRatePlugin
+									],
+									playbackRateConfig: {
+										defaultValue: 1,
+										options: [
+											{
+												value: 0.5,
+												label: `x0.5`
+											},
+											{
+												value: 1,
+												label: `1x`
+											},
+											{
+												value: 1.25,
+												label: 'x1.25'
+											},
+											{
+												value: 1.5,
+												label: 'x1.5'
+											},
+											{
+												value: 1.75,
+												label: 'x1.75'
+											},
+											{
+												value: 2,
+												label: 'x2'
+											},
+											{
+												value: 3,
+												label: 'x3'
+											}
+										],
+									}
+								}
+							);
+							this.player.core.activeContainer.on(
+								Clappr.Events.CONTAINER_STATE_BUFFERING,
+								() => {
+									const bufferItem = {
+										start: new Date()
+									};
+									this.bufferingItems.push(bufferItem);
+									this.currentBufferItem = bufferItem;
+								}
+							);
+						},
+						setVideoSource(videoSource) {
+							if (this.videoSource === videoSource) return;
+							
+							this.videoSource = videoSource;
+							this.loadToPlayer(videoSource);
+						}
+                    }
+				}
+			);
+		</script>
+	</body>	
+</html>

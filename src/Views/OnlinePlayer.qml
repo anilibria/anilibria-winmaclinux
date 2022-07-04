@@ -423,22 +423,28 @@ Page {
                                     visible: !isGroup
                                     iconColor: ApplicationTheme.filterIconButtonColor
                                     hoverColor: ApplicationTheme.filterIconButtonHoverColor
-                                    iconPath: "../Assets/Icons/download.svg"
+                                    iconPath: "../Assets/Icons/external.svg"
                                     iconWidth: 22
                                     iconHeight: 22
                                     onButtonHoverEnter: {
                                         if (playerTimer.running) playerTimer.stop();
                                     }
                                     onButtonPressed: {
+                                        let video;
                                         switch (onlinePlayerViewModel.videoQuality) {
                                             case "fullhd":
+                                                video = fullhd;
+                                                break;
                                             case "hd":
-                                                Qt.openUrlExternally(hdfile);
+                                                video = hd;
                                                 break;
                                             case "sd":
-                                                Qt.openUrlExternally(sdfile);
+                                                video = sd;
                                                 break;
                                         }
+                                        if (!video) return;
+
+                                        Qt.openUrlExternally("https://anilibria.github.io/anilibria-win/videotester.html?video=" + video.replace("https://", ""));
                                     }
                                 }
                             }
@@ -1318,7 +1324,7 @@ Page {
         radius: 12
         Image {
             anchors.centerIn: parent
-            source: onlinePlayerViewModel.releasePoster
+            source: localStorage.getReleasePosterPath(onlinePlayerViewModel.selectedRelease, onlinePlayerViewModel.releasePoster)
             fillMode: Image.PreserveAspectCrop
             width: 180
             height: 270
