@@ -1020,11 +1020,14 @@ void ReleasesListModel::refreshFilteredReleaseById(int id)
 
 QString ReleasesListModel::getCurrentSeason()
 {
+    auto currentYear = QString::number(QDate::currentDate().year());
     QList<int> seasonsCounters;
     for (int i = 0; i < 4; i++) seasonsCounters.append(0);
 
     foreach (auto release, *m_releases) {
         if (!m_scheduleReleases->contains(release->id())) continue;
+        if (release->status().toLower() != "в работе") continue;
+        if (release->year() != currentYear) continue;
 
         auto season = release->season().toLower();
         if (season == winterValue) seasonsCounters[winter]++;
