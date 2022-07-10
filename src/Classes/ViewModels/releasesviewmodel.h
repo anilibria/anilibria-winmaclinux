@@ -69,6 +69,7 @@ class ReleasesViewModel : public QObject
     Q_PROPERTY(bool openedReleaseInHided READ openedReleaseInHided NOTIFY openedReleaseInHidedChanged)
     Q_PROPERTY(bool openedReleaseInFavorites READ openedReleaseInFavorites NOTIFY openedReleaseInFavoritesChanged)
     Q_PROPERTY(QString openedReleaseVideos READ openedReleaseVideos NOTIFY openedReleaseVideosChanged)
+    Q_PROPERTY(QString openedReleaseAnnounce READ openedReleaseAnnounce NOTIFY openedReleaseAnnounceChanged)
     Q_PROPERTY(bool synchronizationEnabled READ synchronizationEnabled WRITE setSynchronizationEnabled NOTIFY synchronizationEnabledChanged)
     Q_PROPERTY(QString newEntities READ newEntities WRITE setNewEntities NOTIFY newEntitiesChanged)
     Q_PROPERTY(bool notCloseReleaseCardAfterWatch READ notCloseReleaseCardAfterWatch WRITE setNotCloseReleaseCardAfterWatch NOTIFY notCloseReleaseCardAfterWatchChanged)
@@ -111,6 +112,7 @@ private:
     QString m_newEntities { "" };
     QScopedPointer<QList<std::tuple<int, int>>> m_sectionSorting { new QList<std::tuple<int, int>>() };
     bool m_notCloseReleaseCardAfterWatch { false };
+    QString m_openedReleaseAnnounce { "" };
 
 public:
     explicit ReleasesViewModel(QObject *parent = nullptr);
@@ -202,6 +204,7 @@ public:
     bool openedReleaseInHided() const noexcept { return m_openedRelease != nullptr ? m_hiddenReleases->contains(m_openedRelease->id()) : false; }
     bool openedReleaseInFavorites() const noexcept { return m_openedRelease != nullptr ? m_userFavorites->contains(m_openedRelease->id()) : false; }
     QString openedReleaseVideos() const noexcept { return m_openedRelease != nullptr ? m_openedRelease->videos() : ""; }
+    QString openedReleaseAnnounce() const noexcept { return m_openedRelease != nullptr ? m_openedRelease->announce() : ""; }
     QStringList getMostPopularGenres() const noexcept;
     QStringList getMostPopularVoices() const noexcept;
     void fillNewInFavorites(QList<FullReleaseModel*>* list) const noexcept;
@@ -357,6 +360,7 @@ signals:
     void itemTorrentsChanged();
     void userActivityChanged();
     void hasCinemahallNotSeenVideosChanged();
+    void openedReleaseAnnounceChanged();
 
 };
 

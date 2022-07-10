@@ -1717,6 +1717,9 @@ Page {
                         fillMode: Image.PreserveAspectCrop
                         width: 280
                         height: 390
+                        sourceSize.width: 280
+                        sourceSize.height: 390
+                        mipmap: true
                         layer.enabled: true
                         layer.effect: OpacityMask {
                             maskSource: cardMask
@@ -1730,6 +1733,7 @@ Page {
                         }
                     }
                     Column {
+                        id: descriptionColumn
                         width: page.width - cardButtons.width - cardPoster.width
                         AccentText {
                             textFormat: Text.RichText
@@ -1750,6 +1754,16 @@ Page {
                             width: parent.width
                             maximumLineCount: 2
                             text: releasesViewModel.openedReleaseOriginalName
+                        }
+                        AccentText {
+                            leftPadding: 8
+                            topPadding: 4
+                            height: releasesViewModel.openedReleaseAnnounce ? 20 : 0
+                            fontPointSize: 10
+                            wrapMode: Text.NoWrap
+                            elide: Text.ElideRight
+                            maximumLineCount: 1
+                            text: releasesViewModel.openedReleaseAnnounce
                         }
                         PlainText {
                             fontPointSize: 10
@@ -1792,7 +1806,6 @@ Page {
                             topPadding: 4
                             text: releasesViewModel.openedReleaseInScheduleDisplay
                         }
-
                         PlainText {
                             fontPointSize: 10
                             leftPadding: 8
@@ -1876,21 +1889,36 @@ Page {
                             width: parent.width
                             text: qsTr("<b>Все серии просмотрены</b>")
                         }
-                        PlainText {
-                            fontPointSize: 10
-                            leftPadding: 8
-                            topPadding: 4
-                            width: parent.width
-                            wrapMode: Text.WordWrap
-                            text: qsTr("<b>Описание:</b> ") + releasesViewModel.openedReleaseDescription
-                            onLinkActivated: {
-                                releasesViewModel.openDescriptionLink(link);
+                        Flickable {
+                            id: descriptionContainer
+                            width: descriptionColumn.width
+                            clip: true
+                            height: 170
+                            boundsBehavior: Flickable.StopAtBounds
+                            boundsMovement: Flickable.StopAtBounds
+                            contentWidth: width
+                            contentHeight: descriptionText.height
+                            ScrollBar.vertical: ScrollBar {
+                                active: true
                             }
 
-                            MouseArea {
-                                anchors.fill: parent
-                                acceptedButtons: Qt.NoButton
-                                cursorShape: parent.hoveredLink ? Qt.PointingHandCursor : Qt.ArrowCursor
+                            PlainText {
+                                id: descriptionText
+                                width: descriptionContainer.width - 10
+                                fontPointSize: 10
+                                leftPadding: 8
+                                topPadding: 4
+                                wrapMode: Text.WordWrap
+                                text: "<b>Описание:</b> " + releasesViewModel.openedReleaseDescription
+                                onLinkActivated: {
+                                    releasesViewModel.openDescriptionLink(link);
+                                }
+
+                                MouseArea {
+                                    anchors.fill: parent
+                                    acceptedButtons: Qt.NoButton
+                                    cursorShape: parent.hoveredLink ? Qt.PointingHandCursor : Qt.ArrowCursor
+                                }
                             }
                         }
                     }
