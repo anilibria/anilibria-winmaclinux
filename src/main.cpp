@@ -18,7 +18,6 @@
 
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
-#include <QtWebEngine>
 #include <QtSvg>
 #include <QQmlContext>
 #include <QString>
@@ -79,13 +78,9 @@ int main(int argc, char *argv[])
     if (argc >= 2 && QString(argv[1]) == "portable") {
         IsPortable = true;
     }
-#if QT_VERSION >= QT_VERSION_CHECK(5, 15, 0)
-    QtWebEngine::initialize();
-#endif
+
     QGuiApplication app(argc, argv);
-#if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
-    QtWebEngine::initialize();
-#endif
+
     qmlRegisterType<SynchronizationService>("Anilibria.Services", 1, 0, "SynchronizationService");
     qmlRegisterType<LocalStorageService>("Anilibria.Services", 1, 0, "LocalStorage");
     qmlRegisterType<ApplicationSettings>("Anilibria.Services", 1, 0, "ApplicationSettings");    

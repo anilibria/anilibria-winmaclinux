@@ -1,4 +1,4 @@
-QT += quick multimedia network webengine concurrent svg websockets
+QT += quick multimedia network concurrent svg websockets
 CONFIG += c++11
 
 windows {

@@ -928,7 +928,6 @@ ApplicationWindow {
         onReleaseCardOpened: {
             analyticsService.sendView("releasecard", "open", "%2Frelease");
             releases.setWebViewUrl();
-            vkCommentsWindow.refreshComments();
             userActivityViewModel.addOpenedCardToCounter();
         }
         onAfterSynchronizedReleases: {
@@ -1303,10 +1302,6 @@ ApplicationWindow {
         id: onlinePlayerWindow
         videoSource: videoplayer.videoPlayerSource
         videoOutput: videoplayer.videoOutputSource
-    }
-
-    VkCommentsWindow {
-        id: vkCommentsWindow
     }
 
     MyAnilibriaViewModel {

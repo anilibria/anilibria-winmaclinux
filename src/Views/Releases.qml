@@ -77,7 +77,7 @@ Page {
     }
 
     onSetWebViewUrl: {
-        if (webView.status === Loader.Ready) webView.item.url = releasesViewModel.getVkontakteCommentPage(releasesViewModel.openedReleaseCode);
+        //REMOVE!!!!
     }
 
     background: Rectangle {
@@ -1726,7 +1726,6 @@ Page {
                             anchors.fill: parent
                             onPressed: {
                                 releasePosterPreview.isVisible = true;
-                                if (Qt.platform.os !== "windows") webView.item.visible = false;
                             }
                         }
                     }
@@ -1919,7 +1918,6 @@ Page {
                             iconWidth: 26
                             iconHeight: 26
                             onButtonPressed: {
-                                if (Qt.platform.os !== "windows") webView.item.visible = false;
                                 cardCopyMenu.open();
                             }
 
@@ -1931,9 +1929,6 @@ Page {
                             CommonMenu {
                                 id: cardCopyMenu
                                 width: 350
-                                onClosed: {
-                                    if (Qt.platform.os !== "windows") webView.item.visible = true;
-                                }
 
                                 CommonMenuItem {
                                     text: "Копировать название"
@@ -1971,49 +1966,6 @@ Page {
                         IconButton {
                             height: 40
                             width: 40
-                            overlayVisible: false
-                            hoverColor: ApplicationTheme.filterIconButtonHoverColor
-                            iconPath: "../Assets/Icons/vk.svg"
-                            iconWidth: 26
-                            iconHeight: 26
-                            onButtonPressed: {
-                                if (Qt.platform.os !== "windows") webView.item.visible = false;
-                                vkontakteMenu.open();
-                            }
-
-                            CommonMenu {
-                                id: vkontakteMenu
-                                width: 350
-                                onClosed: {
-                                    if (Qt.platform.os !== "windows") webView.item.visible = true;
-                                }
-
-                                CommonMenuItem {
-                                    text: "Авторизоваться для комментариев"
-                                    onPressed: {
-                                        webView.item.url = "https://oauth.vk.com/authorize?client_id=-1&display=widget&widget=4&redirect_uri=https://vk.com/";
-                                    }
-                                }
-                                CommonMenuItem {
-                                    text: "Переоткрыть комментарии"
-                                    onPressed: {
-                                        webView.item.url = releasesViewModel.getVkontakteCommentPage(releasesViewModel.openedReleaseCode);
-                                        if (vkCommentsWindow.opened) vkCommentsWindow.refreshComments();
-                                    }
-                                }
-                                CommonMenuItem {
-                                    enabled: !vkCommentsWindow.opened
-                                    text: "Открыть в отдельном окне"
-                                    onPressed: {
-                                        vkCommentsWindow.setModalVisible(true);
-                                        vkontakteMenu.close();
-                                    }
-                                }
-                            }
-                        }
-                        IconButton {
-                            height: 40
-                            width: 40
                             iconColor: ApplicationTheme.filterIconButtonColor
                             hoverColor: ApplicationTheme.filterIconButtonHoverColor
                             iconPath: assetsLocation.iconsPath + "coloredeye.svg"
@@ -2021,16 +1973,12 @@ Page {
                             iconWidth: 26
                             iconHeight: 26
                             onButtonPressed: {
-                                if (Qt.platform.os !== "windows") webView.item.visible = false;
                                 seenMarkMenu.open();
                             }
 
                             CommonMenu {
                                 id: seenMarkMenu
                                 width: 350
-                                onClosed: {
-                                    if (Qt.platform.os !== "windows") webView.item.visible = true;
-                                }
 
                                 CommonMenuItem {
                                     text: "Отметить как просмотренное"
@@ -2077,16 +2025,12 @@ Page {
                             iconWidth: 26
                             iconHeight: 26
                             onButtonPressed: {
-                                if (Qt.platform.os !== "windows") webView.item.visible = false;
                                 cardFavoritesMenu.open();
                             }
 
                             CommonMenu {
                                 id: cardFavoritesMenu
                                 width: 350
-                                onClosed: {
-                                    if (Qt.platform.os !== "windows") webView.item.visible = true;
-                                }
 
                                 CommonMenuItem {
                                     enabled: !releasesViewModel.openedReleaseInFavorites
@@ -2115,16 +2059,12 @@ Page {
                             iconWidth: 26
                             iconHeight: 26
                             onButtonPressed: {
-                                if (Qt.platform.os !== "windows") webView.item.visible = false;
                                 externalPlayerMenu.open();
                             }
 
                             CommonMenu {
                                 id: externalPlayerMenu
                                 width: 380
-                                onClosed: {
-                                    if (Qt.platform.os !== "windows") webView.item.visible = true;
-                                }
 
                                 CommonMenuItem {
                                     text: "Открыть во внешнем плеере в HD качестве"
@@ -2184,16 +2124,12 @@ Page {
                             iconWidth: 26
                             iconHeight: 26
                             onButtonPressed: {
-                                if (Qt.platform.os !== "windows") webView.item.visible = false;
                                 setSeriesMenu.open();
                             }
 
                             CommonMenu {
                                 id: setSeriesMenu
                                 width: 330
-                                onClosed: {
-                                    if (Qt.platform.os !== "windows") webView.item.visible = true;
-                                }
 
                                 Repeater {
                                     model: releasesViewModel.isOpenedCard ? releasesViewModel.openedReleaseCountVideos : 0
@@ -2204,7 +2140,6 @@ Page {
                                             watchSingleRelease(releasesViewModel.openedReleaseId, releasesViewModel.openedReleaseVideos, index, releasesViewModel.openedReleasePoster);
 
                                             releasesViewModel.hideAfterWatchReleaseCard();
-                                            if (Qt.platform.os !== "windows") webView.item.visible = true;
                                         }
                                     }
                                 }
@@ -2223,7 +2158,6 @@ Page {
                         anchors.left: parent.left
                         text: qsTr("Скачать")
                         onClicked: {
-                            if (Qt.platform.os !== "windows") webView.item.visible = false;
                             dowloadTorrent.open();
                         }
 
@@ -2231,9 +2165,6 @@ Page {
                             id: dowloadTorrent
                             y: parent.height - parent.height
                             width: 380
-                            onClosed: {
-                                if (Qt.platform.os !== "windows") webView.item.visible = true;
-                            }
 
                             Repeater {
                                 model: releasesViewModel.openedCardTorrents
@@ -2278,7 +2209,6 @@ Page {
 
                             releasesViewModel.hideAfterWatchReleaseCard();
                             releasePosterPreview.isVisible = false;
-                            if (Qt.platform.os !== "windows") webView.item.visible = true;
                         }
                     }
 
@@ -2288,24 +2218,15 @@ Page {
                         anchors.rightMargin: 10
                     }
 
-                    PlainText {
+                    RoundedActionButton {
+                        id: openCommentsButton
+                        text: qsTr("Открыть комментарии")
                         anchors.verticalCenter: parent.verticalCenter
                         anchors.centerIn: parent
-                        visible: webView.item && webView.item.loading
-                        fontPointSize: 11
-                        text: "Загрузка комментариев..."
-                    }
-                }
-                Loader {
-                    id: webView
-                    sourceComponent: releasesViewModel.isOpenedCard && !vkCommentsWindow.opened ? webViewComponent : null
-                }
-                Component {
-                    id: webViewComponent
-
-                    WebEngineView {
-                        width: cardContainer.width
-                        height: cardContainer.height - releaseInfo.height - 60
+                        onClicked: {
+                            const url = releasesViewModel.getVkontakteCommentPage(releasesViewModel.openedReleaseCode);
+                            Qt.openUrlExternally(url);
+                        }
                     }
                 }
             }
