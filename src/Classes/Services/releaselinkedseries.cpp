@@ -188,6 +188,34 @@ int ReleaseLinkedSeries::getSortedOrder(int id) const noexcept
     return 0;
 }
 
+void ReleaseLinkedSeries::fillReleaseSeries(QList<FullReleaseModel *> *list, const int id) noexcept
+{
+    auto iterator = std::find_if(
+        m_series->cbegin(),
+        m_series->cend(),
+        [id] (ReleaseSeriesModel* model) {
+            return model->releaseIds()->contains(id);
+        }
+    );
+
+    if (iterator == m_series->cend()) return;
+
+    auto item = *iterator;
+    auto idsCollection = item->releaseIds();
+
+    for (auto i = 0; i < idsCollection->count(); i++) {
+        list->append(nullptr);
+    }
+
+    foreach (auto release, *m_releases) {
+        auto releaseId = release->id();
+        if (idsCollection->contains(releaseId)) {
+            auto releaseIndex = idsCollection->indexOf(releaseId);
+            (*list)[releaseIndex] = release;
+        }
+    }
+}
+
 int ReleaseLinkedSeries::getNextLinkedRelease(const int currentRelease)
 {
     foreach (auto item, *m_series) {

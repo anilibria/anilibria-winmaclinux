@@ -157,5 +157,7 @@
         <file>Assets/Icons/coloredsortup.svg</file>
         <file>Assets/Icons/minus.svg</file>
         <file>Assets/Icons/plus.svg</file>
+        <file>Controls/ReleaseSeriesList.qml</file>
+        <file>Assets/Icons/coloredstar.svg</file>
     </qresource>
 </RCC>

@@ -72,6 +72,7 @@ SOURCES += \
     Classes/ListModels/myanilibrialistmodel.cpp \
     Classes/ListModels/onlineplayervideolist.cpp \
     Classes/ListModels/popupnotificationvideolist.cpp \
+    Classes/ListModels/releaseserieslistmodel.cpp \
     Classes/ListModels/releasesimplelistmodel.cpp \
     Classes/ListModels/releaseslistmodel.cpp \
     Classes/ListModels/releasetorrentcommonlist.cpp \
@@ -153,6 +154,7 @@ HEADERS += \
     Classes/ListModels/myanilibrialistmodel.h \
     Classes/ListModels/onlineplayervideolist.h \
     Classes/ListModels/popupnotificationvideolist.h \
+    Classes/ListModels/releaseserieslistmodel.h \
     Classes/ListModels/releasesimplelistmodel.h \
     Classes/ListModels/releaseslistmodel.h \
     Classes/ListModels/releasetorrentcommonlist.h \

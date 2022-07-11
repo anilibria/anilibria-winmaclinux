@@ -2176,6 +2176,7 @@ Page {
                     }
                 }
                 Rectangle {
+                    id: releaseCardControlsContainer
                     color: "transparent"
                     width: cardContainer.width
                     height: 60
@@ -2255,6 +2256,14 @@ Page {
                             const url = releasesViewModel.getVkontakteCommentPage(releasesViewModel.openedReleaseCode);
                             Qt.openUrlExternally(url);
                         }
+                    }
+                }
+
+                ReleaseSeriesList {
+                    width: cardContainer.width
+                    releaseId: releasesViewModel.openedReleaseId
+                    onOpenRelease: {
+                        releasesViewModel.showReleaseCard(releaseId);
                     }
                 }
             }

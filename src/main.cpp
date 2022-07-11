@@ -53,6 +53,7 @@
 #include "Classes/ViewModels/myanilibriaviewmodel.h"
 #include "Classes/ListModels/releasesimplelistmodel.h"
 #include "Classes/ListModels/myanilibrialistmodel.h"
+#include "Classes/ListModels/releaseserieslistmodel.h"
 
 int main(int argc, char *argv[])
 {
@@ -111,6 +112,7 @@ int main(int argc, char *argv[])
     qmlRegisterType<MyAnilibriaViewModel>("Anilibria.ViewModels", 1, 0, "MyAnilibriaViewModel");
     qmlRegisterType<ReleaseSimpleListModel>("Anilibria.ListModels", 1, 0, "ReleaseSimpleListModel");
     qmlRegisterType<MyAnilibriaListModel>("Anilibria.ListModels", 1, 0, "MyAnilibriaListModel");
+    qmlRegisterType<ReleaseSeriesListModel>("Anilibria.ListModels", 1, 0, "ReleaseSeriesListModel");
 
     QCoreApplication::setOrganizationDomain("anilibria.tv");
     QCoreApplication::setOrganizationName("EmptyFlow");
