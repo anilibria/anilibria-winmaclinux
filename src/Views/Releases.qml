@@ -2310,6 +2310,7 @@ Page {
                 }
 
                 ReleaseSeriesList {
+                    visible: releaseCardMenuListModel.isReleaseSeries
                     width: cardContainer.width
                     releaseId: releasesViewModel.openedReleaseId
                     onOpenRelease: {

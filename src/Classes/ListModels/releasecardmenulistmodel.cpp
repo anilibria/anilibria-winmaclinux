@@ -63,4 +63,5 @@ void ReleaseCardMenuListModel::select(int id) noexcept
     endResetModel();
 
     emit selectedTitleChanged();
+    emit isReleaseSeriesChanged();
 }

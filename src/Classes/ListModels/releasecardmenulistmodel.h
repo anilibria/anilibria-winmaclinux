@@ -7,6 +7,7 @@ class ReleaseCardMenuListModel : public QAbstractListModel
 {
     Q_OBJECT
     Q_PROPERTY(QString selectedTitle READ selectedTitle NOTIFY selectedTitleChanged)
+    Q_PROPERTY(bool isReleaseSeries READ isReleaseSeries NOTIFY isReleaseSeriesChanged)
 
 private:
     QStringList m_items { QStringList() };
@@ -24,11 +25,13 @@ public:
     QHash<int,QByteArray> roleNames() const override;
 
     QString selectedTitle() const noexcept { return m_items.value(m_selectedItem); }
+    bool isReleaseSeries() const noexcept { return m_selectedItem == 0; }
 
     Q_INVOKABLE void select(int id) noexcept;
 
 signals:
     void selectedTitleChanged();
+    void isReleaseSeriesChanged();
 
 };
 
