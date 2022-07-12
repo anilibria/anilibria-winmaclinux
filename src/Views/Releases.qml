@@ -23,6 +23,7 @@ import QtWebEngine 1.8
 import QtQuick.Controls.Styles 1.4
 import QtQuick.Dialogs 1.2
 import QtGraphicalEffects 1.0
+import Anilibria.ListModels 1.0
 import "../Controls"
 import "../Theme"
 
@@ -1930,7 +1931,8 @@ Page {
                             width: 40
                             iconColor: ApplicationTheme.filterIconButtonColor
                             hoverColor: ApplicationTheme.filterIconButtonHoverColor
-                            iconPath: "../Assets/Icons/close.svg"
+                            overlayVisible: false
+                            iconPath: assetsLocation.iconsPath + "coloredclosewindow.svg"
                             iconWidth: 28
                             iconHeight: 28
                             onButtonPressed: {
@@ -1942,7 +1944,7 @@ Page {
                             width: 40
                             hoverColor: ApplicationTheme.filterIconButtonHoverColor
                             overlayVisible: false
-                            iconPath: "../Assets/Icons/copy.svg"
+                            iconPath: assetsLocation.iconsPath + "copy.svg"
                             iconWidth: 26
                             iconHeight: 26
                             onButtonPressed: {
@@ -2148,7 +2150,7 @@ Page {
                             width: 40
                             overlayVisible: false
                             hoverColor: ApplicationTheme.filterIconButtonHoverColor
-                            iconPath: "../Assets/Icons/online.svg"
+                            iconPath: assetsLocation.iconsPath + "online.svg"
                             iconWidth: 26
                             iconHeight: 26
                             onButtonPressed: {
@@ -2255,6 +2257,54 @@ Page {
                         onClicked: {
                             const url = releasesViewModel.getVkontakteCommentPage(releasesViewModel.openedReleaseCode);
                             Qt.openUrlExternally(url);
+                        }
+                    }
+                }
+
+                Item {
+                    width: cardContainer.width
+                    height: 30
+
+                    PlainText {
+                        anchors.centerIn: parent
+                        fontPointSize: 11
+                        text: releaseCardMenuListModel.selectedTitle
+                    }
+
+                    IconButton {
+                        anchors.right: parent.right
+                        anchors.rightMargin: 4
+                        anchors.verticalCenter: parent.verticalCenter
+                        height: 26
+                        width: 26
+                        overlayVisible: false
+                        hoverColor: ApplicationTheme.filterIconButtonHoverColor
+                        iconWidth: 22
+                        iconHeight: 22
+                        iconPath: assetsLocation.iconsPath + "allreleases.svg"
+                        onButtonPressed: {
+                            releaseCardSubMenu.open();
+                        }
+
+                        CommonMenu {
+                            id: releaseCardSubMenu
+                            width: 330
+
+                            ReleaseCardMenuListModel {
+                                id: releaseCardMenuListModel
+                            }
+
+                            Repeater {
+                                model: releaseCardMenuListModel
+
+                                CommonMenuItem {
+                                    text: title
+                                    onPressed: {
+                                        releaseCardSubMenu.close();
+                                        releaseCardMenuListModel.select(id);
+                                    }
+                                }
+                            }
                         }
                     }
                 }
