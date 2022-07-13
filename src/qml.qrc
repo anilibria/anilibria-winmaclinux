@@ -159,5 +159,7 @@
         <file>Assets/Icons/plus.svg</file>
         <file>Controls/ReleaseSeriesList.qml</file>
         <file>Assets/Icons/coloredstar.svg</file>
+        <file>Controls/ReleaseOnlineVideosList.qml</file>
+        <file>Assets/Icons/broken.svg</file>
     </qresource>
 </RCC>

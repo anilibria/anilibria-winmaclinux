@@ -73,6 +73,7 @@ SOURCES += \
     Classes/ListModels/onlineplayervideolist.cpp \
     Classes/ListModels/popupnotificationvideolist.cpp \
     Classes/ListModels/releasecardmenulistmodel.cpp \
+    Classes/ListModels/releaseonlineserieslistmodel.cpp \
     Classes/ListModels/releaseserieslistmodel.cpp \
     Classes/ListModels/releasesimplelistmodel.cpp \
     Classes/ListModels/releaseslistmodel.cpp \
@@ -156,6 +157,7 @@ HEADERS += \
     Classes/ListModels/onlineplayervideolist.h \
     Classes/ListModels/popupnotificationvideolist.h \
     Classes/ListModels/releasecardmenulistmodel.h \
+    Classes/ListModels/releaseonlineserieslistmodel.h \
     Classes/ListModels/releaseserieslistmodel.h \
     Classes/ListModels/releasesimplelistmodel.h \
     Classes/ListModels/releaseslistmodel.h \

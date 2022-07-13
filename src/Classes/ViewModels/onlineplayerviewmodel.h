@@ -230,6 +230,8 @@ public:
     bool displaySkipOpening() const noexcept { return m_displaySkipOpening; }
     void setDisplaySkipOpening(bool displaySkipOpening) noexcept;
 
+    std::tuple<int, int> getSeenVideoPosition(int releaseId);
+
     Q_INVOKABLE void toggleFullScreen();
     Q_INVOKABLE void changeVideoPosition(int duration, int position) noexcept;
     Q_INVOKABLE QString checkExistingVideoQuality(int index);    

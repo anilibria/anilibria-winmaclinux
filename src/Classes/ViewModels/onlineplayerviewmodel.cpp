@@ -354,6 +354,14 @@ void OnlinePlayerViewModel::setDisplaySkipOpening(bool displaySkipOpening) noexc
     emit displaySkipOpeningChanged();
 }
 
+std::tuple<int, int> OnlinePlayerViewModel::getSeenVideoPosition(int releaseId)
+{
+    if (!m_seenModels->contains(releaseId)) return std::make_tuple(0, 0);
+
+    auto seenModel = m_seenModels->value(releaseId);
+    return std::make_tuple(seenModel->videoId(), seenModel->videoPosition());
+}
+
 void OnlinePlayerViewModel::toggleFullScreen()
 {
     setIsFullScreen(!m_isFullScreen);
@@ -1060,7 +1068,8 @@ OnlineVideoModel *OnlinePlayerViewModel::previousNotSeenVideo()
 
 void OnlinePlayerViewModel::receiveCommand(const unsigned int id, const QString &command, const QString &argument)
 {
-    qDebug() << "receiveCommand:" << command << " " << argument;
+    if (argument.isEmpty()){
+    }
 
     if (command == "getcurrentvideosource"){
          m_remotePlayer->sendCommandToUser(id, m_videoSourceChangedCommand, m_videoSource);

@@ -2309,12 +2309,25 @@ Page {
                     }
                 }
 
-                ReleaseSeriesList {
-                    visible: releaseCardMenuListModel.isReleaseSeries
+                Item {
                     width: cardContainer.width
-                    releaseId: releasesViewModel.openedReleaseId
-                    onOpenRelease: {
-                        releasesViewModel.showReleaseCard(releaseId);
+                    height: 330
+                    ReleaseSeriesList {
+                        visible: releaseCardMenuListModel.isReleaseSeries
+                        width: cardContainer.width
+                        releaseId: releasesViewModel.openedReleaseId
+                        onOpenRelease: {
+                            releasesViewModel.showReleaseCard(releaseId);
+                        }
+                    }
+
+                    ReleaseOnlineVideosList {
+                        visible: releaseCardMenuListModel.isOnlineVideos
+                        width: cardContainer.width
+                        releaseId: releasesViewModel.openedReleaseId
+                        onOpenRelease: {
+                            releasesViewModel.showReleaseCard(releaseId);
+                        }
                     }
                 }
             }
