@@ -29,6 +29,7 @@ class ReleaseSeriesListModel : public QAbstractListModel
     Q_OBJECT
     Q_PROPERTY(int releaseId READ releaseId WRITE setReleaseId NOTIFY releaseIdChanged)
     Q_PROPERTY(ReleaseLinkedSeries* linkedSeries READ linkedSeries WRITE setLinkedSeries NOTIFY linkedSeriesChanged)
+    Q_PROPERTY(bool isEmpty READ isEmpty NOTIFY isEmptyChanged)
 
 private:
     enum ReleaseSimpleRoles {
@@ -57,9 +58,12 @@ public:
     int releaseId() const noexcept { return m_releaseId; }
     void setReleaseId(int releaseId) noexcept;
 
+    bool isEmpty() const noexcept { return m_releases->isEmpty(); }
+
 signals:
     void releaseIdChanged();
     void linkedSeriesChanged();
+    void isEmptyChanged();
 
 };
 

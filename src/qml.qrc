@@ -161,5 +161,7 @@
         <file>Assets/Icons/coloredstar.svg</file>
         <file>Controls/ReleaseOnlineVideosList.qml</file>
         <file>Assets/Icons/broken.svg</file>
+        <file>Assets/Icons/emptybox.svg</file>
+        <file>Controls/EmptyBoxArea.qml</file>
     </qresource>
 </RCC>

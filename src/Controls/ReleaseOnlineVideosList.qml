@@ -6,11 +6,11 @@ import "../Theme"
 
 Item {
     width: parent.width
-    height: 300
+    height: 330
 
     property alias releaseId: viewModel.releaseId
 
-    signal openRelease(int releaseId)
+    signal openVideo(int videoId)
 
     ReleaseOnlineSeriesListModel {
         id: viewModel
@@ -37,7 +37,7 @@ Item {
         }
         delegate: Item {
             width: 410
-            height: 300
+            height: 330
 
             Rectangle {
                 id: posterImage
@@ -81,7 +81,7 @@ Item {
                     anchors.topMargin: 22
                     width: 40
                     horizontalAlignment: Qt.AlignHCenter
-                    text: index
+                    text: id
                     fontPointSize: 10
                     color: "white"
                 }
@@ -104,8 +104,27 @@ Item {
                     onExited: {
                         posterImage.posterHovered = false;
                     }
+                    onPressed: {
+                        openVideo(index);
+                    }
                 }
             }
+            AccentText {
+                anchors.top: posterImage.bottom
+                width: parent.width
+                text: isSeens ? "Просмотрено" : currentTimeVideo
+                fontPointSize: 10
+                maximumLineCount: 1
+                elide: Text.ElideRight
+                wrapMode: Text.NoWrap
+                horizontalAlignment: Qt.AlignHCenter
+            }
         }
+    }
+
+    EmptyBoxArea {
+        visible: viewModel.isEmpty
+        anchors.fill: parent
+        title: "Нет онлайн серий"
     }
 }

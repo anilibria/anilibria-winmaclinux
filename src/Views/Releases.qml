@@ -2325,8 +2325,10 @@ Page {
                         visible: releaseCardMenuListModel.isOnlineVideos
                         width: cardContainer.width
                         releaseId: releasesViewModel.openedReleaseId
-                        onOpenRelease: {
-                            releasesViewModel.showReleaseCard(releaseId);
+                        onOpenVideo: {
+                            watchSingleRelease(releasesViewModel.openedReleaseId, releasesViewModel.openedReleaseVideos, videoId, releasesViewModel.openedReleasePoster);
+
+                            releasesViewModel.hideAfterWatchReleaseCard();
                         }
                     }
                 }

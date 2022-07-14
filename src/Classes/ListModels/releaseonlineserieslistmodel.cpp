@@ -17,6 +17,7 @@
 */
 
 #include <QJsonDocument>
+#include <QTime>
 #include "releaseonlineserieslistmodel.h"
 #include "../../globalconstants.h"
 
@@ -44,29 +45,30 @@ QVariant ReleaseOnlineSeriesListModel::data(const QModelIndex &index, int role) 
     auto seens = m_onlinePlayer->getSeenVideoPosition(m_releaseId);
     auto videoId = std::get<0>(seens);
     auto videoPosition = std::get<1>(seens);
+    auto currentVideoId = onlineVideo->id() - 1;
 
     switch (role) {
         case IdRole: {
-            return QVariant(currentIndex);
+            return QVariant(onlineVideo->id());
         }
         case IndexRole: {
-            return QVariant(onlineVideo->id());
+            return QVariant(currentVideoId);
         }
         case PosterRole: {
             if (onlineVideo->videoPoster().isEmpty()) {
-                return QVariant("arc://Assets/Icons/broken.svg");
+                return QVariant("qrc:///Assets/Icons/broken.svg");
             } else {
                 return QVariant(AnilibriaImagesPath + onlineVideo->videoPoster());
             }
         }
         case IsSeensRole: {
-            return QVariant(m_releases->getSeriaSeenMark(m_releaseId, onlineVideo->id()));
+            return QVariant(m_releases->getSeriaSeenMark(m_releaseId, currentVideoId));
         }
         case IsCurrentVideoRole: {
-            return QVariant(videoId == onlineVideo->id() - 1);
+            return QVariant(videoId == currentVideoId);
         }
         case CurrentTimeVideoRole: {
-            return videoId == onlineVideo->id() ? QVariant(videoPosition) : QVariant();
+            return videoId == currentVideoId && videoPosition > 0 ? QVariant("Остановились на " + getDisplayTime(videoPosition)) : QVariant("");
         }
     }
 
@@ -95,6 +97,10 @@ QHash<int, QByteArray> ReleaseOnlineSeriesListModel::roleNames() const
         {
             IsCurrentVideoRole,
             "isCurrentVideo"
+        },
+        {
+            CurrentTimeVideoRole,
+            "currentTimeVideo"
         }
     };
 }
@@ -154,4 +160,27 @@ void ReleaseOnlineSeriesListModel::refresh()
     );
 
     endResetModel();
+
+    emit isEmptyChanged();
+}
+
+QString ReleaseOnlineSeriesListModel::getDisplayTime(int milliseconds) const
+{
+    auto time = QTime(0, 0, 0).addMSecs(milliseconds);
+    auto second = time.second();
+    auto minutes = time.minute();
+    auto hours = time.hour();
+
+    if (second == 0) return "";
+
+    if (hours > 0) return getZeroValue(hours) + ":" + getZeroValue(minutes) + ":" + getZeroValue(second);
+
+    if (minutes == 0) return getZeroValue(second) + " секунд";
+
+    return getZeroValue(minutes) + " минут " + getZeroValue(second) + " секунд";
+}
+
+QString ReleaseOnlineSeriesListModel::getZeroValue(int value) const
+{
+    return (value < 10 ? "0" : "") + QString::number(value);
 }

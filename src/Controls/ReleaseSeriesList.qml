@@ -168,4 +168,10 @@ Item {
             }
         }
     }
+
+    EmptyBoxArea {
+        visible: viewModel.isEmpty
+        anchors.fill: parent
+        title: "Нет связанных релизов"
+    }
 }

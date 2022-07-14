@@ -736,6 +736,7 @@ void ReleasesViewModel::closeReleaseCard() noexcept
     m_openedRelease = nullptr;
 
     emit isOpenedCardChanged();
+    emit openedReleaseIdChanged();
 }
 
 void ReleasesViewModel::openDescriptionLink(const QString &link) noexcept

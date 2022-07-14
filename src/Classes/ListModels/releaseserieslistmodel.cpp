@@ -39,6 +39,8 @@ void ReleaseSeriesListModel::refresh() noexcept
     }
 
     endResetModel();
+
+    emit isEmptyChanged();
 }
 
 int ReleaseSeriesListModel::rowCount(const QModelIndex &parent) const

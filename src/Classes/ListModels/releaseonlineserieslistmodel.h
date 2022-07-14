@@ -30,6 +30,7 @@ class ReleaseOnlineSeriesListModel : public QAbstractListModel
     Q_PROPERTY(int releaseId READ releaseId WRITE setReleaseId NOTIFY releaseIdChanged)
     Q_PROPERTY(ReleasesViewModel* releases READ releases WRITE setReleases NOTIFY releasesChanged)
     Q_PROPERTY(OnlinePlayerViewModel* onlinePlayer READ onlinePlayer WRITE setOnlinePlayer NOTIFY onlinePlayerChanged)
+    Q_PROPERTY(bool isEmpty READ isEmpty NOTIFY isEmptyChanged)
 
 private:
     QList<OnlineVideoModel*> m_items { QList<OnlineVideoModel*>() };
@@ -60,12 +61,19 @@ public:
     OnlinePlayerViewModel* onlinePlayer() const noexcept { return m_onlinePlayer; }
     void setOnlinePlayer(const OnlinePlayerViewModel* onlinePlayer) noexcept;
 
+    bool isEmpty() const noexcept { return m_items.isEmpty(); }
+
     void refresh();
+
+private:
+    QString getDisplayTime(int milliseconds) const;
+    QString getZeroValue(int value) const;
 
 signals:
     void releaseIdChanged();
     void releasesChanged();
     void onlinePlayerChanged();
+    void isEmptyChanged();
 
 };
 

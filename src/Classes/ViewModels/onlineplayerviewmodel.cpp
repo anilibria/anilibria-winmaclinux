@@ -356,7 +356,7 @@ void OnlinePlayerViewModel::setDisplaySkipOpening(bool displaySkipOpening) noexc
 
 std::tuple<int, int> OnlinePlayerViewModel::getSeenVideoPosition(int releaseId)
 {
-    if (!m_seenModels->contains(releaseId)) return std::make_tuple(0, 0);
+    if (!m_seenModels->contains(releaseId)) return std::make_tuple(-1, -1);
 
     auto seenModel = m_seenModels->value(releaseId);
     return std::make_tuple(seenModel->videoId(), seenModel->videoPosition());
@@ -536,7 +536,9 @@ int OnlinePlayerViewModel::getCurrentVideoSeenVideoPosition()
     if (!m_seenModels->contains(m_selectedRelease)) return 0;
 
     auto seenModel = m_seenModels->value(m_selectedRelease);
-    return seenModel->videoPosition();
+    if (m_selectedVideo == seenModel->videoId()) return seenModel->videoPosition();
+
+    return 0;
 }
 
 static bool compareSeenTimeStampDescending(const SeenModel* first, const SeenModel* second)
