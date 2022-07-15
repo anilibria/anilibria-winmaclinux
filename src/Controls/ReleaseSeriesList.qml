@@ -139,19 +139,8 @@ Item {
                     onExited: {
                         posterImage.posterHovered = false;
                     }
-                }
-
-                RoundedActionButton {
-                    visible: posterImage.posterHovered && !isSelected
-                    width: 150
-                    disableHover: true
-                    anchors.centerIn: parent
-                    text: "Открыть"
-                    onClicked: {
+                    onPressed: {
                         openRelease(id);
-                    }
-                    onButtonHoveredChanged: {
-                        posterImage.posterHovered = buttonHovered;
                     }
                 }
             }

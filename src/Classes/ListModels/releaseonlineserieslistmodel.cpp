@@ -46,6 +46,7 @@ QVariant ReleaseOnlineSeriesListModel::data(const QModelIndex &index, int role) 
     auto videoId = std::get<0>(seens);
     auto videoPosition = std::get<1>(seens);
     auto currentVideoId = onlineVideo->id() - 1;
+    auto isEmptyPoster = onlineVideo->videoPoster().isEmpty();
 
     switch (role) {
         case IdRole: {
@@ -55,11 +56,14 @@ QVariant ReleaseOnlineSeriesListModel::data(const QModelIndex &index, int role) 
             return QVariant(currentVideoId);
         }
         case PosterRole: {
-            if (onlineVideo->videoPoster().isEmpty()) {
+            if (isEmptyPoster) {
                 return QVariant("qrc:///Assets/Icons/broken.svg");
             } else {
                 return QVariant(AnilibriaImagesPath + onlineVideo->videoPoster());
             }
+        }
+        case IsEmptyPosterRole: {
+            return QVariant(isEmptyPoster);
         }
         case IsSeensRole: {
             return QVariant(m_releases->getSeriaSeenMark(m_releaseId, currentVideoId));
@@ -101,6 +105,10 @@ QHash<int, QByteArray> ReleaseOnlineSeriesListModel::roleNames() const
         {
             CurrentTimeVideoRole,
             "currentTimeVideo"
+        },
+        {
+            IsEmptyPosterRole,
+            "isEmptyPoster"
         }
     };
 }

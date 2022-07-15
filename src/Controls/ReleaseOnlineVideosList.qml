@@ -56,10 +56,10 @@ Item {
                 Image {
                     anchors.centerIn: parent
                     source: poster
-                    sourceSize: Qt.size(350, 500)
-                    fillMode: Image.PreserveAspectCrop
-                    width: 400
-                    height: 270
+                    sourceSize: Qt.size(400, 270)
+                    fillMode: isEmptyPoster ? Image.Stretch : Image.PreserveAspectCrop
+                    width: isEmptyPoster ? 100 : 400
+                    height: isEmptyPoster ? 100 : 270
                     layer.enabled: true
                     layer.effect: OpacityMask {
                         maskSource: mask
@@ -88,7 +88,7 @@ Item {
 
                 Rectangle {
                     id: blockedContainer
-                    visible: posterImage.posterHovered && !isCurrentVideo
+                    visible: posterImage.posterHovered
                     anchors.fill: parent
                     color: "black"
                     opacity: 0.4
