@@ -30,6 +30,7 @@ Rectangle {
     property alias textSize: buttonTitle.fontPointSize
     property bool buttonHovered: false
     property bool buttonEnabled: true
+    property bool disableHover: false
 
     signal clicked()
 
@@ -53,7 +54,7 @@ Rectangle {
         }
 
         MouseArea {
-            hoverEnabled: true
+            hoverEnabled: !disableHover
             anchors.fill: parent
             onEntered: {
                 root.buttonHovered = true;

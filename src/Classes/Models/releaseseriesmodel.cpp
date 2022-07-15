@@ -25,7 +25,7 @@ bool ReleaseSeriesModel::appendReleaseId(const int id)
 {
     if (m_releaseIds->contains(id)) return false;
 
-    m_releaseIds->append(QVariant(id));
+    m_releaseIds->append(id);
     return true;
 }
 
@@ -51,7 +51,7 @@ void ReleaseSeriesModel::readFromJson(const QJsonObject &jsonObject) noexcept
     m_countReleases = jsonObject.value("countReleases").toInt();
     auto releases = jsonObject.value("releasesIds").toArray();
     m_releaseIds->clear();
-    foreach (auto release, releases) m_releaseIds->append(QVariant(release.toInt()));
+    foreach (auto release, releases) m_releaseIds->append(release.toInt());
 
     auto posters = jsonObject.value("posters").toArray();
     m_posters->clear();
