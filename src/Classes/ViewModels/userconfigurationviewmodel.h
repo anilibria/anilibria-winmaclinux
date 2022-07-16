@@ -37,6 +37,7 @@ class UserConfigurationViewModel : public QObject
     Q_PROPERTY(QString startPage READ startPage WRITE setStartPage NOTIFY startPageChanged)
     Q_PROPERTY(bool hideRecommendByGenres READ hideRecommendByGenres WRITE setHideRecommendByGenres NOTIFY hideRecommendByGenresChanged)
     Q_PROPERTY(bool hideWillWatch READ hideWillWatch WRITE setHideWillWatch NOTIFY hideWillWatchChanged)
+    Q_PROPERTY(bool showedVideoForNewcomers READ showedVideoForNewcomers WRITE setShowedVideoForNewcomers NOTIFY showedVideoForNewcomersChanged)
 
 private:
     QString m_cacheFileName { "userconfiguration.cache" };
@@ -52,6 +53,7 @@ private:
     QString m_startPageField { "startPage" };
     QString m_hideRecommendByGenresField { "hideRecommendByGenres" };
     QString m_hideWillWatchField { "hideWillWatchField" };
+    QString m_showedVideoForNewcomersField { "showedVideoForNewcomers" };
     int m_opacityPlayerPanel { 50 };
     bool m_notCloseReleaseCardAfterWatch { false };
     bool m_usingScrollAcceleration { true };
@@ -64,6 +66,7 @@ private:
     QString m_startPage { "release" };
     bool m_hideRecommendByGenres { false };
     bool m_hideWillWatch { false };
+    bool m_showedVideoForNewcomers { false };
 
 public:
     explicit UserConfigurationViewModel(QObject *parent = nullptr);
@@ -104,6 +107,9 @@ public:
     bool hideWillWatch() const noexcept { return m_hideWillWatch; }
     void setHideWillWatch(bool hideWillWatch) noexcept;
 
+    bool showedVideoForNewcomers() const noexcept { return m_showedVideoForNewcomers; }
+    void setShowedVideoForNewcomers(bool showedVideoForNewcomers) noexcept;
+
     Q_INVOKABLE void saveSettingsToFile();
 
 private:
@@ -122,6 +128,7 @@ signals:
     void startPageChanged();
     void hideRecommendByGenresChanged();
     void hideWillWatchChanged();
+    void showedVideoForNewcomersChanged();
 
 };
 

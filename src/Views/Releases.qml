@@ -2368,6 +2368,13 @@ Page {
         id: releasePosterPreview
     }
 
+    InfoForNewcomers {
+        id: infoForNewcomers
+        anchors.bottom: parent.bottom
+        anchors.left: parent.left
+        anchors.leftMargin: 40
+    }
+
     MessageModal {
         id: addToHidedReleasesConfirm
         header: "Добавить релизы в скрытые?"

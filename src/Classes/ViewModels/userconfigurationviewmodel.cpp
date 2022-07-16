@@ -124,6 +124,14 @@ void UserConfigurationViewModel::setHideWillWatch(bool hideWillWatch) noexcept
     emit hideWillWatchChanged();
 }
 
+void UserConfigurationViewModel::setShowedVideoForNewcomers(bool showedVideoForNewcomers) noexcept
+{
+    if (m_showedVideoForNewcomers == showedVideoForNewcomers) return;
+
+    m_showedVideoForNewcomers = showedVideoForNewcomers;
+    emit showedVideoForNewcomersChanged();
+}
+
 void UserConfigurationViewModel::saveSettingsToFile()
 {
     QJsonObject object;
@@ -139,6 +147,7 @@ void UserConfigurationViewModel::saveSettingsToFile()
     object[m_startPageField] = m_startPage;
     object[m_hideRecommendByGenresField] = m_hideRecommendByGenres;
     object[m_hideWillWatchField] = m_hideWillWatch;
+    object[m_showedVideoForNewcomersField] = m_showedVideoForNewcomers;
 
     QFile file(getCachePath(m_cacheFileName));
     file.open(QFile::WriteOnly | QFile::Text);
@@ -167,4 +176,5 @@ void UserConfigurationViewModel::readSettingsFromFile()
     m_startPage = object.contains(m_startPageField) ? object[m_startPageField].toString() : "release";
     m_hideRecommendByGenres = object.contains(m_hideRecommendByGenresField) ? object[m_hideRecommendByGenresField].toBool() : false;
     m_hideWillWatch = object.contains(m_hideWillWatchField) ? object[m_hideWillWatchField].toBool() : false;
+    m_showedVideoForNewcomers = object.contains(m_showedVideoForNewcomersField) ? object[m_showedVideoForNewcomersField].toBool() : false;
 }

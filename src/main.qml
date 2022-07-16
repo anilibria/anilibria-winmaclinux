@@ -1290,6 +1290,7 @@ ApplicationWindow {
     UserConfigurationViewModel {
         id: userConfigurationViewModel
         Component.onDestruction: {
+            if (!userConfigurationViewModel.showedVideoForNewcomers) userConfigurationViewModel.showedVideoForNewcomers = true;
             userConfigurationViewModel.saveSettingsToFile();
         }
     }

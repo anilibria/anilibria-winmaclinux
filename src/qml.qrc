@@ -163,5 +163,6 @@
         <file>Assets/Icons/broken.svg</file>
         <file>Assets/Icons/emptybox.svg</file>
         <file>Controls/EmptyBoxArea.qml</file>
+        <file>Controls/InfoForNewcomers.qml</file>
     </qresource>
 </RCC>
