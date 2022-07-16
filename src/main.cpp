@@ -83,6 +83,9 @@ int main(int argc, char *argv[])
     }
 
     QGuiApplication app(argc, argv);
+#if QT_VERSION >= QT_VERSION_CHECK(5, 15, 0)
+    app.setHighDpiScaleFactorRoundingPolicy(Qt::HighDpiScaleFactorRoundingPolicy::PassThrough);
+#endif
 
     qmlRegisterType<SynchronizationService>("Anilibria.Services", 1, 0, "SynchronizationService");
     qmlRegisterType<LocalStorageService>("Anilibria.Services", 1, 0, "LocalStorage");
