@@ -81,7 +81,7 @@ Page {
                     anchors.centerIn: parent
                     width: 310
                     height: 40
-                    placeholder: "Введите название релиза"
+                    placeholder: "Введите название релиза или жанра"
                     onCompleteEditing: {
                         releaseLinkedSeries.nameFilter = textContent;
                         releaseLinkedSeries.filterSeries();
