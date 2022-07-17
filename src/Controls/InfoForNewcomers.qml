@@ -48,7 +48,6 @@ Item {
         }
     }
     Component.onCompleted: {
-        console.log(userConfigurationViewModel.showedVideoForNewcomers);
         if (!userConfigurationViewModel.showedVideoForNewcomers) root.visible = true;
     }
 }

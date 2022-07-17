@@ -270,7 +270,6 @@ Page {
             if (status === MediaPlayer.Buffered) {
                 onlinePlayerViewModel.isBuffering = false;
                 if (onlinePlayerViewModel.restorePosition > 0){
-                    console.log('Seek in player', onlinePlayerViewModel.restorePosition);
                     playerLoader.item.seek(onlinePlayerViewModel.restorePosition);
                     if (playerLoader.item.position >= onlinePlayerViewModel.restorePosition) onlinePlayerViewModel.restorePosition = 0;
                 } else {
