@@ -57,7 +57,6 @@ Page {
         if (event.key === Qt.Key_Escape) {
             if (releasePosterPreview.isVisible) {
                 releasePosterPreview.isVisible = false;
-                if (Qt.platform.os !== "windows") webView.item.visible = true;
             } else {
                 releasesViewModel.hideReleaseCard();
                 page.showAlpabeticalCharaters = false;
