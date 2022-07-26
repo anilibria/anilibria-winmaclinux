@@ -252,7 +252,7 @@ Page {
         function loaderVolumeChanged() {
             volumeSlider.value = playerLoader.item.volume * 100;
             onlinePlayerViewModel.volumeSlider = volumeSlider.value;
-            if (applicationSettings.sendVolumeToRemote) onlinePlayerViewModel.broadcastVolume(volumeSlider.value);
+            if (applicationSettings.sendVolumeToRemote) onlinePlayerViewModel.broadcastVolume(onlinePlayerViewModel.volumeSlider);
         }
 
         function loaderStatusChanged() {

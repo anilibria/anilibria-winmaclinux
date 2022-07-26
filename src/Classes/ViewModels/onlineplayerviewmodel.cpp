@@ -227,8 +227,7 @@ void OnlinePlayerViewModel::setSendPlaybackToRemoteSwitch(bool sendPlaybackToRem
 void OnlinePlayerViewModel::setVolumeSlider(int volumeSlider) noexcept
 {
     if (m_volumeSlider == volumeSlider) return;
-
-    m_volumeSlider = volumeSlider;
+    m_volumeSlider = volumeSlider < 0 ? 0 : volumeSlider;
     emit volumeSliderChanged();
 }
 
