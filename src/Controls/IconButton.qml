@@ -53,7 +53,6 @@ Item {
         }
         onClicked: {
             _button.buttonPressed();
-            focus = true;
         }
     }
 
