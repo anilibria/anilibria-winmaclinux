@@ -88,6 +88,7 @@ signals:
     void onlinePlayerPageFromNavigated();
     void isAuthorizationPageVisibleChanged();
     void analyticsServiceChanged();
+    void releasesPageToNavigated();
 
 };
 

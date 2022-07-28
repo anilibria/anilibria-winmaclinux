@@ -74,6 +74,10 @@ void MainViewModel::selectPage(const QString& pageId)
         emit onlinePlayerPageFromNavigated();
     }
 
+    if (pageId == "release") {
+        emit releasesPageToNavigated();
+    }
+
     m_analyticsService->sendView("page", "view", "%2F" + pageId);
 }
 

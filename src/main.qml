@@ -1274,6 +1274,9 @@ ApplicationWindow {
             videoplayer.navigateTo();
             windowFooter.visible = false;
         }
+        onReleasesPageToNavigated: {
+            releases.navigateTo();
+        }
     }
 
     OsExtras {

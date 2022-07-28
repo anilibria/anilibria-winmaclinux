@@ -27,7 +27,6 @@ import "Videoplayer"
 
 Page {
     id: _page
-    focus: true
     property var seenVideo: ({})
     property var seenMarks: ({})
     property var videoPlayerSource
@@ -50,7 +49,7 @@ Page {
 
     onStopInPlayer: {
         playerLoader.item.stop();
-    }    
+    }
 
     Keys.onSpacePressed: {
         if (playerLoader.item.playbackState === MediaPlayer.PlayingState) {
@@ -1440,6 +1439,5 @@ Page {
     Component.onCompleted: {
         volumeSlider.value = playerLoader.item.volume * 100;
     }
-
 }
 

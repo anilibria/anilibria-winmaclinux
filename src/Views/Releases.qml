@@ -62,6 +62,9 @@ Page {
                 page.showAlpabeticalCharaters = false;
             }
         }
+        if (event.key === Qt.Key_Home) {
+            if (compactModeSwitch.checked && !releasesViewModel.synchronizationEnabled) showPanelInCompactModeButton.clicked();
+        }
     }
 
     onWidthChanged: {
@@ -83,6 +86,10 @@ Page {
         color: ApplicationTheme.pageBackground
     }
 
+    onNavigateTo: {
+        page.forceActiveFocus();
+    }
+
     anchors.fill: parent
 
     Rectangle {
@@ -99,16 +106,6 @@ Page {
         height: 260
         radius: 6
         visible: false
-    }
-
-    MouseArea {
-        anchors.fill: parent
-        hoverEnabled: true
-        onPositionChanged: {
-            if (!compactModeSwitch.checked) return;
-            if (mouse.x < 80) releasesViewModel.showSidePanel = true;
-            if (mouse.x > 100) releasesViewModel.showSidePanel = false;
-        }
     }
 
     RowLayout {
@@ -1170,6 +1167,7 @@ Page {
                         }
                     }
                 }
+
                 PlainText {
                     anchors.verticalCenter: parent.verticalCenter
                     anchors.horizontalCenter: parent.horizontalCenter
@@ -1177,6 +1175,18 @@ Page {
                     fontPointSize: 12
                     text: "Выполняется синхронизация..."
                 }
+
+                RoundedActionButton {
+                    id: showPanelInCompactModeButton
+                    visible: compactModeSwitch.checked && !releasesViewModel.synchronizationEnabled
+                    text: releasesViewModel.showSidePanel ? "Скрыть панель" : "Показать панель"
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    onClicked: {
+                        releasesViewModel.showSidePanel = !releasesViewModel.showSidePanel;
+                    }
+                }
+
 
                 RoundedActionButton {
                     id: setToStartedSectionButton
@@ -1608,6 +1618,12 @@ Page {
                     clip: true
                     ScrollBar.vertical: ScrollBar {
                         active: true
+                        onPositionChanged: {
+                            if (position < -0.0008 && !releasesViewModel.synchronizationEnabled) {
+                                releasesViewModel.synchronizationEnabled = true;
+                                synchronizationService.synchronizeReleases(1);
+                            }
+                        }
                     }
 
                     Component {
