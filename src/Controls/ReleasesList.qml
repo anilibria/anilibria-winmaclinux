@@ -2,6 +2,7 @@ import QtQuick 2.12
 import QtQuick.Controls 2.12
 import QtGraphicalEffects 1.0
 import Anilibria.ListModels 1.0
+import "../Theme"
 
 Item {
     width: parent.width
@@ -50,7 +51,6 @@ Item {
                 radius: 12
 
                 property bool posterHovered: false
-                property bool buttonHovered: false
 
                 Image {
                     anchors.centerIn: parent
@@ -74,6 +74,30 @@ Item {
                     radius: 12
                 }
 
+                Item {
+                    anchors.centerIn: parent
+                    visible: posterImage.posterHovered
+                    width: 150
+                    height: 28
+
+                    Rectangle {
+                        width: 150
+                        height: parent.height
+                        color: ApplicationTheme.roundedButtonBackground
+                        border.color: "transparent"
+                        border.width: 1
+                        radius: 18
+
+                        PlainText {
+                            id: buttonTitle
+                            fontPointSize: 11
+                            anchors.centerIn: parent
+                            color: ApplicationTheme.roundedButtonForeground
+                            text: "Смотреть"
+                        }
+                    }
+                }
+
                 MouseArea {
                     anchors.fill: parent
                     hoverEnabled: true
@@ -83,19 +107,9 @@ Item {
                     onExited: {
                         posterImage.posterHovered = false;
                     }
-                }
-
-                RoundedActionButton {
-                    visible: posterImage.posterHovered
-                    width: 150
-                    anchors.centerIn: parent
-                    text: "Смотреть"
-                    onClicked: {
+                    onPressed: {
                         mainViewModel.selectPage("videoplayer");
                         onlinePlayerViewModel.quickSetupForSingleRelease(id);
-                    }
-                    onButtonHoveredChanged: {
-                        posterImage.posterHovered = buttonHovered;
                     }
                 }
             }
