@@ -53,6 +53,7 @@ class ReleasesListModel : public QAbstractListModel
     Q_PROPERTY(int countFilteredReleases READ countFilteredReleases NOTIFY countFilteredReleasesChanged)
     Q_PROPERTY(ReleaseLinkedSeries* releaseLinkedSeries READ releaseLinkedSeries WRITE setReleaseLinkedSeries NOTIFY releaseLinkedSeriesChanged)
     Q_PROPERTY(QString scheduleDayFilter READ scheduleDayFilter WRITE setScheduleDayFilter NOTIFY scheduleDayFilterChanged)
+    Q_PROPERTY(bool filterByFavorites READ filterByFavorites WRITE setFilterByFavorites NOTIFY filterByFavoritesChanged)
 
 private:
     QSharedPointer<QList<FullReleaseModel*>> m_releases;
@@ -83,6 +84,7 @@ private:
     bool m_sortingDescending { true };
     bool m_isHasReleases { false };
     bool m_hasReleaseSeriesFilter { false };
+    bool m_filterByFavorites { false };
     QString m_scheduleDayFilter { "" };
     QSharedPointer<QSet<int>> m_selectedReleases { new QSet<int>() };
     enum FullReleaseRoles {
@@ -203,6 +205,9 @@ public:
     QString getScheduleDay(int dayNumber) const noexcept;
     int getScheduleDayNumber(const QString& day) const noexcept;
 
+    bool filterByFavorites() const noexcept { return m_filterByFavorites; }
+    void setFilterByFavorites(bool filterByFavorites) noexcept;
+
     QSharedPointer<QSet<int>> getSelectedReleases();
 
     Q_INVOKABLE void refresh();
@@ -244,6 +249,7 @@ signals:
     void releaseLinkedSeriesChanged();
     void hasReleaseSeriesFilterChanged();
     void scheduleDayFilterChanged();
+    void filterByFavoritesChanged();
 
 };
 

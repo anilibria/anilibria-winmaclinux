@@ -896,6 +896,7 @@ Page {
                             Switch {
                                 id: notificationForFavorites
                                 onCheckedChanged: {
+                                    releasesViewModel.items.filterByFavorites = checked;
                                     localStorage.setNotificationForFavorites(checked);
                                     releasesViewModel.notificationForFavorites = checked;
                                 }
@@ -2520,6 +2521,7 @@ Page {
         const userSettings = JSON.parse(localStorage.getUserSettings());
         downloadTorrentMode.currentIndex = userSettings.torrentDownloadMode;
         notificationForFavorites.checked = userSettings.notificationForFavorites;
+        releasesViewModel.items.filterByFavorites = notificationForFavorites.checked;
         darkModeSwitch.checked = applicationSettings.isDarkTheme;
         clearFilterAfterChangeSectionSwitch.checked = userSettings.clearFiltersAfterChangeSection;
         compactModeSwitch.checked = userSettings.compactMode;
