@@ -614,6 +614,7 @@ void OnlinePlayerViewModel::quickSetupForSingleRelease(int releaseId)
     emit playInPlayer();
     emit saveToWatchHistory(m_navigateReleaseId);
     emit needScrollSeriaPosition();
+    m_releasesViewModel->resetReleaseChanges(m_selectedRelease);
 }
 
 void OnlinePlayerViewModel::quickSetupForMultipleRelease(const QList<int> releaseIds)
@@ -658,7 +659,7 @@ void OnlinePlayerViewModel::quickSetupForFavoritesCinemahall()
 
     QList<FullReleaseModel*> fullReleases;
     m_releasesViewModel->getFavoritesReleases(&fullReleases);
-
+    foreach (auto fullRelease, fullReleases) m_releasesViewModel->resetReleaseChanges(fullRelease->id());
     m_videos->setVideosFromCinemahall(std::move(fullReleases));
 
     emit refreshSeenMarks();
@@ -719,6 +720,8 @@ void OnlinePlayerViewModel::setupForSingleRelease()
     emit playInPlayer();
     emit saveToWatchHistory(m_navigateReleaseId);
     emit needScrollSeriaPosition();
+
+    m_releasesViewModel->resetReleaseChanges(m_selectedRelease);
 }
 
 void OnlinePlayerViewModel::setupForMultipleRelease()
@@ -730,6 +733,7 @@ void OnlinePlayerViewModel::setupForMultipleRelease()
     foreach (auto selectedRelease, *selectedReleases) {
         releases.append(m_releasesViewModel->getReleaseById(selectedRelease));
     }
+    foreach (auto fullRelease, releases) m_releasesViewModel->resetReleaseChanges(fullRelease->id());
     setSeenMarkedAtEnd(false);
     setShowNextPosterRelease(false);
     setIsCinemahall(false);
@@ -769,7 +773,7 @@ void OnlinePlayerViewModel::setupForCinemahall()
     setIsMultipleRelease(false);
 
     auto fullReleases = m_releasesViewModel->cinemahall()->getCinemahallReleases();
-
+    foreach (auto fullRelease, fullReleases) m_releasesViewModel->resetReleaseChanges(fullRelease->id());
     m_videos->setVideosFromCinemahall(std::move(fullReleases));
 
     emit refreshSeenMarks();

@@ -1022,6 +1022,16 @@ FullReleaseModel *ReleasesViewModel::getReleaseById(int id) const noexcept
     return *iterator;
 }
 
+void ReleasesViewModel::resetReleaseChanges(int releaseId) noexcept
+{
+    if (m_releaseChanges->newReleases()->contains(releaseId)) m_releaseChanges->newReleases()->removeOne(releaseId);
+    if (m_releaseChanges->newOnlineSeries()->contains(releaseId)) m_releaseChanges->newOnlineSeries()->removeOne(releaseId);
+    if (m_releaseChanges->newTorrents()->contains(releaseId)) m_releaseChanges->newTorrents()->removeOne(releaseId);
+    if (m_releaseChanges->newTorrentSeries()->contains(releaseId)) m_releaseChanges->newTorrentSeries()->removeOne(releaseId);
+
+    saveChanges();
+}
+
 void ReleasesViewModel::removeAllSeenMark()
 {
     m_seenMarks->clear();
@@ -1551,16 +1561,6 @@ FullReleaseModel *ReleasesViewModel::getReleaseByCode(QString code) const noexce
     if(iterator == m_releases->end()) return nullptr;
 
     return *iterator;
-}
-
-void ReleasesViewModel::resetReleaseChanges(int releaseId) noexcept
-{
-    if (m_releaseChanges->newReleases()->contains(releaseId)) m_releaseChanges->newReleases()->removeOne(releaseId);
-    if (m_releaseChanges->newOnlineSeries()->contains(releaseId)) m_releaseChanges->newOnlineSeries()->removeOne(releaseId);
-    if (m_releaseChanges->newTorrents()->contains(releaseId)) m_releaseChanges->newTorrents()->removeOne(releaseId);
-    if (m_releaseChanges->newTorrentSeries()->contains(releaseId)) m_releaseChanges->newTorrentSeries()->removeOne(releaseId);
-
-    saveChanges();
 }
 
 int ReleasesViewModel::randomBetween(int low, int high) const noexcept

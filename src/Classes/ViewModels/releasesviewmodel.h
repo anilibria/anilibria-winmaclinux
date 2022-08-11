@@ -278,6 +278,7 @@ public:
     Q_INVOKABLE void prepareTorrentsForListItem(const int id);
     Q_INVOKABLE void clearDeletedInCacheMarks();
     FullReleaseModel* getReleaseById(int id) const noexcept;
+    void resetReleaseChanges(int releaseId) noexcept;
     quint32 m_seedValue { 0 };
 
 private:
@@ -307,7 +308,6 @@ private:
     int getCountOnlyFavorites(QList<int>* changes) const noexcept;
     QString getMultipleLinks(QString text) const noexcept;
     FullReleaseModel* getReleaseByCode(QString code) const noexcept;
-    void resetReleaseChanges(int releaseId) noexcept;
     int randomBetween(int low, int high) const noexcept;
     void saveReleasesFromMemoryToFile();
     void mapToFullReleaseModel(QJsonObject &&jsonObject, const bool isFirstStart, QSharedPointer<QSet<int>> hittedIds);
