@@ -47,6 +47,12 @@ QVariant ReleaseSimpleListModel::data(const QModelIndex &index, int role) const
         case PosterRole: {
             return QVariant(release->poster());
         }
+        case DescriptionRole: {
+            auto description = release->description().replace("<br>", "").replace("<b>", "").replace("</b>", "");
+            auto orderIndex = description.indexOf("Порядок просмотра");
+            if (orderIndex > -1) description = description.mid(0, orderIndex);
+            return QVariant(description.length() > 340 ? description.mid(0, 340) + "..." : description);
+        }
     }
 
     return QVariant();
@@ -66,6 +72,10 @@ QHash<int, QByteArray> ReleaseSimpleListModel::roleNames() const
         {
             PosterRole,
             "poster"
+        },
+        {
+            DescriptionRole,
+            "description"
         }
     };
 }

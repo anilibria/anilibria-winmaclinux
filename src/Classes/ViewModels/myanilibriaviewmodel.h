@@ -32,6 +32,7 @@ class MyAnilibriaViewModel : public QObject
     Q_PROPERTY(AllMyAnilibriaListModel* allSections READ allSections NOTIFY allSectionsChanged)
     Q_PROPERTY(QString genres READ genres NOTIFY genresChanged)
     Q_PROPERTY(QString voices READ voices NOTIFY voicesChanged)
+    Q_PROPERTY(QString hoveredDescription READ hoveredDescription WRITE setHoveredDescription NOTIFY hoveredDescriptionChanged)
 
 private:
     QString m_cacheFileName { "myanilibrialist.cache" };
@@ -43,6 +44,7 @@ private:
     QScopedPointer<MyAnilibriaListModel> m_myList { new MyAnilibriaListModel() };
     QScopedPointer<AllMyAnilibriaListModel> m_allList { new AllMyAnilibriaListModel() };
     QSharedPointer<QSet<QString>> m_selectedSections { new QSet<QString>() };
+    QString m_hoveredDescription { "" };
 
 public:
     explicit MyAnilibriaViewModel(QObject *parent = nullptr);
@@ -53,6 +55,9 @@ public:
     MyAnilibriaListModel* myList() const noexcept { return m_myList.get(); }
 
     AllMyAnilibriaListModel* allSections() const noexcept { return m_allList.get(); }
+
+    QString hoveredDescription() const noexcept { return m_hoveredDescription; }
+    void setHoveredDescription(const QString& hoveredDescription) noexcept;
 
     QString genres() const noexcept;
     QString voices() const noexcept;
@@ -74,6 +79,7 @@ signals:
     void voicesChanged();
     void myListChanged();
     void allSectionsChanged();
+    void hoveredDescriptionChanged();
 
 };
 

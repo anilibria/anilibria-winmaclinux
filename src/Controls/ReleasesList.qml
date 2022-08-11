@@ -103,9 +103,11 @@ Item {
                     hoverEnabled: true
                     onEntered: {
                         posterImage.posterHovered = true;
+                        myAnilibriaViewModel.hoveredDescription = description
                     }
                     onExited: {
                         posterImage.posterHovered = false;
+                        myAnilibriaViewModel.hoveredDescription = ""
                     }
                     onPressed: {
                         mainViewModel.selectPage("videoplayer");

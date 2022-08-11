@@ -6,6 +6,8 @@ Item {
     width: scrollview.width
     height: needHideSection ? 34 : 230
 
+    property string hoveredDescription: ""
+
     ExpandableHeader {
         id: statisticsHeader
         anchors.top: parent.top

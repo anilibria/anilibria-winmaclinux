@@ -172,6 +172,13 @@ Page {
                         delegate: Component {
                             Loader {
                                 source: "./MyAnilibria/" + componentId + ".qml"
+                                onLoaded: {
+                                    hoveredDescription.connect(
+                                        function () {
+                                            console.log('pirdesh')
+                                        }
+                                    )
+                                }
                             }
                         }
                         ScrollBar.vertical: ScrollBar {
@@ -181,8 +188,10 @@ Page {
                 }
             }
 
-            Item {
-                visible: myAnilibriaViewModel.hoveredDescription.length
+            Rectangle {
+                color: ApplicationTheme.pageBackground
+                opacity: 0.8
+                visible: true //page.releaseDescription && page.releaseDescription !== "" && showReleaseDescriptionSwitch.checked
                 enabled: false
                 anchors.left: parent.left
                 anchors.leftMargin: 42
@@ -191,18 +200,11 @@ Page {
                 height: 105
                 width: parent.width / 2
 
-                Rectangle {
-                    anchors.fill: parent
-                    color: ApplicationTheme.pageBackground
-                    opacity: 0.8
-                }
-
                 PlainText {
                     anchors.fill: parent
                     fontPointSize: 11
-                    text: myAnilibriaViewModel.hoveredDescription
+                    text: "Бла блабла бла бла ла бал бал аб ла лаб ба б"
                     wrapMode: Text.WordWrap
-                    textFormat: Text.RichText
                     maximumLineCount: 5
                     verticalAlignment: Text.AlignVCenter
                 }

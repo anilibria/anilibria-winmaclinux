@@ -273,6 +273,7 @@ public:
     Q_INVOKABLE void setSeenMark(int id, int seriaId, bool marked);
     QHash<QString, bool>* getSeenMarks();
     void updateAllReleases(const QString &releases, bool insideData);
+    uint32_t getCountFromChanges(const QList<int> *releases, bool filterByFavorites);
     Q_INVOKABLE void openInExternalPlayer(const QString& url);
     Q_INVOKABLE void prepareTorrentsForListItem(const int id);
     Q_INVOKABLE void clearDeletedInCacheMarks();

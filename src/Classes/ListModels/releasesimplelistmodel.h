@@ -47,7 +47,8 @@ public:
     enum ReleaseSimpleRoles {
         IndexRole = Qt::UserRole + 1,
         TitleRole,
-        PosterRole
+        PosterRole,
+        DescriptionRole
     };
 
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;

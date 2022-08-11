@@ -57,6 +57,14 @@ void MyAnilibriaViewModel::setReleasesViewModel(const ReleasesViewModel *viewMod
     m_releasesViewModel = const_cast<ReleasesViewModel *>(viewModel);
 }
 
+void MyAnilibriaViewModel::setHoveredDescription(const QString &hoveredDescription) noexcept
+{
+    if (m_hoveredDescription == hoveredDescription) return;
+
+    m_hoveredDescription = hoveredDescription;
+    emit hoveredDescriptionChanged();
+}
+
 QString MyAnilibriaViewModel::genres() const noexcept
 {
     auto genres = m_releasesViewModel->getMostPopularGenres();
