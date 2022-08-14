@@ -20,5 +20,5 @@ jobs:
     - name: run qmake
       run: qmake -makefile -o src/Makefile src/AniLibria.pro
     - name: run make
-      run: make src
+      run: make -C src
 
