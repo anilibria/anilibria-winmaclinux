@@ -14,11 +14,9 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: apt get qt
-      run: sudo apt-get install -y --no-install-recommends qt5-default qtdeclarative5-dev libqt5svg5-dev qml-module-qtgraphicaleffects  qml-module-qtquick-layouts qml-module-qtquick-dialogs qml-module-qtquick-controls qml-module-qtquick-controls2 qml-module-qt-labs-folderlistmodel qml-module-qt-labs-settings libqt5websockets5-dev
-    - name: cd src
-      run: cd src
+      run: sudo apt-get install -y --no-install-recommends libgstreamer-gl1.0-0 qt5-default qtdeclarative5-dev libqt5svg5-dev qml-module-qtgraphicaleffects  qml-module-qtquick-layouts qml-module-qtquick-dialogs qml-module-qtquick-controls qml-module-qtquick-controls2 qml-module-qt-labs-folderlistmodel qml-module-qt-labs-settings libqt5websockets5-dev
     - name: run qmake
-      run: qmake
+      run: qmake -makefile -o src/Makefile src/AniLibria.pro
     - name: run make
-      run: make
+      run: make src
 
