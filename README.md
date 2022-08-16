@@ -2,6 +2,8 @@
 
 Если Вы найдете ошибки или будут идеи по улучшению приложения то оформляйте ишью в этом репозитории или пишите [на этом сайте](http://anilibriadesktop.reformal.ru/), заранее спасибо. Следите за новостями о выпуске новых версий в [телеграм канале](https://t.me/desktopclientanilibria).  
 
+[![Project CI](https://github.com/anilibria/anilibria-winmaclinux/actions/workflows/c-cpp.yml/badge.svg)](https://github.com/anilibria/anilibria-winmaclinux/actions/workflows/c-cpp.yml)
+
 ## Системные требования:
 
 **Windows** - Windows 7+, с графической картой поддерживающей OpenGL 2.1+  
