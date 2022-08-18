@@ -67,7 +67,8 @@ $ sudo apt-get install -f
 ### Готовые инструкции для сборки под дистрибутивы:
 
 [Ubuntu/Linux Mint 20](https://github.com/anilibria/anilibria-winmaclinux/blob/master/linuxmint20.md)  
-[Fedora](https://github.com/anilibria/anilibria-winmaclinux/blob/master/fedora.md)
+[Fedora](https://github.com/anilibria/anilibria-winmaclinux/blob/master/fedora.md)  
+[macOS](https://github.com/anilibria/anilibria-winmaclinux/blob/master/macosbuild.md)
 
 ### Для сборки необходимо:
 - Минимальная поддерживаемая версия Qt 5.12.3
