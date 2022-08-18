@@ -11,6 +11,7 @@
 * Создайте себе папку для работы например `mkdir ~/anilibria`
 * Перейдите в нее `cd ~/anilibria`
 * Извлеките репозиторий `git clone https://github.com/anilibria/anilibria-winmaclinux.git`
+* Перейдите в ветку для шестой версии `git checkout qt6`
 
 ## Сборка проекта
 * Запустите `Qt Creator` и выберите `Файл`-> `Открыть файл или проект` далее выберите файл путь (из примера ~/anilibria/anilibria-winmaclinux/src/AniLibria.pro)
