@@ -2,6 +2,8 @@
 
 Если Вы найдете ошибки или будут идеи по улучшению приложения то оформляйте ишью в этом репозитории или пишите [на этом сайте](http://anilibriadesktop.reformal.ru/), заранее спасибо. Следите за новостями о выпуске новых версий в [телеграм канале](https://t.me/desktopclientanilibria).  
 
+[![Project CI](https://github.com/anilibria/anilibria-winmaclinux/actions/workflows/c-cpp.yml/badge.svg)](https://github.com/anilibria/anilibria-winmaclinux/actions/workflows/c-cpp.yml)
+
 ## Системные требования:
 
 **Windows** - Windows 7+, с графической картой поддерживающей OpenGL 2.1+  
@@ -65,7 +67,8 @@ $ sudo apt-get install -f
 ### Готовые инструкции для сборки под дистрибутивы:
 
 [Ubuntu/Linux Mint 20](https://github.com/anilibria/anilibria-winmaclinux/blob/master/linuxmint20.md)  
-[Fedora](https://github.com/anilibria/anilibria-winmaclinux/blob/master/fedora.md)
+[Fedora](https://github.com/anilibria/anilibria-winmaclinux/blob/master/fedora.md)  
+[macOS](https://github.com/anilibria/anilibria-winmaclinux/blob/master/macosbuild.md)
 
 ### Для сборки необходимо:
 - Минимальная поддерживаемая версия Qt 5.12.3
