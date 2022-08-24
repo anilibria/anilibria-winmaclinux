@@ -1001,9 +1001,9 @@ Page {
                         Popup {
                             id: optionsPopup
                             x: optionsButton.width - 300
-                            y: optionsButton.height - 500
+                            y: optionsButton.height - 580
                             width: 300
-                            height: 500
+                            height: 580
 
                             modal: true
                             focus: true
@@ -1148,6 +1148,18 @@ Page {
                                     Component.onCompleted: {
                                         value = userConfigurationViewModel.opacityPlayerPanel;
                                         controlPanel.color.a = value / 100;
+                                    }
+                                }
+                                PlainText {
+                                    width: optionsPopup.width - 20
+                                    fontPointSize: 10
+                                    text: "Автопропуск опенинга"
+                                }
+                                Switch {
+                                    id: autoSkipOpeningSwitch
+                                    checked: userConfigurationViewModel.autoSkipOpening
+                                    onCheckedChanged: {
+                                        userConfigurationViewModel.autoSkipOpening = checked;
                                     }
                                 }
                             }
@@ -1305,6 +1317,16 @@ Page {
             enabled: skipOpening.visible
             anchors.fill: parent
             onPressed: {
+                const position = onlinePlayerViewModel.skipOpening();
+                playerLoader.item.seek(position);
+            }
+        }
+    }
+
+    Connections {
+        target: onlinePlayerViewModel
+        function onDisplaySkipOpeningChanged() {
+            if (onlinePlayerViewModel.displaySkipOpening && userConfigurationViewModel.autoSkipOpening) {
                 const position = onlinePlayerViewModel.skipOpening();
                 playerLoader.item.seek(position);
             }

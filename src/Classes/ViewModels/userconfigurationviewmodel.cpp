@@ -132,6 +132,14 @@ void UserConfigurationViewModel::setShowedVideoForNewcomers(bool showedVideoForN
     emit showedVideoForNewcomersChanged();
 }
 
+void UserConfigurationViewModel::setAutoSkipOpening(bool autoSkipOpening) noexcept
+{
+    if (m_autoSkipOpening == autoSkipOpening) return;
+
+    m_autoSkipOpening = autoSkipOpening;
+    emit autoSkipOpeningChanged();
+}
+
 void UserConfigurationViewModel::saveSettingsToFile()
 {
     QJsonObject object;
@@ -148,6 +156,7 @@ void UserConfigurationViewModel::saveSettingsToFile()
     object[m_hideRecommendByGenresField] = m_hideRecommendByGenres;
     object[m_hideWillWatchField] = m_hideWillWatch;
     object[m_showedVideoForNewcomersField] = m_showedVideoForNewcomers;
+    object[m_autoSkipOpeningField] = m_autoSkipOpening;
 
     QFile file(getCachePath(m_cacheFileName));
     file.open(QFile::WriteOnly | QFile::Text);
@@ -177,4 +186,5 @@ void UserConfigurationViewModel::readSettingsFromFile()
     m_hideRecommendByGenres = object.contains(m_hideRecommendByGenresField) ? object[m_hideRecommendByGenresField].toBool() : false;
     m_hideWillWatch = object.contains(m_hideWillWatchField) ? object[m_hideWillWatchField].toBool() : false;
     m_showedVideoForNewcomers = object.contains(m_showedVideoForNewcomersField) ? object[m_showedVideoForNewcomersField].toBool() : false;
+    m_autoSkipOpening = object.contains(m_autoSkipOpeningField) ? object[m_autoSkipOpeningField].toBool() : false;
 }
