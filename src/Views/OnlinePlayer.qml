@@ -1329,6 +1329,7 @@ Page {
             if (onlinePlayerViewModel.displaySkipOpening && userConfigurationViewModel.autoSkipOpening) {
                 const position = onlinePlayerViewModel.skipOpening();
                 playerLoader.item.seek(position);
+                notificationViewModel.sendInfoNotification(`Произошел автоматический пропуск опенинга`);
             }
         }
     }
