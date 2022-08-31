@@ -290,7 +290,7 @@ Page {
                     x: window.width / 2 - apiAddressPopup.width / 2
                     y: window.height / 2 - apiAddressPopup.height / 2
                     width: 450
-                    height: 250
+                    height: 320
                     modal: true
                     focus: true
                     closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
@@ -314,6 +314,7 @@ Page {
                             TextField {
                                 id: apiAddress
                                 width: parent.width
+                                readOnly: serversComboBox.currentIndex > 0
                                 placeholderText: "Введите url"
                             }
                         }
@@ -334,7 +335,61 @@ Page {
                             TextField {
                                 id: staticAddress
                                 width: parent.width
+                                readOnly: serversComboBox.currentIndex > 0
                                 placeholderText: "Введите url"
+                            }
+                        }
+
+                        AccentText {
+                            width: apiAddressPopup.width
+                            text: "Выбрать сервер"
+                            fontPointSize: 12
+                            font.bold: true
+                            elide: Text.ElideRight
+                        }
+
+                        Rectangle {
+                            width: apiAddressPopup.width - 30
+                            height: apiAddress.height
+
+                            CommonComboBox {
+                                id: serversComboBox
+                                width: parent.width
+                                model: ListModel {
+                                    ListElement {
+                                        text: "Вводом вручную"
+                                    }
+                                    ListElement {
+                                        text: "wwnd"
+                                    }
+                                    ListElement {
+                                        text: "anilib.moe"
+                                    }
+                                    ListElement {
+                                        text: "anilibria.iss.one"
+                                    }
+                                }
+
+                                onActivated: {
+                                    switch (index) {
+                                        case 0:
+                                            apiAddress.text = "";
+                                            staticAddress.text = "";
+                                            break;
+                                        case 1:
+                                            apiAddress.text = "https://wwnd.space/";
+                                            staticAddress.text = "https://static.wwnd.space";
+                                            break;
+                                        case 2:
+                                            apiAddress.text = "https://anilib.moe/";
+                                            staticAddress.text = "https://anilib.moe";
+                                            break;
+                                        case 3:
+                                            apiAddress.text = "https://anilibria.iss.one/";
+                                            staticAddress.text = "https://anilibria.iss.one";
+                                            break;
+                                    }
+                                }
                             }
                         }
 
