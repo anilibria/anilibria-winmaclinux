@@ -361,6 +361,14 @@ std::tuple<int, int> OnlinePlayerViewModel::getSeenVideoPosition(int releaseId)
     return std::make_tuple(seenModel->videoId(), seenModel->videoPosition());
 }
 
+void OnlinePlayerViewModel::setRutubeVideoId(const QString &rutubeVideoId) noexcept
+{
+    if (m_rutubeVideoId == rutubeVideoId) return;
+
+    m_rutubeVideoId = rutubeVideoId;
+    emit rutubeVideoIdChanged();
+}
+
 void OnlinePlayerViewModel::toggleFullScreen()
 {
     setIsFullScreen(!m_isFullScreen);
@@ -450,6 +458,7 @@ void OnlinePlayerViewModel::nextVideo()
     setSelectedRelease(video->releaseId());
 
     setVideoSource(getVideoFromQuality(video));
+    setRutubeIdentifier(video);
 
     m_videos->selectVideo(m_selectedRelease, m_selectedVideo);
 
@@ -509,6 +518,7 @@ void OnlinePlayerViewModel::previousVideo()
     setSelectedRelease(video->releaseId());
 
     setVideoSource(getVideoFromQuality(video));
+    setRutubeIdentifier(video);
 
     m_videos->selectVideo(m_selectedRelease, m_selectedVideo);
 
@@ -607,6 +617,7 @@ void OnlinePlayerViewModel::quickSetupForSingleRelease(int releaseId)
     setSelectedVideo(firstVideo->order());
     setIsFullHdAllowed(!firstVideo->fullhd().isEmpty());
     setVideoSource(getVideoFromQuality(firstVideo));
+    setRutubeIdentifier(firstVideo);
 
     m_videos->selectVideo(m_selectedRelease, m_selectedVideo);
 
@@ -634,6 +645,7 @@ void OnlinePlayerViewModel::quickSetupForMultipleRelease(const QList<int> releas
 
     if (video == nullptr) {
         setVideoSource("");
+        clearRutubeIdentifier();
         return;
     }
 
@@ -642,6 +654,7 @@ void OnlinePlayerViewModel::quickSetupForMultipleRelease(const QList<int> releas
     setSelectedVideo(video->order());
     setIsFullHdAllowed(!video->fullhd().isEmpty());
     setVideoSource(getVideoFromQuality(video));
+    setRutubeIdentifier(video);
     m_videos->selectVideo(m_selectedRelease, m_selectedVideo);
 
     emit refreshSeenMarks();
@@ -674,6 +687,7 @@ void OnlinePlayerViewModel::quickSetupForFavoritesCinemahall()
 
     if (video == nullptr) {
         setVideoSource("");
+        clearRutubeIdentifier();
         return;
     }
 
@@ -682,6 +696,7 @@ void OnlinePlayerViewModel::quickSetupForFavoritesCinemahall()
     setSelectedVideo(video->order());
     setIsFullHdAllowed(!video->fullhd().isEmpty());
     setVideoSource(getVideoFromQuality(video));
+    setRutubeIdentifier(video);
     m_videos->selectVideo(m_selectedRelease, m_selectedVideo);
     emit playInPlayer();
     emit needScrollSeriaPosition();
@@ -713,6 +728,7 @@ void OnlinePlayerViewModel::setupForSingleRelease()
     setSelectedVideo(firstVideo->order());
     setIsFullHdAllowed(!firstVideo->fullhd().isEmpty());
     setVideoSource(getVideoFromQuality(firstVideo));
+    setRutubeIdentifier(firstVideo);
 
     m_videos->selectVideo(m_selectedRelease, m_selectedVideo);
 
@@ -749,6 +765,7 @@ void OnlinePlayerViewModel::setupForMultipleRelease()
 
     if (video == nullptr) {
         setVideoSource("");
+        clearRutubeIdentifier();
         return;
     }
 
@@ -757,6 +774,7 @@ void OnlinePlayerViewModel::setupForMultipleRelease()
     setSelectedVideo(video->order());
     setIsFullHdAllowed(!video->fullhd().isEmpty());
     setVideoSource(getVideoFromQuality(video));
+    setRutubeIdentifier(video);
     m_videos->selectVideo(m_selectedRelease, m_selectedVideo);
 
     emit refreshSeenMarks();
@@ -788,6 +806,7 @@ void OnlinePlayerViewModel::setupForCinemahall()
 
     if (video == nullptr) {
         setVideoSource("");
+        clearRutubeIdentifier();
         return;
     }
 
@@ -796,6 +815,7 @@ void OnlinePlayerViewModel::setupForCinemahall()
     setSelectedVideo(video->order());
     setIsFullHdAllowed(!video->fullhd().isEmpty());
     setVideoSource(getVideoFromQuality(video));
+    setRutubeIdentifier(video);
     m_videos->selectVideo(m_selectedRelease, m_selectedVideo);
     emit playInPlayer();
     emit needScrollSeriaPosition();
@@ -850,6 +870,7 @@ void OnlinePlayerViewModel::selectVideo(int releaseId, int videoId)
 
     setIsFullHdAllowed(!video->fullhd().isEmpty());
     setVideoSource(getVideoFromQuality(video));
+    setRutubeIdentifier(video);
     setReleasePoster(video->releasePoster());
 
     m_videos->selectVideo(releaseId, videoId);
@@ -872,6 +893,7 @@ void OnlinePlayerViewModel::changeVideoQuality(const QString &quality) noexcept
 
     emit stopInPlayer();
     setVideoSource(getVideoFromQuality(video));
+    setRutubeIdentifier(video);
     emit playInPlayer();
 }
 
@@ -989,6 +1011,8 @@ QString OnlinePlayerViewModel::getDisplayTimeFromSeconds(int seconds)
 
 QString OnlinePlayerViewModel::getVideoFromQuality(OnlineVideoModel *video)
 {
+    if (!video->rutubeId().isEmpty()) return "";
+
     if (m_videoQuality == "sd" && !video->sd().isEmpty()) {
         return video->sd();
     } else if (m_videoQuality == "hd" && !video->hd().isEmpty()) {
@@ -1132,4 +1156,15 @@ void OnlinePlayerViewModel::createIfNotExistsFile(QString path, QString defaultC
         file.write(defaultContent.toUtf8());
         file.close();
     }
+}
+
+void OnlinePlayerViewModel::setRutubeIdentifier(const OnlineVideoModel *video) noexcept
+{
+    auto rutubeId = video->rutubeId();
+    setRutubeVideoId(rutubeId);
+}
+
+void OnlinePlayerViewModel::clearRutubeIdentifier() noexcept
+{
+    setRutubeVideoId("");
 }

@@ -35,6 +35,7 @@ void OnlineVideoModel::readFromApiModel(const QJsonObject &jsonObject)
     m_SourceSD = jsonObject.value("srcSd").toString();
     m_SourceHD = jsonObject.value("srcHd").toString();
     m_videoPoster = jsonObject.value("poster").toString();
+    m_rutubeId = jsonObject.value("rutube_id").toString();
     if (jsonObject.contains("skips")) {
         auto skips = jsonObject.value("skips").toObject();
 
@@ -66,6 +67,7 @@ void OnlineVideoModel::writeToJson(QJsonObject &json) const noexcept
     json["srcSd"] = m_SourceSD;
     json["srcHd"] = m_SourceHD;
     json["poster"] = m_videoPoster;
+    json["rutube_id"] = m_rutubeId;
 
     auto skipsObject = QJsonObject();
 

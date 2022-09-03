@@ -894,6 +894,9 @@ ApplicationWindow {
                 osExtras.stopPreventSleepMode();
             }
         }
+        onRutubeVideoIdChanged: {
+            if (rutubeVideoId) Qt.openUrlExternally("https://rutube.ru/play/embed/" + rutubeVideoId);
+        }
     }
 
     Rectangle {
