@@ -31,12 +31,14 @@ class ReleaseOnlineSeriesListModel : public QAbstractListModel
     Q_PROPERTY(ReleasesViewModel* releases READ releases WRITE setReleases NOTIFY releasesChanged)
     Q_PROPERTY(OnlinePlayerViewModel* onlinePlayer READ onlinePlayer WRITE setOnlinePlayer NOTIFY onlinePlayerChanged)
     Q_PROPERTY(bool isEmpty READ isEmpty NOTIFY isEmptyChanged)
+    Q_PROPERTY(int selectedVideoIndex READ selectedVideoIndex NOTIFY selectedVideoIndexChanged)
 
 private:
     QList<OnlineVideoModel*> m_items { QList<OnlineVideoModel*>() };
     int m_releaseId { 0 };
     ReleasesViewModel* m_releases { nullptr };
     OnlinePlayerViewModel* m_onlinePlayer { nullptr };
+    int m_selectedVideoIndex { -1 };
     enum ReleaseOnlineSeriaRoles {
         IdRole = Qt::UserRole + 1,
         IndexRole,
@@ -64,6 +66,8 @@ public:
 
     bool isEmpty() const noexcept { return m_items.isEmpty(); }
 
+    int selectedVideoIndex() const { return m_selectedVideoIndex; }
+
     void refresh();
 
 private:
@@ -75,6 +79,7 @@ signals:
     void releasesChanged();
     void onlinePlayerChanged();
     void isEmptyChanged();
+    void selectedVideoIndexChanged();
 
 };
 

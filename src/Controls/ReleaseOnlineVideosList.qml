@@ -9,6 +9,7 @@ Item {
     height: 330
 
     property alias releaseId: viewModel.releaseId
+    property alias isEmpty: viewModel.isEmpty
 
     signal openVideo(int videoId)
 
@@ -16,6 +17,11 @@ Item {
         id: viewModel
         releases: releasesViewModel
         onlinePlayer: onlinePlayerViewModel
+        onSelectedVideoIndexChanged: {
+            if (selectedVideoIndex == -1) return;
+
+            videosListView.positionViewAtIndex(selectedVideoIndex, ListView.Contain);
+        }
     }
 
     Rectangle {
@@ -27,6 +33,7 @@ Item {
     }
 
     ListView {
+        id: videosListView
         anchors.fill: parent
         orientation: ListView.Horizontal
         boundsBehavior: Flickable.StopAtBounds

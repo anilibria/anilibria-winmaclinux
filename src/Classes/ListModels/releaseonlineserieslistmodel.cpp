@@ -120,6 +120,28 @@ void ReleaseOnlineSeriesListModel::setReleaseId(int releaseId) noexcept
     m_releaseId = releaseId;
     emit releaseIdChanged();
     refresh();
+
+    if (m_items.isEmpty()) {
+        m_selectedVideoIndex = -1;
+        return;
+    }
+
+    m_selectedVideoIndex = 0;
+
+    auto seens = m_onlinePlayer->getSeenVideoPosition(m_releaseId);
+    auto videoId = std::get<0>(seens);
+
+    foreach (auto item, m_items) {
+        auto index = item->id() - 1;
+        if (videoId == index) {
+            m_selectedVideoIndex = index;
+            break;
+        }
+    }
+
+    if (m_selectedVideoIndex < m_items.count() - 1) m_selectedVideoIndex += 1;
+
+    emit selectedVideoIndexChanged();
 }
 
 void ReleaseOnlineSeriesListModel::setReleases(const ReleasesViewModel *releases) noexcept

@@ -9,6 +9,7 @@ Item {
     height: 330
 
     property alias releaseId: viewModel.releaseId
+    property alias isEmpty: viewModel.isEmpty
 
     signal openRelease(int releaseId)
 
