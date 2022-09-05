@@ -2307,6 +2307,7 @@ Page {
 
                             ReleaseCardMenuListModel {
                                 id: releaseCardMenuListModel
+                                isEmptyReleaseSeries: releaseSeriesList.isEmpty
                             }
 
                             Repeater {
@@ -2328,6 +2329,7 @@ Page {
                     width: cardContainer.width
                     height: 330
                     ReleaseSeriesList {
+                        id: releaseSeriesList
                         visible: releaseCardMenuListModel.isReleaseSeries
                         width: cardContainer.width
                         releaseId: releasesViewModel.openedReleaseId

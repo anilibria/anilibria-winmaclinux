@@ -25,12 +25,14 @@ class ReleaseCardMenuListModel : public QAbstractListModel
 {
     Q_OBJECT
     Q_PROPERTY(QString selectedTitle READ selectedTitle NOTIFY selectedTitleChanged)
+    Q_PROPERTY(bool isEmptyReleaseSeries READ isEmptyReleaseSeries WRITE setIsEmptyReleaseSeries NOTIFY isEmptyReleaseSeriesChanged)
     Q_PROPERTY(bool isReleaseSeries READ isReleaseSeries NOTIFY isReleaseSeriesChanged)
     Q_PROPERTY(bool isOnlineVideos READ isOnlineVideos NOTIFY isOnlineVideosChanged)
 
 private:
     QStringList m_items { QStringList() };
     int m_selectedItem { 0 };
+    bool m_isEmptyReleaseSeries { false };
     enum ReleaseCardMenuRoles {
         IdRole = Qt::UserRole + 1,
         TitleRole,
@@ -47,12 +49,16 @@ public:
     bool isReleaseSeries() const noexcept { return m_selectedItem == 0; }
     bool isOnlineVideos() const noexcept { return m_selectedItem == 1; }
 
+    bool isEmptyReleaseSeries() const noexcept { return m_isEmptyReleaseSeries; }
+    void setIsEmptyReleaseSeries(bool isEmptyReleaseSeries) noexcept;
+
     Q_INVOKABLE void select(int id) noexcept;
 
 signals:
     void selectedTitleChanged();
     void isReleaseSeriesChanged();
     void isOnlineVideosChanged();
+    void isEmptyReleaseSeriesChanged();
 
 };
 

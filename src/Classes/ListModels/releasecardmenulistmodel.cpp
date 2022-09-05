@@ -72,6 +72,20 @@ QHash<int, QByteArray> ReleaseCardMenuListModel::roleNames() const
     };
 }
 
+void ReleaseCardMenuListModel::setIsEmptyReleaseSeries(bool isEmptyReleaseSeries) noexcept
+{
+    if (m_isEmptyReleaseSeries == isEmptyReleaseSeries) return;
+
+    m_isEmptyReleaseSeries = isEmptyReleaseSeries;
+    emit isEmptyReleaseSeriesChanged();
+
+    // if ReleaseSeries is empty then opened VideoSeries list
+    if (m_isEmptyReleaseSeries) select(1);
+
+    // if ReleaseSeries is not empty and opened VideoSeries then returned to ReleaseSeries list
+    if (!m_isEmptyReleaseSeries && m_selectedItem == 1) select(0);
+}
+
 void ReleaseCardMenuListModel::select(int id) noexcept
 {
     beginResetModel();
