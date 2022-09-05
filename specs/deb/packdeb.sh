@@ -12,7 +12,7 @@ echo "Application builded"
 
 # create deb package
 
-cd ~/anilibria-winmaclinux/deb
+cd ~/anilibria-winmaclinux/specs/deb
 
 mkdir tmp
 dpkg-deb -R pac.deb tmp
