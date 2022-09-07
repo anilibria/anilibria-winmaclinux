@@ -91,9 +91,14 @@ public:
     Q_INVOKABLE QList<QString> getDownloadsReleases();
     Q_INVOKABLE QString getDownloads();
     Q_INVOKABLE void clearPostersCache();
+    Q_INVOKABLE void backupCache(const QString& path);
+
+private:
+    void copyAndRewriteFile(const QString& file, const QString& path);
 
 signals:
     void countCinemahallChanged();
+    void backupFilesCopied();
 };
 
 #endif // LOCALSTORAGESERVICE_H

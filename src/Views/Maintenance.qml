@@ -19,6 +19,7 @@
 import QtQuick 2.12
 import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.3
+import QtQuick.Dialogs 1.2
 import QtGraphicalEffects 1.0
 import Anilibria.Services 1.0
 import "../Controls"
@@ -98,7 +99,7 @@ Page {
 
                     Rectangle {
                         width: scrollview.width - 10
-                        height: 500
+                        height: 600
                         color: "transparent"
                         border.color: "white"
                         border.width: 1
@@ -279,8 +280,36 @@ Page {
                                 }
                             }
 
+                            Item {
+                                width: 220
+                                height: 100
 
+                                RoundedActionButton {
+                                    anchors.verticalCenter: parent.verticalCenter
+                                    anchors.left: parent.left
+                                    anchors.leftMargin: 10
+                                    width: parent.width - 10
+                                    text: "Бэкап кеша приложения"
+                                    onClicked: {
+                                        selectFolderBackupDialog.open();
+                                    }
+                                }
+                            }
 
+                            Rectangle {
+                                color: "transparent"
+                                Layout.fillWidth: true
+                                Layout.fillHeight: true
+
+                                PlainText {
+                                    fontPointSize: 12
+                                    anchors.verticalCenter: parent.verticalCenter
+                                    anchors.left: parent.left
+                                    width: parent.width
+                                    wrapMode: Text.WordWrap
+                                    text: "Вы можете сделать бэкап файлов кеша приложения содержащего историю просмотра, кинозал, настройки и многое другое. Очень полезно если Вы хотите переезжать на другую машину или переустанавливать систему на текущей."
+                                }
+                            }
                         }
                     }
                 }
@@ -604,6 +633,23 @@ Page {
                     }
                 }
             }
+        }
+    }
+
+    Connections {
+        target: localStorage
+        function onBackupFilesCopied() {
+            notificationViewModel.sendInfoNotification("Кеш приложения скопирован!");
+        }
+    }
+
+    FileDialog {
+        id: selectFolderBackupDialog
+        title: "Выберите папку для создания бэкапа"
+        selectExisting: true
+        selectFolder: true
+        onAccepted: {
+            localStorage.backupCache(selectFolderBackupDialog.fileUrl);
         }
     }
 }

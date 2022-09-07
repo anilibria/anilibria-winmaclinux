@@ -39,6 +39,7 @@
 #include "../Models/seenmodel.h"
 #include "../Models/seenmarkmodel.h"
 #include "../Models/externalplaylistvideo.h"
+#include "../../globalhelpers.h"
 
 LocalStorageService::LocalStorageService(QObject *parent) : QObject(parent),
     m_UserSettingsModel(new UserSettingsModel()),
@@ -532,4 +533,36 @@ QString LocalStorageService::getDownloads()
 void LocalStorageService::clearPostersCache()
 {
     m_OfflineImageCacheService->clearPosterCache();
+}
+
+void LocalStorageService::backupCache(const QString &path)
+{
+    auto clearedPath = QString(path).replace("file:///", "").replace("file://", "") + "/";
+    copyAndRewriteFile("cinemahall.cache", clearedPath);
+    copyAndRewriteFile("downloads.cache", clearedPath);
+    copyAndRewriteFile("favorites.cache", clearedPath);
+    copyAndRewriteFile("hidedreleases.cache", clearedPath);
+    copyAndRewriteFile("history.cache", clearedPath);
+    copyAndRewriteFile("myanilibrialist.cache", clearedPath);
+    copyAndRewriteFile("notification.cache", clearedPath);
+    copyAndRewriteFile("releases.cache", clearedPath);
+    copyAndRewriteFile("releasesbackground.cache", clearedPath);
+    copyAndRewriteFile("releaseseries.cache", clearedPath);
+    copyAndRewriteFile("schedule.cache", clearedPath);
+    copyAndRewriteFile("seen.cache", clearedPath);
+    copyAndRewriteFile("seenmark.cache", clearedPath);
+    copyAndRewriteFile("useractivity.cache", clearedPath);
+    copyAndRewriteFile("userconfiguration.cache", clearedPath);
+    copyAndRewriteFile("usersettings.cache", clearedPath);
+    copyAndRewriteFile("youtube.cache", clearedPath);
+
+    emit backupFilesCopied();
+}
+
+void LocalStorageService::copyAndRewriteFile(const QString &file, const QString &path)
+{
+    auto destinationFile = path + file;
+    if (QFile::exists(destinationFile)) QFile::remove(destinationFile);
+
+    QFile::copy(getCachePath(file), destinationFile);
 }
