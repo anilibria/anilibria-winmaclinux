@@ -45,6 +45,8 @@ public:
 
     int previousApplicationStart() const noexcept { return m_previousApplicationStart; }
 
+    Q_INVOKABLE void refreshUserActivity() noexcept;
+
 private:
     void createIfNotExistsFile(const QString& path, const QString& defaultContent) const noexcept;
     QString getCachePath() const noexcept;

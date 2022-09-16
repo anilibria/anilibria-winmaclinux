@@ -92,14 +92,15 @@ Page {
                     Layout.alignment: Qt.AlignJustify
                     clip: true
                     contentWidth: parent.width
-                    contentHeight: 100
+                    contentHeight: flickableContent.height
                     ScrollBar.vertical: ScrollBar {
                         active: true
                     }
 
                     Rectangle {
+                        id: flickableContent
                         width: scrollview.width - 10
-                        height: 600
+                        height: 720
                         color: "transparent"
                         border.color: "white"
                         border.width: 1
@@ -308,6 +309,37 @@ Page {
                                     width: parent.width
                                     wrapMode: Text.WordWrap
                                     text: "Вы можете сделать бэкап файлов кеша приложения содержащего историю просмотра, кинозал, настройки и многое другое. Очень полезно если Вы хотите переезжать на другую машину или переустанавливать систему на текущей."
+                                }
+                            }
+
+                            Item {
+                                width: 220
+                                height: 100
+
+                                RoundedActionButton {
+                                    anchors.verticalCenter: parent.verticalCenter
+                                    anchors.left: parent.left
+                                    anchors.leftMargin: 10
+                                    width: parent.width - 10
+                                    text: "Восстановить из бэкапа"
+                                    onClicked: {
+                                        selectFolderRestoreDialog.open();
+                                    }
+                                }
+                            }
+
+                            Rectangle {
+                                color: "transparent"
+                                Layout.fillWidth: true
+                                Layout.fillHeight: true
+
+                                PlainText {
+                                    fontPointSize: 12
+                                    anchors.verticalCenter: parent.verticalCenter
+                                    anchors.left: parent.left
+                                    width: parent.width
+                                    wrapMode: Text.WordWrap
+                                    text: "Вы можете восстановить состояние из созданного ранее бекапа кеша файлов приложения. Очень важно чтобы на момент выполнения синхронизация релизов была завершена иначе кеш может побится! После выполнения перезапустите приложение!"
                                 }
                             }
                         }
@@ -641,6 +673,11 @@ Page {
         function onBackupFilesCopied() {
             notificationViewModel.sendInfoNotification("Кеш приложения скопирован!");
         }
+        function onRestoreFileCopied() {
+            userActivityViewModel.refreshUserActivity();
+            userConfigurationViewModel.refreshConfiguration();
+            notificationViewModel.sendInfoNotification("Кеш восстановлен! Перезапустите приложение!");
+        }
     }
 
     FileDialog {
@@ -650,6 +687,16 @@ Page {
         selectFolder: true
         onAccepted: {
             localStorage.backupCache(selectFolderBackupDialog.fileUrl);
+        }
+    }
+
+    FileDialog {
+        id: selectFolderRestoreDialog
+        title: "Выберите папку для восстановления из бэкапа"
+        selectExisting: true
+        selectFolder: true
+        onAccepted: {
+            localStorage.restoreBackupCache(selectFolderRestoreDialog.fileUrl);
         }
     }
 }

@@ -116,6 +116,7 @@ public:
     bool autoSkipOpening() const noexcept { return m_autoSkipOpening; }
     void setAutoSkipOpening(bool autoSkipOpening) noexcept;
 
+    Q_INVOKABLE void refreshConfiguration() noexcept;
     Q_INVOKABLE void saveSettingsToFile();
 
 private:

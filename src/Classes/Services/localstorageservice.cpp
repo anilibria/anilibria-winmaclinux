@@ -62,6 +62,24 @@ LocalStorageService::LocalStorageService(QObject *parent) : QObject(parent),
     loadDownloads();
 
     m_OfflineImageCacheService = new OfflineImageCacheService(this);
+
+    m_cacheFiles.append("cinemahall.cache");
+    m_cacheFiles.append("downloads.cache");
+    m_cacheFiles.append("favorites.cache");
+    m_cacheFiles.append("hidedreleases.cache");
+    m_cacheFiles.append("history.cache");
+    m_cacheFiles.append("myanilibrialist.cache");
+    m_cacheFiles.append("notification.cache");
+    m_cacheFiles.append("releases.cache");
+    m_cacheFiles.append("releasesbackground.cache");
+    m_cacheFiles.append("releaseseries.cache");
+    m_cacheFiles.append("schedule.cache");
+    m_cacheFiles.append("seen.cache");
+    m_cacheFiles.append("seenmark.cache");
+    m_cacheFiles.append("useractivity.cache");
+    m_cacheFiles.append("userconfiguration.cache");
+    m_cacheFiles.append("usersettings.cache");
+    m_cacheFiles.append("youtube.cache");
 }
 
 void LocalStorageService::setup(QSharedPointer<QList<FullReleaseModel*>> releases)
@@ -538,25 +556,22 @@ void LocalStorageService::clearPostersCache()
 void LocalStorageService::backupCache(const QString &path)
 {
     auto clearedPath = QString(path).replace("file:///", "").replace("file://", "") + "/";
-    copyAndRewriteFile("cinemahall.cache", clearedPath);
-    copyAndRewriteFile("downloads.cache", clearedPath);
-    copyAndRewriteFile("favorites.cache", clearedPath);
-    copyAndRewriteFile("hidedreleases.cache", clearedPath);
-    copyAndRewriteFile("history.cache", clearedPath);
-    copyAndRewriteFile("myanilibrialist.cache", clearedPath);
-    copyAndRewriteFile("notification.cache", clearedPath);
-    copyAndRewriteFile("releases.cache", clearedPath);
-    copyAndRewriteFile("releasesbackground.cache", clearedPath);
-    copyAndRewriteFile("releaseseries.cache", clearedPath);
-    copyAndRewriteFile("schedule.cache", clearedPath);
-    copyAndRewriteFile("seen.cache", clearedPath);
-    copyAndRewriteFile("seenmark.cache", clearedPath);
-    copyAndRewriteFile("useractivity.cache", clearedPath);
-    copyAndRewriteFile("userconfiguration.cache", clearedPath);
-    copyAndRewriteFile("usersettings.cache", clearedPath);
-    copyAndRewriteFile("youtube.cache", clearedPath);
+    foreach (auto cacheFile, m_cacheFiles) {
+        copyAndRewriteFile(cacheFile, clearedPath);
+    }
 
     emit backupFilesCopied();
+}
+
+void LocalStorageService::restoreBackupCache(const QString &path)
+{
+    auto clearedPath = QString(path).replace("file:///", "").replace("file://", "") + "/";
+
+    foreach (auto cacheFile, m_cacheFiles) {
+        copyFileToLocalCache(cacheFile, clearedPath);
+    }
+
+    emit restoreFileCopied();
 }
 
 void LocalStorageService::copyAndRewriteFile(const QString &file, const QString &path)
@@ -565,4 +580,15 @@ void LocalStorageService::copyAndRewriteFile(const QString &file, const QString 
     if (QFile::exists(destinationFile)) QFile::remove(destinationFile);
 
     QFile::copy(getCachePath(file), destinationFile);
+}
+
+void LocalStorageService::copyFileToLocalCache(const QString &file, const QString &path)
+{
+    auto destinationFile = path + file;
+    if (!QFile::exists(destinationFile)) return;
+
+    auto localFilePath = getCachePath(file);
+    QFile::remove(localFilePath);
+
+    QFile::copy(destinationFile, localFilePath);
 }

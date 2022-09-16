@@ -70,6 +70,18 @@ void UserActivityViewModel::addCinemahallMarkToCounter(const int count) noexcept
     emit countAddedToCinemahallChanged();
 }
 
+void UserActivityViewModel::refreshUserActivity() noexcept
+{
+    readUserActivity();
+
+    emit watchDurationChanged();
+    emit watchUsingApplicationChanged();
+    emit countOpenedReleaseCardChanged();
+    emit countDownloadTorrentChanged();
+    emit countAddedToCinemahallChanged();
+    emit previousApplicationStartChanged();
+}
+
 void UserActivityViewModel::createIfNotExistsFile(const QString& path, const QString& defaultContent) const noexcept
 {
     if (QFile::exists(path)) return;

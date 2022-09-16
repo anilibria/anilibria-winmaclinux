@@ -40,6 +40,7 @@ private:
     OfflineImageCacheService* m_OfflineImageCacheService;
     QVector<DownloadItemModel*>* m_Downloads;
     QSharedPointer<QList<FullReleaseModel *>> m_releases;
+    QStringList m_cacheFiles { QStringList() };
 
     FullReleaseModel* getReleaseFromCache(int id);
     QString getUserSettingsCachePath() const;
@@ -92,13 +93,16 @@ public:
     Q_INVOKABLE QString getDownloads();
     Q_INVOKABLE void clearPostersCache();
     Q_INVOKABLE void backupCache(const QString& path);
+    Q_INVOKABLE void restoreBackupCache(const QString& path);
 
 private:
     void copyAndRewriteFile(const QString& file, const QString& path);
+    void copyFileToLocalCache(const QString& file, const QString& path);
 
 signals:
     void countCinemahallChanged();
     void backupFilesCopied();
+    void restoreFileCopied();
 };
 
 #endif // LOCALSTORAGESERVICE_H

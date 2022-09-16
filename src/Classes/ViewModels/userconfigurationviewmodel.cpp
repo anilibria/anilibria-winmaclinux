@@ -140,6 +140,26 @@ void UserConfigurationViewModel::setAutoSkipOpening(bool autoSkipOpening) noexce
     emit autoSkipOpeningChanged();
 }
 
+void UserConfigurationViewModel::refreshConfiguration() noexcept
+{
+    readSettingsFromFile();
+
+    emit opacityPlayerPanelChanged();
+    emit notCloseReleaseCardAfterWatchChanged();
+    emit usingScrollAccelerationChanged();
+    emit hideStatisticsChanged();
+    emit hideUpdatesByFavoritesChanged();
+    emit hideUpdatesFromStartChanged();
+    emit hideUpdatesLastTwoDaysChanged();
+    emit hideAbandonedSeensChanged();
+    emit markAsReadAfterDownloadChanged();
+    emit startPageChanged();
+    emit hideRecommendByGenresChanged();
+    emit hideWillWatchChanged();
+    emit showedVideoForNewcomersChanged();
+    emit autoSkipOpeningChanged();
+}
+
 void UserConfigurationViewModel::saveSettingsToFile()
 {
     QJsonObject object;
