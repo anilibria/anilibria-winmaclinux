@@ -110,6 +110,7 @@ SOURCES += \
     Classes/Services/releaselinkedseries.cpp \
     Classes/Services/synchronizationservice.cpp \
     Classes/Services/versionchecker.cpp \
+    Classes/ViewModels/applicationthemeviewmodel.cpp \
     Classes/ViewModels/authorizationviewmodel.cpp \
     Classes/ViewModels/imagebackgroundviewmodel.cpp \
     Classes/ViewModels/mainviewmodel.cpp \
@@ -195,6 +196,7 @@ HEADERS += \
     Classes/Services/synchronizationservice.h \
     Classes/Services/versionchecker.h \
     Classes/ListModels/alphabetlistmodel.h \
+    Classes/ViewModels/applicationthemeviewmodel.h \
     Classes/ViewModels/authorizationviewmodel.h \
     Classes/ViewModels/imagebackgroundviewmodel.h \
     Classes/ViewModels/mainviewmodel.h \
