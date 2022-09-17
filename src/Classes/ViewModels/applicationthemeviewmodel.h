@@ -59,7 +59,7 @@ class ApplicationThemeViewModel : public QObject
 
 private:
     QString m_selectedTheme { "" };
-    QMap<QString, QMap<QString, QString>> m_themes { QMap<QString, QMap<QString, QString>>() };
+    QMap<QString, QMap<QString, QString>*> m_themes { QMap<QString, QMap<QString, QString>*>() };
 
     const QString plainTextColorField = "plainTextColor";
     const QString headerTextColorField = "headerTextColor";
@@ -98,36 +98,36 @@ public:
     QString selectedTheme() const noexcept { return m_selectedTheme; }
     void setSelectedTheme(const QString& selectedTheme) noexcept;
 
-    QString plainTextColor() const noexcept { return m_themes[m_selectedTheme][plainTextColorField]; }
-    QString headerTextColor() const noexcept { return m_themes[m_selectedTheme][headerTextColorField]; }
-    QString linkTextColor() const noexcept { return m_themes[m_selectedTheme][linkTextColorField]; }
-    QString pageVerticalPanel() const noexcept { return m_themes[m_selectedTheme][pageVerticalPanelField]; }
-    QString pageBackground() const noexcept { return m_themes[m_selectedTheme][pageBackgroundField]; }
-    QString pageUpperPanel() const noexcept { return m_themes[m_selectedTheme][pageUpperPanelField]; }
-    QString panelBackground() const noexcept { return m_themes[m_selectedTheme][panelBackgroundField]; }
-    QString panelBackgroundShadow() const noexcept { return m_themes[m_selectedTheme][panelBackgroundShadowField]; }
-    QString roundedButtonBackground() const noexcept { return m_themes[m_selectedTheme][roundedButtonBackgroundField]; }
-    QString roundedButtonBackgroundDisabled() const noexcept { return m_themes[m_selectedTheme][roundedButtonBackgroundDisabledField]; }
-    QString roundedButtonForeground() const noexcept { return m_themes[m_selectedTheme][roundedButtonForegroundField]; }
-    QString roundedButtonHovered() const noexcept { return m_themes[m_selectedTheme][roundedButtonHoveredField]; }
-    QString drawerGradiendStep0() const noexcept { return m_themes[m_selectedTheme][drawerGradiendStep0Field]; }
-    QString drawerGradiendStep1() const noexcept { return m_themes[m_selectedTheme][drawerGradiendStep1Field]; }
-    QString drawerGradiendStep2() const noexcept { return m_themes[m_selectedTheme][drawerGradiendStep2Field]; }
-    QString drawerGradiendStep3() const noexcept { return m_themes[m_selectedTheme][drawerGradiendStep3Field]; }
-    QString drawerGradiendStep4() const noexcept { return m_themes[m_selectedTheme][drawerGradiendStep4Field]; }
-    QString filterIconButtonColor() const noexcept { return m_themes[m_selectedTheme][filterIconButtonColorField]; }
-    QString filterIconButtonGreenColor() const noexcept { return m_themes[m_selectedTheme][filterIconButtonGreenColorField]; }
-    QString filterIconButtonHoverColor() const noexcept { return m_themes[m_selectedTheme][filterIconButtonHoverColorField]; }
-    QString selectedItem() const noexcept { return m_themes[m_selectedTheme][selectedItemField]; }
-    QString selectedFavorite() const noexcept { return m_themes[m_selectedTheme][selectedFavoriteField]; }
-    QString playerControlBackground() const noexcept { return m_themes[m_selectedTheme][playerControlBackgroundField]; }
-    QString notificationCenterBackground() const noexcept { return m_themes[m_selectedTheme][notificationCenterBackgroundField]; }
-    QString notificationCenterPanelBackground() const noexcept { return m_themes[m_selectedTheme][notificationCenterPanelBackgroundField]; }
-    QString notificationCenterItemBackground() const noexcept { return m_themes[m_selectedTheme][notificationCenterItemBackgroundField]; }
-    QString playlistSelectedBackground() const noexcept { return m_themes[m_selectedTheme][playlistSelectedBackgroundField]; }
-    QString playlistBackground() const noexcept { return m_themes[m_selectedTheme][playlistBackgroundField]; }
-    QString playlistSelectedText() const noexcept { return m_themes[m_selectedTheme][playlistSelectedTextField]; }
-    QString playlistText() const noexcept { return m_themes[m_selectedTheme][playlistTextField]; }
+    QString plainTextColor() const noexcept { return m_themes.value(m_selectedTheme)->value(plainTextColorField); }
+    QString headerTextColor() const noexcept { return m_themes.value(m_selectedTheme)->value(headerTextColorField); }
+    QString linkTextColor() const noexcept { return m_themes.value(m_selectedTheme)->value(linkTextColorField); }
+    QString pageVerticalPanel() const noexcept { return m_themes.value(m_selectedTheme)->value(pageVerticalPanelField); }
+    QString pageBackground() const noexcept { return m_themes.value(m_selectedTheme)->value(pageBackgroundField); }
+    QString pageUpperPanel() const noexcept { return m_themes.value(m_selectedTheme)->value(pageUpperPanelField); }
+    QString panelBackground() const noexcept { return m_themes.value(m_selectedTheme)->value(panelBackgroundField); }
+    QString panelBackgroundShadow() const noexcept { return m_themes.value(m_selectedTheme)->value(panelBackgroundShadowField); }
+    QString roundedButtonBackground() const noexcept { return m_themes.value(m_selectedTheme)->value(roundedButtonBackgroundField); }
+    QString roundedButtonBackgroundDisabled() const noexcept { return m_themes.value(m_selectedTheme)->value(roundedButtonBackgroundDisabledField); }
+    QString roundedButtonForeground() const noexcept { return m_themes.value(m_selectedTheme)->value(roundedButtonForegroundField); }
+    QString roundedButtonHovered() const noexcept { return m_themes.value(m_selectedTheme)->value(roundedButtonHoveredField); }
+    QString drawerGradiendStep0() const noexcept { return m_themes.value(m_selectedTheme)->value(drawerGradiendStep0Field); }
+    QString drawerGradiendStep1() const noexcept { return m_themes.value(m_selectedTheme)->value(drawerGradiendStep1Field); }
+    QString drawerGradiendStep2() const noexcept { return m_themes.value(m_selectedTheme)->value(drawerGradiendStep2Field); }
+    QString drawerGradiendStep3() const noexcept { return m_themes.value(m_selectedTheme)->value(drawerGradiendStep3Field); }
+    QString drawerGradiendStep4() const noexcept { return m_themes.value(m_selectedTheme)->value(drawerGradiendStep4Field); }
+    QString filterIconButtonColor() const noexcept { return m_themes.value(m_selectedTheme)->value(filterIconButtonColorField); }
+    QString filterIconButtonGreenColor() const noexcept { return m_themes.value(m_selectedTheme)->value(filterIconButtonGreenColorField); }
+    QString filterIconButtonHoverColor() const noexcept { return m_themes.value(m_selectedTheme)->value(filterIconButtonHoverColorField); }
+    QString selectedItem() const noexcept { return m_themes.value(m_selectedTheme)->value(selectedItemField); }
+    QString selectedFavorite() const noexcept { return m_themes.value(m_selectedTheme)->value(selectedFavoriteField); }
+    QString playerControlBackground() const noexcept { return m_themes.value(m_selectedTheme)->value(playerControlBackgroundField); }
+    QString notificationCenterBackground() const noexcept { return m_themes.value(m_selectedTheme)->value(notificationCenterBackgroundField); }
+    QString notificationCenterPanelBackground() const noexcept { return m_themes.value(m_selectedTheme)->value(notificationCenterPanelBackgroundField); }
+    QString notificationCenterItemBackground() const noexcept { return m_themes.value(m_selectedTheme)->value(notificationCenterItemBackgroundField); }
+    QString playlistSelectedBackground() const noexcept { return m_themes.value(m_selectedTheme)->value(playlistSelectedBackgroundField); }
+    QString playlistBackground() const noexcept { return m_themes.value(m_selectedTheme)->value(playlistBackgroundField); }
+    QString playlistSelectedText() const noexcept { return m_themes.value(m_selectedTheme)->value(playlistSelectedTextField); }
+    QString playlistText() const noexcept { return m_themes.value(m_selectedTheme)->value(playlistTextField); }
 
 signals:
     void selectedThemeChanged();

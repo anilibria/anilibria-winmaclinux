@@ -21,38 +21,73 @@
 ApplicationThemeViewModel::ApplicationThemeViewModel(QObject *parent)
     : QObject{parent}
 {
-/*
-    readonly property color plainTextColor: isDarkTheme ? "white" : "black"
-    readonly property color headerTextColor: isDarkTheme ? "white" : "#a32727"
-    readonly property color linkTextColor: isDarkTheme ? "white" : "#b32121"
-    readonly property color pageVerticalPanel: isDarkTheme ? "#262626" : "#9e2323"
-    readonly property color pageBackground: isDarkTheme ? "#1f1f1f" : "#D3D3D3"
-    readonly property color pageUpperPanel: isDarkTheme ? "#3d3d3d" : "#e6e6e6"
-    readonly property color panelBackground: isDarkTheme ? "#474747" : "#f2f2f2"
-    readonly property color panelBackgroundShadow: isDarkTheme ? "#78595959" : "#78808080"
-    readonly property color roundedButtonBackground: isDarkTheme ? "white" : "#b32121"
-    readonly property color roundedButtonBackgroundDisabled: isDarkTheme ? "#f2f2f2" : "#eb9393"
-    readonly property color roundedButtonForeground: isDarkTheme ? "black" : "white"
-    readonly property color roundedButtonHovered: isDarkTheme ? "lightgray" : "#881919"
-    readonly property color drawerGradiendStep0: isDarkTheme ? "#1a1a1a" : "#920710"
-    readonly property color drawerGradiendStep1: isDarkTheme ? "#1f1f1f" : "#aa0813"
-    readonly property color drawerGradiendStep2: isDarkTheme ? "#2e2e2e" : "#c30916"
-    readonly property color drawerGradiendStep3: isDarkTheme ? "#404040" : "#aa0813"
-    readonly property color drawerGradiendStep4: isDarkTheme ? "#454341" : "#920710"
-    readonly property color filterIconButtonColor: isDarkTheme ? "white" : "black"
-    readonly property color filterIconButtonGreenColor: isDarkTheme ? "green" : "green"
-    readonly property color filterIconButtonHoverColor: isDarkTheme ? "#737373" : "white"
-    readonly property color selectedItem: isDarkTheme ? "white" : "red"
-    readonly property color selectedFavorite: isDarkTheme ? "#b30000" : "red"
-    readonly property color playerControlBackground: isDarkTheme ? "#82000000" : "#82ffffff"
-    readonly property color notificationCenterBackground: isDarkTheme ? "#1a1a1a" : "#e6e6e6"
-    readonly property color notificationCenterPanelBackground: isDarkTheme ? "#1a1a1a" : "white"
-    readonly property color notificationCenterItemBackground: isDarkTheme ? "#1a1a1a" : "white"
-    readonly property color playlistSelectedBackground: isDarkTheme ? "#C8ffffff" : "#64c25656"
-    readonly property color playlistBackground: isDarkTheme ? "#C8000000" : "#C8ffffff"
-    readonly property color playlistSelectedText: isDarkTheme ? "black" : "white"
-    readonly property color playlistText: isDarkTheme ? "white" : "black"
-*/
+    auto lightTheme = new QMap<QString, QString>();
+
+    lightTheme->insert(plainTextColorField, "black");
+    lightTheme->insert(headerTextColorField, "#a32727");
+    lightTheme->insert(linkTextColorField, "#b32121");
+    lightTheme->insert(pageVerticalPanelField, "#9e2323");
+    lightTheme->insert(pageBackgroundField, "#D3D3D3");
+    lightTheme->insert(pageUpperPanelField, "#e6e6e6");
+    lightTheme->insert(panelBackgroundField, "#f2f2f2");
+    lightTheme->insert(panelBackgroundShadowField, "#78808080");
+    lightTheme->insert(roundedButtonBackgroundField, "#b32121");
+    lightTheme->insert(roundedButtonBackgroundDisabledField, "#eb9393");
+    lightTheme->insert(roundedButtonForegroundField, "white");
+    lightTheme->insert(roundedButtonHoveredField, "#881919");
+    lightTheme->insert(drawerGradiendStep0Field, "#920710");
+    lightTheme->insert(drawerGradiendStep1Field, "#aa0813");
+    lightTheme->insert(drawerGradiendStep2Field, "#c30916");
+    lightTheme->insert(drawerGradiendStep3Field, "#aa0813");
+    lightTheme->insert(drawerGradiendStep4Field, "#920710");
+    lightTheme->insert(filterIconButtonColorField, "black");
+    lightTheme->insert(filterIconButtonGreenColorField, "green");
+    lightTheme->insert(filterIconButtonHoverColorField, "white");
+    lightTheme->insert(selectedItemField, "red");
+    lightTheme->insert(selectedFavoriteField, "red");
+    lightTheme->insert(playerControlBackgroundField, "#82ffffff");
+    lightTheme->insert(notificationCenterBackgroundField, "#e6e6e6");
+    lightTheme->insert(notificationCenterPanelBackgroundField, "white");
+    lightTheme->insert(notificationCenterItemBackgroundField, "white");
+    lightTheme->insert(playlistSelectedBackgroundField, "#64c25656");
+    lightTheme->insert(playlistBackgroundField, "#C8ffffff");
+    lightTheme->insert(playlistSelectedTextField, "white");
+    lightTheme->insert(playlistTextField, "black");
+    m_themes.insert("Светлая", lightTheme);
+
+    auto darkTheme = new QMap<QString, QString>();
+
+    darkTheme->insert(plainTextColorField, "white");
+    darkTheme->insert(headerTextColorField, "white");
+    darkTheme->insert(linkTextColorField, "white");
+    darkTheme->insert(pageVerticalPanelField, "#262626");
+    darkTheme->insert(pageBackgroundField, "#1f1f1f");
+    darkTheme->insert(pageUpperPanelField, "#3d3d3d");
+    darkTheme->insert(panelBackgroundField, "#474747");
+    darkTheme->insert(panelBackgroundShadowField, "#78595959");
+    darkTheme->insert(roundedButtonBackgroundField, "white");
+    darkTheme->insert(roundedButtonBackgroundDisabledField, "#f2f2f2");
+    darkTheme->insert(roundedButtonForegroundField, "black");
+    darkTheme->insert(roundedButtonHoveredField, "lightgray");
+    darkTheme->insert(drawerGradiendStep0Field, "#1a1a1a");
+    darkTheme->insert(drawerGradiendStep1Field, "#1f1f1f");
+    darkTheme->insert(drawerGradiendStep2Field, "#2e2e2e");
+    darkTheme->insert(drawerGradiendStep3Field, "#404040");
+    darkTheme->insert(drawerGradiendStep4Field, "#454341");
+    darkTheme->insert(filterIconButtonColorField, "white");
+    darkTheme->insert(filterIconButtonGreenColorField, "green");
+    darkTheme->insert(filterIconButtonHoverColorField, "#737373");
+    darkTheme->insert(selectedItemField, "white");
+    darkTheme->insert(selectedFavoriteField, "#b30000");
+    darkTheme->insert(playerControlBackgroundField, "#82000000");
+    darkTheme->insert(notificationCenterBackgroundField, "#1a1a1a");
+    darkTheme->insert(notificationCenterPanelBackgroundField, "#1a1a1a");
+    darkTheme->insert(notificationCenterItemBackgroundField, "#1a1a1a");
+    darkTheme->insert(playlistSelectedBackgroundField, "#C8ffffff");
+    darkTheme->insert(playlistBackgroundField, "#C8000000");
+    darkTheme->insert(playlistSelectedTextField, "black");
+    darkTheme->insert(playlistTextField, "white");
+    m_themes.insert("Темная", darkTheme);
 }
 
 void ApplicationThemeViewModel::setSelectedTheme(const QString &selectedTheme) noexcept
