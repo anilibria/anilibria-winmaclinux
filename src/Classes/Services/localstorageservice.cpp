@@ -80,6 +80,7 @@ LocalStorageService::LocalStorageService(QObject *parent) : QObject(parent),
     m_cacheFiles.append("userconfiguration.cache");
     m_cacheFiles.append("usersettings.cache");
     m_cacheFiles.append("youtube.cache");
+    m_cacheFiles.append("applicationtheme.cache");
 }
 
 void LocalStorageService::setup(QSharedPointer<QList<FullReleaseModel*>> releases)

@@ -1320,6 +1320,10 @@ ApplicationWindow {
         }
     }
 
+    ApplicationThemeViewModel {
+        id: applicationThemeViewModel
+    }
+
     Item {
         id: assetsLocation
         property string path: Qt.resolvedUrl("../Assets/")

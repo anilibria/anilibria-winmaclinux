@@ -56,10 +56,15 @@ class ApplicationThemeViewModel : public QObject
     Q_PROPERTY(QString playlistBackground READ playlistBackground NOTIFY playlistBackgroundChanged)
     Q_PROPERTY(QString playlistSelectedText READ playlistSelectedText NOTIFY playlistSelectedTextChanged)
     Q_PROPERTY(QString playlistText READ playlistText NOTIFY playlistTextChanged)
+    Q_PROPERTY(QStringList themes READ themes NOTIFY themesChanged)
 
 private:
+    QString m_cachePathName { "applicationtheme.cache" };
     QString m_selectedTheme { "" };
+    const QString m_lightTheme { "Светлая" };
+    const QString m_darkTheme { "Темная" };
     QMap<QString, QMap<QString, QString>*> m_themes { QMap<QString, QMap<QString, QString>*>() };
+
 
     const QString plainTextColorField = "plainTextColor";
     const QString headerTextColorField = "headerTextColor";
@@ -128,6 +133,11 @@ public:
     QString playlistBackground() const noexcept { return m_themes.value(m_selectedTheme)->value(playlistBackgroundField); }
     QString playlistSelectedText() const noexcept { return m_themes.value(m_selectedTheme)->value(playlistSelectedTextField); }
     QString playlistText() const noexcept { return m_themes.value(m_selectedTheme)->value(playlistTextField); }
+    QStringList themes() const noexcept { return m_themes.keys(); }
+
+private:
+    void readCacheFile();
+    void setThemeValue(QMap<QString, QString>* theme, const QJsonObject& themeItem, const QMap<QString, QString>* baseTheme, const QString& name) noexcept;
 
 signals:
     void selectedThemeChanged();
@@ -161,6 +171,7 @@ signals:
     void playlistBackgroundChanged();
     void playlistSelectedTextChanged();
     void playlistTextChanged();
+    void themesChanged();
 
 };
 

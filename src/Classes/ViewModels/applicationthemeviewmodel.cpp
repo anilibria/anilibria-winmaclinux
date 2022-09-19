@@ -16,13 +16,17 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QJsonArray>
+#include <QFile>
 #include "applicationthemeviewmodel.h"
+#include "../../globalhelpers.h"
 
 ApplicationThemeViewModel::ApplicationThemeViewModel(QObject *parent)
     : QObject{parent}
 {
     auto lightTheme = new QMap<QString, QString>();
-
     lightTheme->insert(plainTextColorField, "black");
     lightTheme->insert(headerTextColorField, "#a32727");
     lightTheme->insert(linkTextColorField, "#b32121");
@@ -53,10 +57,9 @@ ApplicationThemeViewModel::ApplicationThemeViewModel(QObject *parent)
     lightTheme->insert(playlistBackgroundField, "#C8ffffff");
     lightTheme->insert(playlistSelectedTextField, "white");
     lightTheme->insert(playlistTextField, "black");
-    m_themes.insert("Светлая", lightTheme);
+    m_themes.insert(m_lightTheme, lightTheme);
 
     auto darkTheme = new QMap<QString, QString>();
-
     darkTheme->insert(plainTextColorField, "white");
     darkTheme->insert(headerTextColorField, "white");
     darkTheme->insert(linkTextColorField, "white");
@@ -87,7 +90,10 @@ ApplicationThemeViewModel::ApplicationThemeViewModel(QObject *parent)
     darkTheme->insert(playlistBackgroundField, "#C8000000");
     darkTheme->insert(playlistSelectedTextField, "black");
     darkTheme->insert(playlistTextField, "white");
-    m_themes.insert("Темная", darkTheme);
+    m_themes.insert(m_darkTheme, darkTheme);
+
+    m_cachePathName = getCachePath(m_cachePathName);
+    createIfNotExistsFile(m_cachePathName, "{}");
 }
 
 void ApplicationThemeViewModel::setSelectedTheme(const QString &selectedTheme) noexcept
@@ -96,4 +102,74 @@ void ApplicationThemeViewModel::setSelectedTheme(const QString &selectedTheme) n
 
     m_selectedTheme = selectedTheme;
     emit selectedThemeChanged();
+}
+
+void ApplicationThemeViewModel::readCacheFile()
+{
+    QFile cacheFile(m_cachePathName);
+    if (!cacheFile.open(QFile::ReadOnly | QFile::Text)) {
+        return;
+    }
+    auto data = cacheFile.readAll();
+    cacheFile.close();
+
+    auto jsonDocument = QJsonDocument::fromJson(data);
+    auto rootObject = jsonDocument.object();
+
+    QString selectedTheme = m_lightTheme;
+    if (rootObject.contains("selectedTheme")) selectedTheme = rootObject.value("selectedTheme").toString();
+
+    if (!rootObject.contains("themes")) return;
+
+    auto themes = rootObject.value("themes").toArray();
+    foreach (auto theme, themes) {
+        auto themeItem = theme.toObject();
+        if (!themeItem.contains("name")) continue;
+        if (!themeItem.contains("base")) continue;
+
+        auto themeName = themeItem.value("name").toString();
+        auto baseName = themeItem.value("base").toString();
+
+        if (baseName != m_lightTheme || baseName != m_darkTheme) continue;
+
+        auto baseTheme = m_themes.value(baseName);
+
+        auto savedTheme = new QMap<QString, QString>();
+        setThemeValue(savedTheme, themeItem, baseTheme, plainTextColorField);
+        setThemeValue(savedTheme, themeItem, baseTheme, headerTextColorField);
+        setThemeValue(savedTheme, themeItem, baseTheme, linkTextColorField);
+        setThemeValue(savedTheme, themeItem, baseTheme, pageVerticalPanelField);
+        setThemeValue(savedTheme, themeItem, baseTheme, pageBackgroundField);
+        setThemeValue(savedTheme, themeItem, baseTheme, pageUpperPanelField);
+        setThemeValue(savedTheme, themeItem, baseTheme, panelBackgroundField);
+        setThemeValue(savedTheme, themeItem, baseTheme, panelBackgroundShadowField);
+        setThemeValue(savedTheme, themeItem, baseTheme, roundedButtonBackgroundField);
+        setThemeValue(savedTheme, themeItem, baseTheme, roundedButtonBackgroundDisabledField);
+        setThemeValue(savedTheme, themeItem, baseTheme, roundedButtonForegroundField);
+        setThemeValue(savedTheme, themeItem, baseTheme, roundedButtonHoveredField);
+        setThemeValue(savedTheme, themeItem, baseTheme, drawerGradiendStep0Field);
+        setThemeValue(savedTheme, themeItem, baseTheme, drawerGradiendStep1Field);
+        setThemeValue(savedTheme, themeItem, baseTheme, drawerGradiendStep2Field);
+        setThemeValue(savedTheme, themeItem, baseTheme, drawerGradiendStep3Field);
+        setThemeValue(savedTheme, themeItem, baseTheme, drawerGradiendStep4Field);
+        setThemeValue(savedTheme, themeItem, baseTheme, filterIconButtonColorField);
+        setThemeValue(savedTheme, themeItem, baseTheme, filterIconButtonGreenColorField);
+        setThemeValue(savedTheme, themeItem, baseTheme, filterIconButtonHoverColorField);
+        setThemeValue(savedTheme, themeItem, baseTheme, selectedItemField);
+        setThemeValue(savedTheme, themeItem, baseTheme, selectedFavoriteField);
+        setThemeValue(savedTheme, themeItem, baseTheme, playerControlBackgroundField);
+        setThemeValue(savedTheme, themeItem, baseTheme, notificationCenterBackgroundField);
+        setThemeValue(savedTheme, themeItem, baseTheme, notificationCenterPanelBackgroundField);
+        setThemeValue(savedTheme, themeItem, baseTheme, notificationCenterItemBackgroundField);
+        setThemeValue(savedTheme, themeItem, baseTheme, playlistSelectedBackgroundField);
+        setThemeValue(savedTheme, themeItem, baseTheme, playlistBackgroundField);
+        setThemeValue(savedTheme, themeItem, baseTheme, playlistSelectedTextField);
+        setThemeValue(savedTheme, themeItem, baseTheme, playlistTextField);
+        m_themes.insert(themeName, savedTheme);
+    }
+}
+
+void ApplicationThemeViewModel::setThemeValue(QMap<QString, QString>* theme,const QJsonObject &themeItem, const QMap<QString, QString> *baseTheme, const QString& name) noexcept
+{
+    theme->insert(name, themeItem.contains(name) ? themeItem.value(name).toString() : baseTheme->value(name));
 }
