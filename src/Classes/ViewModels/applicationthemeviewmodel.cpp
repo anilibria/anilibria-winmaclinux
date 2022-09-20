@@ -20,6 +20,7 @@
 #include <QJsonObject>
 #include <QJsonArray>
 #include <QFile>
+#include <QMapIterator>
 #include "applicationthemeviewmodel.h"
 #include "../../globalhelpers.h"
 
@@ -102,6 +103,35 @@ void ApplicationThemeViewModel::setSelectedTheme(const QString &selectedTheme) n
 
     m_selectedTheme = selectedTheme;
     emit selectedThemeChanged();
+}
+
+void ApplicationThemeViewModel::saveCurrentState()
+{
+    QJsonArray themes;
+    QMapIterator<QString, QMap<QString, QString>*> iterator(m_themes);
+    while (iterator.hasNext()) {
+        if (iterator.key() == m_lightTheme || iterator.key() == m_darkTheme) continue;
+
+        QJsonObject theme;
+        theme["name"] = iterator.key();
+        QMapIterator<QString, QString> fieldsIterator(*iterator.value());
+        while (fieldsIterator.hasNext()) {
+            theme[fieldsIterator.key()] = fieldsIterator.value();
+        }
+        themes.append(theme);
+    }
+
+    QJsonObject root;
+    root["selectedTheme"] = m_selectedTheme;
+    root["themes"] = themes;
+
+    QFile cacheFile(m_cachePathName);
+    if (!cacheFile.open(QFile::ReadOnly | QFile::Text)) {
+        return;
+    }
+    auto document = QJsonDocument(root);
+    cacheFile.write(document.toJson());
+    cacheFile.close();
 }
 
 void ApplicationThemeViewModel::readCacheFile()

@@ -135,6 +135,8 @@ public:
     QString playlistText() const noexcept { return m_themes.value(m_selectedTheme)->value(playlistTextField); }
     QStringList themes() const noexcept { return m_themes.keys(); }
 
+    Q_INVOKABLE void saveCurrentState();
+
 private:
     void readCacheFile();
     void setThemeValue(QMap<QString, QString>* theme, const QJsonObject& themeItem, const QMap<QString, QString>* baseTheme, const QString& name) noexcept;
