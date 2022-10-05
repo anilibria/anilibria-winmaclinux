@@ -32,6 +32,7 @@ Rectangle {
         id: textBox
         anchors.fill: parent
         font.pointSize: 10
+        selectByMouse: true
         placeholderText: placeholder
         onTextChanged: {
             if (completeTimer.running) {
