@@ -23,6 +23,7 @@
 #include <QMapIterator>
 #include "applicationthemeviewmodel.h"
 #include "../../globalhelpers.h"
+#include "../../globalconstants.h"
 
 ApplicationThemeViewModel::ApplicationThemeViewModel(QObject *parent)
     : QObject{parent}
@@ -58,6 +59,7 @@ ApplicationThemeViewModel::ApplicationThemeViewModel(QObject *parent)
     lightTheme->insert(playlistBackgroundField, "#C8ffffff");
     lightTheme->insert(playlistSelectedTextField, "white");
     lightTheme->insert(playlistTextField, "black");
+    lightTheme->insert(basedOnThemeField, m_lightTheme);
     m_themes.insert(m_lightTheme, lightTheme);
 
     auto darkTheme = new QMap<QString, QString>();
@@ -91,10 +93,12 @@ ApplicationThemeViewModel::ApplicationThemeViewModel(QObject *parent)
     darkTheme->insert(playlistBackgroundField, "#C8000000");
     darkTheme->insert(playlistSelectedTextField, "black");
     darkTheme->insert(playlistTextField, "white");
+    darkTheme->insert(basedOnThemeField, m_darkTheme);
     m_themes.insert(m_darkTheme, darkTheme);
 
     m_cachePathName = getCachePath(m_cachePathName);
     createIfNotExistsFile(m_cachePathName, "{}");
+    readCacheFile();
 }
 
 void ApplicationThemeViewModel::setSelectedTheme(const QString &selectedTheme) noexcept
@@ -103,6 +107,10 @@ void ApplicationThemeViewModel::setSelectedTheme(const QString &selectedTheme) n
 
     m_selectedTheme = selectedTheme;
     emit selectedThemeChanged();
+
+    auto currentTheme = m_themes.value(m_selectedTheme);
+    m_basedOnDark = currentTheme->value(basedOnThemeField) == m_darkTheme;
+    emit basedOnDarkChanged();
 }
 
 void ApplicationThemeViewModel::saveCurrentState()
@@ -110,6 +118,7 @@ void ApplicationThemeViewModel::saveCurrentState()
     QJsonArray themes;
     QMapIterator<QString, QMap<QString, QString>*> iterator(m_themes);
     while (iterator.hasNext()) {
+        iterator.next();
         if (iterator.key() == m_lightTheme || iterator.key() == m_darkTheme) continue;
 
         QJsonObject theme;
@@ -126,9 +135,8 @@ void ApplicationThemeViewModel::saveCurrentState()
     root["themes"] = themes;
 
     QFile cacheFile(m_cachePathName);
-    if (!cacheFile.open(QFile::ReadOnly | QFile::Text)) {
-        return;
-    }
+    if (!cacheFile.open(QFile::WriteOnly | QFile::Text)) return;
+
     auto document = QJsonDocument(root);
     cacheFile.write(document.toJson());
     cacheFile.close();
@@ -195,11 +203,14 @@ void ApplicationThemeViewModel::readCacheFile()
         setThemeValue(savedTheme, themeItem, baseTheme, playlistBackgroundField);
         setThemeValue(savedTheme, themeItem, baseTheme, playlistSelectedTextField);
         setThemeValue(savedTheme, themeItem, baseTheme, playlistTextField);
+        savedTheme->insert(basedOnThemeField, baseName);
         m_themes.insert(themeName, savedTheme);
     }
+
+    setSelectedTheme(selectedTheme);
 }
 
-void ApplicationThemeViewModel::setThemeValue(QMap<QString, QString>* theme,const QJsonObject &themeItem, const QMap<QString, QString> *baseTheme, const QString& name) noexcept
+void ApplicationThemeViewModel::setThemeValue(QMap<QString, QString>* theme,const QJsonObject &themeItem, const QMap<QString, QString> *baseTheme, const QString& name)
 {
     theme->insert(name, themeItem.contains(name) ? themeItem.value(name).toString() : baseTheme->value(name));
 }

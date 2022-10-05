@@ -1322,6 +1322,9 @@ ApplicationWindow {
 
     ApplicationThemeViewModel {
         id: applicationThemeViewModel
+        Component.onDestruction: {
+            applicationThemeViewModel.saveCurrentState();
+        }
     }
 
     Item {

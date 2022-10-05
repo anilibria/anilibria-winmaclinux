@@ -21,6 +21,7 @@
 
 #include <QObject>
 #include <QMap>
+#include "../../globalconstants.h"
 
 class ApplicationThemeViewModel : public QObject
 {
@@ -57,45 +58,15 @@ class ApplicationThemeViewModel : public QObject
     Q_PROPERTY(QString playlistSelectedText READ playlistSelectedText NOTIFY playlistSelectedTextChanged)
     Q_PROPERTY(QString playlistText READ playlistText NOTIFY playlistTextChanged)
     Q_PROPERTY(QStringList themes READ themes NOTIFY themesChanged)
+    Q_PROPERTY(bool basedOnDark READ basedOnDark NOTIFY basedOnDarkChanged)
 
 private:
     QString m_cachePathName { "applicationtheme.cache" };
-    QString m_selectedTheme { "" };
-    const QString m_lightTheme { "Светлая" };
-    const QString m_darkTheme { "Темная" };
+    QString m_lightTheme { "Светлая" };
+    QString m_darkTheme { "Темная" };
+    QString m_selectedTheme { m_lightTheme };
     QMap<QString, QMap<QString, QString>*> m_themes { QMap<QString, QMap<QString, QString>*>() };
-
-
-    const QString plainTextColorField = "plainTextColor";
-    const QString headerTextColorField = "headerTextColor";
-    const QString linkTextColorField = "linkTextColor";
-    const QString pageVerticalPanelField = "pageVerticalPanel";
-    const QString pageBackgroundField = "pageBackground";
-    const QString pageUpperPanelField = "pageUpperPanel";
-    const QString panelBackgroundField = "panelBackground";
-    const QString panelBackgroundShadowField = "panelBackgroundShadow";
-    const QString roundedButtonBackgroundField = "roundedButtonBackground";
-    const QString roundedButtonBackgroundDisabledField = "roundedButtonBackgroundDisabled";
-    const QString roundedButtonForegroundField = "roundedButtonForeground";
-    const QString roundedButtonHoveredField = "roundedButtonHovered";
-    const QString drawerGradiendStep0Field = "drawerGradiendStep0";
-    const QString drawerGradiendStep1Field = "drawerGradiendStep1";
-    const QString drawerGradiendStep2Field = "drawerGradiendStep2";
-    const QString drawerGradiendStep3Field = "drawerGradiendStep3";
-    const QString drawerGradiendStep4Field = "drawerGradiendStep4";
-    const QString filterIconButtonColorField = "filterIconButtonColor";
-    const QString filterIconButtonGreenColorField = "filterIconButtonGreenColor";
-    const QString filterIconButtonHoverColorField = "filterIconButtonHoverColor";
-    const QString selectedItemField = "selectedItem";
-    const QString selectedFavoriteField = "selectedFavorite";
-    const QString playerControlBackgroundField = "playerControlBackground";
-    const QString notificationCenterBackgroundField = "notificationCenterBackground";
-    const QString notificationCenterPanelBackgroundField = "notificationCenterPanelBackground";
-    const QString notificationCenterItemBackgroundField = "notificationCenterItemBackground";
-    const QString playlistSelectedBackgroundField = "playlistSelectedBackground";
-    const QString playlistBackgroundField = "playlistBackground";
-    const QString playlistSelectedTextField = "playlistSelectedText";
-    const QString playlistTextField = "playlistText";
+    bool m_basedOnDark { false };
 
 public:
     explicit ApplicationThemeViewModel(QObject *parent = nullptr);
@@ -134,12 +105,13 @@ public:
     QString playlistSelectedText() const noexcept { return m_themes.value(m_selectedTheme)->value(playlistSelectedTextField); }
     QString playlistText() const noexcept { return m_themes.value(m_selectedTheme)->value(playlistTextField); }
     QStringList themes() const noexcept { return m_themes.keys(); }
+    bool basedOnDark() const noexcept { return m_basedOnDark; }
 
     Q_INVOKABLE void saveCurrentState();
 
 private:
     void readCacheFile();
-    void setThemeValue(QMap<QString, QString>* theme, const QJsonObject& themeItem, const QMap<QString, QString>* baseTheme, const QString& name) noexcept;
+    void setThemeValue(QMap<QString, QString>* theme, const QJsonObject& themeItem, const QMap<QString, QString>* baseTheme, const QString& name);
 
 signals:
     void selectedThemeChanged();
@@ -174,6 +146,7 @@ signals:
     void playlistSelectedTextChanged();
     void playlistTextChanged();
     void themesChanged();
+    void basedOnDarkChanged();
 
 };
 

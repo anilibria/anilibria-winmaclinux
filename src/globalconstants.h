@@ -55,4 +55,66 @@ extern int MovingUp;
 
 extern int MovingDown;
 
+extern QString plainTextColorField;
+
+extern QString headerTextColorField;
+
+extern QString linkTextColorField;
+
+extern QString pageVerticalPanelField;
+
+extern QString pageBackgroundField;
+
+extern QString pageUpperPanelField;
+
+extern QString panelBackgroundField;
+
+extern QString panelBackgroundShadowField;
+
+extern QString roundedButtonBackgroundField;
+
+extern QString roundedButtonBackgroundDisabledField;
+
+extern QString roundedButtonForegroundField;
+
+extern QString roundedButtonHoveredField;
+
+extern QString drawerGradiendStep0Field;
+
+extern QString drawerGradiendStep1Field;
+
+extern QString drawerGradiendStep2Field;
+
+extern QString drawerGradiendStep3Field;
+
+extern QString drawerGradiendStep4Field;
+
+extern QString filterIconButtonColorField;
+
+extern QString filterIconButtonGreenColorField;
+
+extern QString filterIconButtonHoverColorField;
+
+extern QString selectedItemField;
+
+extern QString selectedFavoriteField;
+
+extern QString playerControlBackgroundField;
+
+extern QString notificationCenterBackgroundField;
+
+extern QString notificationCenterPanelBackgroundField;
+
+extern QString notificationCenterItemBackgroundField;
+
+extern QString playlistSelectedBackgroundField;
+
+extern QString playlistBackgroundField;
+
+extern QString playlistSelectedTextField;
+
+extern QString playlistTextField;
+
+extern QString basedOnThemeField;
+
 #endif // GLOBALCONSTANTS_H
