@@ -738,6 +738,7 @@ Page {
                         closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
 
                         Rectangle {
+                            color: "transparent"
                             visible: !releasesViewModel.isChangesExists
                             width: parent.width
                             height: parent.height
