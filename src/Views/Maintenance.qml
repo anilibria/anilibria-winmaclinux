@@ -346,7 +346,7 @@ Page {
                     }
                 }
 
-                Popup {
+                DefaultPopup {
                     id: apiAddressPopup
                     x: window.width / 2 - apiAddressPopup.width / 2
                     y: window.height / 2 - apiAddressPopup.height / 2
@@ -502,7 +502,7 @@ Page {
                     }
                 }
 
-                Popup {
+                DefaultPopup {
                     id: proxyPopup
                     x: window.width / 2 - proxyPopup.width / 2
                     y: window.height / 2 - proxyPopup.height / 2

@@ -164,5 +164,6 @@
         <file>Assets/Icons/emptybox.svg</file>
         <file>Controls/EmptyBoxArea.qml</file>
         <file>Controls/InfoForNewcomers.qml</file>
+        <file>Controls/DefaultPopup.qml</file>
     </qresource>
 </RCC>

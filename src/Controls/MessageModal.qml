@@ -19,7 +19,7 @@
 import QtQuick 2.12
 import QtQuick.Controls 2.12
 
-Popup {
+DefaultPopup {
     id: messagePopup
     property alias header: popupHeader.text
     property alias message: popupMessage.text

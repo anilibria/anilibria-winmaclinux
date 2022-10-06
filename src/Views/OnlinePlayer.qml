@@ -719,7 +719,7 @@ Page {
                             helpPlayerPopup.open();
                         }
 
-                        Popup {
+                        DefaultPopup {
                             id: helpPlayerPopup
                             x: helpbutton.width - 300
                             y: helpbutton.height - 240
@@ -883,7 +883,7 @@ Page {
                         ToolTip.visible: remotePlayerButton.hovered
                         ToolTip.text: onlinePlayerViewModel.remotePlayer.started ? "Удаленный плеер включен" : "Удаленный плеер выключен, откройте настройки для подключения"
 
-                        Popup {
+                        DefaultPopup {
                             id: remotePlayerPopup
                             x: optionsButton.width - 300
                             y: optionsButton.height - 380
@@ -998,7 +998,7 @@ Page {
                             optionsPopup.open();
                         }
 
-                        Popup {
+                        DefaultPopup {
                             id: optionsPopup
                             x: optionsButton.width - 300
                             y: optionsButton.height - 580

@@ -309,7 +309,7 @@ Page {
                         }
                     }
 
-                    Popup {
+                    DefaultPopup {
                         id: notHaveCinemahallReleasesMessagePopup
                         x: window.width / 2 - 225
                         y: window.height / 2 - 100
@@ -418,7 +418,7 @@ Page {
                         radius: 12
                     }
 
-                    Popup {
+                    DefaultPopup {
                         id: filtersPopup
                         x: 40
                         y: -220
@@ -727,7 +727,7 @@ Page {
                         radius: 12
                     }
 
-                    Popup {
+                    DefaultPopup {
                         id: notificationPopup
                         x: 40
                         y: parent.height - 100
@@ -874,7 +874,7 @@ Page {
                         releaseSettingsPopup.open();
                     }
 
-                    Popup {
+                    DefaultPopup {
                         id: releaseSettingsPopup
                         x: 40
                         y: -410
@@ -1085,7 +1085,7 @@ Page {
                         }
                     }
 
-                    Popup {
+                    DefaultPopup {
                         id: informationPopup
                         x: 40
                         y: parent.height - 100
@@ -1951,6 +1951,7 @@ Page {
                             iconPath: assetsLocation.iconsPath + "coloredclosewindow.svg"
                             iconWidth: 28
                             iconHeight: 28
+                            tooltipMessage: "Закрыть карточку релиза"
                             onButtonPressed: {
                                 releasesViewModel.closeReleaseCard();
                             }
@@ -1963,6 +1964,7 @@ Page {
                             iconPath: assetsLocation.iconsPath + "copy.svg"
                             iconWidth: 26
                             iconHeight: 26
+                            tooltipMessage: "Копировать названия или постер"
                             onButtonPressed: {
                                 cardCopyMenu.open();
                             }
@@ -2018,6 +2020,7 @@ Page {
                             overlayVisible: false
                             iconWidth: 26
                             iconHeight: 26
+                            tooltipMessage: "Управление просмотренным и видимостью релиза"
                             onButtonPressed: {
                                 seenMarkMenu.open();
                             }
@@ -2070,6 +2073,7 @@ Page {
                             iconPath: assetsLocation.iconsPath + "ratingcolor.svg"
                             iconWidth: 26
                             iconHeight: 26
+                            tooltipMessage: "Добавить или удалить из избранного"
                             onButtonPressed: {
                                 cardFavoritesMenu.open();
                             }
@@ -2104,6 +2108,7 @@ Page {
                             iconPath: assetsLocation.iconsPath + "external.svg"
                             iconWidth: 26
                             iconHeight: 26
+                            tooltipMessage: "Открыть онлайн видео в стороннем плеере"
                             onButtonPressed: {
                                 externalPlayerMenu.open();
                             }
@@ -2156,37 +2161,6 @@ Page {
                                     onPressed: {
                                         releasesViewModel.openInExternalPlayer(localStorage.packAsMPCPLAndOpen(releasesViewModel.openedReleaseId, "fullhd"));
                                         externalPlayerMenu.close();
-                                    }
-                                }
-                            }
-                        }
-
-                        IconButton {
-                            height: 40
-                            width: 40
-                            overlayVisible: false
-                            hoverColor: ApplicationTheme.filterIconButtonHoverColor
-                            iconPath: assetsLocation.iconsPath + "online.svg"
-                            iconWidth: 26
-                            iconHeight: 26
-                            onButtonPressed: {
-                                setSeriesMenu.open();
-                            }
-
-                            CommonMenu {
-                                id: setSeriesMenu
-                                width: 330
-
-                                Repeater {
-                                    model: releasesViewModel.isOpenedCard ? releasesViewModel.openedReleaseCountVideos : 0
-
-                                    CommonMenuItem {
-                                        text: "Серия " + (index + 1)
-                                        onPressed: {
-                                            watchSingleRelease(releasesViewModel.openedReleaseId, releasesViewModel.openedReleaseVideos, index, releasesViewModel.openedReleasePoster);
-
-                                            releasesViewModel.hideAfterWatchReleaseCard();
-                                        }
                                     }
                                 }
                             }

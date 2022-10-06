@@ -125,7 +125,7 @@ Page {
                                 sectionVisibilitiesPopup.open();
                             }
 
-                            Popup {
+                            DefaultPopup {
                                 id: sectionVisibilitiesPopup
                                 x: -420
                                 width: 400
