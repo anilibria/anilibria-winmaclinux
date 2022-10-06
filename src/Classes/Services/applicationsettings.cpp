@@ -148,3 +148,15 @@ void ApplicationSettings::setUseCustomToolbar(bool useCustomToolbar)
 
     emit useCustomToolbarChanged(useCustomToolbar);
 }
+
+bool ApplicationSettings::isMaximize() noexcept
+{
+    return m_Settings->value("ismaximaze", false).toBool();
+}
+
+void ApplicationSettings::setIsMaximize(bool isMaximize) noexcept
+{
+    m_Settings->setValue("ismaximaze", isMaximize);
+
+    emit isMaximizeChanged();
+}

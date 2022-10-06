@@ -71,6 +71,10 @@ ApplicationWindow {
             window.width = savedWidth;
             window.height = savedHeight;
         }
+        if (applicationSettings.isMaximize) {
+            window.isShowFullScreenSize = true;
+            window.showMaximized();
+        }
     }
 
     Component.onDestruction: {
@@ -78,6 +82,7 @@ ApplicationWindow {
         applicationSettings.windowHeight = window.height;
         applicationSettings.windowX = window.x;
         applicationSettings.windowY = window.y;
+        applicationSettings.isMaximize = window.isShowFullScreenSize;
     }
 
     header: Rectangle {

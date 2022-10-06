@@ -36,6 +36,7 @@ class ApplicationSettings : public QObject
     Q_PROPERTY(bool sendVolumeToRemote READ sendVolumeToRemote WRITE setSendVolumeToRemote NOTIFY sendVolumeToRemoteChanged)
     Q_PROPERTY(bool sendPlaybackToRemote READ sendPlaybackToRemote WRITE setSendPlaybackToRemote NOTIFY sendPlaybackToRemoteChanged);
     Q_PROPERTY(bool useCustomToolbar READ useCustomToolbar WRITE setUseCustomToolbar NOTIFY useCustomToolbarChanged)
+    Q_PROPERTY(bool isMaximize READ isMaximize WRITE setIsMaximize NOTIFY isMaximizeChanged)
 
 private:
     QSettings* m_Settings;
@@ -73,6 +74,9 @@ public:
     bool useCustomToolbar();
     void setUseCustomToolbar(bool useCustomToolbar);
 
+    bool isMaximize() noexcept;
+    void setIsMaximize(bool isMaximize) noexcept;
+
 signals:
     void userTokenChanged(QString& token);
     void windowHeightChanged(int windowHeight);
@@ -84,6 +88,7 @@ signals:
     void sendVolumeToRemoteChanged(bool sendVolumeToRemote);
     void sendPlaybackToRemoteChanged(bool sendPlaybackToRemote);
     void useCustomToolbarChanged(bool useCustomToolbar);
+    void isMaximizeChanged();
 
 };
 
