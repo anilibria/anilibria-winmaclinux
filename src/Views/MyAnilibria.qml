@@ -13,7 +13,7 @@ Page {
     signal navigateTo()
 
     background: Rectangle {
-        color: ApplicationTheme.pageBackground
+        color: applicationThemeViewModel.pageBackground
     }
 
     Loader {
@@ -32,7 +32,7 @@ Page {
                 anchors.fill: parent
                 spacing: 0
                 Rectangle {
-                    color: ApplicationTheme.pageVerticalPanel
+                    color: applicationThemeViewModel.pageVerticalPanel
                     width: 40
                     Layout.fillHeight: true
                     Column {
@@ -59,7 +59,7 @@ Page {
                         Layout.fillWidth: true
                         Layout.preferredHeight: 45
                         height: 45
-                        color: ApplicationTheme.pageUpperPanel
+                        color: applicationThemeViewModel.pageUpperPanel
 
                         PlainText {
                             anchors.verticalCenter: parent.verticalCenter
@@ -193,7 +193,7 @@ Page {
 
                 Rectangle {
                     anchors.fill: parent
-                    color: ApplicationTheme.pageBackground
+                    color: applicationThemeViewModel.pageBackground
                     opacity: 0.8
                 }
 

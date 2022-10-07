@@ -54,7 +54,7 @@ Item {
                 anchors.leftMargin: 8
                 width: isCurrentVideo ? 404 : 400
                 height: isCurrentVideo ? 274 : 272
-                border.color: isCurrentVideo ? ApplicationTheme.selectedItem : "#adadad"
+                border.color: isCurrentVideo ? applicationThemeViewModel.selectedItem : "#adadad"
                 border.width: isCurrentVideo ? 2 : 1
                 radius: 14
 

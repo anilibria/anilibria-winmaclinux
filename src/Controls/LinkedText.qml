@@ -23,8 +23,8 @@ Text {
     property real fontPointSize: 0
 
     font.pointSize: fontPointSize + windowSettings.dpiSeparation
-    linkColor: ApplicationTheme.linkTextColor
-    color: ApplicationTheme.plainTextColor
+    linkColor: applicationThemeViewModel.linkTextColor
+    color: applicationThemeViewModel.plainTextColor
     onLinkActivated: {
         Qt.openUrlExternally(link);
     }

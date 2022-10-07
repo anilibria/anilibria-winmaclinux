@@ -28,7 +28,7 @@ Page {
     id: root
     anchors.fill: parent
     background: Rectangle {
-        color: ApplicationTheme.pageBackground
+        color: applicationThemeViewModel.pageBackground
     }
 
     signal navigateFrom()
@@ -47,7 +47,7 @@ Page {
         anchors.fill: parent
         spacing: 0
         Rectangle {
-            color: ApplicationTheme.pageVerticalPanel
+            color: applicationThemeViewModel.pageVerticalPanel
             width: 40
             Layout.fillHeight: true
             Column {
@@ -74,7 +74,7 @@ Page {
                 Layout.fillWidth: true
                 Layout.preferredHeight: 45
                 height: 45
-                color: ApplicationTheme.pageUpperPanel
+                color: applicationThemeViewModel.pageUpperPanel
 
                 RoundedTextBox {
                     id: filterByTitle
@@ -108,7 +108,7 @@ Page {
                         anchors.leftMargin: 4
                         anchors.rightMargin: 4
                         radius: 10
-                        color: ApplicationTheme.panelBackground
+                        color: applicationThemeViewModel.panelBackground
 
                         RowLayout {
                             anchors.fill: parent

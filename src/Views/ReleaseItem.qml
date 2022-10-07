@@ -28,9 +28,9 @@ Rectangle {
     width: 480
     height: 280
     radius: 10
-    border.color: ApplicationTheme.selectedItem
+    border.color: applicationThemeViewModel.selectedItem
     border.width: inSelected ? 3 : 0
-    color: !compactModeSwitch.checked ? ApplicationTheme.panelBackground : "transparent"
+    color: !compactModeSwitch.checked ? applicationThemeViewModel.panelBackground : "transparent"
     layer.enabled: !compactModeSwitch.checked
     layer.effect: DropShadow {
         transparentBorder: true
@@ -38,7 +38,7 @@ Rectangle {
         verticalOffset: 2
         radius: 1
         samples: 3
-        color: ApplicationTheme.panelBackgroundShadow
+        color: applicationThemeViewModel.panelBackgroundShadow
     }
 
     property var releaseModel: ({})
@@ -262,7 +262,7 @@ Rectangle {
                                     releaseItem.watchRelease(id, videos, poster);
                                 }
                                 onEntered: {
-                                    onlineRectangle.color = ApplicationTheme.panelBackgroundShadow;
+                                    onlineRectangle.color = applicationThemeViewModel.panelBackgroundShadow;
                                     parent.imageHovered = true;
                                 }
                                 onExited: {
@@ -281,7 +281,7 @@ Rectangle {
                         rightPadding: 8
                         fontPointSize: 12
                         enabled: false
-                        text: '' + countVideos + (countSeensSeries > 0 ? "<font color='" + (ApplicationTheme.isDarkTheme ? "white" : "green") + "'>/" + countSeensSeries + "</font>  " : "")
+                        text: '' + countVideos + (countSeensSeries > 0 ? "<font color='" + (applicationThemeViewModel.isDarkTheme ? "white" : "green") + "'>/" + countSeensSeries + "</font>  " : "")
                     }
 
                     Item {
@@ -311,7 +311,7 @@ Rectangle {
                                     torrentMenuLoader.sourceComponent = torrentMenuComponent;
                                 }
                                 onEntered: {
-                                    torrentsRectangle.color = ApplicationTheme.panelBackgroundShadow;
+                                    torrentsRectangle.color = applicationThemeViewModel.panelBackgroundShadow;
                                     parent.torrentImageHovered = true;
                                 }
                                 onExited: {
@@ -397,7 +397,7 @@ Rectangle {
                         anchors.left: parent.left
                         width: 18 + countFavoritesLabel.width
                         height: 20
-                        color: favoritesItem.favoritesImageHovered ? ApplicationTheme.panelBackgroundShadow : "transparent"
+                        color: favoritesItem.favoritesImageHovered ? applicationThemeViewModel.panelBackgroundShadow : "transparent"
                         opacity: .5
                         radius: 8
                     }
@@ -448,7 +448,7 @@ Rectangle {
                     anchors.bottom: parent.bottom
                     anchors.right: parent.right
                     anchors.rightMargin: 4
-                    color: ApplicationTheme.headerTextColor
+                    color: applicationThemeViewModel.headerTextColor
                     fontPointSize: 12
                     text: "В избранном"
                 }

@@ -23,6 +23,6 @@ Text {
     property real fontPointSize: 0
 
     font.pointSize: fontPointSize + windowSettings.dpiSeparation
-    color: ApplicationTheme.plainTextColor
-    linkColor: ApplicationTheme.linkTextColor
+    color: applicationThemeViewModel.plainTextColor
+    linkColor: applicationThemeViewModel.linkTextColor
 }

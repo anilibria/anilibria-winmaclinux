@@ -21,7 +21,7 @@ import "../Theme"
 
 Rectangle {
     id: _container
-    color: isPressed ? "gray" : (isChecked ? "#9e2323" : (ApplicationTheme.isDarkTheme ? "darkgrey" : "lightgray"))
+    color: isPressed ? "gray" : (isChecked ? "#9e2323" : (applicationThemeViewModel.basedOnDark ? "darkgrey" : "lightgray"))
 
     property alias text: buttonText.text
     property bool isChecked: false
@@ -35,7 +35,7 @@ Rectangle {
         id: buttonText
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter: parent.verticalCenter
-        color: ApplicationTheme.plainTextColor
+        color: applicationThemeViewModel.plainTextColor
     }
     MouseArea {
         anchors.fill: parent

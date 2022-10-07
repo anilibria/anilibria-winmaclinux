@@ -83,7 +83,7 @@ Item {
                     Rectangle {
                         width: 150
                         height: parent.height
-                        color: ApplicationTheme.roundedButtonBackground
+                        color: applicationThemeViewModel.roundedButtonBackground
                         border.color: "transparent"
                         border.width: 1
                         radius: 18
@@ -92,7 +92,7 @@ Item {
                             id: buttonTitle
                             fontPointSize: 11
                             anchors.centerIn: parent
-                            color: ApplicationTheme.roundedButtonForeground
+                            color: applicationThemeViewModel.roundedButtonForeground
                             text: "Смотреть"
                         }
                     }

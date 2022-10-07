@@ -83,7 +83,7 @@ Page {
     }
 
     background: Rectangle {
-        color: ApplicationTheme.pageBackground
+        color: applicationThemeViewModel.pageBackground
     }
 
     onNavigateTo: {
@@ -114,7 +114,7 @@ Page {
         spacing: 0
         enabled: !releasesViewModel.isOpenedCard
         Rectangle {
-            color: ApplicationTheme.pageVerticalPanel
+            color: applicationThemeViewModel.pageVerticalPanel
             Layout.preferredWidth: compactModeSwitch.checked && !releasesViewModel.showSidePanel ? 0 : 40
             Layout.fillHeight: true
 
@@ -765,9 +765,9 @@ Page {
                                 anchors.top: resetNotificationButton.bottom
                                 Rectangle {
                                     visible: releasesViewModel.newReleasesCount > 0
-                                    color: ApplicationTheme.panelBackground
+                                    color: applicationThemeViewModel.panelBackground
                                     border.width: 3
-                                    border.color: ApplicationTheme.selectedItem
+                                    border.color: applicationThemeViewModel.selectedItem
                                     width: 340
                                     height: 40
 
@@ -785,9 +785,9 @@ Page {
                                 }
                                 Rectangle {
                                     visible: releasesViewModel.newOnlineSeriesCount > 0
-                                    color: ApplicationTheme.panelBackground
+                                    color: applicationThemeViewModel.panelBackground
                                     border.width: 3
-                                    border.color: ApplicationTheme.selectedItem
+                                    border.color: applicationThemeViewModel.selectedItem
                                     width: 340
                                     height: 40
 
@@ -805,9 +805,9 @@ Page {
                                 }
                                 Rectangle {
                                     visible: releasesViewModel.newTorrentsCount > 0
-                                    color: ApplicationTheme.panelBackground
+                                    color: applicationThemeViewModel.panelBackground
                                     border.width: 3
-                                    border.color: ApplicationTheme.selectedItem
+                                    border.color: applicationThemeViewModel.selectedItem
                                     width: 340
                                     height: 40
 
@@ -825,9 +825,9 @@ Page {
                                 }
                                 Rectangle {
                                     visible: releasesViewModel.newTorrentSeriesCount > 0
-                                    color: ApplicationTheme.panelBackground
+                                    color: applicationThemeViewModel.panelBackground
                                     border.width: 3
-                                    border.color: ApplicationTheme.selectedItem
+                                    border.color: applicationThemeViewModel.selectedItem
                                     width: 340
                                     height: 40
 
@@ -877,9 +877,9 @@ Page {
                     DefaultPopup {
                         id: releaseSettingsPopup
                         x: 40
-                        y: -410
+                        y: -480
                         width: 720
-                        height: 470
+                        height: 520
                         modal: true
                         focus: true
                         closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
@@ -906,13 +906,24 @@ Page {
                             PlainText {
                                 id: darkModeLabel
                                 fontPointSize: 11
-                                text: "Темная тема"
+                                text: "Тема"
+                            }
+                            CommonComboBox {
+                                id: themes
+                                model: applicationThemeViewModel.themes
+
+                                onActivated: {
+                                    applicationThemeViewModel.selectedTheme = currentValue
+                                }
+                                Component.onCompleted: {
+                                    currentIndex = applicationThemeViewModel.themes.indexOf(applicationThemeViewModel.selectedTheme);
+                                }
                             }
                             Switch {
                                 id: darkModeSwitch
                                 onCheckedChanged: {
                                     applicationSettings.isDarkTheme = checked;
-                                    ApplicationTheme.isDarkTheme = checked;
+                                    applicationThemeViewModel.isDarkTheme = checked;
                                 }
                             }
 
@@ -1138,7 +1149,7 @@ Page {
                 Layout.fillWidth: true
                 Layout.preferredHeight: 45
                 height: 45
-                color: ApplicationTheme.pageUpperPanel
+                color: applicationThemeViewModel.pageUpperPanel
 
                 Switch {
                     id: multupleMode
@@ -1255,7 +1266,7 @@ Page {
                                 width: 20
                                 height: 20
                                 iconPath: assetsLocation.iconsPath + "closewindow.svg"
-                                iconColor: ApplicationTheme.plainTextColor
+                                iconColor: applicationThemeViewModel.plainTextColor
                                 iconWidth: 16
                                 iconHeight: 16
                                 tooltipMessage: "Очистить фильтр по названию"
@@ -1695,8 +1706,8 @@ Page {
             visible: scrollview.contentY > 100
             height: 30
             width: 30
-            iconColor: ApplicationTheme.filterIconButtonColor
-            hoverColor: ApplicationTheme.filterIconButtonHoverColor
+            iconColor: applicationThemeViewModel.filterIconButtonColor
+            hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
             iconPath: "../Assets/Icons/arrowup.svg"
             iconWidth: 24
             iconHeight: 24
@@ -1716,7 +1727,7 @@ Page {
         anchors.fill: parent
         spacing: 0
         Rectangle {
-            color: ApplicationTheme.pageBackground
+            color: applicationThemeViewModel.pageBackground
             Layout.fillWidth: true
             Layout.fillHeight: true
             Column {
@@ -1754,7 +1765,7 @@ Page {
                         width: page.width - cardButtons.width - cardPoster.width
                         AccentText {
                             textFormat: Text.RichText
-                            fontPointSize: 12
+                            fontPointSize: 14
                             width: parent.width
                             leftPadding: 8
                             topPadding: 6
@@ -1945,8 +1956,8 @@ Page {
                         IconButton {
                             height: 40
                             width: 40
-                            iconColor: ApplicationTheme.filterIconButtonColor
-                            hoverColor: ApplicationTheme.filterIconButtonHoverColor
+                            iconColor: applicationThemeViewModel.filterIconButtonColor
+                            hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
                             overlayVisible: false
                             iconPath: assetsLocation.iconsPath + "coloredclosewindow.svg"
                             iconWidth: 28
@@ -1959,7 +1970,7 @@ Page {
                         IconButton {
                             height: 40
                             width: 40
-                            hoverColor: ApplicationTheme.filterIconButtonHoverColor
+                            hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
                             overlayVisible: false
                             iconPath: assetsLocation.iconsPath + "copy.svg"
                             iconWidth: 26
@@ -2014,8 +2025,8 @@ Page {
                         IconButton {
                             height: 40
                             width: 40
-                            iconColor: ApplicationTheme.filterIconButtonColor
-                            hoverColor: ApplicationTheme.filterIconButtonHoverColor
+                            iconColor: applicationThemeViewModel.filterIconButtonColor
+                            hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
                             iconPath: assetsLocation.iconsPath + "coloredeye.svg"
                             overlayVisible: false
                             iconWidth: 26
@@ -2069,7 +2080,7 @@ Page {
                             height: 40
                             width: 40
                             overlayVisible: false
-                            hoverColor: ApplicationTheme.filterIconButtonHoverColor
+                            hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
                             iconPath: assetsLocation.iconsPath + "ratingcolor.svg"
                             iconWidth: 26
                             iconHeight: 26
@@ -2104,7 +2115,7 @@ Page {
                             height: 40
                             width: 40
                             overlayVisible: false
-                            hoverColor: ApplicationTheme.filterIconButtonHoverColor
+                            hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
                             iconPath: assetsLocation.iconsPath + "external.svg"
                             iconWidth: 26
                             iconHeight: 26
@@ -2268,7 +2279,7 @@ Page {
                         height: 26
                         width: 26
                         overlayVisible: false
-                        hoverColor: ApplicationTheme.filterIconButtonHoverColor
+                        hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
                         iconWidth: 22
                         iconHeight: 22
                         iconPath: assetsLocation.iconsPath + "allreleases.svg"
@@ -2330,7 +2341,7 @@ Page {
     }
 
     Rectangle {
-        color: ApplicationTheme.pageBackground
+        color: applicationThemeViewModel.pageBackground
         opacity: 0.8
         visible: page.releaseDescription && page.releaseDescription !== "" && showReleaseDescriptionSwitch.checked
         enabled: false

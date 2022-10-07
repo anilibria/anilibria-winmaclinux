@@ -41,7 +41,7 @@ Rectangle {
         anchors.rightMargin: 8
         anchors.topMargin: 4
         anchors.bottomMargin: 4
-        color: root.buttonEnabled ? (root.buttonHovered ? ApplicationTheme.roundedButtonHovered : ApplicationTheme.roundedButtonBackground) : ApplicationTheme.roundedButtonBackgroundDisabled
+        color: root.buttonEnabled ? (root.buttonHovered ? applicationThemeViewModel.roundedButtonHovered : applicationThemeViewModel.roundedButtonBackground) : applicationThemeViewModel.roundedButtonBackgroundDisabled
         border.color: "transparent"
         border.width: 1
         radius: 18
@@ -50,7 +50,7 @@ Rectangle {
             id: buttonTitle
             fontPointSize: 11
             anchors.centerIn: parent
-            color: ApplicationTheme.roundedButtonForeground
+            color: applicationThemeViewModel.roundedButtonForeground
         }
 
         MouseArea {

@@ -97,7 +97,7 @@ ApplicationWindow {
 
     Rectangle {
         id: controlPanel
-        color: ApplicationTheme.playerControlBackground
+        color: applicationThemeViewModel.playerControlBackground
         anchors.bottom: parent.bottom
         opacity: onlinePlayerWindowViewModel.panelOpacity
         width: root.width
@@ -142,8 +142,8 @@ ApplicationWindow {
                         id: previousButton
                         width: 40
                         height: 40
-                        iconColor: ApplicationTheme.filterIconButtonColor
-                        hoverColor: ApplicationTheme.filterIconButtonHoverColor
+                        iconColor: applicationThemeViewModel.filterIconButtonColor
+                        hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
                         iconPath: assetsLocation.path + "Icons/step-backward.svg"
                         iconWidth: 24
                         iconHeight: 24
@@ -158,8 +158,8 @@ ApplicationWindow {
                         visible: onlinePlayerWindowViewModel.playerButtonVisible
                         width: 40
                         height: 40
-                        iconColor: ApplicationTheme.filterIconButtonColor
-                        hoverColor: ApplicationTheme.filterIconButtonHoverColor
+                        iconColor: applicationThemeViewModel.filterIconButtonColor
+                        hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
                         iconPath: assetsLocation.path + "Icons/play-button.svg"
                         iconWidth: 24
                         iconHeight: 24
@@ -172,8 +172,8 @@ ApplicationWindow {
                         visible: onlinePlayerWindowViewModel.pauseButtonVisible
                         width: 40
                         height: 40
-                        iconColor: ApplicationTheme.filterIconButtonColor
-                        hoverColor: ApplicationTheme.filterIconButtonHoverColor
+                        iconColor: applicationThemeViewModel.filterIconButtonColor
+                        hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
                         iconPath: assetsLocation.path + "Icons/pause.svg"
                         iconWidth: 24
                         iconHeight: 24
@@ -186,8 +186,8 @@ ApplicationWindow {
                         id: nextButton
                         width: 40
                         height: 40
-                        iconColor: ApplicationTheme.filterIconButtonColor
-                        hoverColor: ApplicationTheme.filterIconButtonHoverColor
+                        iconColor: applicationThemeViewModel.filterIconButtonColor
+                        hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
                         iconPath: assetsLocation.path + "Icons/step-forward.svg"
                         iconWidth: 24
                         iconHeight: 24
@@ -210,8 +210,8 @@ ApplicationWindow {
                     anchors.centerIn: parent
                     width: 40
                     height: 40
-                    iconColor: onlinePlayerWindowViewModel.isTopMost ? ApplicationTheme.filterIconButtonGreenColor : ApplicationTheme.filterIconButtonColor
-                    hoverColor: ApplicationTheme.filterIconButtonHoverColor
+                    iconColor: onlinePlayerWindowViewModel.isTopMost ? applicationThemeViewModel.filterIconButtonGreenColor : applicationThemeViewModel.filterIconButtonColor
+                    hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
                     iconPath: assetsLocation.path + "Icons/topmostwindow.svg"
                     iconWidth: 29
                     iconHeight: 29

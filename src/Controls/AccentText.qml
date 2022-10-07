@@ -23,5 +23,5 @@ Text {
     property real fontPointSize: 0
 
     font.pointSize: fontPointSize + windowSettings.dpiSeparation
-    color: ApplicationTheme.headerTextColor
+    color: applicationThemeViewModel.headerTextColor
 }

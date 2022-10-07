@@ -35,7 +35,7 @@ Rectangle {
         anchors.verticalCenter: parent.verticalCenter
         anchors.right: parent.right
         anchors.rightMargin: 4
-        iconColor: ApplicationTheme.plainTextColor
+        iconColor: applicationThemeViewModel.plainTextColor
         iconWidth: 22
         iconHeight: 22
         iconPath: assetsLocation.iconsPath + "arrowup.svg"

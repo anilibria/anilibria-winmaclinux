@@ -349,7 +349,7 @@ Page {
                         Rectangle {
                             height: isGroup ? 70 : 40
                             width: seriesPopup.width
-                            color: selectedVideo ? ApplicationTheme.playlistSelectedBackground : ApplicationTheme.playlistBackground
+                            color: selectedVideo ? applicationThemeViewModel.playlistSelectedBackground : applicationThemeViewModel.playlistBackground
                             MouseArea {
                                 anchors.fill: parent
                                 hoverEnabled: true
@@ -364,7 +364,7 @@ Page {
                             }
                             Text {
                                 visible: !isGroup
-                                color: selectedVideo ? ApplicationTheme.playlistSelectedText : ApplicationTheme.playlistText
+                                color: selectedVideo ? applicationThemeViewModel.playlistSelectedText : applicationThemeViewModel.playlistText
                                 anchors.verticalCenter: parent.verticalCenter
                                 anchors.left: parent.left
                                 anchors.leftMargin: 10
@@ -379,7 +379,7 @@ Page {
 
                                 Text {
                                     visible: isGroup
-                                    color: selectedVideo ? ApplicationTheme.playlistSelectedText : ApplicationTheme.playlistText
+                                    color: selectedVideo ? applicationThemeViewModel.playlistSelectedText : applicationThemeViewModel.playlistText
                                     text: title
                                     width: parent.width
                                     anchors.verticalCenter: parent.verticalCenter
@@ -400,8 +400,8 @@ Page {
                                     height: 36
                                     width: 36
                                     visible: !isGroup
-                                    iconColor: isSeen ? ApplicationTheme.filterIconButtonGreenColor : ApplicationTheme.filterIconButtonColor
-                                    hoverColor: ApplicationTheme.filterIconButtonHoverColor
+                                    iconColor: isSeen ? applicationThemeViewModel.filterIconButtonGreenColor : applicationThemeViewModel.filterIconButtonColor
+                                    hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
                                     iconPath: isSeen ? "../Assets/Icons/seenmarkselected.svg" : "../Assets/Icons/seenmark.svg"
                                     iconWidth: 22
                                     iconHeight: 22
@@ -419,8 +419,8 @@ Page {
                                     height: 36
                                     width: 36
                                     visible: !isGroup
-                                    iconColor: ApplicationTheme.filterIconButtonColor
-                                    hoverColor: ApplicationTheme.filterIconButtonHoverColor
+                                    iconColor: applicationThemeViewModel.filterIconButtonColor
+                                    hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
                                     iconPath: "../Assets/Icons/external.svg"
                                     iconWidth: 22
                                     iconHeight: 22
@@ -459,7 +459,7 @@ Page {
 
     Rectangle {
         id: controlPanel
-        color: ApplicationTheme.playerControlBackground
+        color: applicationThemeViewModel.playerControlBackground
         anchors.bottom: parent.bottom
         width: _page.width
         height: 100
@@ -668,8 +668,8 @@ Page {
                     IconButton {
                         width: 40
                         height: 40
-                        iconColor: ApplicationTheme.filterIconButtonColor
-                        hoverColor: ApplicationTheme.filterIconButtonHoverColor
+                        iconColor: applicationThemeViewModel.filterIconButtonColor
+                        hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
                         iconPath: "../Assets/Icons/menu.svg"
                         iconWidth: 29
                         iconHeight: 29
@@ -680,9 +680,9 @@ Page {
                     IconButton {
                         width: 40
                         height: 40
-                        iconColor: playerLoader.item.muted ? ApplicationTheme.filterIconButtonGreenColor : ApplicationTheme.filterIconButtonColor
-                        hoverColor: ApplicationTheme.filterIconButtonHoverColor
-                        iconPath: "../Assets/Icons/speaker.svg"
+                        iconColor: applicationThemeViewModel.filterIconButtonColor
+                        hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
+                        iconPath: playerLoader.item.muted ? "../Assets/Icons/mute.svg" : "../Assets/Icons/speaker.svg"
                         iconWidth: 24
                         iconHeight: 24
                         onButtonPressed: {
@@ -704,14 +704,15 @@ Page {
                         }
                         onMoved: {
                             playerLoader.item.volume = value / 100;
+                            if (playerLoader.item.muted) playerLoader.item.muted = false;
                         }
                     }
                     IconButton {
                         id: helpbutton
                         width: 40
                         height: 40
-                        iconColor: ApplicationTheme.filterIconButtonColor
-                        hoverColor: ApplicationTheme.filterIconButtonHoverColor
+                        iconColor: applicationThemeViewModel.filterIconButtonColor
+                        hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
                         iconPath: "../Assets/Icons/help.svg"
                         iconWidth: 24
                         iconHeight: 24
@@ -760,8 +761,8 @@ Page {
                         width: 40
                         height: 40
                         visible: playerLoader.item.duration > 0
-                        iconColor: ApplicationTheme.filterIconButtonColor
-                        hoverColor: ApplicationTheme.filterIconButtonHoverColor
+                        iconColor: applicationThemeViewModel.filterIconButtonColor
+                        hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
                         iconPath: "../Assets/Icons/previous10.svg"
                         iconWidth: 24
                         iconHeight: 24
@@ -773,8 +774,8 @@ Page {
                         id: prevButton
                         width: 40
                         height: 40
-                        iconColor: ApplicationTheme.filterIconButtonColor
-                        hoverColor: ApplicationTheme.filterIconButtonHoverColor
+                        iconColor: applicationThemeViewModel.filterIconButtonColor
+                        hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
                         iconPath: "../Assets/Icons/step-backward.svg"
                         iconWidth: 24
                         iconHeight: 24
@@ -790,8 +791,8 @@ Page {
                         visible: false
                         width: 40
                         height: 40
-                        iconColor: ApplicationTheme.filterIconButtonColor
-                        hoverColor: ApplicationTheme.filterIconButtonHoverColor
+                        iconColor: applicationThemeViewModel.filterIconButtonColor
+                        hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
                         iconPath: "../Assets/Icons/play-button.svg"
                         iconWidth: 24
                         iconHeight: 24
@@ -804,8 +805,8 @@ Page {
                         visible: false
                         width: 40
                         height: 40
-                        iconColor: ApplicationTheme.filterIconButtonColor
-                        hoverColor: ApplicationTheme.filterIconButtonHoverColor
+                        iconColor: applicationThemeViewModel.filterIconButtonColor
+                        hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
                         iconPath: "../Assets/Icons/pause.svg"
                         iconWidth: 24
                         iconHeight: 24
@@ -817,8 +818,8 @@ Page {
                         id: nextButton
                         width: 40
                         height: 40
-                        iconColor: ApplicationTheme.filterIconButtonColor
-                        hoverColor: ApplicationTheme.filterIconButtonHoverColor
+                        iconColor: applicationThemeViewModel.filterIconButtonColor
+                        hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
                         iconPath: "../Assets/Icons/step-forward.svg"
                         iconWidth: 24
                         iconHeight: 24
@@ -833,8 +834,8 @@ Page {
                         width: 40
                         height: 40
                         visible: playerLoader.item.duration > 0
-                        iconColor: ApplicationTheme.filterIconButtonColor
-                        hoverColor: ApplicationTheme.filterIconButtonHoverColor
+                        iconColor: applicationThemeViewModel.filterIconButtonColor
+                        hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
                         iconPath: "../Assets/Icons/next30.svg"
                         iconWidth: 24
                         iconHeight: 24
@@ -855,8 +856,8 @@ Page {
                         width: 40
                         height: 40
                         visible: !autoTopMost.checked
-                        iconColor: windowSettings.isTopMost ? ApplicationTheme.filterIconButtonGreenColor : ApplicationTheme.filterIconButtonColor
-                        hoverColor: ApplicationTheme.filterIconButtonHoverColor
+                        iconColor: windowSettings.isTopMost ? applicationThemeViewModel.filterIconButtonGreenColor : applicationThemeViewModel.filterIconButtonColor
+                        hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
                         iconPath: "../Assets/Icons/topmostwindow.svg"
                         iconWidth: 29
                         iconHeight: 29
@@ -870,8 +871,8 @@ Page {
                         id: remotePlayerButton
                         width: 40
                         height: 40
-                        iconColor: onlinePlayerViewModel.remotePlayer.started ? ApplicationTheme.filterIconButtonGreenColor : ApplicationTheme.filterIconButtonColor
-                        hoverColor: ApplicationTheme.filterIconButtonHoverColor
+                        iconColor: onlinePlayerViewModel.remotePlayer.started ? applicationThemeViewModel.filterIconButtonGreenColor : applicationThemeViewModel.filterIconButtonColor
+                        hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
                         iconPath: "../Assets/Icons/connect.svg"
                         iconWidth: 24
                         iconHeight: 24
@@ -989,8 +990,8 @@ Page {
                         id: optionsButton
                         width: 40
                         height: 40
-                        iconColor: ApplicationTheme.filterIconButtonColor
-                        hoverColor: ApplicationTheme.filterIconButtonHoverColor
+                        iconColor: applicationThemeViewModel.filterIconButtonColor
+                        hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
                         iconPath: "../Assets/Icons/options.svg"
                         iconWidth: 24
                         iconHeight: 24
@@ -1174,8 +1175,8 @@ Page {
                         id: resizeVideoButton
                         width: 40
                         height: 40
-                        iconColor: ApplicationTheme.filterIconButtonColor
-                        hoverColor: ApplicationTheme.filterIconButtonHoverColor
+                        iconColor: applicationThemeViewModel.filterIconButtonColor
+                        hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
                         iconPath: "../Assets/Icons/resize.svg"
                         iconWidth: 29
                         iconHeight: 29
@@ -1198,8 +1199,8 @@ Page {
                         id: fullScreenButton
                         width: 40
                         height: 40
-                        iconColor: ApplicationTheme.filterIconButtonColor
-                        hoverColor: ApplicationTheme.filterIconButtonHoverColor
+                        iconColor: applicationThemeViewModel.filterIconButtonColor
+                        hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
                         iconPath: "../Assets/Icons/fullscreen.svg"
                         iconWidth: 29
                         iconHeight: 29
@@ -1303,9 +1304,9 @@ Page {
         anchors.bottomMargin: 4
         width: 200
         height: 40
-        color: ApplicationTheme.playerControlBackground
+        color: applicationThemeViewModel.playerControlBackground
         border.width: 1
-        border.color: ApplicationTheme.plainTextColor
+        border.color: applicationThemeViewModel.plainTextColor
 
         PlainText {
             anchors.centerIn: parent
@@ -1370,7 +1371,7 @@ Page {
         anchors.right: parent.right
         anchors.bottom: parent.bottom
         anchors.bottomMargin: 100
-        color: ApplicationTheme.playerControlBackground
+        color: applicationThemeViewModel.playerControlBackground
         visible: onlinePlayerViewModel.showNextPosterRelease
         width: 220
         height: 300

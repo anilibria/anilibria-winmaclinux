@@ -10,9 +10,9 @@ Item {
 
     Rectangle {
         anchors.fill: parent
-        color: ApplicationTheme.panelBackground
+        color: applicationThemeViewModel.panelBackground
         border.width: 1
-        border.color: ApplicationTheme.plainTextColor
+        border.color: applicationThemeViewModel.plainTextColor
         radius: 8
     }
 
@@ -39,7 +39,7 @@ Item {
         iconPath: assetsLocation.iconsPath + "close.svg"
         iconWidth: 20
         iconHeight: 20
-        iconColor: ApplicationTheme.plainTextColor
+        iconColor: applicationThemeViewModel.plainTextColor
         width: 22
         height: 22
         onButtonPressed: {

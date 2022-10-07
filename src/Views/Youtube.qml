@@ -33,7 +33,7 @@ Page {
     signal navigateTo()
 
     background: Rectangle {
-        color: ApplicationTheme.pageBackground
+        color: applicationThemeViewModel.pageBackground
     }
 
     Loader {
@@ -60,7 +60,7 @@ Page {
                 anchors.fill: parent
                 spacing: 0
                 Rectangle {
-                    color: ApplicationTheme.pageVerticalPanel
+                    color: applicationThemeViewModel.pageVerticalPanel
                     width: 40
                     Layout.fillHeight: true
                     Column {
@@ -86,7 +86,7 @@ Page {
                         Layout.fillWidth: true
                         Layout.preferredHeight: 45
                         height: 45
-                        color: ApplicationTheme.pageUpperPanel
+                        color: applicationThemeViewModel.pageUpperPanel
                     }
 
                     GridView {
@@ -110,7 +110,7 @@ Page {
                                 width: 480
                                 height: 290
                                 radius: 10
-                                color: ApplicationTheme.panelBackground
+                                color: applicationThemeViewModel.panelBackground
                                 layer.enabled: true
                                 layer.effect: DropShadow {
                                     transparentBorder: true
@@ -118,7 +118,7 @@ Page {
                                     verticalOffset: 2
                                     radius: 1
                                     samples: 3
-                                    color: ApplicationTheme.panelBackgroundShadow
+                                    color: applicationThemeViewModel.panelBackgroundShadow
                                 }
                                 MouseArea {
                                     width: 480
@@ -177,8 +177,8 @@ Page {
                     anchors.right: parent.right
                     anchors.top: parent.top
                     anchors.topMargin: 8
-                    iconColor: ApplicationTheme.filterIconButtonColor
-                    hoverColor: ApplicationTheme.filterIconButtonHoverColor
+                    iconColor: applicationThemeViewModel.filterIconButtonColor
+                    hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
                     tooltipMessage: "Вернуться в начало списка релизов"
                     visible: scrollView.contentY > 100
                     iconPath: "../Assets/Icons/arrowup.svg"

@@ -47,7 +47,7 @@ ApplicationWindow {
     property int previousY
 
     Material.accent: Material.Red
-    Material.theme: ApplicationTheme.isDarkTheme ? Material.Dark : Material.Light
+    Material.theme: applicationThemeViewModel.basedOnDark ? Material.Dark : Material.Light
 
     onClosing: {
         onlinePlayerWindow.closeWindow();
@@ -90,7 +90,7 @@ ApplicationWindow {
         visible: applicationSettings.useCustomToolbar
         width: window.width
         height: 35
-        color: ApplicationTheme.notificationCenterBackground
+        color: applicationThemeViewModel.notificationCenterBackground
 
         Rectangle {
             color: "black"
@@ -147,8 +147,8 @@ ApplicationWindow {
             anchors.topMargin: 1
             height: 34
             width: 40
-            iconColor: ApplicationTheme.filterIconButtonColor
-            hoverColor: ApplicationTheme.filterIconButtonHoverColor
+            iconColor: applicationThemeViewModel.filterIconButtonColor
+            hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
             iconPath: "Assets/Icons/catalogmenu.svg"
             iconWidth: 20
             iconHeight: 20
@@ -165,8 +165,8 @@ ApplicationWindow {
             anchors.topMargin: 1
             height: 34
             width: 40
-            iconColor: ApplicationTheme.filterIconButtonColor
-            hoverColor: ApplicationTheme.filterIconButtonHoverColor
+            iconColor: applicationThemeViewModel.filterIconButtonColor
+            hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
             iconPath: "Assets/Icons/videoplayermenu.svg"
             iconWidth: 20
             iconHeight: 20
@@ -183,8 +183,8 @@ ApplicationWindow {
             anchors.topMargin: 1
             height: 34
             width: 40
-            iconColor: ApplicationTheme.filterIconButtonColor
-            hoverColor: ApplicationTheme.filterIconButtonHoverColor
+            iconColor: applicationThemeViewModel.filterIconButtonColor
+            hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
             iconPath: "Assets/Icons/cinemahallmenu.svg"
             iconWidth: 20
             iconHeight: 20
@@ -201,8 +201,8 @@ ApplicationWindow {
             anchors.topMargin: 1
             height: 34
             width: 40
-            iconColor: ApplicationTheme.filterIconButtonColor
-            hoverColor: ApplicationTheme.filterIconButtonHoverColor
+            iconColor: applicationThemeViewModel.filterIconButtonColor
+            hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
             iconPath: "Assets/Icons/seriesmenu.svg"
             iconWidth: 20
             iconHeight: 20
@@ -219,7 +219,7 @@ ApplicationWindow {
             anchors.topMargin: 1
             height: 34
             width: 40
-            hoverColor: ApplicationTheme.filterIconButtonHoverColor
+            hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
             iconPath: "Assets/Icons/house.svg"
             iconWidth: 20
             iconHeight: 20
@@ -236,7 +236,7 @@ ApplicationWindow {
             height: 34
             width: 40
             overlayVisible: false
-            hoverColor: ApplicationTheme.filterIconButtonHoverColor
+            hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
             iconPath: "Assets/Icons/coloredleftmenu.svg"
             iconWidth: 24
             iconHeight: 24
@@ -259,7 +259,7 @@ ApplicationWindow {
             height: 34
             width: 40
             overlayVisible: false
-            hoverColor: ApplicationTheme.filterIconButtonHoverColor
+            hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
             iconPath: "Assets/Icons/coloredrightmenu.svg"
             iconWidth: 24
             iconHeight: 24
@@ -282,7 +282,7 @@ ApplicationWindow {
             height: 34
             width: 40
             overlayVisible: false
-            hoverColor: ApplicationTheme.filterIconButtonHoverColor
+            hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
             iconPath: "Assets/Icons/coloredminimize.svg"
             iconWidth: 24
             iconHeight: 24
@@ -299,7 +299,7 @@ ApplicationWindow {
             height: 34
             width: 40
             overlayVisible: false
-            hoverColor: ApplicationTheme.filterIconButtonHoverColor
+            hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
             iconPath: window.isShowFullScreenSize ? "Assets/Icons/gofromfullscreen.svg" : "Assets/Icons/gotofullscreen.svg"
             iconWidth: 24
             iconHeight: 24
@@ -323,7 +323,7 @@ ApplicationWindow {
             height: 34
             width: 40
             overlayVisible: false
-            hoverColor: ApplicationTheme.filterIconButtonHoverColor
+            hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
             iconPath: "Assets/Icons/coloredclosewindow.svg"
             iconWidth: 24
             iconHeight: 24
@@ -375,7 +375,7 @@ ApplicationWindow {
         visible: true
         width: window.width
         height: 16
-        color: ApplicationTheme.notificationCenterBackground
+        color: applicationThemeViewModel.notificationCenterBackground
 
         Rectangle {
             visible: applicationSettings.useCustomToolbar
@@ -431,8 +431,8 @@ ApplicationWindow {
                 id: notificationPopupButton
                 height: 16
                 width: 16
-                iconColor: notificationViewModel.countNotifications > 0 ? "#9e2323" : ApplicationTheme.filterIconButtonColor
-                hoverColor: ApplicationTheme.filterIconButtonColor
+                iconColor: notificationViewModel.countNotifications > 0 ? "#9e2323" : applicationThemeViewModel.filterIconButtonColor
+                hoverColor: applicationThemeViewModel.filterIconButtonColor
                 iconPath: "../Assets/Icons/notification.svg"
                 iconWidth: 14
                 iconHeight: 14
@@ -585,7 +585,6 @@ ApplicationWindow {
     ApplicationSettings {
         id: applicationSettings
         Component.onCompleted: {
-            ApplicationTheme.isDarkTheme = applicationSettings.isDarkTheme;
             if (!applicationSettings.userToken) return;
 
             synchronizationService.getUserData(applicationSettings.userToken);
@@ -686,11 +685,11 @@ ApplicationWindow {
             start: Qt.point(0, 0)
             end: Qt.point(0, parent.height)
             gradient: Gradient {
-                GradientStop { position: 0.0; color: ApplicationTheme.drawerGradiendStep0 }
-                GradientStop { position: 0.3; color: ApplicationTheme.drawerGradiendStep1 }
-                GradientStop { position: 0.5; color: ApplicationTheme.drawerGradiendStep2 }
-                GradientStop { position: 0.7; color: ApplicationTheme.drawerGradiendStep3 }
-                GradientStop { position: 1.0; color: ApplicationTheme.drawerGradiendStep4 }
+                GradientStop { position: 0.0; color: applicationThemeViewModel.drawerGradiendStep0 }
+                GradientStop { position: 0.3; color: applicationThemeViewModel.drawerGradiendStep1 }
+                GradientStop { position: 0.5; color: applicationThemeViewModel.drawerGradiendStep2 }
+                GradientStop { position: 0.7; color: applicationThemeViewModel.drawerGradiendStep3 }
+                GradientStop { position: 1.0; color: applicationThemeViewModel.drawerGradiendStep4 }
             }
         }
 
@@ -1107,10 +1106,10 @@ ApplicationWindow {
                 anchors.fill: parent
                 anchors.topMargin: 4
                 anchors.bottomMargin: 4
-                border.color: ApplicationTheme.selectedItem
+                border.color: applicationThemeViewModel.selectedItem
                 border.width: 2
                 radius: 8
-                color: ApplicationTheme.notificationCenterItemBackground
+                color: applicationThemeViewModel.notificationCenterItemBackground
 
                 LinkedText {
                     padding: 8
@@ -1134,8 +1133,8 @@ ApplicationWindow {
         anchors.right: parent.right
         anchors.topMargin: -2
         anchors.rightMargin: -1
-        color: ApplicationTheme.notificationCenterPanelBackground
-        border.color: ApplicationTheme.selectedItem
+        color: applicationThemeViewModel.notificationCenterPanelBackground
+        border.color: applicationThemeViewModel.selectedItem
         border.width: 1
         visible: false
 
@@ -1162,8 +1161,8 @@ ApplicationWindow {
                     anchors.top: parent.top
                     anchors.rightMargin: 4
                     anchors.topMargin: 4
-                    iconColor: ApplicationTheme.filterIconButtonColor
-                    hoverColor: ApplicationTheme.filterIconButtonHoverColor
+                    iconColor: applicationThemeViewModel.filterIconButtonColor
+                    hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
                     iconPath: "../Assets/Icons/close.svg"
                     iconWidth: 14
                     iconHeight: 14
@@ -1213,9 +1212,9 @@ ApplicationWindow {
                                 anchors.horizontalCenter: parent.horizontalCenter
                                 height: 70
                                 radius: 8
-                                border.color: ApplicationTheme.selectedItem
+                                border.color: applicationThemeViewModel.selectedItem
                                 border.width: 2
-                                color: ApplicationTheme.notificationCenterItemBackground
+                                color: applicationThemeViewModel.notificationCenterItemBackground
 
                                 LinkedText {
                                     padding: 10
@@ -1234,8 +1233,8 @@ ApplicationWindow {
                                     anchors.top: parent.top
                                     anchors.rightMargin: 4
                                     anchors.topMargin: 4
-                                    iconColor: ApplicationTheme.selectedItem
-                                    hoverColor: ApplicationTheme.filterIconButtonHoverColor
+                                    iconColor: applicationThemeViewModel.selectedItem
+                                    hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
                                     iconPath: "../Assets/Icons/close.svg"
                                     iconWidth: 14
                                     iconHeight: 14

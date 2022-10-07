@@ -27,7 +27,7 @@ Page {
     id: authorizePage
     anchors.fill: parent
     background: Rectangle {
-        color: ApplicationTheme.pageBackground
+        color: applicationThemeViewModel.pageBackground
     }
 
     signal navigateFrom()
@@ -42,7 +42,7 @@ Page {
         anchors.fill: parent
         spacing: 0
         Rectangle {
-            color: ApplicationTheme.pageVerticalPanel
+            color: applicationThemeViewModel.pageVerticalPanel
             width: 40
             Layout.fillHeight: true
             Column {
@@ -73,7 +73,7 @@ Page {
             Rectangle {
                 id: fieldsContainer
                 radius: 8
-                color: ApplicationTheme.panelBackground
+                color: applicationThemeViewModel.panelBackground
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.horizontalCenter: parent.horizontalCenter
                 width: 400

@@ -47,7 +47,7 @@ Item {
                 anchors.leftMargin: 8
                 width: isSelected ? 184 : 182
                 height: isSelected ? 274 : 272
-                border.color: isSelected ? ApplicationTheme.selectedItem : "#adadad"
+                border.color: isSelected ? applicationThemeViewModel.selectedItem : "#adadad"
                 border.width: isSelected ? 2 : 1
                 radius: 12
 

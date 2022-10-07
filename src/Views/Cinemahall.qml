@@ -9,7 +9,7 @@ Page {
     id: root
     anchors.fill: parent
     background: Rectangle {
-        color: ApplicationTheme.pageBackground
+        color: applicationThemeViewModel.pageBackground
     }
 
     signal navigateFrom()
@@ -21,7 +21,7 @@ Page {
         anchors.fill: parent
         spacing: 0
         Rectangle {
-            color: ApplicationTheme.pageVerticalPanel
+            color: applicationThemeViewModel.pageVerticalPanel
             width: 40
             Layout.fillHeight: true
             Column {
@@ -48,7 +48,7 @@ Page {
                 Layout.fillWidth: true
                 Layout.preferredHeight: 45
                 height: 45
-                color: ApplicationTheme.pageUpperPanel
+                color: applicationThemeViewModel.pageUpperPanel
 
                 Switch {
                     id: selectMode
@@ -169,7 +169,7 @@ Page {
                         width: 280
                         height: 280
                         radius: 10
-                        border.color: ApplicationTheme.selectedItem
+                        border.color: applicationThemeViewModel.selectedItem
                         border.width: isSelected ? 3 : 0
                         color: releasesViewModel.cinemahall.dragRelease !== releasesViewModel.cinemahall.dropRelease && releasesViewModel.cinemahall.dropRelease === id ? "#82000000" : "transparent"
                         Drag.active: itemMouseArea.drag.active
@@ -230,7 +230,7 @@ Page {
                                     height: 30
                                     iconWidth: 20
                                     iconHeight: 20
-                                    hoverColor: ApplicationTheme.filterIconButtonHoverColor
+                                    hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
                                     overlayVisible: false
                                     iconPath: assetsLocation.iconsPath + "contextmenu.svg"
                                     onButtonPressed: {
@@ -342,7 +342,7 @@ Page {
 
         Rectangle {
             id: backgroundRectangle
-            color: ApplicationTheme.roundedButtonBackground
+            color: applicationThemeViewModel.roundedButtonBackground
             anchors.fill: parent
             radius: 10
         }
@@ -352,7 +352,7 @@ Page {
             verticalAlignment: Qt.AlignVCenter
             horizontalAlignment: Qt.AlignHCenter
             fontPointSize: 12
-            color: ApplicationTheme.roundedButtonForeground
+            color: applicationThemeViewModel.roundedButtonForeground
             text: "Смотреть кинозал"
         }
 
@@ -385,10 +385,10 @@ Page {
                 watchCinemahall();
             }
             onEntered: {
-                backgroundRectangle.color = ApplicationTheme.roundedButtonHovered;
+                backgroundRectangle.color = applicationThemeViewModel.roundedButtonHovered;
             }
             onExited: {
-                backgroundRectangle.color = ApplicationTheme.roundedButtonBackground;
+                backgroundRectangle.color = applicationThemeViewModel.roundedButtonBackground;
             }
         }
     }
