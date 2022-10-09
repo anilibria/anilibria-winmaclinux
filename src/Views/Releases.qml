@@ -912,7 +912,7 @@ Page {
                                 model: applicationThemeViewModel.themes
 
                                 onActivated: {
-                                    applicationThemeViewModel.selectedTheme = currentValue
+                                    applicationThemeViewModel.selectedTheme = applicationThemeViewModel.themes[currentIndex]
                                 }
                                 Component.onCompleted: {
                                     currentIndex = applicationThemeViewModel.themes.indexOf(applicationThemeViewModel.selectedTheme);
