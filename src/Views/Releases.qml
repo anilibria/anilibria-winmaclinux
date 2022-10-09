@@ -24,7 +24,6 @@ import QtQuick.Dialogs 1.2
 import QtGraphicalEffects 1.0
 import Anilibria.ListModels 1.0
 import "../Controls"
-import "../Theme"
 
 Page {
     id: page

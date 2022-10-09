@@ -17,7 +17,6 @@
 */
 
 import QtQuick 2.12
-import "../Theme"
 
 Rectangle {
     id: _container

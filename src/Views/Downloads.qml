@@ -2,14 +2,13 @@ import QtQuick 2.12
 import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.3
 import QtGraphicalEffects 1.0
-import "../Theme"
 import "../Controls"
 
 Page {
     id: root
     anchors.fill: parent
     background: Rectangle {
-        color: ApplicationTheme.pageBackground
+        color: applicationThemeViewModel.pageBackground
     }
 
     signal navigateFrom()
@@ -28,7 +27,7 @@ Page {
         anchors.fill: parent
         spacing: 0
         Rectangle {
-            color: ApplicationTheme.pageVerticalPanel
+            color: applicationThemeViewModel.pageVerticalPanel
             width: 40
             Layout.fillHeight: true
             Column {
@@ -56,7 +55,7 @@ Page {
                 Layout.fillWidth: true
                 Layout.preferredHeight: 45
                 height: 45
-                color: ApplicationTheme.pageUpperPanel
+                color: applicationThemeViewModel.pageUpperPanel
             }
 
             Item {

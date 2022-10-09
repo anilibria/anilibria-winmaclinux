@@ -22,7 +22,6 @@ import QtQuick.Layouts 1.3
 import QtMultimedia 5.12
 import QtGraphicalEffects 1.0
 import "../Controls"
-import "../Theme"
 import "Videoplayer"
 
 Page {

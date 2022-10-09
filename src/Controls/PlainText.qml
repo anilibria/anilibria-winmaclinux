@@ -17,7 +17,6 @@
 */
 
 import QtQuick 2.12
-import "../Theme"
 
 Text {
     property real fontPointSize: 0

@@ -20,7 +20,6 @@ import QtQuick 2.12
 import QtQuick.Layouts 1.3
 import QtGraphicalEffects 1.0
 import "../Controls"
-import "../Theme"
 
 Item {
     anchors.fill: parent

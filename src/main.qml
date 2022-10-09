@@ -28,7 +28,6 @@ import Anilibria.ListModels 1.0
 import Anilibria.ViewModels 1.0
 import "Views"
 import "Controls"
-import "Theme"
 
 ApplicationWindow {
     id: window

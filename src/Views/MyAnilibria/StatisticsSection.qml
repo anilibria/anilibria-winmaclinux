@@ -1,6 +1,5 @@
 import QtQuick 2.12
 import "../../Controls"
-import "../../Theme"
 
 Item {
     width: scrollview.width
