@@ -133,6 +133,7 @@ Page {
                         }
 
                         LinkedText {
+                            visible: authorizationViewModel.errorMessage.length === 0
                             anchors.top: saveButton.top
                             anchors.topMargin: 10
                             anchors.right: saveButton.left
@@ -140,9 +141,7 @@ Page {
                             fontPointSize: 10
                             text: authorizationViewModel.registerLink
                         }
-
                     }
-
                 }
             }
         }
