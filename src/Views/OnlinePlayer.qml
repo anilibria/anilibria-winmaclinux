@@ -1299,7 +1299,8 @@ Page {
         id: skipOpening
         visible: onlinePlayerViewModel.displaySkipOpening
         anchors.bottom: controlPanel.top
-        anchors.horizontalCenter: controlPanel.horizontalCenter
+        anchors.right: controlPanel.right
+        anchors.rightMargin: onlinePlayerViewModel.showNextPosterRelease ? 230 : 10
         anchors.bottomMargin: 4
         width: 200
         height: 40
