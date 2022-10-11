@@ -99,6 +99,37 @@ ApplicationThemeViewModel::ApplicationThemeViewModel(QObject *parent)
     m_cachePathName = getCachePath(m_cachePathName);
     createIfNotExistsFile(m_cachePathName, "{}");
     readCacheFile();
+
+    m_fields.append(plainTextColorField);
+    m_fields.append(headerTextColorField);
+    m_fields.append(linkTextColorField);
+    m_fields.append(pageVerticalPanelField);
+    m_fields.append(pageBackgroundField);
+    m_fields.append(pageUpperPanelField);
+    m_fields.append(panelBackgroundField);
+    m_fields.append(panelBackgroundShadowField);
+    m_fields.append(roundedButtonBackgroundField);
+    m_fields.append(roundedButtonBackgroundDisabledField);
+    m_fields.append(roundedButtonForegroundField);
+    m_fields.append(roundedButtonHoveredField);
+    m_fields.append(drawerGradiendStep0Field);
+    m_fields.append(drawerGradiendStep1Field);
+    m_fields.append(drawerGradiendStep2Field);
+    m_fields.append(drawerGradiendStep3Field);
+    m_fields.append(drawerGradiendStep4Field);
+    m_fields.append(filterIconButtonColorField);
+    m_fields.append(filterIconButtonGreenColorField);
+    m_fields.append(filterIconButtonHoverColorField);
+    m_fields.append(selectedItemField);
+    m_fields.append(selectedFavoriteField);
+    m_fields.append(playerControlBackgroundField);
+    m_fields.append(notificationCenterBackgroundField);
+    m_fields.append(notificationCenterPanelBackgroundField);
+    m_fields.append(notificationCenterItemBackgroundField);
+    m_fields.append(playlistSelectedBackgroundField);
+    m_fields.append(playlistBackgroundField);
+    m_fields.append(playlistSelectedTextField);
+    m_fields.append(playlistTextField);
 }
 
 void ApplicationThemeViewModel::setSelectedTheme(const QString &selectedTheme) noexcept
@@ -173,6 +204,61 @@ void ApplicationThemeViewModel::saveCurrentState()
     cacheFile.close();
 }
 
+void ApplicationThemeViewModel::reloadThemes()
+{
+    auto oldSelectedTheme = m_selectedTheme;
+    readCacheFile();
+    if (m_selectedTheme != oldSelectedTheme) {
+        if (m_themes.contains(oldSelectedTheme)) setSelectedTheme(oldSelectedTheme);
+    }
+}
+
+void ApplicationThemeViewModel::importTheme(const QString &content)
+{
+    auto jsonDocument = QJsonDocument::fromJson(content.toUtf8());
+    auto rootObject = jsonDocument.object();
+
+    if (!rootObject.contains("name")) {
+        emit errorImportTheme("Тема не импортирована, в ней отсутствует поле name");
+        return;
+    }
+    if (!rootObject.contains("base")) {
+        emit errorImportTheme("Тема не импортирована, в ней отсутствует поле base");
+        return;
+    }
+
+    auto themeName = rootObject.value("name").toString();
+    auto baseName = rootObject.value("base").toString();
+
+    if (baseName != m_lightTheme || baseName != m_darkTheme) {
+        emit errorImportTheme("Тема не импортирована, поле base содержит не корректное значение");
+        return;
+    }
+
+    auto importedTheme = new QMap<QString, QString>();
+    auto baseTheme = m_themes.value(baseName);
+
+    importedTheme->insert(basedOnThemeField, baseName);
+
+    foreach (auto field, m_fields) {
+        setThemeValue(importedTheme, rootObject, baseTheme, field);
+    }
+
+    m_themes.insert(themeName, importedTheme);
+}
+
+void ApplicationThemeViewModel::importThemeFromFile(const QString &content)
+{
+    QString path = content;
+    auto clearedPath = removeFileProtocol(path);
+    QFile file(clearedPath);
+    if (!file.open(QFile::ReadOnly | QFile::Text)) return;
+    auto fileContent = file.readAll();
+    file.close();
+
+    importTheme(fileContent);
+}
+
 void ApplicationThemeViewModel::readCacheFile()
 {
     QFile cacheFile(m_cachePathName);
@@ -204,37 +290,13 @@ void ApplicationThemeViewModel::readCacheFile()
         auto baseTheme = m_themes.value(baseName);
 
         auto savedTheme = new QMap<QString, QString>();
-        setThemeValue(savedTheme, themeItem, baseTheme, plainTextColorField);
-        setThemeValue(savedTheme, themeItem, baseTheme, headerTextColorField);
-        setThemeValue(savedTheme, themeItem, baseTheme, linkTextColorField);
-        setThemeValue(savedTheme, themeItem, baseTheme, pageVerticalPanelField);
-        setThemeValue(savedTheme, themeItem, baseTheme, pageBackgroundField);
-        setThemeValue(savedTheme, themeItem, baseTheme, pageUpperPanelField);
-        setThemeValue(savedTheme, themeItem, baseTheme, panelBackgroundField);
-        setThemeValue(savedTheme, themeItem, baseTheme, panelBackgroundShadowField);
-        setThemeValue(savedTheme, themeItem, baseTheme, roundedButtonBackgroundField);
-        setThemeValue(savedTheme, themeItem, baseTheme, roundedButtonBackgroundDisabledField);
-        setThemeValue(savedTheme, themeItem, baseTheme, roundedButtonForegroundField);
-        setThemeValue(savedTheme, themeItem, baseTheme, roundedButtonHoveredField);
-        setThemeValue(savedTheme, themeItem, baseTheme, drawerGradiendStep0Field);
-        setThemeValue(savedTheme, themeItem, baseTheme, drawerGradiendStep1Field);
-        setThemeValue(savedTheme, themeItem, baseTheme, drawerGradiendStep2Field);
-        setThemeValue(savedTheme, themeItem, baseTheme, drawerGradiendStep3Field);
-        setThemeValue(savedTheme, themeItem, baseTheme, drawerGradiendStep4Field);
-        setThemeValue(savedTheme, themeItem, baseTheme, filterIconButtonColorField);
-        setThemeValue(savedTheme, themeItem, baseTheme, filterIconButtonGreenColorField);
-        setThemeValue(savedTheme, themeItem, baseTheme, filterIconButtonHoverColorField);
-        setThemeValue(savedTheme, themeItem, baseTheme, selectedItemField);
-        setThemeValue(savedTheme, themeItem, baseTheme, selectedFavoriteField);
-        setThemeValue(savedTheme, themeItem, baseTheme, playerControlBackgroundField);
-        setThemeValue(savedTheme, themeItem, baseTheme, notificationCenterBackgroundField);
-        setThemeValue(savedTheme, themeItem, baseTheme, notificationCenterPanelBackgroundField);
-        setThemeValue(savedTheme, themeItem, baseTheme, notificationCenterItemBackgroundField);
-        setThemeValue(savedTheme, themeItem, baseTheme, playlistSelectedBackgroundField);
-        setThemeValue(savedTheme, themeItem, baseTheme, playlistBackgroundField);
-        setThemeValue(savedTheme, themeItem, baseTheme, playlistSelectedTextField);
-        setThemeValue(savedTheme, themeItem, baseTheme, playlistTextField);
+
         savedTheme->insert(basedOnThemeField, baseName);
+
+        foreach (auto field, m_fields) {
+            setThemeValue(savedTheme, themeItem, baseTheme, field);
+        }
+
         m_themes.insert(themeName, savedTheme);
     }
 

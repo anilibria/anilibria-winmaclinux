@@ -22,3 +22,8 @@ void createIfNotExistsFile(const QString& path, const QString& defaultContent) n
     file.write(defaultContent.toUtf8());
     file.close();
 }
+
+QString removeFileProtocol(QString &path) noexcept
+{
+    return path.replace("file:///", "").replace("file://", "");
+}

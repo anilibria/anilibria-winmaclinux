@@ -66,6 +66,7 @@ private:
     QString m_darkTheme { "Темная" };
     QString m_selectedTheme { m_lightTheme };
     QMap<QString, QMap<QString, QString>*> m_themes { QMap<QString, QMap<QString, QString>*>() };
+    QList<QString> m_fields { QList<QString>() };
     bool m_basedOnDark { false };
 
 public:
@@ -108,6 +109,9 @@ public:
     bool basedOnDark() const noexcept { return m_basedOnDark; }
 
     Q_INVOKABLE void saveCurrentState();
+    Q_INVOKABLE void reloadThemes();
+    Q_INVOKABLE void importTheme(const QString& content);
+    Q_INVOKABLE void importThemeFromFile(const QString& content);
 
 private:
     void readCacheFile();
@@ -147,6 +151,7 @@ signals:
     void playlistTextChanged();
     void themesChanged();
     void basedOnDarkChanged();
+    void errorImportTheme(const QString& message);
 
 };
 

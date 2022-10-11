@@ -4,3 +4,5 @@
 QString getCachePath(const QString& filename) noexcept;
 
 void createIfNotExistsFile(const QString& path, const QString& defaultContent) noexcept;
+
+QString removeFileProtocol(QString& path) noexcept;
