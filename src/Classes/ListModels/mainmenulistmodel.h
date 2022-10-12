@@ -33,6 +33,8 @@ public:
 
     QList<MainMenuItemModel*>* m_items { new QList<MainMenuItemModel*>() };
 
+    int m_authorizationOrder { 0 };
+
     int m_selectedItem { 0 };
 
     enum MainMenuRoles {

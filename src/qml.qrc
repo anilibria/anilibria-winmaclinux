@@ -164,5 +164,7 @@
         <file>Controls/InfoForNewcomers.qml</file>
         <file>Controls/DefaultPopup.qml</file>
         <file>Assets/Icons/mute.svg</file>
+        <file>Views/ThemeManager.qml</file>
+        <file>Assets/Icons/themes.svg</file>
     </qresource>
 </RCC>

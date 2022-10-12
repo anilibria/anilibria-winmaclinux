@@ -26,10 +26,12 @@ MainMenuListModel::MainMenuListModel(QObject *parent) : QAbstractListModel(paren
     m_items->append(new MainMenuItemModel(2, "Моя Анилибрия", "myanilibria", "house.svg"));
     m_items->append(new MainMenuItemModel(3, "Кинозал", "cinemahall", "cinemahallmenu.svg"));
     m_items->append(new MainMenuItemModel(4, "Связанные релизы", "releaseseries", "seriesmenu.svg"));
-    m_items->append(new MainMenuItemModel(5, "Менеджер загрузок", "download", "downloadcircle.svg"));
+    m_items->append(new MainMenuItemModel(5, "Менеджер тем", "thememanager", "themes.svg"));
     m_items->append(new MainMenuItemModel(6, "Youtube", "youtube", "youtube.svg"));
     m_items->append(new MainMenuItemModel(7, "Обслуживание", "maintenance", "maintenance.svg"));
     m_items->append(new MainMenuItemModel(8, "Поддержать проект", "", "donate.svg"));
+
+    m_authorizationOrder = m_items->count();
 }
 
 int MainMenuListModel::rowCount(const QModelIndex &parent) const
@@ -88,12 +90,14 @@ void MainMenuListModel::setAuthorizeItemVisible(bool visible)
 {
     beginResetModel();
 
+    auto authorizationOrder = m_authorizationOrder;
+
     if (visible) {
         auto iterator = std::find_if(
             m_items->begin(),
             m_items->end(),
-            [] (MainMenuItemModel* mainMenuItem) {
-                return mainMenuItem->index() == 9;
+            [authorizationOrder] (MainMenuItemModel* mainMenuItem) {
+                return mainMenuItem->index() == authorizationOrder;
             }
         );
 
@@ -101,7 +105,7 @@ void MainMenuListModel::setAuthorizeItemVisible(bool visible)
             m_items->removeOne(*iterator);
         }
     } else {
-        m_items->append(new MainMenuItemModel(9, "Войти", "authorization", "user.svg"));
+        m_items->append(new MainMenuItemModel(m_authorizationOrder, "Войти", "authorization", "user.svg"));
     }
 
     endResetModel();

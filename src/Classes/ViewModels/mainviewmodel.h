@@ -24,6 +24,7 @@ class MainViewModel : public QObject
     Q_PROPERTY(bool isReleasesSeriesPageVisible READ isReleasesSeriesPageVisible NOTIFY isReleasesSeriesPageVisibleChanged)
     Q_PROPERTY(bool isMyAnilibriaPageVisible READ isMyAnilibriaPageVisible NOTIFY isMyAnilibriaPageVisibleChanged)
     Q_PROPERTY(bool isAuthorizationPageVisible READ isAuthorizationPageVisible NOTIFY isAuthorizationPageVisibleChanged)
+    Q_PROPERTY(bool isThemeManagerVisible READ isThemeManagerVisible NOTIFY isThemeManagerVisibleChanged)
 
 private:
     MainMenuListModel* m_mainMenuListModel { new MainMenuListModel(this) };
@@ -59,6 +60,7 @@ public:
     bool isReleasesSeriesPageVisible() const noexcept { return m_currentPageId == "releaseseries"; }
     bool isMyAnilibriaPageVisible() const noexcept { return m_currentPageId == "myanilibria"; }
     bool isAuthorizationPageVisible() const noexcept { return m_currentPageId == "authorization"; }
+    bool isThemeManagerVisible() const noexcept { return m_currentPageId == "thememanager"; }
 
     Q_INVOKABLE void selectPage(const QString& pageId);
 
@@ -89,6 +91,7 @@ signals:
     void isAuthorizationPageVisibleChanged();
     void analyticsServiceChanged();
     void releasesPageToNavigated();
+    void isThemeManagerVisibleChanged();
 
 };
 

@@ -17,6 +17,7 @@ MainViewModel::MainViewModel(QObject *parent) : QObject(parent)
     m_displayNames->insert("download", "Менеджер загрузок");
     m_displayNames->insert("maintenance", "Обслуживание");
     m_displayNames->insert("releaseseries", "Связанные релизы");
+    m_displayNames->insert("thememanager", "Менеджер Тем");
     m_displayNames->insert("authorization", "Авторизация");
 
     m_currentPageDisplayName = m_displayNames->value(m_currentPageId);
@@ -98,6 +99,7 @@ void MainViewModel::refreshPageVisible() noexcept
     emit isReleasesSeriesPageVisibleChanged();
     emit isAuthorizationPageVisibleChanged();
     emit isMyAnilibriaPageVisibleChanged();
+    emit isThemeManagerVisibleChanged();
 }
 
 void MainViewModel::selectedItemInMainMenu(int index, QString pageName)
