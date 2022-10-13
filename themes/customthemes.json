@@ -1,14 +1,8 @@
 [
 	{
-		"name": "Светлая зеленая",
+		"name": "Тестовая тема",
 		"base": "Светлая",
-		"headerTextColor": "#00b300",
-		"linkTextColor": "#008000",
-		"pageVerticalPanel": "#004d00",
-		"pageUpperPanel": "#00cc44",
-		"roundedButtonBackground": "#00cc00",
-		"roundedButtonBackgroundDisabled": "#80ff80",
-		"selectedItem": "green",
-		"selectedFavorite": "green",
+		"author": "RaS",
+		"screenshoot": ""
 	}
 ]
