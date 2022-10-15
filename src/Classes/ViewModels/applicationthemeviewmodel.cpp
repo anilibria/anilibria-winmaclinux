@@ -130,6 +130,8 @@ ApplicationThemeViewModel::ApplicationThemeViewModel(QObject *parent)
     m_fields.append(playlistBackgroundField);
     m_fields.append(playlistSelectedTextField);
     m_fields.append(playlistTextField);
+
+    connect(m_service, &ThemeManagerService::loadingChanged, this, &ApplicationThemeViewModel::serviceLoadingChanged);
 }
 
 void ApplicationThemeViewModel::setSelectedTheme(const QString &selectedTheme) noexcept
@@ -306,4 +308,12 @@ void ApplicationThemeViewModel::readCacheFile()
 void ApplicationThemeViewModel::setThemeValue(QMap<QString, QString>* theme,const QJsonObject &themeItem, const QMap<QString, QString> *baseTheme, const QString& name)
 {
     theme->insert(name, themeItem.contains(name) ? themeItem.value(name).toString() : baseTheme->value(name));
+}
+
+void ApplicationThemeViewModel::serviceLoadingChanged()
+{
+    if (!m_service->loading()) {
+        //TODO: Fill list model
+        //m_service->
+    }
 }

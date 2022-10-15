@@ -14,7 +14,7 @@ Page {
     signal navigateTo()
 
     onNavigateTo: {
-
+        applicationThemeViewModel.service.loadThemes(applicationThemeViewModel.basedOnDark);
     }
 
     RowLayout {

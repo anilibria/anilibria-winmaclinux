@@ -22,6 +22,8 @@
 #include <QObject>
 #include <QMap>
 #include "../../globalconstants.h"
+#include "../Services/thememanagerservice.h"
+#include "../ListModels/externalthemeslistmodel.h"
 
 class ApplicationThemeViewModel : public QObject
 {
@@ -59,6 +61,8 @@ class ApplicationThemeViewModel : public QObject
     Q_PROPERTY(QString playlistText READ playlistText NOTIFY playlistTextChanged)
     Q_PROPERTY(QStringList themes READ themes NOTIFY themesChanged)
     Q_PROPERTY(bool basedOnDark READ basedOnDark NOTIFY basedOnDarkChanged)
+    Q_PROPERTY(ThemeManagerService* service READ service NOTIFY serviceChanged)
+    Q_PROPERTY(ExternalThemesListModel* externalThemes READ externalThemes NOTIFY externalThemesChanged)
 
 private:
     QString m_cachePathName { "applicationtheme.cache" };
@@ -68,6 +72,8 @@ private:
     QMap<QString, QMap<QString, QString>*> m_themes { QMap<QString, QMap<QString, QString>*>() };
     QList<QString> m_fields { QList<QString>() };
     bool m_basedOnDark { false };
+    ThemeManagerService* m_service { new ThemeManagerService(this) };
+    ExternalThemesListModel* m_externalThemes { new ExternalThemesListModel(this) };
 
 public:
     explicit ApplicationThemeViewModel(QObject *parent = nullptr);
@@ -108,6 +114,9 @@ public:
     QStringList themes() const noexcept { return m_themes.keys(); }
     bool basedOnDark() const noexcept { return m_basedOnDark; }
 
+    ThemeManagerService* service() const noexcept { return m_service; }
+    ExternalThemesListModel* externalThemes() const noexcept { return m_externalThemes; }
+
     Q_INVOKABLE void saveCurrentState();
     Q_INVOKABLE void reloadThemes();
     Q_INVOKABLE void importTheme(const QString& content);
@@ -116,6 +125,9 @@ public:
 private:
     void readCacheFile();
     void setThemeValue(QMap<QString, QString>* theme, const QJsonObject& themeItem, const QMap<QString, QString>* baseTheme, const QString& name);
+
+private slots:
+    void serviceLoadingChanged();
 
 signals:
     void selectedThemeChanged();
@@ -152,6 +164,8 @@ signals:
     void themesChanged();
     void basedOnDarkChanged();
     void errorImportTheme(const QString& message);
+    void serviceChanged();
+    void externalThemesChanged();
 
 };
 

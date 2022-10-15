@@ -68,6 +68,7 @@ SOURCES += \
     Classes/ListModels/cinemahalllistmodel.cpp \
     Classes/ListModels/commoncomboboxlistmodel.cpp \
     Classes/ListModels/commonmenulistmodel.cpp \
+    Classes/ListModels/externalthemeslistmodel.cpp \
     Classes/ListModels/mainmenulistmodel.cpp \
     Classes/ListModels/myanilibrialistmodel.cpp \
     Classes/ListModels/onlineplayervideolist.cpp \
@@ -92,6 +93,7 @@ SOURCES += \
     Classes/Models/releasetorrentmodel.cpp \
     Classes/Models/seenmarkmodel.cpp \
     Classes/Models/seenmodel.cpp \
+    Classes/Models/themeitemmodel.cpp \
     Classes/Models/usersettingsmodel.cpp \
     Classes/Models/youtubevideomodel.cpp \
     Classes/RemotePlayer/remoteplayer.cpp \
@@ -109,6 +111,7 @@ SOURCES += \
     Classes/Services/proxyconfigurator.cpp \
     Classes/Services/releaselinkedseries.cpp \
     Classes/Services/synchronizationservice.cpp \
+    Classes/Services/thememanagerservice.cpp \
     Classes/Services/versionchecker.cpp \
     Classes/ViewModels/applicationthemeviewmodel.cpp \
     Classes/ViewModels/authorizationviewmodel.cpp \
@@ -153,6 +156,7 @@ HEADERS += \
     Classes/ListModels/cinemahalllistmodel.h \
     Classes/ListModels/commoncomboboxlistmodel.h \
     Classes/ListModels/commonmenulistmodel.h \
+    Classes/ListModels/externalthemeslistmodel.h \
     Classes/ListModels/mainmenulistmodel.h \
     Classes/ListModels/myanilibrialistmodel.h \
     Classes/ListModels/onlineplayervideolist.h \
@@ -177,6 +181,7 @@ HEADERS += \
     Classes/Models/releasetorrentmodel.h \
     Classes/Models/seenmarkmodel.h \
     Classes/Models/seenmodel.h \
+    Classes/Models/themeitemmodel.h \
     Classes/Models/usersettingsmodel.h \
     Classes/Models/youtubevideomodel.h \
     Classes/RemotePlayer/remoteplayer.h \
@@ -194,6 +199,7 @@ HEADERS += \
     Classes/Services/proxyconfigurator.h \
     Classes/Services/releaselinkedseries.h \
     Classes/Services/synchronizationservice.h \
+    Classes/Services/thememanagerservice.h \
     Classes/Services/versionchecker.h \
     Classes/ListModels/alphabetlistmodel.h \
     Classes/ViewModels/applicationthemeviewmodel.h \
