@@ -323,10 +323,13 @@ Page {
 
     Rectangle {
         id: seriesPopup
-        anchors.top: parent.top
         width: 200
-        height: _page.height - controlPanel.height - 20
+        y: userConfigurationViewModel.fixedControlPanel ? fullHeight / 2 - (height / 2) : 0
+        height: itemsContent.height > panelHeight ? panelHeight : itemsContent.height
         color: "transparent"
+
+        property int fullHeight: _page.height - controlPanel.height
+        property int panelHeight: userConfigurationViewModel.fixedControlPanel ? fullHeight / 2 : fullHeight - 20
 
         Flickable {
             id: serieScrollContainer
@@ -1000,20 +1003,21 @@ Page {
 
                         DefaultPopup {
                             id: optionsPopup
-                            x: optionsButton.width - 300
-                            y: optionsButton.height - 580
-                            width: 300
-                            height: 580
+                            x: optionsButton.width - 610
+                            y: optionsButton.height - 510
+                            width: 600
+                            height: 500
 
                             modal: true
                             focus: true
                             closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
 
                             Column {
-                                width: parent.width
+                                id: leftColumn
+                                width: 300
                                 spacing: 10
                                 PlainText {
-                                    width: optionsPopup.width - 20
+                                    width: leftColumn.width - 20
                                     fontPointSize: 10
                                     text: "Время прыжка"
                                 }
@@ -1074,7 +1078,7 @@ Page {
                                 }
 
                                 PlainText {
-                                    width: optionsPopup.width - 20
+                                    width: leftColumn.width - 20
                                     fontPointSize: 10
                                     text: "Автопереход между сериями"
                                 }
@@ -1087,7 +1091,7 @@ Page {
                                 }
 
                                 PlainText {
-                                    width: optionsPopup.width - 20
+                                    width: leftColumn.width - 20
                                     fontPointSize: 10
                                     text: "Автопереход в режим поверх всех окон"
                                 }
@@ -1101,7 +1105,7 @@ Page {
                                 }
 
                                 PlainText {
-                                    width: optionsPopup.width - 20
+                                    width: leftColumn.width - 20
                                     fontPointSize: 10
                                     text: "Информация о релизе"
                                 }
@@ -1128,12 +1132,12 @@ Page {
                                 }
 
                                 PlainText {
-                                    width: optionsPopup.width - 20
+                                    width: leftColumn.width
                                     fontPointSize: 10
                                     text: "Прозрачность панели"
                                 }
                                 Slider {
-                                    width: optionsPopup.width - 20
+                                    width: leftColumn.width - 20
                                     height: 40
                                     id: opacitySlider
                                     from: 0
@@ -1150,8 +1154,16 @@ Page {
                                         controlPanel.color.a = value / 100;
                                     }
                                 }
+                            }
+
+                            Column {
+                                id: rightColumn
+                                anchors.left: leftColumn.right
+                                width: 300
+                                spacing: 10
+
                                 PlainText {
-                                    width: optionsPopup.width - 20
+                                    width: rightColumn.width - 20
                                     fontPointSize: 10
                                     text: "Автопропуск опенинга"
                                 }
@@ -1160,6 +1172,30 @@ Page {
                                     checked: userConfigurationViewModel.autoSkipOpening
                                     onCheckedChanged: {
                                         userConfigurationViewModel.autoSkipOpening = checked;
+                                    }
+                                }
+                                PlainText {
+                                    width: rightColumn.width - 20
+                                    fontPointSize: 10
+                                    text: "Выравнивание списка серий по центру"
+                                }
+                                Switch {
+                                    id: fixedControlPanelSwitch
+                                    checked: userConfigurationViewModel.fixedControlPanel
+                                    onCheckedChanged: {
+                                        userConfigurationViewModel.fixedControlPanel = checked;
+                                    }
+                                }
+                                PlainText {
+                                    width: rightColumn.width - 20
+                                    fontPointSize: 10
+                                    text: "Скрывать кнопку Пропуcтить опенинг"
+                                }
+                                Switch {
+                                    id: hideSkipOpeningSwitch
+                                    checked: userConfigurationViewModel.hideSkipOpening
+                                    onCheckedChanged: {
+                                        userConfigurationViewModel.hideSkipOpening = checked;
                                     }
                                 }
                             }
@@ -1297,7 +1333,7 @@ Page {
 
     Rectangle {
         id: skipOpening
-        visible: onlinePlayerViewModel.displaySkipOpening
+        visible: onlinePlayerViewModel.displaySkipOpening && !userConfigurationViewModel.hideSkipOpening
         anchors.bottom: controlPanel.top
         anchors.right: controlPanel.right
         anchors.rightMargin: onlinePlayerViewModel.showNextPosterRelease ? 230 : 10

@@ -140,6 +140,22 @@ void UserConfigurationViewModel::setAutoSkipOpening(bool autoSkipOpening) noexce
     emit autoSkipOpeningChanged();
 }
 
+void UserConfigurationViewModel::setHideSkipOpening(bool hideSkipOpening) noexcept
+{
+    if (m_hideSkipOpening == hideSkipOpening) return;
+
+    m_hideSkipOpening = hideSkipOpening;
+    emit hideSkipOpeningChanged();
+}
+
+void UserConfigurationViewModel::setFixedControlPanel(bool fixedControlPanel) noexcept
+{
+    if (m_fixedControlPanel == fixedControlPanel) return;
+
+    m_fixedControlPanel = fixedControlPanel;
+    emit fixedControlPanelChanged();
+}
+
 void UserConfigurationViewModel::refreshConfiguration() noexcept
 {
     readSettingsFromFile();
@@ -158,6 +174,8 @@ void UserConfigurationViewModel::refreshConfiguration() noexcept
     emit hideWillWatchChanged();
     emit showedVideoForNewcomersChanged();
     emit autoSkipOpeningChanged();
+    emit fixedControlPanelChanged();
+    emit hideSkipOpeningChanged();
 }
 
 void UserConfigurationViewModel::saveSettingsToFile()
@@ -177,6 +195,8 @@ void UserConfigurationViewModel::saveSettingsToFile()
     object[m_hideWillWatchField] = m_hideWillWatch;
     object[m_showedVideoForNewcomersField] = m_showedVideoForNewcomers;
     object[m_autoSkipOpeningField] = m_autoSkipOpening;
+    object[m_hideSkipOpeningField] = m_hideSkipOpening;
+    object[m_fixedControlPanelField] = m_fixedControlPanel;
 
     QFile file(getCachePath(m_cacheFileName));
     file.open(QFile::WriteOnly | QFile::Text);
@@ -207,4 +227,6 @@ void UserConfigurationViewModel::readSettingsFromFile()
     m_hideWillWatch = object.contains(m_hideWillWatchField) ? object[m_hideWillWatchField].toBool() : false;
     m_showedVideoForNewcomers = object.contains(m_showedVideoForNewcomersField) ? object[m_showedVideoForNewcomersField].toBool() : false;
     m_autoSkipOpening = object.contains(m_autoSkipOpeningField) ? object[m_autoSkipOpeningField].toBool() : false;
+    m_hideSkipOpening = object.contains(m_hideSkipOpeningField) ? object[m_hideSkipOpeningField].toBool() : false;
+    m_fixedControlPanel = object.contains(m_fixedControlPanelField) ? object[m_fixedControlPanelField].toBool() : false;
 }

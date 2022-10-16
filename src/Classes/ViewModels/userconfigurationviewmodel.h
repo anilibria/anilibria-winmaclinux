@@ -39,6 +39,8 @@ class UserConfigurationViewModel : public QObject
     Q_PROPERTY(bool hideWillWatch READ hideWillWatch WRITE setHideWillWatch NOTIFY hideWillWatchChanged)
     Q_PROPERTY(bool showedVideoForNewcomers READ showedVideoForNewcomers WRITE setShowedVideoForNewcomers NOTIFY showedVideoForNewcomersChanged)
     Q_PROPERTY(bool autoSkipOpening READ autoSkipOpening WRITE setAutoSkipOpening NOTIFY autoSkipOpeningChanged)
+    Q_PROPERTY(bool hideSkipOpening READ hideSkipOpening WRITE setHideSkipOpening NOTIFY hideSkipOpeningChanged)
+    Q_PROPERTY(bool fixedControlPanel READ fixedControlPanel WRITE setFixedControlPanel NOTIFY fixedControlPanelChanged)
 
 private:
     QString m_cacheFileName { "userconfiguration.cache" };
@@ -56,6 +58,8 @@ private:
     QString m_hideWillWatchField { "hideWillWatchField" };
     QString m_showedVideoForNewcomersField { "showedVideoForNewcomers" };
     QString m_autoSkipOpeningField { "autoSkipOpening" };
+    QString m_hideSkipOpeningField { "hideSkipOpening" };
+    QString m_fixedControlPanelField { "fixedControlPanel" };
     int m_opacityPlayerPanel { 50 };
     bool m_notCloseReleaseCardAfterWatch { false };
     bool m_usingScrollAcceleration { true };
@@ -70,6 +74,8 @@ private:
     bool m_hideWillWatch { false };
     bool m_showedVideoForNewcomers { false };
     bool m_autoSkipOpening { false };
+    bool m_hideSkipOpening { false };
+    bool m_fixedControlPanel { false };
 
 public:
     explicit UserConfigurationViewModel(QObject *parent = nullptr);
@@ -116,6 +122,12 @@ public:
     bool autoSkipOpening() const noexcept { return m_autoSkipOpening; }
     void setAutoSkipOpening(bool autoSkipOpening) noexcept;
 
+    bool hideSkipOpening() const noexcept { return m_hideSkipOpening; }
+    void setHideSkipOpening(bool hideSkipOpening) noexcept;
+
+    bool fixedControlPanel() const noexcept { return m_fixedControlPanel; }
+    void setFixedControlPanel(bool fixedControlPanel) noexcept;
+
     Q_INVOKABLE void refreshConfiguration() noexcept;
     Q_INVOKABLE void saveSettingsToFile();
 
@@ -137,6 +149,8 @@ signals:
     void hideWillWatchChanged();
     void showedVideoForNewcomersChanged();
     void autoSkipOpeningChanged();
+    void hideSkipOpeningChanged();
+    void fixedControlPanelChanged();
 
 };
 
