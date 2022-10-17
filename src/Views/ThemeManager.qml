@@ -136,6 +136,15 @@ Page {
                                 Item {
                                     Layout.preferredWidth: 300
                                     Layout.preferredHeight: 200
+
+                                    Image {
+                                        anchors.verticalCenter: parent.verticalCenter
+                                        width: 300
+                                        height: 190
+                                        fillMode: Image.PreserveAspectFit
+                                        mipmap: true
+                                        source: screenshoots
+                                    }
                                 }
                                 Item {
                                     Layout.fillWidth: true
