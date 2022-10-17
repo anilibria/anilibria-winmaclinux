@@ -8,7 +8,13 @@ ExternalThemesListModel::ExternalThemesListModel(QObject *parent)
 
 void ExternalThemesListModel::setItems(const QList<ThemeItemModel *> &items) noexcept
 {
+    beginResetModel();
+
     m_items = items;
+
+    endResetModel();
+
+    emit listIsEmptyChanged();
 }
 
 int ExternalThemesListModel::rowCount(const QModelIndex &parent) const

@@ -7,6 +7,7 @@
 class ExternalThemesListModel : public QAbstractListModel
 {
     Q_OBJECT
+    Q_PROPERTY(bool listIsEmpty READ listIsEmpty NOTIFY listIsEmptyChanged)
 
 private:
     enum ExternalThemesRoles {
@@ -26,7 +27,10 @@ public:
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
     QHash<int,QByteArray> roleNames() const override;
 
+    bool listIsEmpty() const noexcept { return m_items.isEmpty(); }
+
 signals:
+    void listIsEmptyChanged();
 
 };
 

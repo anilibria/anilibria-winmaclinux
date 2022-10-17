@@ -166,5 +166,8 @@
         <file>Assets/Icons/mute.svg</file>
         <file>Views/ThemeManager.qml</file>
         <file>Assets/Icons/themes.svg</file>
+        <file>Assets/Icons/downloadtheme.svg</file>
+        <file>Assets/Icons/updated.svg</file>
+        <file>Assets/Icons/delete.svg</file>
     </qresource>
 </RCC>

@@ -44,5 +44,8 @@ void ThemeManagerService::getThemes(QNetworkReply *reply)
     }
 
     m_loading = false;
+    m_firstLoaded = true;
     emit loadingChanged();
+    emit themesLoaded();
+    emit firstLoadedChanged();
 }

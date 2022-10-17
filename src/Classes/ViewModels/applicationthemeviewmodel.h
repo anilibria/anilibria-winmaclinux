@@ -63,6 +63,9 @@ class ApplicationThemeViewModel : public QObject
     Q_PROPERTY(bool basedOnDark READ basedOnDark NOTIFY basedOnDarkChanged)
     Q_PROPERTY(ThemeManagerService* service READ service NOTIFY serviceChanged)
     Q_PROPERTY(ExternalThemesListModel* externalThemes READ externalThemes NOTIFY externalThemesChanged)
+    Q_PROPERTY(QStringList menuItems READ menuItems NOTIFY menuItemsChanged)
+    Q_PROPERTY(int selectedMenuItem READ selectedMenuItem WRITE setSelectedMenuItem NOTIFY selectedMenuItemChanged)
+    Q_PROPERTY(QString selectedMenuItemName READ selectedMenuItemName NOTIFY selectedMenuItemNameChanged)
 
 private:
     QString m_cachePathName { "applicationtheme.cache" };
@@ -74,6 +77,8 @@ private:
     bool m_basedOnDark { false };
     ThemeManagerService* m_service { new ThemeManagerService(this) };
     ExternalThemesListModel* m_externalThemes { new ExternalThemesListModel(this) };
+    QStringList m_menuItems { QStringList() };
+    int m_selectedMenuItem { 0 };
 
 public:
     explicit ApplicationThemeViewModel(QObject *parent = nullptr);
@@ -117,6 +122,13 @@ public:
     ThemeManagerService* service() const noexcept { return m_service; }
     ExternalThemesListModel* externalThemes() const noexcept { return m_externalThemes; }
 
+    QStringList menuItems() const noexcept { return m_menuItems; }
+
+    int selectedMenuItem() const noexcept { return m_selectedMenuItem; }
+    void setSelectedMenuItem(int selectedMenuItem) noexcept;
+
+    QString selectedMenuItemName() const noexcept { return m_menuItems.value(m_selectedMenuItem); }
+
     Q_INVOKABLE void saveCurrentState();
     Q_INVOKABLE void reloadThemes();
     Q_INVOKABLE void importTheme(const QString& content);
@@ -127,7 +139,7 @@ private:
     void setThemeValue(QMap<QString, QString>* theme, const QJsonObject& themeItem, const QMap<QString, QString>* baseTheme, const QString& name);
 
 private slots:
-    void serviceLoadingChanged();
+    void themesLoaded();
 
 signals:
     void selectedThemeChanged();
@@ -166,6 +178,10 @@ signals:
     void errorImportTheme(const QString& message);
     void serviceChanged();
     void externalThemesChanged();
+    void menuItemsChanged();
+    void selectedMenuItemChanged();
+    void selectedMenuItemNameChanged();
+
 
 };
 

@@ -131,7 +131,11 @@ ApplicationThemeViewModel::ApplicationThemeViewModel(QObject *parent)
     m_fields.append(playlistSelectedTextField);
     m_fields.append(playlistTextField);
 
-    connect(m_service, &ThemeManagerService::loadingChanged, this, &ApplicationThemeViewModel::serviceLoadingChanged);
+    m_menuItems.append("Установленные локально");
+    m_menuItems.append("Доступные для скачивания");
+    m_menuItems.append("Редактор темы");
+
+    connect(m_service, &ThemeManagerService::themesLoaded, this, &ApplicationThemeViewModel::themesLoaded);
 }
 
 void ApplicationThemeViewModel::setSelectedTheme(const QString &selectedTheme) noexcept
@@ -175,6 +179,16 @@ void ApplicationThemeViewModel::setSelectedTheme(const QString &selectedTheme) n
     emit playlistBackgroundChanged();
     emit playlistSelectedTextChanged();
     emit playlistTextChanged();
+}
+
+void ApplicationThemeViewModel::setSelectedMenuItem(int selectedMenuItem) noexcept
+{
+    if (m_selectedMenuItem == selectedMenuItem) return;
+
+    m_selectedMenuItem = selectedMenuItem;
+
+    emit selectedMenuItemChanged();
+    emit selectedMenuItemNameChanged();
 }
 
 void ApplicationThemeViewModel::saveCurrentState()
@@ -310,10 +324,7 @@ void ApplicationThemeViewModel::setThemeValue(QMap<QString, QString>* theme,cons
     theme->insert(name, themeItem.contains(name) ? themeItem.value(name).toString() : baseTheme->value(name));
 }
 
-void ApplicationThemeViewModel::serviceLoadingChanged()
+void ApplicationThemeViewModel::themesLoaded()
 {
-    if (!m_service->loading()) {
-        //TODO: Fill list model
-        //m_service->
-    }
+    m_externalThemes->setItems(m_service->getItems());
 }
