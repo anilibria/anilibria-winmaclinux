@@ -67,3 +67,4 @@ QString playlistBackgroundField = "playlistBackground";
 QString playlistSelectedTextField = "playlistSelectedText";
 QString playlistTextField = "playlistText";
 QString basedOnThemeField = "basedOnTheme";
+QString externalIdField = "externalId";

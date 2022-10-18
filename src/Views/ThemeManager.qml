@@ -192,7 +192,7 @@ Page {
                                             overlayVisible: false
                                             tooltipMessage: "Установить тему"
                                             onButtonPressed: {
-
+                                                applicationThemeViewModel.importThemeFromExternal(themeIndex);
                                             }
                                         }
                                         /*FilterPanelIconButton {

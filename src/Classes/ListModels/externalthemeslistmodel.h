@@ -31,6 +31,8 @@ public:
 
     bool listIsEmpty() const noexcept { return m_items.isEmpty(); }
 
+    ThemeItemModel* getThemeByIndex(int index) const noexcept;
+
 signals:
     void listIsEmptyChanged();
 

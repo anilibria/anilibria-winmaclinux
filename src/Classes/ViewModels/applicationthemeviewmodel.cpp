@@ -60,6 +60,7 @@ ApplicationThemeViewModel::ApplicationThemeViewModel(QObject *parent)
     lightTheme->insert(playlistSelectedTextField, "white");
     lightTheme->insert(playlistTextField, "black");
     lightTheme->insert(basedOnThemeField, m_lightTheme);
+    lightTheme->insert(externalIdField, "");
     m_themes.insert(m_lightTheme, lightTheme);
 
     auto darkTheme = new QMap<QString, QString>();
@@ -94,11 +95,11 @@ ApplicationThemeViewModel::ApplicationThemeViewModel(QObject *parent)
     darkTheme->insert(playlistSelectedTextField, "black");
     darkTheme->insert(playlistTextField, "white");
     darkTheme->insert(basedOnThemeField, m_darkTheme);
+    darkTheme->insert(externalIdField, "");
     m_themes.insert(m_darkTheme, darkTheme);
 
     m_cachePathName = getCachePath(m_cachePathName);
     createIfNotExistsFile(m_cachePathName, "{}");
-    readCacheFile();
 
     m_fields.append(plainTextColorField);
     m_fields.append(headerTextColorField);
@@ -130,12 +131,16 @@ ApplicationThemeViewModel::ApplicationThemeViewModel(QObject *parent)
     m_fields.append(playlistBackgroundField);
     m_fields.append(playlistSelectedTextField);
     m_fields.append(playlistTextField);
+    m_fields.append(externalIdField);
+
+    readCacheFile();
 
     m_menuItems.append("Установленные локально");
     m_menuItems.append("Доступные для скачивания");
     m_menuItems.append("Редактор темы");
 
     connect(m_service, &ThemeManagerService::themesLoaded, this, &ApplicationThemeViewModel::themesLoaded);
+    connect(m_service, &ThemeManagerService::themeLoaded, this, &ApplicationThemeViewModel::themeLoaded);
 }
 
 void ApplicationThemeViewModel::setSelectedTheme(const QString &selectedTheme) noexcept
@@ -201,9 +206,17 @@ void ApplicationThemeViewModel::saveCurrentState()
 
         QJsonObject theme;
         theme["name"] = iterator.key();
+        auto baseThemeName = iterator.value()->value(basedOnThemeField);
+        theme[basedOnThemeField] = baseThemeName;
+        auto baseTheme = m_themes.value(baseThemeName);
         QMapIterator<QString, QString> fieldsIterator(*iterator.value());
         while (fieldsIterator.hasNext()) {
-            theme[fieldsIterator.key()] = fieldsIterator.value();
+            fieldsIterator.next();
+            auto key = fieldsIterator.key();
+            //if base theme already contains value don't need save field
+            if (baseTheme->value(key) == fieldsIterator.value()) continue;
+
+            theme[key] = fieldsIterator.value();
         }
         themes.append(theme);
     }
@@ -275,6 +288,12 @@ void ApplicationThemeViewModel::importThemeFromFile(const QString &content)
     importTheme(fileContent);
 }
 
+void ApplicationThemeViewModel::importThemeFromExternal(int themeIndex)
+{
+    auto theme =  m_externalThemes->getThemeByIndex(themeIndex);
+    m_service->downloadTheme(theme);
+}
+
 void ApplicationThemeViewModel::readCacheFile()
 {
     QFile cacheFile(m_cachePathName);
@@ -296,12 +315,12 @@ void ApplicationThemeViewModel::readCacheFile()
     foreach (auto theme, themes) {
         auto themeItem = theme.toObject();
         if (!themeItem.contains("name")) continue;
-        if (!themeItem.contains("base")) continue;
+        if (!themeItem.contains(basedOnThemeField)) continue;
 
         auto themeName = themeItem.value("name").toString();
-        auto baseName = themeItem.value("base").toString();
+        auto baseName = themeItem.value(basedOnThemeField).toString();
 
-        if (baseName != m_lightTheme || baseName != m_darkTheme) continue;
+        if (baseName != m_lightTheme && baseName != m_darkTheme) continue;
 
         auto baseTheme = m_themes.value(baseName);
 
@@ -327,4 +346,29 @@ void ApplicationThemeViewModel::setThemeValue(QMap<QString, QString>* theme,cons
 void ApplicationThemeViewModel::themesLoaded()
 {
     m_externalThemes->setItems(m_service->getItems());
+}
+
+void ApplicationThemeViewModel::themeLoaded(const QString &theme, bool isDark, const ThemeItemModel* externalTheme)
+{
+    auto themeName = externalTheme->name();
+    auto baseName = isDark ? m_darkTheme : m_lightTheme;
+
+    auto jsonDocument = QJsonDocument::fromJson(theme.toUtf8());
+    auto rootObject = jsonDocument.object();
+
+    auto importedTheme = new QMap<QString, QString>();
+    auto baseTheme = m_themes.value(baseName);
+
+    importedTheme->insert(basedOnThemeField, baseName);
+    importedTheme->insert(externalIdField, externalTheme->source());
+
+    foreach (auto field, m_fields) {
+        if (field == externalIdField) continue;
+
+        setThemeValue(importedTheme, rootObject, baseTheme, field);
+    }
+
+    m_themes.insert(themeName, importedTheme);
+
+    emit themesChanged();
 }

@@ -24,6 +24,7 @@
 #include "../../globalconstants.h"
 #include "../Services/thememanagerservice.h"
 #include "../ListModels/externalthemeslistmodel.h"
+#include "../Models/themeitemmodel.h"
 
 class ApplicationThemeViewModel : public QObject
 {
@@ -133,6 +134,7 @@ public:
     Q_INVOKABLE void reloadThemes();
     Q_INVOKABLE void importTheme(const QString& content);
     Q_INVOKABLE void importThemeFromFile(const QString& content);
+    Q_INVOKABLE void importThemeFromExternal(int themeIndex);
 
 private:
     void readCacheFile();
@@ -140,6 +142,7 @@ private:
 
 private slots:
     void themesLoaded();
+    void themeLoaded(const QString& theme, bool isDark, const ThemeItemModel* externalTheme);
 
 signals:
     void selectedThemeChanged();

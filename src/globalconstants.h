@@ -117,4 +117,6 @@ extern QString playlistTextField;
 
 extern QString basedOnThemeField;
 
+extern QString externalIdField;
+
 #endif // GLOBALCONSTANTS_H

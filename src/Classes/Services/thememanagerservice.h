@@ -18,6 +18,8 @@ private:
     bool m_loading { false };
     QList<ThemeItemModel*> m_themeItems { QList<ThemeItemModel*>() };
     bool m_firstLoaded { false };
+    bool m_darkLoaded { false };
+    ThemeItemModel* m_downloadedTheme { nullptr };
 
 public:
     explicit ThemeManagerService(QObject *parent = nullptr);
@@ -27,16 +29,18 @@ public:
     bool firstLoaded() const noexcept { return m_firstLoaded; }
 
     QList<ThemeItemModel*> getItems() noexcept;
+    void downloadTheme(ThemeItemModel* model) noexcept;
 
     Q_INVOKABLE void loadThemes(bool isDark);
 
 private slots:
-    void getThemes(QNetworkReply *reply);
+    void loadedResult(QNetworkReply *reply);
 
 signals:
     void loadingChanged();
     void themesLoaded();
     void firstLoadedChanged();
+    void themeLoaded(const QString& theme, bool isDark, const ThemeItemModel* externalTheme);
 
 };
 

@@ -62,7 +62,7 @@ QHash<int, QByteArray> ExternalThemesListModel::roleNames() const
     return {
         {
             IndexRole,
-            "pageIndex"
+            "themeIndex"
         },
         {
             TitleRole,
@@ -85,4 +85,11 @@ QHash<int, QByteArray> ExternalThemesListModel::roleNames() const
             "lastUpdated"
         }
     };
+}
+
+ThemeItemModel *ExternalThemesListModel::getThemeByIndex(int index) const noexcept
+{
+    if (index >= m_items.count()) return nullptr;
+
+    return m_items.value(index);
 }

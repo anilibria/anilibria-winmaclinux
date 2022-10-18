@@ -914,6 +914,9 @@ Page {
                                 onActivated: {
                                     applicationThemeViewModel.selectedTheme = applicationThemeViewModel.themes[currentIndex]
                                 }
+                                onModelChanged: {
+                                    currentIndex = applicationThemeViewModel.themes.indexOf(applicationThemeViewModel.selectedTheme);
+                                }
                                 Component.onCompleted: {
                                     currentIndex = applicationThemeViewModel.themes.indexOf(applicationThemeViewModel.selectedTheme);
                                 }
