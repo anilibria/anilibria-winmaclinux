@@ -160,10 +160,23 @@ Page {
                                             text: title
                                         }
 
+                                        Item {
+                                            width: 1
+                                            height: 4
+                                        }
+
                                         PlainText {
                                             id: authorTheme
                                             fontPointSize: 10
                                             text: "Автор: " + author
+                                        }
+                                        PlainText {
+                                            fontPointSize: 10
+                                            text: "Версия: " + version
+                                        }
+                                        PlainText {
+                                            fontPointSize: 10
+                                            text: "Дата обновления: " + lastUpdated
                                         }
                                     }
 

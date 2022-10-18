@@ -1,3 +1,4 @@
+#include <QDateTime>
 #include "externalthemeslistmodel.h"
 
 ExternalThemesListModel::ExternalThemesListModel(QObject *parent)
@@ -45,6 +46,12 @@ QVariant ExternalThemesListModel::data(const QModelIndex &index, int role) const
         case AuthorRole: {
             return QVariant(item->author());
         }
+        case VersionRole: {
+            return QVariant(item->version());
+        }
+        case LastUpdateRole: {
+            return QVariant(QDateTime::fromSecsSinceEpoch(item->lastUpdated()).toString("dd.MM.yyyy"));
+        }
     }
 
     return QVariant();
@@ -68,6 +75,14 @@ QHash<int, QByteArray> ExternalThemesListModel::roleNames() const
         {
             AuthorRole,
             "author"
+        },
+        {
+            VersionRole,
+            "version"
+        },
+        {
+            LastUpdateRole,
+            "lastUpdated"
         }
     };
 }

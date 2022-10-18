@@ -14,7 +14,9 @@ private:
         IndexRole = Qt::UserRole + 1,
         TitleRole,
         ScreenshootRole,
-        AuthorRole
+        AuthorRole,
+        VersionRole,
+        LastUpdateRole
     };
     QList<ThemeItemModel*> m_items { QList<ThemeItemModel*>() };
 
