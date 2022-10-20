@@ -170,10 +170,22 @@ Page {
                                             fontPointSize: 10
                                             text: "Автор: " + author
                                         }
+
+                                        Item {
+                                            width: 1
+                                            height: 2
+                                        }
+
                                         PlainText {
                                             fontPointSize: 10
                                             text: "Версия: " + version
                                         }
+
+                                        Item {
+                                            width: 1
+                                            height: 2
+                                        }
+
                                         PlainText {
                                             fontPointSize: 10
                                             text: "Дата обновления: " + lastUpdated
