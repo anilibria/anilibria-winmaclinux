@@ -73,6 +73,7 @@ SOURCES += \
     Classes/ListModels/myanilibrialistmodel.cpp \
     Classes/ListModels/onlineplayervideolist.cpp \
     Classes/ListModels/popupnotificationvideolist.cpp \
+    Classes/ListModels/qthemefieldlistmodel.cpp \
     Classes/ListModels/releasecardmenulistmodel.cpp \
     Classes/ListModels/releaseonlineserieslistmodel.cpp \
     Classes/ListModels/releaseserieslistmodel.cpp \
@@ -161,6 +162,7 @@ HEADERS += \
     Classes/ListModels/myanilibrialistmodel.h \
     Classes/ListModels/onlineplayervideolist.h \
     Classes/ListModels/popupnotificationvideolist.h \
+    Classes/ListModels/qthemefieldlistmodel.h \
     Classes/ListModels/releasecardmenulistmodel.h \
     Classes/ListModels/releaseonlineserieslistmodel.h \
     Classes/ListModels/releaseserieslistmodel.h \
