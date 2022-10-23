@@ -25,6 +25,7 @@
 #include "../Services/thememanagerservice.h"
 #include "../ListModels/externalthemeslistmodel.h"
 #include "../Models/themeitemmodel.h"
+#include "../ListModels/themefieldlistmodel.h"
 
 class ApplicationThemeViewModel : public QObject
 {
@@ -67,6 +68,7 @@ class ApplicationThemeViewModel : public QObject
     Q_PROPERTY(QStringList menuItems READ menuItems NOTIFY menuItemsChanged)
     Q_PROPERTY(int selectedMenuItem READ selectedMenuItem WRITE setSelectedMenuItem NOTIFY selectedMenuItemChanged)
     Q_PROPERTY(QString selectedMenuItemName READ selectedMenuItemName NOTIFY selectedMenuItemNameChanged)
+    Q_PROPERTY(ThemeFieldListModel* fieldList READ fieldList NOTIFY fieldListChanged)
 
 private:
     QString m_cachePathName { "applicationtheme.cache" };
@@ -80,6 +82,7 @@ private:
     ExternalThemesListModel* m_externalThemes { new ExternalThemesListModel(this) };
     QStringList m_menuItems { QStringList() };
     int m_selectedMenuItem { 0 };
+    ThemeFieldListModel* m_fieldList { new ThemeFieldListModel(this) };
 
 public:
     explicit ApplicationThemeViewModel(QObject *parent = nullptr);
@@ -122,6 +125,8 @@ public:
 
     ThemeManagerService* service() const noexcept { return m_service; }
     ExternalThemesListModel* externalThemes() const noexcept { return m_externalThemes; }
+
+    ThemeFieldListModel* fieldList() const noexcept { return m_fieldList; }
 
     QStringList menuItems() const noexcept { return m_menuItems; }
 
@@ -184,6 +189,7 @@ signals:
     void menuItemsChanged();
     void selectedMenuItemChanged();
     void selectedMenuItemNameChanged();
+    void fieldListChanged();
 
 
 };

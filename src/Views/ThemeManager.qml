@@ -284,8 +284,49 @@ Page {
                     visible: applicationThemeViewModel.selectedMenuItem === 2
                     anchors.fill: parent
 
-                    Text {
-                        text: "Редактор тем"
+                    ColumnLayout {
+                        anchors.fill: parent
+                        spacing: 0
+
+                        Item {
+                            Layout.fillWidth: true
+                            Layout.preferredHeight: 45
+
+                            PlainText {
+                                anchors.left: parent.left
+                                anchors.leftMargin: 4
+                                anchors.verticalCenter: parent.verticalCenter
+                                fontPointSize: 11
+                                text: applicationThemeViewModel.fieldList.editMode
+                            }
+                        }
+                        Item {
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+
+                            ListView {
+                                id: fieldsListView
+                                anchors.fill: parent
+                                clip: true
+                                model: applicationThemeViewModel.fieldList
+                                delegate: Item {
+                                    width: fieldsListView.width
+                                    height: 30
+
+                                    Item {
+                                        anchors.centerIn: parent
+                                        width: 200
+                                        height: parent.height
+
+                                        PlainText {
+                                            fontPointSize: 9
+                                            text: title
+                                        }
+                                    }
+
+                                }
+                            }
+                        }
                     }
                 }
             }

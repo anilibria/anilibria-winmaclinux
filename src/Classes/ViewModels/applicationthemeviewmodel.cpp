@@ -139,6 +139,8 @@ ApplicationThemeViewModel::ApplicationThemeViewModel(QObject *parent)
     m_menuItems.append("Доступные для скачивания");
     m_menuItems.append("Редактор темы");
 
+    m_fieldList->fillFields(m_fields);
+
     connect(m_service, &ThemeManagerService::themesLoaded, this, &ApplicationThemeViewModel::themesLoaded);
     connect(m_service, &ThemeManagerService::themeLoaded, this, &ApplicationThemeViewModel::themeLoaded);
 }

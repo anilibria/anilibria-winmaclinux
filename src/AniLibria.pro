@@ -73,7 +73,6 @@ SOURCES += \
     Classes/ListModels/myanilibrialistmodel.cpp \
     Classes/ListModels/onlineplayervideolist.cpp \
     Classes/ListModels/popupnotificationvideolist.cpp \
-    Classes/ListModels/qthemefieldlistmodel.cpp \
     Classes/ListModels/releasecardmenulistmodel.cpp \
     Classes/ListModels/releaseonlineserieslistmodel.cpp \
     Classes/ListModels/releaseserieslistmodel.cpp \
@@ -81,6 +80,7 @@ SOURCES += \
     Classes/ListModels/releaseslistmodel.cpp \
     Classes/ListModels/releasetorrentcommonlist.cpp \
     Classes/ListModels/releasetorrentslist.cpp \
+    Classes/ListModels/themefieldlistmodel.cpp \
     Classes/Models/changesmodel.cpp \
     Classes/Models/downloaditemmodel.cpp \
     Classes/Models/externalplaylistvideo.cpp \
@@ -162,7 +162,6 @@ HEADERS += \
     Classes/ListModels/myanilibrialistmodel.h \
     Classes/ListModels/onlineplayervideolist.h \
     Classes/ListModels/popupnotificationvideolist.h \
-    Classes/ListModels/qthemefieldlistmodel.h \
     Classes/ListModels/releasecardmenulistmodel.h \
     Classes/ListModels/releaseonlineserieslistmodel.h \
     Classes/ListModels/releaseserieslistmodel.h \
@@ -170,6 +169,7 @@ HEADERS += \
     Classes/ListModels/releaseslistmodel.h \
     Classes/ListModels/releasetorrentcommonlist.h \
     Classes/ListModels/releasetorrentslist.h \
+    Classes/ListModels/themefieldlistmodel.h \
     Classes/Models/changesmodel.h \
     Classes/Models/downloaditemmodel.h \
     Classes/Models/externalplaylistvideo.h \
