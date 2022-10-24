@@ -1,6 +1,7 @@
 import QtQuick 2.12
 import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.3
+import QtQuick.Dialogs 1.3
 import "../Controls"
 
 Page {
@@ -309,27 +310,103 @@ Page {
                                 anchors.fill: parent
                                 clip: true
                                 model: applicationThemeViewModel.fieldList
+                                ScrollBar.vertical: ScrollBar {
+                                    active: true
+                                }
                                 delegate: Item {
                                     width: fieldsListView.width
-                                    height: 30
+                                    height: 90
 
                                     Item {
                                         anchors.centerIn: parent
-                                        width: 200
+                                        width: 500
                                         height: parent.height
 
                                         PlainText {
+                                            id: titleText
+                                            width: 240
+                                            height: parent.height
                                             fontPointSize: 9
+                                            maximumLineCount: 2
+                                            elide: Text.ElideRight
+                                            wrapMode: Text.WordWrap
+                                            horizontalAlignment: Text.AlignRight
+                                            verticalAlignment: Text.AlignVCenter
                                             text: title
                                         }
-                                    }
 
+                                        Item {
+                                            anchors.right: titleText.left
+
+                                            Popup {
+                                                id: informationPopup
+                                                x: -width
+                                                width: 280
+                                                height: 75
+                                                modal: false
+                                                closePolicy: Popup.NoAutoClose
+
+                                                PlainText {
+                                                    width: parent.width
+                                                    height: parent.height
+                                                    fontPointSize: 9
+                                                    maximumLineCount: 4
+                                                    wrapMode: Text.WordWrap
+                                                    elide: Text.ElideRight
+                                                    horizontalAlignment: Text.AlignJustify
+                                                    verticalAlignment: Text.AlignVCenter
+                                                    text: description
+                                                }
+                                            }
+                                        }
+
+                                        FilterPanelIconButton {
+                                            id: helpButton
+                                            width: 20
+                                            height: 20
+                                            iconWidth: 18
+                                            iconHeight: 18
+                                            anchors.left: titleText.right
+                                            anchors.leftMargin: 10
+                                            anchors.verticalCenter: parent.verticalCenter
+                                            iconPath: assetsLocation.iconsPath + "information.svg"
+                                            overlayVisible: false
+                                            tooltipMessage: "Нажмите чтобы получить больше информации о поле"
+                                            onButtonPressed: {
+                                                if (informationPopup.opened) {
+                                                    informationPopup.close();
+                                                } else {
+                                                    informationPopup.open();
+                                                }
+                                            }
+                                        }
+
+                                        TextField {
+                                            anchors.verticalCenter: parent.verticalCenter
+                                            anchors.left: helpButton.right
+                                            anchors.leftMargin: 10
+                                            selectByMouse: true
+                                            width: 210
+                                        }
+                                    }
                                 }
                             }
                         }
                     }
                 }
             }
+        }
+    }
+
+    ColorDialog {
+        id: colorDialog
+        title: "Выберите цвет из палитры"
+        showAlphaChannel: true
+        onAccepted: {
+            console.log("You chose: " + colorDialog.color)
+        }
+        onRejected: {
+            console.log("Canceled")
         }
     }
 }
