@@ -28,6 +28,7 @@ class ThemeFieldListModel : public QAbstractListModel
     Q_PROPERTY(QString themeName READ themeName WRITE setThemeName NOTIFY themeNameChanged)
     Q_PROPERTY(QString basedOnTheme READ basedOnTheme WRITE setBasedOnTheme NOTIFY basedOnThemeChanged)
     Q_PROPERTY(QString editMode READ editMode NOTIFY editModeChanged)
+    Q_PROPERTY(int selectedIndex READ selectedIndex WRITE setSelectedIndex NOTIFY selectedIndexChanged)
 
 private:
     enum ThemeFieldRoles {
@@ -47,6 +48,7 @@ private:
     bool m_isCopyTheme { false };
     QMap<QString, QString> m_values { QMap<QString, QString>() };
     QMap<QString, QString> m_descriptions { QMap<QString, QString>() };
+    int m_selectedIndex { -1 };
 
 public:
     explicit ThemeFieldListModel(QObject *parent = nullptr);
@@ -63,14 +65,22 @@ public:
     QString basedOnTheme() const noexcept { return m_basedOnTheme; }
     void setBasedOnTheme(const QString& basedOnTheme) noexcept;
 
+    int selectedIndex() const noexcept { return m_selectedIndex; }
+    void setSelectedIndex(int selectedIndex) noexcept;
+
     QString editMode() const noexcept;
 
     Q_INVOKABLE void createBlankTheme() noexcept;
+    Q_INVOKABLE void setValueToItem(QString value) noexcept;
+    Q_INVOKABLE void setValueToItemByIndex(int index, QString value) noexcept;
+    Q_INVOKABLE void undefineField(int itemIndex) noexcept;
+    Q_INVOKABLE void defineField(int itemIndex) noexcept;
 
 signals:
     void themeNameChanged();
     void basedOnThemeChanged();
     void editModeChanged();
+    void selectedIndexChanged();
 
 };
 

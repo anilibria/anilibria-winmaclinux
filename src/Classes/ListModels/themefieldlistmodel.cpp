@@ -174,6 +174,14 @@ void ThemeFieldListModel::setBasedOnTheme(const QString &basedOnTheme) noexcept
     emit basedOnThemeChanged();
 }
 
+void ThemeFieldListModel::setSelectedIndex(int selectedIndex) noexcept
+{
+    if (m_selectedIndex == selectedIndex) return;
+
+    m_selectedIndex = selectedIndex;
+    emit selectedIndexChanged();
+}
+
 QString ThemeFieldListModel::editMode() const noexcept
 {
      if (m_isBlankTheme) return "Новая тема";
@@ -193,4 +201,49 @@ void ThemeFieldListModel::createBlankTheme() noexcept
 
     setThemeName("");
     setBasedOnTheme("");
+}
+
+void ThemeFieldListModel::setValueToItem(QString value) noexcept
+{
+    if (m_selectedIndex < 0 && m_selectedIndex >= m_colorFields.count()) return;
+    auto field = m_colorFields.value(m_selectedIndex);
+
+    if (m_values.contains(field)) {
+        m_values[field] = value;
+    } else {
+        m_values.insert(field, value);
+    }
+
+    emit dataChanged(index(m_selectedIndex, 0), index(m_selectedIndex, 0));
+    setSelectedIndex(-1);
+}
+
+void ThemeFieldListModel::setValueToItemByIndex(int index, QString value) noexcept
+{
+    auto field = m_colorFields.value(index);
+
+    if (m_values.contains(field)) {
+        m_values[field] = value;
+    } else {
+        m_values.insert(field, value);
+    }
+}
+
+void ThemeFieldListModel::undefineField(int itemIndex) noexcept
+{
+    auto field = m_colorFields.value(itemIndex);
+
+    if (m_values.contains(field)) m_values.remove(field);
+
+    emit dataChanged(index(itemIndex, 0), index(itemIndex, 0));
+}
+
+void ThemeFieldListModel::defineField(int itemIndex) noexcept
+{
+    auto field = m_colorFields.value(itemIndex);
+
+    if (!m_values.contains(field)) m_values.insert(field, "");
+
+    emit dataChanged(index(itemIndex, 0), index(itemIndex, 0));
+
 }
