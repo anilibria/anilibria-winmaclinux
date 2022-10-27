@@ -71,7 +71,7 @@ $ sudo apt-get install -f
 [macOS](https://github.com/anilibria/anilibria-winmaclinux/blob/master/macosbuild.md)
 
 ### Для сборки необходимо:
-- Минимальная поддерживаемая версия Qt 5.12.3
+- Минимальная поддерживаемая версия Qt 5.13.1
 - Поддержка C++11 (минимальные версии компиляторов MSVC15, GCC 4.8 или CLANG 3.3)
 - Модули Qt - multimedia, graphicaleffects, svg, websocket
 - Для сборки проекта используется qmake
@@ -79,7 +79,7 @@ $ sudo apt-get install -f
 
 ### Linux
 
-OpenSSL для Qt 5.12.3-5.12.5 **1.0.2**, Qt 5.12.5+ **1.1.1**  
+OpenSSL 1.1.1 и старше  
 GStreamer 1.0
 
 ```bash
