@@ -52,6 +52,9 @@ ThemeFieldListModel::ThemeFieldListModel(QObject *parent)
     m_descriptions.insert(playlistBackgroundField, "Цвет фона панелей для элементов плейлиста 2: Цвет элемента плейлиста в состоянии Не Выделен");
     m_descriptions.insert(playlistSelectedTextField, "Цвет текста в плейлисте 1: Цвет текста в плейлисте в состоянии Выделен");
     m_descriptions.insert(playlistTextField, "Цвет текста в плейлисте 2: Цвет текста в плейлисте в состоянии Не Выделен");
+
+    m_saveMenuItems.append("Сохранить и добавить тему в список");
+    m_saveMenuItems.append("Сохранить в файл");
 }
 
 void ThemeFieldListModel::fillFields(const QList<QString> &colors)
@@ -164,6 +167,7 @@ void ThemeFieldListModel::setThemeName(const QString &themeName) noexcept
 
     m_themeName = themeName;
     emit themeNameChanged();
+    emit hasValuesChanged();
 }
 
 void ThemeFieldListModel::setBasedOnTheme(const QString &basedOnTheme) noexcept
@@ -172,6 +176,7 @@ void ThemeFieldListModel::setBasedOnTheme(const QString &basedOnTheme) noexcept
 
     m_basedOnTheme = basedOnTheme;
     emit basedOnThemeChanged();
+    emit hasValuesChanged();
 }
 
 void ThemeFieldListModel::setSelectedIndex(int selectedIndex) noexcept
@@ -201,6 +206,7 @@ void ThemeFieldListModel::createBlankTheme() noexcept
 
     setThemeName("");
     setBasedOnTheme("");
+    emit hasValuesChanged();
 }
 
 void ThemeFieldListModel::setValueToItem(QString value) noexcept
@@ -216,6 +222,7 @@ void ThemeFieldListModel::setValueToItem(QString value) noexcept
 
     emit dataChanged(index(m_selectedIndex, 0), index(m_selectedIndex, 0));
     setSelectedIndex(-1);
+    emit hasValuesChanged();
 }
 
 void ThemeFieldListModel::setValueToItemByIndex(int index, QString value) noexcept
@@ -227,6 +234,8 @@ void ThemeFieldListModel::setValueToItemByIndex(int index, QString value) noexce
     } else {
         m_values.insert(field, value);
     }
+
+    emit hasValuesChanged();
 }
 
 void ThemeFieldListModel::undefineField(int itemIndex) noexcept
@@ -236,6 +245,7 @@ void ThemeFieldListModel::undefineField(int itemIndex) noexcept
     if (m_values.contains(field)) m_values.remove(field);
 
     emit dataChanged(index(itemIndex, 0), index(itemIndex, 0));
+    emit hasValuesChanged();
 }
 
 void ThemeFieldListModel::defineField(int itemIndex) noexcept
@@ -245,5 +255,10 @@ void ThemeFieldListModel::defineField(int itemIndex) noexcept
     if (!m_values.contains(field)) m_values.insert(field, "");
 
     emit dataChanged(index(itemIndex, 0), index(itemIndex, 0));
+    emit hasValuesChanged();
+}
+
+void ThemeFieldListModel::saveThemeToFile(const QString &path) noexcept
+{
 
 }

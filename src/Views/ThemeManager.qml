@@ -307,7 +307,6 @@ Page {
                                 anchors.right: parent.right
                                 anchors.verticalCenter: parent.verticalCenter
                                 width: 200
-                                buttonEnabled: releasesViewModel.cinemahall.hasItems
                                 textSize: 10
                                 text: "Создать пустую тему"
                                 onClicked: {
@@ -315,14 +314,66 @@ Page {
                                 }
                             }
                             RoundedActionButton {
+                                id: copyThemeButton
                                 anchors.right: createEmptyButton.left
                                 anchors.verticalCenter: parent.verticalCenter
                                 width: 200
-                                buttonEnabled: releasesViewModel.cinemahall.hasItems
                                 textSize: 10
                                 text: "Копировать из темы"
                                 onClicked: {
 
+                                }
+                            }
+                            RoundedActionButton {
+                                id: saveButton
+                                anchors.right: copyThemeButton.left
+                                anchors.verticalCenter: parent.verticalCenter
+                                width: 200
+                                buttonEnabled: applicationThemeViewModel.fieldList.hasValues
+                                textSize: 10
+                                text: "Сохранить"
+                                onClicked: {
+
+                                }
+
+                                CommonMenu {
+                                    id: saveMenu
+                                    width: 320
+
+                                    Repeater {
+                                        model: applicationThemeViewModel.fieldList.saveMenuItems
+                                        delegate: CommonMenuItem {
+                                            text: modelData
+                                            onPressed: {
+                                                switch (currentIndex) {
+                                                    case 0:
+                                                        applicationThemeViewModel.fieldList.saveThemeAndApply();
+                                                        break;
+                                                    case 1:
+                                                        //TODO: save to file
+                                                        break;
+                                                }
+
+                                                saveMenu.close();
+                                            }
+                                        }
+                                    }
+
+                                    onClosed: {
+                                        torrentMenuLoader.sourceComponent = null;
+                                    }
+                                }
+                            }
+                            RoundedActionButton {
+                                id: previewButton
+                                anchors.right: saveButton.left
+                                anchors.verticalCenter: parent.verticalCenter
+                                width: 200
+                                buttonEnabled: applicationThemeViewModel.fieldList.hasValues
+                                textSize: 10
+                                text: "Предпросмотр темы"
+                                onClicked: {
+                                    themeManagerPreview.open();
                                 }
                             }
                         }
@@ -330,9 +381,109 @@ Page {
                             Layout.fillWidth: true
                             Layout.fillHeight: true
 
+                            Item {
+                                id: headerFields
+                                anchors.top: parent.top
+                                anchors.left: parent.left
+                                width: parent.width
+                                height: 120
+
+                                Rectangle {
+                                    anchors.fill: parent
+                                    anchors.leftMargin: 2
+                                    anchors.rightMargin: 2
+                                    anchors.topMargin: 2
+                                    anchors.bottomMargin: 2
+                                    radius: 10
+                                    color: applicationThemeViewModel.panelBackground
+                                    layer.enabled: true
+                                    layer.effect: DropShadow {
+                                        transparentBorder: true
+                                        horizontalOffset: 2
+                                        verticalOffset: 2
+                                        radius: 1
+                                        samples: 3
+                                        color: applicationThemeViewModel.panelBackgroundShadow
+                                    }
+                                }
+
+                                Item {
+                                    anchors.centerIn: parent
+                                    width: 800
+                                    height: parent.height
+
+                                    AccentText {
+                                        id: themeNameText
+                                        width: 380
+                                        anchors.top: parent.top
+                                        anchors.topMargin: 25
+                                        fontPointSize: 10
+                                        maximumLineCount: 2
+                                        elide: Text.ElideRight
+                                        wrapMode: Text.WordWrap
+                                        horizontalAlignment: Text.AlignRight
+                                        verticalAlignment: Text.AlignVCenter
+                                        text: "Имя темы"
+                                    }
+
+                                    TextField {
+                                        id: themeNameTextField
+                                        anchors.top: parent.top
+                                        anchors.topMargin: 10
+                                        anchors.left: themeNameText.right
+                                        anchors.leftMargin: 10
+                                        width: 210
+                                        selectByMouse: true
+                                        text: applicationThemeViewModel.fieldList.themeName
+                                        onTextChanged: {
+                                            applicationThemeViewModel.fieldList.themeName = text;
+                                        }
+                                    }
+
+                                    AccentText {
+                                        id: basedOnThemeText
+                                        anchors.top: themeNameText.bottom
+                                        anchors.topMargin: 35
+                                        anchors.right: themeNameText.right
+                                        fontPointSize: 10
+                                        width: 380
+                                        horizontalAlignment: Text.AlignRight
+                                        verticalAlignment: Text.AlignVCenter
+                                        text: "Базовая тема"
+                                    }
+
+                                    CommonComboBox {
+                                        id: basedOnThemeComboBox
+                                        anchors.left: basedOnThemeText.right
+                                        anchors.top: themeNameText.bottom
+                                        anchors.topMargin: 20
+                                        anchors.leftMargin: 10
+                                        width: 180
+                                        model: ListModel {
+                                            ListElement {
+                                                text: ""
+                                            }
+                                            ListElement {
+                                                text: "Светлая"
+                                            }
+                                            ListElement {
+                                                text: "Темная"
+                                            }
+                                        }
+
+                                        onActivated: {
+                                            applicationThemeViewModel.fieldList.basedOnTheme = currentText;
+                                        }
+                                    }
+                                }
+                            }
+
                             ListView {
                                 id: fieldsListView
-                                anchors.fill: parent
+                                anchors.top: headerFields.bottom
+                                anchors.bottom: parent.bottom
+                                anchors.left: parent.left
+                                anchors.right: parent.right
                                 clip: true
                                 model: applicationThemeViewModel.fieldList
                                 ScrollBar.vertical: ScrollBar {
@@ -483,6 +634,27 @@ Page {
         }
         onRejected: {
             applicationThemeViewModel.fieldList.selectedIndex = -1;
+        }
+    }
+
+    ThemeManagerPreview {
+        id: themeManagerPreview
+    }
+
+    Connections {
+        target: applicationThemeViewModel.fieldList
+        function onBasedOnThemeChanged() {
+            switch (applicationThemeViewModel.fieldList.basedOnTheme) {
+                case "":
+                    basedOnThemeComboBox.currentIndex = 0;
+                    break;
+                case "Светлая":
+                    basedOnThemeComboBox.currentIndex = 1;
+                    break;
+                case "Темная":
+                    basedOnThemeComboBox.currentIndex = 2;
+                    break;
+            }
         }
     }
 }

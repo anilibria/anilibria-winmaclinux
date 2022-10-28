@@ -296,6 +296,28 @@ void ApplicationThemeViewModel::importThemeFromExternal(int themeIndex)
     m_service->downloadTheme(theme);
 }
 
+void ApplicationThemeViewModel::saveThemeAndApply() noexcept
+{
+    auto values = m_fieldList->getValues();
+    auto basedOnTheme = m_fieldList->basedOnTheme();
+    auto name =  m_fieldList->themeName();
+
+    auto newTheme = new QMap<QString, QString>();
+    newTheme->insert(basedOnThemeField, basedOnTheme);
+    newTheme->insert(externalIdField, "");
+
+    auto baseTheme = m_themes.value(basedOnTheme);
+
+    foreach (auto field, m_fields) {
+        newTheme->insert(field, values.contains(field) ? values.value(name) : baseTheme->value(name));
+    }
+
+    m_themes.insert(name, newTheme);
+
+    emit themesChanged();
+
+}
+
 void ApplicationThemeViewModel::readCacheFile()
 {
     QFile cacheFile(m_cachePathName);

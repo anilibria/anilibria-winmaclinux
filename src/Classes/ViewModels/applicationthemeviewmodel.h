@@ -140,6 +140,7 @@ public:
     Q_INVOKABLE void importTheme(const QString& content);
     Q_INVOKABLE void importThemeFromFile(const QString& content);
     Q_INVOKABLE void importThemeFromExternal(int themeIndex);
+    Q_INVOKABLE void saveThemeAndApply() noexcept;
 
 private:
     void readCacheFile();
@@ -190,7 +191,7 @@ signals:
     void selectedMenuItemChanged();
     void selectedMenuItemNameChanged();
     void fieldListChanged();
-
+    void isHasValuesChanged();
 
 };
 

@@ -169,5 +169,6 @@
         <file>Assets/Icons/downloadtheme.svg</file>
         <file>Assets/Icons/updated.svg</file>
         <file>Assets/Icons/delete.svg</file>
+        <file>Views/ThemeManagerPreview.qml</file>
     </qresource>
 </RCC>

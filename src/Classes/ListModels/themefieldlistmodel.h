@@ -29,6 +29,8 @@ class ThemeFieldListModel : public QAbstractListModel
     Q_PROPERTY(QString basedOnTheme READ basedOnTheme WRITE setBasedOnTheme NOTIFY basedOnThemeChanged)
     Q_PROPERTY(QString editMode READ editMode NOTIFY editModeChanged)
     Q_PROPERTY(int selectedIndex READ selectedIndex WRITE setSelectedIndex NOTIFY selectedIndexChanged)
+    Q_PROPERTY(bool hasValues READ hasValues NOTIFY hasValuesChanged)
+    Q_PROPERTY(QStringList saveMenuItems READ saveMenuItems NOTIFY saveMenuItemsChanged)
 
 private:
     enum ThemeFieldRoles {
@@ -48,6 +50,7 @@ private:
     bool m_isCopyTheme { false };
     QMap<QString, QString> m_values { QMap<QString, QString>() };
     QMap<QString, QString> m_descriptions { QMap<QString, QString>() };
+    QStringList m_saveMenuItems { QStringList() };
     int m_selectedIndex { -1 };
 
 public:
@@ -70,17 +73,26 @@ public:
 
     QString editMode() const noexcept;
 
+    bool hasValues() const noexcept { return !m_values.isEmpty() && !m_themeName.isEmpty() && !m_basedOnTheme.isEmpty(); }
+
+    QMap<QString, QString> getValues() const noexcept { return m_values; }
+
+    QStringList saveMenuItems() const noexcept { return m_saveMenuItems; }
+
     Q_INVOKABLE void createBlankTheme() noexcept;
     Q_INVOKABLE void setValueToItem(QString value) noexcept;
     Q_INVOKABLE void setValueToItemByIndex(int index, QString value) noexcept;
     Q_INVOKABLE void undefineField(int itemIndex) noexcept;
     Q_INVOKABLE void defineField(int itemIndex) noexcept;
+    Q_INVOKABLE void saveThemeToFile(const QString& path) noexcept;
 
 signals:
     void themeNameChanged();
     void basedOnThemeChanged();
     void editModeChanged();
     void selectedIndexChanged();
+    void hasValuesChanged();
+    void saveMenuItemsChanged();
 
 };
 
