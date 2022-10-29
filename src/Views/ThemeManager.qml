@@ -373,7 +373,7 @@ Page {
                                 textSize: 10
                                 text: "Предпросмотр темы"
                                 onClicked: {
-                                    themeManagerPreview.open();
+                                    themeManagerPreview.show();
                                 }
                             }
                         }
