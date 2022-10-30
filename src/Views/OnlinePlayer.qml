@@ -1107,7 +1107,7 @@ Page {
                                 PlainText {
                                     width: leftColumn.width - 20
                                     fontPointSize: 10
-                                    text: "Информация о релизе"
+                                    text: "Показывать постер релиза"
                                 }
 
                                 Switch {
