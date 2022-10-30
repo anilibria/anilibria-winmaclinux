@@ -373,6 +373,7 @@ Page {
                                 textSize: 10
                                 text: "Предпросмотр темы"
                                 onClicked: {
+                                    applicationThemeViewModel.preparePreviewItems();
                                     themeManagerPreview.show();
                                 }
                             }
@@ -602,7 +603,7 @@ Page {
                                             height: 20
                                             iconWidth: 18
                                             iconHeight: 18
-                                            visible: fieldType === 'color'
+                                            visible: isDefined && fieldType === 'color'
                                             anchors.left: buttonsSeparator.right
                                             anchors.leftMargin: 10
                                             anchors.verticalCenter: parent.verticalCenter

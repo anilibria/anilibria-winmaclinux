@@ -69,6 +69,7 @@ class ApplicationThemeViewModel : public QObject
     Q_PROPERTY(int selectedMenuItem READ selectedMenuItem WRITE setSelectedMenuItem NOTIFY selectedMenuItemChanged)
     Q_PROPERTY(QString selectedMenuItemName READ selectedMenuItemName NOTIFY selectedMenuItemNameChanged)
     Q_PROPERTY(ThemeFieldListModel* fieldList READ fieldList NOTIFY fieldListChanged)
+    Q_PROPERTY(QVariantMap previewItems READ previewItems NOTIFY previewItemsChanged)
 
 private:
     QString m_cachePathName { "applicationtheme.cache" };
@@ -135,12 +136,15 @@ public:
 
     QString selectedMenuItemName() const noexcept { return m_menuItems.value(m_selectedMenuItem); }
 
+    QVariantMap previewItems() const noexcept;
+
     Q_INVOKABLE void saveCurrentState();
     Q_INVOKABLE void reloadThemes();
     Q_INVOKABLE void importTheme(const QString& content);
     Q_INVOKABLE void importThemeFromFile(const QString& content);
     Q_INVOKABLE void importThemeFromExternal(int themeIndex);
     Q_INVOKABLE void saveThemeAndApply() noexcept;
+    Q_INVOKABLE void preparePreviewItems() noexcept;
 
 private:
     void readCacheFile();
@@ -192,6 +196,7 @@ signals:
     void selectedMenuItemNameChanged();
     void fieldListChanged();
     void isHasValuesChanged();
+    void previewItemsChanged();
 
 };
 

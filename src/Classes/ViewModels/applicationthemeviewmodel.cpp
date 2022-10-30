@@ -198,6 +198,32 @@ void ApplicationThemeViewModel::setSelectedMenuItem(int selectedMenuItem) noexce
     emit selectedMenuItemNameChanged();
 }
 
+QVariantMap ApplicationThemeViewModel::previewItems() const noexcept
+{
+    QVariantMap map;
+
+    if (m_fieldList == nullptr) return map;
+
+    auto overridedValues = m_fieldList->getValues();
+
+    auto basedThemeName = m_fieldList->basedOnTheme();
+    auto basedTheme = m_themes.value(basedThemeName);
+
+    foreach (auto field, m_fields) {
+        if (overridedValues.contains(field)) {
+            map.insert(field, overridedValues.value(field));
+            continue;
+        }
+        if (basedTheme != nullptr) {
+            map.insert(field, basedTheme->value(field));
+            continue;
+        }
+        map.insert(field, "");
+    }
+
+    return map;
+}
+
 void ApplicationThemeViewModel::saveCurrentState()
 {
     QJsonArray themes;
@@ -316,6 +342,11 @@ void ApplicationThemeViewModel::saveThemeAndApply() noexcept
 
     emit themesChanged();
 
+}
+
+void ApplicationThemeViewModel::preparePreviewItems() noexcept
+{
+    emit previewItemsChanged();
 }
 
 void ApplicationThemeViewModel::readCacheFile()
