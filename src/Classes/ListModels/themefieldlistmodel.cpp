@@ -40,7 +40,7 @@ ThemeFieldListModel::ThemeFieldListModel(QObject *parent)
     m_descriptions.insert(drawerGradiendStep3Field, "Цвет фона главного меню 4:Четвертый цвет для определения градиента");
     m_descriptions.insert(drawerGradiendStep4Field, "Цвет фона главного меню 5:Пятый цвет для определения градиента");
     m_descriptions.insert(filterIconButtonColorField, "Цвет фона кнопки иконки 1:Заливка фона кнопки в состоянии Активно");
-    m_descriptions.insert(filterIconButtonGreenColorField, "Цвет фона кнопки иконки 2:Заливка фона кнопки в состоянии Активно");
+    m_descriptions.insert(filterIconButtonGreenColorField, "Цвет фона кнопки иконки 2:Заливка фона кнопки в состоянии Активировано");
     m_descriptions.insert(filterIconButtonHoverColorField, "Цвет фона кнопки иконки 3:Заливка фона кнопки в состоянии Мышка поверх элемента");
     m_descriptions.insert(selectedItemField, "Цвет выбранного элемента:Цвет рамки выбранных или акцентированных элементов");
     m_descriptions.insert(selectedFavoriteField, "Цвет выбранного элемента в избранном:Цвет рамки выбранных или акцентированных элементов в избранном");

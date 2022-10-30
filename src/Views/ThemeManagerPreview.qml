@@ -336,6 +336,121 @@ ApplicationWindow {
                             }
                         }
 
+                        Item {
+                            id: activePlaylistItem
+                            anchors.top: roundedButtonActive.bottom
+                            anchors.topMargin: 10
+                            anchors.left: parent.left
+                            anchors.leftMargin: 10
+                            height: 40
+
+                            Rectangle {
+                                height: parent.height
+                                width: 200
+                                color: applicationThemeViewModel.previewItems.playlistBackground
+
+                                Text {
+                                    color: applicationThemeViewModel.previewItems.playlistText
+                                    anchors.verticalCenter: parent.verticalCenter
+                                    anchors.left: parent.left
+                                    anchors.leftMargin: 10
+                                    text: "Активная серия"
+                                }
+
+                                Row {
+                                    width: 36
+                                    spacing: 0
+                                    anchors.right: parent.right
+                                    anchors.rightMargin: 18
+
+                                    Item {
+                                        id: seenButton
+                                        width: 36
+                                        height: 36
+
+                                        Rectangle {
+                                            anchors.fill: parent
+                                            color: "transparent"
+
+                                            Image {
+                                                id: activeIconImage
+                                                anchors.verticalCenter: parent.verticalCenter
+                                                anchors.horizontalCenter: parent.horizontalCenter
+                                                source: assetsLocation.iconsPath + "seenmarkselected.svg"
+                                                width: 22
+                                                height: 22
+                                                mipmap: true
+                                            }
+
+                                            ColorOverlay {
+                                                id: colorOverlay
+                                                anchors.fill: activeIconImage
+                                                source: activeIconImage
+                                                color: applicationThemeViewModel.previewItems.filterIconButtonGreenColor
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
+                        Item {
+                            anchors.top: activePlaylistItem.bottom
+                            anchors.left: parent.left
+                            anchors.leftMargin: 10
+                            height: 40
+
+                            Rectangle {
+                                height: parent.height
+                                width: 200
+                                color: applicationThemeViewModel.previewItems.playlistSelectedBackground
+
+                                Text {
+                                    color: applicationThemeViewModel.previewItems.playlistSelectedText
+                                    anchors.verticalCenter: parent.verticalCenter
+                                    anchors.left: parent.left
+                                    anchors.leftMargin: 10
+                                    text: "Текущая серия"
+                                }
+
+                                Row {
+                                    width: 36
+                                    spacing: 0
+                                    anchors.right: parent.right
+                                    anchors.rightMargin: 18
+
+                                    Item {
+                                        id: notSeenButton
+                                        width: 36
+                                        height: 36
+
+                                        Rectangle {
+                                            anchors.fill: parent
+                                            color: "transparent"
+
+                                            Image {
+                                                id: selectedIconImage
+                                                anchors.verticalCenter: parent.verticalCenter
+                                                anchors.horizontalCenter: parent.horizontalCenter
+                                                source: assetsLocation.iconsPath + "seenmark.svg"
+                                                width: 22
+                                                height: 22
+                                                mipmap: true
+                                            }
+
+                                            ColorOverlay {
+                                                id: selectedColorOverlay
+                                                anchors.fill: selectedIconImage
+                                                source: selectedIconImage
+                                                color: applicationThemeViewModel.previewItems.filterIconButtonColor
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
+                        //playerControlBackground
 
                     }
                 }
