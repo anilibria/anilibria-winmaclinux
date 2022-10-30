@@ -20,6 +20,41 @@ ApplicationWindow {
         color: applicationThemeViewModel.previewItems.pageBackground
     }
 
+    header: Rectangle {
+        id: toolBar
+        width: previewWindow.width
+        height: 35
+        color: applicationThemeViewModel.previewItems.notificationCenterBackground
+
+        Item {
+            id: titleArea
+            anchors.left: parent.left
+            anchors.right: parent.right
+            height: parent.height
+
+            Text {
+                id: taskbarTitle
+                anchors.centerIn: parent
+                font.pointSize: 12 + windowSettings.dpiSeparation
+                color: applicationThemeViewModel.previewItems.headerTextColor
+                text: "Текст заголовка"
+            }
+        }
+    }
+
+    footer: Rectangle {
+        width: previewWindow.width
+        height: 16
+        color: applicationThemeViewModel.previewItems.notificationCenterBackground
+
+        Text {
+            anchors.centerIn: parent
+            font.pointSize: 10 + windowSettings.dpiSeparation
+            color: applicationThemeViewModel.previewItems.plainTextColor
+            text: "Текст панели уведомлений"
+        }
+    }
+
     RowLayout {
         id: panelContainer
         anchors.fill: parent
@@ -29,16 +64,47 @@ ApplicationWindow {
             width: 40
             Layout.fillHeight: true
 
-            IconButton {
-                height: 45
+            Item {
+                id: iconButton
                 width: 40
-                overlayVisible: false
-                iconPath: assetsLocation.iconsPath + "coloreddrawer.svg"
-                iconWidth: 28
-                iconHeight: 28
-                onButtonPressed: {
-                    drawer.open();
+                height: 45
+                property bool hovered: false
+
+                MouseArea {
+                    id: mouseArea
+                    hoverEnabled: true
+                    anchors.fill: parent
+                    onEntered: {
+                        imageRectangle.color = applicationThemeViewModel.previewItems.filterIconButtonHoverColor;
+                        iconButton.hovered = true;
+                    }
+                    onExited: {
+                        imageRectangle.color = "transparent";
+                        iconButton.hovered = false;
+                    }
+                    onPressed: {
+                        drawer.open();
+                    }
                 }
+
+                Rectangle {
+                    id: imageRectangle
+                    anchors.fill: parent
+                    color: "transparent"
+
+                    Image {
+                        id: iconImage
+                        anchors.verticalCenter: parent.verticalCenter
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        source: assetsLocation.iconsPath + "coloreddrawer.svg"
+                        width: 28
+                        height: 28
+                        mipmap: true
+                    }
+                }
+                ToolTip.delay: 1000
+                ToolTip.visible: hovered
+                ToolTip.text: "Текст в тултипе"
             }
         }
 
@@ -182,6 +248,95 @@ ApplicationWindow {
                                 linkColor: applicationThemeViewModel.previewItems.linkTextColor
                             }
                         }
+
+                        Item {
+                            id: roundedButtonActive
+                            anchors.left: parent.left
+                            anchors.top: plainReleaseItem.bottom
+                            anchors.topMargin: 10
+                            width: roundedButtonActiveTitle.width + 34
+                            height: 34
+
+                            Rectangle {
+                                anchors.fill: parent
+                                anchors.leftMargin: 8
+                                anchors.rightMargin: 8
+                                anchors.topMargin: 4
+                                anchors.bottomMargin: 4
+                                color: applicationThemeViewModel.previewItems.roundedButtonBackground
+                                border.color: "transparent"
+                                border.width: 1
+                                radius: 18
+
+                                Text {
+                                    id: roundedButtonActiveTitle
+                                    font.pointSize: 10 + windowSettings.dpiSeparation
+                                    anchors.centerIn: parent
+                                    text: "Активная кнопка"
+                                    color: applicationThemeViewModel.previewItems.roundedButtonForeground
+                                }
+                            }
+                        }
+
+                        Item {
+                            id: roundedButtonHovered
+                            anchors.left: roundedButtonActive.right
+                            anchors.top: plainReleaseItem.bottom
+                            anchors.topMargin: 10
+                            width: roundedButtonHoveredTitle.width + 34
+                            height: 34
+
+                            Rectangle {
+                                anchors.fill: parent
+                                anchors.leftMargin: 8
+                                anchors.rightMargin: 8
+                                anchors.topMargin: 4
+                                anchors.bottomMargin: 4
+                                color: applicationThemeViewModel.previewItems.roundedButtonHovered
+                                border.color: "transparent"
+                                border.width: 1
+                                radius: 18
+
+                                Text {
+                                    id: roundedButtonHoveredTitle
+                                    font.pointSize: 10 + windowSettings.dpiSeparation
+                                    anchors.centerIn: parent
+                                    text: "Активная кнопка с мышкой поверх"
+                                    color: applicationThemeViewModel.previewItems.roundedButtonForeground
+                                }
+                            }
+                        }
+
+                        Item {
+                            id: roundedButtonDisabled
+                            anchors.left: roundedButtonHovered.right
+                            anchors.top: plainReleaseItem.bottom
+                            anchors.topMargin: 10
+                            width: roundedButtonDisabledTitle.width + 34
+                            height: 34
+
+                            Rectangle {
+                                anchors.fill: parent
+                                anchors.leftMargin: 8
+                                anchors.rightMargin: 8
+                                anchors.topMargin: 4
+                                anchors.bottomMargin: 4
+                                color: applicationThemeViewModel.previewItems.roundedButtonBackgroundDisabled
+                                border.color: "transparent"
+                                border.width: 1
+                                radius: 18
+
+                                Text {
+                                    id: roundedButtonDisabledTitle
+                                    font.pointSize: 10 + windowSettings.dpiSeparation
+                                    anchors.centerIn: parent
+                                    text: "Не активная кнопка"
+                                    color: applicationThemeViewModel.previewItems.roundedButtonForeground
+                                }
+                            }
+                        }
+
+
                     }
                 }
             }
