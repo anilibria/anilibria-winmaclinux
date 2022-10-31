@@ -59,6 +59,9 @@ ApplicationThemeViewModel::ApplicationThemeViewModel(QObject *parent)
     lightTheme->insert(playlistBackgroundField, "#C8ffffff");
     lightTheme->insert(playlistSelectedTextField, "white");
     lightTheme->insert(playlistTextField, "black");
+    lightTheme->insert(toggleButtonHoveredField, "gray");
+    lightTheme->insert(toggleButtonCheckedField, "#9e2323");
+    lightTheme->insert(toggleButtonNotCheckedField, "lightgray");
     lightTheme->insert(basedOnThemeField, m_lightTheme);
     lightTheme->insert(externalIdField, "");
     m_themes.insert(m_lightTheme, lightTheme);
@@ -94,6 +97,9 @@ ApplicationThemeViewModel::ApplicationThemeViewModel(QObject *parent)
     darkTheme->insert(playlistBackgroundField, "#C8000000");
     darkTheme->insert(playlistSelectedTextField, "black");
     darkTheme->insert(playlistTextField, "white");
+    darkTheme->insert(toggleButtonHoveredField, "gray");
+    darkTheme->insert(toggleButtonCheckedField, "#9e2323");
+    darkTheme->insert(toggleButtonNotCheckedField, "darkgrey");
     darkTheme->insert(basedOnThemeField, m_darkTheme);
     darkTheme->insert(externalIdField, "");
     m_themes.insert(m_darkTheme, darkTheme);
@@ -131,6 +137,9 @@ ApplicationThemeViewModel::ApplicationThemeViewModel(QObject *parent)
     m_fields.append(playlistBackgroundField);
     m_fields.append(playlistSelectedTextField);
     m_fields.append(playlistTextField);
+    m_fields.append(toggleButtonHoveredField);
+    m_fields.append(toggleButtonCheckedField);
+    m_fields.append(toggleButtonNotCheckedField);
     m_fields.append(externalIdField);
 
     readCacheFile();
@@ -186,6 +195,9 @@ void ApplicationThemeViewModel::setSelectedTheme(const QString &selectedTheme) n
     emit playlistBackgroundChanged();
     emit playlistSelectedTextChanged();
     emit playlistTextChanged();
+    emit toggleButtonHoveredChanged();
+    emit toggleButtonCheckedChanged();
+    emit toggleButtonNotCheckedChanged();
 }
 
 void ApplicationThemeViewModel::setSelectedMenuItem(int selectedMenuItem) noexcept

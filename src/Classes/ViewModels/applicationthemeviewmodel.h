@@ -61,6 +61,9 @@ class ApplicationThemeViewModel : public QObject
     Q_PROPERTY(QString playlistBackground READ playlistBackground NOTIFY playlistBackgroundChanged)
     Q_PROPERTY(QString playlistSelectedText READ playlistSelectedText NOTIFY playlistSelectedTextChanged)
     Q_PROPERTY(QString playlistText READ playlistText NOTIFY playlistTextChanged)
+    Q_PROPERTY(QString toggleButtonHovered READ toggleButtonHovered NOTIFY toggleButtonHoveredChanged)
+    Q_PROPERTY(QString toggleButtonChecked READ toggleButtonChecked NOTIFY toggleButtonCheckedChanged)
+    Q_PROPERTY(QString toggleButtonNotChecked READ toggleButtonNotChecked NOTIFY toggleButtonNotCheckedChanged)
     Q_PROPERTY(QStringList themes READ themes NOTIFY themesChanged)
     Q_PROPERTY(bool basedOnDark READ basedOnDark NOTIFY basedOnDarkChanged)
     Q_PROPERTY(ThemeManagerService* service READ service NOTIFY serviceChanged)
@@ -121,6 +124,9 @@ public:
     QString playlistBackground() const noexcept { return m_themes.value(m_selectedTheme)->value(playlistBackgroundField); }
     QString playlistSelectedText() const noexcept { return m_themes.value(m_selectedTheme)->value(playlistSelectedTextField); }
     QString playlistText() const noexcept { return m_themes.value(m_selectedTheme)->value(playlistTextField); }
+    QString toggleButtonHovered() const noexcept { return m_themes.value(m_selectedTheme)->value(toggleButtonHoveredField); }
+    QString toggleButtonChecked() const noexcept { return m_themes.value(m_selectedTheme)->value(toggleButtonCheckedField); }
+    QString toggleButtonNotChecked() const noexcept { return m_themes.value(m_selectedTheme)->value(toggleButtonNotCheckedField); }
     QStringList themes() const noexcept { return m_themes.keys(); }
     bool basedOnDark() const noexcept { return m_basedOnDark; }
 
@@ -197,6 +203,9 @@ signals:
     void fieldListChanged();
     void isHasValuesChanged();
     void previewItemsChanged();
+    void toggleButtonHoveredChanged();
+    void toggleButtonCheckedChanged();
+    void toggleButtonNotCheckedChanged();
 
 };
 

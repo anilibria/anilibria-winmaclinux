@@ -52,6 +52,9 @@ ThemeFieldListModel::ThemeFieldListModel(QObject *parent)
     m_descriptions.insert(playlistBackgroundField, "Цвет фона панелей для элементов плейлиста 2: Цвет элемента плейлиста в состоянии Не Выделен");
     m_descriptions.insert(playlistSelectedTextField, "Цвет текста в плейлисте 1: Цвет текста в плейлисте в состоянии Выделен");
     m_descriptions.insert(playlistTextField, "Цвет текста в плейлисте 2: Цвет текста в плейлисте в состоянии Не Выделен");
+    m_descriptions.insert(toggleButtonHoveredField, "Цвет кнопки переключателя 1: Цвет фона кнопки переключателя в состоянии Мышка поверх элемента");
+    m_descriptions.insert(toggleButtonCheckedField, "Цвет кнопки переключателя 2: Цвет фона кнопки переключателя в состоянии Выбрано");
+    m_descriptions.insert(toggleButtonNotCheckedField, "Цвет кнопки переключателя 3: Цвет фона кнопки переключателя в состоянии Не Выбрано");
 
     m_saveMenuItems.append("Сохранить и добавить тему в список");
     m_saveMenuItems.append("Сохранить в файл");

@@ -119,4 +119,10 @@ extern QString basedOnThemeField;
 
 extern QString externalIdField;
 
+extern QString toggleButtonHoveredField;
+
+extern QString toggleButtonCheckedField;
+
+extern QString toggleButtonNotCheckedField;
+
 #endif // GLOBALCONSTANTS_H

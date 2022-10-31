@@ -20,7 +20,7 @@ import QtQuick 2.12
 
 Rectangle {
     id: _container
-    color: isPressed ? "gray" : (isChecked ? "#9e2323" : (applicationThemeViewModel.basedOnDark ? "darkgrey" : "lightgray"))
+    color: isPressed ? applicationThemeViewModel.toggleButtonHovered : (isChecked ? applicationThemeViewModel.toggleButtonChecked : applicationThemeViewModel.toggleButtonNotChecked)
 
     property alias text: buttonText.text
     property bool isChecked: false

@@ -450,8 +450,64 @@ ApplicationWindow {
                             }
                         }
 
-                        //playerControlBackground
+                        Item {
+                            width: 400
+                            height: 50
+                            anchors.left: parent.left
+                            anchors.leftMargin: 220
+                            anchors.top: activePlaylistItem.top
 
+                            Rectangle {
+                                anchors.fill: parent
+                                color: applicationThemeViewModel.previewItems.playerControlBackground
+                            }
+
+                            Row {
+                                height: 20
+                                anchors.centerIn: parent
+                                spacing: 10
+
+                                Rectangle {
+                                    id: toggleButtonHoveredToggle
+                                    height: 20
+                                    width: 100
+                                    color: applicationThemeViewModel.previewItems.toggleButtonHovered
+
+                                    Text {
+                                        anchors.horizontalCenter: parent.horizontalCenter
+                                        anchors.verticalCenter: parent.verticalCenter
+                                        color: applicationThemeViewModel.plainTextColor
+                                        text: "поверх"
+                                    }
+                                }
+                                Rectangle {
+                                    id: toggleButtonCheckedToggle
+                                    height: 20
+                                    width: 100
+                                    color: applicationThemeViewModel.previewItems.toggleButtonChecked
+
+                                    Text {
+                                        anchors.horizontalCenter: parent.horizontalCenter
+                                        anchors.verticalCenter: parent.verticalCenter
+                                        color: applicationThemeViewModel.plainTextColor
+                                        text: "выбрано"
+                                    }
+                                }
+                                Rectangle {
+                                    id: toggleButtonNotCheckedToggle
+                                    height: 20
+                                    width: 100
+                                    color: applicationThemeViewModel.previewItems.toggleButtonNotChecked
+
+                                    Text {
+                                        anchors.horizontalCenter: parent.horizontalCenter
+                                        anchors.verticalCenter: parent.verticalCenter
+                                        color: applicationThemeViewModel.plainTextColor
+                                        text: "не выбрано"
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
             }

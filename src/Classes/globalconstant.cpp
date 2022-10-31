@@ -68,3 +68,6 @@ QString playlistSelectedTextField = "playlistSelectedText";
 QString playlistTextField = "playlistText";
 QString basedOnThemeField = "basedOnTheme";
 QString externalIdField = "externalId";
+QString toggleButtonHoveredField = "toggleButtonHovered";
+QString toggleButtonCheckedField = "toggleButtonChecked";
+QString toggleButtonNotCheckedField = "toggleButtonNotChecked";
