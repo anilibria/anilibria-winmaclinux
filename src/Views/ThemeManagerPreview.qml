@@ -53,6 +53,40 @@ ApplicationWindow {
             color: applicationThemeViewModel.previewItems.plainTextColor
             text: "Текст панели уведомлений"
         }
+
+        Item {
+            anchors.right: parent.right
+            width: 16
+            height: 16
+
+            MouseArea {
+                anchors.fill: parent
+                onPressed: {
+                    notificationOverlay.visible = !notificationOverlay.visible;
+                }
+            }
+
+            Rectangle {
+                anchors.fill: parent
+                color: "transparent"
+
+                Image {
+                    id: notificationIconImage
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    source: assetsLocation.iconsPath + "notification.svg"
+                    width: 14
+                    height: 14
+                    mipmap: true
+                }
+
+                ColorOverlay {
+                    anchors.fill: notificationIconImage
+                    source: notificationIconImage
+                    color: "#9e2323"
+                }
+            }
+        }
     }
 
     RowLayout {
@@ -476,7 +510,7 @@ ApplicationWindow {
                                     Text {
                                         anchors.horizontalCenter: parent.horizontalCenter
                                         anchors.verticalCenter: parent.verticalCenter
-                                        color: applicationThemeViewModel.plainTextColor
+                                        color: applicationThemeViewModel.previewItems.plainTextColor
                                         text: "поверх"
                                     }
                                 }
@@ -489,7 +523,7 @@ ApplicationWindow {
                                     Text {
                                         anchors.horizontalCenter: parent.horizontalCenter
                                         anchors.verticalCenter: parent.verticalCenter
-                                        color: applicationThemeViewModel.plainTextColor
+                                        color: applicationThemeViewModel.previewItems.plainTextColor
                                         text: "выбрано"
                                     }
                                 }
@@ -502,7 +536,7 @@ ApplicationWindow {
                                     Text {
                                         anchors.horizontalCenter: parent.horizontalCenter
                                         anchors.verticalCenter: parent.verticalCenter
-                                        color: applicationThemeViewModel.plainTextColor
+                                        color: applicationThemeViewModel.previewItems.plainTextColor
                                         text: "не выбрано"
                                     }
                                 }
@@ -510,6 +544,61 @@ ApplicationWindow {
                         }
                     }
                 }
+            }
+        }
+    }
+
+    Rectangle {
+        id: notificationOverlay
+        width: 240
+        height: window.height
+        anchors.right: parent.right
+        anchors.topMargin: -2
+        anchors.rightMargin: -1
+        color: applicationThemeViewModel.previewItems.notificationCenterPanelBackground
+        border.color: applicationThemeViewModel.previewItems.selectedItem
+        border.width: 1
+        visible: false
+
+        MouseArea {
+            anchors.fill: parent
+            hoverEnabled: true
+            acceptedButtons: Qt.LeftButton | Qt.RightButton
+            onPressed: {
+            }
+        }
+
+        Rectangle {
+            width: 230
+            anchors.top: parent.top
+            anchors.topMargin: 10
+            anchors.horizontalCenter: parent.horizontalCenter
+            height: 70
+            radius: 8
+            border.color: applicationThemeViewModel.previewItems.selectedItem
+            border.width: 2
+            color: applicationThemeViewModel.previewItems.notificationCenterItemBackground
+
+            Text {
+                padding: 10
+                maximumLineCount: 3
+                font.pointSize: 8
+                width: parent.width
+                wrapMode: Text.WordWrap
+                elide: Text.ElideRight
+                color: applicationThemeViewModel.previewItems.plainTextColor
+                anchors.verticalCenter: parent.verticalCenter
+                text: "Текст сообщения"
+            }
+            Image {
+                height: 14
+                width: 14
+                anchors.right: parent.right
+                anchors.top: parent.top
+                anchors.rightMargin: 4
+                anchors.topMargin: 4
+                source: assetsLocation.iconsPath + "coloredclosewindow.svg"
+                mipmap: true
             }
         }
     }
@@ -539,5 +628,6 @@ ApplicationWindow {
 
     onClosing: {
         drawer.close();
+        notificationOverlay.visible = false;
     }
 }
