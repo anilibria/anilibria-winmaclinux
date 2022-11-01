@@ -71,7 +71,6 @@ QVariant ExternalThemesListModel::data(const QModelIndex &index, int role) const
             return QVariant(QDateTime::fromSecsSinceEpoch(item->lastUpdated()).toString("dd.MM.yyyy"));
         }
         case IsDownloadedRole: {
-            qDebug() << item->source() << " " << m_externals->contains(item->source());
             return QVariant(m_externals != nullptr ? m_externals->contains(item->source()) : false);
         }
         case ExternalIdRole: {
