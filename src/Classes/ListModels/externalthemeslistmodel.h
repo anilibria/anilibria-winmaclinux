@@ -34,14 +34,17 @@ private:
         ScreenshootRole,
         AuthorRole,
         VersionRole,
-        LastUpdateRole
+        LastUpdateRole,
+        IsDownloadedRole,
+        ExternalIdRole,
     };
     QList<ThemeItemModel*> m_items { QList<ThemeItemModel*>() };
+    QList<QString>* m_externals { nullptr };
 
 public:
     explicit ExternalThemesListModel(QObject *parent = nullptr);
 
-    void setItems(const QList<ThemeItemModel*>& items) noexcept;
+    void setItems(const QList<ThemeItemModel*>& items, QList<QString>* externals) noexcept;
 
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
@@ -50,6 +53,8 @@ public:
     bool listIsEmpty() const noexcept { return m_items.isEmpty(); }
 
     ThemeItemModel* getThemeByIndex(int index) const noexcept;
+
+    void refresh();
 
 signals:
     void listIsEmptyChanged();

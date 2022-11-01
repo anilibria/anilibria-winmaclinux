@@ -25,11 +25,12 @@ ExternalThemesListModel::ExternalThemesListModel(QObject *parent)
 
 }
 
-void ExternalThemesListModel::setItems(const QList<ThemeItemModel *> &items) noexcept
+void ExternalThemesListModel::setItems(const QList<ThemeItemModel *> &items, QList<QString>* externals) noexcept
 {
     beginResetModel();
 
     m_items = items;
+    m_externals = externals;
 
     endResetModel();
 
@@ -41,7 +42,6 @@ int ExternalThemesListModel::rowCount(const QModelIndex &parent) const
     if (parent.isValid()) return 0;
 
     return m_items.size();
-
 }
 
 QVariant ExternalThemesListModel::data(const QModelIndex &index, int role) const
@@ -69,6 +69,13 @@ QVariant ExternalThemesListModel::data(const QModelIndex &index, int role) const
         }
         case LastUpdateRole: {
             return QVariant(QDateTime::fromSecsSinceEpoch(item->lastUpdated()).toString("dd.MM.yyyy"));
+        }
+        case IsDownloadedRole: {
+            qDebug() << item->source() << " " << m_externals->contains(item->source());
+            return QVariant(m_externals != nullptr ? m_externals->contains(item->source()) : false);
+        }
+        case ExternalIdRole: {
+            return QVariant(item->source());
         }
     }
 
@@ -101,6 +108,14 @@ QHash<int, QByteArray> ExternalThemesListModel::roleNames() const
         {
             LastUpdateRole,
             "lastUpdated"
+        },
+        {
+            IsDownloadedRole,
+            "isDownloaded"
+        },
+        {
+            ExternalIdRole,
+            "externalId"
         }
     };
 }
@@ -110,4 +125,13 @@ ThemeItemModel *ExternalThemesListModel::getThemeByIndex(int index) const noexce
     if (index >= m_items.count()) return nullptr;
 
     return m_items.value(index);
+}
+
+void ExternalThemesListModel::refresh()
+{
+    beginResetModel();
+
+    endResetModel();
+
+    emit listIsEmptyChanged();
 }

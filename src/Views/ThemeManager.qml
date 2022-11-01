@@ -154,7 +154,7 @@ Page {
 
                                     Column {
                                         anchors.verticalCenter: parent.verticalCenter
-                                        height: titleTheme.height + authorTheme.height
+                                        height: titleTheme.height + authorTheme.height + versionTheme.height + updatedTheme.height
 
                                         AccentText {
                                             id: titleTheme
@@ -179,6 +179,7 @@ Page {
                                         }
 
                                         PlainText {
+                                            id: versionTheme
                                             fontPointSize: 10
                                             text: "Версия: " + version
                                         }
@@ -189,6 +190,7 @@ Page {
                                         }
 
                                         PlainText {
+                                            id: updatedTheme
                                             fontPointSize: 10
                                             text: "Дата обновления: " + lastUpdated
                                         }
@@ -196,12 +198,14 @@ Page {
 
                                     Column {
                                         width: 50
-                                        height: 48
+                                        height: (downloadButton.visible ? 24 : 0 ) + (deleteDownloadedButton.visible ? 24 : 0 )
                                         anchors.right: parent.right
                                         anchors.rightMargin: 5
                                         anchors.verticalCenter: parent.verticalCenter
 
                                         FilterPanelIconButton {
+                                            id: downloadButton
+                                            visible: !isDownloaded
                                             iconPath: assetsLocation.iconsPath + "downloadtheme.svg"
                                             overlayVisible: false
                                             tooltipMessage: "Установить тему"
@@ -218,11 +222,14 @@ Page {
                                             }
                                         }*/
                                         FilterPanelIconButton {
+                                            id: deleteDownloadedButton
+                                            visible: isDownloaded
                                             iconPath: assetsLocation.iconsPath + "delete.svg"
                                             overlayVisible: false
                                             tooltipMessage: "Удалить тему"
                                             onButtonPressed: {
-
+                                                deleteExternalThemeConfirm.externalId = externalId;
+                                                deleteExternalThemeConfirm.open();
                                             }
                                         }
                                     }
@@ -333,7 +340,7 @@ Page {
                                 textSize: 10
                                 text: "Сохранить"
                                 onClicked: {
-
+                                    saveMenu.open();
                                 }
 
                                 CommonMenu {
@@ -345,9 +352,9 @@ Page {
                                         delegate: CommonMenuItem {
                                             text: modelData
                                             onPressed: {
-                                                switch (currentIndex) {
+                                                switch (index) {
                                                     case 0:
-                                                        applicationThemeViewModel.fieldList.saveThemeAndApply();
+                                                        applicationThemeViewModel.saveThemeAndApply();
                                                         break;
                                                     case 1:
                                                         //TODO: save to file
@@ -357,10 +364,6 @@ Page {
                                                 saveMenu.close();
                                             }
                                         }
-                                    }
-
-                                    onClosed: {
-                                        torrentMenuLoader.sourceComponent = null;
                                     }
                                 }
                             }
@@ -621,6 +624,35 @@ Page {
                             }
                         }
                     }
+                }
+            }
+        }
+    }
+
+    MessageModal {
+        id: deleteExternalThemeConfirm
+        header: "Удалить установленную тему?"
+        message: "Вы уверены что хотите удалить установленную тему?\nЕсли у Вас эта тема сейчас выбрана то после удаления выбранной станет Светлая тема."
+
+        property string externalId
+
+        content: Row {
+            spacing: 6
+            anchors.right: parent.right
+
+            RoundedActionButton {
+                text: "Ок"
+                width: 100
+                onClicked: {
+                    applicationThemeViewModel.deleteThemeByExternalId(deleteExternalThemeConfirm.externalId);
+                    deleteExternalThemeConfirm.close();
+                }
+            }
+            RoundedActionButton {
+                text: "Отмена"
+                width: 100
+                onClicked: {
+                    deleteExternalThemeConfirm.close();
                 }
             }
         }

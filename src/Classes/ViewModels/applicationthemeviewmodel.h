@@ -87,6 +87,7 @@ private:
     QStringList m_menuItems { QStringList() };
     int m_selectedMenuItem { 0 };
     ThemeFieldListModel* m_fieldList { new ThemeFieldListModel(this) };
+    QList<QString>* m_externalIds { new QList<QString>() };
 
 public:
     explicit ApplicationThemeViewModel(QObject *parent = nullptr);
@@ -151,6 +152,7 @@ public:
     Q_INVOKABLE void importThemeFromExternal(int themeIndex);
     Q_INVOKABLE void saveThemeAndApply() noexcept;
     Q_INVOKABLE void preparePreviewItems() noexcept;
+    Q_INVOKABLE void deleteThemeByExternalId(const QString& externalId) noexcept;
 
 private:
     void readCacheFile();

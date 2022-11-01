@@ -347,18 +347,46 @@ void ApplicationThemeViewModel::saveThemeAndApply() noexcept
     auto baseTheme = m_themes.value(basedOnTheme);
 
     foreach (auto field, m_fields) {
-        newTheme->insert(field, values.contains(field) ? values.value(name) : baseTheme->value(name));
+        if (values.contains(field) && !values.value(field).isEmpty()) {
+            newTheme->insert(field, values.value(field));
+        } else {
+            newTheme->insert(field, baseTheme->value(field));
+        }
     }
 
-    m_themes.insert(name, newTheme);
+    if (m_themes.contains(name)) {
+        m_themes[name] = newTheme;
+    } else {
+        m_themes.insert(name, newTheme);
+    }
 
     emit themesChanged();
-
 }
 
 void ApplicationThemeViewModel::preparePreviewItems() noexcept
 {
     emit previewItemsChanged();
+}
+
+void ApplicationThemeViewModel::deleteThemeByExternalId(const QString &externalId) noexcept
+{
+    QString themeName;
+    QMapIterator<QString, QMap<QString, QString>*> iterator(m_themes);
+    while (iterator.hasNext()) {
+        iterator.next();
+
+        auto value = iterator.value();
+        if (!value->contains(externalIdField)) continue;
+
+        if (value->value(externalIdField) == externalId) {
+            themeName = iterator.key();
+        }
+    }
+    if (!themeName.isEmpty()) m_themes.remove(themeName);
+
+    if (m_externalIds->contains(externalId)) m_externalIds->removeOne(externalId);
+    m_externalThemes->refresh();
+    emit themesChanged();
 }
 
 void ApplicationThemeViewModel::readCacheFile()
@@ -403,6 +431,17 @@ void ApplicationThemeViewModel::readCacheFile()
     }
 
     setSelectedTheme(selectedTheme);
+
+    m_externalIds->clear();
+    QMapIterator<QString, QMap<QString, QString>*> iterator(m_themes);
+    while (iterator.hasNext()) {
+        iterator.next();
+
+        auto value = iterator.value();
+        if (!value->contains(externalIdField)) continue;
+
+        m_externalIds->append(value->value(externalIdField));
+    }
 }
 
 void ApplicationThemeViewModel::setThemeValue(QMap<QString, QString>* theme,const QJsonObject &themeItem, const QMap<QString, QString> *baseTheme, const QString& name)
@@ -412,7 +451,7 @@ void ApplicationThemeViewModel::setThemeValue(QMap<QString, QString>* theme,cons
 
 void ApplicationThemeViewModel::themesLoaded()
 {
-    m_externalThemes->setItems(m_service->getItems());
+    m_externalThemes->setItems(m_service->getItems(), m_externalIds);
 }
 
 void ApplicationThemeViewModel::themeLoaded(const QString &theme, bool isDark, const ThemeItemModel* externalTheme)
@@ -438,4 +477,6 @@ void ApplicationThemeViewModel::themeLoaded(const QString &theme, bool isDark, c
     m_themes.insert(themeName, importedTheme);
 
     emit themesChanged();
+    m_externalIds->append(externalTheme->source());
+    m_externalThemes->refresh();
 }
