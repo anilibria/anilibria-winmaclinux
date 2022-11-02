@@ -105,8 +105,89 @@ Page {
                     visible: applicationThemeViewModel.selectedMenuItem === 0
                     anchors.fill: parent
 
-                    Text {
-                        text: "Установленные локально"
+                    ListView {
+                        id: localThemes
+                        spacing: 4
+                        visible: !applicationThemeViewModel.localThemes.listIsEmpty
+                        anchors.fill: parent
+                        model: applicationThemeViewModel.localThemes
+                        delegate: Item {
+                            width: localThemes.width
+                            height: 100
+
+                            Rectangle {
+                                anchors.fill: parent
+                                anchors.leftMargin: 4
+                                anchors.rightMargin: 4
+                                radius: 10
+                                color: applicationThemeViewModel.panelBackground
+                            }
+
+                            RowLayout {
+                                anchors.fill: parent
+
+                                Item {
+                                    Layout.fillWidth: true
+                                    Layout.preferredHeight: 100
+
+                                    AccentText {
+                                        id: localTitleTheme
+                                        anchors.verticalCenter: parent.verticalCenter
+                                        anchors.left: parent.left
+                                        anchors.leftMargin: 30
+                                        fontPointSize: 12
+                                        text: title
+                                    }
+
+                                    Column {
+                                        width: 50
+                                        height: (deleteLocalButton.visible ? 24 : 0 )
+                                        anchors.right: parent.right
+                                        anchors.rightMargin: 5
+                                        anchors.verticalCenter: parent.verticalCenter
+
+                                        FilterPanelIconButton {
+                                            id: deleteLocalButton
+                                            iconPath: assetsLocation.iconsPath + "delete.svg"
+                                            overlayVisible: false
+                                            tooltipMessage: "Удалить тему"
+                                            onButtonPressed: {
+                                                deleteLocalThemeConfirm.themeName = title;
+                                                deleteLocalThemeConfirm.open();
+                                            }
+                                        }
+                                    }
+
+                                }
+                            }
+                        }
+                    }
+
+                    Item {
+                        visible: applicationThemeViewModel.localThemes.listIsEmpty
+                        anchors.centerIn: parent
+                        width: 200
+                        height: 200
+
+                        Image {
+                            id: emptyLocalItems
+                            anchors.horizontalCenter: parent.horizontalCenter
+                            source: assetsLocation.iconsPath + "emptybox.svg"
+                            width: 80
+                            height: 80
+                            mipmap: true
+                        }
+
+                        PlainText {
+                            anchors.top: emptyLocalItems.bottom
+                            width: parent.width
+                            height: 80
+                            fontPointSize: 10
+                            text: "Не найдено тем по текущему фильтру"
+                            horizontalAlignment: Text.AlignHCenter
+                            wrapMode: Text.Wrap
+                            maximumLineCount: 2
+                        }
                     }
                 }
 
@@ -653,6 +734,35 @@ Page {
                 width: 100
                 onClicked: {
                     deleteExternalThemeConfirm.close();
+                }
+            }
+        }
+    }
+
+    MessageModal {
+        id: deleteLocalThemeConfirm
+        header: "Удалить локальную установленную тему?"
+        message: "Вы уверены что хотите удалить установленную тему?\nЕсли у Вас эта тема сейчас выбрана то после удаления выбранной станет Светлая тема."
+
+        property string themeName
+
+        content: Row {
+            spacing: 6
+            anchors.right: parent.right
+
+            RoundedActionButton {
+                text: "Ок"
+                width: 100
+                onClicked: {
+                    applicationThemeViewModel.deleteThemeFromLocal(deleteLocalThemeConfirm.themeName);
+                    deleteLocalThemeConfirm.close();
+                }
+            }
+            RoundedActionButton {
+                text: "Отмена"
+                width: 100
+                onClicked: {
+                    deleteLocalThemeConfirm.close();
                 }
             }
         }

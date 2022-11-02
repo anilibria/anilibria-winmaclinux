@@ -149,6 +149,7 @@ ApplicationThemeViewModel::ApplicationThemeViewModel(QObject *parent)
     m_menuItems.append("Редактор темы");
 
     m_fieldList->fillFields(m_fields);
+    m_localThemes->setItems(m_localIds);
 
     connect(m_service, &ThemeManagerService::themesLoaded, this, &ApplicationThemeViewModel::themesLoaded);
     connect(m_service, &ThemeManagerService::themeLoaded, this, &ApplicationThemeViewModel::themeLoaded);
@@ -163,6 +164,7 @@ void ApplicationThemeViewModel::setSelectedTheme(const QString &selectedTheme) n
 
     auto currentTheme = m_themes.value(m_selectedTheme);
     m_basedOnDark = currentTheme->value(basedOnThemeField) == m_darkTheme;
+
     emit basedOnDarkChanged();
     emit selectedThemeChanged();
     emit plainTextColorChanged();
@@ -361,6 +363,8 @@ void ApplicationThemeViewModel::saveThemeAndApply() noexcept
     }
 
     emit themesChanged();
+    m_localIds->append(name);
+    m_localThemes->refresh();
 }
 
 void ApplicationThemeViewModel::preparePreviewItems() noexcept
@@ -383,10 +387,25 @@ void ApplicationThemeViewModel::deleteThemeByExternalId(const QString &externalI
         }
     }
     if (!themeName.isEmpty()) m_themes.remove(themeName);
+    if (m_selectedTheme == themeName) setSelectedTheme(m_lightTheme);
 
     if (m_externalIds->contains(externalId)) m_externalIds->removeOne(externalId);
     m_externalThemes->refresh();
     emit themesChanged();
+}
+
+void ApplicationThemeViewModel::deleteThemeFromLocal(const QString &name) noexcept
+{
+    if (name == m_lightTheme || name == m_darkTheme) return;
+    if (!m_themes.contains(name)) return;
+    auto theme = m_themes.value(name);
+    if (theme->contains(externalIdField) && !theme->value(externalIdField).isEmpty()) return;
+
+    m_themes.remove(name);
+    if (m_selectedTheme == name) setSelectedTheme(m_lightTheme);
+    emit themesChanged();
+    m_localIds->removeOne(name);
+    m_localThemes->refresh();
 }
 
 void ApplicationThemeViewModel::readCacheFile()
@@ -438,9 +457,13 @@ void ApplicationThemeViewModel::readCacheFile()
         iterator.next();
 
         auto value = iterator.value();
-        if (!value->contains(externalIdField)) continue;
-
-        m_externalIds->append(value->value(externalIdField));
+        auto isExternal = value->contains(externalIdField) && !value->value(externalIdField).isEmpty();
+        if (isExternal) {
+            m_externalIds->append(value->value(externalIdField));
+        } else {
+            auto themeName = iterator.key();
+            if (themeName != m_lightTheme && themeName != m_darkTheme) m_localIds->append(themeName);
+        }
     }
 }
 

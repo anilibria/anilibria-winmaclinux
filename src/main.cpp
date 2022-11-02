@@ -58,6 +58,7 @@
 #include "Classes/ListModels/releaseonlineserieslistmodel.h"
 #include "Classes/ViewModels/applicationthemeviewmodel.h"
 #include "Classes/ListModels/themefieldlistmodel.h"
+#include "Classes/ListModels/localthemeslistmodel.h"
 
 int main(int argc, char *argv[])
 {
@@ -124,6 +125,7 @@ int main(int argc, char *argv[])
     qmlRegisterType<ReleaseOnlineSeriesListModel>("Anilibria.ListModels", 1, 0, "ReleaseOnlineSeriesListModel");
     qmlRegisterType<ApplicationThemeViewModel>("Anilibria.ViewModels", 1, 0, "ApplicationThemeViewModel");
     qmlRegisterType<ThemeFieldListModel>("Anilibria.ListModels", 1, 0, "ThemeFieldListModel");
+    qmlRegisterType<LocalThemesListModel>("Anilibria.ListModels", 1, 0, "LocalThemesListModel");
 
     QCoreApplication::setOrganizationDomain("anilibria.tv");
     QCoreApplication::setOrganizationName("EmptyFlow");

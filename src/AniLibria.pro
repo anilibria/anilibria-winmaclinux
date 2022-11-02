@@ -69,6 +69,7 @@ SOURCES += \
     Classes/ListModels/commoncomboboxlistmodel.cpp \
     Classes/ListModels/commonmenulistmodel.cpp \
     Classes/ListModels/externalthemeslistmodel.cpp \
+    Classes/ListModels/localthemeslistmodel.cpp \
     Classes/ListModels/mainmenulistmodel.cpp \
     Classes/ListModels/myanilibrialistmodel.cpp \
     Classes/ListModels/onlineplayervideolist.cpp \
@@ -158,6 +159,7 @@ HEADERS += \
     Classes/ListModels/commoncomboboxlistmodel.h \
     Classes/ListModels/commonmenulistmodel.h \
     Classes/ListModels/externalthemeslistmodel.h \
+    Classes/ListModels/localthemeslistmodel.h \
     Classes/ListModels/mainmenulistmodel.h \
     Classes/ListModels/myanilibrialistmodel.h \
     Classes/ListModels/onlineplayervideolist.h \

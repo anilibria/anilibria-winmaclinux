@@ -26,6 +26,7 @@
 #include "../ListModels/externalthemeslistmodel.h"
 #include "../Models/themeitemmodel.h"
 #include "../ListModels/themefieldlistmodel.h"
+#include "../ListModels/localthemeslistmodel.h"
 
 class ApplicationThemeViewModel : public QObject
 {
@@ -73,6 +74,7 @@ class ApplicationThemeViewModel : public QObject
     Q_PROPERTY(QString selectedMenuItemName READ selectedMenuItemName NOTIFY selectedMenuItemNameChanged)
     Q_PROPERTY(ThemeFieldListModel* fieldList READ fieldList NOTIFY fieldListChanged)
     Q_PROPERTY(QVariantMap previewItems READ previewItems NOTIFY previewItemsChanged)
+    Q_PROPERTY(LocalThemesListModel* localThemes READ localThemes NOTIFY localThemesChanged)
 
 private:
     QString m_cachePathName { "applicationtheme.cache" };
@@ -88,6 +90,8 @@ private:
     int m_selectedMenuItem { 0 };
     ThemeFieldListModel* m_fieldList { new ThemeFieldListModel(this) };
     QList<QString>* m_externalIds { new QList<QString>() };
+    QList<QString>* m_localIds { new QList<QString>() };
+    LocalThemesListModel* m_localThemes { new LocalThemesListModel(this) };
 
 public:
     explicit ApplicationThemeViewModel(QObject *parent = nullptr);
@@ -145,6 +149,8 @@ public:
 
     QVariantMap previewItems() const noexcept;
 
+    LocalThemesListModel* localThemes() const noexcept { return m_localThemes; }
+
     Q_INVOKABLE void saveCurrentState();
     Q_INVOKABLE void reloadThemes();
     Q_INVOKABLE void importTheme(const QString& content);
@@ -153,6 +159,7 @@ public:
     Q_INVOKABLE void saveThemeAndApply() noexcept;
     Q_INVOKABLE void preparePreviewItems() noexcept;
     Q_INVOKABLE void deleteThemeByExternalId(const QString& externalId) noexcept;
+    Q_INVOKABLE void deleteThemeFromLocal(const QString& name) noexcept;
 
 private:
     void readCacheFile();
@@ -208,6 +215,7 @@ signals:
     void toggleButtonHoveredChanged();
     void toggleButtonCheckedChanged();
     void toggleButtonNotCheckedChanged();
+    void localThemesChanged();
 
 };
 
