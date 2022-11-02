@@ -16,8 +16,12 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <QFile>
+#include <QJsonObject>
+#include <QJsonDocument>
 #include "themefieldlistmodel.h"
 #include "../../globalconstants.h"
+#include "../../globalhelpers.h"
 
 ThemeFieldListModel::ThemeFieldListModel(QObject *parent)
     : QAbstractListModel{parent}
@@ -263,5 +267,27 @@ void ThemeFieldListModel::defineField(int itemIndex) noexcept
 
 void ThemeFieldListModel::saveThemeToFile(const QString &path) noexcept
 {
+    QJsonObject object;
 
+    QMapIterator<QString, QString> iterator(m_values);
+
+    while (iterator.hasNext()) {
+        iterator.next();
+
+        object[iterator.key()] = iterator.value();
+    }
+
+    object["name"] = m_themeName;
+    object[basedOnThemeField] = m_basedOnTheme;
+
+    auto clearedPath = removeFileProtocol(const_cast<QString&>(path));
+    QFile file(clearedPath);
+    if (!file.open(QFile::WriteOnly | QFile::Text)) {
+        //TODO: show error message
+        return;
+    }
+
+    QJsonDocument document(object);
+    file.write(document.toJson());
+    file.close();
 }

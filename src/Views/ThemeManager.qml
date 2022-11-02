@@ -105,11 +105,32 @@ Page {
                     visible: applicationThemeViewModel.selectedMenuItem === 0
                     anchors.fill: parent
 
+                    Item {
+                        id: localUpperPanel
+                        width: parent.width
+                        height: 45
+
+                        RoundedActionButton {
+                            id: importThemeFromFileButton
+                            anchors.right: parent.right
+                            anchors.verticalCenter: parent.verticalCenter
+                            width: 200
+                            textSize: 10
+                            text: "Импорт темы из файла"
+                            onClicked: {
+                                openThemeToFileDialog.open();
+                            }
+                        }
+                    }
+
                     ListView {
                         id: localThemes
                         spacing: 4
                         visible: !applicationThemeViewModel.localThemes.listIsEmpty
-                        anchors.fill: parent
+                        anchors.top: localUpperPanel.bottom
+                        anchors.left: parent.left
+                        anchors.right: parent.right
+                        anchors.bottom: parent.bottom
                         model: applicationThemeViewModel.localThemes
                         delegate: Item {
                             width: localThemes.width
@@ -382,14 +403,6 @@ Page {
                             Layout.fillWidth: true
                             Layout.preferredHeight: 45
 
-                            PlainText {
-                                anchors.left: parent.left
-                                anchors.leftMargin: 4
-                                anchors.verticalCenter: parent.verticalCenter
-                                fontPointSize: 11
-                                text: applicationThemeViewModel.fieldList.editMode
-                            }
-
                             RoundedActionButton {
                                 id: createEmptyButton
                                 anchors.right: parent.right
@@ -438,7 +451,7 @@ Page {
                                                         applicationThemeViewModel.saveThemeAndApply();
                                                         break;
                                                     case 1:
-                                                        //TODO: save to file
+                                                        saveThemeToFileDialog.open();
                                                         break;
                                                 }
 
@@ -765,6 +778,24 @@ Page {
                     deleteLocalThemeConfirm.close();
                 }
             }
+        }
+    }
+
+    FileDialog {
+        id: openThemeToFileDialog
+        selectExisting: true
+        nameFilters: ["Theme files (*.theme)"]
+        onAccepted: {
+            applicationThemeViewModel.importThemeFromFile(openThemeToFileDialog.fileUrl);
+        }
+    }
+
+    FileDialog {
+        id: saveThemeToFileDialog
+        selectExisting: false
+        nameFilters: ["Theme files (*.theme)"]
+        onAccepted: {
+            applicationThemeViewModel.fieldList.saveThemeToFile(saveThemeToFileDialog.fileUrl);
         }
     }
 

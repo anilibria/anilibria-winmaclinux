@@ -293,15 +293,15 @@ void ApplicationThemeViewModel::importTheme(const QString &content)
         emit errorImportTheme("Тема не импортирована, в ней отсутствует поле name");
         return;
     }
-    if (!rootObject.contains("base")) {
+    if (!rootObject.contains(basedOnThemeField)) {
         emit errorImportTheme("Тема не импортирована, в ней отсутствует поле base");
         return;
     }
 
     auto themeName = rootObject.value("name").toString();
-    auto baseName = rootObject.value("base").toString();
+    auto baseName = rootObject.value(basedOnThemeField).toString();
 
-    if (baseName != m_lightTheme || baseName != m_darkTheme) {
+    if (baseName != m_lightTheme && baseName != m_darkTheme) {
         emit errorImportTheme("Тема не импортирована, поле base содержит не корректное значение");
         return;
     }
@@ -315,7 +315,12 @@ void ApplicationThemeViewModel::importTheme(const QString &content)
         setThemeValue(importedTheme, rootObject, baseTheme, field);
     }
 
-    m_themes.insert(themeName, importedTheme);
+    if (m_themes.contains(themeName)) {
+        m_themes[themeName] = importedTheme;
+    } else {
+        m_themes.insert(themeName, importedTheme);
+        m_localIds->append(themeName);
+    }
 }
 
 void ApplicationThemeViewModel::importThemeFromFile(const QString &content)
@@ -328,6 +333,8 @@ void ApplicationThemeViewModel::importThemeFromFile(const QString &content)
     file.close();
 
     importTheme(fileContent);
+    emit themesChanged();
+    m_localThemes->refresh();
 }
 
 void ApplicationThemeViewModel::importThemeFromExternal(int themeIndex)

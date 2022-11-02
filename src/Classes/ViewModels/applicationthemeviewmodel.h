@@ -204,6 +204,7 @@ signals:
     void themesChanged();
     void basedOnDarkChanged();
     void errorImportTheme(const QString& message);
+    void errorExportTheme(const QString& message);
     void serviceChanged();
     void externalThemesChanged();
     void menuItemsChanged();
