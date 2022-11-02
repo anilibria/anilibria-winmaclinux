@@ -209,7 +209,12 @@ void ThemeFieldListModel::setValues(QMap<QString, QString>&& values, const QStri
 
     m_values.clear();
 
-    m_values.insert(values);
+    QMapIterator<QString, QString> iterator(values);
+    while (iterator.hasNext()) {
+        iterator.next();
+
+        m_values.insert(iterator.key(), iterator.value());
+    }
 
     endResetModel();
 
