@@ -203,6 +203,21 @@ QString ThemeFieldListModel::editMode() const noexcept
      return "";
 }
 
+void ThemeFieldListModel::setValues(QMap<QString, QString>&& values, const QString& name, const QString& basedTheme) noexcept
+{
+    beginResetModel();
+
+    m_values.clear();
+
+    m_values.insert(values);
+
+    endResetModel();
+
+    setThemeName(name);
+    setBasedOnTheme(basedTheme);
+    emit hasValuesChanged();
+}
+
 void ThemeFieldListModel::createBlankTheme() noexcept
 {
     beginResetModel();

@@ -75,6 +75,7 @@ class ApplicationThemeViewModel : public QObject
     Q_PROPERTY(ThemeFieldListModel* fieldList READ fieldList NOTIFY fieldListChanged)
     Q_PROPERTY(QVariantMap previewItems READ previewItems NOTIFY previewItemsChanged)
     Q_PROPERTY(LocalThemesListModel* localThemes READ localThemes NOTIFY localThemesChanged)
+    Q_PROPERTY(QStringList copyMenuItems READ copyMenuItems NOTIFY copyMenuItemsChanged)
 
 private:
     QString m_cachePathName { "applicationtheme.cache" };
@@ -151,6 +152,13 @@ public:
 
     LocalThemesListModel* localThemes() const noexcept { return m_localThemes; }
 
+    QStringList copyMenuItems() const noexcept {
+        auto items = m_themes.keys();
+        items.removeOne(m_lightTheme);
+        items.removeOne(m_darkTheme);
+        return items;
+    }
+
     Q_INVOKABLE void saveCurrentState();
     Q_INVOKABLE void reloadThemes();
     Q_INVOKABLE void importTheme(const QString& content);
@@ -160,6 +168,7 @@ public:
     Q_INVOKABLE void preparePreviewItems() noexcept;
     Q_INVOKABLE void deleteThemeByExternalId(const QString& externalId) noexcept;
     Q_INVOKABLE void deleteThemeFromLocal(const QString& name) noexcept;
+    Q_INVOKABLE void copyThemeFromInstalled(const QString& name) noexcept;
 
 private:
     void readCacheFile();
@@ -217,6 +226,7 @@ signals:
     void toggleButtonCheckedChanged();
     void toggleButtonNotCheckedChanged();
     void localThemesChanged();
+    void copyMenuItemsChanged();
 
 };
 

@@ -79,6 +79,8 @@ public:
 
     QStringList saveMenuItems() const noexcept { return m_saveMenuItems; }
 
+    void setValues(QMap<QString, QString>&& values, const QString& name, const QString& basedTheme) noexcept;
+
     Q_INVOKABLE void createBlankTheme() noexcept;
     Q_INVOKABLE void setValueToItem(QString value) noexcept;
     Q_INVOKABLE void setValueToItemByIndex(int index, QString value) noexcept;

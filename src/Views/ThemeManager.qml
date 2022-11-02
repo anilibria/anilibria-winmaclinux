@@ -41,6 +41,38 @@ Page {
                         drawer.open();
                     }
                 }
+                LeftPanelIconButton {
+                    iconPath: assetsLocation.iconsPath + "information.svg"
+                    overlayVisible: false
+                    iconWidth: 29
+                    iconHeight: 29
+                    tooltipMessage: "Открыть ссылки на обучающие материалы"
+                    onButtonPressed: {
+                        informationPopup.open();
+                    }
+
+                    DefaultPopup {
+                        id: informationPopup
+                        x: 40
+                        y: parent.height - 10
+                        width: 320
+                        height: 60
+                        modal: true
+                        focus: true
+                        closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
+
+                        Column {
+                            LinkedText {
+                                fontPointSize: 11
+                                text: "<a href='https://github.com/anilibria/anilibria-winmaclinux/blob/master/createtheme.md#%D0%BA%D0%B0%D0%BA-%D1%81%D0%BE%D0%B7%D0%B4%D0%B0%D1%82%D1%8C-%D1%82%D0%B5%D0%BC%D1%83-%D0%B4%D0%BB%D1%8F-%D0%BF%D1%80%D0%B8%D0%BB%D0%BE%D0%B6%D0%B5%D0%BD%D0%B8%D1%8F'>Как создать тему для приложения</a>"
+                            }
+                            LinkedText {
+                                fontPointSize: 11
+                                text: "<a href='https://github.com/anilibria/anilibria-winmaclinux/blob/master/sharetheme.md#%D0%BA%D0%B0%D0%BA-%D0%BF%D0%BE%D0%B4%D0%B5%D0%BB%D0%B8%D1%82%D1%8C%D1%81%D1%8F-%D1%81%D0%B2%D0%BE%D0%B5%D0%B9-%D1%82%D0%B5%D0%BC%D0%BE%D0%B9-%D1%81-%D0%B4%D1%80%D1%83%D0%B3%D0%B8%D0%BC%D0%B8'>Как поделиться темой с другими</a>"
+                            }
+                        }
+                    }
+                }
             }
         }
         ColumnLayout {
@@ -422,7 +454,24 @@ Page {
                                 textSize: 10
                                 text: "Копировать из темы"
                                 onClicked: {
+                                    copyThemesMenu.open();
+                                }
 
+                                CommonMenu {
+                                    id: copyThemesMenu
+                                    width: 320
+
+                                    Repeater {
+                                        model: applicationThemeViewModel.copyMenuItems
+                                        delegate: CommonMenuItem {
+                                            text: modelData
+                                            onPressed: {
+                                                applicationThemeViewModel.copyThemeFromInstalled(modelData);
+
+                                                copyThemesMenu.close();
+                                            }
+                                        }
+                                    }
                                 }
                             }
                             RoundedActionButton {

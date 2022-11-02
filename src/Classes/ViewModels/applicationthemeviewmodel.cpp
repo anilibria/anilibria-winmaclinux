@@ -335,6 +335,7 @@ void ApplicationThemeViewModel::importThemeFromFile(const QString &content)
     importTheme(fileContent);
     emit themesChanged();
     m_localThemes->refresh();
+    emit copyMenuItemsChanged();
 }
 
 void ApplicationThemeViewModel::importThemeFromExternal(int themeIndex)
@@ -372,6 +373,7 @@ void ApplicationThemeViewModel::saveThemeAndApply() noexcept
     emit themesChanged();
     m_localIds->append(name);
     m_localThemes->refresh();
+    emit copyMenuItemsChanged();
 }
 
 void ApplicationThemeViewModel::preparePreviewItems() noexcept
@@ -399,6 +401,7 @@ void ApplicationThemeViewModel::deleteThemeByExternalId(const QString &externalI
     if (m_externalIds->contains(externalId)) m_externalIds->removeOne(externalId);
     m_externalThemes->refresh();
     emit themesChanged();
+    emit copyMenuItemsChanged();
 }
 
 void ApplicationThemeViewModel::deleteThemeFromLocal(const QString &name) noexcept
@@ -413,6 +416,29 @@ void ApplicationThemeViewModel::deleteThemeFromLocal(const QString &name) noexce
     emit themesChanged();
     m_localIds->removeOne(name);
     m_localThemes->refresh();
+    emit copyMenuItemsChanged();
+}
+
+void ApplicationThemeViewModel::copyThemeFromInstalled(const QString &name) noexcept
+{
+    if (name == m_lightTheme || name == m_darkTheme) return;
+    if (!m_themes.contains(name)) return;
+
+    auto theme = m_themes.value(name);
+    auto baseThemeName = theme->value(basedOnThemeField);
+    auto baseTheme = m_themes[baseThemeName];
+
+    QMap<QString, QString> m_copiedTheme;
+
+    foreach (auto field, m_fields) {
+        if (field == externalIdField) continue;
+        auto fieldValue = theme->value(field);
+        if (fieldValue == baseTheme->value(field)) continue;
+
+        m_copiedTheme.insert(field, fieldValue);
+    }
+
+    m_fieldList->setValues(std::move(m_copiedTheme), name + " Копия", baseThemeName);
 }
 
 void ApplicationThemeViewModel::readCacheFile()
@@ -472,6 +498,8 @@ void ApplicationThemeViewModel::readCacheFile()
             if (themeName != m_lightTheme && themeName != m_darkTheme) m_localIds->append(themeName);
         }
     }
+
+    emit copyMenuItemsChanged();
 }
 
 void ApplicationThemeViewModel::setThemeValue(QMap<QString, QString>* theme,const QJsonObject &themeItem, const QMap<QString, QString> *baseTheme, const QString& name)
@@ -509,4 +537,6 @@ void ApplicationThemeViewModel::themeLoaded(const QString &theme, bool isDark, c
     emit themesChanged();
     m_externalIds->append(externalTheme->source());
     m_externalThemes->refresh();
+
+    emit copyMenuItemsChanged();
 }
