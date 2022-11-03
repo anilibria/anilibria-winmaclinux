@@ -7,6 +7,10 @@ windows {
     LIBS += -lKernel32
 }
 
+unix: {
+    QT += dbus
+}
+
 unix {
 #Setup desktop entry file. https://specifications.freedesktop.org/desktop-entry-spec/latest
     desktop.files += ../data/anilibria.desktop

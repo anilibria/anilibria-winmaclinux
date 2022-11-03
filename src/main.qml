@@ -42,6 +42,10 @@ ApplicationWindow {
     property var userModel: ({})
     property string tempTorrentPath: ""
     property bool isShowFullScreenSize: false
+    property int normalWindowSizeX: 0
+    property int normalWindowSizeY: 0
+    property int normalWindowSizeWidth: 0
+    property int normalWindowSizeHeight: 0
     property int previousX
     property int previousY
 
@@ -72,7 +76,13 @@ ApplicationWindow {
         }
         if (applicationSettings.isMaximize) {
             window.isShowFullScreenSize = true;
-            window.showMaximized();
+            let currentScreen = getCurrentScreen();
+            if (!currentScreen) return;
+
+            window.x = currentScreen.virtualX;
+            window.width = currentScreen.width;
+            window.y = currentScreen.virtualY;
+            window.height = currentScreen.desktopAvailableHeight;
         }
     }
 
@@ -304,12 +314,31 @@ ApplicationWindow {
             iconHeight: 24
             tooltipMessage: window.isShowFullScreenSize ? "Вернуть окну нормальный размер" : "Открыть окно на полный экран"
             onButtonPressed: {
-                if (window.isShowFullScreenSize) {
-                    window.isShowFullScreenSize = false;
-                    window.showNormal();
-                } else {
+                let currentScreen = getCurrentScreen();
+                if (!currentScreen) return;
+
+                if (normalWindowSizeX === 0 && normalWindowSizeY === 0 && normalWindowSizeWidth === 0 && normalWindowSizeHeight === 0) {
                     window.isShowFullScreenSize = true;
-                    window.showMaximized();
+                    normalWindowSizeX = window.x;
+                    normalWindowSizeY = window.y;
+                    normalWindowSizeWidth = window.width;
+                    normalWindowSizeHeight = window.height;
+
+                    window.x = currentScreen.virtualX;
+                    window.width = currentScreen.width;
+                    window.y = currentScreen.virtualY;
+                    window.height = currentScreen.desktopAvailableHeight;
+                } else {
+                    window.isShowFullScreenSize = false;
+                    window.x = normalWindowSizeX;
+                    window.y = normalWindowSizeY;
+                    window.width = normalWindowSizeWidth;
+                    window.height = normalWindowSizeHeight;
+
+                    normalWindowSizeX = 0;
+                    normalWindowSizeY = 0;
+                    normalWindowSizeWidth = 0;
+                    normalWindowSizeHeight = 0;
                 }
             }
         }
@@ -864,10 +893,16 @@ ApplicationWindow {
                 window.showFullScreen();
                 if (applicationSettings.useCustomToolbar) toolBar.visible = false;
             } else {
+                let currentScreen = getCurrentScreen();
+                if (!currentScreen) return;
+
+                window.showNormal();
+
                 if (window.isShowFullScreenSize) {
-                    window.showMaximized();
-                } else {
-                    window.showNormal();
+                    window.x = currentScreen.virtualX;
+                    window.width = currentScreen.width;
+                    window.y = currentScreen.virtualY;
+                    window.height = currentScreen.desktopAvailableHeight;
                 }
 
                 if (applicationSettings.useCustomToolbar) toolBar.visible = true;
