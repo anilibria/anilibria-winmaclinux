@@ -1,5 +1,6 @@
 #include "osextras.h"
 #include <QString>
+#include <QDebug>
 #ifdef Q_OS_WIN
 #include <windows.h>
 #endif
@@ -25,19 +26,26 @@ OsExtras::OsExtras(QObject *parent) : QObject(parent)
 void OsExtras::startPreventSleepMode()
 {
 #ifdef Q_OS_LINUX
-    m_dbusReplies.clear();
 
     QDBusConnection bus = QDBusConnection::sessionBus();
     if(!bus.isConnected()) return;
 
     for(int i = 0; i < m_dbusServices.count() ; i++)
     {
-        QDBusInterface screenSaverInterface( m_dbusServices[i], m_dbusPaths[i], m_dbusServices[i], bus);
+        try {
+            QDBusInterface screenSaverInterface( m_dbusServices[i], m_dbusPaths[i], m_dbusServices[i], bus);
 
-        if (!screenSaverInterface.isValid()) continue;
+            if (!screenSaverInterface.isValid()) continue;
 
-        QDBusReply<uint> reply = screenSaverInterface.call("Inhibit", "AniLibria", "REASON");
-        m_dbusReplies[i] = reply.isValid() ? reply.value() : 0;
+            QDBusReply<uint> reply = screenSaverInterface.call("Inhibit", "AniLibria", "REASON");
+            if (reply.isValid()) {
+                qDebug() << "valid value" << reply.value();
+                m_dbusReply = reply.value();
+                break;
+            }
+        } catch (std::exception& e) {
+            qDebug() << e.what();
+        }
     }
 #endif
 #ifdef Q_OS_WIN
@@ -53,14 +61,16 @@ void OsExtras::stopPreventSleepMode()
 
     for(int i = 0; i < m_dbusServices.count() ; i++)
     {
-        QDBusInterface screenSaverInterface( m_dbusServices[i], m_dbusPaths[i], m_dbusServices[i], bus);
+        try {
+            QDBusInterface screenSaverInterface( m_dbusServices[i], m_dbusPaths[i], m_dbusServices[i], bus);
 
-        if (!screenSaverInterface.isValid()) continue;
-        auto reply = m_dbusReplies[i];
+            if (!screenSaverInterface.isValid()) continue;
 
-        if (reply > 0) screenSaverInterface.call("UnInhibit", reply);
+            screenSaverInterface.call("UnInhibit", m_dbusReply);
+        } catch (std::exception& e) {
+            qDebug() << e.what();
+        }
     }
-    m_dbusReplies.clear();
 #endif
 #ifdef Q_OS_WIN
     SetThreadExecutionState(ES_CONTINUOUS);

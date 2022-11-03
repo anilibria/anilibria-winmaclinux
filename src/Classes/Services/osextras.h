@@ -13,7 +13,7 @@ public:
 #ifdef Q_OS_LINUX
     QStringList m_dbusServices { QStringList() };
     QStringList m_dbusPaths { QStringList() };
-    QList<uint> m_dbusReplies { QList<uint>() };
+    uint m_dbusReply { 0 };
 #endif
 
     Q_INVOKABLE void startPreventSleepMode();
