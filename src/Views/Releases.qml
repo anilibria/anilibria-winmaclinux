@@ -921,13 +921,6 @@ Page {
                                     currentIndex = applicationThemeViewModel.themes.indexOf(applicationThemeViewModel.selectedTheme);
                                 }
                             }
-                            Switch {
-                                id: darkModeSwitch
-                                onCheckedChanged: {
-                                    applicationSettings.isDarkTheme = checked;
-                                    applicationThemeViewModel.isDarkTheme = checked;
-                                }
-                            }
 
                             PlainText {
                                 id: compactModeLabel
@@ -2512,7 +2505,6 @@ Page {
         downloadTorrentMode.currentIndex = userSettings.torrentDownloadMode;
         notificationForFavorites.checked = userSettings.notificationForFavorites;
         releasesViewModel.items.filterByFavorites = notificationForFavorites.checked;
-        darkModeSwitch.checked = applicationSettings.isDarkTheme;
         clearFilterAfterChangeSectionSwitch.checked = userSettings.clearFiltersAfterChangeSection;
         compactModeSwitch.checked = userSettings.compactMode;
         page.hideCinemahallButton = userSettings.hideCinemhallButton;
