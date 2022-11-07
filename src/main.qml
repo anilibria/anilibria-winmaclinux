@@ -83,6 +83,11 @@ ApplicationWindow {
             window.width = currentScreen.width;
             window.y = currentScreen.virtualY;
             window.height = currentScreen.desktopAvailableHeight;
+
+            window.normalWindowSizeX = applicationSettings.normalX;
+            window.normalWindowSizeY = applicationSettings.normalY;
+            window.normalWindowSizeWidth = applicationSettings.normalWidth;
+            window.normalWindowSizeHeight = applicationSettings.normalHeight;
         }
     }
 
@@ -92,6 +97,12 @@ ApplicationWindow {
         applicationSettings.windowX = window.x;
         applicationSettings.windowY = window.y;
         applicationSettings.isMaximize = window.isShowFullScreenSize;
+        if (applicationSettings.isMaximize) {
+            applicationSettings.normalX = window.normalWindowSizeX;
+            applicationSettings.normalY = window.normalWindowSizeY;
+            applicationSettings.normalWidth = window.normalWindowSizeWidth;
+            applicationSettings.normalHeight = window.normalWindowSizeHeight;
+        }
     }
 
     header: Rectangle {
