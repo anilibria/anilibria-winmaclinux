@@ -133,7 +133,9 @@ Page {
                     anchors.centerIn: parent
                     fontPointSize: 14
                     horizontalAlignment: Text.AlignHCenter
-                    text: `Ваш кинозал пуст.<br />Релизы добавляются в кинозал на странице Каталог релизов.<br />Подробная справка <a href="https://github.com/anilibria/anilibria-winmaclinux/blob/master/cinemahall.md">о том как пользоваться кинозалом</a>.`
+                    text: `Ваш кинозал пуст.<br />Релизы добавляются в кинозал на странице Каталог релизов.<br />
+                    Подробная текстовая справка <a href="https://github.com/anilibria/anilibria-winmaclinux/blob/master/cinemahall.md">о том как пользоваться кинозалом</a>.
+                    <br />Также есть <a href="https://t.me/desktopclientanilibria/275">видеоинструкция</a>.`
                 }
             }
 
