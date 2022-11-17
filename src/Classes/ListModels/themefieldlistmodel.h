@@ -40,7 +40,7 @@ private:
         DescriptionRole,
         ValueRole,
         IsDefinedRole,
-        FieldTypeRole
+        FieldTypeRole,
     };
     QList<QString> m_colorFields { QList<QString>() };
     QString m_themeName { "" };

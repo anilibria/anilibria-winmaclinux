@@ -27,6 +27,7 @@ Rectangle {
     property bool isPressed: false
 
     signal buttonClicked();
+    signal buttonAlreadyClicked();
 
     Text { font.family: "Helvetica"; font.pointSize: 13; font.bold: true }
 
@@ -40,7 +41,11 @@ Rectangle {
         anchors.fill: parent
         hoverEnabled: true
         onClicked: {
-            _container.buttonClicked();
+            if (isChecked) {
+                _container.buttonAlreadyClicked();
+            } else {
+                _container.buttonClicked();
+            }
         }
         onEntered: {
             _container.isPressed = true;

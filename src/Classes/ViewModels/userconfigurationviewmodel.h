@@ -41,6 +41,8 @@ class UserConfigurationViewModel : public QObject
     Q_PROPERTY(bool autoSkipOpening READ autoSkipOpening WRITE setAutoSkipOpening NOTIFY autoSkipOpeningChanged)
     Q_PROPERTY(bool hideSkipOpening READ hideSkipOpening WRITE setHideSkipOpening NOTIFY hideSkipOpeningChanged)
     Q_PROPERTY(bool fixedControlPanel READ fixedControlPanel WRITE setFixedControlPanel NOTIFY fixedControlPanelChanged)
+    Q_PROPERTY(bool hidedQuality READ hidedQuality WRITE setHidedQuality NOTIFY hidedQualityChanged)
+    Q_PROPERTY(bool hidedSpeed READ hidedSpeed WRITE setHidedSpeed NOTIFY hidedSpeedChanged)
 
 private:
     QString m_cacheFileName { "userconfiguration.cache" };
@@ -60,6 +62,7 @@ private:
     QString m_autoSkipOpeningField { "autoSkipOpening" };
     QString m_hideSkipOpeningField { "hideSkipOpening" };
     QString m_fixedControlPanelField { "fixedControlPanel" };
+    QString m_hidedQualityField { "hidedQuality" };
     int m_opacityPlayerPanel { 50 };
     bool m_notCloseReleaseCardAfterWatch { false };
     bool m_usingScrollAcceleration { true };
@@ -76,6 +79,8 @@ private:
     bool m_autoSkipOpening { false };
     bool m_hideSkipOpening { false };
     bool m_fixedControlPanel { false };
+    bool m_hidedQuality { false };
+    bool m_hidedSpeed { false };
 
 public:
     explicit UserConfigurationViewModel(QObject *parent = nullptr);
@@ -128,6 +133,12 @@ public:
     bool fixedControlPanel() const noexcept { return m_fixedControlPanel; }
     void setFixedControlPanel(bool fixedControlPanel) noexcept;
 
+    bool hidedQuality() const noexcept { return m_hidedQuality; }
+    void setHidedQuality(bool hidedQuality) noexcept;
+
+    bool hidedSpeed() const noexcept { return m_hidedSpeed; }
+    void setHidedSpeed(bool hidedSpeed) noexcept;
+
     Q_INVOKABLE void refreshConfiguration() noexcept;
     Q_INVOKABLE void saveSettingsToFile();
 
@@ -151,6 +162,8 @@ signals:
     void autoSkipOpeningChanged();
     void hideSkipOpeningChanged();
     void fixedControlPanelChanged();
+    void hidedQualityChanged();
+    void hidedSpeedChanged();
 
 };
 

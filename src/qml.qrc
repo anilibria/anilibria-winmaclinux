@@ -170,5 +170,6 @@
         <file>Assets/Icons/updated.svg</file>
         <file>Assets/Icons/delete.svg</file>
         <file>Views/ThemeManagerPreview.qml</file>
+        <file>Views/ReleaseCard.qml</file>
     </qresource>
 </RCC>

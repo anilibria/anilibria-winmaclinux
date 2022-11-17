@@ -511,22 +511,26 @@ Page {
                 Row {
                     height: 20
                     anchors.horizontalCenter: parent.horizontalCenter
+
                     ToggleButton {
                         height: 20
-                        width: 60
+                        width: userConfigurationViewModel.hidedQuality && !isChecked ? 0 : 60
                         text: "1080p"
-                        visible: playerLoader.item.duration > 0 && onlinePlayerViewModel.isFullHdAllowed
+                        visible: playerLoader.item.duration > 0 && onlinePlayerViewModel.isFullHdAllowed && !(userConfigurationViewModel.hidedQuality && !isChecked)
                         isChecked: onlinePlayerViewModel.videoQuality === `fullhd`
                         onButtonClicked: {
                             onlinePlayerViewModel.restorePosition = playerLoader.item.position;
                             onlinePlayerViewModel.changeVideoQuality(`fullhd`);
                             localStorage.setVideoQuality(2);
                         }
+                        onButtonAlreadyClicked: {
+                            userConfigurationViewModel.hidedQuality = !userConfigurationViewModel.hidedQuality;
+                        }
                     }
                     ToggleButton {
                         height: 20
-                        width: 60
-                        visible: playerLoader.item.duration > 0
+                        width: userConfigurationViewModel.hidedQuality && !isChecked ? 0 : 60
+                        visible: playerLoader.item.duration > 0 && !(userConfigurationViewModel.hidedQuality && !isChecked)
                         text: "720p"
                         isChecked: onlinePlayerViewModel.videoQuality === `hd`
                         onButtonClicked: {
@@ -534,17 +538,23 @@ Page {
                             onlinePlayerViewModel.changeVideoQuality(`hd`);
                             localStorage.setVideoQuality(1);
                         }
+                        onButtonAlreadyClicked: {
+                            userConfigurationViewModel.hidedQuality = !userConfigurationViewModel.hidedQuality;
+                        }
                     }
                     ToggleButton {
                         height: 20
-                        width: 60
-                        visible: playerLoader.item.duration > 0
+                        width: userConfigurationViewModel.hidedQuality && !isChecked ? 0 : 60
+                        visible: playerLoader.item.duration > 0 && !(userConfigurationViewModel.hidedQuality && !isChecked)
                         text: "480p"
                         isChecked: onlinePlayerViewModel.videoQuality === `sd`
                         onButtonClicked: {
                             onlinePlayerViewModel.restorePosition = playerLoader.item.position;
                             onlinePlayerViewModel.changeVideoQuality(`sd`);
                             localStorage.setVideoQuality(0);
+                        }
+                        onButtonAlreadyClicked: {
+                            userConfigurationViewModel.hidedQuality = !userConfigurationViewModel.hidedQuality;
                         }
                     }
                     Rectangle {

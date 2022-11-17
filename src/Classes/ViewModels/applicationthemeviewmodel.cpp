@@ -200,6 +200,8 @@ void ApplicationThemeViewModel::setSelectedTheme(const QString &selectedTheme) n
     emit toggleButtonHoveredChanged();
     emit toggleButtonCheckedChanged();
     emit toggleButtonNotCheckedChanged();
+
+    m_service->loadThemes(m_basedOnDark);
 }
 
 void ApplicationThemeViewModel::setSelectedMenuItem(int selectedMenuItem) noexcept

@@ -156,6 +156,22 @@ void UserConfigurationViewModel::setFixedControlPanel(bool fixedControlPanel) no
     emit fixedControlPanelChanged();
 }
 
+void UserConfigurationViewModel::setHidedQuality(bool hidedQuality) noexcept
+{
+    if (m_hidedQuality == hidedQuality) return;
+
+    m_hidedQuality = hidedQuality;
+    emit hidedQualityChanged();
+}
+
+void UserConfigurationViewModel::setHidedSpeed(bool hidedSpeed) noexcept
+{
+    if (m_hidedSpeed == hidedSpeed) return;
+
+    m_hidedSpeed = hidedSpeed;
+    emit hidedSpeedChanged();
+}
+
 void UserConfigurationViewModel::refreshConfiguration() noexcept
 {
     readSettingsFromFile();
@@ -197,6 +213,7 @@ void UserConfigurationViewModel::saveSettingsToFile()
     object[m_autoSkipOpeningField] = m_autoSkipOpening;
     object[m_hideSkipOpeningField] = m_hideSkipOpening;
     object[m_fixedControlPanelField] = m_fixedControlPanel;
+    object[m_hidedQualityField] = m_hidedQuality;
 
     QFile file(getCachePath(m_cacheFileName));
     file.open(QFile::WriteOnly | QFile::Text);
@@ -229,4 +246,5 @@ void UserConfigurationViewModel::readSettingsFromFile()
     m_autoSkipOpening = object.contains(m_autoSkipOpeningField) ? object[m_autoSkipOpeningField].toBool() : false;
     m_hideSkipOpening = object.contains(m_hideSkipOpeningField) ? object[m_hideSkipOpeningField].toBool() : false;
     m_fixedControlPanel = object.contains(m_fixedControlPanelField) ? object[m_fixedControlPanelField].toBool() : false;
+    m_hidedQuality = object.contains(m_hidedQualityField) ? object[m_hidedQualityField].toBool() : false;
 }

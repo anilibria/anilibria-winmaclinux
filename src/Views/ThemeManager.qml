@@ -743,26 +743,83 @@ Page {
                                             width: 1
                                         }
 
-                                        FilterPanelIconButton {
-                                            id: colorButton
-                                            width: 20
-                                            height: 20
-                                            iconWidth: 18
-                                            iconHeight: 18
-                                            visible: isDefined && fieldType === 'color'
+                                        Rectangle {
+                                            id: colorRectangle
                                             anchors.left: buttonsSeparator.right
                                             anchors.leftMargin: 10
                                             anchors.verticalCenter: parent.verticalCenter
-                                            iconPath: assetsLocation.iconsPath + "themes.svg"
-                                            overlayVisible: false
-                                            tooltipMessage: "Выберите цвет из палитры"
-                                            onButtonPressed: {
-                                                applicationThemeViewModel.fieldList.selectedIndex = id;
-                                                colorDialog.color = fieldValue;
-                                                colorDialog.visible = true;
+                                            width: 20
+                                            height: 20
+                                            visible: fieldType === 'color'
+                                            color: isDefined ? valueTextField.text : 'white'
+
+                                            Canvas {
+                                                id: crossIcon
+                                                visible: !isDefined
+                                                anchors.fill: parent
+                                                opacity: .5
+                                                onPaint: {
+                                                    const ctx = getContext(`2d`);
+                                                    const halfWidth = colorRectangle.width / 2;
+                                                    const offset = 14;
+
+                                                    ctx.lineWidth = 2;
+                                                    ctx.strokeStyle = `#68b0ab`;
+                                                    ctx.beginPath();
+                                                    ctx.moveTo(colorRectangle.width - offset, offset);
+                                                    ctx.lineTo(offset, colorRectangle.height - offset);
+                                                    ctx.closePath();
+                                                    ctx.stroke();
+
+                                                    ctx.beginPath();
+                                                    ctx.moveTo(offset, offset);
+                                                    ctx.lineTo(colorRectangle.width - offset, colorRectangle.height - offset);
+                                                    ctx.closePath();
+                                                    ctx.stroke();
+                                                }
+                                            }
+
+
+                                            MouseArea {
+                                                anchors.fill: parent
+                                                onPressed: {
+                                                    applicationThemeViewModel.fieldList.selectedIndex = id;
+                                                    colorDialog.color = fieldValue;
+                                                    colorDialog.visible = true;
+                                                }
                                             }
                                         }
                                     }
+                                }
+                            }
+
+                            Rectangle {
+                                color: "transparent"
+                                width: 190
+                                height: 50
+                                anchors.right: parent.right
+                                anchors.rightMargin: 20
+                                anchors.bottom: parent.bottom
+
+                                IconButton {
+                                    anchors.right: parent.right
+                                    anchors.top: parent.top
+                                    anchors.topMargin: 8
+                                    visible: fieldsListView.contentY > 100
+                                    height: 30
+                                    width: 30
+                                    iconColor: applicationThemeViewModel.filterIconButtonColor
+                                    hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
+                                    iconPath: "../Assets/Icons/arrowup.svg"
+                                    iconWidth: 24
+                                    iconHeight: 24
+                                    ToolTip.delay: 1000
+                                    ToolTip.visible: hovered
+                                    ToolTip.text: "Вернуться в начало списка полей"
+                                    onButtonPressed: {
+                                        fieldsListView.contentY = 0;
+                                    }
+
                                 }
                             }
                         }
