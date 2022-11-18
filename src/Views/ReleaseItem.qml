@@ -101,7 +101,7 @@ Rectangle {
             visible: id > -1 && !compactModeSwitch.checked
             width: 182
             height: 272
-            border.color: "#adadad"
+            border.color: applicationThemeViewModel.posterBorder
             border.width: 1
             radius: 12
 
@@ -130,7 +130,7 @@ Rectangle {
                 anchors.horizontalCenter: parent.horizontalCenter
                 width: 152
                 height: 232
-                border.color: "#adadad"
+                border.color: applicationThemeViewModel.posterBorder
                 border.width: 1
                 radius: 12
 

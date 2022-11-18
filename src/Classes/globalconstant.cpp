@@ -71,3 +71,6 @@ QString externalIdField = "externalId";
 QString toggleButtonHoveredField = "toggleButtonHovered";
 QString toggleButtonCheckedField = "toggleButtonChecked";
 QString toggleButtonNotCheckedField = "toggleButtonNotChecked";
+QString posterBorderField = "posterBorder";
+QString roundedButtonDisableForegroundField = "roundedButtonDisableForeground";
+QString materialAccentField = "materialAccent";

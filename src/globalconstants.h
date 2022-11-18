@@ -79,6 +79,8 @@ extern QString roundedButtonForegroundField;
 
 extern QString roundedButtonHoveredField;
 
+extern QString roundedButtonDisableForegroundField;
+
 extern QString drawerGradiendStep0Field;
 
 extern QString drawerGradiendStep1Field;
@@ -124,5 +126,9 @@ extern QString toggleButtonHoveredField;
 extern QString toggleButtonCheckedField;
 
 extern QString toggleButtonNotCheckedField;
+
+extern QString posterBorderField;
+
+extern QString materialAccentField;
 
 #endif // GLOBALCONSTANTS_H

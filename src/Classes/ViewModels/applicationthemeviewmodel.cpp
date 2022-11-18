@@ -62,6 +62,9 @@ ApplicationThemeViewModel::ApplicationThemeViewModel(QObject *parent)
     lightTheme->insert(toggleButtonHoveredField, "gray");
     lightTheme->insert(toggleButtonCheckedField, "#9e2323");
     lightTheme->insert(toggleButtonNotCheckedField, "lightgray");
+    lightTheme->insert(posterBorderField, "#adadad");
+    lightTheme->insert(roundedButtonDisableForegroundField, "white");
+    lightTheme->insert(materialAccentField, "#f44336");
     lightTheme->insert(basedOnThemeField, m_lightTheme);
     lightTheme->insert(externalIdField, "");
     m_themes.insert(m_lightTheme, lightTheme);
@@ -100,6 +103,9 @@ ApplicationThemeViewModel::ApplicationThemeViewModel(QObject *parent)
     darkTheme->insert(toggleButtonHoveredField, "gray");
     darkTheme->insert(toggleButtonCheckedField, "#9e2323");
     darkTheme->insert(toggleButtonNotCheckedField, "darkgrey");
+    darkTheme->insert(posterBorderField, "#adadad");
+    darkTheme->insert(roundedButtonDisableForegroundField, "lightgray");
+    darkTheme->insert(materialAccentField, "#f44336");
     darkTheme->insert(basedOnThemeField, m_darkTheme);
     darkTheme->insert(externalIdField, "");
     m_themes.insert(m_darkTheme, darkTheme);
@@ -117,8 +123,9 @@ ApplicationThemeViewModel::ApplicationThemeViewModel(QObject *parent)
     m_fields.append(panelBackgroundShadowField);
     m_fields.append(roundedButtonBackgroundField);
     m_fields.append(roundedButtonBackgroundDisabledField);
-    m_fields.append(roundedButtonForegroundField);
     m_fields.append(roundedButtonHoveredField);
+    m_fields.append(roundedButtonForegroundField);
+    m_fields.append(roundedButtonDisableForegroundField);
     m_fields.append(drawerGradiendStep0Field);
     m_fields.append(drawerGradiendStep1Field);
     m_fields.append(drawerGradiendStep2Field);
@@ -140,6 +147,8 @@ ApplicationThemeViewModel::ApplicationThemeViewModel(QObject *parent)
     m_fields.append(toggleButtonHoveredField);
     m_fields.append(toggleButtonCheckedField);
     m_fields.append(toggleButtonNotCheckedField);
+    m_fields.append(posterBorderField);
+    m_fields.append(materialAccentField);
     m_fields.append(externalIdField);
 
     readCacheFile();
@@ -200,6 +209,8 @@ void ApplicationThemeViewModel::setSelectedTheme(const QString &selectedTheme) n
     emit toggleButtonHoveredChanged();
     emit toggleButtonCheckedChanged();
     emit toggleButtonNotCheckedChanged();
+    emit materialAccentChanged();
+    emit roundedButtonDisableForegroundChanged();
 
     m_service->loadThemes(m_basedOnDark);
 }

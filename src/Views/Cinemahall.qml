@@ -261,7 +261,7 @@ Page {
                                     anchors.horizontalCenter: parent.horizontalCenter
                                     width: 152
                                     height: 232
-                                    border.color: "#adadad"
+                                    border.color: applicationThemeViewModel.posterBorder
                                     border.width: 1
                                     radius: 12
 

@@ -45,7 +45,7 @@ Item {
                 anchors.leftMargin: 8
                 width: 182
                 height: 272
-                border.color: "#adadad"
+                border.color: applicationThemeViewModel.posterBorder
                 border.width: 1
                 radius: 12
 

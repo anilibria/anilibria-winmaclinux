@@ -82,8 +82,11 @@ Page {
             volumeSlider.value = playerLoader.item.volume * 100;
         }
         if (event.key === Qt.Key_Down) {
-            if (playerLoader.item.volume > 0) playerLoader.item.volume -= .1;
-            if (playerLoader.item.volume < 0) playerLoader.item.volume = 0;
+            let newVolume = playerLoader.item.volume;
+            if (newVolume > 0) newVolume -= .1;
+            if (newVolume < 0) newVolume = 0;
+
+            playerLoader.item.volume = newVolume;
 
             volumeSlider.value = playerLoader.item.volume * 100;
         }
@@ -570,92 +573,119 @@ Page {
                     }
                     ToggleButton {
                         height: 20
-                        width: 40
-                        visible: playerLoader.item.duration > 0
+                        width: userConfigurationViewModel.hidedSpeed && !isChecked ? 0 : 40
+                        visible: playerLoader.item.duration > 0 && !(userConfigurationViewModel.hidedSpeed && !isChecked)
                         text: "x0.25"
                         isChecked: onlinePlayerViewModel.playbackRate === 0.25
                         onButtonClicked: {
                             onlinePlayerViewModel.setVideoSpeed(0.25)
                         }
+                        onButtonAlreadyClicked: {
+                            userConfigurationViewModel.hidedSpeed = !userConfigurationViewModel.hidedSpeed;
+                        }
                     }
                     ToggleButton {
                         height: 20
-                        width: 40
-                        visible: playerLoader.item.duration > 0
+                        width: userConfigurationViewModel.hidedSpeed && !isChecked ? 0 : 40
+                        visible: playerLoader.item.duration > 0 && !(userConfigurationViewModel.hidedSpeed && !isChecked)
                         text: "x0.5"
                         isChecked: onlinePlayerViewModel.playbackRate === 0.5
                         onButtonClicked: {
                             onlinePlayerViewModel.setVideoSpeed(0.5);
                         }
+                        onButtonAlreadyClicked: {
+                            userConfigurationViewModel.hidedSpeed = !userConfigurationViewModel.hidedSpeed;
+                        }
                     }
                     ToggleButton {
                         height: 20
-                        width: 40
-                        visible: playerLoader.item.duration > 0
+                        width: userConfigurationViewModel.hidedSpeed && !isChecked ? 0 : 40
+                        visible: playerLoader.item.duration > 0 && !(userConfigurationViewModel.hidedSpeed && !isChecked)
                         text: "x0.75"
                         isChecked: onlinePlayerViewModel.playbackRate === 0.75
                         onButtonClicked: {
                             onlinePlayerViewModel.setVideoSpeed(0.75);
                         }
+                        onButtonAlreadyClicked: {
+                            userConfigurationViewModel.hidedSpeed = !userConfigurationViewModel.hidedSpeed;
+                        }
                     }
                     ToggleButton {
                         height: 20
-                        width: 40
-                        visible: playerLoader.item.duration > 0
+                        width: userConfigurationViewModel.hidedSpeed && !isChecked ? 0 : 40
+                        visible: playerLoader.item.duration > 0 && !(userConfigurationViewModel.hidedSpeed && !isChecked)
                         text: "x1"
                         isChecked: onlinePlayerViewModel.playbackRate === 1
                         onButtonClicked: {
                             onlinePlayerViewModel.setVideoSpeed(1);
                         }
+                        onButtonAlreadyClicked: {
+                            userConfigurationViewModel.hidedSpeed = !userConfigurationViewModel.hidedSpeed;
+                        }
                     }
                     ToggleButton {
                         height: 20
-                        width: 40
-                        visible: playerLoader.item.duration > 0
+                        width: userConfigurationViewModel.hidedSpeed && !isChecked ? 0 : 40
+                        visible: playerLoader.item.duration > 0 && !(userConfigurationViewModel.hidedSpeed && !isChecked)
                         text: "x1.25"
                         isChecked: onlinePlayerViewModel.playbackRate === 1.1
                         onButtonClicked: {
                             onlinePlayerViewModel.setVideoSpeed(1.1);
                         }
+                        onButtonAlreadyClicked: {
+                            userConfigurationViewModel.hidedSpeed = !userConfigurationViewModel.hidedSpeed;
+                        }
                     }
                     ToggleButton {
                         height: 20
-                        width: 40
-                        visible: playerLoader.item.duration > 0
+                        width: userConfigurationViewModel.hidedSpeed && !isChecked ? 0 : 40
+                        visible: playerLoader.item.duration > 0 && !(userConfigurationViewModel.hidedSpeed && !isChecked)
                         text: "x1.5"
                         isChecked: onlinePlayerViewModel.playbackRate === 1.2
                         onButtonClicked: {
                             onlinePlayerViewModel.setVideoSpeed(1.2);
                         }
+                        onButtonAlreadyClicked: {
+                            userConfigurationViewModel.hidedSpeed = !userConfigurationViewModel.hidedSpeed;
+                        }
                     }
                     ToggleButton {
                         height: 20
-                        width: 40
-                        visible: playerLoader.item.duration > 0
+                        width: userConfigurationViewModel.hidedSpeed && !isChecked ? 0 : 40
+                        visible: playerLoader.item.duration > 0 && !(userConfigurationViewModel.hidedSpeed && !isChecked)
                         text: "x1.75"
                         isChecked: onlinePlayerViewModel.playbackRate === 1.3
                         onButtonClicked: {
                             onlinePlayerViewModel.setVideoSpeed(1.3);
                         }
+                        onButtonAlreadyClicked: {
+                            userConfigurationViewModel.hidedSpeed = !userConfigurationViewModel.hidedSpeed;
+                        }
                     }
                     ToggleButton {
                         height: 20
-                        width: 40
-                        visible: playerLoader.item.duration > 0
+                        width: userConfigurationViewModel.hidedSpeed && !isChecked ? 0 : 40
+                        visible: playerLoader.item.duration > 0 && !(userConfigurationViewModel.hidedSpeed && !isChecked)
                         text: "x2"
                         isChecked: onlinePlayerViewModel.playbackRate === 1.5
                         onButtonClicked: {
                             onlinePlayerViewModel.setVideoSpeed(1.5);
                         }
+                        onButtonAlreadyClicked: {
+                            userConfigurationViewModel.hidedSpeed = !userConfigurationViewModel.hidedSpeed;
+                        }
                     }
                     ToggleButton {
                         height: 20
-                        width: 40
-                        visible: playerLoader.item.duration > 0
+                        width: userConfigurationViewModel.hidedSpeed && !isChecked ? 0 : 40
+                        visible: playerLoader.item.duration > 0 && !(userConfigurationViewModel.hidedSpeed && !isChecked)
                         text: "x3"
                         isChecked: onlinePlayerViewModel.playbackRate === 2
                         onButtonClicked: {
                             onlinePlayerViewModel.setVideoSpeed(2);
+                        }
+                        onButtonAlreadyClicked: {
+                            userConfigurationViewModel.hidedSpeed = !userConfigurationViewModel.hidedSpeed;
                         }
                     }
                 }
@@ -1208,6 +1238,40 @@ Page {
                                         userConfigurationViewModel.hideSkipOpening = checked;
                                     }
                                 }
+                                PlainText {
+                                    width: rightColumn.width - 20
+                                    fontPointSize: 10
+                                    text: "Размер буфера (только для windows)"
+                                }
+                                CommonComboBox {
+                                    Layout.column: 0
+                                    model: ListModel {
+                                        ListElement {
+                                            text: "100"
+                                        }
+                                        ListElement {
+                                            text: "200"
+                                        }
+                                        ListElement {
+                                            text: "300"
+                                        }
+                                        ListElement {
+                                            text: "400"
+                                        }
+                                        ListElement {
+                                            text: "500"
+                                        }
+                                        ListElement {
+                                            text: "600"
+                                        }
+                                    }
+                                    onActivated: {
+                                        userConfigurationViewModel.playerBuffer = (index + 1) * 100;
+                                    }
+                                    Component.onCompleted: {
+                                        currentIndex = userConfigurationViewModel.playerBuffer / 100 - 1;
+                                    }
+                                }
                             }
                         }
 
@@ -1387,7 +1451,7 @@ Page {
         anchors.top: parent.top
         width: 182
         height: 272
-        border.color: "#adadad"
+        border.color: applicationThemeViewModel.posterBorder
         border.width: 1
         radius: 12
         Image {
@@ -1452,7 +1516,7 @@ Page {
             anchors.bottomMargin: 2
             width: 182
             height: 272
-            border.color: "#adadad"
+            border.color: applicationThemeViewModel.posterBorder
             border.width: 1
             radius: 12
             Image {

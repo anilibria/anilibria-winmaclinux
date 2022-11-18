@@ -49,7 +49,7 @@ ApplicationWindow {
     property int previousX
     property int previousY
 
-    Material.accent: Material.Red
+    Material.accent: applicationThemeViewModel.materialAccent
     Material.theme: applicationThemeViewModel.basedOnDark ? Material.Dark : Material.Light
 
     onClosing: {

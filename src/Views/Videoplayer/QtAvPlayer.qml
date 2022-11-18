@@ -69,7 +69,7 @@ Item {
     MediaPlayer {
         id: videoPlayer
         autoPlay: true
-        bufferSize: 500
+        bufferSize: userConfigurationViewModel.playerBuffer
         fastSeek: true
         timeout: 60000
         onBufferProgressChanged: {

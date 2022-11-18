@@ -65,6 +65,9 @@ class ApplicationThemeViewModel : public QObject
     Q_PROPERTY(QString toggleButtonHovered READ toggleButtonHovered NOTIFY toggleButtonHoveredChanged)
     Q_PROPERTY(QString toggleButtonChecked READ toggleButtonChecked NOTIFY toggleButtonCheckedChanged)
     Q_PROPERTY(QString toggleButtonNotChecked READ toggleButtonNotChecked NOTIFY toggleButtonNotCheckedChanged)
+    Q_PROPERTY(QString posterBorder READ posterBorder NOTIFY posterBorderChanged)
+    Q_PROPERTY(QString materialAccent READ materialAccent NOTIFY materialAccentChanged)
+    Q_PROPERTY(QString roundedButtonDisableForeground READ roundedButtonDisableForeground NOTIFY roundedButtonDisableForegroundChanged)
     Q_PROPERTY(QStringList themes READ themes NOTIFY themesChanged)
     Q_PROPERTY(bool basedOnDark READ basedOnDark NOTIFY basedOnDarkChanged)
     Q_PROPERTY(ThemeManagerService* service READ service NOTIFY serviceChanged)
@@ -133,6 +136,9 @@ public:
     QString toggleButtonHovered() const noexcept { return m_themes.value(m_selectedTheme)->value(toggleButtonHoveredField); }
     QString toggleButtonChecked() const noexcept { return m_themes.value(m_selectedTheme)->value(toggleButtonCheckedField); }
     QString toggleButtonNotChecked() const noexcept { return m_themes.value(m_selectedTheme)->value(toggleButtonNotCheckedField); }
+    QString posterBorder() const noexcept { return m_themes.value(m_selectedTheme)->value(posterBorderField); }
+    QString materialAccent() const noexcept { return m_themes.value(m_selectedTheme)->value(materialAccentField); }
+    QString roundedButtonDisableForeground() const noexcept { return m_themes.value(m_selectedTheme)->value(roundedButtonDisableForegroundField); }
     QStringList themes() const noexcept { return m_themes.keys(); }
     bool basedOnDark() const noexcept { return m_basedOnDark; }
 
@@ -227,6 +233,9 @@ signals:
     void toggleButtonNotCheckedChanged();
     void localThemesChanged();
     void copyMenuItemsChanged();
+    void posterBorderChanged();
+    void materialAccentChanged();
+    void roundedButtonDisableForegroundChanged();
 
 };
 

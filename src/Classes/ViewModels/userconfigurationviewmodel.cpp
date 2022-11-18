@@ -172,6 +172,14 @@ void UserConfigurationViewModel::setHidedSpeed(bool hidedSpeed) noexcept
     emit hidedSpeedChanged();
 }
 
+void UserConfigurationViewModel::setPlayerBuffer(int playerBuffer) noexcept
+{
+    if (m_playerBuffer == playerBuffer) return;
+
+    m_playerBuffer = playerBuffer;
+    emit playerBufferChanged();
+}
+
 void UserConfigurationViewModel::refreshConfiguration() noexcept
 {
     readSettingsFromFile();
@@ -214,6 +222,8 @@ void UserConfigurationViewModel::saveSettingsToFile()
     object[m_hideSkipOpeningField] = m_hideSkipOpening;
     object[m_fixedControlPanelField] = m_fixedControlPanel;
     object[m_hidedQualityField] = m_hidedQuality;
+    object[m_hidedSpeedField] = m_hidedSpeed;
+    object[m_playerBufferField] = m_playerBuffer;
 
     QFile file(getCachePath(m_cacheFileName));
     file.open(QFile::WriteOnly | QFile::Text);
@@ -247,4 +257,6 @@ void UserConfigurationViewModel::readSettingsFromFile()
     m_hideSkipOpening = object.contains(m_hideSkipOpeningField) ? object[m_hideSkipOpeningField].toBool() : false;
     m_fixedControlPanel = object.contains(m_fixedControlPanelField) ? object[m_fixedControlPanelField].toBool() : false;
     m_hidedQuality = object.contains(m_hidedQualityField) ? object[m_hidedQualityField].toBool() : false;
+    m_hidedSpeed = object.contains(m_hidedSpeedField) ? object[m_hidedSpeedField].toBool() : false;
+    m_playerBuffer = object.contains(m_playerBufferField) ? object[m_playerBufferField].toInt() : 500;
 }

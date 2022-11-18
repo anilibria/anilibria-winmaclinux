@@ -23,6 +23,8 @@
 #include "../../globalconstants.h"
 #include "../../globalhelpers.h"
 
+//data:image/png;base64,
+
 ThemeFieldListModel::ThemeFieldListModel(QObject *parent)
     : QAbstractListModel{parent}
 {
@@ -37,7 +39,8 @@ ThemeFieldListModel::ThemeFieldListModel(QObject *parent)
     m_descriptions.insert(roundedButtonBackgroundField, "Цвет фона экшен кнопки 1:Заливка фона кнопки в состоянии Активно");
     m_descriptions.insert(roundedButtonBackgroundDisabledField, "Цвет фона экшен кнопки 2:Заливка фона кнопки в состоянии Не Активно");
     m_descriptions.insert(roundedButtonHoveredField, "Цвет фона экшен кнопки 3:Заливка фона кнопки в состоянии Мышка поверх элемента");
-    m_descriptions.insert(roundedButtonForegroundField, "Цвет текста экшен кнопки:Цвет текста внутри экшен кнопки");
+    m_descriptions.insert(roundedButtonForegroundField, "Цвет текста экшен кнопки:Цвет текста внутри экшен кнопки в состоянии Активно");
+    m_descriptions.insert(roundedButtonDisableForegroundField, "Цвет текста экшен кнопки:Цвет текста внутри экшен кнопки в состоянии Не Активно");
     m_descriptions.insert(drawerGradiendStep0Field, "Цвет фона главного меню 1:Первый цвет для определения градиента");
     m_descriptions.insert(drawerGradiendStep1Field, "Цвет фона главного меню 2:Второй цвет для определения градиента");
     m_descriptions.insert(drawerGradiendStep2Field, "Цвет фона главного меню 3:Третий цвет для определения градиента");
@@ -59,6 +62,8 @@ ThemeFieldListModel::ThemeFieldListModel(QObject *parent)
     m_descriptions.insert(toggleButtonHoveredField, "Цвет кнопки переключателя 1: Цвет фона кнопки переключателя в состоянии Мышка поверх элемента");
     m_descriptions.insert(toggleButtonCheckedField, "Цвет кнопки переключателя 2: Цвет фона кнопки переключателя в состоянии Выбрано");
     m_descriptions.insert(toggleButtonNotCheckedField, "Цвет кнопки переключателя 3: Цвет фона кнопки переключателя в состоянии Не Выбрано");
+    m_descriptions.insert(posterBorderField, "Цвет рамки постера:Цвет рамки вокруг постера в элементе релиза в различных списках");
+    m_descriptions.insert(materialAccentField, "Цвет акцента для Material:Цвет акцента в Material элементах (переключатель, текстовое поле)");
 
     m_saveMenuItems.append("Сохранить и добавить тему в список");
     m_saveMenuItems.append("Сохранить в файл");

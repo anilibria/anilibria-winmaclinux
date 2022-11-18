@@ -49,7 +49,7 @@ Rectangle {
             id: buttonTitle
             fontPointSize: 11
             anchors.centerIn: parent
-            color: applicationThemeViewModel.roundedButtonForeground
+            color: root.buttonEnabled ? applicationThemeViewModel.roundedButtonForeground : applicationThemeViewModel.roundedButtonDisableForeground
         }
 
         MouseArea {

@@ -520,7 +520,7 @@ Page {
                                 text: "Предпросмотр темы"
                                 onClicked: {
                                     applicationThemeViewModel.preparePreviewItems();
-                                    themeManagerPreview.show();
+                                    previewWindowLoader.sourceComponent = previewWindowComponent;
                                 }
                             }
                         }
@@ -917,9 +917,24 @@ Page {
         }
     }
 
-    ThemeManagerPreview {
-        id: themeManagerPreview
+    Loader {
+        id: previewWindowLoader
     }
+
+    Component {
+        id: previewWindowComponent
+
+        ThemeManagerPreview {
+            id: themeManagerPreview
+            Component.onCompleted: {
+                show();
+            }
+            onClosing: {
+                previewWindowLoader.sourceComponent = null;
+            }
+        }
+    }
+
 
     Connections {
         target: applicationThemeViewModel.fieldList

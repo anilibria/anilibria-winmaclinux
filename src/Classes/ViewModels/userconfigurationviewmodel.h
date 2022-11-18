@@ -43,6 +43,7 @@ class UserConfigurationViewModel : public QObject
     Q_PROPERTY(bool fixedControlPanel READ fixedControlPanel WRITE setFixedControlPanel NOTIFY fixedControlPanelChanged)
     Q_PROPERTY(bool hidedQuality READ hidedQuality WRITE setHidedQuality NOTIFY hidedQualityChanged)
     Q_PROPERTY(bool hidedSpeed READ hidedSpeed WRITE setHidedSpeed NOTIFY hidedSpeedChanged)
+    Q_PROPERTY(int playerBuffer READ playerBuffer WRITE setPlayerBuffer NOTIFY playerBufferChanged)
 
 private:
     QString m_cacheFileName { "userconfiguration.cache" };
@@ -63,6 +64,8 @@ private:
     QString m_hideSkipOpeningField { "hideSkipOpening" };
     QString m_fixedControlPanelField { "fixedControlPanel" };
     QString m_hidedQualityField { "hidedQuality" };
+    QString m_hidedSpeedField { "hidedSpeed" };
+    QString m_playerBufferField { "playerBuffer" };
     int m_opacityPlayerPanel { 50 };
     bool m_notCloseReleaseCardAfterWatch { false };
     bool m_usingScrollAcceleration { true };
@@ -81,6 +84,7 @@ private:
     bool m_fixedControlPanel { false };
     bool m_hidedQuality { false };
     bool m_hidedSpeed { false };
+    int m_playerBuffer { 0 };
 
 public:
     explicit UserConfigurationViewModel(QObject *parent = nullptr);
@@ -139,6 +143,9 @@ public:
     bool hidedSpeed() const noexcept { return m_hidedSpeed; }
     void setHidedSpeed(bool hidedSpeed) noexcept;
 
+    int playerBuffer() const noexcept { return m_playerBuffer; }
+    void setPlayerBuffer(int playerBuffer) noexcept;
+
     Q_INVOKABLE void refreshConfiguration() noexcept;
     Q_INVOKABLE void saveSettingsToFile();
 
@@ -164,6 +171,7 @@ signals:
     void fixedControlPanelChanged();
     void hidedQualityChanged();
     void hidedSpeedChanged();
+    void playerBufferChanged();
 
 };
 

@@ -8,13 +8,16 @@ import "../Controls"
 ApplicationWindow {
     id: previewWindow
     minimumWidth: 500
-    minimumHeight: 300
+    minimumHeight: 400
     width: 800
-    height: 600
+    height: 650
     flags: Qt.Dialog | Qt.WindowTitleHint | Qt.WindowCloseButtonHint
     modality: Qt.ApplicationModal
     title: "Предпросмотр темы"
-    Material.accent: Material.Red
+    Material.accent: applicationThemeViewModel.previewItems.materialAccent
+    //Material.foreground: "red"
+    //Material.background: "red"
+    //Material.hintTextColor
     Material.theme: applicationThemeViewModel.fieldList.basedOnTheme === 'Темная' ? Material.Dark : Material.Light
     background: Rectangle {
         color: applicationThemeViewModel.previewItems.pageBackground
@@ -216,7 +219,7 @@ ApplicationWindow {
                                 anchors.topMargin: 4
                                 width: 182
                                 height: 272
-                                border.color: "#adadad"
+                                border.color: applicationThemeViewModel.previewItems.posterBorder
                                 border.width: 1
                                 radius: 12
 
@@ -365,7 +368,7 @@ ApplicationWindow {
                                     font.pointSize: 10 + windowSettings.dpiSeparation
                                     anchors.centerIn: parent
                                     text: "Не активная кнопка"
-                                    color: applicationThemeViewModel.previewItems.roundedButtonForeground
+                                    color: applicationThemeViewModel.previewItems.roundedButtonDisableForeground
                                 }
                             }
                         }
@@ -429,6 +432,7 @@ ApplicationWindow {
                         }
 
                         Item {
+                            id: playlistControls
                             anchors.top: activePlaylistItem.bottom
                             anchors.left: parent.left
                             anchors.leftMargin: 10
@@ -485,6 +489,7 @@ ApplicationWindow {
                         }
 
                         Item {
+                            id: playerControls
                             width: 400
                             height: 50
                             anchors.left: parent.left
@@ -540,6 +545,23 @@ ApplicationWindow {
                                         text: "не выбрано"
                                     }
                                 }
+                            }
+                        }
+                        Item {
+                            width: 400
+                            height: 50
+                            anchors.left: parent.left
+                            anchors.leftMargin: 10
+                            anchors.top: playlistControls.bottom
+
+                            Switch {
+                                id: previewSwitch
+                            }
+
+                            TextField {
+                                anchors.left: previewSwitch.right
+                                anchors.leftMargin: 10
+                                width: 300
                             }
                         }
                     }
