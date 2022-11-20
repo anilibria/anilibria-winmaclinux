@@ -174,43 +174,7 @@ void ApplicationThemeViewModel::setSelectedTheme(const QString &selectedTheme) n
     auto currentTheme = m_themes.value(m_selectedTheme);
     m_basedOnDark = currentTheme->value(basedOnThemeField) == m_darkTheme;
 
-    emit basedOnDarkChanged();
-    emit selectedThemeChanged();
-    emit plainTextColorChanged();
-    emit headerTextColorChanged();
-    emit linkTextColorChanged();
-    emit pageVerticalPanelChanged();
-    emit pageBackgroundChanged();
-    emit pageUpperPanelChanged();
-    emit panelBackgroundChanged();
-    emit panelBackgroundShadowChanged();
-    emit roundedButtonBackgroundChanged();
-    emit roundedButtonBackgroundDisabledChanged();
-    emit roundedButtonForegroundChanged();
-    emit roundedButtonHoveredChanged();
-    emit drawerGradiendStep0Changed();
-    emit drawerGradiendStep1Changed();
-    emit drawerGradiendStep2Changed();
-    emit drawerGradiendStep3Changed();
-    emit drawerGradiendStep4Changed();
-    emit filterIconButtonColorChanged();
-    emit filterIconButtonGreenColorChanged();
-    emit filterIconButtonHoverColorChanged();
-    emit selectedItemChanged();
-    emit selectedFavoriteChanged();
-    emit playerControlBackgroundChanged();
-    emit notificationCenterBackgroundChanged();
-    emit notificationCenterPanelBackgroundChanged();
-    emit notificationCenterItemBackgroundChanged();
-    emit playlistSelectedBackgroundChanged();
-    emit playlistBackgroundChanged();
-    emit playlistSelectedTextChanged();
-    emit playlistTextChanged();
-    emit toggleButtonHoveredChanged();
-    emit toggleButtonCheckedChanged();
-    emit toggleButtonNotCheckedChanged();
-    emit materialAccentChanged();
-    emit roundedButtonDisableForegroundChanged();
+    emitAllFields();
 
     m_service->loadThemes(m_basedOnDark);
 }
@@ -387,6 +351,8 @@ void ApplicationThemeViewModel::saveThemeAndApply() noexcept
     if (!m_localIds->contains(name)) m_localIds->append(name);
     m_localThemes->refresh();
     emit copyMenuItemsChanged();
+
+    if (m_selectedTheme == name) emitAllFields();
 }
 
 void ApplicationThemeViewModel::preparePreviewItems() noexcept
@@ -518,6 +484,47 @@ void ApplicationThemeViewModel::readCacheFile()
 void ApplicationThemeViewModel::setThemeValue(QMap<QString, QString>* theme,const QJsonObject &themeItem, const QMap<QString, QString> *baseTheme, const QString& name)
 {
     theme->insert(name, themeItem.contains(name) ? themeItem.value(name).toString() : baseTheme->value(name));
+}
+
+void ApplicationThemeViewModel::emitAllFields()
+{
+    emit basedOnDarkChanged();
+    emit selectedThemeChanged();
+    emit plainTextColorChanged();
+    emit headerTextColorChanged();
+    emit linkTextColorChanged();
+    emit pageVerticalPanelChanged();
+    emit pageBackgroundChanged();
+    emit pageUpperPanelChanged();
+    emit panelBackgroundChanged();
+    emit panelBackgroundShadowChanged();
+    emit roundedButtonBackgroundChanged();
+    emit roundedButtonBackgroundDisabledChanged();
+    emit roundedButtonForegroundChanged();
+    emit roundedButtonHoveredChanged();
+    emit drawerGradiendStep0Changed();
+    emit drawerGradiendStep1Changed();
+    emit drawerGradiendStep2Changed();
+    emit drawerGradiendStep3Changed();
+    emit drawerGradiendStep4Changed();
+    emit filterIconButtonColorChanged();
+    emit filterIconButtonGreenColorChanged();
+    emit filterIconButtonHoverColorChanged();
+    emit selectedItemChanged();
+    emit selectedFavoriteChanged();
+    emit playerControlBackgroundChanged();
+    emit notificationCenterBackgroundChanged();
+    emit notificationCenterPanelBackgroundChanged();
+    emit notificationCenterItemBackgroundChanged();
+    emit playlistSelectedBackgroundChanged();
+    emit playlistBackgroundChanged();
+    emit playlistSelectedTextChanged();
+    emit playlistTextChanged();
+    emit toggleButtonHoveredChanged();
+    emit toggleButtonCheckedChanged();
+    emit toggleButtonNotCheckedChanged();
+    emit materialAccentChanged();
+    emit roundedButtonDisableForegroundChanged();
 }
 
 void ApplicationThemeViewModel::themesLoaded()

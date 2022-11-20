@@ -74,7 +74,7 @@ void ThemeFieldListModel::fillFields(const QList<QString> &colors)
     m_colorFields.append(colors);
     m_colorFields.removeOne(externalIdField); // remove service field
 
-    m_filteredColorFields.append(colors);
+    m_filteredColorFields.append(m_colorFields);
 }
 
 int ThemeFieldListModel::rowCount(const QModelIndex &parent) const

@@ -179,6 +179,7 @@ public:
 private:
     void readCacheFile();
     void setThemeValue(QMap<QString, QString>* theme, const QJsonObject& themeItem, const QMap<QString, QString>* baseTheme, const QString& name);
+    void emitAllFields();
 
 private slots:
     void themesLoaded();
