@@ -384,7 +384,7 @@ void ApplicationThemeViewModel::saveThemeAndApply() noexcept
     }
 
     emit themesChanged();
-    m_localIds->append(name);
+    if (!m_localIds->contains(name)) m_localIds->append(name);
     m_localThemes->refresh();
     emit copyMenuItemsChanged();
 }
