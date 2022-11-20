@@ -73,13 +73,15 @@ void ThemeFieldListModel::fillFields(const QList<QString> &colors)
 {
     m_colorFields.append(colors);
     m_colorFields.removeOne(externalIdField); // remove service field
+
+    m_filteredColorFields.append(colors);
 }
 
 int ThemeFieldListModel::rowCount(const QModelIndex &parent) const
 {
     if (parent.isValid()) return 0;
 
-    return m_colorFields.size();
+    return m_filteredColorFields.size();
 }
 
 QVariant ThemeFieldListModel::data(const QModelIndex &index, int role) const
@@ -87,7 +89,7 @@ QVariant ThemeFieldListModel::data(const QModelIndex &index, int role) const
     if (!index.isValid()) return QVariant();
 
     auto itemIndex = index.row();
-    auto field = m_colorFields.at(itemIndex);
+    auto field = m_filteredColorFields.at(itemIndex);
     auto isDefined = m_values.contains(field);
 
     switch (role) {
@@ -208,6 +210,16 @@ QString ThemeFieldListModel::editMode() const noexcept
      return "";
 }
 
+void ThemeFieldListModel::setFilter(const QString &filter) noexcept
+{
+    if (m_filter == filter) return;
+
+    m_filter = filter;
+    emit filterChanged();
+
+    refresh();
+}
+
 void ThemeFieldListModel::setValues(QMap<QString, QString>&& values, const QString& name, const QString& basedTheme) noexcept
 {
     beginResetModel();
@@ -226,6 +238,25 @@ void ThemeFieldListModel::setValues(QMap<QString, QString>&& values, const QStri
     setThemeName(name);
     setBasedOnTheme(basedTheme);
     emit hasValuesChanged();
+}
+
+void ThemeFieldListModel::refresh() noexcept
+{
+    beginResetModel();
+
+    m_filteredColorFields.clear();
+
+    if (m_filter.isEmpty()) {
+        m_filteredColorFields.append(m_colorFields);
+    } else {
+        foreach (auto colorField, m_colorFields) {
+            if (m_descriptions[colorField].toLower().contains(m_filter.toLower())) {
+                m_filteredColorFields.append(colorField);
+            }
+        }
+    }
+
+    endResetModel();
 }
 
 void ThemeFieldListModel::createBlankTheme() noexcept

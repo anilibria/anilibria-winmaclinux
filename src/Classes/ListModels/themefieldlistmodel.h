@@ -31,6 +31,7 @@ class ThemeFieldListModel : public QAbstractListModel
     Q_PROPERTY(int selectedIndex READ selectedIndex WRITE setSelectedIndex NOTIFY selectedIndexChanged)
     Q_PROPERTY(bool hasValues READ hasValues NOTIFY hasValuesChanged)
     Q_PROPERTY(QStringList saveMenuItems READ saveMenuItems NOTIFY saveMenuItemsChanged)
+    Q_PROPERTY(QString filter READ filter WRITE setFilter NOTIFY filterChanged)
 
 private:
     enum ThemeFieldRoles {
@@ -43,6 +44,7 @@ private:
         FieldTypeRole,
     };
     QList<QString> m_colorFields { QList<QString>() };
+    QList<QString> m_filteredColorFields { QList<QString>() };
     QString m_themeName { "" };
     QString m_basedOnTheme { "" };
     bool m_isBlankTheme { true };
@@ -52,6 +54,7 @@ private:
     QMap<QString, QString> m_descriptions { QMap<QString, QString>() };
     QStringList m_saveMenuItems { QStringList() };
     int m_selectedIndex { -1 };
+    QString m_filter { "" };
 
 public:
     explicit ThemeFieldListModel(QObject *parent = nullptr);
@@ -79,7 +82,12 @@ public:
 
     QStringList saveMenuItems() const noexcept { return m_saveMenuItems; }
 
+    QString filter() const noexcept { return m_filter; }
+    void setFilter(const QString& filter) noexcept;
+
     void setValues(QMap<QString, QString>&& values, const QString& name, const QString& basedTheme) noexcept;
+
+    void refresh() noexcept;
 
     Q_INVOKABLE void createBlankTheme() noexcept;
     Q_INVOKABLE void setValueToItem(QString value) noexcept;
@@ -95,6 +103,7 @@ signals:
     void selectedIndexChanged();
     void hasValuesChanged();
     void saveMenuItemsChanged();
+    void filterChanged();
 
 };
 

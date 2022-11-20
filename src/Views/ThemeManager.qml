@@ -523,6 +523,17 @@ Page {
                                     previewWindowLoader.sourceComponent = previewWindowComponent;
                                 }
                             }
+
+                            TextField {
+                                anchors.left: parent.left
+                                anchors.leftMargin: 10
+                                anchors.verticalCenter: parent.verticalCenter
+                                width: 180
+                                placeholderText: "Фильтр для полей"
+                                onTextChanged: {
+                                    applicationThemeViewModel.fieldList.filter = text;
+                                }
+                            }
                         }
                         Item {
                             Layout.fillWidth: true
