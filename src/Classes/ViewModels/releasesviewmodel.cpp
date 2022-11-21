@@ -608,7 +608,11 @@ QString ReleasesViewModel::getReleaseCodeFromUrl(const QString &url) const noexc
 void ReleasesViewModel::fillFullSearch(QList<FullReleaseModel *> &list, const QString &filter) noexcept
 {
     auto filterLower = filter.toLower();
+#if QT_VERSION <= QT_VERSION_CHECK(5, 15, 0)
+    auto words = filterLower.split(" ", QString::SkipEmptyParts);
+#else
     auto words = filterLower.split(" ", Qt::SkipEmptyParts);
+#endif
     if (words.isEmpty()) return;
 
     foreach (auto release, *m_releases) {
