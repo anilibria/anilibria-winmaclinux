@@ -1374,6 +1374,12 @@ ApplicationWindow {
         }
     }
 
+    MyAnilibriaSearchListModel {
+        id: myAnilibriaSearchListModel
+        releases: releasesViewModel
+    }
+
+
     ApplicationThemeViewModel {
         id: applicationThemeViewModel
         Component.onDestruction: {

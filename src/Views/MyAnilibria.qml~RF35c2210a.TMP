@@ -287,11 +287,6 @@ Page {
                             onExited: {
                                 hoveredRectangle.visible = false;
                             }
-                            onPressed: {
-                                mainViewModel.selectPage("videoplayer");
-                                onlinePlayerViewModel.quickSetupForSingleRelease(releaseId);
-                                filterTextField.text = "";
-                            }
                         }
 
                         Column {

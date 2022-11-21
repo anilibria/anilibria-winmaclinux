@@ -76,6 +76,7 @@ SOURCES += \
     Classes/ListModels/localthemeslistmodel.cpp \
     Classes/ListModels/mainmenulistmodel.cpp \
     Classes/ListModels/myanilibrialistmodel.cpp \
+    Classes/ListModels/myanilibriasearchlistmodel.cpp \
     Classes/ListModels/onlineplayervideolist.cpp \
     Classes/ListModels/popupnotificationvideolist.cpp \
     Classes/ListModels/releasecardmenulistmodel.cpp \
@@ -166,6 +167,7 @@ HEADERS += \
     Classes/ListModels/localthemeslistmodel.h \
     Classes/ListModels/mainmenulistmodel.h \
     Classes/ListModels/myanilibrialistmodel.h \
+    Classes/ListModels/myanilibriasearchlistmodel.h \
     Classes/ListModels/onlineplayervideolist.h \
     Classes/ListModels/popupnotificationvideolist.h \
     Classes/ListModels/releasecardmenulistmodel.h \

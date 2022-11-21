@@ -605,6 +605,48 @@ QString ReleasesViewModel::getReleaseCodeFromUrl(const QString &url) const noexc
     return "";
 }
 
+void ReleasesViewModel::fillFullSearch(QList<FullReleaseModel *> &list, const QString &filter) noexcept
+{
+    auto filterLower = filter.toLower();
+    auto words = filterLower.split(" ", Qt::SkipEmptyParts);
+    if (words.isEmpty()) return;
+
+    foreach (auto release, *m_releases) {
+        auto anyCheck = true;
+        foreach (auto word, words) {
+            if (!fullSearchCheck(word, release)) anyCheck = false;
+        }
+
+        if (anyCheck) list.append(release);
+
+        if (list.count() == 4) break;
+    }
+}
+
+bool ReleasesViewModel::fullSearchCheck(const QString &word, const FullReleaseModel *release) noexcept
+{
+    if (release->title().toLower().contains(word)) {
+        return true;
+    }
+    if (release->originalName().toLower().contains(word)) {
+        return true;
+    }
+    if (release->year().toLower().contains(word)) {
+        return true;
+    }
+    if (release->season().toLower().contains(word)) {
+        return true;
+    }
+    if (release->genres().toLower().contains(word)) {
+        return true;
+    }
+    if (release->voicers().toLower().contains(word)) {
+        return true;
+    }
+
+    return false;
+}
+
 void ReleasesViewModel::copyToClipboard(const QString &text) const noexcept
 {
     if (text.isEmpty()) return;
