@@ -263,7 +263,7 @@ Page {
                     model: myAnilibriaSearchListModel
                     delegate: Item {
                         width: findedReleases.width
-                        height: 60
+                        height: 90
 
                         Rectangle {
                             id: hoveredRectangle
@@ -294,18 +294,33 @@ Page {
                             }
                         }
 
+                        Image {
+                            id: posterImage
+                            anchors.left: parent.left
+                            source: localStorage.getReleasePosterPath(releaseId, poster)
+                            sourceSize: Qt.size(350, 500)
+                            fillMode: Image.PreserveAspectCrop
+                            width: 50
+                            height: 78
+                            mipmap: true
+                        }
+
                         Column {
-                            anchors.fill: parent
+                            height: parent.height
+                            width: parent.width - posterImage.width - 4
+                            anchors.left: posterImage.right
+                            anchors.leftMargin: 4
 
                             Item {
                                 width: parent.width
-                                height: 30
+                                height: 45
 
                                 AccentText {
-                                    anchors.verticalCenter: parent.verticalCenter
+                                    anchors.bottom: parent.bottom
+                                    anchors.bottomMargin: 4
                                     verticalAlignment: Text.AlignVCenter
-                                    width: 300
-                                    height: 30
+                                    width: 280
+                                    height: 20
                                     fontPointSize: 10
                                     text: title
                                     maximumLineCount: 1
@@ -315,7 +330,8 @@ Page {
 
                                 PlainText {
                                     anchors.right: parent.right
-                                    anchors.verticalCenter: parent.verticalCenter
+                                    anchors.bottom: parent.bottom
+                                    anchors.bottomMargin: 4
                                     fontPointSize: 9
                                     text: year
                                 }
@@ -323,11 +339,11 @@ Page {
 
                             Item {
                                 width: parent.width
-                                height: 30
+                                height: 45
 
                                 PlainText {
                                     anchors.top: parent.top
-                                    width: 300
+                                    width: 280
                                     height: 30
                                     fontPointSize: 9
                                     text: originalName
