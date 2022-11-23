@@ -64,7 +64,7 @@ Page {
                         overlayVisible: false
                         iconWidth: 28
                         iconHeight: 28
-                        iconPath: assetsLocation.iconsPath + "coloreddrawer.svg"
+                        iconPath: applicationThemeViewModel.iconMainMenu
                         onButtonPressed: {
                             drawer.open();
                         }

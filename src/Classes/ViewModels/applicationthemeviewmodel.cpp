@@ -65,6 +65,7 @@ ApplicationThemeViewModel::ApplicationThemeViewModel(QObject *parent)
     lightTheme->insert(posterBorderField, "#adadad");
     lightTheme->insert(roundedButtonDisableForegroundField, "white");
     lightTheme->insert(materialAccentField, "#f44336");
+    lightTheme->insert(iconMainMenuField, "qrc:/Assets/Icons/coloreddrawer.svg");
     lightTheme->insert(basedOnThemeField, m_lightTheme);
     lightTheme->insert(externalIdField, "");
     m_themes.insert(m_lightTheme, lightTheme);
@@ -106,6 +107,7 @@ ApplicationThemeViewModel::ApplicationThemeViewModel(QObject *parent)
     darkTheme->insert(posterBorderField, "#adadad");
     darkTheme->insert(roundedButtonDisableForegroundField, "lightgray");
     darkTheme->insert(materialAccentField, "#f44336");
+    darkTheme->insert(iconMainMenuField, "qrc:/Assets/Icons/coloreddrawer.svg");
     darkTheme->insert(basedOnThemeField, m_darkTheme);
     darkTheme->insert(externalIdField, "");
     m_themes.insert(m_darkTheme, darkTheme);
@@ -149,6 +151,7 @@ ApplicationThemeViewModel::ApplicationThemeViewModel(QObject *parent)
     m_fields.append(toggleButtonNotCheckedField);
     m_fields.append(posterBorderField);
     m_fields.append(materialAccentField);
+    m_fields.append(iconMainMenuField);
     m_fields.append(externalIdField);
 
     readCacheFile();
@@ -525,6 +528,7 @@ void ApplicationThemeViewModel::emitAllFields()
     emit toggleButtonNotCheckedChanged();
     emit materialAccentChanged();
     emit roundedButtonDisableForegroundChanged();
+    emit iconMainMenuChanged();
 }
 
 void ApplicationThemeViewModel::themesLoaded()

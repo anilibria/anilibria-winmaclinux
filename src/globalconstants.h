@@ -131,4 +131,6 @@ extern QString posterBorderField;
 
 extern QString materialAccentField;
 
+extern QString iconMainMenuField;
+
 #endif // GLOBALCONSTANTS_H

@@ -122,7 +122,7 @@ Page {
                 width: compactModeSwitch.checked && !releasesViewModel.showSidePanel ? 0 : 40
 
                 LeftPanelIconButton {
-                    iconPath: "../Assets/Icons/coloreddrawer.svg"
+                    iconPath: applicationThemeViewModel.iconMainMenu
                     iconWidth: 28
                     iconHeight: 28
                     overlayVisible: false

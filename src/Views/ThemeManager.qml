@@ -34,7 +34,7 @@ Page {
                     height: 45
                     width: 40
                     overlayVisible: false
-                    iconPath: assetsLocation.iconsPath + "coloreddrawer.svg"
+                    iconPath: applicationThemeViewModel.iconMainMenu
                     iconWidth: 28
                     iconHeight: 28
                     onButtonPressed: {
@@ -706,6 +706,7 @@ Page {
                                             anchors.left: titleText.right
                                             anchors.leftMargin: 10
                                             width: 210
+                                            maximumLength: 100000
                                             visible: isDefined
                                             selectByMouse: true
                                             text: fieldValue
@@ -738,13 +739,9 @@ Page {
                                             anchors.verticalCenter: parent.verticalCenter
                                             iconPath: assetsLocation.iconsPath + (isDefined ? "delete.svg" : "plus.svg")
                                             overlayVisible: false
-                                            tooltipMessage: isDefined ? "Брать цвет из базовой темы" : "Переопределить цвет"
+                                            tooltipMessage: tooltipOverride
                                             onButtonPressed: {
-                                                if (isDefined) {
-                                                    applicationThemeViewModel.fieldList.undefineField(id);
-                                                } else {
-                                                    applicationThemeViewModel.fieldList.defineField(id);
-                                                }
+                                                applicationThemeViewModel.fieldList.toggleDefinedField(id);
                                             }
                                         }
 
@@ -752,6 +749,46 @@ Page {
                                             id: buttonsSeparator
                                             anchors.left: defineValueButton.right
                                             width: 1
+                                        }
+
+                                        FilterPanelIconButton {
+                                            id: selectIconFromFileButton
+                                            visible: isDefined && fieldType === 'icon'
+                                            anchors.left: buttonsSeparator.right
+                                            anchors.leftMargin: 10
+                                            width: 20
+                                            height: 20
+                                            iconWidth: 18
+                                            iconHeight: 18
+                                            anchors.verticalCenter: parent.verticalCenter
+                                            iconPath: assetsLocation.iconsPath + "themes.svg"
+                                            overlayVisible: false
+                                            tooltipMessage: "Выбрать файл изображения для иконки"
+                                            onButtonPressed: {
+                                                openIconFileDialog.selectedIconIndex = id;
+                                                openIconFileDialog.open();
+                                            }
+                                        }
+
+                                        Item {
+                                            id: iconContainer
+                                            anchors.left: selectIconFromFileButton.right
+                                            anchors.leftMargin: 10
+                                            anchors.verticalCenter: parent.verticalCenter
+                                            width: 30
+                                            height: 30
+                                            visible: fieldType === 'icon'
+
+                                            Image {
+                                                id: iconImage
+                                                visible: isDefined && valueTextField.text
+                                                anchors.verticalCenter: parent.verticalCenter
+                                                anchors.horizontalCenter: parent.horizontalCenter
+                                                width: 28
+                                                height: 28
+                                                mipmap: true
+                                                source: valueTextField.text.length && fieldType === 'icon' ? valueTextField.text : assetsLocation.iconsPath + "themes.svg"
+                                            }
                                         }
 
                                         Rectangle {
@@ -913,6 +950,21 @@ Page {
         nameFilters: ["Theme files (*.theme)"]
         onAccepted: {
             applicationThemeViewModel.fieldList.saveThemeToFile(saveThemeToFileDialog.fileUrl);
+        }
+    }
+
+    FileDialog {
+        id: openIconFileDialog
+        selectExisting: true
+        nameFilters: ["Image files (*.jpg *.jpeg *.gif *.svg *.png)"]
+
+        property int selectedIconIndex
+
+        onAccepted: {
+            applicationThemeViewModel.fieldList.addIconFromFile(
+                openIconFileDialog.fileUrl,
+                openIconFileDialog.selectedIconIndex
+            );
         }
     }
 

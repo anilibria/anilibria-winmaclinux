@@ -23,8 +23,6 @@
 #include "../../globalconstants.h"
 #include "../../globalhelpers.h"
 
-//data:image/png;base64,
-
 ThemeFieldListModel::ThemeFieldListModel(QObject *parent)
     : QAbstractListModel{parent}
 {
@@ -64,6 +62,7 @@ ThemeFieldListModel::ThemeFieldListModel(QObject *parent)
     m_descriptions.insert(toggleButtonNotCheckedField, "Цвет кнопки переключателя 3: Цвет фона кнопки переключателя в состоянии Не Выбрано");
     m_descriptions.insert(posterBorderField, "Цвет рамки постера:Цвет рамки вокруг постера в элементе релиза в различных списках");
     m_descriptions.insert(materialAccentField, "Цвет акцента для Material:Цвет акцента в Material элементах (переключатель, текстовое поле)");
+    m_descriptions.insert(iconMainMenuField, "Иконка главного меню:Иконка находящаяся на всех страницах и предназначена для открытия главного меню");
 
     m_saveMenuItems.append("Сохранить и добавить тему в список");
     m_saveMenuItems.append("Сохранить в файл");
@@ -122,19 +121,34 @@ QVariant ThemeFieldListModel::data(const QModelIndex &index, int role) const
             return QVariant(isDefined);
         }
         case FieldTypeRole: {
-            if (field.startsWith("icons")) {
+            if (field.startsWith("icon")) {
                 return QVariant("icon");
             }
             if (field.startsWith("sizes")) {
                 return QVariant("size");
             }
-            if (field.startsWith("positions")) {
+            if (field.startsWith("position")) {
                 return QVariant("position");
             }
-            if (field.startsWith("visibilities")) {
+            if (field.startsWith("visibility")) {
                 return QVariant("visibility");
             }
             return QVariant("color");
+        }
+        case TooltipOverrideRole: {
+            if (field.startsWith("icon")) {
+                return QVariant(isDefined ? "Брать иконку из базовой темы" : "Переопределить иконку");
+            }
+            if (field.startsWith("size")) {
+                return QVariant(isDefined ? "Брать размер из базовой темы" : "Переопределить размер");
+            }
+            if (field.startsWith("position")) {
+                return QVariant(isDefined ? "Брать позицию из базовой темы" : "Переопределить позицию");
+            }
+            if (field.startsWith("visibility")) {
+                return QVariant(isDefined ? "Брать видимость из базовой темы" : "Переопределить видимость");
+            }
+            return QVariant(isDefined ? "Брать цвет из базовой темы" : "Переопределить цвет");
         }
     }
 
@@ -171,6 +185,10 @@ QHash<int, QByteArray> ThemeFieldListModel::roleNames() const
         {
             FieldTypeRole,
             "fieldType"
+        },
+        {
+            TooltipOverrideRole,
+            "tooltipOverride"
         }
     };
 }
@@ -295,7 +313,7 @@ void ThemeFieldListModel::setValueToItemByIndex(int index, QString value) noexce
     if (m_values.contains(field)) {
         m_values[field] = value;
     } else {
-        m_values.insert(field, value);
+        if (!value.isEmpty()) m_values.insert(field, value);
     }
 
     emit hasValuesChanged();
@@ -317,6 +335,19 @@ void ThemeFieldListModel::defineField(int itemIndex) noexcept
 
     if (!m_values.contains(field)) m_values.insert(field, "");
 
+    emit dataChanged(index(itemIndex, 0), index(itemIndex, 0));
+    emit hasValuesChanged();
+}
+
+void ThemeFieldListModel::toggleDefinedField(int itemIndex) noexcept
+{
+    auto field = m_colorFields.value(itemIndex);
+
+    if (m_values.contains(field)) {
+        m_values.remove(field);
+    } else {
+        m_values.insert(field, "");
+    }
     emit dataChanged(index(itemIndex, 0), index(itemIndex, 0));
     emit hasValuesChanged();
 }
@@ -346,4 +377,42 @@ void ThemeFieldListModel::saveThemeToFile(const QString &path) noexcept
     QJsonDocument document(object);
     file.write(document.toJson());
     file.close();
+}
+
+void ThemeFieldListModel::addIconFromFile(const QString &path, int itemIndex) noexcept
+{
+    auto clearedPath = removeFileProtocol(const_cast<QString&>(path));
+    if (!QFile::exists(clearedPath)) return;
+
+    QFile file(clearedPath);
+    if (!file.open(QIODevice::ReadOnly)) return;
+
+    auto content = file.readAll();
+
+    file.close();
+
+    if (content.length() > 40000) {
+        emit errorMessage("Размер файла иконки не должен превышать 40 Кб!");
+        return;
+    }
+
+    auto iconContent = content.toBase64();
+    auto lowerPath = path.toLower();
+    if (lowerPath.endsWith(".png")) {
+        setValueToItemByIndex(itemIndex, "data:image/png;base64," + iconContent);
+    }
+
+    if (lowerPath.endsWith(".jpg") || lowerPath.endsWith(".jpeg")) {
+        setValueToItemByIndex(itemIndex, "data:image/jpeg;base64," + iconContent);
+    }
+
+    if (lowerPath.endsWith(".svg")) {
+        setValueToItemByIndex(itemIndex, "data:image/svg;base64," + iconContent);
+    }
+
+    if (lowerPath.endsWith(".gif")) {
+        setValueToItemByIndex(itemIndex, "data:image/gif;base64," + iconContent);
+    }
+
+    emit dataChanged(index(itemIndex, 0), index(itemIndex, 0));
 }

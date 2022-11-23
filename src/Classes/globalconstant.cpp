@@ -74,3 +74,4 @@ QString toggleButtonNotCheckedField = "toggleButtonNotChecked";
 QString posterBorderField = "posterBorder";
 QString roundedButtonDisableForegroundField = "roundedButtonDisableForeground";
 QString materialAccentField = "materialAccent";
+QString iconMainMenuField = "iconMainMenu";

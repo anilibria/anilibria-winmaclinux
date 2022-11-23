@@ -133,7 +133,7 @@ ApplicationWindow {
                         id: iconImage
                         anchors.verticalCenter: parent.verticalCenter
                         anchors.horizontalCenter: parent.horizontalCenter
-                        source: assetsLocation.iconsPath + "coloreddrawer.svg"
+                        source: applicationThemeViewModel.previewItems.iconMainMenu
                         width: 28
                         height: 28
                         mipmap: true

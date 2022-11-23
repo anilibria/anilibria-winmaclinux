@@ -51,7 +51,7 @@ Page {
             Layout.fillHeight: true
             Column {
                 LeftPanelIconButton {
-                    iconPath: assetsLocation.iconsPath + "coloreddrawer.svg"
+                    iconPath: applicationThemeViewModel.iconMainMenu
                     overlayVisible: false
                     tooltipMessage: "Открыть меню приложения"
                     iconWidth: 28

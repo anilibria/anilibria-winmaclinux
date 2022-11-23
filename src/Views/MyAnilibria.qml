@@ -39,7 +39,7 @@ Page {
                             height: 45
                             width: 40
                             overlayVisible: false
-                            iconPath: assetsLocation.iconsPath + "coloreddrawer.svg"
+                            iconPath: applicationThemeViewModel.iconMainMenu
                             iconWidth: 28
                             iconHeight: 28
                             onButtonPressed: {

@@ -42,6 +42,7 @@ private:
         ValueRole,
         IsDefinedRole,
         FieldTypeRole,
+        TooltipOverrideRole
     };
     QList<QString> m_colorFields { QList<QString>() };
     QList<QString> m_filteredColorFields { QList<QString>() };
@@ -94,7 +95,9 @@ public:
     Q_INVOKABLE void setValueToItemByIndex(int index, QString value) noexcept;
     Q_INVOKABLE void undefineField(int itemIndex) noexcept;
     Q_INVOKABLE void defineField(int itemIndex) noexcept;
+    Q_INVOKABLE void toggleDefinedField(int itemIndex) noexcept;
     Q_INVOKABLE void saveThemeToFile(const QString& path) noexcept;
+    Q_INVOKABLE void addIconFromFile(const QString& path, int itemIndex) noexcept;
 
 signals:
     void themeNameChanged();
@@ -104,6 +107,7 @@ signals:
     void hasValuesChanged();
     void saveMenuItemsChanged();
     void filterChanged();
+    void errorMessage(const QString& message);
 
 };
 
