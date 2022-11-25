@@ -17,19 +17,19 @@
 */
 
 #include "mainmenulistmodel.h"
-#include <QDebug>
+#include "../../globalconstants.h"
 
 MainMenuListModel::MainMenuListModel(QObject *parent) : QAbstractListModel(parent)
 {
-    m_items->append(new MainMenuItemModel(0, "Каталог релизов", "release", "catalogmenu.svg"));
-    m_items->append(new MainMenuItemModel(1, "Видеоплеер", "videoplayer", "videoplayermenu.svg"));
-    m_items->append(new MainMenuItemModel(2, "Моя Анилибрия", "myanilibria", "house.svg"));
-    m_items->append(new MainMenuItemModel(3, "Кинозал", "cinemahall", "cinemahallmenu.svg"));
-    m_items->append(new MainMenuItemModel(4, "Связанные релизы", "releaseseries", "seriesmenu.svg"));
-    m_items->append(new MainMenuItemModel(5, "Менеджер тем", "thememanager", "themes.svg"));
-    m_items->append(new MainMenuItemModel(6, "Youtube", "youtube", "youtube.svg"));
-    m_items->append(new MainMenuItemModel(7, "Обслуживание", "maintenance", "maintenance.svg"));
-    m_items->append(new MainMenuItemModel(8, "Поддержать проект", "", "donate.svg"));
+    m_items->append(new MainMenuItemModel(0, "Каталог релизов", "release", iconMainMenuReleasesField));
+    m_items->append(new MainMenuItemModel(1, "Видеоплеер", "videoplayer", iconMainMenuVideoplayerField));
+    m_items->append(new MainMenuItemModel(2, "Моя Анилибрия", "myanilibria", iconMainMenuMyAnilibriaField));
+    m_items->append(new MainMenuItemModel(3, "Кинозал", "cinemahall", iconMainMenuCinemahallField));
+    m_items->append(new MainMenuItemModel(4, "Связанные релизы", "releaseseries", iconMainMenuReleasesSeriesField));
+    m_items->append(new MainMenuItemModel(5, "Менеджер тем", "thememanager", iconMainMenuThemeManagerField));
+    m_items->append(new MainMenuItemModel(6, "Youtube", "youtube", iconMainMenuYoutubeField));
+    m_items->append(new MainMenuItemModel(7, "Обслуживание", "maintenance", iconMainMenuMaintenanceField));
+    m_items->append(new MainMenuItemModel(8, "Поддержать проект", "", iconMainMenuDonateField));
 
     m_authorizationOrder = m_items->count();
 }
@@ -105,7 +105,7 @@ void MainMenuListModel::setAuthorizeItemVisible(bool visible)
             m_items->removeOne(*iterator);
         }
     } else {
-        m_items->append(new MainMenuItemModel(m_authorizationOrder, "Войти", "authorization", "user.svg"));
+        m_items->append(new MainMenuItemModel(m_authorizationOrder, "Войти", "authorization", iconMainMenuAuthorizationField));
     }
 
     endResetModel();

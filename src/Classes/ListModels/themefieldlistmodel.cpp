@@ -63,6 +63,23 @@ ThemeFieldListModel::ThemeFieldListModel(QObject *parent)
     m_descriptions.insert(posterBorderField, "Цвет рамки постера:Цвет рамки вокруг постера в элементе релиза в различных списках");
     m_descriptions.insert(materialAccentField, "Цвет акцента для Material:Цвет акцента в Material элементах (переключатель, текстовое поле)");
     m_descriptions.insert(iconMainMenuField, "Иконка главного меню:Иконка находящаяся на всех страницах и предназначена для открытия главного меню");
+    m_descriptions.insert(iconMainMenuReleasesField, "Иконка страницы Каталог релизов:Иконка находящаяся в главном меню и на кастомном тулбаре");
+    m_descriptions.insert(iconMainMenuCinemahallField, "Иконка страницы Кинозал:Иконка находящаяся в главном меню и на кастомном тулбаре");
+    m_descriptions.insert(iconMainMenuReleasesSeriesField, "Иконка страницы Связанные релизы:Иконка находящаяся в главном меню и на кастомном тулбаре");
+    m_descriptions.insert(iconMainMenuMaintenanceField, "Иконка страницы Обслуживание:Иконка находящаяся в главном меню и на кастомном тулбаре");
+    m_descriptions.insert(iconMainMenuMyAnilibriaField, "Иконка страницы Моя Анилибрия:Иконка находящаяся в главном меню и на кастомном тулбаре");
+    m_descriptions.insert(iconMainMenuVideoplayerField, "Иконка страницы Видеоплеер:Иконка находящаяся в главном меню и на кастомном тулбаре");
+    m_descriptions.insert(iconMainMenuDonateField, "Иконка страницы Поддержать проект:Иконка находящаяся в главном меню и на кастомном тулбаре");
+    m_descriptions.insert(iconMainMenuThemeManagerField, "Иконка страницы Менеджер тем:Иконка находящаяся в главном меню и на кастомном тулбаре");
+    m_descriptions.insert(iconMainMenuYoutubeField, "Иконка страницы Youtube:Иконка находящаяся в главном меню и на кастомном тулбаре");
+
+    m_descriptions.insert(iconMainMenuAuthorizationField, "Иконка страницы Авторизация:Иконка находящаяся в главном меню и на кастомном тулбаре");
+    m_descriptions.insert(iconLeftHalfScreenField, "Иконка кнопки Левая половина окна:Иконка находящаяся в правой стороне кастомного тулбара");
+    m_descriptions.insert(iconRightHalfScreenField, "Иконка кнопки Правая половина окна:Иконка находящаяся в правой стороне кастомного тулбара");
+    m_descriptions.insert(iconMinimizeWindowField, "Иконка кнопки Минимизировать окно:Иконка находящаяся в правой стороне кастомного тулбара");
+    m_descriptions.insert(iconMaximizeWindowField, "Иконка кнопки Максимизировать окно:Иконка находящаяся в правой стороне кастомного тулбара");
+    m_descriptions.insert(iconCloseWindowField, "Иконка кнопки Закрыть окно:Иконка находящаяся в правой стороне кастомного тулбара");
+    m_descriptions.insert(iconNormalWindowField, "Иконка кнопки Нормальный размер окна:Иконка находящаяся в правой стороне кастомного тулбара");
 
     m_saveMenuItems.append("Сохранить и добавить тему в список");
     m_saveMenuItems.append("Сохранить в файл");

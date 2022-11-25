@@ -66,6 +66,24 @@ ApplicationThemeViewModel::ApplicationThemeViewModel(QObject *parent)
     lightTheme->insert(roundedButtonDisableForegroundField, "white");
     lightTheme->insert(materialAccentField, "#f44336");
     lightTheme->insert(iconMainMenuField, "qrc:/Assets/Icons/coloreddrawer.svg");
+    lightTheme->insert(iconMainMenuReleasesField, "qrc:/Assets/Icons/catalogmenu.svg");
+    lightTheme->insert(iconMainMenuCinemahallField, "qrc:/Assets/Icons/cinemahallmenu.svg");
+    lightTheme->insert(iconMainMenuReleasesSeriesField, "qrc:/Assets/Icons/seriesmenu.svg");
+    lightTheme->insert(iconMainMenuMaintenanceField, "qrc:/Assets/Icons/maintenance.svg");
+    lightTheme->insert(iconMainMenuMyAnilibriaField, "qrc:/Assets/Icons/house.svg");
+    lightTheme->insert(iconMainMenuVideoplayerField, "qrc:/Assets/Icons/videoplayermenu.svg");
+    lightTheme->insert(iconMainMenuDonateField, "qrc:/Assets/Icons/donate.svg");
+    lightTheme->insert(iconMainMenuThemeManagerField, "qrc:/Assets/Icons/themes.svg");
+    lightTheme->insert(iconMainMenuYoutubeField, "qrc:/Assets/Icons/youtube.svg");
+
+    lightTheme->insert(iconMainMenuAuthorizationField, "qrc:/Assets/Icons/user.svg");
+    lightTheme->insert(iconLeftHalfScreenField, "qrc:/Assets/Icons/coloredleftmenu.svg");
+    lightTheme->insert(iconRightHalfScreenField, "qrc:/Assets/Icons/coloredrightmenu.svg");
+    lightTheme->insert(iconMinimizeWindowField, "qrc:/Assets/Icons/coloredminimize.svg");
+    lightTheme->insert(iconMaximizeWindowField, "qrc:/Assets/Icons/gotofullscreen.svg");
+    lightTheme->insert(iconNormalWindowField, "qrc:/Assets/Icons/gofromfullscreen.svg");
+    lightTheme->insert(iconCloseWindowField, "qrc:/Assets/Icons/coloredclosewindow.svg");
+
     lightTheme->insert(basedOnThemeField, m_lightTheme);
     lightTheme->insert(externalIdField, "");
     m_themes.insert(m_lightTheme, lightTheme);
@@ -108,6 +126,24 @@ ApplicationThemeViewModel::ApplicationThemeViewModel(QObject *parent)
     darkTheme->insert(roundedButtonDisableForegroundField, "lightgray");
     darkTheme->insert(materialAccentField, "#f44336");
     darkTheme->insert(iconMainMenuField, "qrc:/Assets/Icons/coloreddrawer.svg");
+    darkTheme->insert(iconMainMenuReleasesField, "qrc:/Assets/Icons/catalogmenu.svg");
+    darkTheme->insert(iconMainMenuCinemahallField, "qrc:/Assets/Icons/cinemahallmenu.svg");
+    darkTheme->insert(iconMainMenuReleasesSeriesField, "qrc:/Assets/Icons/seriesmenu.svg");
+    darkTheme->insert(iconMainMenuMaintenanceField, "qrc:/Assets/Icons/maintenance.svg");
+    darkTheme->insert(iconMainMenuMyAnilibriaField, "qrc:/Assets/Icons/house.svg");
+    darkTheme->insert(iconMainMenuVideoplayerField, "qrc:/Assets/Icons/videoplayermenu.svg");
+    darkTheme->insert(iconMainMenuDonateField, "qrc:/Assets/Icons/donate.svg");
+    darkTheme->insert(iconMainMenuThemeManagerField, "qrc:/Assets/Icons/themes.svg");
+    darkTheme->insert(iconMainMenuYoutubeField, "qrc:/Assets/Icons/youtube.svg");
+    darkTheme->insert(iconMainMenuAuthorizationField, "qrc:/Assets/Icons/user.svg");
+
+    darkTheme->insert(iconLeftHalfScreenField, "qrc:/Assets/Icons/coloredleftmenu.svg");
+    darkTheme->insert(iconRightHalfScreenField, "qrc:/Assets/Icons/coloredrightmenu.svg");
+    darkTheme->insert(iconMinimizeWindowField, "qrc:/Assets/Icons/coloredminimize.svg");
+    darkTheme->insert(iconMaximizeWindowField, "qrc:/Assets/Icons/gotofullscreen.svg");
+    darkTheme->insert(iconNormalWindowField, "qrc:/Assets/Icons/gofromfullscreen.svg");
+    darkTheme->insert(iconCloseWindowField, "qrc:/Assets/Icons/coloredclosewindow.svg");
+
     darkTheme->insert(basedOnThemeField, m_darkTheme);
     darkTheme->insert(externalIdField, "");
     m_themes.insert(m_darkTheme, darkTheme);
@@ -152,6 +188,24 @@ ApplicationThemeViewModel::ApplicationThemeViewModel(QObject *parent)
     m_fields.append(posterBorderField);
     m_fields.append(materialAccentField);
     m_fields.append(iconMainMenuField);
+    m_fields.append(iconMainMenuReleasesField);
+    m_fields.append(iconMainMenuCinemahallField);
+    m_fields.append(iconMainMenuReleasesSeriesField);
+    m_fields.append(iconMainMenuMaintenanceField);
+    m_fields.append(iconMainMenuMyAnilibriaField);
+    m_fields.append(iconMainMenuVideoplayerField);
+    m_fields.append(iconMainMenuDonateField);
+    m_fields.append(iconMainMenuThemeManagerField);
+    m_fields.append(iconMainMenuYoutubeField);
+
+    m_fields.append(iconMainMenuAuthorizationField);
+    m_fields.append(iconLeftHalfScreenField);
+    m_fields.append(iconRightHalfScreenField);
+    m_fields.append(iconMinimizeWindowField);
+    m_fields.append(iconMaximizeWindowField);
+    m_fields.append(iconNormalWindowField);
+    m_fields.append(iconCloseWindowField);
+
     m_fields.append(externalIdField);
 
     readCacheFile();
@@ -529,6 +583,22 @@ void ApplicationThemeViewModel::emitAllFields()
     emit materialAccentChanged();
     emit roundedButtonDisableForegroundChanged();
     emit iconMainMenuChanged();
+    emit iconMainMenuReleasesChanged();
+    emit iconMainMenuReleasesSeriesChanged();
+    emit iconMainMenuCinemahallChanged();
+    emit iconMainMenuMyAnilibriaChanged();
+    emit iconMainMenuMaintenanceChanged();
+    emit iconMainMenuYoutubeChanged();
+    emit iconMainMenuDonateChanged();
+    emit iconMainMenuThemeManagerChanged();
+    emit iconMainMenuVideoplayerChanged();
+    emit iconLeftHalfScreenChanged();
+    emit iconRightHalfScreenChanged();
+    emit iconMinimizeWindowChanged();
+    emit iconMaximizeWindowChanged();
+    emit iconCloseWindowChanged();
+    emit iconNormalWindowChanged();
+    emit iconMainMenuAuthorizationChanged();
 }
 
 void ApplicationThemeViewModel::themesLoaded()

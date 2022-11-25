@@ -365,7 +365,7 @@ Page {
             opacity: .7
             width: 32
             height: 30
-            source: assetsLocation.iconsPath + "cinemahallmenu.svg"
+            source: applicationThemeViewModel.iconMainMenuCinemahall
         }
 
         Image {
@@ -376,7 +376,7 @@ Page {
             opacity: .7
             width: 32
             height: 30
-            source: assetsLocation.iconsPath + "cinemahallmenu.svg"
+            source: applicationThemeViewModel.iconMainMenuCinemahall
         }
 
         MouseArea {

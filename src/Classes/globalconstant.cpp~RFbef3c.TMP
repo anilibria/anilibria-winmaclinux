@@ -91,5 +91,4 @@ QString iconMinimizeWindowField = "iconMinimizeWindow";
 QString iconMaximizeWindowField = "iconMaximizeWindow";
 QString iconNormalWindowField = "iconNormalWindow";
 QString iconCloseWindowField = "iconCloseWindow";
-QString iconMainMenuAuthorizationField = "iconMainMenuAuthorization";
 

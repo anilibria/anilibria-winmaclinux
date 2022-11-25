@@ -169,7 +169,7 @@ ApplicationWindow {
             width: 40
             iconColor: applicationThemeViewModel.filterIconButtonColor
             hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
-            iconPath: "Assets/Icons/catalogmenu.svg"
+            iconPath: applicationThemeViewModel.iconMainMenuReleases
             iconWidth: 20
             iconHeight: 20
             tooltipMessage: "Перейти на страницу Каталог Релизов"
@@ -187,7 +187,7 @@ ApplicationWindow {
             width: 40
             iconColor: applicationThemeViewModel.filterIconButtonColor
             hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
-            iconPath: "Assets/Icons/videoplayermenu.svg"
+            iconPath: applicationThemeViewModel.iconMainMenuVideoplayer
             iconWidth: 20
             iconHeight: 20
             tooltipMessage: "Перейти на страницу Видеоплеер"
@@ -205,7 +205,7 @@ ApplicationWindow {
             width: 40
             iconColor: applicationThemeViewModel.filterIconButtonColor
             hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
-            iconPath: "Assets/Icons/cinemahallmenu.svg"
+            iconPath: applicationThemeViewModel.iconMainMenuCinemahall
             iconWidth: 20
             iconHeight: 20
             tooltipMessage: "Перейти на страницу Кинозал"
@@ -223,7 +223,7 @@ ApplicationWindow {
             width: 40
             iconColor: applicationThemeViewModel.filterIconButtonColor
             hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
-            iconPath: "Assets/Icons/seriesmenu.svg"
+            iconPath: applicationThemeViewModel.iconMainMenuReleasesSeries
             iconWidth: 20
             iconHeight: 20
             tooltipMessage: "Перейти на страницу Связанные релизы"
@@ -240,7 +240,7 @@ ApplicationWindow {
             height: 34
             width: 40
             hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
-            iconPath: "Assets/Icons/house.svg"
+            iconPath: applicationThemeViewModel.iconMainMenuMyAnilibria
             iconWidth: 20
             iconHeight: 20
             tooltipMessage: "Перейти на страницу Моя Анилибрия"
@@ -257,7 +257,7 @@ ApplicationWindow {
             width: 40
             overlayVisible: false
             hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
-            iconPath: "Assets/Icons/coloredleftmenu.svg"
+            iconPath: applicationThemeViewModel.iconLeftHalfScreen
             iconWidth: 24
             iconHeight: 24
             tooltipMessage: "Выставить размер окна - левая половина экрана"
@@ -280,7 +280,7 @@ ApplicationWindow {
             width: 40
             overlayVisible: false
             hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
-            iconPath: "Assets/Icons/coloredrightmenu.svg"
+            iconPath: applicationThemeViewModel.iconRightHalfScreen
             iconWidth: 24
             iconHeight: 24
             tooltipMessage: "Выставить размер окна - правая половина экрана"
@@ -303,7 +303,7 @@ ApplicationWindow {
             width: 40
             overlayVisible: false
             hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
-            iconPath: "Assets/Icons/coloredminimize.svg"
+            iconPath: applicationThemeViewModel.iconMinimizeWindow
             iconWidth: 24
             iconHeight: 24
             tooltipMessage: "Минимизировать окно в панель задач"
@@ -320,7 +320,7 @@ ApplicationWindow {
             width: 40
             overlayVisible: false
             hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
-            iconPath: window.isShowFullScreenSize ? "Assets/Icons/gofromfullscreen.svg" : "Assets/Icons/gotofullscreen.svg"
+            iconPath: window.isShowFullScreenSize ? applicationThemeViewModel.iconNormalWindow : applicationThemeViewModel.iconMaximizeWindow
             iconWidth: 24
             iconHeight: 24
             tooltipMessage: window.isShowFullScreenSize ? "Вернуть окну нормальный размер" : "Открыть окно на полный экран"
@@ -363,7 +363,7 @@ ApplicationWindow {
             width: 40
             overlayVisible: false
             hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
-            iconPath: "Assets/Icons/coloredclosewindow.svg"
+            iconPath: applicationThemeViewModel.iconCloseWindow
             iconWidth: 24
             iconHeight: 24
             tooltipMessage: "Выйти из приложения"
@@ -828,7 +828,7 @@ ApplicationWindow {
                                 spacing: 10
                                 Image {
                                     anchors.verticalCenter: parent.verticalCenter
-                                    source: assetsLocation.iconsPath + icon
+                                    source: applicationThemeViewModel[icon] ? applicationThemeViewModel[icon] : '../Assets/Icons/donate.jpg'
                                     sourceSize.width: 30
                                     sourceSize.height: 30
                                 }
@@ -1384,6 +1384,9 @@ ApplicationWindow {
         id: applicationThemeViewModel
         Component.onDestruction: {
             applicationThemeViewModel.saveCurrentState();
+        }
+        fieldList.onErrorMessage: {
+            notificationViewModel.sendInfoNotification(message);
         }
     }
 

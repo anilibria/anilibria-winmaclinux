@@ -80,6 +80,23 @@ class ApplicationThemeViewModel : public QObject
     Q_PROPERTY(QVariantMap previewItems READ previewItems NOTIFY previewItemsChanged)
     Q_PROPERTY(LocalThemesListModel* localThemes READ localThemes NOTIFY localThemesChanged)
     Q_PROPERTY(QStringList copyMenuItems READ copyMenuItems NOTIFY copyMenuItemsChanged)
+    Q_PROPERTY(QString iconMainMenuReleases READ iconMainMenuReleases NOTIFY iconMainMenuReleasesChanged)
+    Q_PROPERTY(QString iconMainMenuCinemahall READ iconMainMenuCinemahall NOTIFY iconMainMenuCinemahallChanged)
+    Q_PROPERTY(QString iconMainMenuReleasesSeries READ iconMainMenuReleasesSeries NOTIFY iconMainMenuReleasesSeriesChanged)
+    Q_PROPERTY(QString iconMainMenuMaintenance READ iconMainMenuMaintenance NOTIFY iconMainMenuMaintenanceChanged)
+    Q_PROPERTY(QString iconMainMenuMyAnilibria READ iconMainMenuMyAnilibria NOTIFY iconMainMenuMyAnilibriaChanged)
+    Q_PROPERTY(QString iconMainMenuVideoplayer READ iconMainMenuVideoplayer NOTIFY iconMainMenuVideoplayerChanged)
+    Q_PROPERTY(QString iconMainMenuDonate READ iconMainMenuDonate NOTIFY iconMainMenuDonateChanged)
+    Q_PROPERTY(QString iconMainMenuThemeManager READ iconMainMenuThemeManager NOTIFY iconMainMenuThemeManagerChanged)
+    Q_PROPERTY(QString iconMainMenuYoutube READ iconMainMenuYoutube NOTIFY iconMainMenuYoutubeChanged)
+
+    Q_PROPERTY(QString iconMainMenuAuthorization READ iconMainMenuAuthorization NOTIFY iconMainMenuAuthorizationChanged)
+    Q_PROPERTY(QString iconLeftHalfScreen READ iconLeftHalfScreen NOTIFY iconLeftHalfScreenChanged)
+    Q_PROPERTY(QString iconRightHalfScreen READ iconRightHalfScreen NOTIFY iconRightHalfScreenChanged)
+    Q_PROPERTY(QString iconMinimizeWindow READ iconMinimizeWindow NOTIFY iconMinimizeWindowChanged)
+    Q_PROPERTY(QString iconMaximizeWindow READ iconMaximizeWindow NOTIFY iconMaximizeWindowChanged)
+    Q_PROPERTY(QString iconNormalWindow READ iconNormalWindow NOTIFY iconNormalWindowChanged)
+    Q_PROPERTY(QString iconCloseWindow READ iconCloseWindow NOTIFY iconCloseWindowChanged)
 
 private:
     QString m_cachePathName { "applicationtheme.cache" };
@@ -140,6 +157,24 @@ public:
     QString posterBorder() const noexcept { return m_themes.value(m_selectedTheme)->value(posterBorderField); }
     QString materialAccent() const noexcept { return m_themes.value(m_selectedTheme)->value(materialAccentField); }
     QString iconMainMenu() const noexcept { return m_themes.value(m_selectedTheme)->value(iconMainMenuField); }
+    QString iconMainMenuReleases() const noexcept { return m_themes.value(m_selectedTheme)->value(iconMainMenuReleasesField); }
+    QString iconMainMenuCinemahall() const noexcept { return m_themes.value(m_selectedTheme)->value(iconMainMenuCinemahallField); }
+    QString iconMainMenuReleasesSeries() const noexcept { return m_themes.value(m_selectedTheme)->value(iconMainMenuReleasesSeriesField); }
+    QString iconMainMenuMaintenance() const noexcept { return m_themes.value(m_selectedTheme)->value(iconMainMenuMaintenanceField); }
+    QString iconMainMenuMyAnilibria() const noexcept { return m_themes.value(m_selectedTheme)->value(iconMainMenuMyAnilibriaField); }
+    QString iconMainMenuVideoplayer() const noexcept { return m_themes.value(m_selectedTheme)->value(iconMainMenuVideoplayerField); }
+    QString iconMainMenuDonate() const noexcept { return m_themes.value(m_selectedTheme)->value(iconMainMenuDonateField); }
+    QString iconMainMenuThemeManager() const noexcept { return m_themes.value(m_selectedTheme)->value(iconMainMenuThemeManagerField); }
+    QString iconMainMenuYoutube() const noexcept { return m_themes.value(m_selectedTheme)->value(iconMainMenuYoutubeField); }
+
+    QString iconMainMenuAuthorization() const noexcept { return m_themes.value(m_selectedTheme)->value(iconMainMenuAuthorizationField); }
+    QString iconLeftHalfScreen() const noexcept { return m_themes.value(m_selectedTheme)->value(iconLeftHalfScreenField); }
+    QString iconRightHalfScreen() const noexcept { return m_themes.value(m_selectedTheme)->value(iconRightHalfScreenField); }
+    QString iconMinimizeWindow() const noexcept { return m_themes.value(m_selectedTheme)->value(iconMinimizeWindowField); }
+    QString iconMaximizeWindow() const noexcept { return m_themes.value(m_selectedTheme)->value(iconMaximizeWindowField); }
+    QString iconNormalWindow() const noexcept { return m_themes.value(m_selectedTheme)->value(iconNormalWindowField); }
+    QString iconCloseWindow() const noexcept { return m_themes.value(m_selectedTheme)->value(iconCloseWindowField); }
+
     QString roundedButtonDisableForeground() const noexcept { return m_themes.value(m_selectedTheme)->value(roundedButtonDisableForegroundField); }
     QStringList themes() const noexcept { return m_themes.keys(); }
     bool basedOnDark() const noexcept { return m_basedOnDark; }
@@ -240,6 +275,22 @@ signals:
     void materialAccentChanged();
     void roundedButtonDisableForegroundChanged();
     void iconMainMenuChanged();
+    void iconMainMenuReleasesChanged();
+    void iconMainMenuCinemahallChanged();
+    void iconMainMenuReleasesSeriesChanged();
+    void iconMainMenuMaintenanceChanged();
+    void iconMainMenuMyAnilibriaChanged();
+    void iconMainMenuVideoplayerChanged();
+    void iconMainMenuDonateChanged();
+    void iconMainMenuThemeManagerChanged();
+    void iconMainMenuYoutubeChanged();
+    void iconLeftHalfScreenChanged();
+    void iconRightHalfScreenChanged();
+    void iconMinimizeWindowChanged();
+    void iconMaximizeWindowChanged();
+    void iconCloseWindowChanged();
+    void iconNormalWindowChanged();
+    void iconMainMenuAuthorizationChanged();
 
 };
 

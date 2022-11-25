@@ -242,7 +242,7 @@ Page {
                     }
                 }
                 LeftPanelIconButton {
-                    iconPath: "../Assets/Icons/cinemahallmenu.svg"
+                    iconPath: applicationThemeViewModel.iconMainMenuCinemahall
                     overlayVisible: false
                     showCrossIcon: page.showButtonVisibleChanger && page.hideCinemahallButton
                     visible: page.showButtonVisibleChanger || !page.hideCinemahallButton
@@ -342,44 +342,6 @@ Page {
                                     wrapMode: Text.WordWrap
                                     text: "У Вас нет релизов в кинозале, чтобы добавить их переведите режим выбора в множественный режим,\n выберите релизы и используйте пункт Добавить в кинозал"
                                 }
-                            }
-                        }
-                    }
-                }
-                LeftPanelIconButton {
-                    iconPath: "../Assets/Icons/downloadcircle.svg"
-                    overlayVisible: false
-                    tooltipMessage: "Скачивание файлов серий в разных качествах локально"
-                    showCrossIcon: page.showButtonVisibleChanger && page.hideDownloadButton
-                    visible: page.showButtonVisibleChanger || !page.hideDownloadButton
-                    onButtonPressed: {
-                        if (page.showButtonVisibleChanger) {
-                            page.hideDownloadButton = !page.hideDownloadButton;
-                            localStorage.setHideDownloadButton(page.hideDownloadButton);
-                        } else {
-                            downloadsMenuPanel.open();
-                        }
-                    }
-
-                    CommonMenu {
-                        id: downloadsMenuPanel
-                        y: parent.height
-                        width: 300
-
-                        CommonMenuItem {
-                            text: "Скачать все серии в HD"
-                            enabled: releasesViewModel.items.isHasSelectRelease
-                            onPressed: {
-                                releasesViewModel.clearSelectedReleases();
-                                downloadsMenuPanel.close();
-                            }
-                        }
-                        CommonMenuItem {
-                            text: "Скачать все серии в SD"
-                            enabled: releasesViewModel.items.isHasSelectRelease
-                            onPressed: {
-                                releasesViewModel.clearSelectedReleases();
-                                downloadsMenuPanel.close();
                             }
                         }
                     }
