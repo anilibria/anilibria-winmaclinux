@@ -901,22 +901,44 @@ ApplicationWindow {
 
         onIsFullScreenChanged: {
             if (isFullScreen) {
+                if (applicationSettings.useCustomToolbar) {
+                    toolBar.visible = false;
+                    if (!window.isShowFullScreenSize) {
+                        window.normalWindowSizeX = window.x;
+                        window.normalWindowSizeY = window.y;
+                        window.normalWindowSizeWidth = window.width;
+                        window.normalWindowSizeHeight = window.height;
+                    }
+                }
+
                 window.showFullScreen();
-                if (applicationSettings.useCustomToolbar) toolBar.visible = false;
+
             } else {
                 let currentScreen = getCurrentScreen();
                 if (!currentScreen) return;
 
                 window.showNormal();
 
-                if (window.isShowFullScreenSize) {
-                    window.x = currentScreen.virtualX;
-                    window.width = currentScreen.width;
-                    window.y = currentScreen.virtualY;
-                    window.height = currentScreen.desktopAvailableHeight;
-                }
+                if (applicationSettings.useCustomToolbar) {
+                    if (window.isShowFullScreenSize) {
+                        window.x = currentScreen.virtualX;
+                        window.width = currentScreen.width;
+                        window.y = currentScreen.virtualY;
+                        window.height = currentScreen.desktopAvailableHeight;
+                    } else {
+                        window.x = window.normalWindowSizeX;
+                        window.y = window.normalWindowSizeY;
+                        window.width = window.normalWindowSizeWidth;
+                        window.height = window.normalWindowSizeHeight;
 
-                if (applicationSettings.useCustomToolbar) toolBar.visible = true;
+                        window.normalWindowSizeX = 0;
+                        window.normalWindowSizeY = 0;
+                        window.normalWindowSizeWidth = 0;
+                        window.normalWindowSizeHeight = 0;
+                    }
+
+                    toolBar.visible = true;
+                }
             }
         }
         onNeedScrollSeriaPosition: {
