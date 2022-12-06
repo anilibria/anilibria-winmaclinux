@@ -171,5 +171,8 @@
         <file>Assets/Icons/delete.svg</file>
         <file>Views/ThemeManagerPreview.qml</file>
         <file>Views/ReleaseCard.qml</file>
+        <file>Assets/Icons/leftscroll.svg</file>
+        <file>Assets/Icons/rightscroll.svg</file>
+        <file>Controls/NavigationScrollButton.qml</file>
     </qresource>
 </RCC>

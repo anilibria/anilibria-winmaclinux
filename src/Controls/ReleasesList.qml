@@ -4,6 +4,7 @@ import QtGraphicalEffects 1.0
 import Anilibria.ListModels 1.0
 
 Item {
+    id: root
     width: parent.width
     height: 330
 
@@ -25,6 +26,7 @@ Item {
     }
 
     ListView {
+        id: releasesListView
         anchors.fill: parent
         orientation: ListView.Horizontal
         boundsBehavior: Flickable.StopAtBounds
@@ -125,5 +127,25 @@ Item {
                 horizontalAlignment: Qt.AlignHCenter
             }
         }
+    }
+
+    NavigationScrollButton {
+        visible: root.height > 0 && releasesListView.contentX > 100
+        anchors.left: parent.left
+        anchors.leftMargin: 4
+        anchors.top: parent.top
+        anchors.topMargin: 120
+        scrollView: releasesListView
+        isLeft: true
+    }
+
+    NavigationScrollButton {
+        visible: root.height > 0 && !releasesListView.atXEnd
+        anchors.right: parent.right
+        anchors.rightMargin: 4
+        anchors.top: parent.top
+        anchors.topMargin: 120
+        scrollView: releasesListView
+        isLeft: false
     }
 }

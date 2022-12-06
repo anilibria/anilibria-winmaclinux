@@ -70,6 +70,7 @@ Item {
         id: videoPlayer
         autoPlay: true
         bufferSize: userConfigurationViewModel.playerBuffer
+        videoCodecPriority: ["D3D11", "DXVA", "CUDA", "FFmpeg"]
         fastSeek: true
         timeout: 60000
         onBufferProgressChanged: {
