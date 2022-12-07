@@ -70,7 +70,7 @@ Page {
             event.accepted = true;
         }
         if (event.key === Qt.Key_Escape) {
-            mainViewModel.selectPage("release");
+            mainViewModel.selectPage(userConfigurationViewModel.startPage);
         }
         if (event.key === Qt.Key_F11 || event.key === Qt.Key_F || event.key === 1040) {
             onlinePlayerViewModel.toggleFullScreen();
