@@ -23,6 +23,7 @@ import QtQuick.Layouts 1.3
 import QtQuick.Controls.Material 2.0
 import QtGraphicalEffects 1.12
 import QtQuick.Dialogs 1.2
+import QtQuick.Particles 2.13
 import Anilibria.Services 1.0
 import Anilibria.ListModels 1.0
 import Anilibria.ViewModels 1.0
@@ -36,7 +37,7 @@ ApplicationWindow {
     minimumWidth: 800
     minimumHeight: 600
     height: 600
-    title: qsTr("AniLibria.Qt")
+    title: qsTr("AniLibria.Qt CE")
     font.capitalization: Font.MixedCase
     flags: Qt.FramelessWindowHint | Qt.Window | Qt.WindowMinimizeButtonHint
     property var userModel: ({})
@@ -112,6 +113,13 @@ ApplicationWindow {
         height: 35
         color: applicationThemeViewModel.notificationCenterBackground
 
+        Image {
+            anchors.fill: parent
+            fillMode: Image.Tile
+            opacity: .2
+            source: assetsLocation.iconsPath + "snowbackground.png"
+        }
+
         Rectangle {
             color: "black"
             width: 1
@@ -148,14 +156,24 @@ ApplicationWindow {
                 id: taskbarTitle
                 anchors.centerIn: parent
                 fontPointSize: 12
-                text: "AniLibria.Qt - "
+                text: "AniLibria."
             }
+            Image {
+                id: christmasBall
+                anchors.left: taskbarTitle.right
+                anchors.bottom: taskbarTitle.bottom
+                width: 20
+                height: 20
+                mipmap: true
+                source: assetsLocation.iconsPath + "christmasball.svg"
+            }
+
             AccentText {
                 id: currentPageTitle
-                anchors.left: taskbarTitle.right
+                anchors.left: christmasBall.right
                 anchors.verticalCenter: parent.verticalCenter
                 fontPointSize: 12
-                text: mainViewModel.currentPageDisplayName
+                text: "t CE - " + mainViewModel.currentPageDisplayName
             }
         }
         IconButton {
@@ -1356,6 +1374,17 @@ ApplicationWindow {
         onReleasesPageToNavigated: {
             releases.navigateTo();
         }
+        onIsOnlinePlayerPageVisibleChanged: {
+            if (mainViewModel.isOnlinePlayerPageVisible) {
+                particleEffect.visible = false;
+                particleSystem.reset();
+                emitter.reset();
+                particleSystem.running = false;
+            } else {
+                particleEffect.visible = true;
+                particleSystem.running = true;
+            }
+        }
     }
 
     OsExtras {
@@ -1417,5 +1446,43 @@ ApplicationWindow {
         property string path: Qt.resolvedUrl("../Assets/")
         property string backgroundsPath: Qt.resolvedUrl("../Assets/Backgrounds/")
         property string iconsPath: Qt.resolvedUrl("../Assets/Icons/")
+    }
+
+    Item {
+        id: particleEffect
+        anchors.fill: parent
+
+        ParticleSystem {
+            id: particleSystem
+        }
+
+        Emitter {
+            id: emitter
+            anchors.top: parent.top
+            anchors.horizontalCenter: parent.horizontalCenter
+            width: parent.width
+            height: 80
+            system: particleSystem
+            emitRate: 1
+            lifeSpan: 25000
+            lifeSpanVariation: 10
+            size: 15
+            endSize: 20
+            velocity: AngleDirection {
+                angle: 90
+                angleVariation: 40
+                magnitude: 30
+                magnitudeVariation: 10
+            }
+        }
+
+        ImageParticle {
+            source: assetsLocation.iconsPath + "snowflake.svg"
+            system: particleSystem
+            rotation: 15
+            rotationVariation: 5
+            rotationVelocity: 60
+            rotationVelocityVariation: 15
+        }
     }
 }
