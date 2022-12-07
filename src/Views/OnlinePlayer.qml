@@ -1264,6 +1264,48 @@ Page {
                                         ListElement {
                                             text: "600"
                                         }
+                                        ListElement {
+                                            text: "700"
+                                        }
+                                        ListElement {
+                                            text: "800"
+                                        }
+                                        ListElement {
+                                            text: "900"
+                                        }
+                                        ListElement {
+                                            text: "1000"
+                                        }
+                                        ListElement {
+                                            text: "1100"
+                                        }
+                                        ListElement {
+                                            text: "1200"
+                                        }
+                                        ListElement {
+                                            text: "1300"
+                                        }
+                                        ListElement {
+                                            text: "1400"
+                                        }
+                                        ListElement {
+                                            text: "1500"
+                                        }
+                                        ListElement {
+                                            text: "1600"
+                                        }
+                                        ListElement {
+                                            text: "1700"
+                                        }
+                                        ListElement {
+                                            text: "1800"
+                                        }
+                                        ListElement {
+                                            text: "1900"
+                                        }
+                                        ListElement {
+                                            text: "2000"
+                                        }
                                     }
                                     onActivated: {
                                         userConfigurationViewModel.playerBuffer = (index + 1) * 100;
