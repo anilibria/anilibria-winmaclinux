@@ -4,6 +4,7 @@ import QtGraphicalEffects 1.0
 import Anilibria.ListModels 1.0
 
 Item {
+    id: root
     width: parent.width
     height: 330
 
@@ -126,6 +127,26 @@ Item {
                 horizontalAlignment: Qt.AlignHCenter
             }
         }
+    }
+
+    NavigationScrollButton {
+        visible: videosListView.contentX > 100
+        anchors.left: parent.left
+        anchors.leftMargin: 4
+        anchors.top: parent.top
+        anchors.topMargin: 120
+        scrollView: videosListView
+        isLeft: true
+    }
+
+    NavigationScrollButton {
+        visible: !videosListView.atXEnd
+        anchors.right: parent.right
+        anchors.rightMargin: 4
+        anchors.top: parent.top
+        anchors.topMargin: 120
+        scrollView: videosListView
+        isLeft: false
     }
 
     EmptyBoxArea {

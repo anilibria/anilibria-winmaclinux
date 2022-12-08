@@ -20,8 +20,8 @@ Rectangle {
         iconHeight: 30
         tooltipMessage: "Сдвинуть " + (root.isLeft ? "влево" : "вправо") + " область просмотра"
         onButtonPressed: {
-            if (root.isLeft) releasesListView.contentX -= 200;
-            if (!root.isLeft) releasesListView.contentX += 200;
+            if (root.isLeft) scrollView.contentX -= 200;
+            if (!root.isLeft) scrollView.contentX += 200;
         }
     }
 }
