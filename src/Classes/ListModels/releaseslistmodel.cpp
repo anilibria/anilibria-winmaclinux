@@ -446,6 +446,14 @@ void ReleasesListModel::setFilterByFavorites(bool filterByFavorites) noexcept
     emit filterByFavoritesChanged();
 }
 
+int ReleasesListModel::getReleaseIdByIndex(int index) noexcept
+{
+    if (index >= m_filteredReleases->count()) return -1;
+
+    auto release = m_filteredReleases->at(index);
+    return release->id();
+}
+
 QSharedPointer<QSet<int>> ReleasesListModel::getSelectedReleases()
 {
     return m_selectedReleases;

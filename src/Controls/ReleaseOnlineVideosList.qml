@@ -117,6 +117,7 @@ Item {
                 }
             }
             AccentText {
+                id: seenText
                 anchors.top: posterImage.bottom
                 width: parent.width
                 text: isSeens ? "Просмотрено" : currentTimeVideo
@@ -125,6 +126,18 @@ Item {
                 elide: Text.ElideRight
                 wrapMode: Text.NoWrap
                 horizontalAlignment: Qt.AlignHCenter
+            }
+
+            PlainText {
+                anchors.top: seenText.bottom
+                width: parent.width
+                height: 30
+                fontPointSize: 10
+                maximumLineCount: 1
+                elide: Text.ElideRight
+                wrapMode: Text.WordWrap
+                horizontalAlignment: Text.AlignHCenter
+                text: description
             }
         }
     }

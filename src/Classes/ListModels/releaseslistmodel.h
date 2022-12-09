@@ -208,6 +208,8 @@ public:
     bool filterByFavorites() const noexcept { return m_filterByFavorites; }
     void setFilterByFavorites(bool filterByFavorites) noexcept;
 
+    int getReleaseIdByIndex(int index) noexcept;
+
     QSharedPointer<QSet<int>> getSelectedReleases();
 
     Q_INVOKABLE void refresh();

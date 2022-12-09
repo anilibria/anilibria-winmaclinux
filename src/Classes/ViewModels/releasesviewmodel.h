@@ -250,6 +250,9 @@ public:
     Q_INVOKABLE void openDescriptionLink(const QString& link) noexcept;
     Q_INVOKABLE void showReleaseCard(int id) noexcept;
     Q_INVOKABLE void showRandomRelease() noexcept;
+    Q_INVOKABLE void showRandomReleaseFromFavorites() noexcept;
+    Q_INVOKABLE void showRandomReleaseInFiltered() noexcept;
+    Q_INVOKABLE void showRandomReleaseInSeen() noexcept;
     Q_INVOKABLE void hideReleaseCard() noexcept;
     Q_INVOKABLE void hideAfterWatchReleaseCard() noexcept;
     Q_INVOKABLE void setSeenMarkAllSeries(int id, int countSeries, bool marked);
@@ -316,6 +319,7 @@ private:
     void markDeletedReleases(QSharedPointer<QSet<int>> hittedIds);
     QString videosToJson(QList<OnlineVideoModel> &videos);
     QString torrentsToJson(QList<ReleaseTorrentModel> &torrents);
+    QHash<int, int> getAllSeenMarkCount() noexcept;
 
 private slots:
     void releasesUpdated();

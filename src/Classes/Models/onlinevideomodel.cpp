@@ -25,6 +25,11 @@ OnlineVideoModel::OnlineVideoModel()
 
 }
 
+/*QString getProxyUrl(const QString& url) {
+    qDebug() << QString("http://localhost:5174") + url.mid(9);
+    return QString("http://localhost:5174/") + url.mid(8);
+}*/
+
 void OnlineVideoModel::readFromApiModel(const QJsonObject &jsonObject)
 {
     m_Id = jsonObject.value("id").toInt();
@@ -36,6 +41,7 @@ void OnlineVideoModel::readFromApiModel(const QJsonObject &jsonObject)
     m_SourceHD = jsonObject.value("srcHd").toString();
     m_videoPoster = jsonObject.value("poster").toString();
     m_rutubeId = jsonObject.value("rutube_id").toString();
+    m_description = jsonObject.contains("name") ? jsonObject.value("name").toString() : "";
     if (jsonObject.contains("skips")) {
         auto skips = jsonObject.value("skips").toObject();
 
@@ -68,6 +74,7 @@ void OnlineVideoModel::writeToJson(QJsonObject &json) const noexcept
     json["srcHd"] = m_SourceHD;
     json["poster"] = m_videoPoster;
     json["rutube_id"] = m_rutubeId;
+    json["description"] = m_description;
 
     auto skipsObject = QJsonObject();
 

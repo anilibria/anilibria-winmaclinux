@@ -34,6 +34,7 @@ Item {
     property string tooltipMessage: ""
 
     signal buttonPressed()
+    signal rightButtonPressed()
     signal buttonHoverEnter()
     signal buttonHoverExit()
 
@@ -41,6 +42,7 @@ Item {
         id: mouseArea
         hoverEnabled: true
         anchors.fill: parent
+        acceptedButtons: Qt.LeftButton | Qt.RightButton
         onEntered: {
             imageRectangle.color = _button.hoverColor;
             buttonHoverEnter();
@@ -52,7 +54,11 @@ Item {
             hovered = false;
         }
         onClicked: {
-            _button.buttonPressed();
+            if (mouse.button === Qt.LeftButton) {
+                _button.buttonPressed();
+            } else {
+                _button.rightButtonPressed();
+            }
         }
     }
 

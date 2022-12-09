@@ -826,6 +826,49 @@ void ReleasesViewModel::showRandomRelease() noexcept
     showReleaseCard(release->id());
 }
 
+void ReleasesViewModel::showRandomReleaseFromFavorites() noexcept
+{
+    if (m_userFavorites->count() < 5) return;
+
+    auto count = m_userFavorites->count() - 1;
+
+    auto position = randomBetween(1, count);
+
+    auto releaseId = m_userFavorites->at(position);
+
+    showReleaseCard(releaseId);
+}
+
+void ReleasesViewModel::showRandomReleaseInFiltered() noexcept
+{
+    auto count = m_items->countFilteredReleases() - 1;
+    if (count < 5) return;
+
+    auto position = randomBetween(1, count);
+
+    auto releaseId = m_items->getReleaseIdByIndex(position);
+
+    showReleaseCard(releaseId);
+}
+
+void ReleasesViewModel::showRandomReleaseInSeen() noexcept
+{
+    auto seensCounts = getAllSeenMarkCount();
+    QList<int> releaseIds;
+    foreach (auto release, *m_releases) {
+        auto id = release->id();
+        if (!seensCounts.contains(id)) continue;
+
+        if (seensCounts.value(id) < release->countOnlineVideos()) releaseIds.append(id);
+    }
+
+    if (releaseIds.count() < 5) return;
+
+    auto position = randomBetween(1, releaseIds.count() - 1);
+
+    showReleaseCard(releaseIds.value(position));
+}
+
 void ReleasesViewModel::hideReleaseCard() noexcept
 {
     m_openedRelease = nullptr;
@@ -1770,6 +1813,25 @@ QString ReleasesViewModel::torrentsToJson(QList<ReleaseTorrentModel> &torrents)
     QJsonDocument torrentDocument(torrentsArray);
     QString torrentJson(torrentDocument.toJson());
     return torrentJson;
+}
+
+QHash<int, int> ReleasesViewModel::getAllSeenMarkCount() noexcept
+{
+    QHash<int, int> result;
+    QHashIterator<QString, bool> iterator(*m_seenMarks);
+    while(iterator.hasNext()) {
+        iterator.next();
+
+        QString key = iterator.key();
+        auto keyParts = key.split(".");
+        auto releaseId = keyParts.first().toInt();
+        if (!result.contains(releaseId)) {
+            result[releaseId] = 1;
+        } else {
+            result[releaseId] += 1;
+        }
+    }
+    return result;
 }
 
 void ReleasesViewModel::releasesUpdated()

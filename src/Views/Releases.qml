@@ -824,6 +824,36 @@ Page {
                             releasesViewModel.showRandomRelease();
                         }
                     }
+                    onRightButtonPressed: {
+                        randomMenuPanel.open();
+                    }
+
+                    CommonMenu {
+                        id: randomMenuPanel
+                        y: parent.height
+                        width: 380
+
+                        CommonMenuItem {
+                            text: "Случайный релиз по избранному"
+                            onPressed: {
+                                releasesViewModel.showRandomReleaseFromFavorites();
+                            }
+                        }
+                        CommonMenuItem {
+                            text: "Случайный релиз по текущему фильтру"
+                            onPressed: {
+                                releasesViewModel.showRandomReleaseInFiltered();
+                            }
+                        }
+                        CommonMenuItem {
+                            text: "Случайный релиз по просматриваемому"
+                            enabled: releasesViewModel.countFavorites
+                            onPressed: {
+                                releasesViewModel.showRandomReleaseInSeen();
+                            }
+                        }
+                    }
+
                 }
                 LeftPanelIconButton {
                     iconPath: "../Assets/Icons/coloredsettings.svg"

@@ -74,6 +74,9 @@ QVariant ReleaseOnlineSeriesListModel::data(const QModelIndex &index, int role) 
         case CurrentTimeVideoRole: {
             return videoId == currentVideoId && videoPosition > 0 ? QVariant("Остановились на " + getDisplayTime(videoPosition)) : QVariant("");
         }
+        case DescriptionRole: {
+            return onlineVideo->description();
+        }
     }
 
     return QVariant();
@@ -109,6 +112,10 @@ QHash<int, QByteArray> ReleaseOnlineSeriesListModel::roleNames() const
         {
             IsEmptyPosterRole,
             "isEmptyPoster"
+        },
+        {
+            DescriptionRole,
+            "description"
         }
     };
 }

@@ -41,6 +41,7 @@ private:
     int m_openingStartSeconds { -1 };
     int m_openingEndSeconds { -1 };
     QString m_rutubeId { "" };
+    QString m_description { "" };
 
 public:
     OnlineVideoModel();
@@ -66,6 +67,7 @@ public:
     int openingStartSeconds() const noexcept { return m_openingStartSeconds; };
     int openingEndSeconds() const noexcept { return m_openingEndSeconds; };
     QString rutubeId() const noexcept { return m_rutubeId; }
+    QString description() const noexcept { return m_description; }
 
     void setId(const int id) noexcept;
     void setTitle(const QString &title) noexcept;
