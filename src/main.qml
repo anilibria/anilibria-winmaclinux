@@ -1441,6 +1441,13 @@ ApplicationWindow {
         }
     }
 
+    /*LocalProxyViewModel {
+        id: localProxyViewModel
+        Component.onCompleted: {
+            localProxyViewModel.usingProxy = true;
+        }
+    }*/
+
     Item {
         id: assetsLocation
         property string path: Qt.resolvedUrl("../Assets/")

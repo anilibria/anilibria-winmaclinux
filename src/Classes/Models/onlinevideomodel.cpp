@@ -16,19 +16,16 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "onlinevideomodel.h"
+
 #include <QJsonObject>
 #include <QJsonArray>
+#include "onlinevideomodel.h"
+#include "../../globalconstants.h"
 
 OnlineVideoModel::OnlineVideoModel()
 {
 
 }
-
-/*QString getProxyUrl(const QString& url) {
-    qDebug() << QString("http://localhost:5174") + url.mid(9);
-    return QString("http://localhost:5174/") + url.mid(8);
-}*/
 
 void OnlineVideoModel::readFromApiModel(const QJsonObject &jsonObject)
 {
@@ -153,3 +150,11 @@ void OnlineVideoModel::setVideoPoster(const QString &poster) noexcept
 {
     m_videoPoster = poster;
 }
+
+QString OnlineVideoModel::getProxyUrl(const QString& url) {
+    if (!IsUsingVideoProxy) return url;
+    if (url.isEmpty()) return url;
+
+    return "http://localhost:" + QString::number(VideoProxyPort) + url.mid(8);
+}
+

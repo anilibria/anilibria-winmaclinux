@@ -65,6 +65,9 @@ ApplicationThemeViewModel::ApplicationThemeViewModel(QObject *parent)
     lightTheme->insert(posterBorderField, "#adadad");
     lightTheme->insert(roundedButtonDisableForegroundField, "white");
     lightTheme->insert(materialAccentField, "#f44336");
+
+    lightTheme->insert(colorBorderInPanelField, "white");
+
     lightTheme->insert(iconMainMenuField, "qrc:/Assets/Icons/coloreddrawer.svg");
     lightTheme->insert(iconMainMenuReleasesField, "qrc:/Assets/Icons/catalogmenu.svg");
     lightTheme->insert(iconMainMenuCinemahallField, "qrc:/Assets/Icons/cinemahallmenu.svg");
@@ -75,7 +78,6 @@ ApplicationThemeViewModel::ApplicationThemeViewModel(QObject *parent)
     lightTheme->insert(iconMainMenuDonateField, "qrc:/Assets/Icons/donate.svg");
     lightTheme->insert(iconMainMenuThemeManagerField, "qrc:/Assets/Icons/themes.svg");
     lightTheme->insert(iconMainMenuYoutubeField, "qrc:/Assets/Icons/youtube.svg");
-
     lightTheme->insert(iconMainMenuAuthorizationField, "qrc:/Assets/Icons/user.svg");
     lightTheme->insert(iconLeftHalfScreenField, "qrc:/Assets/Icons/coloredleftmenu.svg");
     lightTheme->insert(iconRightHalfScreenField, "qrc:/Assets/Icons/coloredrightmenu.svg");
@@ -125,6 +127,9 @@ ApplicationThemeViewModel::ApplicationThemeViewModel(QObject *parent)
     darkTheme->insert(posterBorderField, "#adadad");
     darkTheme->insert(roundedButtonDisableForegroundField, "lightgray");
     darkTheme->insert(materialAccentField, "#f44336");
+
+    darkTheme->insert(colorBorderInPanelField, "white");
+
     darkTheme->insert(iconMainMenuField, "qrc:/Assets/Icons/coloreddrawer.svg");
     darkTheme->insert(iconMainMenuReleasesField, "qrc:/Assets/Icons/catalogmenu.svg");
     darkTheme->insert(iconMainMenuCinemahallField, "qrc:/Assets/Icons/cinemahallmenu.svg");
@@ -187,6 +192,7 @@ ApplicationThemeViewModel::ApplicationThemeViewModel(QObject *parent)
     m_fields.append(toggleButtonNotCheckedField);
     m_fields.append(posterBorderField);
     m_fields.append(materialAccentField);
+    m_fields.append(colorBorderInPanelField);
     m_fields.append(iconMainMenuField);
     m_fields.append(iconMainMenuReleasesField);
     m_fields.append(iconMainMenuCinemahallField);

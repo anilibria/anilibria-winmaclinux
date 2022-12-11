@@ -36,6 +36,9 @@ QString SimpleListSectionComponent = "SimpleListSection";
 int MovingUp = 1;
 int MovingDown = -1;
 
+bool IsUsingVideoProxy = false;
+int VideoProxyPort = 0;//57742;
+
 QString plainTextColorField = "plainTextColor";
 QString headerTextColorField = "headerTextColor";
 QString linkTextColorField = "linkTextColor";
@@ -74,6 +77,7 @@ QString toggleButtonNotCheckedField = "toggleButtonNotChecked";
 QString posterBorderField = "posterBorder";
 QString roundedButtonDisableForegroundField = "roundedButtonDisableForeground";
 QString materialAccentField = "materialAccent";
+QString colorBorderInPanelField = "colorBorderInPanel";
 QString iconMainMenuField = "iconMainMenu";
 QString iconMainMenuReleasesField = "iconMainMenuReleases";
 QString iconMainMenuCinemahallField = "iconMainMenuCinemahall";

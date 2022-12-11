@@ -52,9 +52,9 @@ public:
 
     int id() const { return m_Id; }
     QString title() const { return m_Title; }
-    QString sd() const { return m_SD; }
-    QString hd() const noexcept { return m_HD; }
-    QString fullhd() const { return m_FullHD; }
+    QString sd() noexcept { return getProxyUrl(m_SD); }
+    QString hd() noexcept { return getProxyUrl(m_HD); }
+    QString fullhd() noexcept { return getProxyUrl(m_FullHD); }
     QString sourcesd() const { return m_SourceSD; }
     QString sourcehd() const { return m_SourceHD; }
     int releaseId() const { return m_releaseId; }
@@ -81,6 +81,10 @@ public:
     void setReleasePoster(QString releasePoster) noexcept;
     void setIsGroup(bool isGroup) noexcept;
     void setVideoPoster(const QString& poster) noexcept;
+
+private:
+    QString getProxyUrl(const QString& url);
+
 };
 
 #endif // ONLINEVIDEOMODEL_H

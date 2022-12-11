@@ -60,6 +60,7 @@
 #include "Classes/ListModels/themefieldlistmodel.h"
 #include "Classes/ListModels/localthemeslistmodel.h"
 #include "Classes/ListModels/myanilibriasearchlistmodel.h"
+#include "Classes/ViewModels/localproxyviewmodel.h"
 
 int main(int argc, char *argv[])
 {
@@ -128,6 +129,7 @@ int main(int argc, char *argv[])
     qmlRegisterType<ThemeFieldListModel>("Anilibria.ListModels", 1, 0, "ThemeFieldListModel");
     qmlRegisterType<LocalThemesListModel>("Anilibria.ListModels", 1, 0, "LocalThemesListModel");
     qmlRegisterType<MyAnilibriaSearchListModel>("Anilibria.ListModels", 1, 0, "MyAnilibriaSearchListModel");
+    qmlRegisterType<LocalProxyViewModel>("Anilibria.ViewModels", 1, 0, "LocalProxyViewModel");
 
     QCoreApplication::setOrganizationDomain("anilibria.tv");
     QCoreApplication::setOrganizationName("EmptyFlow");

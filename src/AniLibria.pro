@@ -105,6 +105,7 @@ SOURCES += \
     Classes/Models/youtubevideomodel.cpp \
     Classes/RemotePlayer/remoteplayer.cpp \
     Classes/RemotePlayer/remoteplayertransport.cpp \
+    Classes/Servers/videoproxyserver.cpp \
     Classes/Services/analyticsservice.cpp \
     Classes/Services/anilibriaapiservice.cpp \
     Classes/Services/apiserviceconfigurator.cpp \
@@ -123,6 +124,7 @@ SOURCES += \
     Classes/ViewModels/applicationthemeviewmodel.cpp \
     Classes/ViewModels/authorizationviewmodel.cpp \
     Classes/ViewModels/imagebackgroundviewmodel.cpp \
+    Classes/ViewModels/localproxyviewmodel.cpp \
     Classes/ViewModels/mainviewmodel.cpp \
     Classes/ViewModels/myanilibriaviewmodel.cpp \
     Classes/ViewModels/notificationviewmodel.cpp \
@@ -196,6 +198,7 @@ HEADERS += \
     Classes/Models/youtubevideomodel.h \
     Classes/RemotePlayer/remoteplayer.h \
     Classes/RemotePlayer/remoteplayertransport.h \
+    Classes/Servers/videoproxyserver.h \
     Classes/Services/analyticsservice.h \
     Classes/Services/anilibriaapiservice.h \
     Classes/Services/apiserviceconfigurator.h \
@@ -215,6 +218,7 @@ HEADERS += \
     Classes/ViewModels/applicationthemeviewmodel.h \
     Classes/ViewModels/authorizationviewmodel.h \
     Classes/ViewModels/imagebackgroundviewmodel.h \
+    Classes/ViewModels/localproxyviewmodel.h \
     Classes/ViewModels/mainviewmodel.h \
     Classes/ViewModels/myanilibriaviewmodel.h \
     Classes/ViewModels/notificationviewmodel.h \

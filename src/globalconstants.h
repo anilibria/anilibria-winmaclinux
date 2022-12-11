@@ -55,6 +55,10 @@ extern int MovingUp;
 
 extern int MovingDown;
 
+extern bool IsUsingVideoProxy;
+
+extern int VideoProxyPort;
+
 extern QString plainTextColorField;
 
 extern QString headerTextColorField;
@@ -130,6 +134,8 @@ extern QString toggleButtonNotCheckedField;
 extern QString posterBorderField;
 
 extern QString materialAccentField;
+
+extern QString colorBorderInPanelField;
 
 extern QString iconMainMenuField;
 

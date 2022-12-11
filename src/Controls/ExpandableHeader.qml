@@ -7,7 +7,7 @@ Rectangle {
     anchors.margins: 4
     height: 30
     color: "transparent"
-    border.color: "white"
+    border.color: applicationThemeViewModel.colorBorderInPanel
     border.width: 1
     radius: 4
 

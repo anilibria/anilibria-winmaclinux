@@ -67,6 +67,7 @@ class ApplicationThemeViewModel : public QObject
     Q_PROPERTY(QString toggleButtonNotChecked READ toggleButtonNotChecked NOTIFY toggleButtonNotCheckedChanged)
     Q_PROPERTY(QString posterBorder READ posterBorder NOTIFY posterBorderChanged)
     Q_PROPERTY(QString materialAccent READ materialAccent NOTIFY materialAccentChanged)
+    Q_PROPERTY(QString colorBorderInPanel READ colorBorderInPanel NOTIFY colorBorderInPanelChanged)
     Q_PROPERTY(QString roundedButtonDisableForeground READ roundedButtonDisableForeground NOTIFY roundedButtonDisableForegroundChanged)
     Q_PROPERTY(QString iconMainMenu READ iconMainMenu NOTIFY iconMainMenuChanged)
     Q_PROPERTY(QStringList themes READ themes NOTIFY themesChanged)
@@ -156,6 +157,7 @@ public:
     QString toggleButtonNotChecked() const noexcept { return m_themes.value(m_selectedTheme)->value(toggleButtonNotCheckedField); }
     QString posterBorder() const noexcept { return m_themes.value(m_selectedTheme)->value(posterBorderField); }
     QString materialAccent() const noexcept { return m_themes.value(m_selectedTheme)->value(materialAccentField); }
+    QString colorBorderInPanel() const noexcept { return m_themes.value(m_selectedTheme)->value(colorBorderInPanelField); }
     QString iconMainMenu() const noexcept { return m_themes.value(m_selectedTheme)->value(iconMainMenuField); }
     QString iconMainMenuReleases() const noexcept { return m_themes.value(m_selectedTheme)->value(iconMainMenuReleasesField); }
     QString iconMainMenuCinemahall() const noexcept { return m_themes.value(m_selectedTheme)->value(iconMainMenuCinemahallField); }
@@ -291,6 +293,7 @@ signals:
     void iconCloseWindowChanged();
     void iconNormalWindowChanged();
     void iconMainMenuAuthorizationChanged();
+    void colorBorderInPanelChanged();
 
 };
 

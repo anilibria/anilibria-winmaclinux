@@ -548,6 +548,7 @@ ApplicationWindow {
                             }
                         }
                         Item {
+                            id: materialControls
                             width: 400
                             height: 50
                             anchors.left: parent.left
@@ -562,6 +563,35 @@ ApplicationWindow {
                                 anchors.left: previewSwitch.right
                                 anchors.leftMargin: 10
                                 width: 300
+                            }
+                        }
+                        Item {
+                            id: myAnilibriaControls
+                            width: 400
+                            height: 50
+                            anchors.left: parent.left
+                            anchors.leftMargin: 10
+                            anchors.top: materialControls.bottom
+
+                            Rectangle {
+                                id: root
+                                anchors.left: parent.left
+                                anchors.right: parent.right
+                                anchors.margins: 4
+                                height: 30
+                                color: "transparent"
+                                border.color: applicationThemeViewModel.previewItems.colorBorderInPanel
+                                border.width: 1
+                                radius: 4
+
+                                Text {
+                                    anchors.left: parent.left
+                                    anchors.verticalCenter: parent.verticalCenter
+                                    anchors.leftMargin: 10
+                                    font.pointSize: 12 + windowSettings.dpiSeparation
+                                    color: applicationThemeViewModel.previewItems.headerTextColor
+                                    text: "Текст заголовка"
+                                }
                             }
                         }
                     }

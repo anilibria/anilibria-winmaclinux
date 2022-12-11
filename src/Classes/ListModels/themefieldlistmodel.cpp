@@ -62,6 +62,7 @@ ThemeFieldListModel::ThemeFieldListModel(QObject *parent)
     m_descriptions.insert(toggleButtonNotCheckedField, "Цвет кнопки переключателя 3: Цвет фона кнопки переключателя в состоянии Не Выбрано");
     m_descriptions.insert(posterBorderField, "Цвет рамки постера:Цвет рамки вокруг постера в элементе релиза в различных списках");
     m_descriptions.insert(materialAccentField, "Цвет акцента для Material:Цвет акцента в Material элементах (переключатель, текстовое поле)");
+    m_descriptions.insert(colorBorderInPanelField, "Цвет рамки заголовка регионов:Цвет рамки заголовков регионов на странице Моя Анилибирия");
     m_descriptions.insert(iconMainMenuField, "Иконка главного меню:Иконка находящаяся на всех страницах и предназначена для открытия главного меню");
     m_descriptions.insert(iconMainMenuReleasesField, "Иконка страницы Каталог релизов:Иконка находящаяся в главном меню и на кастомном тулбаре");
     m_descriptions.insert(iconMainMenuCinemahallField, "Иконка страницы Кинозал:Иконка находящаяся в главном меню и на кастомном тулбаре");
@@ -72,7 +73,6 @@ ThemeFieldListModel::ThemeFieldListModel(QObject *parent)
     m_descriptions.insert(iconMainMenuDonateField, "Иконка страницы Поддержать проект:Иконка находящаяся в главном меню и на кастомном тулбаре");
     m_descriptions.insert(iconMainMenuThemeManagerField, "Иконка страницы Менеджер тем:Иконка находящаяся в главном меню и на кастомном тулбаре");
     m_descriptions.insert(iconMainMenuYoutubeField, "Иконка страницы Youtube:Иконка находящаяся в главном меню и на кастомном тулбаре");
-
     m_descriptions.insert(iconMainMenuAuthorizationField, "Иконка страницы Авторизация:Иконка находящаяся в главном меню и на кастомном тулбаре");
     m_descriptions.insert(iconLeftHalfScreenField, "Иконка кнопки Левая половина окна:Иконка находящаяся в правой стороне кастомного тулбара");
     m_descriptions.insert(iconRightHalfScreenField, "Иконка кнопки Правая половина окна:Иконка находящаяся в правой стороне кастомного тулбара");
