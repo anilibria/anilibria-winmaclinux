@@ -51,11 +51,13 @@ void VideoProxyServer::processSocket(int socket)
             host = routeData.mid(startIndex + 1, routeData.indexOf("/", startIndex + 1) - 1);
             currentPath = routeData;
 
-            innerTcpSocket = new QSslSocket();
-            innerTcpSocket->setPeerVerifyMode(QSslSocket::QueryPeer);
+            // we need make 302 request in first place
 
-            innerTcpSocket->connectToHostEncrypted(host, 443);
-            if (!innerTcpSocket->waitForEncrypted(1000)) {
+            auto inner302Socket = new QSslSocket();
+            inner302Socket->setPeerVerifyMode(QSslSocket::QueryPeer);
+
+            inner302Socket->connectToHostEncrypted(host, 443);
+            if (!inner302Socket->waitForEncrypted(1000)) {
                 tcpSocket->write("HTTP/1.1 204 No Content\r\nServer: AnilibriaQtInnerVideoProxy\r\nConnection: close\r\n\r\n");
                 tcpSocket->waitForBytesWritten(1000);
                 closeSocket(tcpSocket);
@@ -64,10 +66,32 @@ void VideoProxyServer::processSocket(int socket)
             }
 
 
-            innerTcpSocket->write(bytes.replace("/" + host, "").replace(localAddress.toUtf8(), host));
-            innerTcpSocket->waitForBytesWritten(1000);
+            inner302Socket->write(bytes.replace("/" + host, "").replace(localAddress.toUtf8(), host));
+            inner302Socket->waitForBytesWritten(1000);
 
-            //TODO: Support 302 Header!!!!
+            // and after it real request
+
+            auto redirectData = readAllAvailableBytesFromSocket(inner302Socket);
+            auto redirectDataString = QString(redirectData);
+            auto indexLocation = redirectDataString.indexOf("Location: ") + 10;
+            redirectDataString = redirectDataString.mid(indexLocation);
+            QUrl url = QUrl(redirectDataString.mid(0, redirectDataString.indexOf(QString("\r\n").toUtf8())));
+
+            innerTcpSocket = new QSslSocket();
+            innerTcpSocket->setPeerVerifyMode(QSslSocket::QueryPeer);
+            innerTcpSocket->connectToHostEncrypted(url.host(), 443);
+            if (!innerTcpSocket->waitForEncrypted(1000)) {
+                tcpSocket->write("HTTP/1.1 204 No Content\r\nServer: AnilibriaQtInnerVideoProxy\r\nConnection: close\r\n\r\n");
+                tcpSocket->waitForBytesWritten(1000);
+                closeSocket(tcpSocket);
+                tcpSocket = nullptr;
+                break;
+            }
+
+            auto path = url.path() + "?" + url.query();
+            auto replacedBytes = bytes.replace(currentPath.replace("/" + host, "").toUtf8(), path.toUtf8()).replace(host, url.host().toUtf8());
+            innerTcpSocket->write(replacedBytes);
+            innerTcpSocket->waitForBytesWritten(1000);
 
             break;
         }
@@ -86,7 +110,7 @@ void VideoProxyServer::processSocket(int socket)
     qint64 totalLoopBytes = 0;
     int tryTimes = 0;
     int readDelay = 1000;
-    auto isPlaylist = currentPath.contains(".m3u8");
+    //auto isPlaylist = currentPath.contains(".m3u8");
     while (true) {
         innerTcpSocket->waitForReadyRead(readDelay);
         auto bytesCount = innerTcpSocket->bytesAvailable();
@@ -96,23 +120,32 @@ void VideoProxyServer::processSocket(int socket)
             continue;
         }
         if (bytesCount == 0 || innerTcpSocket->atEnd()) {
-            auto bytes = readAllAvailableBytesFromSocket(tcpSocket);
-            if (bytes.length() == 0) break;
+            auto restBytes = readAllAvailableBytesFromSocket(tcpSocket);
+            if (restBytes.length() == 0) break;
 
-            innerTcpSocket->write(isPlaylist ? bytes.replace("https://" + host, "http://" + localAddress.toUtf8()) : bytes);
+            innerTcpSocket->write(/*isPlaylist ? bytes.replace("https://" + host, "http://" + localAddress.toUtf8()) :*/ restBytes);
             innerTcpSocket->waitForBytesWritten(2000);
             continue;
         }
 
         totalLoopBytes += bytesCount;
 
-        auto bytes = innerTcpSocket->read(bytesCount);
+        auto bytesPart = innerTcpSocket->read(bytesCount);
 
-        tcpSocket->write(isPlaylist ? bytes.replace("https://" + host, "http://" + localAddress.toUtf8()) : bytes);
+        tcpSocket->write(/*isPlaylist ? bytes.replace("https://" + host, "http://" + localAddress.toUtf8()) : */ bytesPart);
         tcpSocket->waitForBytesWritten();
     }
 
-    tcpSocket->waitForBytesWritten(1000);
+    auto maxAttempts = 10;
+    while (true) {
+        if (maxAttempts <= 0) break;
+        tcpSocket->waitForBytesWritten(1000);
+        if (tcpSocket->bytesToWrite() > 0) {
+            maxAttempts -= 1;
+        } else {
+            break;
+        }
+    }
 
     innerTcpSocket->disconnectFromHost();
     delete innerTcpSocket;
