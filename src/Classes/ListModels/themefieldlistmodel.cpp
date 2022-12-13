@@ -110,7 +110,7 @@ QVariant ThemeFieldListModel::data(const QModelIndex &index, int role) const
 
     switch (role) {
         case IdRole: {
-            return QVariant(itemIndex);
+            return QVariant(m_colorFields.indexOf(field));
         }
         case NameRole: {
             return QVariant(field);
@@ -177,7 +177,7 @@ QHash<int, QByteArray> ThemeFieldListModel::roleNames() const
     return {
         {
             IdRole,
-            "id"
+            "identifier"
         },
         {
             NameRole,
@@ -318,7 +318,7 @@ void ThemeFieldListModel::setValueToItem(QString value) noexcept
         m_values.insert(field, value);
     }
 
-    emit dataChanged(index(m_selectedIndex, 0), index(m_selectedIndex, 0));
+    refreshRowByField(field);
     setSelectedIndex(-1);
     emit hasValuesChanged();
 }
@@ -342,7 +342,7 @@ void ThemeFieldListModel::undefineField(int itemIndex) noexcept
 
     if (m_values.contains(field)) m_values.remove(field);
 
-    emit dataChanged(index(itemIndex, 0), index(itemIndex, 0));
+    refreshRowByField(field);
     emit hasValuesChanged();
 }
 
@@ -352,7 +352,7 @@ void ThemeFieldListModel::defineField(int itemIndex) noexcept
 
     if (!m_values.contains(field)) m_values.insert(field, "");
 
-    emit dataChanged(index(itemIndex, 0), index(itemIndex, 0));
+    refreshRowByField(field);
     emit hasValuesChanged();
 }
 
@@ -365,7 +365,7 @@ void ThemeFieldListModel::toggleDefinedField(int itemIndex) noexcept
     } else {
         m_values.insert(field, "");
     }
-    emit dataChanged(index(itemIndex, 0), index(itemIndex, 0));
+    refreshRowByField(field);
     emit hasValuesChanged();
 }
 
@@ -431,5 +431,17 @@ void ThemeFieldListModel::addIconFromFile(const QString &path, int itemIndex) no
         setValueToItemByIndex(itemIndex, "data:image/gif;base64," + iconContent);
     }
 
-    emit dataChanged(index(itemIndex, 0), index(itemIndex, 0));
+    auto field = m_colorFields.value(itemIndex);
+    refreshRowByField(field);
+}
+
+void ThemeFieldListModel::refreshRowByField(const QString &field) noexcept
+{
+    if (m_filteredColorFields.contains(field)) {
+        auto filteredIndex = m_filteredColorFields.indexOf(field);
+        emit dataChanged(index(filteredIndex, 0), index(filteredIndex, 0));
+    } else {
+        auto itemIndex = m_colorFields.indexOf(field);
+        emit dataChanged(index(itemIndex, 0), index(itemIndex, 0));
+    }
 }

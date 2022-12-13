@@ -99,6 +99,9 @@ public:
     Q_INVOKABLE void saveThemeToFile(const QString& path) noexcept;
     Q_INVOKABLE void addIconFromFile(const QString& path, int itemIndex) noexcept;
 
+private:
+    void refreshRowByField(const QString& field) noexcept;
+
 signals:
     void themeNameChanged();
     void basedOnThemeChanged();

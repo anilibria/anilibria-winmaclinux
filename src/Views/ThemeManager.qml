@@ -715,7 +715,7 @@ Page {
                                             selectByMouse: true
                                             text: fieldValue
                                             onTextChanged: {
-                                                applicationThemeViewModel.fieldList.setValueToItemByIndex(id, text);
+                                                applicationThemeViewModel.fieldList.setValueToItemByIndex(identifier, text);
                                             }
                                         }
 
@@ -745,7 +745,7 @@ Page {
                                             overlayVisible: false
                                             tooltipMessage: tooltipOverride
                                             onButtonPressed: {
-                                                applicationThemeViewModel.fieldList.toggleDefinedField(id);
+                                                applicationThemeViewModel.fieldList.toggleDefinedField(identifier);
                                             }
                                         }
 
@@ -769,7 +769,7 @@ Page {
                                             overlayVisible: false
                                             tooltipMessage: "Выбрать файл изображения для иконки"
                                             onButtonPressed: {
-                                                openIconFileDialog.selectedIconIndex = id;
+                                                openIconFileDialog.selectedIconIndex = identifier;
                                                 openIconFileDialog.open();
                                             }
                                         }
@@ -835,7 +835,7 @@ Page {
                                             MouseArea {
                                                 anchors.fill: parent
                                                 onPressed: {
-                                                    applicationThemeViewModel.fieldList.selectedIndex = id;
+                                                    applicationThemeViewModel.fieldList.selectedIndex = identifier;
                                                     colorDialog.color = fieldValue;
                                                     colorDialog.visible = true;
                                                 }

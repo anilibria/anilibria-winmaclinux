@@ -220,7 +220,7 @@ QString VideoProxyServer::joinChunkedData(const QString &content) noexcept
         auto countBytes = hexValue.toUInt(&bStatus, 16);
         if (!bStatus || countBytes == 0) break;
         index += 2;
-        result.append(current.midRef(index, countBytes));
+        result.append(current.midRef(startIndex + index, countBytes));
 
         startIndex += index + countBytes;
         if (startIndex + 2 < content.count()) startIndex += 2; // It need for remove ending \r\n
