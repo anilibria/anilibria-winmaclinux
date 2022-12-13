@@ -34,8 +34,11 @@ public:
     QQueue<int>* m_QueuedAddedFavorites;
     QQueue<int>* m_QueuedDeletedFavorites;
     QString m_FavoriteToken;
+    QList<QString> m_pages { QList<QString>() };
+    QSet<int> m_pageCounter { QSet<int>() };
+    QMutex* m_mutex { new QMutex() };
 
-    void getAllReleases(const int count, const int page);
+    void getAllReleases(const int countPages, const int perPage);
     void getYoutubeVideos();
     void getSchedule();
     void signin(QString email, QString password, QString fa2code);
@@ -47,9 +50,10 @@ public:
     void performRemoveFavorite(QString token, int id);
     void removeMultiFavorites(QString token, QString ids);
     void downloadTorrent(QString path);
+    QList<QString> getPages() const noexcept { return m_pages; };
 
 signals:
-    void allReleasesReceived(QString data);
+    void allReleasesReceived();
     void allYoutubeItemReceived(QString data);
     void scheduleReceived(QString data);
     void signinReceived(QString token, QString payload);

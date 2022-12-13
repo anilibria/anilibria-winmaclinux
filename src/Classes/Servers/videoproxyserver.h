@@ -23,6 +23,8 @@ private:
     QByteArray getRoute(QByteArray bytes);
     void closeSocket(QTcpSocket* socket);
     QByteArray readAllAvailableBytesFromSocket(QTcpSocket * socket);
+    void waitAllBytesWroted(QTcpSocket * socket);
+    QString joinChunkedData(const QString& content) noexcept;
 
 signals:
 

@@ -423,9 +423,6 @@ Page {
                                         text: "wwnd"
                                     }
                                     ListElement {
-                                        text: "anilib.moe"
-                                    }
-                                    ListElement {
                                         text: "anilibria.iss.one"
                                     }
                                 }
@@ -441,10 +438,6 @@ Page {
                                             staticAddress.text = "https://static.wwnd.space";
                                             break;
                                         case 2:
-                                            apiAddress.text = "https://anilib.moe/";
-                                            staticAddress.text = "https://anilib.moe";
-                                            break;
-                                        case 3:
                                             apiAddress.text = "https://anilibria.iss.one/";
                                             staticAddress.text = "https://anilibria.iss.one";
                                             break;

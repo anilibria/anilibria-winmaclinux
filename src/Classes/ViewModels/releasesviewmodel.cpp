@@ -267,7 +267,6 @@ void ReleasesViewModel::setSynchronizationService(SynchronizationService *synchr
     if (!isFirstTime) return;
 
     connect(m_synchronizationService, &SynchronizationService::synchronizedReleases, this, &ReleasesViewModel::synchronizedReleases);
-    connect(m_synchronizationService, &SynchronizationService::synchronizedFromDL, this, &ReleasesViewModel::synchronizedFromDL);
     connect(m_synchronizationService, &SynchronizationService::synchronizedSchedule, this, &ReleasesViewModel::synchronizedSchedule);
     connect(m_synchronizationService, &SynchronizationService::userFavoritesReceived, this,&ReleasesViewModel::userFavoritesReceived);
 
@@ -988,7 +987,7 @@ QHash<QString, bool> *ReleasesViewModel::getSeenMarks()
     return m_seenMarks;
 }
 
-void ReleasesViewModel::updateAllReleases(const QString &releases, bool insideData)
+void ReleasesViewModel::updateAllReleases(const QList<QString> &releases, bool insideData)
 {
     if (releases.isEmpty()) {
         setSynchronizationEnabled(false);
@@ -996,32 +995,51 @@ void ReleasesViewModel::updateAllReleases(const QString &releases, bool insideDa
         return;
     }
 
+    foreach (auto release, releases) {
+        if (release.isEmpty()) {
+            setSynchronizationEnabled(false);
+            emit errorWhileReleaseSynchronization();
+            return;
+        }
+    }
+
     QFuture<bool> future = QtConcurrent::run(
         [=] {
-            QJsonParseError jsonError;
-            QJsonDocument jsonDocument = QJsonDocument::fromJson(releases.toUtf8(), &jsonError);
-            if (jsonError.error != 0) {
-                setSynchronizationEnabled(false);
-                emit errorWhileReleaseSynchronization();
-                return false;
-            }
+            auto jsons = QList<QJsonDocument>();
 
-            QJsonArray jsonReleases;
-            if (insideData) {
-                auto rootObject = jsonDocument.object();
-                bool isValid = rootObject.contains("data") && rootObject["data"].isObject();
-                if (isValid) {
-                    auto dataObject = rootObject["data"].toObject();
-                    isValid = dataObject.contains("items") && dataObject["items"].isArray();
-                    if (isValid) jsonReleases = dataObject["items"].toArray();
-                }
-                if (!isValid) {
+            foreach (auto jsonPage, releases) {
+                QJsonParseError jsonError;
+                jsons.append(QJsonDocument::fromJson(jsonPage.toUtf8(), &jsonError));
+                if (jsonError.error != 0) {
                     setSynchronizationEnabled(false);
                     emit errorWhileReleaseSynchronization();
                     return false;
                 }
+            }
+
+            QJsonArray jsonReleases;
+            if (insideData) {
+                foreach (auto jsonDocument, jsons) {
+                    auto rootObject = jsonDocument.object();
+                    bool isValid = rootObject.contains("data") && rootObject["data"].isObject();
+                    if (isValid) {
+                        auto dataObject = rootObject["data"].toObject();
+                        isValid = dataObject.contains("items") && dataObject["items"].isArray();
+                        if (isValid) {
+                            auto pageReleases = dataObject["items"].toArray();
+                            foreach (auto pageRelease, pageReleases) {
+                                jsonReleases.append(pageRelease);
+                            }
+                        }
+                    }
+                    if (!isValid) {
+                        setSynchronizationEnabled(false);
+                        emit errorWhileReleaseSynchronization();
+                        return false;
+                    }
+                }
             } else {
-                jsonReleases = jsonDocument.array();
+                jsonReleases = jsons.first().array();
             }
 
             auto filterByFavorites = m_items->filterByFavorites();
@@ -1253,7 +1271,9 @@ bool ReleasesViewModel::importReleasesFromFile(QString path)
     auto json = importFile.readAll();
     importFile.close();
 
-    updateAllReleases(json, false);
+    QList<QString> list;
+    list.append(json);
+    updateAllReleases(list, false);
 
     return true;
 }
@@ -1850,12 +1870,7 @@ void ReleasesViewModel::releasesUpdated()
 
 void ReleasesViewModel::synchronizedReleases()
 {
-    updateAllReleases(m_synchronizationService->getSynchronizedReleases(), true);
-}
-
-void ReleasesViewModel::synchronizedFromDL(const QString &data)
-{
-    updateAllReleases(data, false);
+    updateAllReleases(m_synchronizationService->getSynchronizedReleasePages(), true);
 }
 
 void ReleasesViewModel::synchronizedSchedule(const QString &data)

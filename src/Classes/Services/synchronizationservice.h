@@ -36,7 +36,7 @@ private:
 public:    
     explicit SynchronizationService(QObject *parent = nullptr);
 
-    Q_INVOKABLE void synchronizeReleases(const int page);
+    Q_INVOKABLE void synchronizeReleases();
     Q_INVOKABLE void synchronizeSchedule();
     Q_INVOKABLE void authorize(QString email, QString password, QString fa2code);
     Q_INVOKABLE void signout(QString token);
@@ -50,6 +50,7 @@ public:
     Q_INVOKABLE void synchronizeDL();
 
     QString&& getSynchronizedReleases();
+    QList<QString> getSynchronizedReleasePages();
 signals:
     void synchronizedReleases();
     void synchronizationCompleted();
@@ -63,10 +64,9 @@ signals:
     void userFavoritesReceived(QString data);
     void userFavoritesEdited();
     void torrentDownloaded(QString torrentPath);
-    void synchronizedFromDL(QString data);
 
 public slots:
-    void saveReleasesToCache(QString data);
+    void saveReleasesToCache();
     void saveReleasesFromDLToCache();
     void saveScheduleToCache(QString data);
     void saveYoutubeToCache(QString data);

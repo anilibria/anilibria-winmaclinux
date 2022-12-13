@@ -45,21 +45,33 @@ AnilibriaApiService::AnilibriaApiService(QObject *parent) : QObject(parent),
     }
 }
 
-void AnilibriaApiService::getAllReleases(const int count, const int page)
+void AnilibriaApiService::getAllReleases(const int countPages, const int perPage)
 {
+    m_pages.clear();
+    for (auto i = 0; i < countPages; i++) {
+        m_pageCounter.insert(i);
+    }
+
     auto networkManager = new QNetworkAccessManager(this);
-    QNetworkRequest request(QUrl(AnilibriaApiPath + "public/api/index.php"));
-    request.setRawHeader("User-Agent", "Anilibria CP Client");
-    request.setHeader(QNetworkRequest::ContentTypeHeader, QVariant("application/x-www-form-urlencoded"));
-
-    QUrlQuery params;
-    params.addQueryItem("query", "list");
-    params.addQueryItem("page", QString::number(page));
-    params.addQueryItem("perPage", QString::number(count));
-
     connect(networkManager,&QNetworkAccessManager::finished,this,&AnilibriaApiService::getAllReleasesResponse);
 
-    networkManager->post(request, params.query(QUrl::FullyEncoded).toUtf8());
+    auto iterator = 0;
+
+    for (auto i = 0; i < countPages; i++) {
+        QNetworkRequest request(QUrl(AnilibriaApiPath + "public/api/index.php"));
+        request.setRawHeader("User-Agent", "Anilibria CP Client");
+        request.setHeader(QNetworkRequest::ContentTypeHeader, QVariant("application/x-www-form-urlencoded"));
+
+        QUrlQuery params;
+        params.addQueryItem("query", "list");
+        params.addQueryItem("page", QString::number(i + 1));
+        params.addQueryItem("perPage", QString::number(perPage));
+
+        auto reply = networkManager->post(request, params.query(QUrl::FullyEncoded).toUtf8());
+        reply->setProperty("page", i);
+
+        iterator++;
+    }
 }
 
 void AnilibriaApiService::getYoutubeVideos()
@@ -250,9 +262,19 @@ void AnilibriaApiService::getAllReleasesResponse(QNetworkReply *reply)
     if (reply->error() == QNetworkReply::ProtocolFailure) return;
     if (reply->error() == QNetworkReply::HostNotFoundError) return;
 
+    auto page = reply->property("page").toInt();
+
     QString data = reply->readAll();
 
-    emit allReleasesReceived(data);
+    m_mutex->lock();
+
+    m_pageCounter.remove(page);
+
+    m_pages.append(data);
+
+    if (m_pageCounter.isEmpty()) emit allReleasesReceived();
+
+    m_mutex->unlock();
 }
 
 void AnilibriaApiService::getAllYoutubeItemsResponse(QNetworkReply *reply)

@@ -1441,12 +1441,12 @@ ApplicationWindow {
         }
     }
 
-    /*LocalProxyViewModel {
+    LocalProxyViewModel {
         id: localProxyViewModel
         Component.onCompleted: {
-            localProxyViewModel.usingProxy = true;
+            //localProxyViewModel.usingProxy = true;
         }
-    }*/
+    }
 
     Item {
         id: assetsLocation

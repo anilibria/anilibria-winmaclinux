@@ -40,9 +40,9 @@ SynchronizationService::SynchronizationService(QObject *parent) : QObject(parent
     connect(m_dlService, &DLService::allSynchronized, this, &SynchronizationService::saveReleasesFromDLToCache);
 }
 
-void SynchronizationService::synchronizeReleases(const int page)
+void SynchronizationService::synchronizeReleases()
 {
-    m_AnilibriaApiService->getAllReleases(1500, page);
+    m_AnilibriaApiService->getAllReleases(3, 500);
 }
 
 void SynchronizationService::synchronizeSchedule()
@@ -105,28 +105,18 @@ QString &&SynchronizationService::getSynchronizedReleases()
     return std::move(m_synchronizedReleases);
 }
 
-void SynchronizationService::saveReleasesToCache(QString data)
+QList<QString> SynchronizationService::getSynchronizedReleasePages()
 {
-    m_synchronizedReleases = std::move(data);
+    return m_AnilibriaApiService->getPages();
+}
+
+void SynchronizationService::saveReleasesToCache()
+{
     emit synchronizedReleases();
 }
 
 void SynchronizationService::saveReleasesFromDLToCache()
 {
-    auto loadedReleases = m_dlService->getLoadedReleases();
-    if (loadedReleases->count() == 0) return;
-
-    QJsonArray releases;
-
-    foreach(auto loadedRelease, *loadedReleases) {
-        QJsonObject releaseObject;
-        loadedRelease->writeToApiModel(releaseObject);
-        releases.append(releaseObject);
-    }
-
-    QJsonDocument document(releases);
-
-    emit synchronizedFromDL(document.toJson());
 }
 
 void SynchronizationService::saveScheduleToCache(QString data)
