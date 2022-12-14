@@ -1314,6 +1314,18 @@ Page {
                                         currentIndex = userConfigurationViewModel.playerBuffer / 100 - 1;
                                     }
                                 }
+                                PlainText {
+                                    width: rightColumn.width - 20
+                                    fontPointSize: 10
+                                    text: "Включить видео прокси"
+                                }
+                                Switch {
+                                    id: enableUsingVideoProxySwitch
+                                    checked: userConfigurationViewModel.usingVideoProxy
+                                    onCheckedChanged: {
+                                        userConfigurationViewModel.usingVideoProxy = checked;
+                                    }
+                                }
                             }
                         }
 

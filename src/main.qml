@@ -1443,9 +1443,7 @@ ApplicationWindow {
 
     LocalProxyViewModel {
         id: localProxyViewModel
-        Component.onCompleted: {
-            //localProxyViewModel.usingProxy = true;
-        }
+        usingProxy: userConfigurationViewModel.usingVideoProxy
     }
 
     Item {

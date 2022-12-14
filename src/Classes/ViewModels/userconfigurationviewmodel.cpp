@@ -180,6 +180,14 @@ void UserConfigurationViewModel::setPlayerBuffer(int playerBuffer) noexcept
     emit playerBufferChanged();
 }
 
+void UserConfigurationViewModel::setUsingVideoProxy(bool usingVideoProxy) noexcept
+{
+    if (m_usingVideoProxy == usingVideoProxy) return;
+
+    m_usingVideoProxy = usingVideoProxy;
+    emit usingVideoProxyChanged();
+}
+
 void UserConfigurationViewModel::refreshConfiguration() noexcept
 {
     readSettingsFromFile();
@@ -224,6 +232,7 @@ void UserConfigurationViewModel::saveSettingsToFile()
     object[m_hidedQualityField] = m_hidedQuality;
     object[m_hidedSpeedField] = m_hidedSpeed;
     object[m_playerBufferField] = m_playerBuffer;
+    object[m_usingVideoProxyField] = m_usingVideoProxy;
 
     QFile file(getCachePath(m_cacheFileName));
     file.open(QFile::WriteOnly | QFile::Text);
@@ -259,4 +268,5 @@ void UserConfigurationViewModel::readSettingsFromFile()
     m_hidedQuality = object.contains(m_hidedQualityField) ? object[m_hidedQualityField].toBool() : false;
     m_hidedSpeed = object.contains(m_hidedSpeedField) ? object[m_hidedSpeedField].toBool() : false;
     m_playerBuffer = object.contains(m_playerBufferField) ? object[m_playerBufferField].toInt() : 500;
+    m_usingVideoProxy = object.contains(m_usingVideoProxyField) ? object[m_usingVideoProxyField].toBool() : false;
 }

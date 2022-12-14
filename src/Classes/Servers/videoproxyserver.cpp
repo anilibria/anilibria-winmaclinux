@@ -57,14 +57,14 @@ void VideoProxyServer::processSocket(int socket)
             inner302Socket->setPeerVerifyMode(QSslSocket::QueryPeer);
 
             inner302Socket->connectToHostEncrypted(host, 443);
-            if (!inner302Socket->waitForEncrypted(1000)) {
+            if (!inner302Socket->waitForEncrypted(2000)) {
                 tcpSocket->write("HTTP/1.1 204 No Content\r\nServer: AnilibriaQtInnerVideoProxy\r\nConnection: close\r\n\r\n");
                 tcpSocket->waitForBytesWritten(1000);
                 closeSocket(tcpSocket);
                 tcpSocket = nullptr;
+                qWarning() << "inner302Socket error";
                 break;
             }
-
 
             inner302Socket->write(bytes.replace("/" + host, "").replace(localAddress.toUtf8(), host));
             inner302Socket->waitForBytesWritten(1000);
@@ -72,6 +72,7 @@ void VideoProxyServer::processSocket(int socket)
             // and after it real request
 
             auto redirectData = readAllAvailableBytesFromSocket(inner302Socket);
+            closeSocket(inner302Socket);
             auto redirectDataString = QString(redirectData);
             auto indexLocation = redirectDataString.indexOf("Location: ") + 10;
             redirectDataString = redirectDataString.mid(indexLocation);
@@ -80,11 +81,12 @@ void VideoProxyServer::processSocket(int socket)
             innerTcpSocket = new QSslSocket();
             innerTcpSocket->setPeerVerifyMode(QSslSocket::QueryPeer);
             innerTcpSocket->connectToHostEncrypted(url.host(), 443);
-            if (!innerTcpSocket->waitForEncrypted(1000)) {
+            if (!innerTcpSocket->waitForEncrypted(2000)) {
                 tcpSocket->write("HTTP/1.1 204 No Content\r\nServer: AnilibriaQtInnerVideoProxy\r\nConnection: close\r\n\r\n");
                 tcpSocket->waitForBytesWritten(1000);
                 closeSocket(tcpSocket);
                 tcpSocket = nullptr;
+                qWarning() << "innerTcpSocket error";
                 break;
             }
 
@@ -103,7 +105,7 @@ void VideoProxyServer::processSocket(int socket)
     }
 
     if (innerTcpSocket == nullptr || tcpSocket == nullptr) {
-        qWarning() << "Error while try read request headers from socket " << socket;
+        qWarning() << "Error for currentPath " << currentPath << " host " << host;
         return;
     }
 
@@ -135,11 +137,11 @@ void VideoProxyServer::processSocket(int socket)
                 continue;
             }
             if (bytesCount == 0 || innerTcpSocket->atEnd()) {
-                auto restBytes = readAllAvailableBytesFromSocket(tcpSocket);
+                auto restBytes = readAllAvailableBytesFromSocket(innerTcpSocket);
                 if (restBytes.length() == 0) break;
 
-                innerTcpSocket->write(restBytes);
-                innerTcpSocket->waitForBytesWritten(2000);
+                tcpSocket->write(restBytes);
+                tcpSocket->waitForBytesWritten(2000);
                 continue;
             }
 
@@ -148,8 +150,9 @@ void VideoProxyServer::processSocket(int socket)
             auto bytesPart = innerTcpSocket->read(bytesCount);
 
             tcpSocket->write(bytesPart);
-            tcpSocket->waitForBytesWritten(1000);
+            if (tcpSocket->state() != QAbstractSocket::UnconnectedState) tcpSocket->waitForBytesWritten(1000);
         }
+
     }
 
     waitAllBytesWroted(tcpSocket);
@@ -173,7 +176,7 @@ QByteArray VideoProxyServer::getRoute(QByteArray bytes)
 
 void VideoProxyServer::closeSocket(QTcpSocket *socket)
 {
-    socket->waitForBytesWritten(2000);
+    if (socket->state() != QAbstractSocket::UnconnectedState) socket->waitForBytesWritten(2000);
     socket->disconnectFromHost();
     delete socket;
 }
@@ -198,6 +201,7 @@ void VideoProxyServer::waitAllBytesWroted(QTcpSocket *socket)
     auto maxAttempts = 10;
     while (true) {
         if (maxAttempts <= 0) break;
+        if (socket->state() == QAbstractSocket::UnconnectedState) break;
         socket->waitForBytesWritten(1000);
         if (socket->bytesToWrite() > 0) {
             maxAttempts -= 1;

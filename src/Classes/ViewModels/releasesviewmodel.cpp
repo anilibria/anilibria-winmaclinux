@@ -816,6 +816,8 @@ void ReleasesViewModel::showReleaseCard(int id) noexcept
 
 void ReleasesViewModel::showRandomRelease() noexcept
 {
+    if (m_releases->isEmpty()) return;
+
     auto count = m_releases->count() - 1;
 
     auto position = randomBetween(1, count);
