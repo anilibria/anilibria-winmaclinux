@@ -154,6 +154,7 @@ void OnlineVideoModel::setVideoPoster(const QString &poster) noexcept
 QString OnlineVideoModel::getProxyUrl(const QString& url) {
     if (!IsUsingVideoProxy) return url;
     if (url.isEmpty()) return url;
+    if (!url.contains("cache.libria.fun")) return url;
 
     return "http://localhost:" + QString::number(VideoProxyPort) + "/" + url.mid(8);
 }
