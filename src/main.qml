@@ -1441,11 +1441,6 @@ ApplicationWindow {
         }
     }
 
-    LocalProxyViewModel {
-        id: localProxyViewModel
-        usingProxy: userConfigurationViewModel.usingVideoProxy
-    }
-
     Item {
         id: assetsLocation
         property string path: Qt.resolvedUrl("../Assets/")

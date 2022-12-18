@@ -60,7 +60,12 @@
 #include "Classes/ListModels/themefieldlistmodel.h"
 #include "Classes/ListModels/localthemeslistmodel.h"
 #include "Classes/ListModels/myanilibriasearchlistmodel.h"
-#include "Classes/ViewModels/localproxyviewmodel.h"
+#ifdef Q_OS_WIN
+#include "vlc-qt/qml/VlcQmlPlayer.h"
+#include "vlc-qt/qml/VlcQmlVideoOutput.h"
+#include "vlc-qt/core/TrackModel.h"
+#include "vlc-qt/core/Common.h"
+#endif
 
 int main(int argc, char *argv[])
 {
@@ -129,7 +134,17 @@ int main(int argc, char *argv[])
     qmlRegisterType<ThemeFieldListModel>("Anilibria.ListModels", 1, 0, "ThemeFieldListModel");
     qmlRegisterType<LocalThemesListModel>("Anilibria.ListModels", 1, 0, "LocalThemesListModel");
     qmlRegisterType<MyAnilibriaSearchListModel>("Anilibria.ListModels", 1, 0, "MyAnilibriaSearchListModel");
-    qmlRegisterType<LocalProxyViewModel>("Anilibria.ViewModels", 1, 0, "LocalProxyViewModel");
+
+#ifdef Q_OS_WIN
+    VlcCommon::setPluginPath(app.applicationDirPath() + "/plugins");
+
+    qmlRegisterUncreatableType<Vlc>("VLCQt", 1, 1, "Vlc", QStringLiteral("Vlc cannot be instantiated directly"));
+    qmlRegisterUncreatableType<VlcQmlSource>("VLCQt", 1, 1, "VlcSource", QStringLiteral("VlcQmlSource cannot be instantiated directly"));
+    qmlRegisterUncreatableType<VlcTrackModel>("VLCQt", 1, 1, "VlcTrackModel", QStringLiteral("VlcTrackModel cannot be instantiated directly"));
+
+    qmlRegisterType<VlcQmlPlayer>("VLCQt", 1, 1, "VlcPlayer");
+    qmlRegisterType<VlcQmlVideoOutput>("VLCQt", 1, 1, "VlcVideoOutput");
+#endif
 
     QCoreApplication::setOrganizationDomain("anilibria.tv");
     QCoreApplication::setOrganizationName("EmptyFlow");

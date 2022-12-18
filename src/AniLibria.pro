@@ -2,9 +2,86 @@ QT += quick multimedia network concurrent svg websockets
 CONFIG += c++11
 
 windows {
-    QT += av
-    Debug:CONFIG += qml_debug
     LIBS += -lKernel32
+
+    LIBS += -L$$PWD/vlc-qt/vlc/ -llibvlc
+    LIBS += -L$$PWD/vlc-qt/vlc/ -llibvlccore
+
+    INCLUDEPATH += $$PWD/vlc-qt/vlc/include
+    DEPENDPATH += $$PWD/vlc-qt/vlc/include
+
+SOURCES += \
+    vlc-qt/core/AbstractVideoFrame.cpp \
+    vlc-qt/core/AbstractVideoStream.cpp \
+    vlc-qt/core/Audio.cpp \
+    vlc-qt/core/Common.cpp \
+    vlc-qt/core/Enums.cpp \
+    vlc-qt/core/Equalizer.cpp \
+    vlc-qt/core/Error.cpp \
+    vlc-qt/core/Instance.cpp \
+    vlc-qt/core/Media.cpp \
+    vlc-qt/core/MediaList.cpp \
+    vlc-qt/core/MediaListPlayer.cpp \
+    vlc-qt/core/MediaPlayer.cpp \
+    vlc-qt/core/MetaManager.cpp \
+    vlc-qt/core/ModuleDescription.cpp \
+    vlc-qt/core/TrackModel.cpp \
+    vlc-qt/core/Video.cpp \
+    vlc-qt/core/VideoFrame.cpp \
+    vlc-qt/core/VideoMemoryStream.cpp \
+    vlc-qt/core/VideoStream.cpp \
+    vlc-qt/core/YUVVideoFrame.cpp \
+    vlc-qt/core/compat/asprintf.c \
+    vlc-qt/core/compat/vasprintf.c \
+    vlc-qt/qml/QmlSource.cpp \
+    vlc-qt/qml/QmlVideoObject.cpp \
+    vlc-qt/qml/QmlVideoPlayer.cpp \
+    vlc-qt/qml/VlcQmlPlayer.cpp \
+    vlc-qt/qml/VlcQmlVideoOutput.cpp \
+    vlc-qt/qml/painter/GlPainter.cpp \
+    vlc-qt/qml/painter/GlslPainter.cpp \
+    vlc-qt/qml/rendering/QmlVideoStream.cpp \
+    vlc-qt/qml/rendering/VideoMaterial.cpp \
+    vlc-qt/qml/rendering/VideoMaterialShader.cpp \
+    vlc-qt/qml/rendering/VideoNode.cpp
+
+HEADERS += \
+    vlc-qt/core/AbstractVideoFrame.h \
+    vlc-qt/core/AbstractVideoStream.h \
+    vlc-qt/core/Audio.h \
+    vlc-qt/core/Common.h \
+    vlc-qt/core/Enums.h \
+    vlc-qt/core/Equalizer.h \
+    vlc-qt/core/Error.h \
+    vlc-qt/core/Instance.h \
+    vlc-qt/core/Media.h \
+    vlc-qt/core/MediaList.h \
+    vlc-qt/core/MediaListPlayer.h \
+    vlc-qt/core/MediaPlayer.h \
+    vlc-qt/core/MetaManager.h \
+    vlc-qt/core/ModuleDescription.h \
+    vlc-qt/core/SharedExportCore.h \
+    vlc-qt/core/Stats.h \
+    vlc-qt/core/TrackModel.h \
+    vlc-qt/core/Video.h \
+    vlc-qt/core/VideoDelegate.h \
+    vlc-qt/core/VideoFrame.h \
+    vlc-qt/core/VideoMemoryStream.h \
+    vlc-qt/core/VideoStream.h \
+    vlc-qt/core/YUVVideoFrame.h \
+    vlc-qt/core/compat/asprintf.h \
+    vlc-qt/core/compat/poll.h \
+    vlc-qt/qml/QmlSource.h \
+    vlc-qt/qml/QmlVideoObject.h \
+    vlc-qt/qml/QmlVideoPlayer.h \
+    vlc-qt/qml/VlcQmlPlayer.h \
+    vlc-qt/qml/VlcQmlVideoOutput.h \
+    vlc-qt/qml/painter/GlPainter.h \
+    vlc-qt/qml/painter/GlslPainter.h \
+    vlc-qt/qml/rendering/QmlVideoStream.h \
+    vlc-qt/qml/rendering/VideoMaterial.h \
+    vlc-qt/qml/rendering/VideoMaterialShader.h \
+    vlc-qt/qml/rendering/VideoNode.h
 }
 
 unix: {
@@ -105,7 +182,6 @@ SOURCES += \
     Classes/Models/youtubevideomodel.cpp \
     Classes/RemotePlayer/remoteplayer.cpp \
     Classes/RemotePlayer/remoteplayertransport.cpp \
-    Classes/Servers/videoproxyserver.cpp \
     Classes/Services/analyticsservice.cpp \
     Classes/Services/anilibriaapiservice.cpp \
     Classes/Services/apiserviceconfigurator.cpp \
@@ -124,7 +200,6 @@ SOURCES += \
     Classes/ViewModels/applicationthemeviewmodel.cpp \
     Classes/ViewModels/authorizationviewmodel.cpp \
     Classes/ViewModels/imagebackgroundviewmodel.cpp \
-    Classes/ViewModels/localproxyviewmodel.cpp \
     Classes/ViewModels/mainviewmodel.cpp \
     Classes/ViewModels/myanilibriaviewmodel.cpp \
     Classes/ViewModels/notificationviewmodel.cpp \
@@ -198,7 +273,6 @@ HEADERS += \
     Classes/Models/youtubevideomodel.h \
     Classes/RemotePlayer/remoteplayer.h \
     Classes/RemotePlayer/remoteplayertransport.h \
-    Classes/Servers/videoproxyserver.h \
     Classes/Services/analyticsservice.h \
     Classes/Services/anilibriaapiservice.h \
     Classes/Services/apiserviceconfigurator.h \
@@ -218,7 +292,6 @@ HEADERS += \
     Classes/ViewModels/applicationthemeviewmodel.h \
     Classes/ViewModels/authorizationviewmodel.h \
     Classes/ViewModels/imagebackgroundviewmodel.h \
-    Classes/ViewModels/localproxyviewmodel.h \
     Classes/ViewModels/mainviewmodel.h \
     Classes/ViewModels/myanilibriaviewmodel.h \
     Classes/ViewModels/notificationviewmodel.h \
