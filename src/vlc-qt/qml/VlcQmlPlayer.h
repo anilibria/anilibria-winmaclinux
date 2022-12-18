@@ -66,6 +66,8 @@ private:
     int m_bufferingProgress { 0 };
     bool m_isEnded { false };
     int m_playbackState { 0 };
+    bool m_muted { false };
+    qreal m_volume { 1 };
 
     bool _autoplay;
     Vlc::Deinterlacing _deinterlacing;

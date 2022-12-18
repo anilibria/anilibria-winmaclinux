@@ -27,6 +27,8 @@
 #include "VlcQmlPlayer.h"
 #include "QmlSource.h"
 
+#include <QDebug>
+
 VlcQmlPlayer::VlcQmlPlayer(QObject *parent)
     : VlcQmlSource(parent),
       _media(0),
@@ -48,7 +50,6 @@ VlcQmlPlayer::VlcQmlPlayer(QObject *parent)
     connect(_player, &VlcMediaPlayer::timeChanged, this, &VlcQmlPlayer::positionChanged);
     connect(_player, &VlcMediaPlayer::bufferingInteger, this, &VlcQmlPlayer::buffering);
     connect(_player, &VlcMediaPlayer::vout, this, &VlcQmlPlayer::mediaPlayerVout);
-    connect(_player->audio(), &VlcAudio::muteChanged, this, &VlcQmlPlayer::audioMuteChanged);
 
     setPlayer(_player);
 }
@@ -160,9 +161,7 @@ void VlcQmlPlayer::setSource(QString source) noexcept
 
 qreal VlcQmlPlayer::volume() const
 {
-    auto value = _player->audio()->volume();
-    auto floatValue = static_cast<double>(value);
-    return floatValue / 100.0f;
+    return m_volume;
 }
 
 void VlcQmlPlayer::setVolume(qreal volume)
@@ -171,6 +170,7 @@ void VlcQmlPlayer::setVolume(qreal volume)
     if (value == VlcQmlPlayer::volume()) return;
 
     _player->audio()->setVolume(value);
+    m_volume = volume;
     emit volumeChanged();
 }
 
@@ -287,12 +287,15 @@ void VlcQmlPlayer::setPlaybackState(int playbackState) noexcept
 
 bool VlcQmlPlayer::muted() const noexcept
 {
-    return _player->audio()->getMute();
+    return m_muted;
 }
 
 void VlcQmlPlayer::setMuted(bool muted) noexcept
 {
     _player->audio()->setMute(muted);
+    m_muted = muted;
+
+    emit mutedChanged();
 }
 
 void VlcQmlPlayer::mediaParsed(bool parsed)
