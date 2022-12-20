@@ -61,7 +61,11 @@ $ su - -c 'apt-get install anilibria-winmaclinux'
 $ sudo dpkg -i ~/anilibria_0.0.0_amd64.deb
 $ sudo apt-get install -f
 ```
-
+### Flatpak
+Скачайте flatpack пакет со страницы релиза и выполните следующую команду:
+```console
+$ flatpak install --user anilibria.flatpak
+```
 ## Сборка из исходников:
 
 ### Готовые инструкции для сборки под дистрибутивы:
