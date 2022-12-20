@@ -1,23 +1,28 @@
 app-id: tv.anilibria.anilibria
 runtime: org.kde.Platform
-runtime-version: '5.15-21.08'
+runtime-version: '5.15-22.08'
 sdk: org.kde.Sdk
-command: /app/bin/AniLibria
+command: AniLibria
 modules:
   - name: anilibria
-    buildsystem: simple
-    build-commands:
-      - sed -i.bak 's/usr/app/g' src/AniLibria.pro
-      - sed -i.bak 's/\/opt\/$${TARGET}\/bin/\/app\/bin/g' src/AniLibria.pro
-      - sed -i.bak 's/anilibria.desktop/tv.anilibria.anilibria.desktop/g' src/AniLibria.pro
-      - cat data/anilibria.desktop | sed 's/\/opt\/AniLibria/\/app/g' > data/tv.anilibria.anilibria.desktop
-      - cd src && qmake
-      - cd src && make -j$(nproc --all)
-      - cd src && make install
+    buildsystem: qmake
+    subdir: src
+    build-options:
+      env:
+        QT_INSTALL_PREFIX: /app
+      config-opts:
+        - CONFIG += flatpak
+    post-install:
+      - desktop-file-edit --set-key=Exec --set-value=/app/bin/AniLibria /app/share/applications/anilibria.desktop
     sources:
       - type: git
-        url: https://github.com/anilibria/anilibria-winmaclinux
+        url: https://github.com/KnightMurloc/anilibria-winmaclinux
+        tag: "1.2.3.4"
+        commit: "fd4e3d415becc04e56115dbee1dbc1e5135d0c87"
+rename-icon: "anilibria"
+rename-desktop-file: "anilibria.desktop"
 finish-args:
+  - --share=ipc
   - --socket=x11
   - --socket=wayland
   - --device=dri
