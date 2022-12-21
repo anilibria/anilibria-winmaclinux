@@ -34,6 +34,8 @@
 
 ## Пакеты для пакетных менеджеров Linux
 
+[![Packaging status](https://repology.org/badge/vertical-allrepos/anilibria-winmaclinux.svg)](https://repology.org/project/anilibria-winmaclinux/versions)
+
 ### Arch linux
 Установите пакет из aur [anilibria-winmaclinux-git](https://aur.archlinux.org/packages/anilibria-winmaclinux-git) своим любимым aur helper'ом. Например `yay`:
 
