@@ -76,3 +76,5 @@ mdk-sdk
 
 pac.deb
 
+/src/vlc-qt/vlc/*
+
