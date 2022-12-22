@@ -9,16 +9,14 @@ modules:
     subdir: src
     build-options:
       env:
-        QT_INSTALL_PREFIX: /app
+        PREFIX: /app
       config-opts:
         - CONFIG += flatpak
     post-install:
       - desktop-file-edit --set-key=Exec --set-value=/app/bin/AniLibria /app/share/applications/anilibria.desktop
     sources:
       - type: git
-        url: https://github.com/KnightMurloc/anilibria-winmaclinux
-        tag: "1.2.3.4"
-        commit: "fd4e3d415becc04e56115dbee1dbc1e5135d0c87"
+        url: https://github.com/anilibria/anilibria-winmaclinux
 rename-icon: "anilibria"
 rename-desktop-file: "anilibria.desktop"
 finish-args:
@@ -28,3 +26,4 @@ finish-args:
   - --device=dri
   - --socket=pulseaudio
   - --share=network
+  - --filesystem=host
