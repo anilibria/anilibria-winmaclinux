@@ -55,10 +55,6 @@ extern int MovingUp;
 
 extern int MovingDown;
 
-extern bool IsUsingVideoProxy;
-
-extern int VideoProxyPort;
-
 extern QString plainTextColorField;
 
 extern QString headerTextColorField;

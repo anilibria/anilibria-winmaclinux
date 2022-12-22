@@ -36,9 +36,6 @@ QString SimpleListSectionComponent = "SimpleListSection";
 int MovingUp = 1;
 int MovingDown = -1;
 
-bool IsUsingVideoProxy = false;
-int VideoProxyPort = 57742;
-
 QString plainTextColorField = "plainTextColor";
 QString headerTextColorField = "headerTextColor";
 QString linkTextColorField = "linkTextColor";
