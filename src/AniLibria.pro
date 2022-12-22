@@ -86,43 +86,50 @@ HEADERS += \
 
 unix: {
     QT += dbus
+    ENV_PREFIX=$$(PREFIX)
+    isEmpty(ENV_PREFIX){
+        PREFIX=$$[QT_INSTALL_PREFIX]
+    }else{
+        PREFIX=$$(PREFIX)
+    }
 }
+
 
 unix {
 #Setup desktop entry file. https://specifications.freedesktop.org/desktop-entry-spec/latest
     desktop.files += ../data/anilibria.desktop
-    desktop.path = $$[QT_INSTALL_PREFIX]/share/applications
+    desktop.path = $$PREFIX/share/applications
 
 #Setup icons for following resolutions: 16x16; 32x32; 128x128; 256x256 and 512x512.
 #https://specifications.freedesktop.org/icon-theme-spec/icon-theme-spec-latest.html
 
 #16x16
-    icon_16.path = $$[QT_INSTALL_PREFIX]/share/icons/hicolor/16x16/apps
+    icon_16.path = $$PREFIX/share/icons/hicolor/16x16/apps
     icon_16.commands = mkdir -p icons/16 && cp ../anilibria.iconset/icon_16x16.png icons/16/anilibria.png
     icon_16.files += icons/16/anilibria.png
     icon_16.CONFIG += no_check_exist
 #32x32
-    icon_32.path = $$[QT_INSTALL_PREFIX]/share/icons/hicolor/32x32/apps
+    icon_32.path = $$PREFIX/share/icons/hicolor/32x32/apps
     icon_32.commands = mkdir -p icons/32 && cp ../anilibria.iconset/icon_32x32.png icons/32/anilibria.png
     icon_32.files += icons/32/anilibria.png
     icon_32.CONFIG += no_check_exist
 #48x48 #TODO: create png icon in 48x48 resolution.
-    icon_48.path = $$[QT_INSTALL_PREFIX]/share/icons/hicolor/48x48/apps
+    icon_48.path = $$PREFIX/share/icons/hicolor/48x48/apps
     icon_48.commands = mkdir -p icons/48 && cp icon48.png icons/48/anilibria.png
     icon_48.files += icons/48/anilibria.png
     icon_48.CONFIG += no_check_exist
 #128x128
-    icon_128.path = $$[QT_INSTALL_PREFIX]/share/icons/hicolor/128x128/apps
+    icon_128.path = $$PREFIX/share/icons/hicolor/128x128/apps
     icon_128.commands = mkdir -p icons/128 && cp ../anilibria.iconset/icon_128x128.png icons/128/anilibria.png
     icon_128.files += icons/128/anilibria.png
     icon_128.CONFIG += no_check_exist
 #256x256
-    icon_256.path = $$[QT_INSTALL_PREFIX]/share/icons/hicolor/256x256/apps
+    icon_256.path = $$PREFIX/share/icons/hicolor/256x256/apps
     icon_256.commands = mkdir -p icons/256 && cp ../anilibria.iconset/icon_256x256.png icons/256/anilibria.png
     icon_256.files += icons/256/anilibria.png
     icon_256.CONFIG += no_check_exist
 #512x512
-    icon_512.path = $$[QT_INSTALL_PREFIX]/share/icons/hicolor/512x512/apps
+    icon_512.path = $$PREFIX/share/icons/hicolor/512x512/apps
     icon_512.commands = mkdir -p icons/512 && cp ../anilibria.iconset/icon_512x512.png icons/512/anilibria.png
     icon_512.files += icons/512/anilibria.png
     icon_512.CONFIG += no_check_exist
@@ -231,7 +238,7 @@ QML_DESIGNER_IMPORT_PATH =
     qnx: target.path = /tmp/$${TARGET}/bin
     else: unix:!android: target.path = /opt/$${TARGET}/bin
 }else{
-    target.path = $$[QT_INSTALL_PREFIX]/bin
+    target.path = $$PREFIX/bin
 }
 !isEmpty(target.path) {
     unix: INSTALLS += target desktop $${UNIX_ICONS}
@@ -239,7 +246,7 @@ QML_DESIGNER_IMPORT_PATH =
 }
 
 flatpak {
-    metadata.path = $$[QT_INSTALL_PREFIX]/share/metainfo
+    metadata.path = $$PREFIX/share/metainfo
     metadata.files += ../tv.anilibria.anilibria.appdata.xml
     unix: INSTALLS += metadata
 }
