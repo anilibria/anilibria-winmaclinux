@@ -246,11 +246,10 @@ Rectangle {
                             opacity: .5
                         }
 
-                        Image {
+                        TooltipedImage {
                             source: assetsLocation.iconsPath + 'online.svg'
                             width: 22
                             height: 22
-                            mipmap: true
 
                             property bool imageHovered: false
 
@@ -270,9 +269,8 @@ Rectangle {
                                 }
                             }
 
-                            ToolTip.delay: 2000
-                            ToolTip.visible: imageHovered
-                            ToolTip.text: `Начать просмотр этого релиза`
+                            tooltipMessage: `Начать просмотр этого релиза`
+                            tooltipMessageVisible: imageHovered
                         }
                     }
                     PlainText {
@@ -295,10 +293,9 @@ Rectangle {
                             radius: 8
                         }
 
-                        Image {
+                        TooltipedImage {
                             anchors.fill: parent
                             source: assetsLocation.iconsPath + 'utorrent.svg'
-                            mipmap: true
 
                             property bool torrentImageHovered: false
 
@@ -319,9 +316,8 @@ Rectangle {
                                 }
                             }
 
-                            ToolTip.delay: 2000
-                            ToolTip.visible: torrentImageHovered
-                            ToolTip.text: `Показать все торренты для этого релиза`
+                            tooltipMessage: `Показать все торренты для этого релиза`
+                            tooltipMessageVisible: torrentImageHovered
 
                             Loader {
                                 id: torrentMenuLoader
@@ -404,15 +400,13 @@ Rectangle {
                     Row {
                         anchors.left: parent.left
 
-                        Image {
+                        TooltipedImage {
                             source: assetsLocation.iconsPath + 'ratingcolor.svg'
                             width: 18
                             height: 20
-                            mipmap: true
 
-                            ToolTip.delay: 2000
-                            ToolTip.visible: favoritesItem.favoritesImageHovered
-                            ToolTip.text: inFavorites ? `Удалить из избранного` : `Добавить в избранное`
+                            tooltipMessage: inFavorites ? `Удалить из избранного` : `Добавить в избранное`
+                            tooltipMessageVisible: favoritesItem.favoritesImageHovered
                         }
                         PlainText {
                             id: countFavoritesLabel

@@ -15,7 +15,7 @@ ApplicationWindow {
     modality: Qt.ApplicationModal
     title: "Предпросмотр темы"
     Material.accent: applicationThemeViewModel.previewItems.materialAccent
-    //Material.foreground: "red"
+    Material.foreground: applicationThemeViewModel.previewItems.colorMaterialText
     //Material.background: "red"
     //Material.hintTextColor
     Material.theme: applicationThemeViewModel.fieldList.basedOnTheme === 'Темная' ? Material.Dark : Material.Light
@@ -139,9 +139,6 @@ ApplicationWindow {
                         mipmap: true
                     }
                 }
-                ToolTip.delay: 1000
-                ToolTip.visible: hovered
-                ToolTip.text: "Текст в тултипе"
             }
         }
 
@@ -242,6 +239,26 @@ ApplicationWindow {
                                     layer.effect: OpacityMask {
                                         maskSource: mask
                                     }
+                                }
+
+                                Image {
+                                    id: bookmarkImage
+                                    anchors.left: parent.left
+                                    anchors.leftMargin: -7
+                                    width: 50
+                                    height: 50
+                                    source: assetsLocation.iconsPath + "numberbookmark.svg"
+                                }
+
+                                PlainText {
+                                    anchors.left: bookmarkImage.left
+                                    anchors.top: bookmarkImage.top
+                                    anchors.topMargin: 22
+                                    width: 40
+                                    horizontalAlignment: Qt.AlignHCenter
+                                    text: "10"
+                                    fontPointSize: 10
+                                    color: applicationThemeViewModel.previewItems.colorPageIndexText
                                 }
                             }
                         }
@@ -557,12 +574,37 @@ ApplicationWindow {
 
                             Switch {
                                 id: previewSwitch
+                                ToolTip.delay: 1000
+                                ToolTip.visible: hovered
+                                ToolTip.text: '<font color="white">Текст в тултипе</font>'
                             }
 
                             TextField {
+                                id: textField
                                 anchors.left: previewSwitch.right
                                 anchors.leftMargin: 10
                                 width: 300
+                                ToolTip.delay: 1000
+                                ToolTip.visible: hovered
+                                ToolTip.text: '<font color="white">Текст в тултипе</font>'
+                            }
+
+                            ComboBox {
+                                id: remotePlayerPortComboBox
+                                anchors.left: textField.right
+                                anchors.leftMargin: 10
+                                width: 200
+                                model: ListModel {
+                                    ListElement {
+                                        text: "Пункт 1"
+                                    }
+                                    ListElement {
+                                        text: "Пункт 2"
+                                    }
+                                    ListElement {
+                                        text: "Пункт 3"
+                                    }
+                                }
                             }
                         }
                         Item {

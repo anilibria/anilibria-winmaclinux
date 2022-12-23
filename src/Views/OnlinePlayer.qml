@@ -824,9 +824,7 @@ Page {
                         onButtonPressed: {
                             onlinePlayerViewModel.previousVideo();
                         }
-                        ToolTip.delay: 1000
-                        ToolTip.visible: prevButton.hovered
-                        ToolTip.text: "Предыдущая серия (P / PgUp)"
+                        tooltipMessage: "Предыдущая серия (P / PgUp)"
                     }
                     IconButton {
                         id: playButton
@@ -868,9 +866,7 @@ Page {
                         onButtonPressed: {
                             onlinePlayerViewModel.nextVideo();
                         }
-                        ToolTip.delay: 1000
-                        ToolTip.visible: nextButton.hovered
-                        ToolTip.text: "Следующая серия (N / PgDn)"
+                        tooltipMessage: "Следующая серия (N / PgDn)"
                     }
                     IconButton {
                         width: 40
@@ -918,13 +914,10 @@ Page {
                         iconPath: "../Assets/Icons/connect.svg"
                         iconWidth: 24
                         iconHeight: 24
+                        tooltipMessage: onlinePlayerViewModel.remotePlayer.started ? "Удаленный плеер включен" : "Удаленный плеер выключен, откройте настройки для подключения"
                         onButtonPressed: {
                             remotePlayerPopup.open();
                         }
-
-                        ToolTip.delay: 1000
-                        ToolTip.visible: remotePlayerButton.hovered
-                        ToolTip.text: onlinePlayerViewModel.remotePlayer.started ? "Удаленный плеер включен" : "Удаленный плеер выключен, откройте настройки для подключения"
 
                         DefaultPopup {
                             id: remotePlayerPopup
@@ -1037,6 +1030,7 @@ Page {
                         iconPath: "../Assets/Icons/options.svg"
                         iconWidth: 24
                         iconHeight: 24
+                        tooltipMessage: "Показать настройки страницы Видеоплеер"
                         onButtonPressed: {
                             optionsPopup.open();
                         }
@@ -1328,11 +1322,6 @@ Page {
                                 }
                             }
                         }
-
-                        ToolTip.delay: 1000
-                        ToolTip.visible: optionsButton.hovered
-                        ToolTip.text: "Показать настройки страницы Видеоплеер"
-
                     }
                     IconButton {
                         id: resizeVideoButton
@@ -1343,6 +1332,7 @@ Page {
                         iconPath: "../Assets/Icons/resize.svg"
                         iconWidth: 29
                         iconHeight: 29
+                        tooltipMessage: "Включить режим обрезки видео потока"
                         onButtonPressed: {
                             switch (playerLoader.item.fillMode) {
                                 case VideoOutput.PreserveAspectFit:
@@ -1353,10 +1343,6 @@ Page {
                                     break;
                             }
                         }
-
-                        ToolTip.delay: 1000
-                        ToolTip.visible: resizeVideoButton.hovered
-                        ToolTip.text: "Включить режим обрезки видео потока, работает только на Linux и macOS"
                     }
                     IconButton {
                         id: fullScreenButton
@@ -1367,13 +1353,10 @@ Page {
                         iconPath: "../Assets/Icons/fullscreen.svg"
                         iconWidth: 29
                         iconHeight: 29
+                        tooltipMessage: "Переключиться между полноэкранным и оконным режимами"
                         onButtonPressed: {
                             onlinePlayerViewModel.toggleFullScreen();
                         }
-
-                        ToolTip.delay: 1000
-                        ToolTip.visible: fullScreenButton.hovered
-                        ToolTip.text: "Переключиться между полноэкранным и оконным режимами"
                     }
                 }
             }

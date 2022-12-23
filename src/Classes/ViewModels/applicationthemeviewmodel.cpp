@@ -65,9 +65,10 @@ ApplicationThemeViewModel::ApplicationThemeViewModel(QObject *parent)
     lightTheme->insert(posterBorderField, "#adadad");
     lightTheme->insert(roundedButtonDisableForegroundField, "white");
     lightTheme->insert(materialAccentField, "#f44336");
-
     lightTheme->insert(colorBorderInPanelField, "white");
-
+    lightTheme->insert(colorBackgroundNavigationButtonField, "white");
+    lightTheme->insert(colorMaterialTextField, "black");
+    lightTheme->insert(colorPageIndexTextField, "white");
     lightTheme->insert(iconMainMenuField, "qrc:/Assets/Icons/coloreddrawer.svg");
     lightTheme->insert(iconMainMenuReleasesField, "qrc:/Assets/Icons/catalogmenu.svg");
     lightTheme->insert(iconMainMenuCinemahallField, "qrc:/Assets/Icons/cinemahallmenu.svg");
@@ -127,9 +128,10 @@ ApplicationThemeViewModel::ApplicationThemeViewModel(QObject *parent)
     darkTheme->insert(posterBorderField, "#adadad");
     darkTheme->insert(roundedButtonDisableForegroundField, "lightgray");
     darkTheme->insert(materialAccentField, "#f44336");
-
     darkTheme->insert(colorBorderInPanelField, "white");
-
+    darkTheme->insert(colorBackgroundNavigationButtonField, "white");
+    darkTheme->insert(colorMaterialTextField, "white");
+    darkTheme->insert(colorPageIndexTextField, "white");
     darkTheme->insert(iconMainMenuField, "qrc:/Assets/Icons/coloreddrawer.svg");
     darkTheme->insert(iconMainMenuReleasesField, "qrc:/Assets/Icons/catalogmenu.svg");
     darkTheme->insert(iconMainMenuCinemahallField, "qrc:/Assets/Icons/cinemahallmenu.svg");
@@ -192,7 +194,10 @@ ApplicationThemeViewModel::ApplicationThemeViewModel(QObject *parent)
     m_fields.append(toggleButtonNotCheckedField);
     m_fields.append(posterBorderField);
     m_fields.append(materialAccentField);
+    m_fields.append(colorMaterialTextField);
     m_fields.append(colorBorderInPanelField);
+    m_fields.append(colorBackgroundNavigationButtonField);
+    m_fields.append(colorPageIndexTextField);
     m_fields.append(iconMainMenuField);
     m_fields.append(iconMainMenuReleasesField);
     m_fields.append(iconMainMenuCinemahallField);
@@ -203,7 +208,6 @@ ApplicationThemeViewModel::ApplicationThemeViewModel(QObject *parent)
     m_fields.append(iconMainMenuDonateField);
     m_fields.append(iconMainMenuThemeManagerField);
     m_fields.append(iconMainMenuYoutubeField);
-
     m_fields.append(iconMainMenuAuthorizationField);
     m_fields.append(iconLeftHalfScreenField);
     m_fields.append(iconRightHalfScreenField);
@@ -605,6 +609,9 @@ void ApplicationThemeViewModel::emitAllFields()
     emit iconCloseWindowChanged();
     emit iconNormalWindowChanged();
     emit iconMainMenuAuthorizationChanged();
+    emit colorMaterialTextChanged();
+    emit colorBackgroundNavigationButtonChanged();
+    emit colorPageIndexTextChanged();
 }
 
 void ApplicationThemeViewModel::themesLoaded()

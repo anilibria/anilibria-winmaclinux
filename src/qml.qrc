@@ -174,5 +174,6 @@
         <file>Assets/Icons/leftscroll.svg</file>
         <file>Assets/Icons/rightscroll.svg</file>
         <file>Controls/NavigationScrollButton.qml</file>
+        <file>Controls/TooltipedImage.qml</file>
     </qresource>
 </RCC>

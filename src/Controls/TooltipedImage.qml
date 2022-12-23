@@ -1,10 +1,14 @@
 import QtQuick 2.12
 import QtQuick.Controls 2.12
 
-Switch {
-    property string tooltipMessage
+Image {
+    id: root
+    mipmap: true
 
-    ToolTip.delay: 1000
-    ToolTip.visible: hovered && tooltipMessage
+    property string tooltipMessage
+    property bool tooltipMessageVisible
+
+    ToolTip.delay: 2000
+    ToolTip.visible: tooltipMessageVisible
     ToolTip.text: "<font color='white'>" + tooltipMessage + "</font>"
 }

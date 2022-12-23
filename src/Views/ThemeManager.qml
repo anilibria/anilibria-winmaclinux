@@ -865,9 +865,7 @@ Page {
                                     iconPath: "../Assets/Icons/arrowup.svg"
                                     iconWidth: 24
                                     iconHeight: 24
-                                    ToolTip.delay: 1000
-                                    ToolTip.visible: hovered
-                                    ToolTip.text: "Вернуться в начало списка полей"
+                                    tooltipMessage: "Вернуться в начало списка полей"
                                     onButtonPressed: {
                                         fieldsListView.contentY = 0;
                                     }

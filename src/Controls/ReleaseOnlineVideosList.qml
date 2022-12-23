@@ -90,7 +90,7 @@ Item {
                     horizontalAlignment: Qt.AlignHCenter
                     text: id
                     fontPointSize: 10
-                    color: "white"
+                    color: applicationThemeViewModel.colorPageIndexText
                 }
 
                 Rectangle {

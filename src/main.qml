@@ -52,6 +52,7 @@ ApplicationWindow {
 
     Material.accent: applicationThemeViewModel.materialAccent
     Material.theme: applicationThemeViewModel.basedOnDark ? Material.Dark : Material.Light
+    Material.foreground: applicationThemeViewModel.colorMaterialText
 
     onClosing: {
         onlinePlayerWindow.closeWindow();

@@ -2,7 +2,7 @@ import QtQuick 2.12
 
 Rectangle {
     id: root
-    color: "white"
+    color: applicationThemeViewModel.colorBackgroundNavigationButton
     height: 40
     width: 40
     radius: 10

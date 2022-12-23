@@ -19,7 +19,7 @@
 #include <QFile>
 #include <QDebug>
 #include <QVector>
-#include <QRegExp>
+#include <QRegularExpression>
 #include <QtConcurrent>
 #include <QFuture>
 #include "releaselinkedseries.h"
@@ -367,7 +367,7 @@ void ReleaseLinkedSeries::processReleasesFromDescription(const QString& descript
     auto cuttedDescription = description.midRef(watchOrderIndex + startToken.length());
     auto parts = cuttedDescription.split("#").mid(1);
 
-    QRegExp linkRegexp("(https|http)\\:\\/\\/(www\\.anilibriaqt|anilibriaqt|www)\\.(anilib|anilibria)\\.(top|tv)\\/release\\/(.*)\\.html");
+    QRegularExpression linkRegexp(R"((https|http)\:\/\/(www\.anilibriaqt|anilibriaqt\.|www\.|)(anilib\.top|anilibria\.tv)\/release\/(.*)\.html)");
 
     //if already have series that have greater releases it means that don't need processing
     auto seriesItem = std::find_if(
@@ -386,8 +386,10 @@ void ReleaseLinkedSeries::processReleasesFromDescription(const QString& descript
     foreach (auto part, parts) {
         auto partString = part.toString();
 
-        if (linkRegexp.indexIn(partString, 0) > -1) {
-            auto link = linkRegexp.cap(5);
+        auto match = linkRegexp.match(partString);
+
+        if (match.hasMatch()) {
+            auto link = match.captured(4);
             if (releases.contains(link)) {
                 auto release = releases[link];
                 if (series->appendReleaseId(release->id())) {

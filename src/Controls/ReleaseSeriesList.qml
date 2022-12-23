@@ -85,7 +85,7 @@ Item {
                     horizontalAlignment: Qt.AlignHCenter
                     text: releaseNumber
                     fontPointSize: 10
-                    color: "white"
+                    color: applicationThemeViewModel.colorPageIndexText
                 }
 
                 Rectangle {

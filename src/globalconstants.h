@@ -133,6 +133,12 @@ extern QString materialAccentField;
 
 extern QString colorBorderInPanelField;
 
+extern QString colorBackgroundNavigationButtonField;
+
+extern QString colorMaterialTextField;
+
+extern QString colorPageIndexTextField;
+
 extern QString iconMainMenuField;
 
 extern QString iconMainMenuReleasesField;

@@ -111,5 +111,5 @@ Item {
     }
     ToolTip.delay: 1000
     ToolTip.visible: tooltipMessage && hovered
-    ToolTip.text: tooltipMessage
+    ToolTip.text: "<font color='white'>" + tooltipMessage + "</font>"
 }

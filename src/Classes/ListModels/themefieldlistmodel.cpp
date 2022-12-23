@@ -62,7 +62,10 @@ ThemeFieldListModel::ThemeFieldListModel(QObject *parent)
     m_descriptions.insert(toggleButtonNotCheckedField, "Цвет кнопки переключателя 3: Цвет фона кнопки переключателя в состоянии Не Выбрано");
     m_descriptions.insert(posterBorderField, "Цвет рамки постера:Цвет рамки вокруг постера в элементе релиза в различных списках");
     m_descriptions.insert(materialAccentField, "Цвет акцента для Material:Цвет акцента в Material элементах (переключатель, текстовое поле)");
+    m_descriptions.insert(colorMaterialTextField, "Цвет текста для Material:Цвет текста в Material элементах (текстовое поле, выпадающее поле)");
     m_descriptions.insert(colorBorderInPanelField, "Цвет рамки заголовка регионов:Цвет рамки заголовков регионов на странице Моя Анилибирия");
+    m_descriptions.insert(colorBackgroundNavigationButtonField, "Цвет фона кнопки навигации:Цвет фона кнопок со стрелками навигации в горизонтальных списках");
+    m_descriptions.insert(colorPageIndexTextField, "Цвет текста индекса релиза:Цвет текста индекса релиза на странице Кинозал и в Карточке релиза");
     m_descriptions.insert(iconMainMenuField, "Иконка главного меню:Иконка находящаяся на всех страницах и предназначена для открытия главного меню");
     m_descriptions.insert(iconMainMenuReleasesField, "Иконка страницы Каталог релизов:Иконка находящаяся в главном меню и на кастомном тулбаре");
     m_descriptions.insert(iconMainMenuCinemahallField, "Иконка страницы Кинозал:Иконка находящаяся в главном меню и на кастомном тулбаре");

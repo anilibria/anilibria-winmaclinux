@@ -75,6 +75,11 @@ QString posterBorderField = "posterBorder";
 QString roundedButtonDisableForegroundField = "roundedButtonDisableForeground";
 QString materialAccentField = "materialAccent";
 QString colorBorderInPanelField = "colorBorderInPanel";
+
+QString colorBackgroundNavigationButtonField = "colorBackgroundNavigationButton";
+QString colorMaterialTextField = "colorMaterialText";
+QString colorPageIndexTextField = "colorPageIndexText";
+
 QString iconMainMenuField = "iconMainMenu";
 QString iconMainMenuReleasesField = "iconMainMenuReleases";
 QString iconMainMenuCinemahallField = "iconMainMenuCinemahall";
@@ -85,7 +90,6 @@ QString iconMainMenuVideoplayerField = "iconMainMenuVideoplayer";
 QString iconMainMenuDonateField = "iconMainMenuDonate";
 QString iconMainMenuThemeManagerField = "iconMainMenuThemeManager";
 QString iconMainMenuYoutubeField = "iconMainMenuYoutube";
-
 QString iconLeftHalfScreenField = "iconLeftHalfScreen";
 QString iconRightHalfScreenField = "iconRightHalfScreen";
 QString iconMinimizeWindowField = "iconMinimizeWindow";

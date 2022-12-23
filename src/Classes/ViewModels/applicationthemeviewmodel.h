@@ -68,6 +68,11 @@ class ApplicationThemeViewModel : public QObject
     Q_PROPERTY(QString posterBorder READ posterBorder NOTIFY posterBorderChanged)
     Q_PROPERTY(QString materialAccent READ materialAccent NOTIFY materialAccentChanged)
     Q_PROPERTY(QString colorBorderInPanel READ colorBorderInPanel NOTIFY colorBorderInPanelChanged)
+
+    Q_PROPERTY(QString colorBackgroundNavigationButton READ colorBackgroundNavigationButton NOTIFY colorBackgroundNavigationButtonChanged)
+    Q_PROPERTY(QString colorMaterialText READ colorMaterialText NOTIFY colorMaterialTextChanged)
+    Q_PROPERTY(QString colorPageIndexText READ colorPageIndexText NOTIFY colorPageIndexTextChanged)
+
     Q_PROPERTY(QString roundedButtonDisableForeground READ roundedButtonDisableForeground NOTIFY roundedButtonDisableForegroundChanged)
     Q_PROPERTY(QString iconMainMenu READ iconMainMenu NOTIFY iconMainMenuChanged)
     Q_PROPERTY(QStringList themes READ themes NOTIFY themesChanged)
@@ -90,7 +95,6 @@ class ApplicationThemeViewModel : public QObject
     Q_PROPERTY(QString iconMainMenuDonate READ iconMainMenuDonate NOTIFY iconMainMenuDonateChanged)
     Q_PROPERTY(QString iconMainMenuThemeManager READ iconMainMenuThemeManager NOTIFY iconMainMenuThemeManagerChanged)
     Q_PROPERTY(QString iconMainMenuYoutube READ iconMainMenuYoutube NOTIFY iconMainMenuYoutubeChanged)
-
     Q_PROPERTY(QString iconMainMenuAuthorization READ iconMainMenuAuthorization NOTIFY iconMainMenuAuthorizationChanged)
     Q_PROPERTY(QString iconLeftHalfScreen READ iconLeftHalfScreen NOTIFY iconLeftHalfScreenChanged)
     Q_PROPERTY(QString iconRightHalfScreen READ iconRightHalfScreen NOTIFY iconRightHalfScreenChanged)
@@ -158,6 +162,9 @@ public:
     QString posterBorder() const noexcept { return m_themes.value(m_selectedTheme)->value(posterBorderField); }
     QString materialAccent() const noexcept { return m_themes.value(m_selectedTheme)->value(materialAccentField); }
     QString colorBorderInPanel() const noexcept { return m_themes.value(m_selectedTheme)->value(colorBorderInPanelField); }
+    QString colorBackgroundNavigationButton() const noexcept { return m_themes.value(m_selectedTheme)->value(colorBackgroundNavigationButtonField); }
+    QString colorMaterialText() const noexcept { return m_themes.value(m_selectedTheme)->value(colorMaterialTextField); }
+    QString colorPageIndexText() const noexcept { return m_themes.value(m_selectedTheme)->value(colorPageIndexTextField); }
     QString iconMainMenu() const noexcept { return m_themes.value(m_selectedTheme)->value(iconMainMenuField); }
     QString iconMainMenuReleases() const noexcept { return m_themes.value(m_selectedTheme)->value(iconMainMenuReleasesField); }
     QString iconMainMenuCinemahall() const noexcept { return m_themes.value(m_selectedTheme)->value(iconMainMenuCinemahallField); }
@@ -168,7 +175,6 @@ public:
     QString iconMainMenuDonate() const noexcept { return m_themes.value(m_selectedTheme)->value(iconMainMenuDonateField); }
     QString iconMainMenuThemeManager() const noexcept { return m_themes.value(m_selectedTheme)->value(iconMainMenuThemeManagerField); }
     QString iconMainMenuYoutube() const noexcept { return m_themes.value(m_selectedTheme)->value(iconMainMenuYoutubeField); }
-
     QString iconMainMenuAuthorization() const noexcept { return m_themes.value(m_selectedTheme)->value(iconMainMenuAuthorizationField); }
     QString iconLeftHalfScreen() const noexcept { return m_themes.value(m_selectedTheme)->value(iconLeftHalfScreenField); }
     QString iconRightHalfScreen() const noexcept { return m_themes.value(m_selectedTheme)->value(iconRightHalfScreenField); }
@@ -294,6 +300,9 @@ signals:
     void iconNormalWindowChanged();
     void iconMainMenuAuthorizationChanged();
     void colorBorderInPanelChanged();
+    void colorBackgroundNavigationButtonChanged();
+    void colorMaterialTextChanged();
+    void colorPageIndexTextChanged();
 
 };
 

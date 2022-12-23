@@ -49,15 +49,13 @@ Page {
                 height: 45
                 color: applicationThemeViewModel.pageUpperPanel
 
-                Switch {
+                CommonSwitch {
                     id: selectMode
                     anchors.left: parent.left
                     onCheckedChanged: {
                         releasesViewModel.cinemahall.deselectItems();
                     }
-                    ToolTip.delay: 1000
-                    ToolTip.visible: selectMode.hovered
-                    ToolTip.text: "Данный переключатель влияет на поведение при клике ЛКМ на релизах в списке\nРежим выбора выбор позволяет выбрать несколько релизов и выполнять действия(например удаление)\nРежим изменения порядка позволяет изменять порядок релизов в списке путем перетаскивания\nЧтобы переключать его можно использовать клик ПКМ в области списка релизов"
+                    tooltipMessage: "Данный переключатель влияет на поведение при клике ЛКМ на релизах в списке\nРежим выбора выбор позволяет выбрать несколько релизов и выполнять действия(например удаление)\nРежим изменения порядка позволяет изменять порядок релизов в списке путем перетаскивания\nЧтобы переключать его можно использовать клик ПКМ в области списка релизов"
                 }
                 PlainText {
                     anchors.verticalCenter: parent.verticalCenter
@@ -296,7 +294,7 @@ Page {
                                     horizontalAlignment: Qt.AlignHCenter
                                     text: releaseNumber
                                     fontPointSize: 10
-                                    color: "white"
+                                    color: applicationThemeViewModel.colorPageIndexText
                                 }
 
                             }

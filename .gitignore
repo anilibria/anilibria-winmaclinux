@@ -78,3 +78,4 @@ pac.deb
 
 /src/vlc-qt/vlc/*
 
+*.TMP

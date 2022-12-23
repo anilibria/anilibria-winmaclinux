@@ -998,15 +998,13 @@ Page {
                                 fontPointSize: 11
                                 text: "Сбрасывать все фильтры после\nсмены раздела"
                             }
-                            Switch {
+                            CommonSwitch {
                                 id: clearFilterAfterChangeSectionSwitch
                                 onCheckedChanged: {
                                     localStorage.setClearFiltersAfterChangeSection(checked);
                                 }
 
-                                ToolTip.delay: 1000
-                                ToolTip.visible: hovered
-                                ToolTip.text: "Разделы это кнопки находящиеся по центру выше списка релизов\nДанная настройка влияет на то будут ли сброшены все фильтры при смене раздела или нет"
+                                tooltipMessage: "Разделы это кнопки находящиеся по центру выше списка релизов\nДанная настройка влияет на то будут ли сброшены все фильтры при смене раздела или нет"
                             }
 
                             PlainText {
@@ -1014,15 +1012,12 @@ Page {
                                 fontPointSize: 11
                                 text: "Показывать описание в списке"
                             }
-                            Switch {
+                            CommonSwitch {
                                 id: showReleaseDescriptionSwitch
                                 onCheckedChanged: {
                                     localStorage.setShowReleaseDescription(checked);
                                 }
-
-                                ToolTip.delay: 1000
-                                ToolTip.visible: hovered
-                                ToolTip.text: "Если настройка включена при наведении на релизы будет показываться описание в виде небольшой плашки в нижней части окна"
+                                tooltipMessage: "Если настройка включена при наведении на релизы будет показываться описание в виде небольшой плашки в нижней части окна"
                             }
 
                             PlainText {
@@ -1030,15 +1025,13 @@ Page {
                                 fontPointSize: 11
                                 text: "Не закрывать карточку релиза после просмотра"
                             }
-                            Switch {
+                            CommonSwitch {
                                 id: notCloseReleaseCardAfterWatchSwitch
                                 checked: userConfigurationViewModel.notCloseReleaseCardAfterWatch
                                 onCheckedChanged: {
                                     userConfigurationViewModel.notCloseReleaseCardAfterWatch = checked;
                                 }
-                                ToolTip.delay: 1000
-                                ToolTip.visible: hovered
-                                ToolTip.text: "Если настройка включена при нажатии на кнопку Смотреть из карточки сама карточка релизов не будет закрыта"
+                                tooltipMessage: "Если настройка включена при нажатии на кнопку Смотреть из карточки сама карточка релизов не будет закрыта"
                             }
 
                             RoundedActionButton {
@@ -1138,7 +1131,7 @@ Page {
                 height: 45
                 color: applicationThemeViewModel.pageUpperPanel
 
-                Switch {
+                CommonSwitch {
                     id: multupleMode
                     anchors.left: parent.left
                     onCheckedChanged: {
@@ -1149,9 +1142,7 @@ Page {
                             releasesViewModel.hideReleaseCard();
                         }
                     }
-                    ToolTip.delay: 1000
-                    ToolTip.visible: multupleMode.hovered
-                    ToolTip.text: "Данный переключатель влияет на поведение при клике ЛКМ на релизах в списке\nОдиночный выбор позволяет открывать карточку с подробной информацией\nМножественный выбор позволяет выбрать несколько релизов и выполнять действия (добавить в избранное и т.п.)\nЧтобы переключать его можно использовать клик ПКМ в области списка релизов"
+                    tooltipMessage: "Данный переключатель влияет на поведение при клике ЛКМ на релизах в списке\nОдиночный выбор позволяет открывать карточку с подробной информацией\nМножественный выбор позволяет выбрать несколько релизов и выполнять действия (добавить в избранное и т.п.)\nЧтобы переключать его можно использовать клик ПКМ в области списка релизов"
                 }
                 PlainText {
                     anchors.verticalCenter: parent.verticalCenter
@@ -1698,9 +1689,7 @@ Page {
             iconPath: "../Assets/Icons/arrowup.svg"
             iconWidth: 24
             iconHeight: 24
-            ToolTip.delay: 1000
-            ToolTip.visible: hovered
-            ToolTip.text: "Вернуться в начало списка релизов"
+            tooltipMessage: "Вернуться в начало списка релизов"
             onButtonPressed: {
                 scrollview.contentY = 0;
             }
