@@ -353,7 +353,7 @@ void VlcQmlPlayer::playerStateChanged()
     if (currentState != Vlc::Playing && currentState != Vlc::Paused) setPlaybackState(0);
 
     emit stateChanged();
-    setIsEnded(currentState == Vlc::Ended);
+    if (currentState == Vlc::Ended && _player->length() - _player->time() <= 1500) setIsEnded(true);
 }
 
 void VlcQmlPlayer::audioMuteChanged(bool muted)
