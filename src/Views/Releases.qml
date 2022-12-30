@@ -133,7 +133,7 @@ Page {
                 }
 
                 LeftPanelIconButton {
-                    iconPath: "../Assets/Icons/coloredrefresh.svg"
+                    iconPath: applicationThemeViewModel.currentItems.iconReleaseCatalogSynchronization
                     iconWidth: 34
                     iconHeight: 34
                     overlayVisible: false
@@ -147,7 +147,7 @@ Page {
                 }
 
                 LeftPanelIconButton {
-                    iconPath: "../Assets/Icons/ratingcolor.svg"
+                    iconPath: applicationThemeViewModel.currentItems.iconFavorites
                     iconWidth: 29
                     iconHeight: 29
                     overlayVisible: false
@@ -180,7 +180,7 @@ Page {
                     }
                 }
                 LeftPanelIconButton {
-                    iconPath: "../Assets/Icons/coloredeye.svg"
+                    iconPath: applicationThemeViewModel.currentItems.iconSeen
                     overlayVisible: false
                     iconWidth: 29
                     iconHeight: 29
@@ -347,7 +347,7 @@ Page {
                     }
                 }
                 LeftPanelIconButton {
-                    iconPath: "../Assets/Icons/search.svg"
+                    iconPath: applicationThemeViewModel.currentItems.iconReleaseCatalogSearch
                     overlayVisible: false
                     iconWidth: 29
                     iconHeight: 29
@@ -660,7 +660,7 @@ Page {
                     }
                 }
                 LeftPanelIconButton {
-                    iconPath: "../Assets/Icons/coloredbell.svg"
+                    iconPath: applicationThemeViewModel.currentItems.iconReleaseCatalogNotification
                     iconWidth: 29
                     iconHeight: 29
                     overlayVisible: false
@@ -809,7 +809,7 @@ Page {
                     }
                 }
                 LeftPanelIconButton {
-                    iconPath: "../Assets/Icons/coloreddice.svg"
+                    iconPath: applicationThemeViewModel.currentItems.iconReleaseCatalogRandom
                     iconWidth: 32
                     iconHeight: 32
                     overlayVisible: false
@@ -856,7 +856,7 @@ Page {
 
                 }
                 LeftPanelIconButton {
-                    iconPath: "../Assets/Icons/coloredsettings.svg"
+                    iconPath: applicationThemeViewModel.currentItems.iconReleaseCatalogSettings
                     iconWidth: 29
                     iconHeight: 29
                     overlayVisible: false
@@ -1060,7 +1060,7 @@ Page {
                 }
 
                 LeftPanelIconButton {
-                    iconPath: "../Assets/Icons/information.svg"
+                    iconPath: applicationThemeViewModel.currentItems.iconInfo
                     overlayVisible: false
                     iconWidth: 29
                     iconHeight: 29
@@ -1107,7 +1107,7 @@ Page {
                     }
                 }
                 LeftPanelIconButton {
-                    iconPath: "../Assets/Icons/hidebuttonmenu.svg"
+                    iconPath: applicationThemeViewModel.currentItems.iconReleaseCatalogHidedButtons
                     overlayVisible: false
                     iconWidth: 29
                     iconHeight: 29
@@ -1243,8 +1243,9 @@ Page {
                                 anchors.topMargin: 6
                                 width: 20
                                 height: 20
-                                iconPath: assetsLocation.iconsPath + "closewindow.svg"
+                                iconPath: applicationThemeViewModel.currentItems.iconClearTextControl
                                 iconColor: applicationThemeViewModel.plainTextColor
+                                overlayVisible: false
                                 iconWidth: 16
                                 iconHeight: 16
                                 tooltipMessage: "Очистить фильтр по названию"
@@ -1257,7 +1258,7 @@ Page {
                         }
 
                         FilterPanelIconButton {
-                            iconPath: assetsLocation.iconsPath + "allreleases.svg"
+                            iconPath: applicationThemeViewModel.currentItems.iconReleaseCatalogAllReleases
                             overlayVisible: false
                             tooltipMessage: "Все релизы"
                             onButtonPressed: {
@@ -1265,7 +1266,7 @@ Page {
                             }
                         }
                         FilterPanelIconButton {
-                            iconPath: assetsLocation.iconsPath + "ratingcolor.svg"
+                            iconPath: applicationThemeViewModel.currentItems.iconFavorites
                             overlayVisible: false
                             tooltipMessage: "Избранное"
                             onButtonPressed: {
@@ -1273,7 +1274,7 @@ Page {
                             }
                         }
                         FilterPanelIconButton {
-                            iconPath: assetsLocation.iconsPath + "coloredbell.svg"
+                            iconPath: applicationThemeViewModel.currentItems.iconReleaseCatalogNotification
                             overlayVisible: false
                             tooltipMessage: "Показать меню с фильтрами по уведомлениям"
                             onButtonPressed: {
@@ -1312,7 +1313,7 @@ Page {
                             }
                         }
                         FilterPanelIconButton {
-                            iconPath: assetsLocation.iconsPath + "calendarcolor.svg"
+                            iconPath: applicationThemeViewModel.currentItems.iconReleaseCatalogSchedule
                             overlayVisible: false
                             iconWidth: 26
                             iconHeight: 26
@@ -1322,7 +1323,7 @@ Page {
                             }
                         }
                         FilterPanelIconButton {
-                            iconPath: assetsLocation.iconsPath + "history.svg"
+                            iconPath: applicationThemeViewModel.currentItems.iconReleaseCatalogHistory
                             overlayVisible: false
                             tooltipMessage: "Показать меню с фильтрами по истории и истории просмотра"
                             onButtonPressed: {
@@ -1350,7 +1351,7 @@ Page {
                         }
                         FilterPanelIconButton {
                             id: seenMenuButton
-                            iconPath: assetsLocation.iconsPath + "coloredeye.svg"
+                            iconPath: applicationThemeViewModel.currentItems.iconSeen
                             overlayVisible: false
                             tooltipMessage: "Показать меню с фильтрами по состоянию просмотра"
                             onButtonPressed: {
@@ -1401,7 +1402,7 @@ Page {
                             }
                         }
                         FilterPanelIconButton {
-                            iconPath: assetsLocation.iconsPath + "alphabet.svg"
+                            iconPath: applicationThemeViewModel.currentItems.iconReleaseCatalogAlphabet
                             iconWidth: 24
                             iconHeight: 24
                             overlayVisible: false
@@ -1411,7 +1412,7 @@ Page {
                             }
                         }
                         FilterPanelIconButton {
-                            iconPath: assetsLocation.iconsPath + "listcustom.svg"
+                            iconPath: applicationThemeViewModel.currentItems.iconReleaseCatalogCompilation
                             overlayVisible: false
                             iconWidth: 24
                             iconHeight: 24
@@ -1542,7 +1543,7 @@ Page {
                     anchors.verticalCenter: parent.verticalCenter
                     anchors.right: parent.right
                     anchors.rightMargin: 14
-                    iconPath: assetsLocation.iconsPath + (releasesViewModel.items.sortingDescending ? "sortdescending.svg" : "sortascending.svg")
+                    iconPath: releasesViewModel.items.sortingDescending ? applicationThemeViewModel.currentItems.iconReleaseCatalogSortDesc : applicationThemeViewModel.currentItems.iconReleaseCatalogSortAsc
                     tooltipMessage: "Направление сортировки списка"
                     onButtonPressed: {
                         releasesViewModel.items.sortingDescending = !releasesViewModel.items.sortingDescending;
@@ -1686,7 +1687,7 @@ Page {
             width: 30
             iconColor: applicationThemeViewModel.filterIconButtonColor
             hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
-            iconPath: "../Assets/Icons/arrowup.svg"
+            iconPath: applicationThemeViewModel.currentItems.iconBackToTop
             iconWidth: 24
             iconHeight: 24
             tooltipMessage: "Вернуться в начало списка релизов"

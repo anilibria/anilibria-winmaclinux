@@ -247,7 +247,7 @@ Rectangle {
                         }
 
                         TooltipedImage {
-                            source: assetsLocation.iconsPath + 'online.svg'
+                            source: applicationThemeViewModel.currentItems.iconReleaseCatalogOnline
                             width: 22
                             height: 22
 
@@ -295,7 +295,7 @@ Rectangle {
 
                         TooltipedImage {
                             anchors.fill: parent
-                            source: assetsLocation.iconsPath + 'utorrent.svg'
+                            source: applicationThemeViewModel.currentItems.iconReleaseCatalogTorrent
 
                             property bool torrentImageHovered: false
 
@@ -360,7 +360,7 @@ Rectangle {
                     }
                     Image {
                         visible: inSchedule
-                        source: assetsLocation.iconsPath + 'calendarcolor.svg'
+                        source: applicationThemeViewModel.currentItems.iconReleaseCatalogSchedule
                         width: 22
                         height: 22
                         mipmap: true
@@ -401,7 +401,7 @@ Rectangle {
                         anchors.left: parent.left
 
                         TooltipedImage {
-                            source: assetsLocation.iconsPath + 'ratingcolor.svg'
+                            source: applicationThemeViewModel.currentItems.iconFavorites
                             width: 18
                             height: 20
 

@@ -75,11 +75,9 @@ QString posterBorderField = "posterBorder";
 QString roundedButtonDisableForegroundField = "roundedButtonDisableForeground";
 QString materialAccentField = "materialAccent";
 QString colorBorderInPanelField = "colorBorderInPanel";
-
 QString colorBackgroundNavigationButtonField = "colorBackgroundNavigationButton";
 QString colorMaterialTextField = "colorMaterialText";
 QString colorPageIndexTextField = "colorPageIndexText";
-
 QString iconMainMenuField = "iconMainMenu";
 QString iconMainMenuReleasesField = "iconMainMenuReleases";
 QString iconMainMenuCinemahallField = "iconMainMenuCinemahall";
@@ -97,4 +95,29 @@ QString iconMaximizeWindowField = "iconMaximizeWindow";
 QString iconNormalWindowField = "iconNormalWindow";
 QString iconCloseWindowField = "iconCloseWindow";
 QString iconMainMenuAuthorizationField = "iconMainMenuAuthorization";
+
+QString iconFavoritesField = "iconFavorites";
+QString iconSeenField = "iconSeen";
+QString iconInfoField = "iconInfo";
+QString iconBackToTopField = "iconBackToTop";
+QString iconClearTextControlField = "iconClearTextControl";
+QString iconReleaseCatalogSynchronizationField = "iconReleaseCatalogSynchronization";
+QString iconReleaseCatalogSearchField = "iconReleaseCatalogSearch";
+QString iconReleaseCatalogNotificationField = "iconReleaseCatalogNotification";
+QString iconReleaseCatalogRandomField = "iconReleaseCatalogRandom";
+QString iconReleaseCatalogSettingsField = "iconReleaseCatalogSettings";
+QString iconReleaseCatalogHidedButtonsField = "iconReleaseCatalogHidedButtons";
+QString iconReleaseCatalogOnlineField = "iconReleaseCatalogOnline";
+QString iconReleaseCatalogTorrentField = "iconReleaseCatalogTorrent";
+QString iconReleaseCatalogScheduleField = "iconReleaseCatalogSchedule";
+QString iconReleaseCatalogHistoryField = "iconReleaseCatalogHistory";
+QString iconReleaseCatalogAlphabetField = "iconReleaseCatalogAlphabet";
+QString iconReleaseCatalogAllReleasesField = "iconReleaseCatalogAllReleases";
+QString iconReleaseCatalogCompilationField = "iconReleaseCatalogCompilation";
+QString iconReleaseCatalogSortAscField = "iconReleaseCatalogSortAsc";
+QString iconReleaseCatalogSortDescField = "iconReleaseCatalogSortDesc";
+QString iconReleaseCardListMenuField = "iconReleaseCardListMenu";
+QString iconReleaseCardCloseField = "iconReleaseCardClose";
+QString iconReleaseCardCopyField = "iconReleaseCardCopy";
+QString iconReleaseCardExternalField = "iconReleaseCardExternal";
 

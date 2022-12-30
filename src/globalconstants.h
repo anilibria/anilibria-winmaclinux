@@ -140,38 +140,46 @@ extern QString colorMaterialTextField;
 extern QString colorPageIndexTextField;
 
 extern QString iconMainMenuField;
-
 extern QString iconMainMenuReleasesField;
-
 extern QString iconMainMenuCinemahallField;
-
 extern QString iconMainMenuReleasesSeriesField;
-
 extern QString iconMainMenuMaintenanceField;
-
 extern QString iconMainMenuMyAnilibriaField;
-
 extern QString iconMainMenuVideoplayerField;
-
 extern QString iconMainMenuDonateField;
-
 extern QString iconMainMenuThemeManagerField;
-
 extern QString iconMainMenuYoutubeField;
-
 extern QString iconMainMenuAuthorizationField;
-
 extern QString iconLeftHalfScreenField;
-
 extern QString iconRightHalfScreenField;
-
 extern QString iconMinimizeWindowField;
-
 extern QString iconMaximizeWindowField;
-
 extern QString iconNormalWindowField;
-
 extern QString iconCloseWindowField;
 
+extern QString iconFavoritesField;
+extern QString iconSeenField;
+extern QString iconInfoField;
+extern QString iconClearTextControlField;
+extern QString iconBackToTopField;
+extern QString iconReleaseCatalogSynchronizationField;
+extern QString iconReleaseCatalogSearchField;
+extern QString iconReleaseCatalogNotificationField;
+extern QString iconReleaseCatalogRandomField;
+extern QString iconReleaseCatalogSettingsField;
+extern QString iconReleaseCatalogHidedButtonsField;
+extern QString iconReleaseCatalogOnlineField;
+extern QString iconReleaseCatalogTorrentField;
+extern QString iconReleaseCatalogScheduleField;
+extern QString iconReleaseCatalogHistoryField;
+extern QString iconReleaseCatalogAlphabetField;
+extern QString iconReleaseCatalogAllReleasesField;
+extern QString iconReleaseCatalogCompilationField;
+extern QString iconReleaseCatalogSortAscField;
+extern QString iconReleaseCatalogSortDescField;
+extern QString iconReleaseCardListMenuField;
+extern QString iconReleaseCardCloseField;
+extern QString iconReleaseCardCopyField;
+extern QString iconReleaseCardExternalField;
 
 #endif // GLOBALCONSTANTS_H

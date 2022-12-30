@@ -246,7 +246,7 @@ ColumnLayout {
                         iconColor: applicationThemeViewModel.filterIconButtonColor
                         hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
                         overlayVisible: false
-                        iconPath: assetsLocation.iconsPath + "coloredclosewindow.svg"
+                        iconPath: applicationThemeViewModel.currentItems.iconReleaseCardClose
                         iconWidth: 28
                         iconHeight: 28
                         tooltipMessage: "Закрыть карточку релиза"
@@ -259,7 +259,7 @@ ColumnLayout {
                         width: 40
                         hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
                         overlayVisible: false
-                        iconPath: assetsLocation.iconsPath + "copy.svg"
+                        iconPath: applicationThemeViewModel.currentItems.iconReleaseCardCopy
                         iconWidth: 26
                         iconHeight: 26
                         tooltipMessage: "Копировать названия или постер"
@@ -314,7 +314,7 @@ ColumnLayout {
                         width: 40
                         iconColor: applicationThemeViewModel.filterIconButtonColor
                         hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
-                        iconPath: assetsLocation.iconsPath + "coloredeye.svg"
+                        iconPath: applicationThemeViewModel.currentItems.iconSeen
                         overlayVisible: false
                         iconWidth: 26
                         iconHeight: 26
@@ -368,7 +368,7 @@ ColumnLayout {
                         width: 40
                         overlayVisible: false
                         hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
-                        iconPath: assetsLocation.iconsPath + "ratingcolor.svg"
+                        iconPath: applicationThemeViewModel.currentItems.iconFavorites
                         iconWidth: 26
                         iconHeight: 26
                         tooltipMessage: "Добавить или удалить из избранного"
@@ -403,7 +403,7 @@ ColumnLayout {
                         width: 40
                         overlayVisible: false
                         hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
-                        iconPath: assetsLocation.iconsPath + "external.svg"
+                        iconPath: applicationThemeViewModel.currentItems.iconReleaseCardExternal
                         iconWidth: 26
                         iconHeight: 26
                         tooltipMessage: "Открыть онлайн видео в стороннем плеере"
@@ -569,7 +569,7 @@ ColumnLayout {
                     hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
                     iconWidth: 22
                     iconHeight: 22
-                    iconPath: assetsLocation.iconsPath + "allreleases.svg"
+                    iconPath: applicationThemeViewModel.currentItems.iconReleaseCardListMenu
                     onButtonPressed: {
                         releaseCardSubMenu.open();
                     }

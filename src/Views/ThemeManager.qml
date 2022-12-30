@@ -42,7 +42,7 @@ Page {
                     }
                 }
                 LeftPanelIconButton {
-                    iconPath: assetsLocation.iconsPath + "information.svg"
+                    iconPath: applicationThemeViewModel.currentItems.iconInfo
                     overlayVisible: false
                     iconWidth: 29
                     iconHeight: 29
@@ -862,7 +862,7 @@ Page {
                                     width: 30
                                     iconColor: applicationThemeViewModel.filterIconButtonColor
                                     hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
-                                    iconPath: "../Assets/Icons/arrowup.svg"
+                                    iconPath: applicationThemeViewModel.currentItems.iconBackToTop
                                     iconWidth: 24
                                     iconHeight: 24
                                     tooltipMessage: "Вернуться в начало списка полей"

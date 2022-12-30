@@ -68,11 +68,9 @@ class ApplicationThemeViewModel : public QObject
     Q_PROPERTY(QString posterBorder READ posterBorder NOTIFY posterBorderChanged)
     Q_PROPERTY(QString materialAccent READ materialAccent NOTIFY materialAccentChanged)
     Q_PROPERTY(QString colorBorderInPanel READ colorBorderInPanel NOTIFY colorBorderInPanelChanged)
-
     Q_PROPERTY(QString colorBackgroundNavigationButton READ colorBackgroundNavigationButton NOTIFY colorBackgroundNavigationButtonChanged)
     Q_PROPERTY(QString colorMaterialText READ colorMaterialText NOTIFY colorMaterialTextChanged)
     Q_PROPERTY(QString colorPageIndexText READ colorPageIndexText NOTIFY colorPageIndexTextChanged)
-
     Q_PROPERTY(QString roundedButtonDisableForeground READ roundedButtonDisableForeground NOTIFY roundedButtonDisableForegroundChanged)
     Q_PROPERTY(QString iconMainMenu READ iconMainMenu NOTIFY iconMainMenuChanged)
     Q_PROPERTY(QStringList themes READ themes NOTIFY themesChanged)
@@ -102,6 +100,7 @@ class ApplicationThemeViewModel : public QObject
     Q_PROPERTY(QString iconMaximizeWindow READ iconMaximizeWindow NOTIFY iconMaximizeWindowChanged)
     Q_PROPERTY(QString iconNormalWindow READ iconNormalWindow NOTIFY iconNormalWindowChanged)
     Q_PROPERTY(QString iconCloseWindow READ iconCloseWindow NOTIFY iconCloseWindowChanged)
+    Q_PROPERTY(QVariantMap currentItems READ currentItems NOTIFY currentItemsChanged)
 
 private:
     QString m_cachePathName { "applicationtheme.cache" };
@@ -119,6 +118,7 @@ private:
     QList<QString>* m_externalIds { new QList<QString>() };
     QList<QString>* m_localIds { new QList<QString>() };
     LocalThemesListModel* m_localThemes { new LocalThemesListModel(this) };
+    QVariantMap m_currentItems { QVariantMap() };
 
 public:
     explicit ApplicationThemeViewModel(QObject *parent = nullptr);
@@ -200,6 +200,9 @@ public:
     QString selectedMenuItemName() const noexcept { return m_menuItems.value(m_selectedMenuItem); }
 
     QVariantMap previewItems() const noexcept;
+
+    QVariantMap currentItems() const noexcept { return m_currentItems; }
+    void setCurrentItems() noexcept;
 
     LocalThemesListModel* localThemes() const noexcept { return m_localThemes; }
 
@@ -303,6 +306,7 @@ signals:
     void colorBackgroundNavigationButtonChanged();
     void colorMaterialTextChanged();
     void colorPageIndexTextChanged();
+    void currentItemsChanged();
 
 };
 

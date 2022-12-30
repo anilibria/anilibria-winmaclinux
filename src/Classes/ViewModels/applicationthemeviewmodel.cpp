@@ -87,6 +87,31 @@ ApplicationThemeViewModel::ApplicationThemeViewModel(QObject *parent)
     lightTheme->insert(iconNormalWindowField, "qrc:/Assets/Icons/gofromfullscreen.svg");
     lightTheme->insert(iconCloseWindowField, "qrc:/Assets/Icons/coloredclosewindow.svg");
 
+    lightTheme->insert(iconFavoritesField, "qrc:/Assets/Icons/ratingcolor.svg");
+    lightTheme->insert(iconSeenField, "qrc:/Assets/Icons/coloredeye.svg");
+    lightTheme->insert(iconInfoField, "qrc:/Assets/Icons/information.svg");
+    lightTheme->insert(iconClearTextControlField, "qrc:/Assets/Icons/closewindow.svg");
+    lightTheme->insert(iconBackToTopField, "qrc:/Assets/Icons/arrowup.svg");
+    lightTheme->insert(iconReleaseCatalogSynchronizationField, "qrc:/Assets/Icons/coloredrefresh.svg");
+    lightTheme->insert(iconReleaseCatalogSearchField, "qrc:/Assets/Icons/search.svg");
+    lightTheme->insert(iconReleaseCatalogNotificationField, "qrc:/Assets/Icons/coloredbell.svg");
+    lightTheme->insert(iconReleaseCatalogRandomField, "qrc:/Assets/Icons/coloreddice.svg");
+    lightTheme->insert(iconReleaseCatalogSettingsField, "qrc:/Assets/Icons/coloredsettings.svg");
+    lightTheme->insert(iconReleaseCatalogHidedButtonsField, "qrc:/Assets/Icons/hidebuttonmenu.svg");
+    lightTheme->insert(iconReleaseCatalogOnlineField, "qrc:/Assets/Icons/online.svg");
+    lightTheme->insert(iconReleaseCatalogTorrentField, "qrc:/Assets/Icons/utorrent.svg");
+    lightTheme->insert(iconReleaseCatalogScheduleField, "qrc:/Assets/Icons/calendarcolor.svg");
+    lightTheme->insert(iconReleaseCatalogHistoryField, "qrc:/Assets/Icons/history.svg");
+    lightTheme->insert(iconReleaseCatalogAlphabetField, "qrc:/Assets/Icons/alphabet.svg");
+    lightTheme->insert(iconReleaseCatalogAllReleasesField, "qrc:/Assets/Icons/allreleases.svg");
+    lightTheme->insert(iconReleaseCatalogCompilationField, "qrc:/Assets/Icons/listcustom.svg");
+    lightTheme->insert(iconReleaseCatalogSortAscField, "qrc:/Assets/Icons/sortascending.svg");
+    lightTheme->insert(iconReleaseCatalogSortDescField, "qrc:/Assets/Icons/sortdescending.svg");
+    lightTheme->insert(iconReleaseCardListMenuField, "qrc:/Assets/Icons/allreleases.svg");
+    lightTheme->insert(iconReleaseCardCloseField, "qrc:/Assets/Icons/coloredclosewindow.svg");
+    lightTheme->insert(iconReleaseCardCopyField, "qrc:/Assets/Icons/copy.svg");
+    lightTheme->insert(iconReleaseCardExternalField, "qrc:/Assets/Icons/external.svg");
+
     lightTheme->insert(basedOnThemeField, m_lightTheme);
     lightTheme->insert(externalIdField, "");
     m_themes.insert(m_lightTheme, lightTheme);
@@ -143,13 +168,37 @@ ApplicationThemeViewModel::ApplicationThemeViewModel(QObject *parent)
     darkTheme->insert(iconMainMenuThemeManagerField, "qrc:/Assets/Icons/themes.svg");
     darkTheme->insert(iconMainMenuYoutubeField, "qrc:/Assets/Icons/youtube.svg");
     darkTheme->insert(iconMainMenuAuthorizationField, "qrc:/Assets/Icons/user.svg");
-
     darkTheme->insert(iconLeftHalfScreenField, "qrc:/Assets/Icons/coloredleftmenu.svg");
     darkTheme->insert(iconRightHalfScreenField, "qrc:/Assets/Icons/coloredrightmenu.svg");
     darkTheme->insert(iconMinimizeWindowField, "qrc:/Assets/Icons/coloredminimize.svg");
     darkTheme->insert(iconMaximizeWindowField, "qrc:/Assets/Icons/gotofullscreen.svg");
     darkTheme->insert(iconNormalWindowField, "qrc:/Assets/Icons/gofromfullscreen.svg");
     darkTheme->insert(iconCloseWindowField, "qrc:/Assets/Icons/coloredclosewindow.svg");
+
+    darkTheme->insert(iconFavoritesField, "qrc:/Assets/Icons/ratingcolor.svg");
+    darkTheme->insert(iconSeenField, "qrc:/Assets/Icons/coloredeye.svg");
+    darkTheme->insert(iconInfoField, "qrc:/Assets/Icons/information.svg");
+    darkTheme->insert(iconClearTextControlField, "qrc:/Assets/Icons/closewindowwhite.svg");
+    darkTheme->insert(iconBackToTopField, "qrc:/Assets/Icons/arrowup.svg");
+    darkTheme->insert(iconReleaseCatalogSynchronizationField, "qrc:/Assets/Icons/coloredrefresh.svg");
+    darkTheme->insert(iconReleaseCatalogSearchField, "qrc:/Assets/Icons/search.svg");
+    darkTheme->insert(iconReleaseCatalogNotificationField, "qrc:/Assets/Icons/coloredbell.svg");
+    darkTheme->insert(iconReleaseCatalogRandomField, "qrc:/Assets/Icons/coloreddice.svg");
+    darkTheme->insert(iconReleaseCatalogSettingsField, "qrc:/Assets/Icons/coloredsettings.svg");
+    darkTheme->insert(iconReleaseCatalogHidedButtonsField, "qrc:/Assets/Icons/hidebuttonmenu.svg");
+    darkTheme->insert(iconReleaseCatalogOnlineField, "qrc:/Assets/Icons/online.svg");
+    darkTheme->insert(iconReleaseCatalogTorrentField, "qrc:/Assets/Icons/utorrent.svg");
+    darkTheme->insert(iconReleaseCatalogScheduleField, "qrc:/Assets/Icons/calendarcolor.svg");
+    darkTheme->insert(iconReleaseCatalogHistoryField, "qrc:/Assets/Icons/history.svg");
+    darkTheme->insert(iconReleaseCatalogAlphabetField, "qrc:/Assets/Icons/alphabet.svg");
+    darkTheme->insert(iconReleaseCatalogAllReleasesField, "qrc:/Assets/Icons/allreleases.svg");
+    darkTheme->insert(iconReleaseCatalogCompilationField, "qrc:/Assets/Icons/listcustom.svg");
+    darkTheme->insert(iconReleaseCatalogSortAscField, "qrc:/Assets/Icons/sortascending.svg");
+    darkTheme->insert(iconReleaseCatalogSortDescField, "qrc:/Assets/Icons/sortdescending.svg");
+    darkTheme->insert(iconReleaseCardListMenuField, "qrc:/Assets/Icons/allreleases.svg");
+    darkTheme->insert(iconReleaseCardCloseField, "qrc:/Assets/Icons/coloredclosewindow.svg");
+    darkTheme->insert(iconReleaseCardCopyField, "qrc:/Assets/Icons/copy.svg");
+    darkTheme->insert(iconReleaseCardExternalField, "qrc:/Assets/Icons/external.svg");
 
     darkTheme->insert(basedOnThemeField, m_darkTheme);
     darkTheme->insert(externalIdField, "");
@@ -216,6 +265,31 @@ ApplicationThemeViewModel::ApplicationThemeViewModel(QObject *parent)
     m_fields.append(iconNormalWindowField);
     m_fields.append(iconCloseWindowField);
 
+    m_fields.append(iconFavoritesField);
+    m_fields.append(iconSeenField);
+    m_fields.append(iconInfoField);
+    m_fields.append(iconClearTextControlField);
+    m_fields.append(iconBackToTopField);
+    m_fields.append(iconReleaseCatalogSynchronizationField);
+    m_fields.append(iconReleaseCatalogSearchField);
+    m_fields.append(iconReleaseCatalogNotificationField);
+    m_fields.append(iconReleaseCatalogRandomField);
+    m_fields.append(iconReleaseCatalogSettingsField);
+    m_fields.append(iconReleaseCatalogHidedButtonsField);
+    m_fields.append(iconReleaseCatalogOnlineField);
+    m_fields.append(iconReleaseCatalogTorrentField);
+    m_fields.append(iconReleaseCatalogScheduleField);
+    m_fields.append(iconReleaseCatalogHistoryField);
+    m_fields.append(iconReleaseCatalogAlphabetField);
+    m_fields.append(iconReleaseCatalogAllReleasesField);
+    m_fields.append(iconReleaseCatalogCompilationField);
+    m_fields.append(iconReleaseCatalogSortAscField);
+    m_fields.append(iconReleaseCatalogSortDescField);
+    m_fields.append(iconReleaseCardListMenuField);
+    m_fields.append(iconReleaseCardCloseField);
+    m_fields.append(iconReleaseCardCopyField);
+    m_fields.append(iconReleaseCardExternalField);
+
     m_fields.append(externalIdField);
 
     readCacheFile();
@@ -229,6 +303,8 @@ ApplicationThemeViewModel::ApplicationThemeViewModel(QObject *parent)
 
     connect(m_service, &ThemeManagerService::themesLoaded, this, &ApplicationThemeViewModel::themesLoaded);
     connect(m_service, &ThemeManagerService::themeLoaded, this, &ApplicationThemeViewModel::themeLoaded);
+
+    setCurrentItems();
 }
 
 void ApplicationThemeViewModel::setSelectedTheme(const QString &selectedTheme) noexcept
@@ -242,6 +318,7 @@ void ApplicationThemeViewModel::setSelectedTheme(const QString &selectedTheme) n
     m_basedOnDark = currentTheme->value(basedOnThemeField) == m_darkTheme;
 
     emitAllFields();
+    setCurrentItems();
 
     m_service->loadThemes(m_basedOnDark);
 }
@@ -280,6 +357,19 @@ QVariantMap ApplicationThemeViewModel::previewItems() const noexcept
     }
 
     return map;
+}
+
+void ApplicationThemeViewModel::setCurrentItems() noexcept
+{
+    m_currentItems.clear();
+
+    auto theme = m_themes.value(m_selectedTheme);
+
+    foreach (auto field, m_fields) {
+        m_currentItems.insert(field, theme->value(field));
+    }
+
+    emit currentItemsChanged();
 }
 
 void ApplicationThemeViewModel::saveCurrentState()
@@ -419,7 +509,10 @@ void ApplicationThemeViewModel::saveThemeAndApply() noexcept
     m_localThemes->refresh();
     emit copyMenuItemsChanged();
 
-    if (m_selectedTheme == name) emitAllFields();
+    if (m_selectedTheme == name) {
+        emitAllFields();
+        setCurrentItems();
+    }
 }
 
 void ApplicationThemeViewModel::preparePreviewItems() noexcept
@@ -529,6 +622,7 @@ void ApplicationThemeViewModel::readCacheFile()
     }
 
     setSelectedTheme(selectedTheme);
+    if (m_currentItems.isEmpty()) setCurrentItems();
 
     m_externalIds->clear();
     QMapIterator<QString, QMap<QString, QString>*> iterator(m_themes);

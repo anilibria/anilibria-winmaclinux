@@ -180,7 +180,7 @@ Page {
                     hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
                     tooltipMessage: "Вернуться в начало списка релизов"
                     visible: scrollView.contentY > 100
-                    iconPath: "../Assets/Icons/arrowup.svg"
+                    iconPath: applicationThemeViewModel.currentItems.iconBackToTop
                     iconWidth: 24
                     iconHeight: 24
                     onButtonPressed: {

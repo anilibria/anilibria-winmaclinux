@@ -84,6 +84,31 @@ ThemeFieldListModel::ThemeFieldListModel(QObject *parent)
     m_descriptions.insert(iconCloseWindowField, "Иконка кнопки Закрыть окно:Иконка находящаяся в правой стороне кастомного тулбара");
     m_descriptions.insert(iconNormalWindowField, "Иконка кнопки Нормальный размер окна:Иконка находящаяся в правой стороне кастомного тулбара");
 
+    m_descriptions.insert(iconFavoritesField, "Иконка Избранное:Иконка для кнопок на разных страницах с действиями с Избранным");
+    m_descriptions.insert(iconSeenField, "Иконка Просмотрено:Иконка для кнопок на разных страницах с действиями над (Не)Просмотренными(мыеми) релизами");
+    m_descriptions.insert(iconInfoField, "Иконка Информация:Иконка для кнопок содержащих справочные материалы");
+    m_descriptions.insert(iconClearTextControlField, "Иконка Очистка:Иконка для кнопки внутри текстовых полей для очистки текста");
+    m_descriptions.insert(iconBackToTopField, "Иконка Вернуть наверх:Иконка для кнопки возврата в начало скролируемой области");
+    m_descriptions.insert(iconReleaseCatalogSynchronizationField, "Иконка Синхронизация:Иконка для кнопки начала синхронизации в Каталоге релизов");
+    m_descriptions.insert(iconReleaseCatalogSearchField, "Иконка Поиск:Иконка для кнопки открытия поисковых полей в Каталоге релизов");
+    m_descriptions.insert(iconReleaseCatalogNotificationField, "Иконка Уведомления:Иконка для кнопки открытия уведомлений в Каталоге релизов");
+    m_descriptions.insert(iconReleaseCatalogRandomField, "Иконка Случайный релиз:Иконка для кнопки открытия случайного релиза в Каталоге релизов");
+    m_descriptions.insert(iconReleaseCatalogSettingsField, "Иконка Настройки:Иконка для кнопки открытия настроек");
+    m_descriptions.insert(iconReleaseCatalogHidedButtonsField, "Иконка Настройки:Иконка для кнопки установки скрываемых кнопок");
+    m_descriptions.insert(iconReleaseCatalogOnlineField, "Иконка Онлайн:Иконка для кнопки открытия плеера в списке релизов в Каталоге релизов");
+    m_descriptions.insert(iconReleaseCatalogTorrentField, "Иконка Торрент:Иконка для кнопки открытия меню торрентов в списке релизов в Каталоге релизов");
+    m_descriptions.insert(iconReleaseCatalogScheduleField, "Иконка Расписание:Иконка для кнопки расписание в Каталоге релизов");
+    m_descriptions.insert(iconReleaseCatalogHistoryField, "Иконка История:Иконка для кнопки с историей в Каталоге релизов");
+    m_descriptions.insert(iconReleaseCatalogAlphabetField, "Иконка Алфавит:Иконка для кнопки с фильтром Алфавит в Каталоге релизов");
+    m_descriptions.insert(iconReleaseCatalogAllReleasesField, "Иконка Все релизы:Иконка для кнопки Все релизы в Каталоге релизов");
+    m_descriptions.insert(iconReleaseCatalogCompilationField, "Иконка Подборки:Иконка для кнопки Подборки в Каталоге релизов");
+    m_descriptions.insert(iconReleaseCatalogSortAscField, "Иконка Сортировка вниз:Иконка для кнопки Сортировка вниз в Каталоге релизов");
+    m_descriptions.insert(iconReleaseCatalogSortDescField, "Иконка Сортировка вниз:Иконка для кнопки Сортировка вверх в Каталоге релизов");
+    m_descriptions.insert(iconReleaseCardListMenuField, "Иконка Меню Списков:Иконка для кнопки Меню Списков в Карточке релиза");
+    m_descriptions.insert(iconReleaseCardCloseField, "Иконка Закрыть карточку:Иконка для кнопки Закрыть карточку в Карточке релиза");
+    m_descriptions.insert(iconReleaseCardCopyField, "Иконка Копирование:Иконка для кнопки Копирование в Карточке релиза");
+    m_descriptions.insert(iconReleaseCardExternalField, "Иконка Внешние источники:Иконка для кнопки Открыть во внешних плеерах в Карточке релиза");
+
     m_saveMenuItems.append("Сохранить и добавить тему в список");
     m_saveMenuItems.append("Сохранить в файл");
 }

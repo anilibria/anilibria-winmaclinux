@@ -37,7 +37,7 @@ Rectangle {
         iconColor: applicationThemeViewModel.plainTextColor
         iconWidth: 22
         iconHeight: 22
-        iconPath: assetsLocation.iconsPath + "arrowup.svg"
+        iconPath: applicationThemeViewModel.currentItems.iconBackToTop
         transform: Rotation {
             id: rotationIconButton
             angle: headerHided ? 180 : 0

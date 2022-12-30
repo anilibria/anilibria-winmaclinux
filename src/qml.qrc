@@ -175,5 +175,6 @@
         <file>Assets/Icons/rightscroll.svg</file>
         <file>Controls/NavigationScrollButton.qml</file>
         <file>Controls/TooltipedImage.qml</file>
+        <file>Assets/Icons/closewindowwhite.svg</file>
     </qresource>
 </RCC>
