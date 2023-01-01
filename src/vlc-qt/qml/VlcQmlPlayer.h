@@ -144,6 +144,7 @@ public:
     Q_INVOKABLE void pause();
     Q_INVOKABLE void play();
     Q_INVOKABLE void stop();
+    Q_INVOKABLE void reloadCurrentSource();
 
 private:
     void openInternal();
@@ -180,6 +181,7 @@ signals:
     void sourceNotLoaded();
     void mutedChanged();
     void playbackStateChanged();
+    void earlyEnded(int time);
 };
 
 #endif // VLCQT_QMLPLAYER_H_

@@ -76,6 +76,11 @@ Item {
                 root.status = MediaPlayer.Buffered;
             }
         }
+        onEarlyEnded: {
+            onlinePlayerViewModel.restorePosition = time;
+            reloadCurrentSource();
+            console.log('early ended!!!!!');
+        }
     }
 
     VlcVideoOutput {
