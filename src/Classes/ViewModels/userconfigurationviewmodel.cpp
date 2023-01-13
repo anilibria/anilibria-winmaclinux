@@ -267,6 +267,6 @@ void UserConfigurationViewModel::readSettingsFromFile()
     m_fixedControlPanel = object.contains(m_fixedControlPanelField) ? object[m_fixedControlPanelField].toBool() : false;
     m_hidedQuality = object.contains(m_hidedQualityField) ? object[m_hidedQualityField].toBool() : false;
     m_hidedSpeed = object.contains(m_hidedSpeedField) ? object[m_hidedSpeedField].toBool() : false;
-    m_playerBuffer = object.contains(m_playerBufferField) ? object[m_playerBufferField].toInt() : 500;
+    m_playerBuffer = object.contains(m_playerBufferField) ? object[m_playerBufferField].toInt() : 0;
     m_usingVideoProxy = object.contains(m_usingVideoProxyField) ? object[m_usingVideoProxyField].toBool() : false;
 }

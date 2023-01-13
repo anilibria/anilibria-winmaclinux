@@ -808,6 +808,7 @@ Page {
                         iconPath: "../Assets/Icons/previous10.svg"
                         iconWidth: 24
                         iconHeight: 24
+                        tooltipMessage: "Прыжок назад"
                         onButtonPressed: {
                             playerLoader.item.seek(onlinePlayerViewModel.jumpInPlayer(jumpMinuteComboBox.currentIndex, jumpSecondComboBox.currentIndex, true))
                         }
@@ -877,6 +878,7 @@ Page {
                         iconPath: "../Assets/Icons/next30.svg"
                         iconWidth: 24
                         iconHeight: 24
+                        tooltipMessage: "Прыжок вперед"
                         onButtonPressed: {
                             playerLoader.item.seek(onlinePlayerViewModel.jumpInPlayer(jumpMinuteComboBox.currentIndex, jumpSecondComboBox.currentIndex, false));
                         }
@@ -888,6 +890,22 @@ Page {
                     anchors.right: parent.right
                     anchors.rightMargin: 6
                     anchors.verticalCenter: parent.verticalCenter
+
+                    IconButton {
+                        id: reloadButton
+                        width: 40
+                        height: 40
+                        visible: !autoTopMost.checked
+                        iconColor: applicationThemeViewModel.filterIconButtonColor
+                        hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
+                        iconPath: assetsLocation.iconsPath + "playerrefresh.svg"
+                        iconWidth: 29
+                        iconHeight: 29
+                        tooltipMessage: "Перезапустить текущее видео"
+                        onButtonPressed: {
+                            onlinePlayerViewModel.reloadCurrentVideo()
+                        }
+                    }
 
                     IconButton {
                         id: topmostButton
@@ -1235,89 +1253,20 @@ Page {
                                 PlainText {
                                     width: rightColumn.width - 20
                                     fontPointSize: 10
-                                    text: "Размер буфера (только для windows)"
+                                    text: "Порт приложения TorrentStream"
+
                                 }
-                                CommonComboBox {
-                                    Layout.column: 0
-                                    model: ListModel {
-                                        ListElement {
-                                            text: "100"
-                                        }
-                                        ListElement {
-                                            text: "200"
-                                        }
-                                        ListElement {
-                                            text: "300"
-                                        }
-                                        ListElement {
-                                            text: "400"
-                                        }
-                                        ListElement {
-                                            text: "500"
-                                        }
-                                        ListElement {
-                                            text: "600"
-                                        }
-                                        ListElement {
-                                            text: "700"
-                                        }
-                                        ListElement {
-                                            text: "800"
-                                        }
-                                        ListElement {
-                                            text: "900"
-                                        }
-                                        ListElement {
-                                            text: "1000"
-                                        }
-                                        ListElement {
-                                            text: "1100"
-                                        }
-                                        ListElement {
-                                            text: "1200"
-                                        }
-                                        ListElement {
-                                            text: "1300"
-                                        }
-                                        ListElement {
-                                            text: "1400"
-                                        }
-                                        ListElement {
-                                            text: "1500"
-                                        }
-                                        ListElement {
-                                            text: "1600"
-                                        }
-                                        ListElement {
-                                            text: "1700"
-                                        }
-                                        ListElement {
-                                            text: "1800"
-                                        }
-                                        ListElement {
-                                            text: "1900"
-                                        }
-                                        ListElement {
-                                            text: "2000"
-                                        }
-                                    }
-                                    onActivated: {
-                                        userConfigurationViewModel.playerBuffer = (index + 1) * 100;
-                                    }
-                                    Component.onCompleted: {
-                                        currentIndex = userConfigurationViewModel.playerBuffer / 100 - 1;
-                                    }
-                                }
-                                PlainText {
+
+                                TextField {
                                     width: rightColumn.width - 20
-                                    fontPointSize: 10
-                                    text: "Включить видео прокси"
-                                }
-                                Switch {
-                                    id: enableUsingVideoProxySwitch
-                                    checked: userConfigurationViewModel.usingVideoProxy
-                                    onCheckedChanged: {
-                                        userConfigurationViewModel.usingVideoProxy = checked;
+                                    text: userConfigurationViewModel.playerBuffer
+                                    validator: IntValidator {
+                                        top: 65535
+                                        bottom: 0
+                                    }
+                                    onTextChanged: {
+                                        const value = parseInt(text);
+                                        if (value > -1) userConfigurationViewModel.playerBuffer = value;
                                     }
                                 }
                             }

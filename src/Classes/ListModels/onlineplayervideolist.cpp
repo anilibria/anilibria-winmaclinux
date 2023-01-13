@@ -17,6 +17,7 @@
 */
 
 #include "onlineplayervideolist.h"
+#include "../../globalconstants.h"
 #include <QtGlobal>
 
 OnlinePlayerVideoList::OnlinePlayerVideoList(QObject *parent) : QAbstractListModel(parent),
@@ -216,6 +217,41 @@ OnlineVideoModel *OnlinePlayerVideoList::getFirstReleaseWithPredicate(std::funct
 
         return *searchResult;
     }
+}
+
+void OnlinePlayerVideoList::setVideosFromSingleTorrent(const ReleaseTorrentModel& torrent, int releaseId, const QString &poster, int port) noexcept
+{
+    beginResetModel();
+
+    m_videos->clear();
+
+    auto countSeries = 0;
+    auto series = torrent.series();
+    if (series.indexOf("-") > -1) {
+        auto parts = series.splitRef("-");
+        auto start = parts[0].toInt();
+        auto end = parts[1].toInt();
+
+        countSeries = start == 1 && end == 1 ? 1 : end - 1;
+    } else {
+        countSeries = series.toInt();
+    }
+
+    for (auto i = 0; i < countSeries; i++) {
+        auto videoModel = new OnlineVideoModel();
+        auto url = "http://localhost:" + QString::number(port) + "/online?index=" + QString::number(i) + "&path=" + AnilibriaImagesPath + torrent.url();
+        videoModel->setFullHd(url);
+        videoModel->setHd(url);
+        videoModel->setSd(url);
+        videoModel->setOrder(i);
+        videoModel->setReleaseId(releaseId);
+        videoModel->setReleasePoster(poster);
+        videoModel->setIsGroup(false);
+        videoModel->setTitle("Файл " + QString::number(i + 1));
+        m_videos->append(videoModel);
+    }
+
+    endResetModel();
 }
 
 void OnlinePlayerVideoList::setVideosFromSingleList(const QString &json, int releaseId, const QString& poster) noexcept

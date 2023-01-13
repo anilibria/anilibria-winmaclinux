@@ -54,6 +54,9 @@ QVariant ReleaseTorrentsList::data(const QModelIndex &index, int role) const
         case UrlRole: {
             return QVariant(torrent->url());
         }
+        case IdentifierRole: {
+            return QVariant(index.row());
+        }
     }
 
     return QVariant();
@@ -81,6 +84,10 @@ QHash<int, QByteArray> ReleaseTorrentsList::roleNames() const
         {
             UrlRole,
             "url"
+        },
+        {
+            IdentifierRole,
+            "identifier"
         }
     };
 }

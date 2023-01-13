@@ -51,7 +51,7 @@ DefaultPopup {
             width: messagePopup.width - 20
             height: messagePopup.height - 40
 
-            PlainText {
+            LinkedText {
                 id: popupMessage
                 width: parent.width
                 height: 60

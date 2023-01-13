@@ -33,6 +33,7 @@ private:
         QualityRole,
         SeriesRole,
         UrlRole,
+        IdentifierRole,
     };
     QList<ReleaseTorrentModel*>* m_torrents { new QList<ReleaseTorrentModel*>() };
 

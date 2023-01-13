@@ -628,6 +628,53 @@ void OnlinePlayerViewModel::quickSetupForSingleRelease(int releaseId)
     m_releasesViewModel->resetReleaseChanges(m_selectedRelease);
 }
 
+void OnlinePlayerViewModel::quickSetupForSingleTorrentRelease(int releaseId, int index, int port)
+{
+    auto release = m_releasesViewModel->getReleaseById(releaseId);
+    m_navigateReleaseId = releaseId;
+    m_navigatePoster = release->poster();
+    m_navigateVideos = "";
+    m_customPlaylistPosition = -1;
+
+    auto torents = release->torrents();
+
+    auto document = QJsonDocument::fromJson(torents.toUtf8());
+    auto torrentsArray = document.array();
+
+    if (index >= torrentsArray.count()) return;
+
+    auto torrentItem = torrentsArray[index];
+
+    ReleaseTorrentModel torrent;
+    torrent.readFromApiModel(torrentItem.toObject());
+
+    m_videos->setVideosFromSingleTorrent(torrent, releaseId, release->poster(), port);
+
+    setReleasePoster(m_navigatePoster);
+    setSelectedRelease(m_navigateReleaseId);
+
+    int videoIndex = 0;
+    if (m_seenModels->contains(m_navigateReleaseId)) {
+        auto model = m_seenModels->value(m_navigateReleaseId);
+        videoIndex = model->videoId();
+    }
+
+    auto firstVideo = m_videos->getVideoAtIndex(videoIndex);
+
+    setSelectedVideo(firstVideo->order());
+    setIsFullHdAllowed(!firstVideo->fullhd().isEmpty());
+    setVideoSource(getVideoFromQuality(firstVideo));
+    setRutubeIdentifier(firstVideo);
+
+    m_videos->selectVideo(m_selectedRelease, m_selectedVideo);
+
+    emit refreshSeenMarks();
+    emit playInPlayer();
+    emit saveToWatchHistory(m_navigateReleaseId);
+    emit needScrollSeriaPosition();
+    m_releasesViewModel->resetReleaseChanges(m_selectedRelease);
+}
+
 void OnlinePlayerViewModel::quickSetupForMultipleRelease(const QList<int> releaseIds)
 {
     QList<FullReleaseModel*> releases;
@@ -959,6 +1006,14 @@ int OnlinePlayerViewModel::skipOpening() noexcept
         }
     );
     return video->openingEndSeconds() * 1000;
+}
+
+void OnlinePlayerViewModel::reloadCurrentVideo() noexcept
+{
+    setRestorePosition(m_videoPosition);
+    auto videoSource = m_videoSource;
+    setVideoSource("");
+    setVideoSource(videoSource);
 }
 
 void OnlinePlayerViewModel::saveVideoSeens()

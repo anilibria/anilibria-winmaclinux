@@ -472,6 +472,7 @@ ColumnLayout {
                 height: 60
 
                 RoundedActionButton {
+                    id: downloadTorrentButton
                     anchors.verticalCenter: parent.verticalCenter
                     anchors.leftMargin: 10
                     anchors.left: parent.left
@@ -501,10 +502,48 @@ ColumnLayout {
                     }
                 }
 
+                RoundedActionButton {
+                    id: watchTorrentButton
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.left: downloadTorrentButton.right
+                    text: qsTr("Смотреть торрент")
+                    onClicked: {
+                        if (!userConfigurationViewModel.playerBuffer) {
+                            torrentStreamInfo.open();
+                            return;
+                        }
+
+                        watchTorrent.open();
+                    }
+
+                    CommonMenu {
+                        id: watchTorrent
+                        y: parent.height - parent.height
+                        width: 380
+
+                        Repeater {
+                            model: releasesViewModel.openedCardTorrents
+                            CommonMenuItem {
+                                text: "Смотреть " + quality + " [" + series + "]"
+                                onPressed: {
+                                    watchTorrent.close();
+
+                                    onlinePlayerViewModel.quickSetupForSingleTorrentRelease(releasesViewModel.openedReleaseId, identifier, userConfigurationViewModel.playerBuffer);
+
+                                    releasesViewModel.hideAfterWatchReleaseCard();
+                                    releasePosterPreview.isVisible = false;
+
+                                    mainViewModel.selectPage("videoplayer");
+                                }
+                            }
+                        }
+                    }
+                }
+
                 PlainText {
                     anchors.verticalCenter: parent.verticalCenter
-                    anchors.left: parent.left
-                    anchors.leftMargin: 100
+                    anchors.left: watchTorrentButton.right
+                    anchors.leftMargin: 10
                     fontPointSize: 11
                     text: "Доступно "+ releasesViewModel.openedReleaseCountTorrents + " торрентов"
                 }
@@ -625,4 +664,22 @@ ColumnLayout {
         }
     }
 
+    MessageModal {
+        id: torrentStreamInfo
+        header: "Приложение TorrentStream не установлено"
+        message: "Вы можете изучить инструкцию об установке <a href='https://github.com/anilibria/anilibria-winmaclinux/blob/master/torrentstream.md'>тут</a><br>
+            Также если Вы знаете как установить то можете просто скачать последнюю версию <a href='https://github.com/trueromanus/TorrentStream/releases/latest'>отсюда</a><br>"
+        content: Row {
+            spacing: 6
+            anchors.right: parent.right
+
+            RoundedActionButton {
+                text: "Закрыть"
+                width: 100
+                onClicked: {
+                    torrentStreamInfo.close();
+                }
+            }
+        }
+    }
 }

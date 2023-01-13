@@ -1124,7 +1124,7 @@ ApplicationWindow {
             anchors.left: parent.left
             anchors.top: parent.top
             anchors.bottom: parent.bottom
-            cursorShape:  Qt.SizeHorCursor
+            cursorShape: !onlinePlayerViewModel.isFullScreen ? Qt.SizeHorCursor : Qt.BlankCursor
             onPressed: {
                 previousX = mouseX
             }
@@ -1138,12 +1138,12 @@ ApplicationWindow {
 
         MouseArea {
             id: rightWindowResize
-            enabled: applicationSettings.useCustomToolbar && !onlinePlayerViewModel.isFullScreen
+            enabled: applicationSettings.useCustomToolbar
             width: 1
             anchors.right: parent.right
             anchors.top: parent.top
             anchors.bottom: parent.bottom
-            cursorShape:  Qt.SizeHorCursor
+            cursorShape: !onlinePlayerViewModel.isFullScreen ? Qt.SizeHorCursor : Qt.BlankCursor
             onPressed: {
                 previousX = mouseX
             }

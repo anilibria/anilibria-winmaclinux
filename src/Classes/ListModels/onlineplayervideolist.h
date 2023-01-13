@@ -31,6 +31,7 @@
 #include <QJsonObject>
 #include <QJsonValue>
 #include "../Models/onlinevideomodel.h"
+#include "../Models/releasetorrentmodel.h"
 #include "../ViewModels/releasesviewmodel.h"
 
 class OnlinePlayerVideoList : public QAbstractListModel
@@ -79,6 +80,7 @@ public:
     int getReleaseVideosCount(int releaseId) const noexcept;
     OnlineVideoModel* getFirstReleaseWithPredicate(std::function<bool(OnlineVideoModel*)> callback, bool isEndDirection = false) const noexcept;
 
+    void setVideosFromSingleTorrent(const ReleaseTorrentModel& torrent, int releaseId, const QString& poster, int port) noexcept;
     void setVideosFromSingleList(const QString& json, int releaseId, const QString& poster) noexcept;
     void setVideosFromCinemahall(QList<FullReleaseModel*>&& releases) noexcept;
     void selectVideo(int releaseId, int videoId) noexcept;

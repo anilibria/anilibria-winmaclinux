@@ -247,6 +247,7 @@ public:
     Q_INVOKABLE int getLastVideoSeen();
     Q_INVOKABLE void setVideoSeens(int id, int videoId, double videoPosition);
     Q_INVOKABLE void quickSetupForSingleRelease(int releaseId);
+    Q_INVOKABLE void quickSetupForSingleTorrentRelease(int releaseId, int index, int port);
     Q_INVOKABLE void quickSetupForMultipleRelease(QList<int> releaseIds);
     Q_INVOKABLE void quickSetupForFavoritesCinemahall();
     Q_INVOKABLE void setupForSingleRelease();
@@ -264,6 +265,7 @@ public:
     Q_INVOKABLE bool isLastSeriaIsSingleRelease() const noexcept;
     Q_INVOKABLE void refreshSingleVideo(int releaseId, int videoId) noexcept;
     Q_INVOKABLE int skipOpening() noexcept;
+    Q_INVOKABLE void reloadCurrentVideo() noexcept;
 
 private:
     void saveVideoSeens();
