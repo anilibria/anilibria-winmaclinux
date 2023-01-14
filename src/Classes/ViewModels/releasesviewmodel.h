@@ -91,6 +91,7 @@ class ReleasesViewModel : public QObject
     Q_PROPERTY(bool synchronizationEnabled READ synchronizationEnabled WRITE setSynchronizationEnabled NOTIFY synchronizationEnabledChanged)
     Q_PROPERTY(QString newEntities READ newEntities WRITE setNewEntities NOTIFY newEntitiesChanged)
     Q_PROPERTY(bool notCloseReleaseCardAfterWatch READ notCloseReleaseCardAfterWatch WRITE setNotCloseReleaseCardAfterWatch NOTIFY notCloseReleaseCardAfterWatchChanged)
+    Q_PROPERTY(QList<int> countSections READ countSections NOTIFY countSectionsChanged)
 
 private:
     const QString releasesCacheFileName { "releases.cache" };
@@ -131,6 +132,7 @@ private:
     QScopedPointer<QList<std::tuple<int, int>>> m_sectionSorting { new QList<std::tuple<int, int>>() };
     bool m_notCloseReleaseCardAfterWatch { false };
     QString m_openedReleaseAnnounce { "" };
+    QList<int> m_sectionCounters { QList<int>() };
 
 public:
     explicit ReleasesViewModel(QObject *parent = nullptr);
@@ -225,6 +227,7 @@ public:
     QString openedReleaseAnnounce() const noexcept { return m_openedRelease != nullptr ? m_openedRelease->announce() : ""; }
     QStringList getMostPopularGenres() const noexcept;
     QStringList getMostPopularVoices() const noexcept;
+    QList<int> countSections() const noexcept { return m_sectionCounters; };
     void fillNewInFavorites(QList<FullReleaseModel*>* list) const noexcept;
     void fillNewFromStart(QList<FullReleaseModel*>* list) const noexcept;
     void fillNewFromLastTwoDays(QList<FullReleaseModel*>* list) const noexcept;
@@ -385,6 +388,7 @@ signals:
     void userActivityChanged();
     void hasCinemahallNotSeenVideosChanged();
     void openedReleaseAnnounceChanged();
+    void countSectionsChanged();
 
 };
 

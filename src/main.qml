@@ -62,6 +62,14 @@ ApplicationWindow {
         if (!active) videoplayer.windowNotActived();
     }
 
+    onWidthChanged: {
+        if (width < 750) {
+            mainViewModel.isSmallSizeMode = true;
+        } else {
+            mainViewModel.isSmallSizeMode = false;
+        }
+    }
+
     Component.onCompleted: {
         if (!applicationSettings.useCustomToolbar) window.flags = 1;
 
@@ -155,16 +163,8 @@ ApplicationWindow {
             AccentText {
                 id: taskbarTitle
                 anchors.centerIn: parent
-                fontPointSize: 12
-                text: "AniLibria.Qt - "
-            }
-
-            AccentText {
-                id: currentPageTitle
-                anchors.left: taskbarTitle.right
-                anchors.verticalCenter: parent.verticalCenter
-                fontPointSize: 12
-                text: mainViewModel.currentPageDisplayName
+                fontPointSize: mainViewModel.isSmallSizeMode ? 10 : 12
+                text: "AniLibria.Qt - " + mainViewModel.currentPageDisplayName
             }
         }
         IconButton {
@@ -206,6 +206,7 @@ ApplicationWindow {
         }
         IconButton {
             id: goToCinemaHall
+            visible: !mainViewModel.isSmallSizeMode
             overlayVisible: false
             anchors.left: goToOnlineVideoPage.right
             anchors.top: parent.top
@@ -224,6 +225,7 @@ ApplicationWindow {
         }
         IconButton {
             id: goToReleaseSeries
+            visible: !mainViewModel.isSmallSizeMode
             overlayVisible: false
             anchors.left: goToCinemaHall.right
             anchors.top: parent.top
@@ -242,6 +244,7 @@ ApplicationWindow {
         }
         IconButton {
             id: goToMyAnilibria
+            visible: !mainViewModel.isSmallSizeMode
             overlayVisible: false
             anchors.left: goToReleaseSeries.right
             anchors.top: parent.top
@@ -259,6 +262,7 @@ ApplicationWindow {
         }
         IconButton {
             id: leftHalfScreenWindow
+            visible: !mainViewModel.isSmallSizeMode
             anchors.right: rightHalfScreenWindow.left
             anchors.top: parent.top
             anchors.topMargin: 1
@@ -282,6 +286,7 @@ ApplicationWindow {
         }
         IconButton {
             id: rightHalfScreenWindow
+            visible: !mainViewModel.isSmallSizeMode
             anchors.right: minimizeWindow.left
             anchors.top: parent.top
             anchors.topMargin: 1
@@ -305,6 +310,7 @@ ApplicationWindow {
         }
         IconButton {
             id: minimizeWindow
+            visible: !mainViewModel.isSmallSizeMode
             anchors.right: windowOrFullScreenSize.left
             anchors.top: parent.top
             anchors.topMargin: 1
@@ -322,6 +328,7 @@ ApplicationWindow {
         }
         IconButton {
             id: windowOrFullScreenSize
+            visible: !mainViewModel.isSmallSizeMode
             anchors.right: closeWindow.left
             anchors.top: parent.top
             anchors.topMargin: 1
@@ -420,9 +427,8 @@ ApplicationWindow {
 
     footer: Rectangle {
         id: windowFooter
-        visible: true
         width: window.width
-        height: 16
+        height: mainViewModel.isSmallSizeMode ? 1 : 16
         color: applicationThemeViewModel.notificationCenterBackground
 
         Rectangle {
@@ -453,6 +459,7 @@ ApplicationWindow {
         }
 
         Rectangle {
+            visible: !mainViewModel.isSmallSizeMode
             color: "transparent"
             anchors.left: parent.left
             anchors.leftMargin: 4
@@ -465,6 +472,7 @@ ApplicationWindow {
         }
 
         PlainText {
+            visible: !mainViewModel.isSmallSizeMode
             anchors.right: notificationCounter.left
             anchors.verticalCenter: parent.verticalCenter
             fontPointSize: 10
@@ -473,6 +481,7 @@ ApplicationWindow {
 
         Row {
             id: notificationCounter
+            visible: !mainViewModel.isSmallSizeMode
             anchors.right: parent.right
 
             IconButton {

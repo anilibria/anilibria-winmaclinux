@@ -58,6 +58,14 @@ void MainViewModel::setAnalyticsService(const AnalyticsService *service) noexcep
     emit analyticsServiceChanged();
 }
 
+void MainViewModel::setIsSmallSizeMode(bool isSmallSizeMode) noexcept
+{
+    if (m_isSmallSizeMode == isSmallSizeMode) return;
+
+    m_isSmallSizeMode = isSmallSizeMode;
+    emit isSmallSizeModeChanged();
+}
+
 void MainViewModel::selectPage(const QString& pageId)
 {
     if (pageId == m_currentPageId) return;

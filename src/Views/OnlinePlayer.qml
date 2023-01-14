@@ -751,6 +751,7 @@ Page {
                     }
                     IconButton {
                         id: helpbutton
+                        visible: !mainViewModel.isSmallSizeMode
                         width: 40
                         height: 40
                         iconColor: applicationThemeViewModel.filterIconButtonColor
@@ -802,7 +803,7 @@ Page {
                     IconButton {
                         width: 40
                         height: 40
-                        visible: playerLoader.item.duration > 0
+                        visible: playerLoader.item.duration > 0 && !mainViewModel.isSmallSizeMode
                         iconColor: applicationThemeViewModel.filterIconButtonColor
                         hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
                         iconPath: "../Assets/Icons/previous10.svg"
@@ -872,7 +873,7 @@ Page {
                     IconButton {
                         width: 40
                         height: 40
-                        visible: playerLoader.item.duration > 0
+                        visible: playerLoader.item.duration > 0 && !mainViewModel.isSmallSizeMode
                         iconColor: applicationThemeViewModel.filterIconButtonColor
                         hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
                         iconPath: "../Assets/Icons/next30.svg"
@@ -911,7 +912,7 @@ Page {
                         id: topmostButton
                         width: 40
                         height: 40
-                        visible: !autoTopMost.checked
+                        visible: !autoTopMost.checked && !mainViewModel.isSmallSizeMode
                         iconColor: windowSettings.isTopMost ? applicationThemeViewModel.filterIconButtonGreenColor : applicationThemeViewModel.filterIconButtonColor
                         hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
                         iconPath: "../Assets/Icons/topmostwindow.svg"
@@ -925,6 +926,7 @@ Page {
 
                     IconButton {
                         id: remotePlayerButton
+                        visible: !mainViewModel.isSmallSizeMode
                         width: 40
                         height: 40
                         iconColor: onlinePlayerViewModel.remotePlayer.started ? applicationThemeViewModel.filterIconButtonGreenColor : applicationThemeViewModel.filterIconButtonColor
@@ -1274,6 +1276,7 @@ Page {
                     }
                     IconButton {
                         id: resizeVideoButton
+                        visible: !mainViewModel.isSmallSizeMode
                         width: 40
                         height: 40
                         iconColor: applicationThemeViewModel.filterIconButtonColor

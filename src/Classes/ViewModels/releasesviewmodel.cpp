@@ -61,6 +61,17 @@ ReleasesViewModel::ReleasesViewModel(QObject *parent) : QObject(parent)
     m_sectionNames.append("Текущий сезон");
     m_sectionNames.append("Не текущий сезон");
 
+    int sectionIterator = 0;
+    foreach (auto section, m_sectionNames) {
+        if (section.isEmpty()) {
+            sectionIterator++;
+            continue;
+        }
+        m_sectionCounters.append(sectionIterator);
+
+        sectionIterator++;
+    }
+
     m_sectionSorting->append(std::make_tuple<int, int>(0, 1));
     m_sectionSorting->append(std::make_tuple<int, int>(0, 1));
     m_sectionSorting->append(std::make_tuple<int, int>(0, 1));

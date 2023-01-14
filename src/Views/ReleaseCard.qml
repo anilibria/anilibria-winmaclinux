@@ -28,6 +28,7 @@ ColumnLayout {
                 rightPadding: 4
                 Image {
                     id: cardPoster
+                    visible: !mainViewModel.isSmallSizeMode
                     source: localStorage.getReleasePosterPath(releasesViewModel.openedReleaseId, releasesViewModel.openedReleasePoster)
                     fillMode: Image.PreserveAspectCrop
                     width: 280
@@ -49,7 +50,7 @@ ColumnLayout {
                 }
                 Column {
                     id: descriptionColumn
-                    width: page.width - cardButtons.width - cardPoster.width
+                    width: page.width - cardButtons.width - (!mainViewModel.isSmallSizeMode ? cardPoster.width : 0)
                     AccentText {
                         textFormat: Text.RichText
                         fontPointSize: 14
@@ -477,6 +478,7 @@ ColumnLayout {
                     anchors.leftMargin: 10
                     anchors.left: parent.left
                     text: qsTr("Скачать")
+                    textSize: mainViewModel.isSmallSizeMode ? 10 : 11
                     onClicked: {
                         dowloadTorrent.open();
                     }
@@ -506,7 +508,8 @@ ColumnLayout {
                     id: watchTorrentButton
                     anchors.verticalCenter: parent.verticalCenter
                     anchors.left: downloadTorrentButton.right
-                    text: qsTr("Смотреть торрент")
+                    text: mainViewModel.isSmallSizeMode ? "См. торрент" : "Смотреть торрент"
+                    textSize: mainViewModel.isSmallSizeMode ? 10 : 11
                     onClicked: {
                         if (!userConfigurationViewModel.playerBuffer) {
                             torrentStreamInfo.open();
@@ -541,6 +544,7 @@ ColumnLayout {
                 }
 
                 PlainText {
+                    visible: !mainViewModel.isSmallSizeMode
                     anchors.verticalCenter: parent.verticalCenter
                     anchors.left: watchTorrentButton.right
                     anchors.leftMargin: 10
@@ -549,6 +553,7 @@ ColumnLayout {
                 }
 
                 PlainText {
+                    visible: !mainViewModel.isSmallSizeMode
                     anchors.verticalCenter: parent.verticalCenter
                     anchors.right: watchButton.left
                     anchors.rightMargin: 10
@@ -559,6 +564,7 @@ ColumnLayout {
                 RoundedActionButton {
                     id: watchButton
                     text: qsTr("Смотреть")
+                    textSize: mainViewModel.isSmallSizeMode ? 10 : 11
                     anchors.verticalCenter: parent.verticalCenter
                     anchors.right: parent.right
                     anchors.rightMargin: 10
@@ -578,13 +584,31 @@ ColumnLayout {
 
                 RoundedActionButton {
                     id: openCommentsButton
-                    text: qsTr("Открыть комментарии")
+                    textSize: mainViewModel.isSmallSizeMode ? 10 : 11
+                    text: mainViewModel.isSmallSizeMode ? "Комментарии" : "Открыть комментарии"
                     anchors.verticalCenter: parent.verticalCenter
-                    anchors.centerIn: parent
+                    anchors.horizontalCenter: parent.horizontalCenter
                     onClicked: {
                         const url = releasesViewModel.getVkontakteCommentPage(releasesViewModel.openedReleaseCode);
                         Qt.openUrlExternally(url);
                     }
+
+                    property bool isNeedSmallMode: mainViewModel.isSmallSizeMode
+
+                    onIsNeedSmallModeChanged: {
+                        openCommentsButton.state = mainViewModel.isSmallSizeMode ? "smallsizemode" : "";
+                    }
+
+                    states: [
+                        State {
+                            name: "smallsizemode"
+                            AnchorChanges {
+                                target: openCommentsButton
+                                anchors.left: watchTorrentButton.right
+                                anchors.horizontalCenter: undefined
+                            }
+                        }
+                    ]
                 }
             }
 

@@ -25,6 +25,7 @@ class MainViewModel : public QObject
     Q_PROPERTY(bool isMyAnilibriaPageVisible READ isMyAnilibriaPageVisible NOTIFY isMyAnilibriaPageVisibleChanged)
     Q_PROPERTY(bool isAuthorizationPageVisible READ isAuthorizationPageVisible NOTIFY isAuthorizationPageVisibleChanged)
     Q_PROPERTY(bool isThemeManagerVisible READ isThemeManagerVisible NOTIFY isThemeManagerVisibleChanged)
+    Q_PROPERTY(bool isSmallSizeMode READ isSmallSizeMode WRITE setIsSmallSizeMode NOTIFY isSmallSizeModeChanged)
 
 private:
     MainMenuListModel* m_mainMenuListModel { new MainMenuListModel(this) };
@@ -33,6 +34,7 @@ private:
     QString m_currentPageDisplayName { "" };
     QMap<QString, QString>* m_displayNames { new QMap<QString, QString>() };
     AnalyticsService* m_analyticsService { nullptr };
+    bool m_isSmallSizeMode { false };
 
 public:
     explicit MainViewModel(QObject *parent = nullptr);
@@ -49,6 +51,9 @@ public:
 
     AnalyticsService* analyticsService() const noexcept { return m_analyticsService; }
     void setAnalyticsService(const AnalyticsService* service) noexcept;
+
+    bool isSmallSizeMode() const noexcept { return m_isSmallSizeMode; }
+    void setIsSmallSizeMode(bool isSmallSizeMode) noexcept;
 
     bool isReleasesPageVisible() const noexcept { return m_currentPageId == "release"; }
     bool isOnlinePlayerPageVisible() const noexcept { return m_currentPageId == "videoplayer"; }
@@ -92,6 +97,7 @@ signals:
     void analyticsServiceChanged();
     void releasesPageToNavigated();
     void isThemeManagerVisibleChanged();
+    void isSmallSizeModeChanged();
 
 };
 

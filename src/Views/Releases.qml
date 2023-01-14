@@ -1145,6 +1145,7 @@ Page {
                     tooltipMessage: "Данный переключатель влияет на поведение при клике ЛКМ на релизах в списке\nОдиночный выбор позволяет открывать карточку с подробной информацией\nМножественный выбор позволяет выбрать несколько релизов и выполнять действия (добавить в избранное и т.п.)\nЧтобы переключать его можно использовать клик ПКМ в области списка релизов"
                 }
                 PlainText {
+                    visible: !mainViewModel.isSmallSizeMode
                     anchors.verticalCenter: parent.verticalCenter
                     anchors.leftMargin: 4
                     anchors.left: multupleMode.right
@@ -1163,7 +1164,7 @@ Page {
                     anchors.verticalCenter: parent.verticalCenter
                     anchors.horizontalCenter: parent.horizontalCenter
                     visible: releasesViewModel.synchronizationEnabled
-                    fontPointSize: 12
+                    fontPointSize: mainViewModel.isSmallSizeMode ? 10 : 12
                     text: "Выполняется синхронизация..."
                 }
 
@@ -1183,6 +1184,7 @@ Page {
                     id: setToStartedSectionButton
                     visible: page.startedSection !== releasesViewModel.items.section
                     text: "Сделать стартовым"
+                    textSize: !mainViewModel.isSmallSizeMode ? 11 : 10
                     anchors.verticalCenter: parent.verticalCenter
                     anchors.right: displaySection.left
                     anchors.rightMargin: 8
@@ -1198,7 +1200,7 @@ Page {
                     anchors.verticalCenter: parent.verticalCenter
                     anchors.right: parent.right
                     anchors.rightMargin: 8
-                    fontPointSize: 12
+                    fontPointSize: mainViewModel.isSmallSizeMode ? 10 : 12
                 }
             }
 
@@ -1219,7 +1221,7 @@ Page {
                 Rectangle {
                     id: filtersContainer
                     anchors.centerIn: parent
-                    width: 520
+                    width: mainViewModel.isSmallSizeMode ? 230 : 520
                     height: parent.height
                     color: "transparent"
 
@@ -1228,7 +1230,7 @@ Page {
                         spacing: 8
                         RoundedTextBox {
                             id: filterByTitle
-                            width: 210
+                            width: mainViewModel.isSmallSizeMode ? 180 : 210
                             height: 40
                             placeholder: "Введите название релиза"
                             onCompleteEditing: {
@@ -1258,6 +1260,34 @@ Page {
                         }
 
                         FilterPanelIconButton {
+                            visible: mainViewModel.isSmallSizeMode
+                            iconPath: applicationThemeViewModel.currentItems.iconReleaseCatalogAllReleases
+                            overlayVisible: false
+                            tooltipMessage: "Выберите раздел"
+                            onButtonPressed: {
+                                allSectionsMenu.open();
+                            }
+
+                            CommonMenu {
+                                id: allSectionsMenu
+                                width: 350
+                                y: parent.height
+
+                                Repeater {
+                                    model: releasesViewModel.countSections.map(a => a)
+                                    delegate: CommonMenuItem {
+                                        text: releasesViewModel.sectionNames[modelData]
+                                        onPressed: {
+                                            page.changeSection(modelData);
+                                        }
+                                    }
+
+                                }
+                            }
+                        }
+
+                        FilterPanelIconButton {
+                            visible: !mainViewModel.isSmallSizeMode
                             iconPath: applicationThemeViewModel.currentItems.iconReleaseCatalogAllReleases
                             overlayVisible: false
                             tooltipMessage: "Все релизы"
@@ -1266,6 +1296,7 @@ Page {
                             }
                         }
                         FilterPanelIconButton {
+                            visible: !mainViewModel.isSmallSizeMode
                             iconPath: applicationThemeViewModel.currentItems.iconFavorites
                             overlayVisible: false
                             tooltipMessage: "Избранное"
@@ -1274,6 +1305,7 @@ Page {
                             }
                         }
                         FilterPanelIconButton {
+                            visible: !mainViewModel.isSmallSizeMode
                             iconPath: applicationThemeViewModel.currentItems.iconReleaseCatalogNotification
                             overlayVisible: false
                             tooltipMessage: "Показать меню с фильтрами по уведомлениям"
@@ -1313,6 +1345,7 @@ Page {
                             }
                         }
                         FilterPanelIconButton {
+                            visible: !mainViewModel.isSmallSizeMode
                             iconPath: applicationThemeViewModel.currentItems.iconReleaseCatalogSchedule
                             overlayVisible: false
                             iconWidth: 26
@@ -1323,6 +1356,7 @@ Page {
                             }
                         }
                         FilterPanelIconButton {
+                            visible: !mainViewModel.isSmallSizeMode
                             iconPath: applicationThemeViewModel.currentItems.iconReleaseCatalogHistory
                             overlayVisible: false
                             tooltipMessage: "Показать меню с фильтрами по истории и истории просмотра"
@@ -1351,6 +1385,7 @@ Page {
                         }
                         FilterPanelIconButton {
                             id: seenMenuButton
+                            visible: !mainViewModel.isSmallSizeMode
                             iconPath: applicationThemeViewModel.currentItems.iconSeen
                             overlayVisible: false
                             tooltipMessage: "Показать меню с фильтрами по состоянию просмотра"
@@ -1402,6 +1437,7 @@ Page {
                             }
                         }
                         FilterPanelIconButton {
+                            visible: !mainViewModel.isSmallSizeMode
                             iconPath: applicationThemeViewModel.currentItems.iconReleaseCatalogAlphabet
                             iconWidth: 24
                             iconHeight: 24
@@ -1412,6 +1448,7 @@ Page {
                             }
                         }
                         FilterPanelIconButton {
+                            visible: !mainViewModel.isSmallSizeMode
                             iconPath: applicationThemeViewModel.currentItems.iconReleaseCatalogCompilation
                             overlayVisible: false
                             iconWidth: 24
@@ -1602,7 +1639,7 @@ Page {
                     anchors.horizontalCenter: parent.horizontalCenter
                     height: parent.height
                     width: parent.width
-                    cellWidth: parent.width / Math.floor(parent.width / 490)
+                    cellWidth: parent.width / Math.floor(parent.width / (mainViewModel.isSmallSizeMode ? 250 : 490))
                     cellHeight: 290
                     delegate: releaseDelegate
                     model: releasesViewModel.items

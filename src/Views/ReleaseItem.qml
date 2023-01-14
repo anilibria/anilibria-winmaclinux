@@ -24,13 +24,13 @@ import "../Controls"
 
 Rectangle {
     id: releaseItem
-    width: 480
+    width: mainViewModel.isSmallSizeMode ? 280 : 480
     height: 280
     radius: 10
     border.color: applicationThemeViewModel.selectedItem
     border.width: inSelected ? 3 : 0
-    color: !compactModeSwitch.checked ? applicationThemeViewModel.panelBackground : "transparent"
-    layer.enabled: !compactModeSwitch.checked
+    color: !isCompactReleaseMode ? applicationThemeViewModel.panelBackground : "transparent"
+    layer.enabled: !isCompactReleaseMode
     layer.effect: DropShadow {
         transparentBorder: true
         horizontalOffset: 2
@@ -39,6 +39,8 @@ Rectangle {
         samples: 3
         color: applicationThemeViewModel.panelBackgroundShadow
     }
+
+    property bool isCompactReleaseMode: compactModeSwitch.checked || mainViewModel.isSmallSizeMode
 
     property var releaseModel: ({})
 
@@ -90,15 +92,15 @@ Rectangle {
         anchors.topMargin: 10
         columnSpacing: 3
         rowSpacing: 3
-        columns: !compactModeSwitch.checked ? 2 : 1
-        rows: compactModeSwitch.checked ? 2 : 1
+        columns: !isCompactReleaseMode ? 2 : 1
+        rows: isCompactReleaseMode ? 2 : 1
         bottomPadding: 4
         leftPadding: 4
         topPadding: 4
         rightPadding: 4
 
         Rectangle {
-            visible: id > -1 && !compactModeSwitch.checked
+            visible: id > -1 && !isCompactReleaseMode
             width: 182
             height: 272
             border.color: applicationThemeViewModel.posterBorder
@@ -120,8 +122,8 @@ Rectangle {
         }
 
         Rectangle {
-            visible: compactModeSwitch.checked
-            width: 460
+            visible: isCompactReleaseMode
+            width: mainViewModel.isSmallSizeMode ? 280 : 460
             height: 236
             color: "transparent"
 
@@ -149,17 +151,16 @@ Rectangle {
             }
         }
 
-        Rectangle {
-            visible: compactModeSwitch.checked
-            width: 460
+        Item {
+            visible: isCompactReleaseMode
+            width: mainViewModel.isSmallSizeMode ? 280 : 460
             height: 38
-            color: "transparent"
 
             AccentText {
                 fontPointSize: 10
                 horizontalAlignment: Text.AlignHCenter
                 verticalAlignment: Text.AlignVCenter
-                width: 460
+                width: parent.width
                 leftPadding: 8
                 topPadding: 6
                 wrapMode: Text.WordWrap
@@ -169,7 +170,7 @@ Rectangle {
         }
 
         Grid {
-            visible: !compactModeSwitch.checked
+            visible: !isCompactReleaseMode
             height: 280
             Layout.row: 1
             Layout.column: 1
