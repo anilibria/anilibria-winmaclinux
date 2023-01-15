@@ -2,6 +2,7 @@ name: Flatpak x86_64 Build
 
 on:
   push:
+    branches: [deploy]
 
 jobs:
   build:
