@@ -1,0 +1,16 @@
+name: Flatpak x86_64 Build
+
+on:
+  push:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - uses: flatpak/flatpak-github-actions/flatpak-builder@v4
+      with:
+        bundle: anilibria.flatpak
+        manifest-path: tv.anilibria.app.yml
+        cache-key: flatpak-builder-${{ github.sha }}
