@@ -22,6 +22,7 @@
 #include <QObject>
 #include <QHash>
 #include <QList>
+#include <QNetworkReply>
 #include "../ListModels/onlineplayervideolist.h"
 #include "../RemotePlayer/remoteplayer.h"
 #include "../Models/seenmodel.h"
@@ -266,6 +267,7 @@ public:
     Q_INVOKABLE void refreshSingleVideo(int releaseId, int videoId) noexcept;
     Q_INVOKABLE int skipOpening() noexcept;
     Q_INVOKABLE void reloadCurrentVideo() noexcept;
+    Q_INVOKABLE void openVideoInExternalPlayer(const QString& path) noexcept;
 
 private:
     void saveVideoSeens();
@@ -282,6 +284,9 @@ private:
     void receiveCountUsers();
     void setRutubeIdentifier(const OnlineVideoModel* video) noexcept;
     void clearRutubeIdentifier() noexcept;
+
+private slots:
+    void downloadPlaylist(QNetworkReply *reply);
 
 signals:
     void isFullScreenChanged();

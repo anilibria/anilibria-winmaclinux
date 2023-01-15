@@ -326,7 +326,7 @@ Page {
 
     Rectangle {
         id: seriesPopup
-        width: 200
+        width: 230
         y: userConfigurationViewModel.fixedControlPanel ? fullHeight / 2 - (height / 2) : 0
         height: itemsContent.height > panelHeight ? panelHeight : itemsContent.height
         color: "transparent"
@@ -396,7 +396,7 @@ Page {
                             }
 
                             Row {
-                                width: 72
+                                width: 94
                                 spacing: 0
                                 anchors.right: parent.right
                                 anchors.rightMargin: 18
@@ -410,9 +410,6 @@ Page {
                                     iconPath: isSeen ? "../Assets/Icons/seenmarkselected.svg" : "../Assets/Icons/seenmark.svg"
                                     iconWidth: 22
                                     iconHeight: 22
-                                    onButtonHoverEnter: {
-                                        if (playerTimer.running) playerTimer.stop();
-                                    }
                                     onButtonPressed: {
                                         releasesViewModel.toggleSeenMark(releaseId, order);
                                         onlinePlayerViewModel.refreshSingleVideo(releaseId, order);
@@ -426,12 +423,9 @@ Page {
                                     visible: !isGroup
                                     iconColor: applicationThemeViewModel.filterIconButtonColor
                                     hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
-                                    iconPath: "../Assets/Icons/external.svg"
+                                    iconPath: assetsLocation.iconsPath + "external.svg"
                                     iconWidth: 22
                                     iconHeight: 22
-                                    onButtonHoverEnter: {
-                                        if (playerTimer.running) playerTimer.stop();
-                                    }
                                     onButtonPressed: {
                                         let video;
                                         switch (onlinePlayerViewModel.videoQuality) {
@@ -448,6 +442,34 @@ Page {
                                         if (!video) return;
 
                                         Qt.openUrlExternally("https://anilibria.github.io/anilibria-win/videotester.html?video=" + video.replace("https://", ""));
+                                    }
+                                }
+
+                                IconButton {
+                                    height: 36
+                                    width: 36
+                                    visible: !isGroup
+                                    iconColor: applicationThemeViewModel.filterIconButtonColor
+                                    hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
+                                    iconPath: assetsLocation.iconsPath + "externalplayer.svg"
+                                    iconWidth: 22
+                                    iconHeight: 22
+                                    onButtonPressed: {
+                                        let video;
+                                        switch (onlinePlayerViewModel.videoQuality) {
+                                            case "fullhd":
+                                                video = fullhd;
+                                                break;
+                                            case "hd":
+                                                video = hd;
+                                                break;
+                                            case "sd":
+                                                video = sd;
+                                                break;
+                                        }
+                                        if (!video) return;
+
+                                        onlinePlayerViewModel.openVideoInExternalPlayer(video);
                                     }
                                 }
                             }

@@ -177,5 +177,6 @@
         <file>Controls/TooltipedImage.qml</file>
         <file>Assets/Icons/closewindowwhite.svg</file>
         <file>Assets/Icons/playerrefresh.svg</file>
+        <file>Assets/Icons/externalplayer.svg</file>
     </qresource>
 </RCC>

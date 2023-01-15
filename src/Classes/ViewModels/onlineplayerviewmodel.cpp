@@ -22,6 +22,9 @@
 #include <QStandardPaths>
 #include <QJsonDocument>
 #include <QJsonArray>
+#include <QUuid>
+#include <QDesktopServices>
+#include "../../globalhelpers.h"
 
 OnlinePlayerViewModel::OnlinePlayerViewModel(QObject *parent) : QObject(parent),
     m_isFullScreen(false),
@@ -1016,6 +1019,18 @@ void OnlinePlayerViewModel::reloadCurrentVideo() noexcept
     setVideoSource(videoSource);
 }
 
+void OnlinePlayerViewModel::openVideoInExternalPlayer(const QString& path) noexcept
+{
+    auto manager = new QNetworkAccessManager(this);
+
+    connect(manager, &QNetworkAccessManager::finished, this, &OnlinePlayerViewModel::downloadPlaylist);
+
+    auto url = QUrl(path);
+    QNetworkRequest request(url);
+    request.setAttribute(QNetworkRequest::RedirectPolicyAttribute, QNetworkRequest::NoLessSafeRedirectPolicy);
+    manager->get(request);
+}
+
 void OnlinePlayerViewModel::saveVideoSeens()
 {
     QJsonArray array;
@@ -1222,4 +1237,23 @@ void OnlinePlayerViewModel::setRutubeIdentifier(const OnlineVideoModel *video) n
 void OnlinePlayerViewModel::clearRutubeIdentifier() noexcept
 {
     setRutubeVideoId("");
+}
+
+void OnlinePlayerViewModel::downloadPlaylist(QNetworkReply * reply)
+{
+    auto content = reply->readAll();
+
+    auto uuid = QUuid::createUuid();
+    auto randomName = uuid.toString().replace("-", "").replace("{", "").replace("}", "").replace("[", "").replace("]", "");
+    auto fileName = getCachePath(randomName + ".m3u8");
+    QFile file(fileName);
+    if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+        return;
+    }
+
+    file.write(content);
+
+    file.close();
+
+    QDesktopServices::openUrl(QUrl(fileName));
 }
