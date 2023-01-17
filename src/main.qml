@@ -420,7 +420,8 @@ ApplicationWindow {
             onMouseYChanged: {
                 const delta = mouseY - previousY;
                 window.y += delta;
-                window.height -= delta;
+                var newHeight = window.height - delta;
+                if (newHeight > 50) window.height = newHeight;
             }
         }
     }
@@ -522,10 +523,12 @@ ApplicationWindow {
                 previousY = mouseY
             }
             onMouseXChanged: {
-                window.width += mouseX - previousX;
+                var newWidth = window.width + mouseX - previousX;
+                if (newWidth > 100) window.width = newWidth;
             }
             onMouseYChanged: {
-                window.height += mouseY - previousY;
+                var newHeight = window.height + mouseY - previousY;
+                if (newHeight > 50) window.height = newHeight;
             }
         }
 
@@ -544,10 +547,12 @@ ApplicationWindow {
             onMouseXChanged: {
                 const delta = mouseX - previousX;
                 window.x = window.x + delta;
-                window.width = window.width - delta;
+                const newWidth = window.width - delta;
+                if (newWidth > 100) window.width = newWidth;
             }
             onMouseYChanged: {
-                window.height += mouseY - previousY;
+                const newHeight = window.height + mouseY - previousY;
+                if (newHeight > 50) window.height = newHeight;
             }
         }
 
@@ -563,7 +568,8 @@ ApplicationWindow {
                 previousY = mouseY
             }
             onMouseYChanged: {
-                window.height += mouseY - previousY;
+                const newHeight = window.height + mouseY - previousY;
+                if (newHeight > 50) window.height = newHeight;
             }
         }
     }
@@ -1141,7 +1147,8 @@ ApplicationWindow {
             onMouseXChanged: {
                 const delta = mouseX - previousX;
                 window.x = window.x + delta;
-                window.width = window.width - delta;
+                const newWidth = window.width - delta;
+                if (newWidth > 100) window.width = newWidth;
             }
         }
 
@@ -1157,7 +1164,8 @@ ApplicationWindow {
                 previousX = mouseX
             }
             onMouseXChanged: {
-                window.width += mouseX - previousX;
+                const newWidth = window.width + mouseX - previousX;
+                if (newWidth > 100) window.width = newWidth;
             }
         }
     }
