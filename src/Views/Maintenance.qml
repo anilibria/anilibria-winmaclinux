@@ -65,6 +65,7 @@ Page {
                         iconWidth: 28
                         iconHeight: 28
                         iconPath: applicationThemeViewModel.iconMainMenu
+                        tooltipMessage: "Перейти на страницу Каталог релизов"
                         onButtonPressed: {
                             drawer.open();
                         }
