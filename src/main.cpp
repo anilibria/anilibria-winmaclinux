@@ -88,8 +88,12 @@ int main(int argc, char *argv[])
         freopen_s(&newstderr, "CONOUT$", "w", stderr);
     }
 #endif
-    if (argc >= 2 && QString(argv[1]) == "portable") {
-        IsPortable = true;
+
+    if (argc >= 2) {
+        auto parameter = QString(argv[1]);
+        if (parameter == "portable" || parameter == "-portable") {
+            IsPortable = true;
+        }
     }
 
     QGuiApplication app(argc, argv);
