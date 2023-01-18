@@ -27,7 +27,7 @@ OnlinePlayerWindowViewModel::OnlinePlayerWindowViewModel(QObject *parent) : QObj
     m_panelOpacity(1),
     m_isStandartPlayer(true)
 {
-#ifdef Q_OS_WIN
+#ifdef USE_VLC_PLAYER
     m_isStandartPlayer = false;
 #endif
 }

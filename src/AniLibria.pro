@@ -14,6 +14,8 @@ windows {
 }
 
 buildwithvlc {
+    DEFINES += USE_VLC_PLAYER
+
     SOURCES += \
         vlc-qt/core/AbstractVideoFrame.cpp \
         vlc-qt/core/AbstractVideoStream.cpp \
