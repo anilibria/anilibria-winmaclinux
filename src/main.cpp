@@ -60,7 +60,7 @@
 #include "Classes/ListModels/themefieldlistmodel.h"
 #include "Classes/ListModels/localthemeslistmodel.h"
 #include "Classes/ListModels/myanilibriasearchlistmodel.h"
-#ifdef Q_OS_WIN
+#ifdef USE_VLC_PLAYER
 #include "vlc-qt/qml/VlcQmlPlayer.h"
 #include "vlc-qt/qml/VlcQmlVideoOutput.h"
 #include "vlc-qt/core/TrackModel.h"
@@ -139,7 +139,7 @@ int main(int argc, char *argv[])
     qmlRegisterType<LocalThemesListModel>("Anilibria.ListModels", 1, 0, "LocalThemesListModel");
     qmlRegisterType<MyAnilibriaSearchListModel>("Anilibria.ListModels", 1, 0, "MyAnilibriaSearchListModel");
 
-#ifdef Q_OS_WIN
+#ifdef USE_VLC_PLAYER
     VlcCommon::setPluginPath(app.applicationDirPath() + "/plugins");
 
     qmlRegisterUncreatableType<Vlc>("VLCQt", 1, 1, "Vlc", QStringLiteral("Vlc cannot be instantiated directly"));
