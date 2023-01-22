@@ -372,6 +372,14 @@ void OnlinePlayerViewModel::setRutubeVideoId(const QString &rutubeVideoId) noexc
     emit rutubeVideoIdChanged();
 }
 
+void OnlinePlayerViewModel::setShowedDropWarning(bool showedDropWarning) noexcept
+{
+    if (m_showedDropWarning == showedDropWarning) return;
+
+    m_showedDropWarning = showedDropWarning;
+    emit showedDropWarningChanged();
+}
+
 void OnlinePlayerViewModel::toggleFullScreen()
 {
     setIsFullScreen(!m_isFullScreen);
@@ -591,7 +599,7 @@ void OnlinePlayerViewModel::setVideoSeens(int id, int videoId, double videoPosit
     saveVideoSeens();
 }
 
-void OnlinePlayerViewModel::quickSetupForSingleRelease(int releaseId)
+void OnlinePlayerViewModel::quickSetupForSingleRelease(int releaseId, int customPosition)
 {
     setShowNextPosterRelease(false);
     setSeenMarkedAtEnd(false);
@@ -602,7 +610,8 @@ void OnlinePlayerViewModel::quickSetupForSingleRelease(int releaseId)
     m_navigateReleaseId = releaseId;
     m_navigatePoster = release->poster();
     m_navigateVideos = release->videos();
-    m_customPlaylistPosition = -1;
+    m_customPlaylistPosition = customPosition;
+    m_isReleaseLess2022 = release->year() < 2022;
 
     m_videos->setVideosFromSingleList(m_navigateVideos, m_navigateReleaseId, m_navigatePoster);
 
@@ -614,6 +623,8 @@ void OnlinePlayerViewModel::quickSetupForSingleRelease(int releaseId)
         auto model = m_seenModels->value(m_navigateReleaseId);
         videoIndex = model->videoId();
     }
+
+    if (m_customPlaylistPosition > -1) videoIndex = m_customPlaylistPosition;
 
     auto firstVideo = m_videos->getVideoAtIndex(videoIndex);
 
@@ -628,6 +639,7 @@ void OnlinePlayerViewModel::quickSetupForSingleRelease(int releaseId)
     emit playInPlayer();
     emit saveToWatchHistory(m_navigateReleaseId);
     emit needScrollSeriaPosition();
+    emit isReleaseLess2022Changed();
     m_releasesViewModel->resetReleaseChanges(m_selectedRelease);
 }
 

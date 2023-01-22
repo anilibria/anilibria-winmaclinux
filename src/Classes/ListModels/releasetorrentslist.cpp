@@ -67,7 +67,7 @@ QHash<int, QByteArray> ReleaseTorrentsList::roleNames() const
     return {
         {
             IdRole,
-            "id"
+            "releaseid"
         },
         {
             SizeRole,

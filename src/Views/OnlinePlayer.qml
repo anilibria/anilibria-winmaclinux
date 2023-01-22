@@ -148,12 +148,7 @@ Page {
             const lastSeenReleaseId = onlinePlayerViewModel.getLastVideoSeen();
             if (lastSeenReleaseId === 0) return;
 
-            onlinePlayerViewModel.customPlaylistPosition = -1;
-            onlinePlayerViewModel.navigateReleaseId = lastSeenReleaseId;
-            onlinePlayerViewModel.navigateVideos = releasesViewModel.getReleaseVideos(lastSeenReleaseId);
-            onlinePlayerViewModel.navigatePoster = releasesViewModel.getReleasePoster(lastSeenReleaseId);
-
-            onlinePlayerViewModel.setupForSingleRelease();
+            onlinePlayerViewModel.quickSetupForSingleRelease(lastSeenReleaseId);
         }
 
     }
@@ -1486,6 +1481,11 @@ Page {
                 mainViewModel.selectPage("release");
             }
         }
+    }
+
+    InfoAboutPlayer {
+        anchors.right: releasePosterArea.left
+        anchors.top: parent.top
     }
 
     Rectangle {

@@ -219,6 +219,7 @@ SOURCES += \
     Classes/ViewModels/onlineplayerviewmodel.cpp \
     Classes/ViewModels/onlineplayerwindowviewmodel.cpp \
     Classes/ViewModels/releasesviewmodel.cpp \
+    Classes/ViewModels/torrentnotifierviewmodel.cpp \
     Classes/ViewModels/useractivityviewmodel.cpp \
     Classes/ViewModels/userconfigurationviewmodel.cpp \
     Classes/ViewModels/youtubeviewmodel.cpp \
@@ -320,6 +321,7 @@ HEADERS += \
     Classes/ViewModels/onlineplayerviewmodel.h \
     Classes/ViewModels/onlineplayerwindowviewmodel.h \
     Classes/ViewModels/releasesviewmodel.h \
+    Classes/ViewModels/torrentnotifierviewmodel.h \
     Classes/ViewModels/useractivityviewmodel.h \
     Classes/ViewModels/userconfigurationviewmodel.h \
     Classes/ViewModels/youtubeviewmodel.h \

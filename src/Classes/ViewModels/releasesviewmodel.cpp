@@ -1126,6 +1126,15 @@ void ReleasesViewModel::clearDeletedInCacheMarks()
     saveReleasesFromMemoryToFile();
 }
 
+void ReleasesViewModel::downloadTorrent(int releaseId, const QString& torrentPath, int port)
+{
+    if (port == 0) return;
+
+    auto url = "http://localhost:" + QString::number(port) + "/fulldownload?id=" + QString::number(releaseId) + "&path=" + torrentPath;
+    QNetworkRequest request(url);
+    m_manager->get(request);
+}
+
 FullReleaseModel *ReleasesViewModel::getReleaseById(int id) const noexcept
 {
     auto iterator = std::find_if(

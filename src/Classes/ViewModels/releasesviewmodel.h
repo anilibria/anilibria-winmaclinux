@@ -133,6 +133,7 @@ private:
     bool m_notCloseReleaseCardAfterWatch { false };
     QString m_openedReleaseAnnounce { "" };
     QList<int> m_sectionCounters { QList<int>() };
+    QNetworkAccessManager* m_manager { new QNetworkAccessManager(this) };
 
 public:
     explicit ReleasesViewModel(QObject *parent = nullptr);
@@ -285,6 +286,7 @@ public:
     Q_INVOKABLE void openInExternalPlayer(const QString& url);
     Q_INVOKABLE void prepareTorrentsForListItem(const int id);
     Q_INVOKABLE void clearDeletedInCacheMarks();
+    Q_INVOKABLE void downloadTorrent(int releaseId, const QString& torrentPath, int port);
     FullReleaseModel* getReleaseById(int id) const noexcept;
     void resetReleaseChanges(int releaseId) noexcept;
     quint32 m_seedValue { 0 };

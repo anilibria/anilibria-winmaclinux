@@ -64,6 +64,7 @@ public:
     Q_INVOKABLE void setAutoNextVideo(bool autoNextVideo);
     Q_INVOKABLE void setAutoTopMost(bool autoTopMost);
     Q_INVOKABLE void setTorrentDownloadMode(int torrentDownloadMode);
+    Q_INVOKABLE bool isUseTorrentStreamMode();
     Q_INVOKABLE void setNotificationForFavorites(bool notificationForFavorites);
     Q_INVOKABLE void setJumpMinute(int jumpMinute);
     Q_INVOKABLE void setJumpSecond(int jumpSecond);

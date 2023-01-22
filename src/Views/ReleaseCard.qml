@@ -494,10 +494,15 @@ ColumnLayout {
                                 text: "Скачать " + quality + " [" + series + "] " + size
                                 onPressed: {
                                     const torrentUri = synchronizationService.combineWithWebSiteUrl(url);
-                                    synchronizationService.downloadTorrent(torrentUri);
-                                    userActivityViewModel.addDownloadedTorrentToCounter();
+                                    if (localStorage.isUseTorrentStreamMode()) {
+                                        releasesViewModel.downloadTorrent(releaseid, torrentUri, userConfigurationViewModel.playerBuffer);
+                                        torrentNotifierViewModel.startGetNotifiers(userConfigurationViewModel.playerBuffer);
+                                    } else {
+                                        synchronizationService.downloadTorrent(torrentUri);
+                                        userActivityViewModel.addDownloadedTorrentToCounter();
 
-                                    if (userConfigurationViewModel.markAsReadAfterDownload) setSeenStateForOpenedRelease(true);
+                                        if (userConfigurationViewModel.markAsReadAfterDownload) setSeenStateForOpenedRelease(true);
+                                    }
                                 }
                             }
                         }

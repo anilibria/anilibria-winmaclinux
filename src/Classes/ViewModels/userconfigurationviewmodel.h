@@ -66,7 +66,7 @@ private:
     QString m_fixedControlPanelField { "fixedControlPanel" };
     QString m_hidedQualityField { "hidedQuality" };
     QString m_hidedSpeedField { "hidedSpeed" };
-    QString m_playerBufferField { "playerBuffer" };
+    QString m_playerBufferField { "torrentStreamBuffer" };
     QString m_usingVideoProxyField { "usingVideoProxy" };
     int m_opacityPlayerPanel { 50 };
     bool m_notCloseReleaseCardAfterWatch { false };

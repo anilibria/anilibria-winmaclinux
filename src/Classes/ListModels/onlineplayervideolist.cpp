@@ -232,14 +232,14 @@ void OnlinePlayerVideoList::setVideosFromSingleTorrent(const ReleaseTorrentModel
         auto start = parts[0].toInt();
         auto end = parts[1].toInt();
 
-        countSeries = start == 1 && end == 1 ? 1 : end - 1;
+        countSeries = start == 1 && end == 1 ? 1 : end;
     } else {
         countSeries = series.toInt();
     }
 
     for (auto i = 0; i < countSeries; i++) {
         auto videoModel = new OnlineVideoModel();
-        auto url = "http://localhost:" + QString::number(port) + "/online?index=" + QString::number(i) + "&path=" + AnilibriaImagesPath + torrent.url();
+        auto url = "http://localhost:" + QString::number(port) + "/online?id=" + QString::number(releaseId) + "&index=" + QString::number(i) + "&path=" + AnilibriaImagesPath + torrent.url();
         videoModel->setFullHd(url);
         videoModel->setHd(url);
         videoModel->setSd(url);

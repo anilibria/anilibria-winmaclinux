@@ -1062,13 +1062,8 @@ ApplicationWindow {
             visible: mainViewModel.isReleasesPageVisible
             focus: true
             onWatchSingleRelease: {
-                onlinePlayerViewModel.customPlaylistPosition = startSeria;
-                onlinePlayerViewModel.navigateReleaseId = releaseId;
-                onlinePlayerViewModel.navigateVideos = videos;
-                onlinePlayerViewModel.navigatePoster = poster;
-
                 mainViewModel.selectPage("videoplayer");
-                onlinePlayerViewModel.setupForSingleRelease();
+                onlinePlayerViewModel.quickSetupForSingleRelease(releaseId, startSeria);
             }
             onWatchCinemahall: {
                 mainViewModel.selectPage("videoplayer");
@@ -1437,6 +1432,18 @@ ApplicationWindow {
         }
         fieldList.onErrorMessage: {
             notificationViewModel.sendInfoNotification(message);
+        }
+    }
+
+    TorrentNotifierViewModel {
+        id: torrentNotifierViewModel
+        onTorrentFullyDownloaded: {
+            console.log('release ' + releaseId + ' fully downloaded!!!');
+        }
+        Component.onCompleted: {
+            /*if (userConfigurationViewModel.playerBuffer > 0) {
+                torrentNotifierViewModel.startGetNotifiers(userConfigurationViewModel.playerBuffer);
+            }*/
         }
     }
 

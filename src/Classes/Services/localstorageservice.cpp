@@ -241,6 +241,11 @@ void LocalStorageService::setTorrentDownloadMode(int torrentDownloadMode)
     saveSettings();
 }
 
+bool LocalStorageService::isUseTorrentStreamMode()
+{
+    return m_UserSettingsModel->torrentDownloadMode() == 2;
+}
+
 void LocalStorageService::setNotificationForFavorites(bool notificationForFavorites)
 {
     m_UserSettingsModel->setNotificationForFavorites(notificationForFavorites);

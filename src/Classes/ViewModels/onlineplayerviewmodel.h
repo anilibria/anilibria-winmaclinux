@@ -72,6 +72,8 @@ class OnlinePlayerViewModel : public QObject
     Q_PROPERTY(bool seenMarkedAtEnd READ seenMarkedAtEnd WRITE setSeenMarkedAtEnd NOTIFY seenMarkedAtEndChanged)
     Q_PROPERTY(bool displaySkipOpening READ displaySkipOpening WRITE setDisplaySkipOpening NOTIFY displaySkipOpeningChanged)
     Q_PROPERTY(QString rutubeVideoId READ rutubeVideoId WRITE setRutubeVideoId NOTIFY rutubeVideoIdChanged)
+    Q_PROPERTY(bool showedDropWarning READ showedDropWarning WRITE setShowedDropWarning NOTIFY showedDropWarningChanged)
+    Q_PROPERTY(bool isReleaseLess2022 READ isReleaseLess2022 NOTIFY isReleaseLess2022Changed)
 
 private:
     bool m_isFullScreen;
@@ -120,6 +122,8 @@ private:
     bool m_seenMarkedAtEnd { false };
     bool m_displaySkipOpening { false };
     QString m_rutubeVideoId { "" };
+    bool m_showedDropWarning { false };
+    bool m_isReleaseLess2022 { false };
 
 public:
     explicit OnlinePlayerViewModel(QObject *parent = nullptr);
@@ -238,6 +242,11 @@ public:
     QString rutubeVideoId() const noexcept { return m_rutubeVideoId; }
     void setRutubeVideoId(const QString& rutubeVideoId) noexcept;
 
+    bool showedDropWarning() const noexcept { return m_showedDropWarning; }
+    void setShowedDropWarning(bool showedDropWarning) noexcept;
+
+    bool isReleaseLess2022() const noexcept { return m_isReleaseLess2022; }
+
     Q_INVOKABLE void toggleFullScreen();
     Q_INVOKABLE void changeVideoPosition(int duration, int position) noexcept;
     Q_INVOKABLE QString checkExistingVideoQuality(int index);    
@@ -247,7 +256,7 @@ public:
     Q_INVOKABLE int getCurrentVideoSeenVideoPosition();
     Q_INVOKABLE int getLastVideoSeen();
     Q_INVOKABLE void setVideoSeens(int id, int videoId, double videoPosition);
-    Q_INVOKABLE void quickSetupForSingleRelease(int releaseId);
+    Q_INVOKABLE void quickSetupForSingleRelease(int releaseId, int customPosition = -1);
     Q_INVOKABLE void quickSetupForSingleTorrentRelease(int releaseId, int index, int port);
     Q_INVOKABLE void quickSetupForMultipleRelease(QList<int> releaseIds);
     Q_INVOKABLE void quickSetupForFavoritesCinemahall();
@@ -338,6 +347,8 @@ signals:
     void displaySkipOpeningChanged();
     void isRutubeVideoChanged();
     void rutubeVideoIdChanged();
+    void showedDropWarningChanged();
+    void isReleaseLess2022Changed();
 
 };
 

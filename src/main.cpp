@@ -60,6 +60,7 @@
 #include "Classes/ListModels/themefieldlistmodel.h"
 #include "Classes/ListModels/localthemeslistmodel.h"
 #include "Classes/ListModels/myanilibriasearchlistmodel.h"
+#include "Classes/ViewModels/torrentnotifierviewmodel.cpp"
 #ifdef USE_VLC_PLAYER
 #include "vlc-qt/qml/VlcQmlPlayer.h"
 #include "vlc-qt/qml/VlcQmlVideoOutput.h"
@@ -138,6 +139,7 @@ int main(int argc, char *argv[])
     qmlRegisterType<ThemeFieldListModel>("Anilibria.ListModels", 1, 0, "ThemeFieldListModel");
     qmlRegisterType<LocalThemesListModel>("Anilibria.ListModels", 1, 0, "LocalThemesListModel");
     qmlRegisterType<MyAnilibriaSearchListModel>("Anilibria.ListModels", 1, 0, "MyAnilibriaSearchListModel");
+    qmlRegisterType<TorrentNotifierViewModel>("Anilibria.ViewModels", 1, 0, "TorrentNotifierViewModel");
 
 #ifdef USE_VLC_PLAYER
     VlcCommon::setPluginPath(app.applicationDirPath() + "/plugins");
