@@ -24,29 +24,20 @@
 TorrentNotifierViewModel::TorrentNotifierViewModel(QObject *parent)
     : QObject{parent}
 {
-    m_timer->setInterval(4000);
     m_webSocket = new QWebSocket("localhost", QWebSocketProtocol::VersionLatest, this);
 
     connect(m_timer,&QTimer::timeout, this, &TorrentNotifierViewModel::triggerNotifier);
-    connect(m_webSocket,&QWebSocket::textMessageReceived, this, &TorrentNotifierViewModel::triggerNotifier);
+    connect(m_webSocket,&QWebSocket::textMessageReceived, this, &TorrentNotifierViewModel::messageReceived);
 }
 
 void TorrentNotifierViewModel::startGetNotifiers(int port)
 {
-    if (m_timer->isActive()) return;
-
     m_webSocket->open(QUrl("ws://localhost:" + QString::number(port) + "/ws"));
-
-    m_timer->start();
-
 }
 
 void TorrentNotifierViewModel::stopNotifiers()
 {
-    if (!m_timer->isActive()) return;
-
     m_webSocket->close(QWebSocketProtocol::CloseCode::CloseCodeNormal, "not need");
-    m_timer->stop();
 }
 
 void TorrentNotifierViewModel::triggerNotifier()
@@ -60,31 +51,22 @@ void TorrentNotifierViewModel::messageReceived(const QString &message)
 {
     if (message.isEmpty()) return;
 
-    auto document = QJsonDocument::fromJson(message.toUtf8());
-    auto items = document.array();
-    foreach (auto item, items) {
-        auto object = item.toObject();
+    auto firstSeparator = message.indexOf(":");
+    if (firstSeparator == -1) return;
+
+    auto response = message.midRef(0, firstSeparator);
+
+    if (response == "ds") {
+        auto document = QJsonDocument::fromJson(message.mid(3).toUtf8());
+        auto object = document.object();
         auto isAll = false;
         QString path = "";
         int identifier = 0;
-        if (object.contains("all")) isAll = object.value("all").toBool();
-        if (object.contains("path")) path = object.value("path").toString();
-        if (object.contains("identifier")) identifier = object.value("identifier").toInt();
-        if (identifier > 0 && !path.isEmpty()) {
-            auto key = QString::number(identifier) + path;
-            if (!m_downloadedStatuses.contains(key) && isAll) {
-                m_downloadedStatuses.insert(key, true);
-                return;
-            }
-            if (m_downloadedStatuses.contains(key)) {
-                auto value = m_downloadedStatuses.value(key);
-                if (!value && isAll) {
-                    emit torrentFullyDownloaded(identifier);
-                    return;
-                }
-            }
-
-            m_downloadedStatuses.insert(key, isAll);
+        if (object.contains("All")) isAll = object.value("All").toBool();
+        if (object.contains("Path")) path = object.value("Path").toString();
+        if (object.contains("Id")) identifier = object.value("Id").toInt();
+        if (identifier > 0 && !path.isEmpty() && isAll) {
+            emit torrentFullyDownloaded(identifier, path);
         }
     }
 }

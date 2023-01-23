@@ -1441,9 +1441,12 @@ ApplicationWindow {
             console.log('release ' + releaseId + ' fully downloaded!!!');
         }
         Component.onCompleted: {
-            /*if (userConfigurationViewModel.playerBuffer > 0) {
+            if (userConfigurationViewModel.playerBuffer > 0) {
                 torrentNotifierViewModel.startGetNotifiers(userConfigurationViewModel.playerBuffer);
-            }*/
+            }
+        }
+        Component.onDestruction: {
+            torrentNotifierViewModel.stopNotifiers();
         }
     }
 

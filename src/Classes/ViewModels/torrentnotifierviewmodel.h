@@ -32,7 +32,6 @@ class TorrentNotifierViewModel : public QObject
 private:
     QTimer* m_timer { new QTimer(this) };
     QWebSocket* m_webSocket;
-    QMap<QString, bool> m_downloadedStatuses { QMap<QString, bool>() };
 
 public:
     explicit TorrentNotifierViewModel(QObject *parent = nullptr);
@@ -45,7 +44,7 @@ private slots:
     void messageReceived(const QString &message);
 
 signals:
-    void torrentFullyDownloaded(int releaseId);
+    void torrentFullyDownloaded(int releaseId, const QString& path);
 
 };
 
