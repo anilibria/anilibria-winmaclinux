@@ -204,20 +204,22 @@ Page {
     Loader {
         id: playerLoader
         anchors.fill: parent
-        source: onlinePlayerWindowViewModel.isStandartPlayer ? (onlinePlayerWindowViewModel.isQt515 ? `Videoplayer/QtPlayer515.qml` : `Videoplayer/QtPlayer.qml` ) : `Videoplayer/QtAvPlayer.qml`
-        Component.onCompleted: {
-            _page.videoPlayerSource = playerLoader.item.videoPlayerSource;
-            _page.videoOutputSource = playerLoader.item.videoOutputSource;
+        source: onlinePlayerWindowViewModel.playerComponent
+        onLoaded: {
+            if (playerLoader.source) {
+                _page.videoPlayerSource = playerLoader.item.videoPlayerSource;
+                _page.videoOutputSource = playerLoader.item.videoOutputSource;
 
-            playerCreated();
+                playerCreated();
 
-            playerLoader.item.source = Qt.binding(function() { return onlinePlayerViewModel.videoSource; });
-            playerLoader.item.playbackRate = Qt.binding(function() { return onlinePlayerViewModel.playbackRate; });
+                playerLoader.item.source = Qt.binding(function() { return onlinePlayerViewModel.videoSource; });
+                playerLoader.item.playbackRate = Qt.binding(function() { return onlinePlayerViewModel.playbackRate; });
 
-            playerLoader.item.playbackStateChanged.connect(loaderPlaybackStateChanged);
-            playerLoader.item.volumeChanged.connect(loaderVolumeChanged);
-            playerLoader.item.statusChanged.connect(loaderStatusChanged);
-            playerLoader.item.positionChanged.connect(loaderPositionChanged);
+                playerLoader.item.playbackStateChanged.connect(loaderPlaybackStateChanged);
+                playerLoader.item.volumeChanged.connect(loaderVolumeChanged);
+                playerLoader.item.statusChanged.connect(loaderStatusChanged);
+                playerLoader.item.positionChanged.connect(loaderPositionChanged);
+            }
         }
 
         function loaderPlaybackStateChanged() {
@@ -1286,6 +1288,21 @@ Page {
                                     onTextChanged: {
                                         const value = parseInt(text);
                                         if (value > -1) userConfigurationViewModel.playerBuffer = value;
+                                    }
+                                }
+
+                                PlainText {
+                                    width: rightColumn.width - 20
+                                    fontPointSize: 10
+                                    text: "Текущий плеер"
+                                }
+
+                                CommonComboBox {
+                                    model: onlinePlayerWindowViewModel.players
+
+                                    onActivated: {
+                                        const newPlayer = onlinePlayerWindowViewModel.players[currentIndex]
+                                        onlinePlayerWindowViewModel.changePlayer(newPlayer)
                                     }
                                 }
                             }

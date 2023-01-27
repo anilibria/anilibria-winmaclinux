@@ -44,8 +44,8 @@ ApplicationWindow {
     signal loadPlayer()
 
     function playerLoadedHandler() {
-        if (!onlinePlayerWindowViewModel.isStandartPlayer) videoOutputLoader.item.source = root.videoSource;
-        if (onlinePlayerWindowViewModel.isQt515 && onlinePlayerWindowViewModel.isStandartPlayer) {
+        if (!onlinePlayerWindowViewModel.supportOutput) videoOutputLoader.item.source = root.videoSource;
+        if (onlinePlayerWindowViewModel.supportOutput) {
             root.videoSource.addNewVideoOuput(videoOutputLoader.item);
         }
         root.videoSource.playbackStateChanged.connect(playbackStateChanged);
@@ -56,7 +56,7 @@ ApplicationWindow {
     Loader {
         id: videoOutputLoader
         anchors.fill: parent
-        source: onlinePlayerWindowViewModel.isStandartPlayer ? (onlinePlayerWindowViewModel.isQt515 ? `Videoplayer/QtVideo515Output.qml` : `Videoplayer/QtVideoOutput.qml`) : `Videoplayer/QtAvVideoOutput.qml`
+        source: onlinePlayerWindowViewModel.playerOutputComponent
     }
 
     onLoadPlayer: {

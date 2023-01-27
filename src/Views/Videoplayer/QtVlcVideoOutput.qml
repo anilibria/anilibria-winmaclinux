@@ -1,7 +1,7 @@
 import QtQuick 2.12
-import QtAV 1.7
+import VLCQt 1.1
 
-VideoOutput2 {
+VlcVideoOutput {
     id: videoOutput
     anchors.fill: parent
 }
