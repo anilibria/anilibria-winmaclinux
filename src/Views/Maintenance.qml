@@ -100,7 +100,7 @@ Page {
                     Rectangle {
                         id: flickableContent
                         width: scrollview.width - 10
-                        height: 720
+                        height: 840
                         color: "transparent"
                         border.color: "white"
                         border.width: 1
@@ -340,6 +340,37 @@ Page {
                                     width: parent.width
                                     wrapMode: Text.WordWrap
                                     text: "Вы можете восстановить состояние из созданного ранее бекапа кеша файлов приложения. Очень важно чтобы на момент выполнения синхронизация релизов была завершена иначе кеш может побится! После выполнения перезапустите приложение!"
+                                }
+                            }
+
+                            Item {
+                                width: 220
+                                height: 100
+
+                                RoundedActionButton {
+                                    anchors.verticalCenter: parent.verticalCenter
+                                    anchors.left: parent.left
+                                    anchors.leftMargin: 10
+                                    width: parent.width - 10
+                                    text: "TorrentStream"
+                                    onClicked: {
+                                        torrentStreamPopup.open();
+                                    }
+                                }
+                            }
+
+                            Rectangle {
+                                color: "transparent"
+                                Layout.fillWidth: true
+                                Layout.fillHeight: true
+
+                                PlainText {
+                                    fontPointSize: 12
+                                    anchors.verticalCenter: parent.verticalCenter
+                                    anchors.left: parent.left
+                                    width: parent.width
+                                    wrapMode: Text.WordWrap
+                                    text: "Настроить метод взаимодействия с приложением TorrentStream"
                                 }
                             }
                         }
@@ -653,6 +684,116 @@ Page {
                                 onClicked: {
                                     proxyPopup.close();
                                 }
+                            }
+                        }
+                    }
+                }
+            }
+
+            DefaultPopup {
+                id: torrentStreamPopup
+                x: window.width / 2 - apiAddressPopup.width / 2
+                y: window.height / 2 - apiAddressPopup.height / 2
+                width: 450
+                height: 320
+                modal: true
+                focus: true
+                closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
+
+                ColumnLayout {
+                    width: parent.width
+                    spacing: 10
+
+                    AccentText {
+                        width: torrentStreamPopup.width
+                        text: "Путь к приложению"
+                        fontPointSize: 12
+                        font.bold: true
+                        elide: Text.ElideRight
+                    }
+
+                    Rectangle {
+                        width: torrentStreamPopup.width - 30
+                        height: torrentStreamPath.height
+
+                        TextField {
+                            id: torrentStreamPath
+                            width: parent.width
+                            placeholderText: "Введите полный путь"
+                            text: userConfigurationViewModel.torrentStreamPath
+                        }
+                    }
+
+
+                    AccentText {
+                        width: torrentStreamPopup.width
+                        text: "Порт приложения"
+                        fontPointSize: 12
+                        font.bold: true
+                        elide: Text.ElideRight
+                    }
+
+                    Rectangle {
+                        width: torrentStreamPopup.width - 30
+                        height: torrentStreamPort.height
+
+                        TextField {
+                            id: torrentStreamPort
+                            width: parent.width
+                            placeholderText: "Введите порт приложения TorrentStream"
+                            text: userConfigurationViewModel.playerBuffer
+                            validator: IntValidator {
+                                top: 65535
+                                bottom: 0
+                            }
+                        }
+                    }
+
+                    AccentText {
+                        width: torrentStreamPopup.width
+                        text: "Использовать проксирование видео для QtAv"
+                        fontPointSize: 12
+                        font.bold: true
+                        elide: Text.ElideRight
+                    }
+
+                    Switch {
+                        id: usingVideoProxySwitch
+                        height: 15
+                        checked: userConfigurationViewModel.usingVideoProxy
+                    }
+
+                    Rectangle {
+                        color: "transparent"
+                        width: apiAddressPopup.width - 20
+                        height: 70
+
+                        RoundedActionButton {
+                            id: torrentStreamSaveButton
+                            anchors.right: torrentStreamCancelButton.left
+                            anchors.rightMargin: 10
+                            anchors.verticalCenter: parent.verticalCenter
+                            text: "Сохранить"
+                            width: 100
+                            onClicked: {
+                                const value = parseInt(torrentStreamPort.text);
+                                if (value > -1) userConfigurationViewModel.playerBuffer = value;
+
+                                userConfigurationViewModel.usingVideoProxy = usingVideoProxySwitch;
+                                userConfigurationViewModel.torrentStreamPath = torrentStreamPath.text;
+
+                                torrentStreamPopup.close();
+                            }
+                        }
+
+                        RoundedActionButton {
+                            id: torrentStreamCancelButton
+                            anchors.right: parent.right
+                            anchors.verticalCenter: parent.verticalCenter
+                            text: "Отмена"
+                            width: 100
+                            onClicked: {
+                                torrentStreamPopup.close();
                             }
                         }
                     }

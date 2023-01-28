@@ -19,6 +19,9 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QJsonArray>
+#include <QFile>
+#include <QFileInfo>
+#include <QProcess>
 #include "torrentnotifierviewmodel.h"
 
 TorrentNotifierViewModel::TorrentNotifierViewModel(QObject *parent)
@@ -28,6 +31,28 @@ TorrentNotifierViewModel::TorrentNotifierViewModel(QObject *parent)
 
     connect(m_timer,&QTimer::timeout, this, &TorrentNotifierViewModel::triggerNotifier);
     connect(m_webSocket,&QWebSocket::textMessageReceived, this, &TorrentNotifierViewModel::messageReceived);
+}
+
+void TorrentNotifierViewModel::setTorrentStreamPath(const QString &torrentStreamPath) noexcept
+{
+    if (m_torrentStreamPath == torrentStreamPath) return;
+
+    m_torrentStreamPath = torrentStreamPath;
+    emit torrentStreamPathChanged();
+
+    QFileInfo fileInfo(torrentStreamPath);
+    if (!QFile::exists(fileInfo.absoluteFilePath())) {
+        qInfo() << "TorrentStream path not configured";
+        emit torrentStreamNotConfigured();
+        return;
+    }
+
+    QStringList arguments;
+
+    m_torrentStreamProcess = new QProcess(this);
+    m_torrentStreamProcess->start(fileInfo.absoluteFilePath(), arguments);
+
+    connect(m_torrentStreamProcess, &QProcess::started, this, &TorrentNotifierViewModel::torrentStreamProcessStarted);
 }
 
 void TorrentNotifierViewModel::startGetNotifiers(int port)
@@ -69,4 +94,12 @@ void TorrentNotifierViewModel::messageReceived(const QString &message)
             emit torrentFullyDownloaded(identifier, path);
         }
     }
+}
+
+void TorrentNotifierViewModel::torrentStreamProcessStarted()
+{
+    qInfo() << "TorrentStream started from application";
+    m_activated = true;
+    emit activatedChanged();
+    emit torrentStreamStarted();
 }

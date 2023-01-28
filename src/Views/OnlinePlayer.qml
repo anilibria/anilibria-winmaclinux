@@ -1271,25 +1271,6 @@ Page {
                                         userConfigurationViewModel.hideSkipOpening = checked;
                                     }
                                 }
-                                PlainText {
-                                    width: rightColumn.width - 20
-                                    fontPointSize: 10
-                                    text: "Порт приложения TorrentStream"
-
-                                }
-
-                                TextField {
-                                    width: rightColumn.width - 20
-                                    text: userConfigurationViewModel.playerBuffer
-                                    validator: IntValidator {
-                                        top: 65535
-                                        bottom: 0
-                                    }
-                                    onTextChanged: {
-                                        const value = parseInt(text);
-                                        if (value > -1) userConfigurationViewModel.playerBuffer = value;
-                                    }
-                                }
 
                                 PlainText {
                                     width: rightColumn.width - 20

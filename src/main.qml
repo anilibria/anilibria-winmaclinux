@@ -1437,13 +1437,14 @@ ApplicationWindow {
 
     TorrentNotifierViewModel {
         id: torrentNotifierViewModel
+        torrentStreamPath: userConfigurationViewModel.torrentStreamPath
         onTorrentFullyDownloaded: {
             console.log('release ' + releaseId + ' fully downloaded!!!');
         }
-        Component.onCompleted: {
-            if (userConfigurationViewModel.playerBuffer > 0) {
-                torrentNotifierViewModel.startGetNotifiers(userConfigurationViewModel.playerBuffer);
-            }
+        onTorrentStreamNotConfigured: {
+            if (!userConfigurationViewModel.playerBuffer) return
+
+            torrentNotifierViewModel.startGetNotifiers(userConfigurationViewModel.playerBuffer);
         }
         Component.onDestruction: {
             torrentNotifierViewModel.stopNotifiers();

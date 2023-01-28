@@ -24,17 +24,28 @@
 #include <QTimer>
 #include <QWebSocket>
 #include <QMap>
+#include <QProcess>
 
 class TorrentNotifierViewModel : public QObject
 {
     Q_OBJECT
+    Q_PROPERTY(QString torrentStreamPath READ torrentStreamPath WRITE setTorrentStreamPath NOTIFY torrentStreamPathChanged)
+    Q_PROPERTY(bool activated READ activated NOTIFY activatedChanged)
 
 private:
     QTimer* m_timer { new QTimer(this) };
     QWebSocket* m_webSocket;
+    QString m_torrentStreamPath { "" };
+    QProcess* m_torrentStreamProcess { nullptr };
+    bool m_activated { false };
 
 public:
     explicit TorrentNotifierViewModel(QObject *parent = nullptr);
+
+    QString torrentStreamPath() const noexcept { return m_torrentStreamPath; }
+    void setTorrentStreamPath(const QString& torrentStreamPath) noexcept;
+
+    bool activated() const noexcept { return m_activated; }
 
     Q_INVOKABLE void startGetNotifiers(int port);
     Q_INVOKABLE void stopNotifiers();
@@ -42,9 +53,14 @@ public:
 private slots:
     void triggerNotifier();
     void messageReceived(const QString &message);
+    void torrentStreamProcessStarted();
 
 signals:
     void torrentFullyDownloaded(int releaseId, const QString& path);
+    void torrentStreamStarted();
+    void torrentStreamNotConfigured();
+    void torrentStreamPathChanged();
+    void activatedChanged();
 
 };
 
