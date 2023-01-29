@@ -219,6 +219,9 @@ Page {
                 playerLoader.item.volumeChanged.connect(loaderVolumeChanged);
                 playerLoader.item.statusChanged.connect(loaderStatusChanged);
                 playerLoader.item.positionChanged.connect(loaderPositionChanged);
+
+                playerLoader.item.volume = onlinePlayerViewModel.volumeSlider / 100;
+                playerLoader.item.muted = onlinePlayerViewModel.muted;
             }
         }
 
@@ -743,7 +746,7 @@ Page {
                         height: 40
                         iconColor: applicationThemeViewModel.filterIconButtonColor
                         hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
-                        iconPath: playerLoader.item.muted ? "../Assets/Icons/mute.svg" : "../Assets/Icons/speaker.svg"
+                        iconPath: onlinePlayerViewModel.muted ? "../Assets/Icons/mute.svg" : "../Assets/Icons/speaker.svg"
                         iconWidth: 24
                         iconHeight: 24
                         onButtonPressed: {

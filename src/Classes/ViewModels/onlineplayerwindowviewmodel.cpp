@@ -134,7 +134,6 @@ void OnlinePlayerWindowViewModel::changePlayer(const QString &player)
     emit supportOutputChanged();
     emit playerComponentChanged();
     emit playerOutputComponentChanged();
-
 }
 
 void OnlinePlayerWindowViewModel::fillSupportedPlayers()
