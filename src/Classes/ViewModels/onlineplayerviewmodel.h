@@ -74,6 +74,8 @@ class OnlinePlayerViewModel : public QObject
     Q_PROPERTY(QString rutubeVideoId READ rutubeVideoId WRITE setRutubeVideoId NOTIFY rutubeVideoIdChanged)
     Q_PROPERTY(bool showedDropWarning READ showedDropWarning WRITE setShowedDropWarning NOTIFY showedDropWarningChanged)
     Q_PROPERTY(bool isReleaseLess2022 READ isReleaseLess2022 NOTIFY isReleaseLess2022Changed)
+    Q_PROPERTY(bool needProxified READ needProxified WRITE setNeedProxified NOTIFY needProxifiedChanged)
+    Q_PROPERTY(int proxyPort READ proxyPort WRITE setProxyPort NOTIFY proxyPortChanged)
 
 private:
     bool m_isFullScreen;
@@ -124,6 +126,8 @@ private:
     QString m_rutubeVideoId { "" };
     bool m_showedDropWarning { false };
     bool m_isReleaseLess2022 { false };
+    bool m_needProxified { false };
+    int m_proxyPort { -1 };
 
 public:
     explicit OnlinePlayerViewModel(QObject *parent = nullptr);
@@ -247,6 +251,12 @@ public:
 
     bool isReleaseLess2022() const noexcept { return m_isReleaseLess2022; }
 
+    bool needProxified() const noexcept { return m_needProxified; }
+    void setNeedProxified(bool needProxified) noexcept;
+
+    int proxyPort() const noexcept { return m_proxyPort; }
+    void setProxyPort(int proxyPort) noexcept;
+
     Q_INVOKABLE void toggleFullScreen();
     Q_INVOKABLE void changeVideoPosition(int duration, int position) noexcept;
     Q_INVOKABLE QString checkExistingVideoQuality(int index);    
@@ -349,6 +359,8 @@ signals:
     void rutubeVideoIdChanged();
     void showedDropWarningChanged();
     void isReleaseLess2022Changed();
+    void needProxifiedChanged();
+    void proxyPortChanged();
 
 };
 

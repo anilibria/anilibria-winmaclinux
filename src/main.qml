@@ -922,7 +922,8 @@ ApplicationWindow {
     OnlinePlayerViewModel {
         id: onlinePlayerViewModel
         releasesViewModel: releasesViewModel
-
+        proxyPort: userConfigurationViewModel.playerBuffer
+        needProxified: userConfigurationViewModel.usingVideoProxy && onlinePlayerWindowViewModel.isSelectedQtAv && torrentNotifierViewModel.activated
         onIsFullScreenChanged: {
             if (isFullScreen) {
                 if (applicationSettings.useCustomToolbar) {
@@ -964,6 +965,15 @@ ApplicationWindow {
                     toolBar.visible = true;
                 }
             }
+        }
+        onNeedProxifiedChanged: {
+            let oldSource = onlinePlayerViewModel.videoSource;
+            if (oldSource.indexOf('/proxyvideolist?path=')) {
+                oldSource = oldSource.substring(oldSource.indexOf("https://"));
+                console.log('replaced source', oldSource);
+            }
+            onlinePlayerViewModel.videoSource = "";
+            onlinePlayerViewModel.videoSource = oldSource;
         }
         onNeedScrollSeriaPosition: {
             videoplayer.setSerieScrollPosition();
@@ -1438,6 +1448,7 @@ ApplicationWindow {
     TorrentNotifierViewModel {
         id: torrentNotifierViewModel
         torrentStreamPath: userConfigurationViewModel.torrentStreamPath
+        removeAllData: userConfigurationViewModel.removeAllDownloadedTorrent
         onTorrentFullyDownloaded: {
             console.log('release ' + releaseId + ' fully downloaded!!!');
         }
@@ -1446,8 +1457,13 @@ ApplicationWindow {
 
             torrentNotifierViewModel.startGetNotifiers(userConfigurationViewModel.playerBuffer);
         }
+        Component.onCompleted: {
+            if (userConfigurationViewModel.torrentStreamPath) {
+                torrentNotifierViewModel.tryStartTorrentStreamApplication();
+            }
+        }
         Component.onDestruction: {
-            torrentNotifierViewModel.stopNotifiers();
+            torrentNotifierViewModel.closeConnectionsAndApplication();
         }
     }
 

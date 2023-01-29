@@ -37,6 +37,8 @@ class OnlinePlayerWindowViewModel : public QObject
     Q_PROPERTY(bool supportOutput READ supportOutput NOTIFY supportOutputChanged)
     Q_PROPERTY(QStringList players READ players NOTIFY playersChanged)
     Q_PROPERTY(QString selectedPlayer READ selectedPlayer NOTIFY selectedPlayerChanged)
+    Q_PROPERTY(bool isHasVlc READ isHasVlc NOTIFY isHasVlcChanged)
+    Q_PROPERTY(bool isSelectedQtAv READ isSelectedQtAv NOTIFY isSelectedQtAvChanged)
 
 private:
     bool m_playerButtonVisible;
@@ -52,6 +54,10 @@ private:
     QString m_selectedPlayer { "" };
     QMap<QString, QString> m_playerComponents { QMap<QString, QString>() };
     QMap<QString, QString> m_playerOutputComponents { QMap<QString, QString>() };
+    bool m_isHasVlc { false };
+    bool m_isSelectedQtAv { false };
+    const QString nameVLCPlayer { "VLC" };
+    const QString nameQtAvPlayer { "QtAv" };
 
 public:
     explicit OnlinePlayerWindowViewModel(QObject *parent = nullptr);
@@ -77,6 +83,9 @@ public:
 
     QString selectedPlayer() const noexcept { return m_selectedPlayer; }
 
+    bool isHasVlc() const noexcept { return m_isHasVlc; }
+    bool isSelectedQtAv() const noexcept { return m_isSelectedQtAv; }
+
     Q_INVOKABLE void playbackStateChanged(const bool& isPlaying);
     Q_INVOKABLE void hideControlPanel();
     Q_INVOKABLE void showPanel();
@@ -99,6 +108,8 @@ signals:
     void supportOutputChanged();
     void playersChanged();
     void selectedPlayerChanged();
+    void isHasVlcChanged();
+    void isSelectedQtAvChanged();
 
 };
 

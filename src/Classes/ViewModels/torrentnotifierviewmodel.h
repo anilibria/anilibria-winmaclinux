@@ -31,6 +31,7 @@ class TorrentNotifierViewModel : public QObject
     Q_OBJECT
     Q_PROPERTY(QString torrentStreamPath READ torrentStreamPath WRITE setTorrentStreamPath NOTIFY torrentStreamPathChanged)
     Q_PROPERTY(bool activated READ activated NOTIFY activatedChanged)
+    Q_PROPERTY(bool removeAllData READ removeAllData WRITE setRemoveAllData NOTIFY removeAllDataChanged)
 
 private:
     QTimer* m_timer { new QTimer(this) };
@@ -38,6 +39,7 @@ private:
     QString m_torrentStreamPath { "" };
     QProcess* m_torrentStreamProcess { nullptr };
     bool m_activated { false };
+    bool m_removeAllData { false };
 
 public:
     explicit TorrentNotifierViewModel(QObject *parent = nullptr);
@@ -47,13 +49,18 @@ public:
 
     bool activated() const noexcept { return m_activated; }
 
+    bool removeAllData() const noexcept { return m_removeAllData; }
+    void setRemoveAllData(bool removeAllData) noexcept;
+
     Q_INVOKABLE void startGetNotifiers(int port);
-    Q_INVOKABLE void stopNotifiers();
+    Q_INVOKABLE void closeConnectionsAndApplication();
+    Q_INVOKABLE void tryStartTorrentStreamApplication();
 
 private slots:
     void triggerNotifier();
     void messageReceived(const QString &message);
     void torrentStreamProcessStarted();
+    void socketConnected();
 
 signals:
     void torrentFullyDownloaded(int releaseId, const QString& path);
@@ -61,6 +68,7 @@ signals:
     void torrentStreamNotConfigured();
     void torrentStreamPathChanged();
     void activatedChanged();
+    void removeAllDataChanged();
 
 };
 

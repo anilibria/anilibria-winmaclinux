@@ -147,9 +147,11 @@ void OnlinePlayerViewModel::setDisplayEndVideoPosition(const QString &displayEnd
 
 void OnlinePlayerViewModel::setVideoSource(const QString &videoSource)
 {
-    if (m_videoSource == videoSource) return;
+    auto source = m_needProxified && m_proxyPort > 0 ? QString("http://localhost:") + QString::number(m_proxyPort) + "/proxyvideolist?path=" + videoSource : videoSource;
+    qDebug() << "setVideoSource: " << source;
+    if (m_videoSource == source) return;
 
-    m_videoSource = videoSource;
+    m_videoSource = source;
     emit videoSourceChanged();
 
     m_remotePlayer->broadcastCommand(m_videoSourceChangedCommand, videoSource);
@@ -378,6 +380,22 @@ void OnlinePlayerViewModel::setShowedDropWarning(bool showedDropWarning) noexcep
 
     m_showedDropWarning = showedDropWarning;
     emit showedDropWarningChanged();
+}
+
+void OnlinePlayerViewModel::setNeedProxified(bool needProxified) noexcept
+{
+    if (m_needProxified == needProxified) return;
+
+    m_needProxified = needProxified;
+    emit needProxifiedChanged();
+}
+
+void OnlinePlayerViewModel::setProxyPort(int proxyPort) noexcept
+{
+    if (m_proxyPort == proxyPort) return;
+
+    m_proxyPort = proxyPort;
+    emit proxyPortChanged();
 }
 
 void OnlinePlayerViewModel::toggleFullScreen()

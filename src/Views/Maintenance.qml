@@ -694,8 +694,8 @@ Page {
                 id: torrentStreamPopup
                 x: window.width / 2 - apiAddressPopup.width / 2
                 y: window.height / 2 - apiAddressPopup.height / 2
-                width: 450
-                height: 320
+                width: 550
+                height: 330
                 modal: true
                 focus: true
                 closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
@@ -757,16 +757,39 @@ Page {
                         elide: Text.ElideRight
                     }
 
-                    Switch {
-                        id: usingVideoProxySwitch
+                    Item {
+                        width: torrentStreamPopup.width
                         height: 15
-                        checked: userConfigurationViewModel.usingVideoProxy
+
+                        Switch {
+                            id: usingVideoProxySwitch
+                            height: 15
+                            checked: userConfigurationViewModel.usingVideoProxy
+                        }
                     }
 
-                    Rectangle {
-                        color: "transparent"
-                        width: apiAddressPopup.width - 20
-                        height: 70
+                    AccentText {
+                        width: torrentStreamPopup.width
+                        text: "Удалять скачанное после каждого запуска приложения"
+                        fontPointSize: 12
+                        font.bold: true
+                        elide: Text.ElideRight
+                    }
+
+                    Item {
+                        width: torrentStreamPopup.width
+                        height: 15
+
+                        Switch {
+                            id: removeAllDownloadedTorrentSwitch
+                            height: 15
+                            checked: userConfigurationViewModel.removeAllDownloadedTorrent
+                        }
+                    }
+
+                    Item {
+                        width: torrentStreamPopup.width - 20
+                        height: 40
 
                         RoundedActionButton {
                             id: torrentStreamSaveButton
@@ -779,8 +802,9 @@ Page {
                                 const value = parseInt(torrentStreamPort.text);
                                 if (value > -1) userConfigurationViewModel.playerBuffer = value;
 
-                                userConfigurationViewModel.usingVideoProxy = usingVideoProxySwitch;
+                                userConfigurationViewModel.usingVideoProxy = usingVideoProxySwitch.checked;
                                 userConfigurationViewModel.torrentStreamPath = torrentStreamPath.text;
+                                userConfigurationViewModel.removeAllDownloadedTorrent = removeAllDownloadedTorrentSwitch.checked;
 
                                 torrentStreamPopup.close();
                             }

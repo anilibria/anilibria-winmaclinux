@@ -37,6 +37,7 @@ ApplicationWindow {
 
     property var videoSource
     property var videoOutput
+    property bool needLoadPlayer
 
     signal showWindow()
     signal hideWindow(bool paused)
@@ -57,10 +58,18 @@ ApplicationWindow {
         id: videoOutputLoader
         anchors.fill: parent
         source: onlinePlayerWindowViewModel.playerOutputComponent
+        onLoaded: {
+            if (needLoadPlayer) playerLoadedHandler();
+        }
     }
 
     onLoadPlayer: {
-        if (videoOutputLoader.loaded) playerLoadedHandler();
+        if (videoOutputLoader.status == Loader.Ready) {
+            needLoadPlayer = false;
+            playerLoadedHandler();
+        } else {
+            needLoadPlayer = true;
+        }
     }
 
     MouseArea {

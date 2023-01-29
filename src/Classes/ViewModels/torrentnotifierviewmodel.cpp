@@ -31,6 +31,7 @@ TorrentNotifierViewModel::TorrentNotifierViewModel(QObject *parent)
 
     connect(m_timer,&QTimer::timeout, this, &TorrentNotifierViewModel::triggerNotifier);
     connect(m_webSocket,&QWebSocket::textMessageReceived, this, &TorrentNotifierViewModel::messageReceived);
+    connect(m_webSocket,&QWebSocket::connected, this, &TorrentNotifierViewModel::socketConnected);
 }
 
 void TorrentNotifierViewModel::setTorrentStreamPath(const QString &torrentStreamPath) noexcept
@@ -39,20 +40,14 @@ void TorrentNotifierViewModel::setTorrentStreamPath(const QString &torrentStream
 
     m_torrentStreamPath = torrentStreamPath;
     emit torrentStreamPathChanged();
+}
 
-    QFileInfo fileInfo(torrentStreamPath);
-    if (!QFile::exists(fileInfo.absoluteFilePath())) {
-        qInfo() << "TorrentStream path not configured";
-        emit torrentStreamNotConfigured();
-        return;
-    }
+void TorrentNotifierViewModel::setRemoveAllData(bool removeAllData) noexcept
+{
+    if (m_removeAllData == removeAllData) return;
 
-    QStringList arguments;
-
-    m_torrentStreamProcess = new QProcess(this);
-    m_torrentStreamProcess->start(fileInfo.absoluteFilePath(), arguments);
-
-    connect(m_torrentStreamProcess, &QProcess::started, this, &TorrentNotifierViewModel::torrentStreamProcessStarted);
+    m_removeAllData = removeAllData;
+    emit removeAllDataChanged();
 }
 
 void TorrentNotifierViewModel::startGetNotifiers(int port)
@@ -60,9 +55,35 @@ void TorrentNotifierViewModel::startGetNotifiers(int port)
     m_webSocket->open(QUrl("ws://localhost:" + QString::number(port) + "/ws"));
 }
 
-void TorrentNotifierViewModel::stopNotifiers()
+void TorrentNotifierViewModel::closeConnectionsAndApplication()
 {
-    m_webSocket->close(QWebSocketProtocol::CloseCode::CloseCodeNormal, "not need");
+    if (!m_activated) return;
+
+    if (m_webSocket->state() == QAbstractSocket::SocketState::ConnectedState) m_webSocket->close(QWebSocketProtocol::CloseCode::CloseCodeNormal, "not need");
+
+    if (m_torrentStreamProcess != nullptr) m_torrentStreamProcess->kill();
+}
+
+void TorrentNotifierViewModel::tryStartTorrentStreamApplication()
+{
+    if (m_torrentStreamPath.isEmpty()) return;
+
+    QFileInfo fileInfo(m_torrentStreamPath);
+    if (!QFile::exists(fileInfo.absoluteFilePath())) {
+        qInfo() << "TorrentStream path not configured";
+        emit torrentStreamNotConfigured();
+        return;
+    }
+
+    QStringList arguments;
+#ifdef Q_OS_WIN
+    arguments.append("-noconsole");
+#endif
+
+    m_torrentStreamProcess = new QProcess(this);
+    m_torrentStreamProcess->start(fileInfo.absoluteFilePath(), arguments);
+
+    connect(m_torrentStreamProcess, &QProcess::started, this, &TorrentNotifierViewModel::torrentStreamProcessStarted);
 }
 
 void TorrentNotifierViewModel::triggerNotifier()
@@ -102,4 +123,18 @@ void TorrentNotifierViewModel::torrentStreamProcessStarted()
     m_activated = true;
     emit activatedChanged();
     emit torrentStreamStarted();
+}
+
+void TorrentNotifierViewModel::socketConnected()
+{
+    if (m_activated) return;
+
+    m_activated = true;
+    emit activatedChanged();
+
+    qInfo() << "TorrentStream socket connected";
+
+    if (m_removeAllData) {
+        //TODO: http://localhost:X/clearall for removing all data
+    }
 }
