@@ -360,7 +360,7 @@ void ReleaseLinkedSeries::createCacheFileIfNotExists() const noexcept
 
 void ReleaseLinkedSeries::processReleasesFromDescription(const QString& description, const QMap<QString, FullReleaseModel*>& releases, int currentRelease, const QString currentReleaseTitle, const QString& poster, const QString& genres) noexcept
 {
-    QString startToken = "Порядок просмотра:";
+    QString startToken = "Порядок просмотра";
     int watchOrderIndex = description.indexOf(startToken);
     if (watchOrderIndex == -1) return;
 
