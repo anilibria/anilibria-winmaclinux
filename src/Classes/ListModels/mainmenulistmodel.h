@@ -55,7 +55,7 @@ public:
     Q_INVOKABLE void selectItem(int index);
 
 signals:    
-    void selectedItem(int index, QString pageName);
+    void selectedItem(QString pageName);
 
 };
 

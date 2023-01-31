@@ -61,6 +61,7 @@ private slots:
     void messageReceived(const QString &message);
     void torrentStreamProcessStarted();
     void socketConnected();
+    void socketDisconnected();
 
 signals:
     void torrentFullyDownloaded(int releaseId, const QString& path);

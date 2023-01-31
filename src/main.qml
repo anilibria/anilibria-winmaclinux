@@ -852,7 +852,7 @@ ApplicationWindow {
                                 spacing: 10
                                 Image {
                                     anchors.verticalCenter: parent.verticalCenter
-                                    source: applicationThemeViewModel[icon] ? applicationThemeViewModel[icon] : '../Assets/Icons/donate.jpg'
+                                    source: applicationThemeViewModel.currentItems[icon] ? applicationThemeViewModel.currentItems[icon] : '../Assets/Icons/donate.jpg'
                                     sourceSize.width: 30
                                     sourceSize.height: 30
                                 }
@@ -1135,6 +1135,11 @@ ApplicationWindow {
         ThemeManager {
             id: themeManager
             visible: mainViewModel.isThemeManagerVisible
+        }
+
+        TorrentStream {
+            id: torrentStream
+            visible: mainViewModel.isTorrentStreamPageVisible
         }
 
         MouseArea {

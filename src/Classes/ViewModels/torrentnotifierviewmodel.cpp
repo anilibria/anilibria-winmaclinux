@@ -32,6 +32,7 @@ TorrentNotifierViewModel::TorrentNotifierViewModel(QObject *parent)
     connect(m_timer,&QTimer::timeout, this, &TorrentNotifierViewModel::triggerNotifier);
     connect(m_webSocket,&QWebSocket::textMessageReceived, this, &TorrentNotifierViewModel::messageReceived);
     connect(m_webSocket,&QWebSocket::connected, this, &TorrentNotifierViewModel::socketConnected);
+    connect(m_webSocket,&QWebSocket::disconnected, this, &TorrentNotifierViewModel::socketConnected);
 }
 
 void TorrentNotifierViewModel::setTorrentStreamPath(const QString &torrentStreamPath) noexcept
@@ -138,3 +139,14 @@ void TorrentNotifierViewModel::socketConnected()
         //TODO: http://localhost:X/clearall for removing all data
     }
 }
+
+void TorrentNotifierViewModel::socketDisconnected()
+{
+    if (!m_activated) return;
+
+    m_activated = false;
+    emit activatedChanged();
+
+    qInfo() << "TorrentStream socket disconnected";
+}
+

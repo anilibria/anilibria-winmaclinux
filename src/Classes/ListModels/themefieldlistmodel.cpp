@@ -83,7 +83,6 @@ ThemeFieldListModel::ThemeFieldListModel(QObject *parent)
     m_descriptions.insert(iconMaximizeWindowField, "Иконка кнопки Максимизировать окно:Иконка находящаяся в правой стороне кастомного тулбара");
     m_descriptions.insert(iconCloseWindowField, "Иконка кнопки Закрыть окно:Иконка находящаяся в правой стороне кастомного тулбара");
     m_descriptions.insert(iconNormalWindowField, "Иконка кнопки Нормальный размер окна:Иконка находящаяся в правой стороне кастомного тулбара");
-
     m_descriptions.insert(iconFavoritesField, "Иконка Избранное:Иконка для кнопок на разных страницах с действиями с Избранным");
     m_descriptions.insert(iconSeenField, "Иконка Просмотрено:Иконка для кнопок на разных страницах с действиями над (Не)Просмотренными(мыеми) релизами");
     m_descriptions.insert(iconInfoField, "Иконка Информация:Иконка для кнопок содержащих справочные материалы");
@@ -108,6 +107,7 @@ ThemeFieldListModel::ThemeFieldListModel(QObject *parent)
     m_descriptions.insert(iconReleaseCardCloseField, "Иконка Закрыть карточку:Иконка для кнопки Закрыть карточку в Карточке релиза");
     m_descriptions.insert(iconReleaseCardCopyField, "Иконка Копирование:Иконка для кнопки Копирование в Карточке релиза");
     m_descriptions.insert(iconReleaseCardExternalField, "Иконка Внешние источники:Иконка для кнопки Открыть во внешних плеерах в Карточке релиза");
+    m_descriptions.insert(iconMainMenuTorrentStreamField, "Иконка страницы TorrentStream:Иконка находящаяся в главном меню");
 
     m_saveMenuItems.append("Сохранить и добавить тему в список");
     m_saveMenuItems.append("Сохранить в файл");

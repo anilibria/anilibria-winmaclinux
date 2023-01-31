@@ -79,6 +79,7 @@ ApplicationThemeViewModel::ApplicationThemeViewModel(QObject *parent)
     lightTheme->insert(iconMainMenuDonateField, "qrc:/Assets/Icons/donate.svg");
     lightTheme->insert(iconMainMenuThemeManagerField, "qrc:/Assets/Icons/themes.svg");
     lightTheme->insert(iconMainMenuYoutubeField, "qrc:/Assets/Icons/youtube.svg");
+    lightTheme->insert(iconMainMenuTorrentStreamField, "qrc:/Assets/Icons/utorrent.svg");
     lightTheme->insert(iconMainMenuAuthorizationField, "qrc:/Assets/Icons/user.svg");
     lightTheme->insert(iconLeftHalfScreenField, "qrc:/Assets/Icons/coloredleftmenu.svg");
     lightTheme->insert(iconRightHalfScreenField, "qrc:/Assets/Icons/coloredrightmenu.svg");
@@ -167,6 +168,7 @@ ApplicationThemeViewModel::ApplicationThemeViewModel(QObject *parent)
     darkTheme->insert(iconMainMenuDonateField, "qrc:/Assets/Icons/donate.svg");
     darkTheme->insert(iconMainMenuThemeManagerField, "qrc:/Assets/Icons/themes.svg");
     darkTheme->insert(iconMainMenuYoutubeField, "qrc:/Assets/Icons/youtube.svg");
+    darkTheme->insert(iconMainMenuTorrentStreamField, "qrc:/Assets/Icons/utorrent.svg");
     darkTheme->insert(iconMainMenuAuthorizationField, "qrc:/Assets/Icons/user.svg");
     darkTheme->insert(iconLeftHalfScreenField, "qrc:/Assets/Icons/coloredleftmenu.svg");
     darkTheme->insert(iconRightHalfScreenField, "qrc:/Assets/Icons/coloredrightmenu.svg");
@@ -257,6 +259,7 @@ ApplicationThemeViewModel::ApplicationThemeViewModel(QObject *parent)
     m_fields.append(iconMainMenuDonateField);
     m_fields.append(iconMainMenuThemeManagerField);
     m_fields.append(iconMainMenuYoutubeField);
+    m_fields.append(iconMainMenuTorrentStreamField);
     m_fields.append(iconMainMenuAuthorizationField);
     m_fields.append(iconLeftHalfScreenField);
     m_fields.append(iconRightHalfScreenField);
@@ -264,7 +267,6 @@ ApplicationThemeViewModel::ApplicationThemeViewModel(QObject *parent)
     m_fields.append(iconMaximizeWindowField);
     m_fields.append(iconNormalWindowField);
     m_fields.append(iconCloseWindowField);
-
     m_fields.append(iconFavoritesField);
     m_fields.append(iconSeenField);
     m_fields.append(iconInfoField);
