@@ -398,6 +398,14 @@ void OnlinePlayerViewModel::setProxyPort(int proxyPort) noexcept
     emit proxyPortChanged();
 }
 
+void OnlinePlayerViewModel::setMuted(bool muted) noexcept
+{
+    if (m_muted == muted) return;
+
+    m_muted = muted;
+    emit mutedChanged();
+}
+
 void OnlinePlayerViewModel::toggleFullScreen()
 {
     setIsFullScreen(!m_isFullScreen);

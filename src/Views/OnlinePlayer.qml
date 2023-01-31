@@ -497,12 +497,12 @@ Page {
 
             Slider {
                 id: playerLocation
-                visible: playerLoader.item.duration > 0
+                visible: onlinePlayerViewModel.videoDuration > 0
                 height: 20
                 width: controlPanel.width
                 from: 1
                 value: 1
-                to: playerLoader.item.duration
+                to: onlinePlayerViewModel.videoDuration
                 onPressedChanged: {
                     if (!pressed && onlinePlayerViewModel.lastMovedPosition > 0) {
                         playerLoader.item.seek(onlinePlayerViewModel.lastMovedPosition);
@@ -521,7 +521,7 @@ Page {
                 width: 2
                 height: 20
                 color: "transparent"
-                visible: playerLoader.item.duration === 0
+                visible: onlinePlayerViewModel.videoDuration === 0
             }
 
             Item {
@@ -541,7 +541,7 @@ Page {
                         height: 20
                         width: userConfigurationViewModel.hidedQuality && !isChecked ? 0 : 60
                         text: "1080p"
-                        visible: playerLoader.item.duration > 0 && onlinePlayerViewModel.isFullHdAllowed && !(userConfigurationViewModel.hidedQuality && !isChecked)
+                        visible: onlinePlayerViewModel.videoDuration > 0 && onlinePlayerViewModel.isFullHdAllowed && !(userConfigurationViewModel.hidedQuality && !isChecked)
                         isChecked: onlinePlayerViewModel.videoQuality === `fullhd`
                         onButtonClicked: {
                             onlinePlayerViewModel.restorePosition = playerLoader.item.position;
@@ -555,7 +555,7 @@ Page {
                     ToggleButton {
                         height: 20
                         width: userConfigurationViewModel.hidedQuality && !isChecked ? 0 : 60
-                        visible: playerLoader.item.duration > 0 && !(userConfigurationViewModel.hidedQuality && !isChecked)
+                        visible: onlinePlayerViewModel.videoDuration > 0 && !(userConfigurationViewModel.hidedQuality && !isChecked)
                         text: "720p"
                         isChecked: onlinePlayerViewModel.videoQuality === `hd`
                         onButtonClicked: {
@@ -570,7 +570,7 @@ Page {
                     ToggleButton {
                         height: 20
                         width: userConfigurationViewModel.hidedQuality && !isChecked ? 0 : 60
-                        visible: playerLoader.item.duration > 0 && !(userConfigurationViewModel.hidedQuality && !isChecked)
+                        visible: onlinePlayerViewModel.videoDuration > 0 && !(userConfigurationViewModel.hidedQuality && !isChecked)
                         text: "480p"
                         isChecked: onlinePlayerViewModel.videoQuality === `sd`
                         onButtonClicked: {
@@ -585,7 +585,7 @@ Page {
                     Rectangle {
                         width: 20
                         height: 20
-                        visible: playerLoader.item.duration > 0
+                        visible: onlinePlayerViewModel.videoDuration > 0
                         color: "transparent"
                         PlainText {
                             anchors.centerIn: parent
@@ -596,7 +596,7 @@ Page {
                     ToggleButton {
                         height: 20
                         width: userConfigurationViewModel.hidedSpeed && !isChecked ? 0 : 40
-                        visible: playerLoader.item.duration > 0 && !(userConfigurationViewModel.hidedSpeed && !isChecked)
+                        visible: onlinePlayerViewModel.videoDuration > 0 && !(userConfigurationViewModel.hidedSpeed && !isChecked)
                         text: "x0.25"
                         isChecked: onlinePlayerViewModel.playbackRate === 0.25
                         onButtonClicked: {
@@ -609,7 +609,7 @@ Page {
                     ToggleButton {
                         height: 20
                         width: userConfigurationViewModel.hidedSpeed && !isChecked ? 0 : 40
-                        visible: playerLoader.item.duration > 0 && !(userConfigurationViewModel.hidedSpeed && !isChecked)
+                        visible: onlinePlayerViewModel.videoDuration > 0 && !(userConfigurationViewModel.hidedSpeed && !isChecked)
                         text: "x0.5"
                         isChecked: onlinePlayerViewModel.playbackRate === 0.5
                         onButtonClicked: {
@@ -622,7 +622,7 @@ Page {
                     ToggleButton {
                         height: 20
                         width: userConfigurationViewModel.hidedSpeed && !isChecked ? 0 : 40
-                        visible: playerLoader.item.duration > 0 && !(userConfigurationViewModel.hidedSpeed && !isChecked)
+                        visible: onlinePlayerViewModel.videoDuration > 0 && !(userConfigurationViewModel.hidedSpeed && !isChecked)
                         text: "x0.75"
                         isChecked: onlinePlayerViewModel.playbackRate === 0.75
                         onButtonClicked: {
@@ -635,7 +635,7 @@ Page {
                     ToggleButton {
                         height: 20
                         width: userConfigurationViewModel.hidedSpeed && !isChecked ? 0 : 40
-                        visible: playerLoader.item.duration > 0 && !(userConfigurationViewModel.hidedSpeed && !isChecked)
+                        visible: onlinePlayerViewModel.videoDuration > 0 && !(userConfigurationViewModel.hidedSpeed && !isChecked)
                         text: "x1"
                         isChecked: onlinePlayerViewModel.playbackRate === 1
                         onButtonClicked: {
@@ -648,7 +648,7 @@ Page {
                     ToggleButton {
                         height: 20
                         width: userConfigurationViewModel.hidedSpeed && !isChecked ? 0 : 40
-                        visible: playerLoader.item.duration > 0 && !(userConfigurationViewModel.hidedSpeed && !isChecked)
+                        visible: onlinePlayerViewModel.videoDuration > 0 && !(userConfigurationViewModel.hidedSpeed && !isChecked)
                         text: "x1.25"
                         isChecked: onlinePlayerViewModel.playbackRate === 1.1
                         onButtonClicked: {
@@ -661,7 +661,7 @@ Page {
                     ToggleButton {
                         height: 20
                         width: userConfigurationViewModel.hidedSpeed && !isChecked ? 0 : 40
-                        visible: playerLoader.item.duration > 0 && !(userConfigurationViewModel.hidedSpeed && !isChecked)
+                        visible: onlinePlayerViewModel.videoDuration > 0 && !(userConfigurationViewModel.hidedSpeed && !isChecked)
                         text: "x1.5"
                         isChecked: onlinePlayerViewModel.playbackRate === 1.2
                         onButtonClicked: {
@@ -674,7 +674,7 @@ Page {
                     ToggleButton {
                         height: 20
                         width: userConfigurationViewModel.hidedSpeed && !isChecked ? 0 : 40
-                        visible: playerLoader.item.duration > 0 && !(userConfigurationViewModel.hidedSpeed && !isChecked)
+                        visible: onlinePlayerViewModel.videoDuration > 0 && !(userConfigurationViewModel.hidedSpeed && !isChecked)
                         text: "x1.75"
                         isChecked: onlinePlayerViewModel.playbackRate === 1.3
                         onButtonClicked: {
@@ -687,7 +687,7 @@ Page {
                     ToggleButton {
                         height: 20
                         width: userConfigurationViewModel.hidedSpeed && !isChecked ? 0 : 40
-                        visible: playerLoader.item.duration > 0 && !(userConfigurationViewModel.hidedSpeed && !isChecked)
+                        visible: onlinePlayerViewModel.videoDuration > 0 && !(userConfigurationViewModel.hidedSpeed && !isChecked)
                         text: "x2"
                         isChecked: onlinePlayerViewModel.playbackRate === 1.5
                         onButtonClicked: {
@@ -700,7 +700,7 @@ Page {
                     ToggleButton {
                         height: 20
                         width: userConfigurationViewModel.hidedSpeed && !isChecked ? 0 : 40
-                        visible: playerLoader.item.duration > 0 && !(userConfigurationViewModel.hidedSpeed && !isChecked)
+                        visible: onlinePlayerViewModel.videoDuration > 0 && !(userConfigurationViewModel.hidedSpeed && !isChecked)
                         text: "x3"
                         isChecked: onlinePlayerViewModel.playbackRate === 2
                         onButtonClicked: {
@@ -751,6 +751,7 @@ Page {
                         iconHeight: 24
                         onButtonPressed: {
                             playerLoader.item.muted = !playerLoader.item.muted;
+                            onlinePlayerViewModel.muted = playerLoader.item.muted;
                         }
                     }
                     Slider {
@@ -825,7 +826,7 @@ Page {
                     IconButton {
                         width: 40
                         height: 40
-                        visible: playerLoader.item.duration > 0 && !mainViewModel.isSmallSizeMode
+                        visible: onlinePlayerViewModel.videoDuration > 0 && !mainViewModel.isSmallSizeMode
                         iconColor: applicationThemeViewModel.filterIconButtonColor
                         hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
                         iconPath: "../Assets/Icons/previous10.svg"
@@ -895,7 +896,7 @@ Page {
                     IconButton {
                         width: 40
                         height: 40
-                        visible: playerLoader.item.duration > 0 && !mainViewModel.isSmallSizeMode
+                        visible: onlinePlayerViewModel.videoDuration > 0 && !mainViewModel.isSmallSizeMode
                         iconColor: applicationThemeViewModel.filterIconButtonColor
                         hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
                         iconPath: "../Assets/Icons/next30.svg"
@@ -1285,8 +1286,10 @@ Page {
                                     model: onlinePlayerWindowViewModel.players
 
                                     onActivated: {
-                                        const newPlayer = onlinePlayerWindowViewModel.players[currentIndex]
-                                        onlinePlayerWindowViewModel.changePlayer(newPlayer)
+                                        optionsPopup.close();
+                                        onlinePlayerViewModel.restorePosition = onlinePlayerViewModel.videoPosition;
+                                        const newPlayer = onlinePlayerWindowViewModel.players[currentIndex];
+                                        onlinePlayerWindowViewModel.changePlayer(newPlayer);
                                     }
                                 }
                             }

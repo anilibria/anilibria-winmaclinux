@@ -536,6 +536,13 @@ ColumnLayout {
                                 onPressed: {
                                     watchTorrent.close();
 
+                                    // TODO: if already downloaded torrent start watch local file
+
+                                    if (!onlinePlayerWindowViewModel.isHasVlc) {
+                                        vlcInfo.open();
+                                        return;
+                                    }
+
                                     onlinePlayerViewModel.quickSetupForSingleTorrentRelease(releasesViewModel.openedReleaseId, identifier, userConfigurationViewModel.playerBuffer);
 
                                     releasesViewModel.hideAfterWatchReleaseCard();
@@ -711,4 +718,23 @@ ColumnLayout {
             }
         }
     }
+
+    MessageModal {
+        id: vlcInfo
+        header: "Плеер VLC не доступен"
+        message: "Ваша версия собрана без плеера VLC. К сожалению только плеер VLC умеет стримить торренты. Для возможности смотреть торрент необходимо собрать приложение с плеером VLC."
+        content: Row {
+            spacing: 6
+            anchors.right: parent.right
+
+            RoundedActionButton {
+                text: "Закрыть"
+                width: 100
+                onClicked: {
+                    vlcInfo.close();
+                }
+            }
+        }
+    }
+
 }

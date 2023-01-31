@@ -76,6 +76,7 @@ class OnlinePlayerViewModel : public QObject
     Q_PROPERTY(bool isReleaseLess2022 READ isReleaseLess2022 NOTIFY isReleaseLess2022Changed)
     Q_PROPERTY(bool needProxified READ needProxified WRITE setNeedProxified NOTIFY needProxifiedChanged)
     Q_PROPERTY(int proxyPort READ proxyPort WRITE setProxyPort NOTIFY proxyPortChanged)
+    Q_PROPERTY(bool muted READ muted WRITE setMuted NOTIFY mutedChanged)
 
 private:
     bool m_isFullScreen;
@@ -128,6 +129,7 @@ private:
     bool m_isReleaseLess2022 { false };
     bool m_needProxified { false };
     int m_proxyPort { -1 };
+    bool m_muted { false };
 
 public:
     explicit OnlinePlayerViewModel(QObject *parent = nullptr);
@@ -257,6 +259,9 @@ public:
     int proxyPort() const noexcept { return m_proxyPort; }
     void setProxyPort(int proxyPort) noexcept;
 
+    bool muted() const noexcept { return m_muted; }
+    void setMuted(bool muted) noexcept;
+
     Q_INVOKABLE void toggleFullScreen();
     Q_INVOKABLE void changeVideoPosition(int duration, int position) noexcept;
     Q_INVOKABLE QString checkExistingVideoQuality(int index);    
@@ -361,6 +366,7 @@ signals:
     void isReleaseLess2022Changed();
     void needProxifiedChanged();
     void proxyPortChanged();
+    void mutedChanged();
 
 };
 
