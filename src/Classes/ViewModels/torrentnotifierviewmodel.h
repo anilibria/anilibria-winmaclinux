@@ -25,6 +25,7 @@
 #include <QWebSocket>
 #include <QMap>
 #include <QProcess>
+#include <QNetworkAccessManager>
 
 class TorrentNotifierViewModel : public QObject
 {
@@ -32,6 +33,7 @@ class TorrentNotifierViewModel : public QObject
     Q_PROPERTY(QString torrentStreamPath READ torrentStreamPath WRITE setTorrentStreamPath NOTIFY torrentStreamPathChanged)
     Q_PROPERTY(bool activated READ activated NOTIFY activatedChanged)
     Q_PROPERTY(bool removeAllData READ removeAllData WRITE setRemoveAllData NOTIFY removeAllDataChanged)
+    Q_PROPERTY(int port READ port WRITE setPort NOTIFY portChanged)
 
 private:
     QTimer* m_timer { new QTimer(this) };
@@ -40,6 +42,9 @@ private:
     QProcess* m_torrentStreamProcess { nullptr };
     bool m_activated { false };
     bool m_removeAllData { false };
+    bool m_dataRemoved { false };
+    QNetworkAccessManager* m_manager { new QNetworkAccessManager(this) };
+    int m_port { 0 };
 
 public:
     explicit TorrentNotifierViewModel(QObject *parent = nullptr);
@@ -52,14 +57,16 @@ public:
     bool removeAllData() const noexcept { return m_removeAllData; }
     void setRemoveAllData(bool removeAllData) noexcept;
 
-    Q_INVOKABLE void startGetNotifiers(int port);
+    int port() const noexcept { return m_port; }
+    void setPort(int port) noexcept;
+
+    Q_INVOKABLE void startGetNotifiers();
     Q_INVOKABLE void closeConnectionsAndApplication();
     Q_INVOKABLE void tryStartTorrentStreamApplication();
 
 private slots:
     void triggerNotifier();
     void messageReceived(const QString &message);
-    void torrentStreamProcessStarted();
     void socketConnected();
     void socketDisconnected();
 
@@ -70,6 +77,7 @@ signals:
     void torrentStreamPathChanged();
     void activatedChanged();
     void removeAllDataChanged();
+    void portChanged();
 
 };
 

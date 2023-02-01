@@ -51,9 +51,17 @@ void TorrentNotifierViewModel::setRemoveAllData(bool removeAllData) noexcept
     emit removeAllDataChanged();
 }
 
-void TorrentNotifierViewModel::startGetNotifiers(int port)
+void TorrentNotifierViewModel::setPort(int port) noexcept
 {
-    m_webSocket->open(QUrl("ws://localhost:" + QString::number(port) + "/ws"));
+    if (m_port == port) return;
+
+    m_port = port;
+    emit portChanged();
+}
+
+void TorrentNotifierViewModel::startGetNotifiers()
+{
+    m_webSocket->open(QUrl("ws://localhost:" + QString::number(m_port) + "/ws"));
 }
 
 void TorrentNotifierViewModel::closeConnectionsAndApplication()
@@ -70,7 +78,8 @@ void TorrentNotifierViewModel::tryStartTorrentStreamApplication()
     if (m_torrentStreamPath.isEmpty()) return;
 
     QFileInfo fileInfo(m_torrentStreamPath);
-    if (!QFile::exists(fileInfo.absoluteFilePath())) {
+    auto absolutePath = fileInfo.absoluteFilePath();
+    if (!QFile::exists(absolutePath)) {
         qInfo() << "TorrentStream path not configured";
         emit torrentStreamNotConfigured();
         return;
@@ -82,9 +91,15 @@ void TorrentNotifierViewModel::tryStartTorrentStreamApplication()
 #endif
 
     m_torrentStreamProcess = new QProcess(this);
-    m_torrentStreamProcess->start(fileInfo.absoluteFilePath(), arguments);
+    m_torrentStreamProcess->setWorkingDirectory(fileInfo.absolutePath());
+    m_torrentStreamProcess->start(absolutePath, arguments);
 
-    connect(m_torrentStreamProcess, &QProcess::started, this, &TorrentNotifierViewModel::torrentStreamProcessStarted);
+    if (!m_torrentStreamProcess->waitForStarted(10000)) {
+        qInfo () << "Failing to start TorrentStream: " << m_torrentStreamProcess->errorString();
+        return;
+    }
+
+    emit torrentStreamStarted();
 }
 
 void TorrentNotifierViewModel::triggerNotifier()
@@ -116,14 +131,9 @@ void TorrentNotifierViewModel::messageReceived(const QString &message)
             emit torrentFullyDownloaded(identifier, path);
         }
     }
-}
-
-void TorrentNotifierViewModel::torrentStreamProcessStarted()
-{
-    qInfo() << "TorrentStream started from application";
-    m_activated = true;
-    emit activatedChanged();
-    emit torrentStreamStarted();
+    if (response == "nt") {
+        //TODO: added new torrent
+    }
 }
 
 void TorrentNotifierViewModel::socketConnected()
@@ -135,8 +145,12 @@ void TorrentNotifierViewModel::socketConnected()
 
     qInfo() << "TorrentStream socket connected";
 
-    if (m_removeAllData) {
-        //TODO: http://localhost:X/clearall for removing all data
+    if (m_removeAllData && !m_dataRemoved) {
+        m_dataRemoved = true;
+        QUrl url("http://localhost:" + QString::number(m_port) + "/clearall");
+        QNetworkRequest request(url);
+        m_manager->get(request);
+        qInfo() << "TorrentStream clear downloaded data";
     }
 }
 
