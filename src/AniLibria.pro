@@ -165,6 +165,7 @@ SOURCES += \
     Classes/ListModels/cinemahalllistmodel.cpp \
     Classes/ListModels/commoncomboboxlistmodel.cpp \
     Classes/ListModels/commonmenulistmodel.cpp \
+    Classes/ListModels/dowloadedtorrentslistmodel.cpp \
     Classes/ListModels/externalthemeslistmodel.cpp \
     Classes/ListModels/localthemeslistmodel.cpp \
     Classes/ListModels/mainmenulistmodel.cpp \
@@ -181,6 +182,7 @@ SOURCES += \
     Classes/ListModels/releasetorrentslist.cpp \
     Classes/ListModels/themefieldlistmodel.cpp \
     Classes/Models/changesmodel.cpp \
+    Classes/Models/downloadedtorrentmodel.cpp \
     Classes/Models/downloaditemmodel.cpp \
     Classes/Models/externalplaylistvideo.cpp \
     Classes/Models/fullreleasemodel.cpp \
@@ -266,6 +268,7 @@ HEADERS += \
     Classes/ListModels/cinemahalllistmodel.h \
     Classes/ListModels/commoncomboboxlistmodel.h \
     Classes/ListModels/commonmenulistmodel.h \
+    Classes/ListModels/dowloadedtorrentslistmodel.h \
     Classes/ListModels/externalthemeslistmodel.h \
     Classes/ListModels/localthemeslistmodel.h \
     Classes/ListModels/mainmenulistmodel.h \
@@ -282,6 +285,7 @@ HEADERS += \
     Classes/ListModels/releasetorrentslist.h \
     Classes/ListModels/themefieldlistmodel.h \
     Classes/Models/changesmodel.h \
+    Classes/Models/downloadedtorrentmodel.h \
     Classes/Models/downloaditemmodel.h \
     Classes/Models/externalplaylistvideo.h \
     Classes/Models/fullreleasemodel.h \

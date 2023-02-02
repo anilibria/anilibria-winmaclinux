@@ -26,6 +26,11 @@
 #include <QMap>
 #include <QProcess>
 #include <QNetworkAccessManager>
+#include <QNetworkReply>
+#include <QSharedPointer>
+#include "../Models/downloadedtorrentmodel.h"
+#include "../ViewModels/releasesviewmodel.h"
+#include "../ListModels/dowloadedtorrentslistmodel.h"
 
 class TorrentNotifierViewModel : public QObject
 {
@@ -34,17 +39,22 @@ class TorrentNotifierViewModel : public QObject
     Q_PROPERTY(bool activated READ activated NOTIFY activatedChanged)
     Q_PROPERTY(bool removeAllData READ removeAllData WRITE setRemoveAllData NOTIFY removeAllDataChanged)
     Q_PROPERTY(int port READ port WRITE setPort NOTIFY portChanged)
+    Q_PROPERTY(ReleasesViewModel* releasesViewModel READ releasesViewModel WRITE setReleasesViewModel NOTIFY releasesViewModelChanged)
+    Q_PROPERTY(DowloadedTorrentsListModel* torrents READ torrents NOTIFY torrentsChanged)
 
 private:
-    QTimer* m_timer { new QTimer(this) };
     QWebSocket* m_webSocket;
     QString m_torrentStreamPath { "" };
     QProcess* m_torrentStreamProcess { nullptr };
     bool m_activated { false };
     bool m_removeAllData { false };
     bool m_dataRemoved { false };
+    QSharedPointer<QList<DownloadedTorrentModel*>> m_downloadedTorrents { new QList<DownloadedTorrentModel*>() };
+    QList<DownloadedTorrentModel*> m_downloadedTorrents2 { QList<DownloadedTorrentModel*>() };
     QNetworkAccessManager* m_manager { new QNetworkAccessManager(this) };
     int m_port { 0 };
+    ReleasesViewModel* m_releasesViewModel { nullptr };
+    DowloadedTorrentsListModel* m_torrents { new DowloadedTorrentsListModel(this) };
 
 public:
     explicit TorrentNotifierViewModel(QObject *parent = nullptr);
@@ -60,15 +70,25 @@ public:
     int port() const noexcept { return m_port; }
     void setPort(int port) noexcept;
 
+    ReleasesViewModel* releasesViewModel() const noexcept { return m_releasesViewModel; }
+    void setReleasesViewModel(const ReleasesViewModel* viewmodel) noexcept;
+
+    DowloadedTorrentsListModel* torrents() const noexcept { return m_torrents; }
+
     Q_INVOKABLE void startGetNotifiers();
     Q_INVOKABLE void closeConnectionsAndApplication();
     Q_INVOKABLE void tryStartTorrentStreamApplication();
+    Q_INVOKABLE void startGetTorrentData();
+
+private:
+    void getTorrentData() const noexcept;
 
 private slots:
     void triggerNotifier();
     void messageReceived(const QString &message);
     void socketConnected();
     void socketDisconnected();
+    void requestResponse(QNetworkReply* reply);
 
 signals:
     void torrentFullyDownloaded(int releaseId, const QString& path);
@@ -78,6 +98,8 @@ signals:
     void activatedChanged();
     void removeAllDataChanged();
     void portChanged();
+    void releasesViewModelChanged();
+    void torrentsChanged();
 
 };
 

@@ -1455,6 +1455,7 @@ ApplicationWindow {
         torrentStreamPath: userConfigurationViewModel.torrentStreamPath
         removeAllData: userConfigurationViewModel.removeAllDownloadedTorrent
         port: userConfigurationViewModel.playerBuffer
+        releasesViewModel: releasesViewModel
         onTorrentFullyDownloaded: {
             console.log('release ' + releaseId + ' fully downloaded!!!');
         }
@@ -1465,6 +1466,9 @@ ApplicationWindow {
         }
         onTorrentStreamStarted: {
             torrentNotifierViewModel.startGetNotifiers();
+        }
+        onActivatedChanged: {
+            if (activated) torrentNotifierViewModel.startGetTorrentData();
         }
         Component.onCompleted: {
             if (userConfigurationViewModel.torrentStreamPath) {

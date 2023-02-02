@@ -495,8 +495,7 @@ ColumnLayout {
                                 onPressed: {
                                     const torrentUri = synchronizationService.combineWithWebSiteUrl(url);
                                     if (localStorage.isUseTorrentStreamMode()) {
-                                        releasesViewModel.downloadTorrent(releaseid, torrentUri, userConfigurationViewModel.playerBuffer);
-                                        torrentNotifierViewModel.startGetNotifiers(userConfigurationViewModel.playerBuffer);
+                                        releasesViewModel.downloadTorrent(releasesViewModel.openedReleaseId, torrentUri, userConfigurationViewModel.playerBuffer);
                                     } else {
                                         synchronizationService.downloadTorrent(torrentUri);
                                         userActivityViewModel.addDownloadedTorrentToCounter();
