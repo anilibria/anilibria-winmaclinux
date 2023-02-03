@@ -55,6 +55,8 @@ public:
     int countFiles() const noexcept;
     int countDownloadedFiles() const noexcept;
 
+    QStringList getFiles() const noexcept;
+
     void resetData();
 };
 

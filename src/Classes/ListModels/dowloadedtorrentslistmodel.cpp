@@ -67,6 +67,12 @@ QVariant DowloadedTorrentsListModel::data(const QModelIndex &index, int role) co
         case FilesDownloadedRole: {
             return QVariant(item->countDownloadedFiles());
         }
+        case IdentifierRole: {
+            return QVariant(index.row());
+        }
+        case TorrentPathRole: {
+            return QVariant(item->downloadPath());
+        }
         default: return QVariant();
     }
 }
@@ -97,6 +103,14 @@ QHash<int, QByteArray> DowloadedTorrentsListModel::roleNames() const
         {
             FilesDownloadedRole,
             "filesDownloaded"
+        },
+        {
+            IdentifierRole,
+            "identifier"
+        },
+        {
+            TorrentPathRole,
+            "torrentPath"
         }
     };
 }

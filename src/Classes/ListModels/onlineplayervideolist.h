@@ -80,6 +80,7 @@ public:
     int getReleaseVideosCount(int releaseId) const noexcept;
     OnlineVideoModel* getFirstReleaseWithPredicate(std::function<bool(OnlineVideoModel*)> callback, bool isEndDirection = false) const noexcept;
 
+    void setVideosFromDownloadedTorrent(const QStringList& files, int releaseId, const QString& poster) noexcept;
     void setVideosFromSingleTorrent(const ReleaseTorrentModel& torrent, int releaseId, const QString& poster, int port) noexcept;
     void setVideosFromSingleList(const QString& json, int releaseId, const QString& poster) noexcept;
     void setVideosFromCinemahall(QList<FullReleaseModel*>&& releases) noexcept;

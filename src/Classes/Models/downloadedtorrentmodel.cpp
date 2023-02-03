@@ -43,6 +43,16 @@ int DownloadedTorrentModel::countDownloadedFiles() const noexcept
     return result;
 }
 
+QStringList DownloadedTorrentModel::getFiles() const noexcept
+{
+    QStringList result;
+    foreach (auto file, m_files) {
+        result.append(std::get<2>(file));
+    }
+
+    return result;
+}
+
 void DownloadedTorrentModel::resetData()
 {
     m_files.clear();

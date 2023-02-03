@@ -50,7 +50,6 @@ private:
     bool m_removeAllData { false };
     bool m_dataRemoved { false };
     QSharedPointer<QList<DownloadedTorrentModel*>> m_downloadedTorrents { new QList<DownloadedTorrentModel*>() };
-    QList<DownloadedTorrentModel*> m_downloadedTorrents2 { QList<DownloadedTorrentModel*>() };
     QNetworkAccessManager* m_manager { new QNetworkAccessManager(this) };
     int m_port { 0 };
     ReleasesViewModel* m_releasesViewModel { nullptr };
@@ -79,6 +78,10 @@ public:
     Q_INVOKABLE void closeConnectionsAndApplication();
     Q_INVOKABLE void tryStartTorrentStreamApplication();
     Q_INVOKABLE void startGetTorrentData();
+    Q_INVOKABLE void clearAllData();
+    Q_INVOKABLE void watchDownloadedTorrents(int index) noexcept;
+    Q_INVOKABLE void clearOnlyTorrent(const QString& path) noexcept;
+    Q_INVOKABLE void clearTorrentAndData(const QString& path) noexcept;
 
 private:
     void getTorrentData() const noexcept;
@@ -91,7 +94,7 @@ private slots:
     void requestResponse(QNetworkReply* reply);
 
 signals:
-    void torrentFullyDownloaded(int releaseId, const QString& path);
+    void torrentFullyDownloaded(const QString& releaseName);
     void torrentStreamStarted();
     void torrentStreamNotConfigured();
     void torrentStreamPathChanged();
@@ -100,6 +103,7 @@ signals:
     void portChanged();
     void releasesViewModelChanged();
     void torrentsChanged();
+    void prepareWatchTorrentFiles(QStringList files, int releaseId);
 
 };
 

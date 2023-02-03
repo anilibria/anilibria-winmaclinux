@@ -45,6 +45,17 @@ Page {
                 }
 
                 LeftPanelIconButton {
+                    iconPath: assetsLocation.iconsPath + "delete.svg"
+                    iconWidth: 29
+                    iconHeight: 29
+                    overlayVisible: false
+                    tooltipMessage: "Удалить все торренты и скачанные файлы"
+                    onButtonPressed: {
+                        torrentNotifierViewModel.clearAllData();
+                    }
+                }
+
+                LeftPanelIconButton {
                     iconPath: applicationThemeViewModel.currentItems.iconReleaseCatalogSettings
                     iconWidth: 29
                     iconHeight: 29
@@ -116,7 +127,7 @@ Page {
                                 color: "transparent"
                                 height: parent.height
                                 Layout.topMargin: 6
-                                Layout.preferredWidth: 300
+                                Layout.preferredWidth: 200
                                 Layout.fillHeight: true
                                 Layout.leftMargin: 6
 
@@ -170,7 +181,7 @@ Page {
                                     PlainText {
                                         Layout.preferredHeight: 20
                                         fontPointSize: 10
-                                        text: "Скачано файлов " + filesCount + " из " + filesDownloaded
+                                        text: "Скачано файлов " + filesDownloaded + " из " + filesCount
                                     }
 
                                     Item {
@@ -183,6 +194,7 @@ Page {
                                 Layout.preferredWidth: 200
                                 Layout.fillHeight: true
                                 Layout.rightMargin: 6
+                                Layout.topMargin: 2
                                 height: parent.height
                                 color: "transparent"
 
@@ -190,38 +202,34 @@ Page {
                                     anchors.centerIn: parent
 
                                     FilterPanelIconButton {
-                                        iconPath: assetsLocation.iconsPath + "ratingcolor.svg"
+                                        iconPath: assetsLocation.iconsPath + "contextmenu.svg"
                                         overlayVisible: false
-                                        tooltipMessage: "Открыть меню для операций по добавлению/удалению всей группы в избранное"
+                                        tooltipMessage: "Открыть меню операций доступных для торрента"
                                         onButtonPressed: {
-                                            favoriteSeriesMenu.open();
+                                            torrentActionsMenu.open();
                                         }
 
                                         CommonMenu {
-                                            id: favoriteSeriesMenu
+                                            id: torrentActionsMenu
                                             y: parent.y
                                             width: 300
 
                                             CommonMenuItem {
                                                 enabled: !!window.userModel.login
-                                                text: "Добавить в избранное"
+                                                text: "Удалить только торрент"
                                                 onPressed: {
-                                                    for (const releaseId of releaseIds) {
-                                                        releasesViewModel.addReleaseToFavorites(releaseId);
-                                                    }
+                                                    torrentActionsMenu.close();
 
-                                                    favoriteSeriesMenu.close();
+                                                    torrentNotifierViewModel.clearOnlyTorrent(torrentPath);
                                                 }
                                             }
                                             CommonMenuItem {
                                                 enabled: !!window.userModel.login
-                                                text: "Удалить из избранного"
+                                                text: "Удалить торрент и файлы"
                                                 onPressed: {
-                                                    for (const releaseId of releaseIds) {
-                                                        releasesViewModel.removeReleaseFromFavorites(releaseId);
-                                                    }
+                                                    torrentActionsMenu.close();
 
-                                                    favoriteSeriesMenu.close();
+                                                    torrentNotifierViewModel.clearTorrentAndData(torrentPath);
                                                 }
                                             }
                                         }
@@ -229,14 +237,14 @@ Page {
                                     FilterPanelIconButton {
                                         iconPath: assetsLocation.iconsPath + "videoplayermenu.svg"
                                         overlayVisible: false
-                                        tooltipMessage: "Открыть меню для выбора выриантов просмотра"
+                                        tooltipMessage: "Начать просмотр скачанного торрента"
                                         onButtonPressed: {
                                             if (filesDownloaded < filesCount) {
                                                 notAllTorrentsDownloadedInfo.open();
                                                 return;
                                             }
 
-                                            //TODO: open all downloaded files
+                                            torrentNotifierViewModel.watchDownloadedTorrents(identifier);
                                         }
                                     }
                                 }
@@ -252,7 +260,7 @@ Page {
         id: notAllTorrentsDownloadedInfo
         header: "Просмотр торрента целиком"
         message: "Чтобы просмотреть торрент целиком его необходимо вначале скачать тоже целиком.<br>
-            Подождите пока все файлы загрузятся и потом нажмите на эту кнопку еще раз"
+            Когда торрент загрузиться целиком Вы получите уведомление. После чего нажмите на эту кнопку еще раз."
         content: Row {
             spacing: 6
             anchors.right: parent.right

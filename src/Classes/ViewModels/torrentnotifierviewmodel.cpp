@@ -118,6 +118,36 @@ void TorrentNotifierViewModel::startGetTorrentData()
     getTorrentData();
 }
 
+void TorrentNotifierViewModel::clearAllData()
+{
+    QUrl url("http://localhost:" + QString::number(m_port) + "/clearall");
+    QNetworkRequest request(url);
+    m_manager->get(request);
+}
+
+void TorrentNotifierViewModel::watchDownloadedTorrents(int index) noexcept
+{
+    if (index >= m_downloadedTorrents->count()) return;
+
+    auto torrent = m_downloadedTorrents->at(index);
+
+    emit prepareWatchTorrentFiles(torrent->getFiles(), torrent->releaseId());
+}
+
+void TorrentNotifierViewModel::clearOnlyTorrent(const QString &path) noexcept
+{
+    QUrl url("http://localhost:" + QString::number(m_port) + "/clearonlytorrent?path=" + path);
+    QNetworkRequest request(url);
+    m_manager->get(request);
+}
+
+void TorrentNotifierViewModel::clearTorrentAndData(const QString &path) noexcept
+{
+    QUrl url("http://localhost:" + QString::number(m_port) + "/cleartorrentanddata?path=" + path);
+    QNetworkRequest request(url);
+    m_manager->get(request);
+}
+
 void TorrentNotifierViewModel::getTorrentData() const noexcept
 {
     QUrl url("http://localhost:" + QString::number(m_port) + "/torrents");
@@ -152,10 +182,14 @@ void TorrentNotifierViewModel::messageReceived(const QString &message)
         if (object.contains("Path")) path = object.value("Path").toString();
         if (object.contains("Id")) identifier = object.value("Id").toInt();
         if (identifier > 0 && !path.isEmpty() && isAll) {
-            emit torrentFullyDownloaded(identifier, path);
+            auto release = m_releasesViewModel->getReleaseById(identifier);
+            if (release != nullptr) {
+                emit torrentFullyDownloaded(release->title());
+            }
         }
     }
     if (response == "nt") getTorrentData();
+    if (response == "dt") getTorrentData();
 }
 
 void TorrentNotifierViewModel::socketConnected()
@@ -169,9 +203,7 @@ void TorrentNotifierViewModel::socketConnected()
 
     if (m_removeAllData && !m_dataRemoved) {
         m_dataRemoved = true;
-        QUrl url("http://localhost:" + QString::number(m_port) + "/clearall");
-        QNetworkRequest request(url);
-        m_manager->get(request);
+        clearAllData();
         qInfo() << "TorrentStream clear downloaded data";
     }
 }
@@ -201,8 +233,6 @@ void TorrentNotifierViewModel::requestResponse(QNetworkReply *reply)
         m_downloadedTorrents->clear();
 
         auto json = reply->readAll();
-
-        qDebug() << json;
 
         auto jsonDocument = QJsonDocument::fromJson(json);
         auto array = jsonDocument.array();

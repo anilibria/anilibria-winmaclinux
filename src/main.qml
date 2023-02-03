@@ -1457,7 +1457,8 @@ ApplicationWindow {
         port: userConfigurationViewModel.playerBuffer
         releasesViewModel: releasesViewModel
         onTorrentFullyDownloaded: {
-            console.log('release ' + releaseId + ' fully downloaded!!!');
+            notificationViewModel.sendInfoNotification("Торрент скачан " + releaseName);
+            torrentNotifierViewModel.startGetTorrentData();
         }
         onTorrentStreamNotConfigured: {
             if (!userConfigurationViewModel.playerBuffer) return
@@ -1469,6 +1470,10 @@ ApplicationWindow {
         }
         onActivatedChanged: {
             if (activated) torrentNotifierViewModel.startGetTorrentData();
+        }
+        onPrepareWatchTorrentFiles: {
+            onlinePlayerViewModel.quickSetupForSingleDownloadedTorrent(files, releaseId);
+            mainViewModel.selectPage("videoplayer");
         }
         Component.onCompleted: {
             if (userConfigurationViewModel.torrentStreamPath) {

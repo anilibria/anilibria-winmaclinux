@@ -292,6 +292,7 @@ public:
     Q_INVOKABLE int skipOpening() noexcept;
     Q_INVOKABLE void reloadCurrentVideo() noexcept;
     Q_INVOKABLE void openVideoInExternalPlayer(const QString& path) noexcept;
+    Q_INVOKABLE void quickSetupForSingleDownloadedTorrent(const QStringList& files, int releaseId) noexcept;
 
 private:
     void saveVideoSeens();
