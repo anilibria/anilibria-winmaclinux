@@ -703,6 +703,8 @@ void OnlinePlayerViewModel::quickSetupForSingleTorrentRelease(int releaseId, int
 
     auto firstVideo = m_videos->getVideoAtIndex(videoIndex);
 
+    if (firstVideo == nullptr) firstVideo = m_videos->getVideoAtIndex(0);
+
     setSelectedVideo(firstVideo->order());
     setIsFullHdAllowed(!firstVideo->fullhd().isEmpty());
     setVideoSource(getVideoFromQuality(firstVideo));
