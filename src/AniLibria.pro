@@ -17,10 +17,10 @@ windows {
 }
 
 unix {
-    LIBS += -Lvlc
+    LIBS += -lvlc
 
-    INCLUDEPATH += .
-    DEPENDPATH += .
+    INCLUDEPATH += /usr/include/
+    DEPENDPATH += /usr/include/
 
     INCLUDEPATH += /usr/include/vlc/plugins
     DEPENDPATH += /usr/include/vlc/plugins
