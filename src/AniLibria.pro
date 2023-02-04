@@ -31,6 +31,12 @@ unix {
 buildwithvlc {
     DEFINES += USE_VLC_PLAYER
 
+    windows {
+        SOURCES += \
+            vlc-qt/core/compat/asprintf.c \
+            vlc-qt/core/compat/vasprintf.c
+    }
+
     SOURCES += \
         vlc-qt/core/AbstractVideoFrame.cpp \
         vlc-qt/core/AbstractVideoStream.cpp \
@@ -52,8 +58,6 @@ buildwithvlc {
         vlc-qt/core/VideoMemoryStream.cpp \
         vlc-qt/core/VideoStream.cpp \
         vlc-qt/core/YUVVideoFrame.cpp \
-        vlc-qt/core/compat/asprintf.c \
-        vlc-qt/core/compat/vasprintf.c \
         vlc-qt/qml/QmlSource.cpp \
         vlc-qt/qml/QmlVideoObject.cpp \
         vlc-qt/qml/QmlVideoPlayer.cpp \
