@@ -19,8 +19,8 @@ windows {
 unix {
     LIBS += -Lvlc
 
-    INCLUDEPATH += /usr/include
-    DEPENDPATH += /usr/include
+    INCLUDEPATH += .
+    DEPENDPATH += .
 
     CONFIG += buildwithvlc
 }
