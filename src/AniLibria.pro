@@ -22,6 +22,9 @@ unix {
     INCLUDEPATH += .
     DEPENDPATH += .
 
+    INCLUDEPATH += /usr/include/vlc/plugins
+    DEPENDPATH += /usr/include/vlc/plugins
+
     CONFIG += buildwithvlc
 }
 
