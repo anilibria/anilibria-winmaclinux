@@ -16,17 +16,17 @@ windows {
     DEFINES += NO_NEED_STANDART_PLAYER
 }
 
-unix {
-    LIBS += -lvlc
+#unix {
+#    LIBS += -lvlc
 
-    INCLUDEPATH += /usr/include/
-    DEPENDPATH += /usr/include/
+#    INCLUDEPATH += /usr/include/
+#    DEPENDPATH += /usr/include/
 
-    INCLUDEPATH += /usr/include/vlc/plugins
-    DEPENDPATH += /usr/include/vlc/plugins
+#    INCLUDEPATH += /usr/include/vlc/plugins
+#    DEPENDPATH += /usr/include/vlc/plugins
 
-    CONFIG += buildwithvlc
-}
+#    CONFIG += buildwithvlc
+#}
 
 buildwithvlc {
     DEFINES += USE_VLC_PLAYER

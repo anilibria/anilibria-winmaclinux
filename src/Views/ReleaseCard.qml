@@ -542,6 +542,10 @@ ColumnLayout {
                                         return;
                                     }
 
+                                    if (!onlinePlayerWindowViewModel.isSelectedVlc) {
+                                        onlinePlayerWindowViewModel.changePlayer("VLC");
+                                    }
+
                                     onlinePlayerViewModel.quickSetupForSingleTorrentRelease(releasesViewModel.openedReleaseId, identifier, userConfigurationViewModel.playerBuffer);
 
                                     releasesViewModel.hideAfterWatchReleaseCard();

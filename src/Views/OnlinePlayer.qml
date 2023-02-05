@@ -1283,6 +1283,7 @@ Page {
                                 }
 
                                 CommonComboBox {
+                                    id: playersComboBox
                                     model: onlinePlayerWindowViewModel.players
 
                                     onActivated: {
@@ -1290,6 +1291,14 @@ Page {
                                         onlinePlayerViewModel.restorePosition = onlinePlayerViewModel.videoPosition;
                                         const newPlayer = onlinePlayerWindowViewModel.players[currentIndex];
                                         onlinePlayerWindowViewModel.changePlayer(newPlayer);
+                                    }
+
+                                    Connections {
+                                        target: onlinePlayerWindowViewModel
+                                        function onSelectedPlayerChanged() {
+                                            const playerIndex = onlinePlayerWindowViewModel.players.indexOf(onlinePlayerWindowViewModel.selectedPlayer);
+                                            if (playersComboBox.currentIndex !== playerIndex) playersComboBox.currentIndex = playerIndex;
+                                        }
                                     }
                                 }
                             }

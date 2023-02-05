@@ -229,9 +229,9 @@ void OnlinePlayerVideoList::setVideosFromDownloadedTorrent(const QStringList &fi
     foreach (auto file, files) {
         auto videoModel = new OnlineVideoModel();
 #ifdef Q_OS_WIN
-        auto url = "file:///" + file;
+        auto url = "file:///" + file.replace("\\", "/").replace(" ", "%20");
 #else
-        auto url = "file://" + file;
+        auto url = "file://" + file.replace(" ", "%20");
 #endif
         videoModel->setFullHd(url);
         videoModel->setHd(url);
