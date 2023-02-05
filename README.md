@@ -80,7 +80,7 @@ $ flatpak install --user anilibria.flatpak
 - Поддержка C++11 (минимальные версии компиляторов MSVC15, GCC 4.8 или CLANG 3.3)
 - Модули Qt - multimedia, graphicaleffects, svg, websocket
 - Для сборки проекта используется qmake
-- Для Windows сборки требуется зависимость libVLC версии 3.0.8
+- Для Windows сборки требуется зависимость libVLC версии 3.0.18
 
 ### Linux
 
