@@ -33,7 +33,7 @@ TorrentNotifierViewModel::TorrentNotifierViewModel(QObject *parent)
 
     connect(m_webSocket,&QWebSocket::textMessageReceived, this, &TorrentNotifierViewModel::messageReceived);
     connect(m_webSocket,&QWebSocket::connected, this, &TorrentNotifierViewModel::socketConnected);
-    connect(m_webSocket,&QWebSocket::disconnected, this, &TorrentNotifierViewModel::socketConnected);
+    connect(m_webSocket,&QWebSocket::disconnected, this, &TorrentNotifierViewModel::socketDisconnected);
     connect(m_manager,&QNetworkAccessManager::finished, this, &TorrentNotifierViewModel::requestResponse);
 }
 
