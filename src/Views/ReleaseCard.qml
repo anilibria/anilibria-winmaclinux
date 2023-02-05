@@ -495,8 +495,7 @@ ColumnLayout {
                                 onPressed: {
                                     const torrentUri = synchronizationService.combineWithWebSiteUrl(url);
                                     if (localStorage.isUseTorrentStreamMode()) {
-                                        releasesViewModel.downloadTorrent(releaseid, torrentUri, userConfigurationViewModel.playerBuffer);
-                                        torrentNotifierViewModel.startGetNotifiers(userConfigurationViewModel.playerBuffer);
+                                        releasesViewModel.downloadTorrent(releasesViewModel.openedReleaseId, torrentUri, userConfigurationViewModel.playerBuffer);
                                     } else {
                                         synchronizationService.downloadTorrent(torrentUri);
                                         userActivityViewModel.addDownloadedTorrentToCounter();
@@ -535,6 +534,17 @@ ColumnLayout {
                                 text: "Смотреть " + quality + " [" + series + "]"
                                 onPressed: {
                                     watchTorrent.close();
+
+                                    // TODO: if already downloaded torrent start watch local file
+
+                                    if (!onlinePlayerWindowViewModel.isHasVlc) {
+                                        vlcInfo.open();
+                                        return;
+                                    }
+
+                                    if (!onlinePlayerWindowViewModel.isSelectedVlc) {
+                                        onlinePlayerWindowViewModel.changePlayer("VLC");
+                                    }
 
                                     onlinePlayerViewModel.quickSetupForSingleTorrentRelease(releasesViewModel.openedReleaseId, identifier, userConfigurationViewModel.playerBuffer);
 
@@ -711,4 +721,23 @@ ColumnLayout {
             }
         }
     }
+
+    MessageModal {
+        id: vlcInfo
+        header: "Плеер VLC не доступен"
+        message: "Ваша версия собрана без плеера VLC. К сожалению только плеер VLC умеет стримить торренты. Для возможности смотреть торрент необходимо собрать приложение с плеером VLC."
+        content: Row {
+            spacing: 6
+            anchors.right: parent.right
+
+            RoundedActionButton {
+                text: "Закрыть"
+                width: 100
+                onClicked: {
+                    vlcInfo.close();
+                }
+            }
+        }
+    }
+
 }

@@ -32,8 +32,14 @@ class OnlinePlayerWindowViewModel : public QObject
     Q_PROPERTY(bool isTopMost READ isTopMost WRITE setIsTopMost NOTIFY isTopMostChanged)
     Q_PROPERTY(int windowCursorShape READ windowCursorShape WRITE setWindowCursorShape NOTIFY windowCursorShapeChanged)
     Q_PROPERTY(int panelOpacity READ panelOpacity WRITE setPanelOpacity NOTIFY panelOpacityChanged)
-    Q_PROPERTY(bool isStandartPlayer READ isStandartPlayer WRITE setIsStandartPlayer NOTIFY isStandartPlayerChanged)
-    Q_PROPERTY(bool isQt515 READ isQt515 NOTIFY isQt515Changed)
+    Q_PROPERTY(QString playerComponent READ playerComponent NOTIFY playerComponentChanged)
+    Q_PROPERTY(QString playerOutputComponent READ playerOutputComponent NOTIFY playerOutputComponentChanged)
+    Q_PROPERTY(bool supportOutput READ supportOutput NOTIFY supportOutputChanged)
+    Q_PROPERTY(QStringList players READ players NOTIFY playersChanged)
+    Q_PROPERTY(QString selectedPlayer READ selectedPlayer NOTIFY selectedPlayerChanged)
+    Q_PROPERTY(bool isHasVlc READ isHasVlc NOTIFY isHasVlcChanged)
+    Q_PROPERTY(bool isSelectedQtAv READ isSelectedQtAv NOTIFY isSelectedQtAvChanged)
+    Q_PROPERTY(bool isSelectedVlc READ isSelectedVlc NOTIFY isSelectedVlcChanged)
 
 private:
     bool m_playerButtonVisible;
@@ -42,7 +48,18 @@ private:
     bool m_isTopMost;
     int m_windowCursorShape;
     int m_panelOpacity;
-    bool m_isStandartPlayer;
+    QString m_playerComponent { "" };
+    QString m_playerOutputComponent { "" };
+    bool m_supportOutput { false };
+    QStringList m_players { QStringList() };
+    QString m_selectedPlayer { "" };
+    QMap<QString, QString> m_playerComponents { QMap<QString, QString>() };
+    QMap<QString, QString> m_playerOutputComponents { QMap<QString, QString>() };
+    bool m_isHasVlc { false };
+    bool m_isSelectedQtAv { false };
+    bool m_isSelectedVlc { false };
+    const QString nameVLCPlayer { "VLC" };
+    const QString nameQtAvPlayer { "QtAv" };
 
 public:
     explicit OnlinePlayerWindowViewModel(QObject *parent = nullptr);
@@ -53,14 +70,9 @@ public:
     bool isTopMost() const noexcept { return m_isTopMost; }
     int windowCursorShape() const noexcept { return m_windowCursorShape; }
     int panelOpacity() const noexcept { return m_panelOpacity; }
-    bool isStandartPlayer() const noexcept { return m_isStandartPlayer; }
-    bool isQt515() const noexcept {
-#if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
-        return false;
-#else
-        return true;
-#endif
-    }
+    QString playerComponent() const noexcept { return m_playerComponent; };
+    QString playerOutputComponent() const noexcept { return m_playerOutputComponent; }
+    bool supportOutput() const noexcept { return m_supportOutput; }
 
     void setPlayerButtonVisible(const bool& playerButtonVisible) noexcept;
     void setPauseButtonVisible(const bool& pauseButtonVisible) noexcept;
@@ -68,11 +80,23 @@ public:
     void setIsTopMost(const bool& isTopMost) noexcept;
     void setWindowCursorShape(const int& windowCursorShape) noexcept;
     void setPanelOpacity(int panelOpacity) noexcept;
-    void setIsStandartPlayer(bool isStandartPlayer) noexcept;
+
+    QStringList players() const noexcept { return m_players; }
+
+    QString selectedPlayer() const noexcept { return m_selectedPlayer; }
+
+    bool isHasVlc() const noexcept { return m_isHasVlc; }
+    bool isSelectedQtAv() const noexcept { return m_isSelectedQtAv; }
+    bool isSelectedVlc() const noexcept { return m_isSelectedVlc; }
 
     Q_INVOKABLE void playbackStateChanged(const bool& isPlaying);
     Q_INVOKABLE void hideControlPanel();
     Q_INVOKABLE void showPanel();
+    Q_INVOKABLE void clearCurrentPlayer();
+    Q_INVOKABLE void changePlayer(const QString& player);
+
+private:
+    void fillSupportedPlayers();
 
 signals:
     void playerButtonVisibleChanged();
@@ -82,8 +106,14 @@ signals:
     void controlPanelOpacityChanged();
     void windowCursorShapeChanged();
     void panelOpacityChanged();
-    void isStandartPlayerChanged();
-    void isQt515Changed();
+    void playerComponentChanged();
+    void playerOutputComponentChanged();
+    void supportOutputChanged();
+    void playersChanged();
+    void selectedPlayerChanged();
+    void isHasVlcChanged();
+    void isSelectedQtAvChanged();
+    void isSelectedVlcChanged();
 
 };
 

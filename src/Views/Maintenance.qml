@@ -100,7 +100,7 @@ Page {
                     Rectangle {
                         id: flickableContent
                         width: scrollview.width - 10
-                        height: 720
+                        height: 840
                         color: "transparent"
                         border.color: "white"
                         border.width: 1
@@ -657,7 +657,7 @@ Page {
                         }
                     }
                 }
-            }
+            }            
         }
     }
 

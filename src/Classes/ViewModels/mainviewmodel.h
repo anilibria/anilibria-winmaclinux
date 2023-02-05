@@ -26,6 +26,7 @@ class MainViewModel : public QObject
     Q_PROPERTY(bool isAuthorizationPageVisible READ isAuthorizationPageVisible NOTIFY isAuthorizationPageVisibleChanged)
     Q_PROPERTY(bool isThemeManagerVisible READ isThemeManagerVisible NOTIFY isThemeManagerVisibleChanged)
     Q_PROPERTY(bool isSmallSizeMode READ isSmallSizeMode WRITE setIsSmallSizeMode NOTIFY isSmallSizeModeChanged)
+    Q_PROPERTY(bool isTorrentStreamPageVisible READ isTorrentStreamPageVisible NOTIFY isTorrentStreamPageVisibleChanged)
 
 private:
     MainMenuListModel* m_mainMenuListModel { new MainMenuListModel(this) };
@@ -66,6 +67,7 @@ public:
     bool isMyAnilibriaPageVisible() const noexcept { return m_currentPageId == "myanilibria"; }
     bool isAuthorizationPageVisible() const noexcept { return m_currentPageId == "authorization"; }
     bool isThemeManagerVisible() const noexcept { return m_currentPageId == "thememanager"; }
+    bool isTorrentStreamPageVisible() const noexcept { return m_currentPageId == "torrentstream"; }
 
     Q_INVOKABLE void selectPage(const QString& pageId);
 
@@ -74,7 +76,7 @@ private:
     void refreshPageVisible() noexcept;
 
 public slots:
-    void selectedItemInMainMenu(int index, QString pageName);
+    void selectedItemInMainMenu(QString pageName);
 
 signals:
     void mainMenuListModelChanged();
@@ -98,6 +100,7 @@ signals:
     void releasesPageToNavigated();
     void isThemeManagerVisibleChanged();
     void isSmallSizeModeChanged();
+    void isTorrentStreamPageVisibleChanged();
 
 };
 

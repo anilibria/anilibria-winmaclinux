@@ -179,5 +179,8 @@
         <file>Assets/Icons/playerrefresh.svg</file>
         <file>Assets/Icons/externalplayer.svg</file>
         <file>Controls/InfoAboutPlayer.qml</file>
+        <file>Views/Videoplayer/QtVlcPlayer.qml</file>
+        <file>Views/Videoplayer/QtVlcVideoOutput.qml</file>
+        <file>Views/TorrentStream.qml</file>
     </qresource>
 </RCC>

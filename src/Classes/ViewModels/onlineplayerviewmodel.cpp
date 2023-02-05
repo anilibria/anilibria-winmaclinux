@@ -147,9 +147,11 @@ void OnlinePlayerViewModel::setDisplayEndVideoPosition(const QString &displayEnd
 
 void OnlinePlayerViewModel::setVideoSource(const QString &videoSource)
 {
-    if (m_videoSource == videoSource) return;
+    auto isLocalFile = videoSource.startsWith("file://");
+    auto source = !isLocalFile && m_needProxified && m_proxyPort > 0 ? QString("http://localhost:") + QString::number(m_proxyPort) + "/proxyvideolist?path=" + videoSource : videoSource;
+    if (m_videoSource == source) return;
 
-    m_videoSource = videoSource;
+    m_videoSource = source;
     emit videoSourceChanged();
 
     m_remotePlayer->broadcastCommand(m_videoSourceChangedCommand, videoSource);
@@ -378,6 +380,30 @@ void OnlinePlayerViewModel::setShowedDropWarning(bool showedDropWarning) noexcep
 
     m_showedDropWarning = showedDropWarning;
     emit showedDropWarningChanged();
+}
+
+void OnlinePlayerViewModel::setNeedProxified(bool needProxified) noexcept
+{
+    if (m_needProxified == needProxified) return;
+
+    m_needProxified = needProxified;
+    emit needProxifiedChanged();
+}
+
+void OnlinePlayerViewModel::setProxyPort(int proxyPort) noexcept
+{
+    if (m_proxyPort == proxyPort) return;
+
+    m_proxyPort = proxyPort;
+    emit proxyPortChanged();
+}
+
+void OnlinePlayerViewModel::setMuted(bool muted) noexcept
+{
+    if (m_muted == muted) return;
+
+    m_muted = muted;
+    emit mutedChanged();
 }
 
 void OnlinePlayerViewModel::toggleFullScreen()
@@ -676,6 +702,8 @@ void OnlinePlayerViewModel::quickSetupForSingleTorrentRelease(int releaseId, int
     }
 
     auto firstVideo = m_videos->getVideoAtIndex(videoIndex);
+
+    if (firstVideo == nullptr) firstVideo = m_videos->getVideoAtIndex(0);
 
     setSelectedVideo(firstVideo->order());
     setIsFullHdAllowed(!firstVideo->fullhd().isEmpty());
@@ -1042,6 +1070,43 @@ void OnlinePlayerViewModel::openVideoInExternalPlayer(const QString& path) noexc
     QNetworkRequest request(url);
     request.setAttribute(QNetworkRequest::RedirectPolicyAttribute, QNetworkRequest::NoLessSafeRedirectPolicy);
     manager->get(request);
+}
+
+void OnlinePlayerViewModel::quickSetupForSingleDownloadedTorrent(const QStringList &files, int releaseId) noexcept
+{
+    auto release = m_releasesViewModel->getReleaseById(releaseId);
+    m_navigateReleaseId = releaseId;
+    m_navigatePoster = release->poster();
+    m_navigateVideos = "";
+    m_customPlaylistPosition = -1;
+
+    m_videos->setVideosFromDownloadedTorrent(files, releaseId, release->poster());
+
+    setReleasePoster(m_navigatePoster);
+    setSelectedRelease(m_navigateReleaseId);
+
+    int videoIndex = 0;
+    if (m_seenModels->contains(m_navigateReleaseId)) {
+        auto model = m_seenModels->value(m_navigateReleaseId);
+        videoIndex = model->videoId();
+    }
+
+    auto firstVideo = m_videos->getVideoAtIndex(videoIndex);
+
+    if (firstVideo == nullptr) firstVideo = m_videos->getVideoAtIndex(0);
+
+    setSelectedVideo(firstVideo->order());
+    setIsFullHdAllowed(!firstVideo->fullhd().isEmpty());
+    setVideoSource(getVideoFromQuality(firstVideo));
+    setRutubeIdentifier(firstVideo);
+
+    m_videos->selectVideo(m_selectedRelease, m_selectedVideo);
+
+    emit refreshSeenMarks();
+    emit playInPlayer();
+    emit saveToWatchHistory(m_navigateReleaseId);
+    emit needScrollSeriaPosition();
+    m_releasesViewModel->resetReleaseChanges(m_selectedRelease);
 }
 
 void OnlinePlayerViewModel::saveVideoSeens()

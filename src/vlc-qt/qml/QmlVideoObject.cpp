@@ -264,7 +264,11 @@ unsigned int VlcQmlVideoObject::formatCallback(char *chroma,
         _graphicsPainter = new GlslPainter;
 
     qstrcpy(chroma, "YV12");
+#ifdef Q_OS_WIN
     const vlc_chroma_description_t *chromaDesc = vlc_fourcc_GetChromaDescription(VLC_CODEC_YV12);
+#else
+    const vlc_chroma_description_t *chromaDesc = nullptr;
+#endif
 
     Q_ASSERT(chromaDesc);
 

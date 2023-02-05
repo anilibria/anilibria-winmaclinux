@@ -88,6 +88,7 @@ QString iconMainMenuVideoplayerField = "iconMainMenuVideoplayer";
 QString iconMainMenuDonateField = "iconMainMenuDonate";
 QString iconMainMenuThemeManagerField = "iconMainMenuThemeManager";
 QString iconMainMenuYoutubeField = "iconMainMenuYoutube";
+QString iconMainMenuTorrentStreamField = "iconMainMenuTorrentStream";
 QString iconLeftHalfScreenField = "iconLeftHalfScreen";
 QString iconRightHalfScreenField = "iconRightHalfScreen";
 QString iconMinimizeWindowField = "iconMinimizeWindow";

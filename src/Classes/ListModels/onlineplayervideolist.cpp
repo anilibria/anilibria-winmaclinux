@@ -219,6 +219,35 @@ OnlineVideoModel *OnlinePlayerVideoList::getFirstReleaseWithPredicate(std::funct
     }
 }
 
+void OnlinePlayerVideoList::setVideosFromDownloadedTorrent(const QStringList &files, int releaseId, const QString& poster) noexcept
+{
+    beginResetModel();
+
+    m_videos->clear();
+
+    int iterator = 0;
+    foreach (auto file, files) {
+        auto videoModel = new OnlineVideoModel();
+#ifdef Q_OS_WIN
+        auto url = "file:///" + file.replace("\\", "/").replace(" ", "%20");
+#else
+        auto url = "file://" + file.replace(" ", "%20");
+#endif
+        videoModel->setFullHd(url);
+        videoModel->setHd(url);
+        videoModel->setSd(url);
+        videoModel->setOrder(iterator);
+        videoModel->setReleaseId(releaseId);
+        videoModel->setReleasePoster(poster);
+        videoModel->setIsGroup(false);
+        videoModel->setTitle("Файл торрента " + QString::number(iterator + 1));
+        m_videos->append(videoModel);
+        iterator++;
+    }
+
+    endResetModel();
+}
+
 void OnlinePlayerVideoList::setVideosFromSingleTorrent(const ReleaseTorrentModel& torrent, int releaseId, const QString &poster, int port) noexcept
 {
     beginResetModel();

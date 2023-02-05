@@ -26,10 +26,11 @@ MainMenuListModel::MainMenuListModel(QObject *parent) : QAbstractListModel(paren
     m_items->append(new MainMenuItemModel(2, "Моя Анилибрия", "myanilibria", iconMainMenuMyAnilibriaField));
     m_items->append(new MainMenuItemModel(3, "Кинозал", "cinemahall", iconMainMenuCinemahallField));
     m_items->append(new MainMenuItemModel(4, "Связанные релизы", "releaseseries", iconMainMenuReleasesSeriesField));
-    m_items->append(new MainMenuItemModel(5, "Менеджер тем", "thememanager", iconMainMenuThemeManagerField));
-    m_items->append(new MainMenuItemModel(6, "Youtube", "youtube", iconMainMenuYoutubeField));
-    m_items->append(new MainMenuItemModel(7, "Обслуживание", "maintenance", iconMainMenuMaintenanceField));
-    m_items->append(new MainMenuItemModel(8, "Поддержать проект", "", iconMainMenuDonateField));
+    m_items->append(new MainMenuItemModel(5, "TorrentStream", "torrentstream", iconMainMenuTorrentStreamField));
+    m_items->append(new MainMenuItemModel(6, "Менеджер тем", "thememanager", iconMainMenuThemeManagerField));
+    m_items->append(new MainMenuItemModel(7, "Youtube", "youtube", iconMainMenuYoutubeField));
+    m_items->append(new MainMenuItemModel(8, "Обслуживание", "maintenance", iconMainMenuMaintenanceField));
+    m_items->append(new MainMenuItemModel(9, "Поддержать проект", "", iconMainMenuDonateField));
 
     m_authorizationOrder = m_items->count();
 }
@@ -126,5 +127,5 @@ void MainMenuListModel::selectItem(int index)
 
     auto menuItem = *iterator;
 
-    emit selectedItem(index, menuItem->pageName());
+    emit selectedItem(menuItem->pageName());
 }

@@ -852,7 +852,7 @@ ApplicationWindow {
                                 spacing: 10
                                 Image {
                                     anchors.verticalCenter: parent.verticalCenter
-                                    source: applicationThemeViewModel[icon] ? applicationThemeViewModel[icon] : '../Assets/Icons/donate.jpg'
+                                    source: applicationThemeViewModel.currentItems[icon] ? applicationThemeViewModel.currentItems[icon] : '../Assets/Icons/donate.jpg'
                                     sourceSize.width: 30
                                     sourceSize.height: 30
                                 }
@@ -922,7 +922,8 @@ ApplicationWindow {
     OnlinePlayerViewModel {
         id: onlinePlayerViewModel
         releasesViewModel: releasesViewModel
-
+        proxyPort: userConfigurationViewModel.playerBuffer
+        needProxified: userConfigurationViewModel.usingVideoProxy && onlinePlayerWindowViewModel.isSelectedQtAv && torrentNotifierViewModel.activated
         onIsFullScreenChanged: {
             if (isFullScreen) {
                 if (applicationSettings.useCustomToolbar) {
@@ -964,6 +965,15 @@ ApplicationWindow {
                     toolBar.visible = true;
                 }
             }
+        }
+        onNeedProxifiedChanged: {
+            let oldSource = onlinePlayerViewModel.videoSource;
+            if (oldSource.indexOf('/proxyvideolist?path=')) {
+                oldSource = oldSource.substring(oldSource.indexOf("https://"));
+                console.log('replaced source', oldSource);
+            }
+            onlinePlayerViewModel.videoSource = "";
+            onlinePlayerViewModel.videoSource = oldSource;
         }
         onNeedScrollSeriaPosition: {
             videoplayer.setSerieScrollPosition();
@@ -1125,6 +1135,11 @@ ApplicationWindow {
         ThemeManager {
             id: themeManager
             visible: mainViewModel.isThemeManagerVisible
+        }
+
+        TorrentStream {
+            id: torrentStream
+            visible: mainViewModel.isTorrentStreamPageVisible
         }
 
         MouseArea {
@@ -1437,16 +1452,36 @@ ApplicationWindow {
 
     TorrentNotifierViewModel {
         id: torrentNotifierViewModel
+        torrentStreamPath: userConfigurationViewModel.torrentStreamPath
+        removeAllData: userConfigurationViewModel.removeAllDownloadedTorrent
+        port: userConfigurationViewModel.playerBuffer
+        releasesViewModel: releasesViewModel
         onTorrentFullyDownloaded: {
-            console.log('release ' + releaseId + ' fully downloaded!!!');
+            notificationViewModel.sendInfoNotification("Торрент скачан " + releaseName);
+            torrentNotifierViewModel.startGetTorrentData();
+        }
+        onTorrentStreamNotConfigured: {
+            if (!userConfigurationViewModel.playerBuffer) return
+
+            torrentNotifierViewModel.startGetNotifiers();
+        }
+        onTorrentStreamStarted: {
+            torrentNotifierViewModel.startGetNotifiers();
+        }
+        onActivatedChanged: {
+            if (activated) torrentNotifierViewModel.startGetTorrentData();
+        }
+        onPrepareWatchTorrentFiles: {
+            onlinePlayerViewModel.quickSetupForSingleDownloadedTorrent(files, releaseId);
+            mainViewModel.selectPage("videoplayer");
         }
         Component.onCompleted: {
-            if (userConfigurationViewModel.playerBuffer > 0) {
-                torrentNotifierViewModel.startGetNotifiers(userConfigurationViewModel.playerBuffer);
+            if (userConfigurationViewModel.torrentStreamPath) {
+                torrentNotifierViewModel.tryStartTorrentStreamApplication();
             }
         }
         Component.onDestruction: {
-            torrentNotifierViewModel.stopNotifiers();
+            torrentNotifierViewModel.closeConnectionsAndApplication();
         }
     }
 

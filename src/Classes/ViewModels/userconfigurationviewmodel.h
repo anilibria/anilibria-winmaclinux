@@ -45,6 +45,8 @@ class UserConfigurationViewModel : public QObject
     Q_PROPERTY(bool hidedSpeed READ hidedSpeed WRITE setHidedSpeed NOTIFY hidedSpeedChanged)
     Q_PROPERTY(int playerBuffer READ playerBuffer WRITE setPlayerBuffer NOTIFY playerBufferChanged)
     Q_PROPERTY(bool usingVideoProxy READ usingVideoProxy WRITE setUsingVideoProxy NOTIFY usingVideoProxyChanged)
+    Q_PROPERTY(QString torrentStreamPath READ torrentStreamPath WRITE setTorrentStreamPath NOTIFY torrentStreamPathChanged)
+    Q_PROPERTY(bool removeAllDownloadedTorrent READ removeAllDownloadedTorrent WRITE setRemoveAllDownloadedTorrent NOTIFY removeAllDownloadedTorrentChanged)
 
 private:
     QString m_cacheFileName { "userconfiguration.cache" };
@@ -68,6 +70,8 @@ private:
     QString m_hidedSpeedField { "hidedSpeed" };
     QString m_playerBufferField { "torrentStreamBuffer" };
     QString m_usingVideoProxyField { "usingVideoProxy" };
+    QString m_torrentStreamPathField { "torrentStreamPath" };
+    QString m_removeAllDownloadedTorrentField { "removeAllDownloadedTorrent" };
     int m_opacityPlayerPanel { 50 };
     bool m_notCloseReleaseCardAfterWatch { false };
     bool m_usingScrollAcceleration { true };
@@ -88,6 +92,8 @@ private:
     bool m_hidedSpeed { false };
     int m_playerBuffer { 0 };
     bool m_usingVideoProxy { false };
+    QString m_torrentStreamPath { "" };
+    bool m_removeAllDownloadedTorrent { false };
 
 public:
     explicit UserConfigurationViewModel(QObject *parent = nullptr);
@@ -152,6 +158,12 @@ public:
     bool usingVideoProxy() const noexcept { return m_usingVideoProxy; }
     void setUsingVideoProxy(bool usingVideoProxy) noexcept;
 
+    QString torrentStreamPath() const noexcept { return m_torrentStreamPath; }
+    void setTorrentStreamPath(const QString& torrentStreamPath) noexcept;
+
+    bool removeAllDownloadedTorrent() const noexcept { return m_removeAllDownloadedTorrent; }
+    void setRemoveAllDownloadedTorrent(bool removeAllDownloadedTorrent) noexcept;
+
     Q_INVOKABLE void refreshConfiguration() noexcept;
     Q_INVOKABLE void saveSettingsToFile();
 
@@ -179,6 +191,8 @@ signals:
     void hidedSpeedChanged();
     void playerBufferChanged();
     void usingVideoProxyChanged();
+    void torrentStreamPathChanged();
+    void removeAllDownloadedTorrentChanged();
 
 };
 

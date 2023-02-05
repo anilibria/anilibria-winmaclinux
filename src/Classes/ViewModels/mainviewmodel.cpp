@@ -1,6 +1,5 @@
 #include <QDesktopServices>
 #include <QUrl>
-#include <QDebug>
 #include "mainviewmodel.h"
 
 MainViewModel::MainViewModel(QObject *parent) : QObject(parent)
@@ -19,6 +18,7 @@ MainViewModel::MainViewModel(QObject *parent) : QObject(parent)
     m_displayNames->insert("releaseseries", "Связанные релизы");
     m_displayNames->insert("thememanager", "Менеджер Тем");
     m_displayNames->insert("authorization", "Авторизация");
+    m_displayNames->insert("torrentstream", "TorrentStream");
 
     m_currentPageDisplayName = m_displayNames->value(m_currentPageId);
 }
@@ -108,12 +108,12 @@ void MainViewModel::refreshPageVisible() noexcept
     emit isAuthorizationPageVisibleChanged();
     emit isMyAnilibriaPageVisibleChanged();
     emit isThemeManagerVisibleChanged();
+    emit isTorrentStreamPageVisibleChanged();
 }
 
-void MainViewModel::selectedItemInMainMenu(int index, QString pageName)
+void MainViewModel::selectedItemInMainMenu(QString pageName)
 {
-    int supportProject = 8;
-    if (index != supportProject) {
+    if (!pageName.isEmpty()) {
         selectPage(pageName);
         return;
     }

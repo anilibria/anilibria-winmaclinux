@@ -188,6 +188,22 @@ void UserConfigurationViewModel::setUsingVideoProxy(bool usingVideoProxy) noexce
     emit usingVideoProxyChanged();
 }
 
+void UserConfigurationViewModel::setTorrentStreamPath(const QString &torrentStreamPath) noexcept
+{
+    if (m_torrentStreamPath == torrentStreamPath) return;
+
+    m_torrentStreamPath = torrentStreamPath;
+    emit torrentStreamPathChanged();
+}
+
+void UserConfigurationViewModel::setRemoveAllDownloadedTorrent(bool removeAllDownloadedTorrent) noexcept
+{
+    if (m_removeAllDownloadedTorrent == removeAllDownloadedTorrent) return;
+
+    m_removeAllDownloadedTorrent = removeAllDownloadedTorrent;
+    emit removeAllDownloadedTorrentChanged();
+}
+
 void UserConfigurationViewModel::refreshConfiguration() noexcept
 {
     readSettingsFromFile();
@@ -233,6 +249,8 @@ void UserConfigurationViewModel::saveSettingsToFile()
     object[m_hidedSpeedField] = m_hidedSpeed;
     object[m_playerBufferField] = m_playerBuffer;
     object[m_usingVideoProxyField] = m_usingVideoProxy;
+    object[m_torrentStreamPathField] = m_torrentStreamPath;
+    object[m_removeAllDownloadedTorrentField] = m_removeAllDownloadedTorrent;
 
     QFile file(getCachePath(m_cacheFileName));
     file.open(QFile::WriteOnly | QFile::Text);
@@ -268,5 +286,7 @@ void UserConfigurationViewModel::readSettingsFromFile()
     m_hidedQuality = object.contains(m_hidedQualityField) ? object[m_hidedQualityField].toBool() : false;
     m_hidedSpeed = object.contains(m_hidedSpeedField) ? object[m_hidedSpeedField].toBool() : false;
     m_playerBuffer = object.contains(m_playerBufferField) ? object[m_playerBufferField].toInt() : 0;
-    m_usingVideoProxy = object.contains(m_usingVideoProxyField) ? object[m_usingVideoProxyField].toBool() : false;
+    m_usingVideoProxy = object.contains(m_usingVideoProxyField) ? object[m_usingVideoProxyField].toBool() : true;
+    m_torrentStreamPath = object.contains(m_torrentStreamPathField) ? object[m_torrentStreamPathField].toString() : "torrentStream/TorrentStream.exe";
+    m_removeAllDownloadedTorrent = object.contains(m_removeAllDownloadedTorrentField) ? object[m_removeAllDownloadedTorrentField].toBool() : true;
 }
