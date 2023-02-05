@@ -56,4 +56,5 @@ https://www.idownloadblog.com/2015/03/24/apps-launch-system-startup-mac/
 C:\my\longest\path\what\i\cant\create\just\from\my\brain\lalalalalalla\torrentStream <- плохой путь он слишком длинный
 C:\torrentStream\ <- хороший путь потому что короткий
 ```
-Если Вы запускаете TorrentStream вместе с приложением то далее надо перейти на страницу `TorrentStream` , открыть настройки (кнопка с шестеренкой) и указать новый путь к приложению TorrentStream в поле `Путь к приложению`.
+Если Вы запускаете TorrentStream вместе с приложением то далее надо перейти на страницу `TorrentStream` , открыть настройки (кнопка с шестеренкой) и указать новый путь к приложению TorrentStream в поле `Путь к приложению`.  
+[Тикет](https://code.videolan.org/videolan/vlc/-/issues/25640) VLC для отслеживания 
