@@ -2,9 +2,11 @@ import QtQuick 2.12
 
 Item {
     id: root
-    visible: !mainViewModel.isSmallSizeMode && !onlinePlayerViewModel.showedDropWarning && onlinePlayerViewModel.isReleaseLess2022
+    visible: !mainViewModel.isSmallSizeMode && !onlinePlayerViewModel.showedDropWarning &&
+        onlinePlayerViewModel.isReleaseLess2022 &&
+        onlinePlayerWindowViewModel.isSelectedVlc
     width: 460
-    height: 200
+    height: 140
 
     Rectangle {
         anchors.fill: parent
@@ -21,12 +23,9 @@ Item {
         verticalAlignment: Text.AlignVCenter
         horizontalAlignment: Text.AlignHCenter
         fontPointSize: 10
-        text: "<b>Релизы младше 2022 года могут содержать микродропы при воспроизведении.</b><br />
-            Варианты как можно смотреть еще:<br />
-            - Смотреть через браузер, первая кнопка справа от глазика в плейлисте<br />
-            - Смотреть через внешний плеер, вторая кнопка справа от глазика в плейлисте<br />
-            - Смотреть торрент, одноименная кнопка в карточке релиза<br />
-            - Ну или просто скачать торрент, кнопка Скачать находиться тоже в карточке релиза"
+        text: "<b>Релизы озвученные младше 2022 года могут содержать микродропы при воспроизведении на плеере VLC</b><br />" +
+            (Qt.platform.os === 'windows' ? "Чтобы решить эту проблему Вы можете смотреть на плеере QtAv с включенным проксированием на странице TorrentStream." :
+                "Чтобы решить эту проблему Вы можете смотреть на плеере Default или Default classic.")
     }
 
     IconButton {

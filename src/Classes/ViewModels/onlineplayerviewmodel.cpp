@@ -637,7 +637,10 @@ void OnlinePlayerViewModel::quickSetupForSingleRelease(int releaseId, int custom
     m_navigatePoster = release->poster();
     m_navigateVideos = release->videos();
     m_customPlaylistPosition = customPosition;
-    auto year = release->year().toInt();
+
+    QDateTime timestamp;
+    timestamp.setTime_t(release->timestamp());
+    auto year = timestamp.date().year();
     m_isReleaseLess2022 = year > 0 && year < 2022;
 
     m_videos->setVideosFromSingleList(m_navigateVideos, m_navigateReleaseId, m_navigatePoster);
