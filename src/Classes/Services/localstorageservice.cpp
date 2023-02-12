@@ -405,7 +405,7 @@ QString LocalStorageService::packAsM3UAndOpen(int id, QString quality)
         content += video.exportToM3U();
     }
 
-    QString fileName = QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation) + "/" + QString::number(id) + ".m3u";
+    QString fileName = QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation) + "/" + QString::number(id) + quality + ".m3u";
     QFile m3uFile(fileName);
     if (!m3uFile.open(QFile::WriteOnly | QFile::Text)) return "";
 
