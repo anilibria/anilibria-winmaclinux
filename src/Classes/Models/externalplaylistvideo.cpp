@@ -42,7 +42,7 @@ void ExternalPlaylistVideo::setName(const QString &name) noexcept
 
 QString ExternalPlaylistVideo::exportToM3U() noexcept
 {
-    return "# EXTINF:-1, " + m_Name + "\n" + m_Address + "\n\n";
+    return "#EXTINF:-1, " + m_Name + "\n" + m_Address + "\n\n";
 }
 
 QString ExternalPlaylistVideo::exportToMPCPL() noexcept

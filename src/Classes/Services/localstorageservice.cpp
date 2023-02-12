@@ -400,7 +400,7 @@ QString LocalStorageService::packAsM3UAndOpen(int id, QString quality)
 
     std::sort(videos.begin(), videos.end(), compareExternalPlaylistVideo);
 
-    QString content = "# EXTM3U\n\n";
+    QString content = "#EXTM3U\n\n";
     foreach (auto video, videos) {
         content += video.exportToM3U();
     }
