@@ -44,12 +44,12 @@ VlcQmlPlayer::VlcQmlPlayer(QObject *parent)
     _subtitleTrackModel = new VlcTrackModel(this);
     _videoTrackModel = new VlcTrackModel(this);
 
-    connect(_player, &VlcMediaPlayer::lengthChanged, this, &VlcQmlPlayer::durationChanged);
-    connect(_player, &VlcMediaPlayer::seekableChanged, this, &VlcQmlPlayer::seekableChanged);
+    connect(_player, &VlcMediaPlayer::lengthChanged, this, &VlcQmlPlayer::playerDurationChanged);
+    connect(_player, &VlcMediaPlayer::seekableChanged, this, &VlcQmlPlayer::playerSeekableChanged);
     connect(_player, &VlcMediaPlayer::stateChanged, this, &VlcQmlPlayer::playerStateChanged);
-    connect(_player, &VlcMediaPlayer::timeChanged, this, &VlcQmlPlayer::positionChanged);
+    connect(_player, &VlcMediaPlayer::timeChanged, this, &VlcQmlPlayer::playerPositionChanged);
     connect(_player, &VlcMediaPlayer::bufferingInteger, this, &VlcQmlPlayer::buffering);
-    connect(_player, &VlcMediaPlayer::vout, this, &VlcQmlPlayer::mediaPlayerVout);
+    //connect(_player, &VlcMediaPlayer::vout, this, &VlcQmlPlayer::mediaPlayerVout);
 
     setPlayer(_player);
 }
@@ -107,24 +107,14 @@ void VlcQmlPlayer::setLogLevel(int level)
     emit logLevelChanged();
 }
 
-bool VlcQmlPlayer::seekable() const
-{
-    return _player->seekable();
-}
-
-int VlcQmlPlayer::state() const
-{
-    return _player->state();
-}
-
 qint64 VlcQmlPlayer::duration() const
 {
-    return _player->length();
+    return m_duration;
 }
 
-qint64 VlcQmlPlayer::position() const
+int VlcQmlPlayer::position() const
 {
-    return _player->time();
+    return m_position;
 }
 
 QString VlcQmlPlayer::source() const noexcept
@@ -292,6 +282,8 @@ bool VlcQmlPlayer::muted() const noexcept
 
 void VlcQmlPlayer::setMuted(bool muted) noexcept
 {
+    if (m_muted == muted) return;
+
     _player->audio()->setMute(muted);
     m_muted = muted;
 
@@ -346,27 +338,43 @@ void VlcQmlPlayer::buffering(int progress)
 
 void VlcQmlPlayer::playerStateChanged()
 {
-    auto currentState = state();
+    auto currentState = _player->state();
 
     if (currentState == Vlc::Playing) setPlaybackState(1);
     if (currentState == Vlc::Paused) setPlaybackState(2);
     if (currentState != Vlc::Playing && currentState != Vlc::Paused) setPlaybackState(0);
 
-    emit stateChanged();
     if (currentState == Vlc::Ended) {
-        if (_player->length() - _player->time() <= 5000) {
+        if (m_duration - m_position <= 5000) {
             setIsEnded(true);
         } else {
-            emit earlyEnded(_player->time());
+            emit earlyEnded(m_position);
         }
     }
 }
 
-void VlcQmlPlayer::audioMuteChanged(bool muted)
+void VlcQmlPlayer::playerPositionChanged(int time)
 {
-    if (muted) {
-    }
-    emit mutedChanged();
+    if (m_position == time) return;
+
+    m_position = time;
+    emit positionChanged();
+}
+
+void VlcQmlPlayer::playerDurationChanged(int duration)
+{
+    if (m_duration == duration) return;
+
+    m_duration = duration;
+    emit durationChanged();
+}
+
+void VlcQmlPlayer::playerSeekableChanged(bool seekable)
+{
+    if (m_seekable == seekable) return;
+
+    m_seekable = seekable;
+    emit seekableChanged();
 }
 
 void VlcQmlPlayer::seek(qint64 time)

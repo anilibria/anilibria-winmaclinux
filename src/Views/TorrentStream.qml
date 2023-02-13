@@ -297,7 +297,7 @@ Page {
                 elide: Text.ElideRight
             }
 
-            Rectangle {
+            Item {
                 width: torrentStreamPopup.width - 30
                 height: torrentStreamPath.height
 
@@ -318,7 +318,7 @@ Page {
                 elide: Text.ElideRight
             }
 
-            Rectangle {
+            Item {
                 width: torrentStreamPopup.width - 30
                 height: torrentStreamPort.height
 

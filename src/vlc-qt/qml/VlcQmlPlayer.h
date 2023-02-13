@@ -40,7 +40,6 @@ class VlcQmlPlayer : public VlcQmlSource
     Q_PROPERTY(int logLevel READ logLevel WRITE setLogLevel NOTIFY logLevelChanged)
     Q_PROPERTY(qint64 position READ position NOTIFY positionChanged)
     Q_PROPERTY(bool seekable READ seekable NOTIFY seekableChanged)
-    Q_PROPERTY(int state READ state NOTIFY stateChanged)
     Q_PROPERTY(QString source READ source WRITE setSource NOTIFY sourceChanged)
     Q_PROPERTY(qreal volume READ volume WRITE setVolume NOTIFY volumeChanged)
     Q_PROPERTY(VlcTrackModel *audioTrackModel READ audioTrackModel CONSTANT)
@@ -68,6 +67,9 @@ private:
     int m_playbackState { 0 };
     bool m_muted { false };
     qreal m_volume { 1 };
+    int m_position { 0 };
+    int m_duration { 0 };
+    bool m_seekable { false };
 
     bool _autoplay;
     Vlc::Deinterlacing _deinterlacing;
@@ -90,14 +92,12 @@ public:
     void setDeinterlacing(int deinterlacing);
 
     qint64 duration() const;
-    qint64 position() const;
+    int position() const;
 
     int logLevel() const;
     void setLogLevel(int level);
 
-    bool seekable() const;
-
-    int state() const;
+    bool seekable() const noexcept { return m_seekable; }
 
     QString source() const noexcept;
     void setSource(QString source) noexcept;
@@ -156,7 +156,9 @@ private slots:
     void mediaPlayerVout(int count);
     void buffering(int progress);
     void playerStateChanged();
-    void audioMuteChanged(bool muted);
+    void playerPositionChanged(int time);
+    void playerDurationChanged(int duration);
+    void playerSeekableChanged(bool seekable);
 
 signals:
     void autoplayChanged();
