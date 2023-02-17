@@ -5,7 +5,7 @@
 
 **Этап 1. Устанавливаем зависимости необходимые для сборки**
 ```shell
-sudo dnf install qt5-qtbase-devel qt5-qtwebview-devel qt5-qtwebengine-devel qt5-qtmultimedia-devel qt5-qtsvg-devel qt5-qtwebsockets-devel qt5-qtdeclarative-devel qt5-qtquickcontrols2-devel qt5-qtquickcontrols git-all
+sudo dnf install qt5-qtbase-devel qt5-qtwebview-devel qt5-qtwebengine-devel qt5-qtmultimedia-devel qt5-qtsvg-devel qt5-qtwebsockets-devel qt5-qtdeclarative-devel qt5-qtquickcontrols2-devel qt5-qtquickcontrols git-all vlc-devel vlc
 sudo dnf install https://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm  
 sudo dnf install gstreamer1-libav  
 ```
@@ -21,11 +21,43 @@ cd anilibria-winmaclinux/src/
 qmake-qt5
 sudo make install
 ```
+**Этап 4 (опциональный). Сборка с плеером VLC**  
+Необходимо заменить в файле src/Anilibria.pro следующие строчки
+```shell
+#unix {
+#    LIBS += -lvlc
+
+#    INCLUDEPATH += /usr/include/
+#    DEPENDPATH += /usr/include/
+
+#    INCLUDEPATH += /usr/include/vlc/plugins
+#    DEPENDPATH += /usr/include/vlc/plugins
+
+#    CONFIG += buildwithvlc
+#}
+```
+на эти
+```shell
+unix {
+    LIBS += -lvlc
+
+    INCLUDEPATH += /usr/include/
+    DEPENDPATH += /usr/include/
+
+    INCLUDEPATH += /usr/include/vlc/plugins
+    DEPENDPATH += /usr/include/vlc/plugins
+
+    CONFIG += buildwithvlc
+}
+```
+
 **Необязательный последний этап. После всех манипуляций можно удалить созданную папку командой**
 ```shell
 cd ~
 sudo rm -rf anilibria/
 ```
+
+
 
 ### Как найти приложение?
 Приложение будет доступно из меню по имени AniLibria.

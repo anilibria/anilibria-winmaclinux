@@ -19,6 +19,35 @@ cd anilibria-winmaclinux/src/
 qmake
 sudo make install
 ```
+**Этап 4 (опциональный). Сборка с плеером VLC**  
+Необходимо заменить в файле src/Anilibria.pro следующие строчки
+```shell
+#unix {
+#    LIBS += -lvlc
+
+#    INCLUDEPATH += /usr/include/
+#    DEPENDPATH += /usr/include/
+
+#    INCLUDEPATH += /usr/include/vlc/plugins
+#    DEPENDPATH += /usr/include/vlc/plugins
+
+#    CONFIG += buildwithvlc
+#}
+```
+на эти
+```shell
+unix {
+    LIBS += -lvlc
+
+    INCLUDEPATH += /usr/include/
+    DEPENDPATH += /usr/include/
+
+    INCLUDEPATH += /usr/include/vlc/plugins
+    DEPENDPATH += /usr/include/vlc/plugins
+
+    CONFIG += buildwithvlc
+}
+```
 **Необязательный последний этап. После всех манипуляций можно удалить созданную папку командой**
 ```shell
 cd ~
