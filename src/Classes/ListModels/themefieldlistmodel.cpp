@@ -102,7 +102,7 @@ ThemeFieldListModel::ThemeFieldListModel(QObject *parent)
     m_descriptions.insert(iconReleaseCatalogAllReleasesField, "Иконка Все релизы:Иконка для кнопки Все релизы в Каталоге релизов");
     m_descriptions.insert(iconReleaseCatalogCompilationField, "Иконка Подборки:Иконка для кнопки Подборки в Каталоге релизов");
     m_descriptions.insert(iconReleaseCatalogSortAscField, "Иконка Сортировка вниз:Иконка для кнопки Сортировка вниз в Каталоге релизов");
-    m_descriptions.insert(iconReleaseCatalogSortDescField, "Иконка Сортировка вниз:Иконка для кнопки Сортировка вверх в Каталоге релизов");
+    m_descriptions.insert(iconReleaseCatalogSortDescField, "Иконка Сортировка вверх:Иконка для кнопки Сортировка вверх в Каталоге релизов");
     m_descriptions.insert(iconReleaseCardListMenuField, "Иконка Меню Списков:Иконка для кнопки Меню Списков в Карточке релиза");
     m_descriptions.insert(iconReleaseCardCloseField, "Иконка Закрыть карточку:Иконка для кнопки Закрыть карточку в Карточке релиза");
     m_descriptions.insert(iconReleaseCardCopyField, "Иконка Копирование:Иконка для кнопки Копирование в Карточке релиза");
