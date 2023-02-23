@@ -225,7 +225,7 @@ Page {
                                     anchors.centerIn: parent
 
                                     FilterPanelIconButton {
-                                        iconPath: assetsLocation.iconsPath + "ratingcolor.svg"
+                                        iconPath: applicationThemeViewModel.currentItems.iconFavorites
                                         overlayVisible: false
                                         tooltipMessage: "Открыть меню для операций по добавлению/удалению всей группы в избранное"
                                         onButtonPressed: {
@@ -262,7 +262,7 @@ Page {
                                         }
                                     }
                                     FilterPanelIconButton {
-                                        iconPath: assetsLocation.iconsPath + "cinemahallmenu.svg"
+                                        iconPath: applicationThemeViewModel.currentItems.iconMainMenuCinemahall
                                         overlayVisible: false
                                         tooltipMessage: "Открыть меню для операций по добавлению/удалению всей группы в кинозал"
                                         onButtonPressed: {
@@ -285,7 +285,7 @@ Page {
                                         }
                                     }
                                     FilterPanelIconButton {
-                                        iconPath: assetsLocation.iconsPath + "videoplayermenu.svg"
+                                        iconPath: applicationThemeViewModel.currentItems.iconMainMenuVideoplayer
                                         overlayVisible: false
                                         tooltipMessage: "Начать просмотр всей группы в видеоплеере"
                                         onButtonPressed: {

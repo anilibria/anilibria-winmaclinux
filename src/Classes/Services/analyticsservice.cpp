@@ -57,9 +57,9 @@ void AnalyticsService::sendPostEvent(QString category, QString message, QString 
 #endif
 
 #ifdef QT_DEBUG
-    if (category.isEmpty() || message.isEmpty() || page.isEmpty()) {
-
-    }
+    Q_UNUSED(category);
+    Q_UNUSED(message);
+    Q_UNUSED(page);
 #else
 
     auto networkManager = new QNetworkAccessManager(this);
