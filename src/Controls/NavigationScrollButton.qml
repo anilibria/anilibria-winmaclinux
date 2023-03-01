@@ -15,7 +15,7 @@ Rectangle {
         width: 40
         hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
         overlayVisible: false
-        iconPath: assetsLocation.iconsPath + (root.isLeft ? "leftscroll.svg" : "rightscroll.svg")
+        iconPath: root.isLeft ? applicationThemeViewModel.currentItems.iconNavigationButtonLeft : applicationThemeViewModel.currentItems.iconNavigationButtonRight
         iconWidth: 30
         iconHeight: 30
         tooltipMessage: "Сдвинуть " + (root.isLeft ? "влево" : "вправо") + " область просмотра"

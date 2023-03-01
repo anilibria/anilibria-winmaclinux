@@ -22,11 +22,10 @@ import QtGraphicalEffects 1.0
 
 Item {
     id: _button
-    property alias iconColor: colorOverlay.color
     property alias iconPath: iconImage.source
     property alias iconWidth: iconImage.width
     property alias iconHeight: iconImage.height
-    property alias overlayVisible: colorOverlay.visible
+    property bool overlayVisible: false
     property string hoverColor: "lightgray"
     property bool hovered: false
     property alias showCrossIcon: crossIcon.visible
@@ -74,13 +73,6 @@ Item {
             width: 29
             height: 29
             mipmap: true
-        }
-
-        ColorOverlay {
-            id: colorOverlay
-            anchors.fill: iconImage
-            source: iconImage
-            color: "white"
         }
 
         Canvas {

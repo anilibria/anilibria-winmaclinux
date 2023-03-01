@@ -396,18 +396,18 @@ Page {
                             }
 
                             Row {
-                                width: 94
+                                width: 62
                                 spacing: 0
                                 anchors.right: parent.right
-                                anchors.rightMargin: 18
+                                anchors.rightMargin: 24
 
                                 IconButton {
                                     height: 36
                                     width: 36
                                     visible: !isGroup
-                                    iconColor: isSeen ? applicationThemeViewModel.filterIconButtonGreenColor : applicationThemeViewModel.filterIconButtonColor
                                     hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
-                                    iconPath: isSeen ? "../Assets/Icons/seenmarkselected.svg" : "../Assets/Icons/seenmark.svg"
+                                    iconPath: isSeen ? applicationThemeViewModel.currentItems.iconPlayerSeen : applicationThemeViewModel.currentItems.iconPlayerUnseen
+                                    overlayVisible: false
                                     iconWidth: 22
                                     iconHeight: 22
                                     onButtonPressed: {
@@ -421,55 +421,64 @@ Page {
                                     height: 36
                                     width: 36
                                     visible: !isGroup
-                                    iconColor: applicationThemeViewModel.filterIconButtonColor
                                     hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
-                                    iconPath: assetsLocation.iconsPath + "external.svg"
+                                    iconPath: applicationThemeViewModel.currentItems.iconPlayerExternal
+                                    overlayVisible: false
                                     iconWidth: 22
                                     iconHeight: 22
                                     onButtonPressed: {
-                                        let video;
-                                        switch (onlinePlayerViewModel.videoQuality) {
-                                            case "fullhd":
-                                                video = fullhd;
-                                                break;
-                                            case "hd":
-                                                video = hd;
-                                                break;
-                                            case "sd":
-                                                video = sd;
-                                                break;
-                                        }
-                                        if (!video) return;
-
-                                        Qt.openUrlExternally("https://anilibria.github.io/anilibria-win/videotester.html?video=" + video.replace("https://", ""));
+                                        externalMenu.open();
                                     }
-                                }
 
-                                IconButton {
-                                    height: 36
-                                    width: 36
-                                    visible: !isGroup
-                                    iconColor: applicationThemeViewModel.filterIconButtonColor
-                                    hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
-                                    iconPath: assetsLocation.iconsPath + "externalplayer.svg"
-                                    iconWidth: 22
-                                    iconHeight: 22
-                                    onButtonPressed: {
-                                        let video;
-                                        switch (onlinePlayerViewModel.videoQuality) {
-                                            case "fullhd":
-                                                video = fullhd;
-                                                break;
-                                            case "hd":
-                                                video = hd;
-                                                break;
-                                            case "sd":
-                                                video = sd;
-                                                break;
+                                    CommonMenu {
+                                        id: externalMenu
+                                        y: parent.y
+                                        width: 300
+
+                                        CommonMenuItem {
+                                            text: "Открыть в браузере"
+                                            onPressed: {
+                                                let video;
+                                                switch (onlinePlayerViewModel.videoQuality) {
+                                                    case "fullhd":
+                                                        video = fullhd;
+                                                        break;
+                                                    case "hd":
+                                                        video = hd;
+                                                        break;
+                                                    case "sd":
+                                                        video = sd;
+                                                        break;
+                                                }
+                                                if (!video) return;
+
+                                                Qt.openUrlExternally("https://anilibria.github.io/anilibria-win/videotester.html?video=" + video.replace("https://", ""));
+
+                                                externalMenu.close();
+                                            }
                                         }
-                                        if (!video) return;
+                                        CommonMenuItem {
+                                            text: "Открыть во внешнем плеере"
+                                            onPressed: {
+                                                let video;
+                                                switch (onlinePlayerViewModel.videoQuality) {
+                                                    case "fullhd":
+                                                        video = fullhd;
+                                                        break;
+                                                    case "hd":
+                                                        video = hd;
+                                                        break;
+                                                    case "sd":
+                                                        video = sd;
+                                                        break;
+                                                }
+                                                if (!video) return;
 
-                                        onlinePlayerViewModel.openVideoInExternalPlayer(video);
+                                                onlinePlayerViewModel.openVideoInExternalPlayer(video);
+
+                                                externalMenu.close();
+                                            }
+                                        }
                                     }
                                 }
                             }
@@ -484,12 +493,17 @@ Page {
         }
     }
 
-    Rectangle {
+    Item {
         id: controlPanel
-        color: applicationThemeViewModel.playerControlBackground
         anchors.bottom: parent.bottom
         width: _page.width
         height: 100
+
+        Rectangle {
+            id: controlPanelBackground
+            anchors.fill: parent
+            color: applicationThemeViewModel.currentItems.playerControlBackground
+        }
 
         Column {
             width: controlPanel.width
@@ -732,9 +746,9 @@ Page {
                     IconButton {
                         width: 40
                         height: 40
-                        iconColor: applicationThemeViewModel.filterIconButtonColor
                         hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
-                        iconPath: "../Assets/Icons/menu.svg"
+                        overlayVisible: false
+                        iconPath: applicationThemeViewModel.currentItems.iconPlayerDrawer
                         iconWidth: 29
                         iconHeight: 29
                         onButtonPressed: {
@@ -744,9 +758,9 @@ Page {
                     IconButton {
                         width: 40
                         height: 40
-                        iconColor: applicationThemeViewModel.filterIconButtonColor
+                        overlayVisible: false
                         hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
-                        iconPath: onlinePlayerViewModel.muted ? "../Assets/Icons/mute.svg" : "../Assets/Icons/speaker.svg"
+                        iconPath: onlinePlayerViewModel.muted ? applicationThemeViewModel.currentItems.iconPlayerMute : applicationThemeViewModel.currentItems.iconPlayerUnMute
                         iconWidth: 24
                         iconHeight: 24
                         onButtonPressed: {
@@ -777,9 +791,9 @@ Page {
                         visible: !mainViewModel.isSmallSizeMode
                         width: 40
                         height: 40
-                        iconColor: applicationThemeViewModel.filterIconButtonColor
+                        overlayVisible: false
                         hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
-                        iconPath: "../Assets/Icons/help.svg"
+                        iconPath: applicationThemeViewModel.currentItems.iconPlayerInfo
                         iconWidth: 24
                         iconHeight: 24
                         onButtonPressed: {
@@ -827,9 +841,9 @@ Page {
                         width: 40
                         height: 40
                         visible: onlinePlayerViewModel.videoDuration > 0 && !mainViewModel.isSmallSizeMode
-                        iconColor: applicationThemeViewModel.filterIconButtonColor
+                        overlayVisible: false
                         hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
-                        iconPath: "../Assets/Icons/previous10.svg"
+                        iconPath: applicationThemeViewModel.currentItems.iconPlayerJumpLeft
                         iconWidth: 24
                         iconHeight: 24
                         tooltipMessage: "Прыжок назад"
@@ -841,9 +855,9 @@ Page {
                         id: prevButton
                         width: 40
                         height: 40
-                        iconColor: applicationThemeViewModel.filterIconButtonColor
+                        overlayVisible: false
                         hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
-                        iconPath: "../Assets/Icons/step-backward.svg"
+                        iconPath: applicationThemeViewModel.currentItems.iconPlayerPreviousSeria
                         iconWidth: 24
                         iconHeight: 24
                         onButtonPressed: {
@@ -856,9 +870,9 @@ Page {
                         visible: false
                         width: 40
                         height: 40
-                        iconColor: applicationThemeViewModel.filterIconButtonColor
+                        overlayVisible: false
                         hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
-                        iconPath: "../Assets/Icons/play-button.svg"
+                        iconPath: applicationThemeViewModel.currentItems.iconPlayerPlay
                         iconWidth: 24
                         iconHeight: 24
                         onButtonPressed: {
@@ -870,9 +884,9 @@ Page {
                         visible: false
                         width: 40
                         height: 40
-                        iconColor: applicationThemeViewModel.filterIconButtonColor
+                        overlayVisible: false
                         hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
-                        iconPath: "../Assets/Icons/pause.svg"
+                        iconPath: applicationThemeViewModel.currentItems.iconPlayerPause
                         iconWidth: 24
                         iconHeight: 24
                         onButtonPressed: {
@@ -883,9 +897,9 @@ Page {
                         id: nextButton
                         width: 40
                         height: 40
-                        iconColor: applicationThemeViewModel.filterIconButtonColor
+                        overlayVisible: false
                         hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
-                        iconPath: "../Assets/Icons/step-forward.svg"
+                        iconPath: applicationThemeViewModel.currentItems.iconPlayerNextSeria
                         iconWidth: 24
                         iconHeight: 24
                         onButtonPressed: {
@@ -897,9 +911,9 @@ Page {
                         width: 40
                         height: 40
                         visible: onlinePlayerViewModel.videoDuration > 0 && !mainViewModel.isSmallSizeMode
-                        iconColor: applicationThemeViewModel.filterIconButtonColor
+                        overlayVisible: false
                         hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
-                        iconPath: "../Assets/Icons/next30.svg"
+                        iconPath: applicationThemeViewModel.currentItems.iconPlayerJumpRight
                         iconWidth: 24
                         iconHeight: 24
                         tooltipMessage: "Прыжок вперед"
@@ -920,9 +934,9 @@ Page {
                         width: 40
                         height: 40
                         visible: !autoTopMost.checked
-                        iconColor: applicationThemeViewModel.filterIconButtonColor
+                        overlayVisible: false
                         hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
-                        iconPath: assetsLocation.iconsPath + "playerrefresh.svg"
+                        iconPath: applicationThemeViewModel.currentItems.iconPlayerRefresh
                         iconWidth: 29
                         iconHeight: 29
                         tooltipMessage: "Перезапустить текущее видео"
@@ -936,9 +950,9 @@ Page {
                         width: 40
                         height: 40
                         visible: !autoTopMost.checked && !mainViewModel.isSmallSizeMode
-                        iconColor: windowSettings.isTopMost ? applicationThemeViewModel.filterIconButtonGreenColor : applicationThemeViewModel.filterIconButtonColor
+                        overlayVisible: false
                         hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
-                        iconPath: "../Assets/Icons/topmostwindow.svg"
+                        iconPath: applicationThemeViewModel.currentItems.iconPlayerTopMost
                         iconWidth: 29
                         iconHeight: 29
                         tooltipMessage: windowSettings.isTopMost ? "Выключить режим поверх всех окон (T)" : "Включить режим поверх всех окон (T)"
@@ -952,9 +966,9 @@ Page {
                         visible: !mainViewModel.isSmallSizeMode
                         width: 40
                         height: 40
-                        iconColor: onlinePlayerViewModel.remotePlayer.started ? applicationThemeViewModel.filterIconButtonGreenColor : applicationThemeViewModel.filterIconButtonColor
+                        overlayVisible: false
                         hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
-                        iconPath: "../Assets/Icons/connect.svg"
+                        iconPath: applicationThemeViewModel.currentItems.iconPlayerRemote
                         iconWidth: 24
                         iconHeight: 24
                         tooltipMessage: onlinePlayerViewModel.remotePlayer.started ? "Удаленный плеер включен" : "Удаленный плеер выключен, откройте настройки для подключения"
@@ -1068,9 +1082,9 @@ Page {
                         id: optionsButton
                         width: 40
                         height: 40
-                        iconColor: applicationThemeViewModel.filterIconButtonColor
+                        overlayVisible: false
                         hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
-                        iconPath: "../Assets/Icons/options.svg"
+                        iconPath: applicationThemeViewModel.currentItems.iconPlayerSettings
                         iconWidth: 24
                         iconHeight: 24
                         tooltipMessage: "Показать настройки страницы Видеоплеер"
@@ -1218,17 +1232,18 @@ Page {
                                     height: 40
                                     id: opacitySlider
                                     from: 0
-                                    to: 100
+                                    to: 110
                                     onPressedChanged: {
                                         controlPanel.forceActiveFocus();
                                     }
                                     onMoved: {
-                                        controlPanel.color.a = value / 100;
+                                        controlPanelBackground.opacity = value / 100;
+                                        console.log(controlPanelBackground.opacity);
                                         userConfigurationViewModel.opacityPlayerPanel = value;
                                     }
                                     Component.onCompleted: {
                                         value = userConfigurationViewModel.opacityPlayerPanel;
-                                        controlPanel.color.a = value / 100;
+                                        controlPanelBackground.opacity = value / 100;
                                     }
                                 }
                             }
@@ -1309,9 +1324,9 @@ Page {
                         visible: !mainViewModel.isSmallSizeMode
                         width: 40
                         height: 40
-                        iconColor: applicationThemeViewModel.filterIconButtonColor
+                        overlayVisible: false
                         hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
-                        iconPath: "../Assets/Icons/resize.svg"
+                        iconPath: applicationThemeViewModel.currentItems.iconPlayerCropMode
                         iconWidth: 29
                         iconHeight: 29
                         tooltipMessage: "Включить режим обрезки видео потока"
@@ -1330,9 +1345,9 @@ Page {
                         id: fullScreenButton
                         width: 40
                         height: 40
-                        iconColor: applicationThemeViewModel.filterIconButtonColor
+                        overlayVisible: false
                         hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
-                        iconPath: "../Assets/Icons/fullscreen.svg"
+                        iconPath: applicationThemeViewModel.currentItems.iconPlayerFullscreen
                         iconWidth: 29
                         iconHeight: 29
                         tooltipMessage: "Переключиться между полноэкранным и оконным режимами"
@@ -1456,10 +1471,12 @@ Page {
     Connections {
         target: onlinePlayerViewModel
         function onDisplaySkipOpeningChanged() {
-            if (onlinePlayerViewModel.displaySkipOpening && userConfigurationViewModel.autoSkipOpening) {
-                const position = onlinePlayerViewModel.skipOpening();
-                playerLoader.item.seek(position);
-                notificationViewModel.sendInfoNotification(`Произошел автоматический пропуск опенинга`);
+            if (userConfigurationViewModel.autoSkipOpening) {
+                if (onlinePlayerViewModel.displaySkipOpening && !onlinePlayerViewModel.endSkipOpening) {
+                    const position = onlinePlayerViewModel.skipOpening();
+                    playerLoader.item.seek(position);
+                    notificationViewModel.sendInfoNotification(`Произошел автоматический пропуск опенинга`);
+                }
             }
         }
     }
@@ -1598,4 +1615,3 @@ Page {
         volumeSlider.value = playerLoader.item.volume * 100;
     }
 }
-

@@ -150,7 +150,7 @@ ApplicationWindow {
                         id: previousButton
                         width: 40
                         height: 40
-                        iconColor: applicationThemeViewModel.filterIconButtonColor
+                        overlayVisible: false
                         hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
                         iconPath: assetsLocation.path + "Icons/step-backward.svg"
                         iconWidth: 24
@@ -166,7 +166,7 @@ ApplicationWindow {
                         visible: onlinePlayerWindowViewModel.playerButtonVisible
                         width: 40
                         height: 40
-                        iconColor: applicationThemeViewModel.filterIconButtonColor
+                        overlayVisible: false
                         hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
                         iconPath: assetsLocation.path + "Icons/play-button.svg"
                         iconWidth: 24
@@ -180,7 +180,7 @@ ApplicationWindow {
                         visible: onlinePlayerWindowViewModel.pauseButtonVisible
                         width: 40
                         height: 40
-                        iconColor: applicationThemeViewModel.filterIconButtonColor
+                        overlayVisible: false
                         hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
                         iconPath: assetsLocation.path + "Icons/pause.svg"
                         iconWidth: 24
@@ -194,7 +194,7 @@ ApplicationWindow {
                         id: nextButton
                         width: 40
                         height: 40
-                        iconColor: applicationThemeViewModel.filterIconButtonColor
+                        overlayVisible: false
                         hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
                         iconPath: assetsLocation.path + "Icons/step-forward.svg"
                         iconWidth: 24
@@ -218,9 +218,9 @@ ApplicationWindow {
                     anchors.centerIn: parent
                     width: 40
                     height: 40
-                    iconColor: onlinePlayerWindowViewModel.isTopMost ? applicationThemeViewModel.filterIconButtonGreenColor : applicationThemeViewModel.filterIconButtonColor
+                    overlayVisible: false
                     hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
-                    iconPath: assetsLocation.path + "Icons/topmostwindow.svg"
+                    iconPath: "../Assets/Icons/videoplayer/topmost.svg"
                     iconWidth: 29
                     iconHeight: 29
                     tooltipMessage: onlinePlayerWindowViewModel.isTopMost ? "Выключить режим поверх всех окон" : "Включить режим поверх всех окон"

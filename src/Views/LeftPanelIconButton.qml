@@ -26,7 +26,7 @@ IconButton {
     width: 40
     iconWidth: 30
     iconHeight: 30
-    iconColor: "white"
+    overlayVisible: false
 
     ToolTip.delay: 1000
     ToolTip.visible: hovered

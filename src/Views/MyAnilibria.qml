@@ -99,8 +99,8 @@ Page {
                                 anchors.topMargin: 6
                                 width: 20
                                 height: 20
-                                iconPath: assetsLocation.iconsPath + "closewindow.svg"
-                                iconColor: applicationThemeViewModel.plainTextColor
+                                iconPath: applicationThemeViewModel.currentItems.iconClearTextControl
+                                overlayVisible: false
                                 iconWidth: 16
                                 iconHeight: 16
                                 tooltipMessage: "Очистить фильтр"
@@ -116,7 +116,7 @@ Page {
                             height: 45
                             width: 40
                             overlayVisible: false
-                            iconPath: assetsLocation.iconsPath + "plus.svg"
+                            iconPath: applicationThemeViewModel.currentItems.iconMyAnilibriaButtonPlus
                             iconWidth: 28
                             iconHeight: 28
                             tooltipMessage: "Открыть все секции"
@@ -131,7 +131,7 @@ Page {
                             height: 45
                             width: 40
                             overlayVisible: false
-                            iconPath: assetsLocation.iconsPath + "minus.svg"
+                            iconPath: applicationThemeViewModel.currentItems.iconMyAnilibriaButtonMinus
                             iconWidth: 28
                             iconHeight: 28
                             tooltipMessage: "Закрыть все секции"
@@ -146,7 +146,7 @@ Page {
                             height: 45
                             width: 40
                             overlayVisible: false
-                            iconPath: assetsLocation.iconsPath + "videos.svg"
+                            iconPath: applicationThemeViewModel.currentItems.iconMyAnilibriaButtonSortSections
                             iconWidth: 28
                             iconHeight: 28
                             tooltipMessage: "Изменить видимость секций станицы"

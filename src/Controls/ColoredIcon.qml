@@ -20,7 +20,6 @@ import QtQuick 2.12
 import QtGraphicalEffects 1.0
 
 Item {
-    property alias iconColor: _colorOverlay.color
     property real iconWidth
     property real iconHeight
     property alias iconSource: _iconImage.source

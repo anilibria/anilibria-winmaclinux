@@ -108,7 +108,7 @@ Page {
                     hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
                     iconWidth: 22
                     iconHeight: 22
-                    iconPath: assetsLocation.iconsPath + "allreleases.svg"
+                    iconPath: applicationThemeViewModel.currentItems.iconReleaseCatalogAllReleases
                     onButtonPressed: {
                         managerMenu.open();
                     }
@@ -205,7 +205,7 @@ Page {
 
                                         FilterPanelIconButton {
                                             id: deleteLocalButton
-                                            iconPath: assetsLocation.iconsPath + "delete.svg"
+                                            iconPath: applicationThemeViewModel.currentItems.iconDeleteItem
                                             overlayVisible: false
                                             tooltipMessage: "Удалить тему"
                                             onButtonPressed: {
@@ -229,7 +229,7 @@ Page {
                         Image {
                             id: emptyLocalItems
                             anchors.horizontalCenter: parent.horizontalCenter
-                            source: assetsLocation.iconsPath + "emptybox.svg"
+                            source: applicationThemeViewModel.currentItems.iconEmpty
                             width: 80
                             height: 80
                             mipmap: true
@@ -344,7 +344,7 @@ Page {
                                         FilterPanelIconButton {
                                             id: downloadButton
                                             visible: !isDownloaded
-                                            iconPath: assetsLocation.iconsPath + "downloadtheme.svg"
+                                            iconPath: applicationThemeViewModel.currentItems.iconDownloadTheme
                                             overlayVisible: false
                                             tooltipMessage: "Установить тему"
                                             onButtonPressed: {
@@ -362,7 +362,7 @@ Page {
                                         FilterPanelIconButton {
                                             id: deleteDownloadedButton
                                             visible: isDownloaded
-                                            iconPath: assetsLocation.iconsPath + "delete.svg"
+                                            iconPath: applicationThemeViewModel.currentItems.iconDeleteItem
                                             overlayVisible: false
                                             tooltipMessage: "Удалить тему"
                                             onButtonPressed: {
@@ -386,7 +386,7 @@ Page {
                         Image {
                             id: emptyExternalItems
                             anchors.horizontalCenter: parent.horizontalCenter
-                            source: assetsLocation.iconsPath + "emptybox.svg"
+                            source: applicationThemeViewModel.currentItems.iconEmpty
                             width: 80
                             height: 80
                             mipmap: true
@@ -741,7 +741,7 @@ Page {
                                             anchors.left: valueTextField.right
                                             anchors.leftMargin: 10
                                             anchors.verticalCenter: parent.verticalCenter
-                                            iconPath: assetsLocation.iconsPath + (isDefined ? "delete.svg" : "plus.svg")
+                                            iconPath: isDefined ? applicationThemeViewModel.currentItems.iconDeleteItem : applicationThemeViewModel.currentItems.iconMyAnilibriaButtonPlus
                                             overlayVisible: false
                                             tooltipMessage: tooltipOverride
                                             onButtonPressed: {
@@ -765,7 +765,7 @@ Page {
                                             iconWidth: 18
                                             iconHeight: 18
                                             anchors.verticalCenter: parent.verticalCenter
-                                            iconPath: assetsLocation.iconsPath + "themes.svg"
+                                            iconPath: applicationThemeViewModel.currentItems.iconMainMenuThemeManager
                                             overlayVisible: false
                                             tooltipMessage: "Выбрать файл изображения для иконки"
                                             onButtonPressed: {
@@ -791,7 +791,7 @@ Page {
                                                 width: 28
                                                 height: 28
                                                 mipmap: true
-                                                source: valueTextField.text.length && fieldType === 'icon' ? valueTextField.text : assetsLocation.iconsPath + "themes.svg"
+                                                source: valueTextField.text.length && fieldType === 'icon' ? valueTextField.text : applicationThemeViewModel.currentItems.iconMainMenuThemeManager
                                             }
                                         }
 
@@ -860,9 +860,9 @@ Page {
                                     visible: fieldsListView.contentY > 100
                                     height: 30
                                     width: 30
-                                    iconColor: applicationThemeViewModel.filterIconButtonColor
                                     hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
                                     iconPath: applicationThemeViewModel.currentItems.iconBackToTop
+                                    overlayVisible: false
                                     iconWidth: 24
                                     iconHeight: 24
                                     tooltipMessage: "Вернуться в начало списка полей"

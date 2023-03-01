@@ -45,7 +45,18 @@ Page {
                 }
 
                 LeftPanelIconButton {
-                    iconPath: assetsLocation.iconsPath + "delete.svg"
+                    iconPath: applicationThemeViewModel.currentItems.iconReleaseCatalogSynchronization
+                    iconWidth: 34
+                    iconHeight: 34
+                    overlayVisible: false
+                    tooltipMessage: "Обновить список"
+                    onButtonPressed: {
+                        torrentNotifierViewModel.startGetTorrentData();
+                    }
+                }
+
+                LeftPanelIconButton {
+                    iconPath: applicationThemeViewModel.currentItems.iconDeleteItem
                     iconWidth: 29
                     iconHeight: 29
                     overlayVisible: false

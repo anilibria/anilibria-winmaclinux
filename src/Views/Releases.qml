@@ -1246,7 +1246,6 @@ Page {
                                 width: 20
                                 height: 20
                                 iconPath: applicationThemeViewModel.currentItems.iconClearTextControl
-                                iconColor: applicationThemeViewModel.plainTextColor
                                 overlayVisible: false
                                 iconWidth: 16
                                 iconHeight: 16
@@ -1722,9 +1721,9 @@ Page {
             visible: scrollview.contentY > 100
             height: 30
             width: 30
-            iconColor: applicationThemeViewModel.filterIconButtonColor
             hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
             iconPath: applicationThemeViewModel.currentItems.iconBackToTop
+            overlayVisible: false
             iconWidth: 24
             iconHeight: 24
             tooltipMessage: "Вернуться в начало списка релизов"

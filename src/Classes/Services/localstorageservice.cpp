@@ -394,7 +394,12 @@ QString LocalStorageService::packAsM3UAndOpen(int id, QString quality)
         ExternalPlaylistVideo video;
         video.setAddress(jsonVideo[quality].toString());
         video.setOrder(jsonVideo["id"].toInt());
-        video.setName("Серия " + QString::number(video.order()));
+        auto videoObject = jsonVideo.toObject();
+        if(videoObject.contains("name") && !videoObject["name"].toString().isEmpty()) {
+            video.setName(videoObject["name"].toString());
+        } else {
+            video.setName("Серия " + QString::number(video.order()));
+        }
         videos.append(video);
     }
 

@@ -34,7 +34,6 @@ Rectangle {
         anchors.verticalCenter: parent.verticalCenter
         anchors.right: parent.right
         anchors.rightMargin: 4
-        iconColor: applicationThemeViewModel.plainTextColor
         iconWidth: 22
         iconHeight: 22
         iconPath: applicationThemeViewModel.currentItems.iconBackToTop
@@ -61,7 +60,7 @@ Rectangle {
             iconWidth: 22
             iconHeight: 22
             overlayVisible: false
-            iconPath: assetsLocation.iconsPath + "coloredsortup.svg"
+            iconPath: applicationThemeViewModel.currentItems.iconMyAnilibriaButtonSortUp
             onButtonPressed: {
                 moveSection(1);
             }
@@ -75,7 +74,7 @@ Rectangle {
             iconWidth: 22
             iconHeight: 22
             overlayVisible: false
-            iconPath: assetsLocation.iconsPath + "coloredsortdown.svg"
+            iconPath: applicationThemeViewModel.currentItems.iconMyAnilibriaButtonSortBottom
             onButtonPressed: {
                 moveSection(-1);
             }

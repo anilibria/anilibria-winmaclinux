@@ -27,7 +27,6 @@
         <file>Controls/IconButton.qml</file>
         <file>Assets/Icons/step-backward.svg</file>
         <file>Assets/Icons/step-forward.svg</file>
-        <file>Assets/Icons/resize.svg</file>
         <file>Controls/ToggleButton.qml</file>
         <file>Assets/Icons/rating.svg</file>
         <file>Assets/Icons/favorite.svg</file>
@@ -36,7 +35,6 @@
         <file>Assets/Icons/star.svg</file>
         <file>Assets/Icons/anilibrialogodefault.svg</file>
         <file>Assets/Icons/logout.svg</file>
-        <file>Assets/Icons/notification.svg</file>
         <file>Assets/Icons/allreleases.svg</file>
         <file>Assets/Icons/online.svg</file>
         <file>Assets/Icons/utorrent.svg</file>
@@ -45,12 +43,7 @@
         <file>Assets/Icons/refresh.svg</file>
         <file>Assets/Icons/search.svg</file>
         <file>Assets/Icons/sort.svg</file>
-        <file>Assets/Icons/dice.svg</file>
-        <file>Assets/Icons/fullscreen.svg</file>
-        <file>Assets/Icons/seenmark.svg</file>
-        <file>Assets/Icons/seenmarkselected.svg</file>
         <file>Assets/Icons/history.svg</file>
-        <file>Assets/Icons/options.svg</file>
         <file>Assets/Icons/copy.svg</file>
         <file>Assets/Icons/vk.svg</file>
         <file>Controls/RoundedActionButton.qml</file>
@@ -62,8 +55,6 @@
         <file>Controls/MessageModal.qml</file>
         <file>Assets/Icons/seenmarkpanel.svg</file>
         <file>Assets/Icons/rewind10.svg</file>
-        <file>Assets/Icons/next30.svg</file>
-        <file>Assets/Icons/previous10.svg</file>
         <file>Controls/LinkedText.qml</file>
         <file>Controls/PlainText.qml</file>
         <file>Controls/AccentText.qml</file>
@@ -75,18 +66,15 @@
         <file>Assets/Icons/popcorn.svg</file>
         <file>Views/Cinemahall.qml</file>
         <file>Assets/Icons/cinemaplay.svg</file>
-        <file>Assets/Icons/downloadcircle.svg</file>
         <file>Assets/Icons/startdownload.svg</file>
         <file>Assets/Icons/trash.svg</file>
         <file>Assets/Icons/stopdownload.svg</file>
         <file>Assets/Icons/downloading.svg</file>
-        <file>Assets/Icons/downloadcheck.svg</file>
         <file>Assets/Icons/idledownload.svg</file>
         <file>Assets/Icons/maintenance.svg</file>
         <file>Views/Maintenance.qml</file>
         <file>Assets/Icons/hidebuttonmenu.svg</file>
         <file>Assets/Icons/connect.svg</file>
-        <file>Assets/Icons/topmostwindow.svg</file>
         <file>Views/ReleaseAlphabeticalCharacters.qml</file>
         <file>Assets/Icons/alphabet.svg</file>
         <file>Views/ReleasePosterPreview.qml</file>
@@ -99,7 +87,6 @@
         <file>Assets/Icons/releasepage.svg</file>
         <file>Assets/Icons/lefthalf.svg</file>
         <file>Assets/Icons/righthalf.svg</file>
-        <file>Assets/Icons/help.svg</file>
         <file>Views/LeftPanelIconButton.qml</file>
         <file>Views/FilterPanelIconButton.qml</file>
         <file>Views/OnlinePlayerWindow.qml</file>
@@ -176,11 +163,50 @@
         <file>Controls/NavigationScrollButton.qml</file>
         <file>Controls/TooltipedImage.qml</file>
         <file>Assets/Icons/closewindowwhite.svg</file>
-        <file>Assets/Icons/playerrefresh.svg</file>
-        <file>Assets/Icons/externalplayer.svg</file>
         <file>Controls/InfoAboutPlayer.qml</file>
         <file>Views/Videoplayer/QtVlcPlayer.qml</file>
         <file>Views/Videoplayer/QtVlcVideoOutput.qml</file>
         <file>Views/TorrentStream.qml</file>
+        <file>Assets/Icons/videoplayer/info.svg</file>
+        <file>Assets/Icons/videoplayer/leftjump.svg</file>
+        <file>Assets/Icons/videoplayer/network.svg</file>
+        <file>Assets/Icons/videoplayer/nextseria.svg</file>
+        <file>Assets/Icons/videoplayer/pause.svg</file>
+        <file>Assets/Icons/videoplayer/play.svg</file>
+        <file>Assets/Icons/videoplayer/previousseria.svg</file>
+        <file>Assets/Icons/videoplayer/reload.svg</file>
+        <file>Assets/Icons/videoplayer/rightjump.svg</file>
+        <file>Assets/Icons/videoplayer/settings.svg</file>
+        <file>Assets/Icons/videoplayer/topmost.svg</file>
+        <file>Assets/Icons/videoplayer/fullscreen.svg</file>
+        <file>Assets/Icons/videoplayer/resize.svg</file>
+        <file>Assets/Icons/videoplayer/muteoff.svg</file>
+        <file>Assets/Icons/videoplayer/muteon.svg</file>
+        <file>Assets/Icons/videoplayer/seenmark.svg</file>
+        <file>Assets/Icons/videoplayer/seenmarkselected.svg</file>
+        <file>Assets/Icons/videoplayer/externalplayer.svg</file>
+        <file>Assets/Icons/videoplayer/darkexternalplayer.svg</file>
+        <file>Assets/Icons/videoplayer/darkfullscreen.svg</file>
+        <file>Assets/Icons/videoplayer/darkinfo.svg</file>
+        <file>Assets/Icons/videoplayer/darkleftjump.svg</file>
+        <file>Assets/Icons/videoplayer/darkmuteoff.svg</file>
+        <file>Assets/Icons/videoplayer/darkmuteon.svg</file>
+        <file>Assets/Icons/videoplayer/darknetwork.svg</file>
+        <file>Assets/Icons/videoplayer/darknextseria.svg</file>
+        <file>Assets/Icons/videoplayer/darkpause.svg</file>
+        <file>Assets/Icons/videoplayer/darkplay.svg</file>
+        <file>Assets/Icons/videoplayer/darkpreviousseria.svg</file>
+        <file>Assets/Icons/videoplayer/darkreload.svg</file>
+        <file>Assets/Icons/videoplayer/darkresize.svg</file>
+        <file>Assets/Icons/videoplayer/darkrightjump.svg</file>
+        <file>Assets/Icons/videoplayer/darkseenmark.svg</file>
+        <file>Assets/Icons/videoplayer/darksettings.svg</file>
+        <file>Assets/Icons/videoplayer/darktopmost.svg</file>
+        <file>Assets/Icons/videoplayer/darkmenu.svg</file>
+        <file>Assets/Icons/videoplayer/menu.svg</file>
+        <file>Assets/Icons/notification/darknotification.svg</file>
+        <file>Assets/Icons/notification/notification.svg</file>
+        <file>Assets/Icons/notification/notificationselected.svg</file>
+        <file>Assets/Icons/darkarrowup.svg</file>
     </qresource>
 </RCC>

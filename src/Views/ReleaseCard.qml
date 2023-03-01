@@ -244,7 +244,6 @@ ColumnLayout {
                     IconButton {
                         height: 40
                         width: 40
-                        iconColor: applicationThemeViewModel.filterIconButtonColor
                         hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
                         overlayVisible: false
                         iconPath: applicationThemeViewModel.currentItems.iconReleaseCardClose
@@ -313,7 +312,6 @@ ColumnLayout {
                     IconButton {
                         height: 40
                         width: 40
-                        iconColor: applicationThemeViewModel.filterIconButtonColor
                         hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
                         iconPath: applicationThemeViewModel.currentItems.iconSeen
                         overlayVisible: false

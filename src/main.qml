@@ -176,7 +176,6 @@ ApplicationWindow {
             anchors.topMargin: 1
             height: 34
             width: 40
-            iconColor: applicationThemeViewModel.filterIconButtonColor
             hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
             iconPath: applicationThemeViewModel.iconMainMenuReleases
             iconWidth: 20
@@ -194,7 +193,6 @@ ApplicationWindow {
             anchors.topMargin: 1
             height: 34
             width: 40
-            iconColor: applicationThemeViewModel.filterIconButtonColor
             hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
             iconPath: applicationThemeViewModel.iconMainMenuVideoplayer
             iconWidth: 20
@@ -213,7 +211,6 @@ ApplicationWindow {
             anchors.topMargin: 1
             height: 34
             width: 40
-            iconColor: applicationThemeViewModel.filterIconButtonColor
             hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
             iconPath: applicationThemeViewModel.iconMainMenuCinemahall
             iconWidth: 20
@@ -232,7 +229,6 @@ ApplicationWindow {
             anchors.topMargin: 1
             height: 34
             width: 40
-            iconColor: applicationThemeViewModel.filterIconButtonColor
             hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
             iconPath: applicationThemeViewModel.iconMainMenuReleasesSeries
             iconWidth: 20
@@ -489,9 +485,9 @@ ApplicationWindow {
                 id: notificationPopupButton
                 height: 16
                 width: 16
-                iconColor: notificationViewModel.countNotifications > 0 ? "#9e2323" : applicationThemeViewModel.filterIconButtonColor
                 hoverColor: applicationThemeViewModel.filterIconButtonColor
-                iconPath: "../Assets/Icons/notification.svg"
+                iconPath: notificationViewModel.countNotifications > 0 ? applicationThemeViewModel.currentItems.iconNotificationSelected : applicationThemeViewModel.currentItems.iconNotification
+                overlayVisible: false
                 iconWidth: 14
                 iconHeight: 14
                 onButtonPressed: {
@@ -1269,9 +1265,9 @@ ApplicationWindow {
                     anchors.top: parent.top
                     anchors.rightMargin: 4
                     anchors.topMargin: 4
-                    iconColor: applicationThemeViewModel.filterIconButtonColor
                     hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
-                    iconPath: "../Assets/Icons/close.svg"
+                    iconPath: applicationThemeViewModel.currentItems.iconCloseWindow
+                    overlayVisible: false
                     iconWidth: 14
                     iconHeight: 14
                     onButtonPressed: {
@@ -1341,9 +1337,9 @@ ApplicationWindow {
                                     anchors.top: parent.top
                                     anchors.rightMargin: 4
                                     anchors.topMargin: 4
-                                    iconColor: applicationThemeViewModel.selectedItem
                                     hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
-                                    iconPath: "../Assets/Icons/close.svg"
+                                    overlayVisible: false
+                                    iconPath: applicationThemeViewModel.currentItems.iconCloseWindow
                                     iconWidth: 14
                                     iconHeight: 14
                                     onButtonPressed: {

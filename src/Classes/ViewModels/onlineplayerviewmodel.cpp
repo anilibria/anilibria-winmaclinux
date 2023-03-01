@@ -151,6 +151,9 @@ void OnlinePlayerViewModel::setVideoSource(const QString &videoSource)
     auto source = !isLocalFile && m_needProxified && m_proxyPort > 0 ? QString("http://localhost:") + QString::number(m_proxyPort) + "/proxyvideolist?path=" + videoSource : videoSource;
     if (m_videoSource == source) return;
 
+    m_endSkipOpening = false;
+    emit endSkipOpeningChanged();
+
     m_videoSource = source;
     emit videoSourceChanged();
 
@@ -1052,7 +1055,10 @@ int OnlinePlayerViewModel::skipOpening() noexcept
             return video->releaseId() == releaseId && video->order() == videoId;
         }
     );
-    return video->openingEndSeconds() * 1000;
+    m_endSkipOpening = true;
+    emit endSkipOpeningChanged();
+
+    return (video->openingEndSeconds() + 1) * 1000;
 }
 
 void OnlinePlayerViewModel::reloadCurrentVideo() noexcept

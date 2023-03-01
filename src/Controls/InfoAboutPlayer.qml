@@ -33,10 +33,9 @@ Item {
         anchors.top: parent.top
         anchors.rightMargin: 4
         anchors.topMargin: 4
-        iconPath: assetsLocation.iconsPath + "close.svg"
+        iconPath: applicationThemeViewModel.currentItems.iconCloseWindow
         iconWidth: 20
         iconHeight: 20
-        iconColor: applicationThemeViewModel.plainTextColor
         width: 22
         height: 22
         onButtonPressed: {

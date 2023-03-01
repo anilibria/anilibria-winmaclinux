@@ -343,14 +343,7 @@ void VlcQmlPlayer::playerStateChanged()
     if (currentState == Vlc::Playing) setPlaybackState(1);
     if (currentState == Vlc::Paused) setPlaybackState(2);
     if (currentState != Vlc::Playing && currentState != Vlc::Paused) setPlaybackState(0);
-
-    if (currentState == Vlc::Ended) {
-        if (m_duration - m_position <= 5000) {
-            setIsEnded(true);
-        } else {
-            emit earlyEnded(m_position);
-        }
-    }
+    if (currentState == Vlc::Ended && !m_isEnded && m_duration - m_position <= 5000) setIsEnded(true);
 }
 
 void VlcQmlPlayer::playerPositionChanged(int time)
