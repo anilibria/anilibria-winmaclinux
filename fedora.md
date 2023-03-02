@@ -5,9 +5,9 @@
 
 **Этап 1. Устанавливаем зависимости необходимые для сборки**
 ```shell
-sudo dnf install qt5-qtbase-devel qt5-qtwebview-devel qt5-qtwebengine-devel qt5-qtmultimedia-devel qt5-qtsvg-devel qt5-qtwebsockets-devel qt5-qtdeclarative-devel qt5-qtquickcontrols2-devel qt5-qtquickcontrols git-all vlc-devel vlc
-sudo dnf install https://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm  
-sudo dnf install gstreamer1-libav  
+sudo dnf install qt5-qtbase-devel qt5-qtwebview-devel qt5-qtwebengine-devel qt5-qtmultimedia-devel qt5-qtsvg-devel qt5-qtwebsockets-devel qt5-qtdeclarative-devel qt5-qtquickcontrols2-devel qt5-qtquickcontrols git-all
+sudo dnf install https://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm
+sudo dnf install gstreamer1-libav vlc-devel vlc
 ```
 **Этап 2. Создаем папку для проекта, переходим в нее и извлекаем исходники (предполагается что Вы находитесь в домашней папке)**
 ```shell
