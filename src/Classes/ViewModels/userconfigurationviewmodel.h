@@ -47,6 +47,7 @@ class UserConfigurationViewModel : public QObject
     Q_PROPERTY(bool usingVideoProxy READ usingVideoProxy WRITE setUsingVideoProxy NOTIFY usingVideoProxyChanged)
     Q_PROPERTY(QString torrentStreamPath READ torrentStreamPath WRITE setTorrentStreamPath NOTIFY torrentStreamPathChanged)
     Q_PROPERTY(bool removeAllDownloadedTorrent READ removeAllDownloadedTorrent WRITE setRemoveAllDownloadedTorrent NOTIFY removeAllDownloadedTorrentChanged)
+    Q_PROPERTY(bool isCroppedPlayer READ isCroppedPlayer WRITE setIsCroppedPlayer NOTIFY isCroppedPlayerChanged)
 
 private:
     QString m_cacheFileName { "userconfiguration.cache" };
@@ -72,6 +73,7 @@ private:
     QString m_usingVideoProxyField { "usingVideoProxy" };
     QString m_torrentStreamPathField { "torrentStreamPath" };
     QString m_removeAllDownloadedTorrentField { "removeAllDownloadedTorrent" };
+    const QString m_isCroppedPlayerField { "isCroppedPlayerField" };
     int m_opacityPlayerPanel { 50 };
     bool m_notCloseReleaseCardAfterWatch { false };
     bool m_usingScrollAcceleration { true };
@@ -94,6 +96,7 @@ private:
     bool m_usingVideoProxy { false };
     QString m_torrentStreamPath { "" };
     bool m_removeAllDownloadedTorrent { false };
+    bool m_isCroppedPlayer { false };
 
 public:
     explicit UserConfigurationViewModel(QObject *parent = nullptr);
@@ -164,6 +167,9 @@ public:
     bool removeAllDownloadedTorrent() const noexcept { return m_removeAllDownloadedTorrent; }
     void setRemoveAllDownloadedTorrent(bool removeAllDownloadedTorrent) noexcept;
 
+    bool isCroppedPlayer() const noexcept { return m_isCroppedPlayer; }
+    void setIsCroppedPlayer(bool isCroppedPlayer) noexcept;
+
     Q_INVOKABLE void refreshConfiguration() noexcept;
     Q_INVOKABLE void saveSettingsToFile();
 
@@ -193,6 +199,7 @@ signals:
     void usingVideoProxyChanged();
     void torrentStreamPathChanged();
     void removeAllDownloadedTorrentChanged();
+    void isCroppedPlayerChanged();
 
 };
 

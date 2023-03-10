@@ -222,6 +222,7 @@ Page {
 
                 playerLoader.item.volume = onlinePlayerViewModel.volumeSlider / 100;
                 playerLoader.item.muted = onlinePlayerViewModel.muted;
+                if (userConfigurationViewModel.isCroppedPlayer) playerLoader.item.fillMode = VideoOutput.PreserveAspectCrop;
             }
         }
 
@@ -1334,9 +1335,11 @@ Page {
                             switch (playerLoader.item.fillMode) {
                                 case VideoOutput.PreserveAspectFit:
                                     playerLoader.item.fillMode = VideoOutput.PreserveAspectCrop;
+                                    userConfigurationViewModel.isCroppedPlayer = true;
                                     break;
                                 case VideoOutput.PreserveAspectCrop:
                                     playerLoader.item.fillMode = VideoOutput.PreserveAspectFit;
+                                    userConfigurationViewModel.isCroppedPlayer = false;
                                     break;
                             }
                         }

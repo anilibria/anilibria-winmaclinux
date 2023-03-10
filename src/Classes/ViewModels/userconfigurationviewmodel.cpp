@@ -204,6 +204,14 @@ void UserConfigurationViewModel::setRemoveAllDownloadedTorrent(bool removeAllDow
     emit removeAllDownloadedTorrentChanged();
 }
 
+void UserConfigurationViewModel::setIsCroppedPlayer(bool isCroppedPlayer) noexcept
+{
+    if (m_isCroppedPlayer == isCroppedPlayer) return;
+
+    m_isCroppedPlayer = isCroppedPlayer;
+    emit isCroppedPlayerChanged();
+}
+
 void UserConfigurationViewModel::refreshConfiguration() noexcept
 {
     readSettingsFromFile();
@@ -224,6 +232,7 @@ void UserConfigurationViewModel::refreshConfiguration() noexcept
     emit autoSkipOpeningChanged();
     emit fixedControlPanelChanged();
     emit hideSkipOpeningChanged();
+    emit isCroppedPlayerChanged();
 }
 
 void UserConfigurationViewModel::saveSettingsToFile()
@@ -251,6 +260,7 @@ void UserConfigurationViewModel::saveSettingsToFile()
     object[m_usingVideoProxyField] = m_usingVideoProxy;
     object[m_torrentStreamPathField] = m_torrentStreamPath;
     object[m_removeAllDownloadedTorrentField] = m_removeAllDownloadedTorrent;
+    object[m_isCroppedPlayerField] = m_isCroppedPlayer;
 
     QFile file(getCachePath(m_cacheFileName));
     file.open(QFile::WriteOnly | QFile::Text);
@@ -289,4 +299,5 @@ void UserConfigurationViewModel::readSettingsFromFile()
     m_usingVideoProxy = object.contains(m_usingVideoProxyField) ? object[m_usingVideoProxyField].toBool() : true;
     m_torrentStreamPath = object.contains(m_torrentStreamPathField) ? object[m_torrentStreamPathField].toString() : "torrentStream/TorrentStream.exe";
     m_removeAllDownloadedTorrent = object.contains(m_removeAllDownloadedTorrentField) ? object[m_removeAllDownloadedTorrentField].toBool() : true;
+    m_isCroppedPlayer = object.contains(m_isCroppedPlayerField) ? object[m_isCroppedPlayerField].toBool() : false;
 }
