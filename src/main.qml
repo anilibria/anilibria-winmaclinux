@@ -77,6 +77,10 @@ ApplicationWindow {
         const savedHeight = applicationSettings.windowHeight;
         const savedX = applicationSettings.windowX;
         const savedY = applicationSettings.windowY;
+
+        //if coordinates not in active screen areas we restore default
+        if (!isInActiveScreen(savedX, savedY)) return;
+
         if (savedWidth > 0 && savedHeight > 0) {
             window.x = savedX;
             window.y = savedY;
@@ -582,6 +586,18 @@ ApplicationWindow {
         }
 
         return currentScreen;
+    }
+
+    function isInActiveScreen(x, y) {
+        const countScreens = Qt.application.screens.length;
+        for (let i = 0; i < countScreens; i++) {
+            const screen = Qt.application.screens[i];
+            const isInWidth = x >= screen.virtualX && x <= screen.virtualX + screen.width;
+            const isInHeight = y >= screen.virtualY && y <= screen.virtualY + screen.width;
+            if (isInWidth && isInHeight) return true;
+        }
+
+        return false;
     }
 
     NotificationViewModel {

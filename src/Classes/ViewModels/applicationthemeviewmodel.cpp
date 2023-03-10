@@ -144,6 +144,9 @@ ApplicationThemeViewModel::ApplicationThemeViewModel(QObject *parent)
     lightTheme->insert(iconNotificationField, "qrc:/Assets/Icons/notification/notification.svg");
     lightTheme->insert(iconNotificationSelectedField, "qrc:/Assets/Icons/notification/notificationselected.svg");
 
+    lightTheme->insert(colorTooltipTextField, "white");
+    lightTheme->insert(colorSeenReleaseItemTextField, "green");
+
     lightTheme->insert(basedOnThemeField, m_lightTheme);
     lightTheme->insert(externalIdField, "");
     m_themes.insert(m_lightTheme, lightTheme);
@@ -264,6 +267,9 @@ ApplicationThemeViewModel::ApplicationThemeViewModel(QObject *parent)
     darkTheme->insert(iconNotificationField, "qrc:/Assets/Icons/notification/darknotification.svg");
     darkTheme->insert(iconNotificationSelectedField, "qrc:/Assets/Icons/notification/notificationselected.svg");
 
+    darkTheme->insert(colorTooltipTextField, "white");
+    darkTheme->insert(colorSeenReleaseItemTextField, "green");
+
     darkTheme->insert(basedOnThemeField, m_darkTheme);
     darkTheme->insert(externalIdField, "");
     m_themes.insert(m_darkTheme, darkTheme);
@@ -311,6 +317,8 @@ ApplicationThemeViewModel::ApplicationThemeViewModel(QObject *parent)
     m_fields.append(colorBorderInPanelField);
     m_fields.append(colorBackgroundNavigationButtonField);
     m_fields.append(colorPageIndexTextField);
+    m_fields.append(colorTooltipTextField);
+    m_fields.append(colorSeenReleaseItemTextField);
     m_fields.append(iconMainMenuField);
     m_fields.append(iconMainMenuReleasesField);
     m_fields.append(iconMainMenuCinemahallField);
@@ -353,7 +361,6 @@ ApplicationThemeViewModel::ApplicationThemeViewModel(QObject *parent)
     m_fields.append(iconReleaseCardCloseField);
     m_fields.append(iconReleaseCardCopyField);
     m_fields.append(iconReleaseCardExternalField);
-
     m_fields.append(iconNavigationButtonLeftField);
     m_fields.append(iconNavigationButtonRightField);
     m_fields.append(iconMyAnilibriaButtonSortUpField);

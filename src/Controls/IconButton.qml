@@ -103,5 +103,5 @@ Item {
     }
     ToolTip.delay: 1000
     ToolTip.visible: tooltipMessage && hovered
-    ToolTip.text: "<font color='white'>" + tooltipMessage + "</font>"
+    ToolTip.text: "<font color='" + applicationThemeViewModel.currentItems.colorTooltipText + "'>" + tooltipMessage + "</font>"
 }

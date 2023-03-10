@@ -77,7 +77,7 @@ ApplicationWindow {
                     id: notificationIconImage
                     anchors.verticalCenter: parent.verticalCenter
                     anchors.horizontalCenter: parent.horizontalCenter
-                    source: assetsLocation.iconsPath + "notification.svg"
+                    source: applicationThemeViewModel.previewItems.iconNotification
                     width: 14
                     height: 14
                     mipmap: true
@@ -430,7 +430,7 @@ ApplicationWindow {
                                                 id: activeIconImage
                                                 anchors.verticalCenter: parent.verticalCenter
                                                 anchors.horizontalCenter: parent.horizontalCenter
-                                                source: assetsLocation.iconsPath + "seenmarkselected.svg"
+                                                source: applicationThemeViewModel.previewItems.iconPlayerSeen
                                                 width: 22
                                                 height: 22
                                                 mipmap: true
@@ -487,7 +487,7 @@ ApplicationWindow {
                                                 id: selectedIconImage
                                                 anchors.verticalCenter: parent.verticalCenter
                                                 anchors.horizontalCenter: parent.horizontalCenter
-                                                source: assetsLocation.iconsPath + "seenmark.svg"
+                                                source: applicationThemeViewModel.previewItems.iconPlayerUnseen
                                                 width: 22
                                                 height: 22
                                                 mipmap: true
@@ -576,7 +576,7 @@ ApplicationWindow {
                                 id: previewSwitch
                                 ToolTip.delay: 1000
                                 ToolTip.visible: hovered
-                                ToolTip.text: '<font color="white">Текст в тултипе</font>'
+                                ToolTip.text: "<font color='" + applicationThemeViewModel.previewItems.colorTooltipText + "'>Текст в тултипе</font>"
                             }
 
                             TextField {
@@ -586,7 +586,7 @@ ApplicationWindow {
                                 width: 300
                                 ToolTip.delay: 1000
                                 ToolTip.visible: hovered
-                                ToolTip.text: '<font color="white">Текст в тултипе</font>'
+                                ToolTip.text: "<font color='" + applicationThemeViewModel.previewItems.colorTooltipText + "'>Текст в тултипе</font>"
                             }
 
                             ComboBox {

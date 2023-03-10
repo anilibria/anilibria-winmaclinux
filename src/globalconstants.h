@@ -139,6 +139,9 @@ extern QString colorMaterialTextField;
 
 extern QString colorPageIndexTextField;
 
+extern QString colorTooltipTextField;
+extern QString colorSeenReleaseItemTextField;
+
 extern QString iconMainMenuField;
 extern QString iconMainMenuReleasesField;
 extern QString iconMainMenuCinemahallField;
@@ -157,7 +160,6 @@ extern QString iconMinimizeWindowField;
 extern QString iconMaximizeWindowField;
 extern QString iconNormalWindowField;
 extern QString iconCloseWindowField;
-
 extern QString iconFavoritesField;
 extern QString iconSeenField;
 extern QString iconInfoField;

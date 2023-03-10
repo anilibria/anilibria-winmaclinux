@@ -279,7 +279,7 @@ Rectangle {
                         rightPadding: 8
                         fontPointSize: 12
                         enabled: false
-                        text: '' + countVideos + (countSeensSeries > 0 ? "<font color='" + (applicationThemeViewModel.isDarkTheme ? "white" : "green") + "'>/" + countSeensSeries + "</font>  " : "")
+                        text: '' + countVideos + (countSeensSeries > 0 ? "<font color='" + applicationThemeViewModel.currentItems.colorSeenReleaseItemText + "'>/" + countSeensSeries + "</font>  " : "")
                     }
 
                     Item {

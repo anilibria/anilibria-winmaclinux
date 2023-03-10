@@ -10,5 +10,5 @@ Image {
 
     ToolTip.delay: 2000
     ToolTip.visible: tooltipMessageVisible
-    ToolTip.text: "<font color='white'>" + tooltipMessage + "</font>"
+    ToolTip.text: "<font color='" + applicationThemeViewModel.currentItems.colorTooltipText + "'>" + tooltipMessage + "</font>"
 }

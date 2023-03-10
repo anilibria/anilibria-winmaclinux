@@ -140,6 +140,8 @@ ThemeFieldListModel::ThemeFieldListModel(QObject *parent)
     m_descriptions.insert(iconPlayerDrawerField, "Иконка Пауза (плеер):Иконка для кнопки Меню");
     m_descriptions.insert(iconNotificationField, "Иконка Уведомления (тулбар):Иконка для кнопки уведомлений в тулбаре");
     m_descriptions.insert(iconNotificationSelectedField, "Иконка Есть уведомления (тулбар):Иконка для кнопки уведомлений в тулбаре");
+    m_descriptions.insert(colorTooltipTextField, "Цвет текста в подсказке:Цвет текста во всех подсказках");
+    m_descriptions.insert(colorSeenReleaseItemTextField, "Цвет текста Просмотренной серии:Цвет текста для количества посмотренных серий в списке релизов");
 
     m_saveMenuItems.append("Сохранить и добавить тему в список");
     m_saveMenuItems.append("Сохранить в файл");
