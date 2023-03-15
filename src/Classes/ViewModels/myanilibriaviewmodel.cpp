@@ -33,6 +33,10 @@ MyAnilibriaViewModel::MyAnilibriaViewModel(QObject *parent)
     m_fullSectionsOrders->insert(4, AbandonedSeensSectionId);
     m_fullSectionsOrders->insert(5, RecommendedByGenresSectionId);
     m_fullSectionsOrders->insert(6, WillWatchSectionId);
+    m_fullSectionsOrders->insert(7, NextInReleaseSeriesSectionId);
+    m_fullSectionsOrders->insert(8, CurrentSeasonSectionId);
+    m_fullSectionsOrders->insert(9, ActualInCurrentSeasonSectionId);
+    m_fullSectionsOrders->insert(10, RecommendedByVoicesSectionId);
 
     m_sectionTitles->insert(StatisticsSectionId, "Статистика");
     m_sectionTitles->insert(NewInFavoritesSectionId, "Обновления по избранному");
@@ -41,6 +45,10 @@ MyAnilibriaViewModel::MyAnilibriaViewModel(QObject *parent)
     m_sectionTitles->insert(AbandonedSeensSectionId, "Брошенный просмотр");
     m_sectionTitles->insert(RecommendedByGenresSectionId, "Рекомендации по жанру");
     m_sectionTitles->insert(WillWatchSectionId, "Буду смотреть");
+    m_sectionTitles->insert(NextInReleaseSeriesSectionId, "Что просмотреть дальше");
+    m_sectionTitles->insert(CurrentSeasonSectionId, "Текущий сезон");
+    m_sectionTitles->insert(ActualInCurrentSeasonSectionId, "Актуально в текущем сезоне");
+    m_sectionTitles->insert(RecommendedByVoicesSectionId, "Рекомендации по войсерам");
 
     m_myList->setup(m_sectionTitles, m_sectionOrders , m_selectedSections);
     m_allList->setup(m_fullSectionsOrders, m_sectionTitles, m_selectedSections);

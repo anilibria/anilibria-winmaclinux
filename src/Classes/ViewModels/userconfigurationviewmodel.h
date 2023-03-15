@@ -48,6 +48,10 @@ class UserConfigurationViewModel : public QObject
     Q_PROPERTY(QString torrentStreamPath READ torrentStreamPath WRITE setTorrentStreamPath NOTIFY torrentStreamPathChanged)
     Q_PROPERTY(bool removeAllDownloadedTorrent READ removeAllDownloadedTorrent WRITE setRemoveAllDownloadedTorrent NOTIFY removeAllDownloadedTorrentChanged)
     Q_PROPERTY(bool isCroppedPlayer READ isCroppedPlayer WRITE setIsCroppedPlayer NOTIFY isCroppedPlayerChanged)
+    Q_PROPERTY(bool hideNextInReleaseSeries READ hideNextInReleaseSeries WRITE setHideNextInReleaseSeries NOTIFY hideNextInReleaseSeriesChanged)
+    Q_PROPERTY(bool hideCurrentSeason READ hideCurrentSeason WRITE setHideCurrentSeason NOTIFY hideCurrentSeasonChanged)
+    Q_PROPERTY(bool hideActualInCurrentSeason READ hideActualInCurrentSeason WRITE setHideActualInCurrentSeason NOTIFY hideActualInCurrentSeasonChanged)
+    Q_PROPERTY(bool hideRecommendedByVoices READ hideRecommendedByVoices WRITE setHideRecommendedByVoices NOTIFY hideRecommendedByVoicesChanged)
 
 private:
     QString m_cacheFileName { "userconfiguration.cache" };
@@ -74,6 +78,10 @@ private:
     QString m_torrentStreamPathField { "torrentStreamPath" };
     QString m_removeAllDownloadedTorrentField { "removeAllDownloadedTorrent" };
     const QString m_isCroppedPlayerField { "isCroppedPlayerField" };
+    const QString m_hideNextInReleaseSeriesField { "hideNextInReleaseSeries" };
+    const QString m_hideCurrentSeasonField { "m_hideCurrentSeason" };
+    const QString m_hideActualInCurrentSeasonField { "hideActualInCurrentSeason" };
+    const QString m_hideRecommendedByVoicesField { "hideRecommendedByVoices" };
     int m_opacityPlayerPanel { 50 };
     bool m_notCloseReleaseCardAfterWatch { false };
     bool m_usingScrollAcceleration { true };
@@ -97,6 +105,10 @@ private:
     QString m_torrentStreamPath { "" };
     bool m_removeAllDownloadedTorrent { false };
     bool m_isCroppedPlayer { false };
+    bool m_hideNextInReleaseSeries { false };
+    bool m_hideCurrentSeason { false };
+    bool m_hideActualInCurrentSeason { false };
+    bool m_hideRecommendedByVoices { false };
 
 public:
     explicit UserConfigurationViewModel(QObject *parent = nullptr);
@@ -170,6 +182,18 @@ public:
     bool isCroppedPlayer() const noexcept { return m_isCroppedPlayer; }
     void setIsCroppedPlayer(bool isCroppedPlayer) noexcept;
 
+    bool hideNextInReleaseSeries() const noexcept { return m_hideNextInReleaseSeries; }
+    void setHideNextInReleaseSeries(bool hideNextInReleaseSeries) noexcept;
+
+    bool hideCurrentSeason() const noexcept { return m_hideCurrentSeason; }
+    void setHideCurrentSeason(bool hideCurrentSeason) noexcept;
+
+    bool hideActualInCurrentSeason() const noexcept { return m_hideActualInCurrentSeason; }
+    void setHideActualInCurrentSeason(bool hideActualInCurrentSeason) noexcept;
+
+    bool hideRecommendedByVoices() const noexcept { return m_hideRecommendedByVoices; }
+    void setHideRecommendedByVoices(bool hideRecommendedByVoices) noexcept;
+
     Q_INVOKABLE void refreshConfiguration() noexcept;
     Q_INVOKABLE void saveSettingsToFile();
 
@@ -200,6 +224,10 @@ signals:
     void torrentStreamPathChanged();
     void removeAllDownloadedTorrentChanged();
     void isCroppedPlayerChanged();
+    void hideNextInReleaseSeriesChanged();
+    void hideCurrentSeasonChanged();
+    void hideActualInCurrentSeasonChanged();
+    void hideRecommendedByVoicesChanged();
 
 };
 

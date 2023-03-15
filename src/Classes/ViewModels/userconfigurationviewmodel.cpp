@@ -212,6 +212,38 @@ void UserConfigurationViewModel::setIsCroppedPlayer(bool isCroppedPlayer) noexce
     emit isCroppedPlayerChanged();
 }
 
+void UserConfigurationViewModel::setHideNextInReleaseSeries(bool hideNextInReleaseSeries) noexcept
+{
+    if (m_hideNextInReleaseSeries == hideNextInReleaseSeries) return;
+
+    m_hideNextInReleaseSeries = hideNextInReleaseSeries;
+    emit hideNextInReleaseSeriesChanged();
+}
+
+void UserConfigurationViewModel::setHideCurrentSeason(bool hideCurrentSeason) noexcept
+{
+    if (m_hideCurrentSeason == hideCurrentSeason) return;
+
+    m_hideCurrentSeason = hideCurrentSeason;
+    emit hideCurrentSeasonChanged();
+}
+
+void UserConfigurationViewModel::setHideActualInCurrentSeason(bool hideActualInCurrentSeason) noexcept
+{
+    if (m_hideActualInCurrentSeason == hideActualInCurrentSeason) return;
+
+    m_hideActualInCurrentSeason = hideActualInCurrentSeason;
+    emit hideActualInCurrentSeasonChanged();
+}
+
+void UserConfigurationViewModel::setHideRecommendedByVoices(bool hideRecommendedByVoices) noexcept
+{
+    if (m_hideRecommendedByVoices == hideRecommendedByVoices) return;
+
+    m_hideRecommendedByVoices = hideRecommendedByVoices;
+    emit hideRecommendedByVoicesChanged();
+}
+
 void UserConfigurationViewModel::refreshConfiguration() noexcept
 {
     readSettingsFromFile();
@@ -262,6 +294,11 @@ void UserConfigurationViewModel::saveSettingsToFile()
     object[m_removeAllDownloadedTorrentField] = m_removeAllDownloadedTorrent;
     object[m_isCroppedPlayerField] = m_isCroppedPlayer;
 
+    object[m_hideNextInReleaseSeriesField] = m_hideNextInReleaseSeries;
+    object[m_hideCurrentSeasonField] = m_hideCurrentSeason;
+    object[m_hideActualInCurrentSeasonField] = m_hideActualInCurrentSeason;
+    object[m_hideRecommendedByVoicesField] = m_hideRecommendedByVoices;
+
     QFile file(getCachePath(m_cacheFileName));
     file.open(QFile::WriteOnly | QFile::Text);
     file.write(QJsonDocument(object).toJson());
@@ -300,4 +337,8 @@ void UserConfigurationViewModel::readSettingsFromFile()
     m_torrentStreamPath = object.contains(m_torrentStreamPathField) ? object[m_torrentStreamPathField].toString() : "torrentStream/TorrentStream.exe";
     m_removeAllDownloadedTorrent = object.contains(m_removeAllDownloadedTorrentField) ? object[m_removeAllDownloadedTorrentField].toBool() : true;
     m_isCroppedPlayer = object.contains(m_isCroppedPlayerField) ? object[m_isCroppedPlayerField].toBool() : false;
+    m_hideNextInReleaseSeries = object.contains(m_hideNextInReleaseSeriesField) ? object[m_hideNextInReleaseSeriesField].toBool() : false;
+    m_hideCurrentSeason = object.contains(m_hideCurrentSeasonField) ? object[m_hideCurrentSeasonField].toBool() : false;
+    m_hideActualInCurrentSeason = object.contains(m_hideActualInCurrentSeasonField) ? object[m_hideActualInCurrentSeasonField].toBool() : false;
+    m_hideRecommendedByVoices = object.contains(m_hideRecommendedByVoicesField) ? object[m_hideRecommendedByVoicesField].toBool() : false;
 }

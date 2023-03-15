@@ -173,6 +173,22 @@ QSharedPointer<QList<int>> ReleaseLinkedSeries::getAllLinkedReleases() const noe
     return allReleases;
 }
 
+QList<QList<int>> ReleaseLinkedSeries::getFullLinkedReleases() const noexcept
+{
+    QList<QList<int>> allReleases;
+
+    foreach (auto serie, *m_series) {
+        auto ids = serie->releaseIds();
+        QList<int> innerIds;
+        foreach (auto id, *ids) {
+            innerIds.append(id.toInt());
+        }
+        allReleases.append(innerIds);
+    }
+
+    return allReleases;
+}
+
 int ReleaseLinkedSeries::getSortedOrder(int id) const noexcept
 {
     int iterator = 0;

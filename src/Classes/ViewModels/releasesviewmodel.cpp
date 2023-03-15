@@ -578,12 +578,109 @@ void ReleasesViewModel::fillWillWatch(QList<FullReleaseModel *> *list) noexcept
         auto seenVideos = m_items->getReleaseSeenMarkCount(releaseId);
         int watchTimestamp = 0;
         if (m_historyItems->contains(releaseId)) {
-             auto item = m_historyItems->value(releaseId);
-             watchTimestamp = item->watchTimestamp();
+            auto item = m_historyItems->value(releaseId);
+            watchTimestamp = item->watchTimestamp();
         }
 
         if (seenVideos == 0 && watchTimestamp == 0) list->append(release);
     }
+}
+
+void ReleasesViewModel::fillNextInReleaseSeries(QList<FullReleaseModel *> *list) noexcept
+{
+    auto linkedReleases = m_items->getFullLinkedReleases();
+    auto historyItems = m_historyItems;
+    auto items = m_items;
+    auto releasesMap = m_releasesMap.get();
+
+    foreach (auto group, linkedReleases) {
+        auto countWatched = 0;
+        auto notFullWatched = QList<FullReleaseModel *>();
+        foreach (auto releaseId, group) {
+            if (!releasesMap->contains(releaseId)) continue;
+            auto release = releasesMap->value(releaseId);
+
+            auto countSeens = items->getReleaseSeenMarkCount(releaseId);
+            auto isFullWatch = release->countOnlineVideos() == countSeens;
+            if (isFullWatch) {
+                countWatched += 1;
+            } else {
+                if (notFullWatched.count() < 4) notFullWatched.append(release);
+            }
+        }
+
+        if (countWatched > 0 && !notFullWatched.isEmpty()) list->append(notFullWatched);
+    }
+}
+
+void ReleasesViewModel::fillCurrentSeason(QList<FullReleaseModel *> *list) noexcept
+{
+    auto currentYear = QString::number(QDate::currentDate().year());
+    auto currentSeason = m_items->getCurrentSeason();
+
+    foreach (auto release, *m_releases) {
+        if (release->year() != currentYear) continue;
+        if (release->status().toLower() != "в работе") continue;
+        if (release->season() != currentSeason) continue;
+
+        list->append(release);
+    }
+}
+
+void ReleasesViewModel::fillRecommendedByVoices(QList<FullReleaseModel *> *list) noexcept
+{
+    auto voices = getMostPopularVoices();
+    if (voices.isEmpty()) return;
+
+    QMutableStringListIterator iterator(voices);
+    while (iterator.hasNext()) {
+        auto value = iterator.next();
+        iterator.setValue(value.toLower());
+    }
+
+    auto releases = m_releases;
+    m_seedValue += QRandomGenerator::system()->generate();
+    auto seedValue = m_seedValue;
+    auto historyItems = m_historyItems;
+
+    QFuture<QList<FullReleaseModel *>> future = QtConcurrent::run(
+        [voices, releases, seedValue, historyItems] {
+            auto list = QList<FullReleaseModel *>();
+
+            foreach (auto release, *releases) {
+                auto historyItem = historyItems->value(release->id());
+                if (historyItem == nullptr || historyItem->watchTimestamp() != 0) continue; // if you opened release in video player it means it not fit our condition
+
+                auto releaseVoices = release->voicers().toLower();
+                foreach (auto voice, voices) {
+                    if (releaseVoices.contains(voice)) {
+                        list.append(release);
+                        break;
+                    }
+                }
+            }
+
+            if (list.count() <= 5) return list;
+
+            if (QRandomGenerator::global()->bounded(0, 10) > 5) std::reverse(list.begin(), list.end());
+
+            QRandomGenerator generator(seedValue);
+
+            auto index = 0;
+            while (list.count() > 5) {
+                if (generator.bounded(0, 1000) % 2 == 0) {
+                    list.removeAt(QRandomGenerator::global()->bounded(0, list.count() - 1));
+                }
+
+                index++;
+                if (index >= list.count()) index = 0;
+            }
+
+            return list;
+        }
+    );
+
+    list->append(future.result());
 }
 
 void ReleasesViewModel::getFavoritesReleases(QList<FullReleaseModel *> *list) const noexcept

@@ -127,6 +127,10 @@ void MyAnilibriaListModel::setSectionHideMark(const QString &section, const bool
     if (section == AbandonedSeensSectionId) m_userConfiguration->setHideAbandonedSeens(notVisible);
     if (section == RecommendedByGenresSectionId) m_userConfiguration->setHideRecommendByGenres(notVisible);
     if (section == WillWatchSectionId) m_userConfiguration->setHideWillWatch(notVisible);
+    if (section == NextInReleaseSeriesSectionId) m_userConfiguration->setHideNextInReleaseSeries(notVisible);
+    if (section == CurrentSeasonSectionId) m_userConfiguration->setHideCurrentSeason(notVisible);
+    if (section == ActualInCurrentSeasonSectionId) m_userConfiguration->setHideActualInCurrentSeason(notVisible);
+    if (section == RecommendedByVoicesSectionId) m_userConfiguration->setHideRecommendedByVoices(notVisible);
 }
 
 void MyAnilibriaListModel::refresh() noexcept
@@ -166,6 +170,22 @@ void MyAnilibriaListModel::toggleSectionHideMark(const int elementIndex)
         auto current = m_userConfiguration->hideWillWatch();
         m_userConfiguration->setHideWillWatch(!current);
     }
+    if (section == NextInReleaseSeriesSectionId){
+        auto current = m_userConfiguration->hideNextInReleaseSeries();
+        m_userConfiguration->setHideNextInReleaseSeries(!current);
+    }
+    if (section == CurrentSeasonSectionId){
+        auto current = m_userConfiguration->hideCurrentSeason();
+        m_userConfiguration->setHideCurrentSeason(!current);
+    }
+    if (section == ActualInCurrentSeasonSectionId){
+        auto current = m_userConfiguration->hideActualInCurrentSeason();
+        m_userConfiguration->setHideActualInCurrentSeason(!current);
+    }
+    if (section == RecommendedByVoicesSectionId){
+        auto current = m_userConfiguration->hideRecommendedByVoices();
+        m_userConfiguration->setHideRecommendedByVoices(!current);
+    }
 
     emit dataChanged(index(elementIndex,0), index(elementIndex,0));
 }
@@ -204,6 +224,14 @@ bool MyAnilibriaListModel::getHideSection(const QString &section) const noexcept
     if (section == WillWatchSectionId) {
         return m_userConfiguration->hideWillWatch();
     }
+
+    if (section == NextInReleaseSeriesSectionId) return m_userConfiguration->hideNextInReleaseSeries();
+
+    if (section == CurrentSeasonSectionId) return m_userConfiguration->hideCurrentSeason();
+
+    if (section == ActualInCurrentSeasonSectionId) return m_userConfiguration->hideActualInCurrentSeason();
+
+    if (section == RecommendedByVoicesSectionId) return m_userConfiguration->hideRecommendedByVoices();
 
     return false;
 }

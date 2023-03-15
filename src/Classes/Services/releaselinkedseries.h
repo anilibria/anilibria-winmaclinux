@@ -66,6 +66,7 @@ public:
     void setNameFilter(const QString& nameFilter) noexcept;
 
     QSharedPointer<QList<int>> getAllLinkedReleases() const noexcept;
+    QList<QList<int>> getFullLinkedReleases() const noexcept;
     int getSortedOrder(int id) const noexcept;
 
     void fillReleaseSeries(QList<FullReleaseModel*>* list, const int id) noexcept;

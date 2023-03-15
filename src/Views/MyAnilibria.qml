@@ -158,7 +158,7 @@ Page {
                                 id: sectionVisibilitiesPopup
                                 x: -420
                                 width: 400
-                                height: 430
+                                height: 460
                                 modal: true
                                 focus: true
                                 closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent

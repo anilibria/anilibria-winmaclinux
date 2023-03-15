@@ -103,6 +103,11 @@ static bool compareTimeStampDescending(const FullReleaseModel* first, const Full
     return first->timestamp() > second->timestamp();
 }
 
+static bool compareRatingDescending(const FullReleaseModel* first, const FullReleaseModel* second)
+{
+    return first->rating() > second->rating();
+}
+
 void ReleaseSimpleListModel::refresh()
 {
     if (m_releasesViewModel == nullptr) return;
@@ -143,6 +148,30 @@ void ReleaseSimpleListModel::refresh()
 
     if (m_filterMode == WillWatchSectionId) {
         m_releasesViewModel->fillWillWatch(m_releases.get());
+
+        std::sort(m_releases->begin(), m_releases->end(), compareTimeStampDescending);
+    }
+
+    if (m_filterMode == NextInReleaseSeriesSectionId) {
+        m_releasesViewModel->fillNextInReleaseSeries(m_releases.get());
+
+        std::sort(m_releases->begin(), m_releases->end(), compareTimeStampDescending);
+    }
+
+    if (m_filterMode == CurrentSeasonSectionId) {
+        m_releasesViewModel->fillCurrentSeason(m_releases.get());
+
+        std::sort(m_releases->begin(), m_releases->end(), compareTimeStampDescending);
+    }
+
+    if (m_filterMode == ActualInCurrentSeasonSectionId) {
+        m_releasesViewModel->fillCurrentSeason(m_releases.get());
+
+        std::sort(m_releases->begin(), m_releases->end(), compareRatingDescending);
+    }
+
+    if (m_filterMode == RecommendedByVoicesSectionId) {
+        m_releasesViewModel->fillRecommendedByVoices(m_releases.get());
 
         std::sort(m_releases->begin(), m_releases->end(), compareTimeStampDescending);
     }

@@ -22,6 +22,7 @@
 #include <QObject>
 #include <QAbstractListModel>
 #include <QSet>
+#include <QMap>
 #include "../Models/fullreleasemodel.h"
 #include "../Models/changesmodel.h"
 #include "../Models/historymodel.h"
@@ -212,6 +213,10 @@ public:
 
     QSharedPointer<QSet<int>> getSelectedReleases();
 
+    QString getCurrentSeason();
+
+    QList<QList<int>> getFullLinkedReleases();
+
     Q_INVOKABLE void refresh();
     Q_INVOKABLE void selectItem(int id);
     Q_INVOKABLE void deselectItem(int id);
@@ -226,7 +231,7 @@ private:
     QHash<int, int>&& getAllSeenMarkCount(QHash<int, int>&& result) noexcept;
     void sortingFilteringReleases(QHash<int, int>&& seenMarks);
     void refreshFilteredReleaseById(int id);
-    QString getCurrentSeason();
+
 
 signals:
     void titleFilterChanged();

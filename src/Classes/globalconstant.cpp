@@ -29,6 +29,10 @@ QString LastTwoDaysSectionId = "lasttwodays";
 QString AbandonedSeensSectionId = "abondonedseens";
 QString RecommendedByGenresSectionId = "recommendbygenres";
 QString WillWatchSectionId = "willwatch";
+QString NextInReleaseSeriesSectionId = "nextinreleaseseries";
+QString CurrentSeasonSectionId = "currentseason";
+QString ActualInCurrentSeasonSectionId = "actualincurrentseason";
+QString RecommendedByVoicesSectionId = "recommendedbyvoices";
 
 QString StatisticsSectionComponent = "StatisticsSection";
 QString SimpleListSectionComponent = "SimpleListSection";

@@ -369,19 +369,11 @@ void ReleasesListModel::refreshItem(int id)
 
 int ReleasesListModel::getReleaseSeenMarkCount(int releaseId) const noexcept
 {
-    auto result = 0;
-    QHashIterator<QString, bool> iterator(*m_seenMarkModels);
-    while(iterator.hasNext()) {
-        iterator.next();
-
-        QString key = iterator.key();
-        auto id = QString::number(releaseId);
-        if (!key.startsWith(id)) continue;
-
-        result += 1;
-    }
-
-    return result;
+    auto keys = m_seenMarkModels->keys();
+    auto key = QString::number(releaseId) + ".";
+    return std::count_if(keys.cbegin(), keys.cend(), [key](const QString& item) {
+       return item.startsWith(key);
+    });
 }
 
 void ReleasesListModel::setHasReleaseSeriesFilter(bool hasReleaseSeriesFilter) noexcept
@@ -457,6 +449,47 @@ int ReleasesListModel::getReleaseIdByIndex(int index) noexcept
 QSharedPointer<QSet<int>> ReleasesListModel::getSelectedReleases()
 {
     return m_selectedReleases;
+}
+
+QString ReleasesListModel::getCurrentSeason()
+{
+    auto currentYear = QString::number(QDate::currentDate().year());
+    QList<int> seasonsCounters;
+    for (int i = 0; i < 4; i++) seasonsCounters.append(0);
+
+    foreach (auto release, *m_releases) {
+        if (!m_scheduleReleases->contains(release->id())) continue;
+        if (release->status().toLower() != "в работе") continue;
+        if (release->year() != currentYear) continue;
+
+        auto season = release->season().toLower();
+        if (season == winterValue) seasonsCounters[winter]++;
+        if (season == summerValue) seasonsCounters[summer]++;
+        if (season == autumnValue) seasonsCounters[autumn]++;
+        if (season == springValue) seasonsCounters[spring]++;
+    }
+
+    auto maxIndex = -1;
+    auto maxIndexValue = 0;
+    for (int i = 0; i < 4; i++) {
+        auto value = seasonsCounters.value(i);
+        if (value > maxIndexValue) {
+            maxIndexValue = value;
+            maxIndex = i;
+        }
+    }
+
+    if (maxIndex == winter) return winterValue;
+    if (maxIndex == autumn) return autumnValue;
+    if (maxIndex == spring) return springValue;
+    if (maxIndex == summer) return summerValue;
+
+    return "";
+}
+
+QList<QList<int> > ReleasesListModel::getFullLinkedReleases()
+{
+    return m_releaseLinkedSeries->getFullLinkedReleases();
 }
 
 void ReleasesListModel::refresh()
@@ -1031,40 +1064,4 @@ void ReleasesListModel::refreshFilteredReleaseById(int id)
 
     int itemIndex = m_filteredReleases->indexOf(*iterator);
     emit dataChanged(index(itemIndex), index(itemIndex));
-}
-
-QString ReleasesListModel::getCurrentSeason()
-{
-    auto currentYear = QString::number(QDate::currentDate().year());
-    QList<int> seasonsCounters;
-    for (int i = 0; i < 4; i++) seasonsCounters.append(0);
-
-    foreach (auto release, *m_releases) {
-        if (!m_scheduleReleases->contains(release->id())) continue;
-        if (release->status().toLower() != "в работе") continue;
-        if (release->year() != currentYear) continue;
-
-        auto season = release->season().toLower();
-        if (season == winterValue) seasonsCounters[winter]++;
-        if (season == summerValue) seasonsCounters[summer]++;
-        if (season == autumnValue) seasonsCounters[autumn]++;
-        if (season == springValue) seasonsCounters[spring]++;
-    }
-
-    auto maxIndex = -1;
-    auto maxIndexValue = 0;
-    for (int i = 0; i < 4; i++) {
-        auto value = seasonsCounters.value(i);
-        if (value > maxIndexValue) {
-            maxIndexValue = value;
-            maxIndex = i;
-        }
-    }
-
-    if (maxIndex == winter) return winterValue;
-    if (maxIndex == autumn) return autumnValue;
-    if (maxIndex == spring) return springValue;
-    if (maxIndex == summer) return summerValue;
-
-    return "";
 }

@@ -34,17 +34,15 @@ const int HistoryReleaseCardMode = 0;
 const int HistoryWatchReleaseCardMode = 1;
 
 extern QString StatisticsSectionId;
-
 extern QString NewInFavoritesSectionId;
-
 extern QString NewFromStartSectionId;
-
 extern QString LastTwoDaysSectionId;
-
 extern QString AbandonedSeensSectionId;
-
 extern QString RecommendedByGenresSectionId;
-
+extern QString NextInReleaseSeriesSectionId;
+extern QString CurrentSeasonSectionId;
+extern QString ActualInCurrentSeasonSectionId;
+extern QString RecommendedByVoicesSectionId;
 extern QString WillWatchSectionId;
 
 extern QString StatisticsSectionComponent;

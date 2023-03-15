@@ -235,6 +235,9 @@ public:
     void fillAbandonedSeens(QList<FullReleaseModel*>* list) const noexcept;
     void fillRecommendsByGenres(QList<FullReleaseModel*>* list) noexcept;
     void fillWillWatch(QList<FullReleaseModel*>* list) noexcept;
+    void fillNextInReleaseSeries(QList<FullReleaseModel*>* list) noexcept;
+    void fillCurrentSeason(QList<FullReleaseModel*>* list) noexcept;
+    void fillRecommendedByVoices(QList<FullReleaseModel*>* list) noexcept;
     void getFavoritesReleases(QList<FullReleaseModel*>* list) const noexcept;
     QString getReleaseCodeFromUrl(const QString& url) const noexcept;
     void fillFullSearch(QList<FullReleaseModel*>& list, const QString& filter) noexcept;
