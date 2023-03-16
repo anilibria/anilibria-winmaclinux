@@ -158,7 +158,7 @@ Page {
                                 id: sectionVisibilitiesPopup
                                 x: -420
                                 width: 400
-                                height: 460
+                                height: 480
                                 modal: true
                                 focus: true
                                 closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
@@ -363,6 +363,17 @@ Page {
                         }
                     }
                 }
+            }
+
+            Connections {
+                target: myAnilibriaViewModel
+                function onNeedRestoreScroll() {
+                    scrollview.contentY = myAnilibriaViewModel.restoreScroll;
+                }
+            }
+
+            Component.onCompleted: {
+                myAnilibriaViewModel.refreshAllSectionsModels();
             }
         }
     }

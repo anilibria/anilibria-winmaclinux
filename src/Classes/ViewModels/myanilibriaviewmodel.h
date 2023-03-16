@@ -23,6 +23,7 @@
 #include "./releasesviewmodel.h"
 #include "../ListModels/myanilibrialistmodel.h"
 #include "../ListModels/allmyanilibrialistmodel.h"
+#include "../ListModels/releasesimplelistmodel.h"
 
 class MyAnilibriaViewModel : public QObject
 {
@@ -33,6 +34,8 @@ class MyAnilibriaViewModel : public QObject
     Q_PROPERTY(QString genres READ genres NOTIFY genresChanged)
     Q_PROPERTY(QString voices READ voices NOTIFY voicesChanged)
     Q_PROPERTY(QString hoveredDescription READ hoveredDescription WRITE setHoveredDescription NOTIFY hoveredDescriptionChanged)
+    Q_PROPERTY(int restoreScroll READ restoreScroll WRITE setRestoreScroll NOTIFY restoreScrollChanged)
+    Q_PROPERTY(ReleaseSimpleListModel* zeroSectionModel READ zeroSectionModel NOTIFY zeroSectionModelChanged)
 
 private:
     QString m_cacheFileName { "myanilibrialist.cache" };
@@ -44,7 +47,10 @@ private:
     QScopedPointer<MyAnilibriaListModel> m_myList { new MyAnilibriaListModel() };
     QScopedPointer<AllMyAnilibriaListModel> m_allList { new AllMyAnilibriaListModel() };
     QSharedPointer<QSet<QString>> m_selectedSections { new QSet<QString>() };
+    QMap<QString, ReleaseSimpleListModel*> m_sectionModels { QMap<QString, ReleaseSimpleListModel*>() };
     QString m_hoveredDescription { "" };
+    int m_restoreScroll { 0 };
+    ReleaseSimpleListModel* m_zeroSectionModel { new ReleaseSimpleListModel(this) };
 
 public:
     explicit MyAnilibriaViewModel(QObject *parent = nullptr);
@@ -62,10 +68,17 @@ public:
     QString genres() const noexcept;
     QString voices() const noexcept;
 
+    int restoreScroll() const noexcept { return m_restoreScroll; }
+    void setRestoreScroll(int restoreScroll) noexcept;
+
+    ReleaseSimpleListModel* zeroSectionModel() const noexcept { return m_zeroSectionModel; }
+
     Q_INVOKABLE void selectSection(const QString& section) noexcept;
     Q_INVOKABLE void deselectSection(const QString& section) noexcept;
     Q_INVOKABLE void saveSectionsToFile();
     Q_INVOKABLE void moveSection(const int direction, const int index) noexcept;
+    Q_INVOKABLE ReleaseSimpleListModel* getSectionModel(const QString& section) noexcept;
+    Q_INVOKABLE void refreshAllSectionsModels() noexcept;
 
 private:
     void readFromCache() noexcept;
@@ -80,6 +93,9 @@ signals:
     void myListChanged();
     void allSectionsChanged();
     void hoveredDescriptionChanged();
+    void restoreScrollChanged();
+    void needRestoreScroll();
+    void zeroSectionModelChanged();
 
 };
 

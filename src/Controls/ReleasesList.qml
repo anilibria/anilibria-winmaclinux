@@ -8,14 +8,9 @@ Item {
     width: parent.width
     height: 330
 
-    property alias filterMode: viewModel.filterMode
-    property alias hasItems: viewModel.hasItems
-    property alias countItems: viewModel.countItems
-
-    ReleaseSimpleListModel {
-        id: viewModel
-        releases: releasesViewModel
-    }
+    property string filterMode
+    property bool hasItems: releasesListView.model.hasItems
+    property int countItems: releasesListView.model.countItems
 
     Rectangle {
         id: mask
@@ -30,7 +25,7 @@ Item {
         anchors.fill: parent
         orientation: ListView.Horizontal
         boundsBehavior: Flickable.StopAtBounds
-        model: viewModel
+        model: applicationThemeViewModel.zeroSectionModel
         clip: true
         ScrollBar.horizontal: ScrollBar {
             active: true
@@ -147,5 +142,9 @@ Item {
         anchors.topMargin: 120
         scrollView: releasesListView
         isLeft: false
+    }
+
+    Component.onCompleted: {
+        releasesListView.model = myAnilibriaViewModel.getSectionModel(root.filterMode);
     }
 }

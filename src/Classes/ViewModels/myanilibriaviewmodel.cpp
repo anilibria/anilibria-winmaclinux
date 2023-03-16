@@ -56,6 +56,46 @@ MyAnilibriaViewModel::MyAnilibriaViewModel(QObject *parent)
     m_pathToCacheFile = getCachePath(m_cacheFileName);
     createIfNotExistsFile(m_pathToCacheFile, "[]");
     readFromCache();
+
+    auto newInFavoritesSection = new ReleaseSimpleListModel(this);
+    newInFavoritesSection->setFilterMode(NewInFavoritesSectionId);
+    m_sectionModels.insert(NewInFavoritesSectionId, newInFavoritesSection);
+
+    auto newFromStartSection = new ReleaseSimpleListModel(this);
+    newFromStartSection->setFilterMode(NewFromStartSectionId);
+    m_sectionModels.insert(NewFromStartSectionId, newFromStartSection);
+
+    auto lastTwoDaysSection = new ReleaseSimpleListModel(this);
+    lastTwoDaysSection->setFilterMode(LastTwoDaysSectionId);
+    m_sectionModels.insert(LastTwoDaysSectionId, lastTwoDaysSection);
+
+    auto abandonedSeensSection = new ReleaseSimpleListModel(this);
+    abandonedSeensSection->setFilterMode(AbandonedSeensSectionId);
+    m_sectionModels.insert(AbandonedSeensSectionId, abandonedSeensSection);
+
+    auto recommendedByGenresSection = new ReleaseSimpleListModel(this);
+    recommendedByGenresSection->setFilterMode(RecommendedByGenresSectionId);
+    m_sectionModels.insert(RecommendedByGenresSectionId, recommendedByGenresSection);
+
+    auto willWatchSection = new ReleaseSimpleListModel(this);
+    willWatchSection->setFilterMode(WillWatchSectionId);
+    m_sectionModels.insert(WillWatchSectionId, willWatchSection);
+
+    auto nextInReleaseSeriesSection = new ReleaseSimpleListModel(this);
+    nextInReleaseSeriesSection->setFilterMode(NextInReleaseSeriesSectionId);
+    m_sectionModels.insert(NextInReleaseSeriesSectionId, nextInReleaseSeriesSection);
+
+    auto currentSeasonSection = new ReleaseSimpleListModel(this);
+    currentSeasonSection->setFilterMode(CurrentSeasonSectionId);
+    m_sectionModels.insert(CurrentSeasonSectionId, currentSeasonSection);
+
+    auto actualInCurrentSeasonSection = new ReleaseSimpleListModel(this);
+    actualInCurrentSeasonSection->setFilterMode(ActualInCurrentSeasonSectionId);
+    m_sectionModels.insert(ActualInCurrentSeasonSectionId, actualInCurrentSeasonSection);
+
+    auto recommendedByVoicesSection = new ReleaseSimpleListModel(this);
+    recommendedByVoicesSection->setFilterMode(RecommendedByVoicesSectionId);
+    m_sectionModels.insert(RecommendedByVoicesSectionId, recommendedByVoicesSection);
 }
 
 void MyAnilibriaViewModel::setReleasesViewModel(const ReleasesViewModel *viewModel) noexcept
@@ -63,6 +103,12 @@ void MyAnilibriaViewModel::setReleasesViewModel(const ReleasesViewModel *viewMod
     if (m_releasesViewModel != nullptr) return; // not allowed setup viewmodel twice and more
 
     m_releasesViewModel = const_cast<ReleasesViewModel *>(viewModel);
+
+    auto keys = m_sectionModels.keys();
+    foreach (auto key, keys) {
+        auto model = m_sectionModels.value(key);
+        model->setReleases(m_releasesViewModel);
+    }
 }
 
 void MyAnilibriaViewModel::setHoveredDescription(const QString &hoveredDescription) noexcept
@@ -87,6 +133,14 @@ QString MyAnilibriaViewModel::voices() const noexcept
     if (voices.isEmpty()) return "Нет данных";
 
     return voices.join(", ");
+}
+
+void MyAnilibriaViewModel::setRestoreScroll(int restoreScroll) noexcept
+{
+    if (restoreScroll == m_restoreScroll) return;
+
+    m_restoreScroll = restoreScroll;
+    emit restoreScrollChanged();
 }
 
 void MyAnilibriaViewModel::selectSection(const QString &section) noexcept
@@ -149,6 +203,24 @@ void MyAnilibriaViewModel::moveSection(const int direction, const int index) noe
     }
 
     m_myList->refresh();
+
+    emit needRestoreScroll();
+}
+
+ReleaseSimpleListModel *MyAnilibriaViewModel::getSectionModel(const QString &section) noexcept
+{
+    if (!m_sectionModels.contains(section)) return nullptr;
+
+    return m_sectionModels.value(section);
+}
+
+void MyAnilibriaViewModel::refreshAllSectionsModels() noexcept
+{
+    auto keys = m_sectionModels.keys();
+    foreach (auto key, keys) {
+        auto model = m_sectionModels.value(key);
+        model->recalculateItem();
+    }
 }
 
 void MyAnilibriaViewModel::readFromCache() noexcept

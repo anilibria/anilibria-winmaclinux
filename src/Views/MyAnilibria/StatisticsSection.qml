@@ -19,6 +19,7 @@ Item {
             myAnilibriaViewModel.myList.toggleSectionHideMark(currentIndex)
         }
         onMoveSection: {
+            myAnilibriaViewModel.restoreScroll = scrollview.contentY;
             myAnilibriaViewModel.moveSection(direction, currentIndex);
         }
     }

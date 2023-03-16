@@ -71,6 +71,8 @@ public:
 
     int countItems() const noexcept { return m_releases->count(); }
 
+    void recalculateItem() noexcept;
+
 private:
     void refresh();
 

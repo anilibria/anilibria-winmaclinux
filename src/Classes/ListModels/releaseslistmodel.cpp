@@ -489,6 +489,8 @@ QString ReleasesListModel::getCurrentSeason()
 
 QList<QList<int> > ReleasesListModel::getFullLinkedReleases()
 {
+    if (m_releaseLinkedSeries == nullptr) return QList<QList<int>>();
+
     return m_releaseLinkedSeries->getFullLinkedReleases();
 }
 

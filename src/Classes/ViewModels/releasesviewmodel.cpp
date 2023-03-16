@@ -490,6 +490,8 @@ void ReleasesViewModel::fillNewInFavorites(QList<FullReleaseModel *>* list) cons
 
 void ReleasesViewModel::fillNewFromStart(QList<FullReleaseModel *> *list) const noexcept
 {
+    if (m_userActivity == nullptr) return;
+
     auto applicationStart = m_userActivity->previousApplicationStart();
     foreach (auto release, *m_releases) {
         if (release->timestamp() < applicationStart) continue;

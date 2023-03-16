@@ -98,6 +98,11 @@ void ReleaseSimpleListModel::setFilterMode(const QString &filterMode) noexcept
     refresh();
 }
 
+void ReleaseSimpleListModel::recalculateItem() noexcept
+{
+    refresh();
+}
+
 static bool compareTimeStampDescending(const FullReleaseModel* first, const FullReleaseModel* second)
 {
     return first->timestamp() > second->timestamp();
