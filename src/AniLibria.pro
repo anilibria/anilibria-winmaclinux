@@ -1,6 +1,11 @@
 QT += quick multimedia network concurrent svg websockets
 CONFIG += c++11
 
+macx {
+    QT -= virualkeyboard
+    QMAKE_LFLAGS_SONAME = -Wl,-install_name,@rpath/
+}
+
 windows {
     LIBS += -lKernel32
 
