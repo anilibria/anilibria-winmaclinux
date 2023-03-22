@@ -1016,6 +1016,16 @@ void ReleasesViewModel::setSeenMarkAllSeriesSelectedReleases(bool marked)
     saveSeenMarks();
 }
 
+void ReleasesViewModel::setSeenMarkForSingleRelease(int id, bool marked)
+{
+    auto release = getReleaseById(id);
+    if (release == nullptr) return;
+
+    setSeenMarkForRelease(id, release->countOnlineVideos(), marked);
+    m_items->refreshItem(id);
+    saveSeenMarks();
+}
+
 void ReleasesViewModel::setSeenMarkForRelease(int id, int countSeries, bool marked)
 {
     for (int i = 0; i < countSeries; i++) {

@@ -42,8 +42,6 @@ Rectangle {
 
     property bool isCompactReleaseMode: compactModeSwitch.checked || mainViewModel.isSmallSizeMode
 
-    property var releaseModel: ({})
-
     signal leftClicked()
     signal rightClicked()
     signal addToFavorite(int id)
@@ -283,8 +281,11 @@ Rectangle {
                     }
 
                     Item {
+                        id: torrentMenuContainer
                         width: 22
                         height: 22
+
+                        property int torrentReleaseId: 0
 
                         Rectangle {
                             id: torrentsRectangle
@@ -305,6 +306,7 @@ Rectangle {
                                 hoverEnabled: true
                                 onPressed: {
                                     releasesViewModel.prepareTorrentsForListItem(id);
+                                    torrentMenuContainer.torrentReleaseId = id;
                                     torrentMenuLoader.sourceComponent = torrentMenuComponent;
                                 }
                                 onEntered: {
@@ -342,6 +344,10 @@ Rectangle {
                                                 releasesViewModel.itemTorrents.downloadTorrent(currentIndex);
                                                 torrentsMenu.close();
 
+                                                userActivityViewModel.addDownloadedTorrentToCounter();
+                                                if (userConfigurationViewModel.markAsReadAfterDownload) {
+                                                    releasesViewModel.setSeenMarkForSingleRelease(torrentMenuContainer.torrentReleaseId, true);
+                                                }
                                             }
                                         }
                                     }

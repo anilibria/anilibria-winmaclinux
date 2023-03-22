@@ -264,6 +264,7 @@ public:
     Q_INVOKABLE void hideAfterWatchReleaseCard() noexcept;
     Q_INVOKABLE void setSeenMarkAllSeries(int id, int countSeries, bool marked);
     Q_INVOKABLE void setSeenMarkAllSeriesSelectedReleases(bool marked);
+    Q_INVOKABLE void setSeenMarkForSingleRelease(int id, bool marked);
     Q_INVOKABLE void setSeenMarkForRelease(int id, int countSeries, bool marked);
     Q_INVOKABLE void refreshOpenedReleaseCard();
     Q_INVOKABLE void removeAllSeenMark();
