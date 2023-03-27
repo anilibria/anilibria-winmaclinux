@@ -901,6 +901,7 @@ Page {
                             }
                             CommonComboBox {
                                 id: themes
+                                width: 320
                                 model: applicationThemeViewModel.themes
 
                                 onActivated: {
