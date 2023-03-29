@@ -228,8 +228,8 @@ ApplicationThemeViewModel::ApplicationThemeViewModel(QObject *parent)
     darkTheme->insert(iconReleaseCatalogAlphabetField, "qrc:/Assets/Icons/alphabet.svg");
     darkTheme->insert(iconReleaseCatalogAllReleasesField, "qrc:/Assets/Icons/allreleases.svg");
     darkTheme->insert(iconReleaseCatalogCompilationField, "qrc:/Assets/Icons/listcustom.svg");
-    darkTheme->insert(iconReleaseCatalogSortAscField, "qrc:/Assets/Icons/sortascending.svg");
-    darkTheme->insert(iconReleaseCatalogSortDescField, "qrc:/Assets/Icons/sortdescending.svg");
+    darkTheme->insert(iconReleaseCatalogSortAscField, "qrc:/Assets/Icons/darksortascending.svg");
+    darkTheme->insert(iconReleaseCatalogSortDescField, "qrc:/Assets/Icons/darksortdescending.svg");
     darkTheme->insert(iconReleaseCardListMenuField, "qrc:/Assets/Icons/allreleases.svg");
     darkTheme->insert(iconReleaseCardCloseField, "qrc:/Assets/Icons/coloredclosewindow.svg");
     darkTheme->insert(iconReleaseCardCopyField, "qrc:/Assets/Icons/copy.svg");

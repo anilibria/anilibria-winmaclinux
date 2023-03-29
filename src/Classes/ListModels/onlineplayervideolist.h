@@ -91,6 +91,9 @@ public:
     void refreshSingleVideo(int releaseId, int videoId) noexcept;
     bool isPositionInOpening(int position) const noexcept;
 
+private:
+    QVector<OnlineVideoModel*> fillVideosFrom(const QJsonArray& array, int releaseId, const QString& poster);
+
 signals:    
 
 };

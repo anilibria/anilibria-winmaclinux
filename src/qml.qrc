@@ -208,5 +208,7 @@
         <file>Assets/Icons/notification/notification.svg</file>
         <file>Assets/Icons/notification/notificationselected.svg</file>
         <file>Assets/Icons/darkarrowup.svg</file>
+        <file>Assets/Icons/darksortascending.svg</file>
+        <file>Assets/Icons/darksortdescending.svg</file>
     </qresource>
 </RCC>

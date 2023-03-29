@@ -225,6 +225,17 @@ void OnlinePlayerVideoList::setVideosFromDownloadedTorrent(const QStringList &fi
 
     m_videos->clear();
 
+    auto release = m_releaseViewModel->getReleaseById(releaseId);
+    if (release == nullptr) {
+        endResetModel();
+        return;
+    }
+
+    auto document = QJsonDocument::fromJson(release->videos().toUtf8());
+    auto videosArray = document.array();
+
+    auto videos = fillVideosFrom(videosArray, releaseId, poster);
+
     int iterator = 0;
     foreach (auto file, files) {
         auto videoModel = new OnlineVideoModel();
@@ -241,6 +252,10 @@ void OnlinePlayerVideoList::setVideosFromDownloadedTorrent(const QStringList &fi
         videoModel->setReleasePoster(poster);
         videoModel->setIsGroup(false);
         videoModel->setTitle("Файл торрента " + QString::number(iterator + 1));
+        if (iterator < videos.count()) {
+            videoModel->setOpeningEndSeconds(videos.value(iterator)->openingEndSeconds());
+            videoModel->setOpeningStartSeconds(videos.value(iterator)->openingStartSeconds());
+        }
         m_videos->append(videoModel);
         iterator++;
     }
@@ -254,6 +269,12 @@ void OnlinePlayerVideoList::setVideosFromSingleTorrent(const ReleaseTorrentModel
 
     m_videos->clear();
 
+    auto release = m_releaseViewModel->getReleaseById(releaseId);
+    if (release == nullptr) {
+        endResetModel();
+        return;
+    }
+
     auto countSeries = 0;
     auto series = torrent.series();
     if (series.indexOf("-") > -1) {
@@ -266,6 +287,11 @@ void OnlinePlayerVideoList::setVideosFromSingleTorrent(const ReleaseTorrentModel
         countSeries = series.toInt();
     }
 
+    auto document = QJsonDocument::fromJson(release->videos().toUtf8());
+    auto videosArray = document.array();
+
+    auto videos = fillVideosFrom(videosArray, releaseId, poster);
+
     for (auto i = 0; i < countSeries; i++) {
         auto videoModel = new OnlineVideoModel();
         auto url = "http://localhost:" + QString::number(port) + "/online?id=" + QString::number(releaseId) + "&index=" + QString::number(i) + "&path=" + AnilibriaImagesPath + torrent.url();
@@ -277,6 +303,10 @@ void OnlinePlayerVideoList::setVideosFromSingleTorrent(const ReleaseTorrentModel
         videoModel->setReleasePoster(poster);
         videoModel->setIsGroup(false);
         videoModel->setTitle("Файл " + QString::number(i + 1));
+        if (i < videos.count()) {
+            videoModel->setOpeningEndSeconds(videos.value(i)->openingEndSeconds());
+            videoModel->setOpeningStartSeconds(videos.value(i)->openingStartSeconds());
+        }
         m_videos->append(videoModel);
     }
 
@@ -292,30 +322,7 @@ void OnlinePlayerVideoList::setVideosFromSingleList(const QString &json, int rel
     auto document = QJsonDocument::fromJson(json.toUtf8());
     auto videosArray = document.array();
 
-    foreach (auto video, videosArray) {
-        auto videoModel = new OnlineVideoModel();
-        videoModel->readFromApiModel(video.toObject());
-        videoModel->setReleaseId(releaseId);
-        videoModel->setReleasePoster(poster);
-        videoModel->setIsGroup(false);
-        m_videos->append(videoModel);
-    }
-
-    std::sort(
-        m_videos->begin(),
-        m_videos->end(),
-        [](const OnlineVideoModel* first, const OnlineVideoModel* second) {
-            return first->id() < second->id();
-        }
-    );
-
-    QVectorIterator<OnlineVideoModel*> iterator(*m_videos);
-    int index = -1;
-    while (iterator.hasNext()) {
-        auto item = iterator.next();
-        index += 1;
-        item->setOrder(index);
-    }
+    m_videos->append(fillVideosFrom(videosArray, releaseId, poster));
 
     endResetModel();
 }
@@ -457,4 +464,36 @@ bool OnlinePlayerVideoList::isPositionInOpening(int position) const noexcept
     if (m_openingStart == -1) return false;
 
     return position >= m_openingStart && position < m_openingEnd;
+}
+
+QVector<OnlineVideoModel*> OnlinePlayerVideoList::fillVideosFrom(const QJsonArray& array, int releaseId, const QString& poster)
+{
+    QVector<OnlineVideoModel*> result;
+
+    foreach (auto video, array) {
+        auto videoModel = new OnlineVideoModel();
+        videoModel->readFromApiModel(video.toObject());
+        videoModel->setReleaseId(releaseId);
+        videoModel->setReleasePoster(poster);
+        videoModel->setIsGroup(false);
+        result.append(videoModel);
+    }
+
+    std::sort(
+        result.begin(),
+        result.end(),
+        [](const OnlineVideoModel* first, const OnlineVideoModel* second) {
+            return first->id() < second->id();
+        }
+    );
+
+    QVectorIterator<OnlineVideoModel*> iterator(result);
+    int index = -1;
+    while (iterator.hasNext()) {
+        auto item = iterator.next();
+        index += 1;
+        item->setOrder(index);
+    }
+
+    return result;
 }

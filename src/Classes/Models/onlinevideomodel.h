@@ -81,6 +81,8 @@ public:
     void setReleasePoster(QString releasePoster) noexcept;
     void setIsGroup(bool isGroup) noexcept;
     void setVideoPoster(const QString& poster) noexcept;
+    void setOpeningStartSeconds(int value) noexcept { m_openingStartSeconds = value; }
+    void setOpeningEndSeconds(int value) noexcept { m_openingEndSeconds = value; };
 
 private:
     QString getProxyUrl(const QString& url);
