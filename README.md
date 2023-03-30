@@ -3,6 +3,7 @@
 Если Вы найдете ошибки или будут идеи по улучшению приложения то оформляйте ишью в этом репозитории или пишите [на этом сайте](http://anilibriadesktop.reformal.ru/), заранее спасибо. Следите за новостями о выпуске новых версий, входящих в них изменений, а также прочих новостей в [телеграм канале](https://t.me/desktopclientanilibria).  
 
 [![Project CI](https://github.com/anilibria/anilibria-winmaclinux/actions/workflows/c-cpp.yml/badge.svg)](https://github.com/anilibria/anilibria-winmaclinux/actions/workflows/c-cpp.yml)
+[![Flatpak x86_64 Build](https://github.com/anilibria/anilibria-winmaclinux/actions/workflows/flatpak.yml/badge.svg)](https://github.com/anilibria/anilibria-winmaclinux/actions/workflows/flatpak.yml)
 
 ## Системные требования:
 
