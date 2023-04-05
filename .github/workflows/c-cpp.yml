@@ -16,7 +16,7 @@ jobs:
     - name: apt-update
       run: sudo apt-get update -qq
     - name: apt get qt
-      run: sudo apt-get install -y --no-install-recommends qtdeclarative5-dev libqt5svg5-dev qml-module-qtgraphicaleffects qml-module-qtquick-layouts qml-module-qtquick-dialogs qml-module-qtquick-controls qml-module-qtquick-controls2 qml-module-qt-labs-folderlistmodel qml-module-qt-labs-settings libqt5websockets5-dev qtmultimedia5-dev libqt5multimedia5-plugins qml-module-qtmultimedia libvlccore-dev libvlc-dev
+      run: sudo apt-get install -y --no-install-recommends qtdeclarative5-dev libqt5svg5-dev qml-module-qtgraphicaleffects qml-module-qtquick-layouts qml-module-qtquick-dialogs qml-module-qtquick-controls qml-module-qtquick-controls2 qml-module-qt-labs-folderlistmodel qml-module-qt-labs-settings libqt5websockets5-dev qtmultimedia5-dev libqt5multimedia5-plugins qml-module-qtmultimedia qtquickcontrols2-5-dev libvlccore-dev libvlc-dev
     - name: run qmake
       run: qmake -makefile -o src/Makefile src/AniLibria.pro
     - name: run make
