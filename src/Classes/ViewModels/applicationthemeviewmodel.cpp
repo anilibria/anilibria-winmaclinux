@@ -69,6 +69,9 @@ ApplicationThemeViewModel::ApplicationThemeViewModel(QObject *parent)
     lightTheme->insert(colorBackgroundNavigationButtonField, "white");
     lightTheme->insert(colorMaterialTextField, "black");
     lightTheme->insert(colorPageIndexTextField, "white");
+    lightTheme->insert(colorTooltipBackgroundField, "#616161");
+    lightTheme->insert(colorDrawerItemTextField, "white");
+    lightTheme->insert(colorDrawerItemHoveredField, "#50000000");
     lightTheme->insert(iconMainMenuField, "qrc:/Assets/Icons/coloreddrawer.svg");
     lightTheme->insert(iconMainMenuReleasesField, "qrc:/Assets/Icons/catalogmenu.svg");
     lightTheme->insert(iconMainMenuCinemahallField, "qrc:/Assets/Icons/cinemahallmenu.svg");
@@ -142,7 +145,7 @@ ApplicationThemeViewModel::ApplicationThemeViewModel(QObject *parent)
     lightTheme->insert(iconPlayerPreviousSeriaField, "qrc:/Assets/Icons/videoplayer/previousseria.svg");
     lightTheme->insert(iconPlayerDrawerField, "qrc:/Assets/Icons/videoplayer/menu.svg");
     lightTheme->insert(iconNotificationField, "qrc:/Assets/Icons/notification/notification.svg");
-    lightTheme->insert(iconNotificationSelectedField, "qrc:/Assets/Icons/notification/notificationselected.svg");
+    lightTheme->insert(iconNotificationSelectedField, "qrc:/Assets/Icons/notification/notificationselected.svg");    
 
     lightTheme->insert(colorTooltipTextField, "white");
     lightTheme->insert(colorSeenReleaseItemTextField, "green");
@@ -192,6 +195,9 @@ ApplicationThemeViewModel::ApplicationThemeViewModel(QObject *parent)
     darkTheme->insert(colorBackgroundNavigationButtonField, "white");
     darkTheme->insert(colorMaterialTextField, "white");
     darkTheme->insert(colorPageIndexTextField, "white");
+    darkTheme->insert(colorTooltipBackgroundField, "#616161");
+    darkTheme->insert(colorDrawerItemTextField, "white");
+    darkTheme->insert(colorDrawerItemHoveredField, "#50ffffff");
     darkTheme->insert(iconMainMenuField, "qrc:/Assets/Icons/coloreddrawer.svg");
     darkTheme->insert(iconMainMenuReleasesField, "qrc:/Assets/Icons/catalogmenu.svg");
     darkTheme->insert(iconMainMenuCinemahallField, "qrc:/Assets/Icons/cinemahallmenu.svg");
@@ -319,6 +325,9 @@ ApplicationThemeViewModel::ApplicationThemeViewModel(QObject *parent)
     m_fields.append(colorPageIndexTextField);
     m_fields.append(colorTooltipTextField);
     m_fields.append(colorSeenReleaseItemTextField);
+    m_fields.append(colorTooltipBackgroundField);
+    m_fields.append(colorDrawerItemTextField);
+    m_fields.append(colorDrawerItemHoveredField);
     m_fields.append(iconMainMenuField);
     m_fields.append(iconMainMenuReleasesField);
     m_fields.append(iconMainMenuCinemahallField);

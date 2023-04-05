@@ -21,6 +21,7 @@
 #include <QtSvg>
 #include <QQmlContext>
 #include <QString>
+#include <QQuickStyle>
 #include <QQmlFileSelector>
 #include "Classes/Services/synchronizationservice.h"
 #include "Classes/Services/localstorageservice.h"
@@ -61,6 +62,7 @@
 #include "Classes/ListModels/localthemeslistmodel.h"
 #include "Classes/ListModels/myanilibriasearchlistmodel.h"
 #include "Classes/ViewModels/torrentnotifierviewmodel.cpp"
+#include "Classes/customstyle.h"
 #ifdef USE_VLC_PLAYER
 #include "vlc-qt/qml/VlcQmlPlayer.h"
 #include "vlc-qt/qml/VlcQmlVideoOutput.h"
@@ -98,6 +100,10 @@ int main(int argc, char *argv[])
     }
 
     QGuiApplication app(argc, argv);
+
+    QQuickStyle::setStyle("CustomStyle");
+    QQuickStyle::setFallbackStyle("Material");
+
 #if QT_VERSION >= QT_VERSION_CHECK(5, 15, 0)
     app.setHighDpiScaleFactorRoundingPolicy(Qt::HighDpiScaleFactorRoundingPolicy::PassThrough);
 #endif
@@ -141,6 +147,8 @@ int main(int argc, char *argv[])
     qmlRegisterType<MyAnilibriaSearchListModel>("Anilibria.ListModels", 1, 0, "MyAnilibriaSearchListModel");
     qmlRegisterType<TorrentNotifierViewModel>("Anilibria.ViewModels", 1, 0, "TorrentNotifierViewModel");
 
+    qmlRegisterUncreatableType<CustomStyle>("CustomStyle", 1, 0, "CustomStyle", "CustomStyle is an attached property");
+
 #ifdef USE_VLC_PLAYER
     VlcCommon::setPluginPath(app.applicationDirPath() + "/plugins");
 
@@ -156,7 +164,7 @@ int main(int argc, char *argv[])
     QCoreApplication::setOrganizationName("EmptyFlow");
     QCoreApplication::setApplicationName("AnilibriaDesktopClient");
 
-    QQmlApplicationEngine engine;
+    QQmlApplicationEngine engine;    
     engine.rootContext()->setContextProperty("ApplicationVersion", ApplicationVersion);
 
 #if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)

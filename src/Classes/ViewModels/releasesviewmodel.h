@@ -84,6 +84,7 @@ class ReleasesViewModel : public QObject
     Q_PROPERTY(QString openedReleaseCode READ openedReleaseCode NOTIFY openedReleaseCodeChanged)
     Q_PROPERTY(int openedReleaseCountTorrents READ openedReleaseCountTorrents NOTIFY openedReleaseCountTorrentsChanged)
     Q_PROPERTY(int openedReleaseCountVideos READ openedReleaseCountVideos NOTIFY openedReleaseCountVideosChanged)
+    Q_PROPERTY(int openedReleaseSeenCountVideos READ openedReleaseSeenCountVideos NOTIFY openedReleaseSeenCountVideosChanged)
     Q_PROPERTY(bool openedReleaseInHided READ openedReleaseInHided NOTIFY openedReleaseInHidedChanged)
     Q_PROPERTY(bool openedReleaseInFavorites READ openedReleaseInFavorites NOTIFY openedReleaseInFavoritesChanged)
     Q_PROPERTY(QString openedReleaseVideos READ openedReleaseVideos NOTIFY openedReleaseVideosChanged)
@@ -222,6 +223,7 @@ public:
     QString openedReleaseCode() const noexcept { return m_openedRelease != nullptr ? m_openedRelease->code() : ""; }
     int openedReleaseCountTorrents() const noexcept { return m_openedRelease != nullptr ? m_openedRelease->countTorrents() : 0; }
     int openedReleaseCountVideos() const noexcept { return m_openedRelease != nullptr ? m_openedRelease->countOnlineVideos() : 0; }
+    int openedReleaseSeenCountVideos() const noexcept { return m_openedRelease != nullptr ? m_items->getReleaseSeenMarkCount(m_openedRelease->id()) : 0; }
     bool openedReleaseInHided() const noexcept { return m_openedRelease != nullptr ? m_hiddenReleases->contains(m_openedRelease->id()) : false; }
     bool openedReleaseInFavorites() const noexcept { return m_openedRelease != nullptr ? m_userFavorites->contains(m_openedRelease->id()) : false; }
     QString openedReleaseVideos() const noexcept { return m_openedRelease != nullptr ? m_openedRelease->videos() : ""; }
@@ -395,6 +397,7 @@ signals:
     void hasCinemahallNotSeenVideosChanged();
     void openedReleaseAnnounceChanged();
     void countSectionsChanged();
+    void openedReleaseSeenCountVideosChanged();
 
 };
 

@@ -126,7 +126,6 @@ QString iconReleaseCardListMenuField = "iconReleaseCardListMenu";
 QString iconReleaseCardCloseField = "iconReleaseCardClose";
 QString iconReleaseCardCopyField = "iconReleaseCardCopy";
 QString iconReleaseCardExternalField = "iconReleaseCardExternal";
-
 QString iconNavigationButtonLeftField = "iconNavigationButtonLeft";
 QString iconNavigationButtonRightField = "iconNavigationButtonRight";
 QString iconMyAnilibriaButtonSortUpField = "iconMyAnilibriaButtonSortUp";
@@ -159,3 +158,8 @@ QString iconEditThemeFieldPlusField = "iconEditThemeFieldPlus";
 QString iconEmptyField = "iconEmpty";
 QString iconNotificationField = "iconNotification";
 QString iconNotificationSelectedField = "iconNotificationSelected";
+
+QString colorTooltipBackgroundField = "colorTooltipBackground";
+QString colorDrawerItemTextField = "colorDrawerItemText";
+QString colorDrawerItemHoveredField = "colorDrawerItemHovered";
+

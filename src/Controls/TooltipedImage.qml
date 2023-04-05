@@ -1,5 +1,6 @@
 import QtQuick 2.12
 import QtQuick.Controls 2.12
+import CustomStyle 1.0
 
 Image {
     id: root
@@ -8,7 +9,11 @@ Image {
     property string tooltipMessage
     property bool tooltipMessageVisible
 
-    ToolTip.delay: 2000
-    ToolTip.visible: tooltipMessageVisible
-    ToolTip.text: "<font color='" + applicationThemeViewModel.currentItems.colorTooltipText + "'>" + tooltipMessage + "</font>"
+    ToolTip {
+        delay: 2000
+        visible: tooltipMessageVisible
+        text: tooltipMessage
+        CustomStyle.tooltipColor: applicationThemeViewModel.currentItems.colorTooltipBackground
+        CustomStyle.colorTooltipText: applicationThemeViewModel.currentItems.colorTooltipText
+    }
 }

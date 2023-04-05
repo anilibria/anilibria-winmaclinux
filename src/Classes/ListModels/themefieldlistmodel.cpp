@@ -142,6 +142,9 @@ ThemeFieldListModel::ThemeFieldListModel(QObject *parent)
     m_descriptions.insert(iconNotificationSelectedField, "Иконка Есть уведомления (тулбар):Иконка для кнопки уведомлений в тулбаре");
     m_descriptions.insert(colorTooltipTextField, "Цвет текста в подсказке:Цвет текста во всех подсказках");
     m_descriptions.insert(colorSeenReleaseItemTextField, "Цвет текста Просмотренной серии:Цвет текста для количества посмотренных серий в списке релизов");
+    m_descriptions.insert(colorTooltipBackgroundField, "Цвет фона в подсказке:Цвет фона во всех подсказках");
+    m_descriptions.insert(colorDrawerItemTextField, "Цвет текста в главном меню:Цвет текста для пунктов страниц, имени пользователя и версии в главном меню");
+    m_descriptions.insert(colorDrawerItemHoveredField, "Цвет фона пункта главного меню:Цвет фона пункта главного меню в состоянии Мышка поверх элемента");
 
     m_saveMenuItems.append("Сохранить и добавить тему в список");
     m_saveMenuItems.append("Сохранить в файл");

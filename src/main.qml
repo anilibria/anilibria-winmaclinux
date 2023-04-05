@@ -26,6 +26,7 @@ import QtQuick.Dialogs 1.2
 import Anilibria.Services 1.0
 import Anilibria.ListModels 1.0
 import Anilibria.ViewModels 1.0
+import CustomStyle 1.0
 import "Views"
 import "Controls"
 
@@ -802,7 +803,7 @@ ApplicationWindow {
                     anchors.leftMargin: 10
                     anchors.verticalCenter: parent.verticalCenter
                     text: "Вы авторизованы как:\n" + (userModel.login ? userModel.login : "")
-                    color: "white"
+                    color: applicationThemeViewModel.currentItems.colorDrawerItemText
                     elide: Text.ElideRight
                     antialiasing: true
                     wrapMode: Text.WordWrap
@@ -842,7 +843,7 @@ ApplicationWindow {
                         height: 50
                         Rectangle {
                             id: mainMenuDelegate
-                            color: mainMenuControl.isHovered ?  Qt.rgba(0, 0, 0, .1) : "transparent"
+                            color: mainMenuControl.isHovered ? applicationThemeViewModel.currentItems.colorDrawerItemHovered : "transparent"
                             anchors.fill: parent
                             MouseArea {
                                 hoverEnabled: true
@@ -870,8 +871,9 @@ ApplicationWindow {
                                 }
                                 Label {
                                     anchors.verticalCenter: parent.verticalCenter
-                                    color: "white"
                                     text: title
+                                    font.pointSize: 10
+                                    CustomStyle.labelColor: applicationThemeViewModel.currentItems.colorDrawerItemText
                                 }
                             }
                         }
@@ -916,12 +918,12 @@ ApplicationWindow {
                 Column {
                     anchors.verticalCenter: parent.verticalCenter
                     Text {
-                        color: "white"
+                        color: applicationThemeViewModel.currentItems.colorDrawerItemText
                         font.pointSize: 11
                         text: qsTr("AniLibria.Qt")
                     }
                     Text {
-                        color: "white"
+                        color: applicationThemeViewModel.currentItems.colorDrawerItemText
                         font.pointSize: 11
                         text: qsTr("версия " + ApplicationVersion)
                     }

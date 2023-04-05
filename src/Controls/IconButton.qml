@@ -19,6 +19,7 @@
 import QtQuick 2.12
 import QtQuick.Controls 2.12
 import QtGraphicalEffects 1.0
+import CustomStyle 1.0
 
 Item {
     id: _button
@@ -101,7 +102,12 @@ Item {
             }
         }        
     }
-    ToolTip.delay: 1000
-    ToolTip.visible: tooltipMessage && hovered
-    ToolTip.text: "<font color='" + applicationThemeViewModel.currentItems.colorTooltipText + "'>" + tooltipMessage + "</font>"
+
+    ToolTip {
+        delay: 2000
+        visible: tooltipMessage && hovered
+        text: tooltipMessage
+        CustomStyle.tooltipColor: applicationThemeViewModel.currentItems.colorTooltipBackground
+        CustomStyle.colorTooltipText: applicationThemeViewModel.currentItems.colorTooltipText
+    }
 }

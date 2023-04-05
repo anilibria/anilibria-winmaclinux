@@ -1,0 +1,3 @@
+module CustomStyle
+ToolTip 2.12 ToolTip.qml
+Label 2.12 Label.qml

@@ -18,6 +18,7 @@
 
 import QtQuick 2.12
 import QtQuick.Controls 2.12
+import CustomStyle 1.0
 import "../Controls"
 
 IconButton {
@@ -29,7 +30,11 @@ IconButton {
     iconWidth: 24
     iconHeight: 24
 
-    ToolTip.delay: 1000
-    ToolTip.visible: hovered
-    ToolTip.text: "<font color='" + applicationThemeViewModel.currentItems.colorTooltipText + "'>" + tooltipMessage + "</font>"
+    ToolTip {
+        delay: 2000
+        visible: hovered && tooltipMessage
+        text: tooltipMessage
+        CustomStyle.tooltipColor: applicationThemeViewModel.currentItems.colorTooltipBackground
+        CustomStyle.colorTooltipText: applicationThemeViewModel.currentItems.colorTooltipText
+    }
 }

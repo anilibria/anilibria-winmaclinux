@@ -1066,6 +1066,8 @@ void ReleasesViewModel::refreshOpenedReleaseCard()
     emit openedReleaseInFavoritesChanged();
     emit openedReleaseInHidedChanged();
     emit openedReleaseVideosChanged();
+    emit openedReleaseSeenCountVideosChanged();
+    emit openedReleaseAnnounceChanged();
 }
 
 void ReleasesViewModel::setSeenMark(int id, int seriaId, bool marked)

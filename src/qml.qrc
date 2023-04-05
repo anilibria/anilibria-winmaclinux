@@ -1,7 +1,6 @@
 <RCC>
     <qresource prefix="/">
         <file>main.qml</file>
-        <file>qtquickcontrols2.conf</file>
         <file>Views/Releases.qml</file>
         <file>Views/OnlinePlayer.qml</file>
         <file>Views/Authorization.qml</file>
@@ -210,5 +209,8 @@
         <file>Assets/Icons/darkarrowup.svg</file>
         <file>Assets/Icons/darksortascending.svg</file>
         <file>Assets/Icons/darksortdescending.svg</file>
+        <file>CustomStyle/qmldir</file>
+        <file>CustomStyle/ToolTip.qml</file>
+        <file>CustomStyle/Label.qml</file>
     </qresource>
 </RCC>

@@ -531,8 +531,9 @@ Page {
                             TextField {
                                 anchors.left: parent.left
                                 anchors.leftMargin: 10
-                                anchors.verticalCenter: parent.verticalCenter
+                                anchors.verticalCenter: parent.verticalCenter                                
                                 width: 180
+                                font.pointSize: 10
                                 placeholderText: "Фильтр для полей"
                                 onTextChanged: {
                                     applicationThemeViewModel.fieldList.filter = text;
@@ -594,6 +595,7 @@ Page {
                                         anchors.topMargin: 10
                                         anchors.left: themeNameText.right
                                         anchors.leftMargin: 10
+                                        font.pointSize: 10
                                         width: 210
                                         selectByMouse: true
                                         text: applicationThemeViewModel.fieldList.themeName
@@ -710,6 +712,7 @@ Page {
                                             anchors.left: titleText.right
                                             anchors.leftMargin: 10
                                             width: 210
+                                            font.pointSize: 10
                                             maximumLength: 100000
                                             visible: isDefined
                                             selectByMouse: true

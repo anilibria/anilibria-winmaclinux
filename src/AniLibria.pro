@@ -1,4 +1,4 @@
-QT += quick multimedia network concurrent svg websockets
+QT += quick multimedia network concurrent svg websockets quickcontrols2
 CONFIG += c++11
 
 macx {
@@ -249,6 +249,7 @@ SOURCES += \
     Classes/ViewModels/useractivityviewmodel.cpp \
     Classes/ViewModels/userconfigurationviewmodel.cpp \
     Classes/ViewModels/youtubeviewmodel.cpp \
+    Classes/customstyle.cpp \
     Classes/globalconstant.cpp \
     Classes/ListModels/alphabetlistmodel.cpp \
     globalhelpers.cpp \
@@ -353,5 +354,6 @@ HEADERS += \
     Classes/ViewModels/useractivityviewmodel.h \
     Classes/ViewModels/userconfigurationviewmodel.h \
     Classes/ViewModels/youtubeviewmodel.h \
+    Classes/customstyle.h \
     globalconstants.h \
     globalhelpers.h
