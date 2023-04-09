@@ -101,6 +101,7 @@ class ApplicationThemeViewModel : public QObject
     Q_PROPERTY(QString iconNormalWindow READ iconNormalWindow NOTIFY iconNormalWindowChanged)
     Q_PROPERTY(QString iconCloseWindow READ iconCloseWindow NOTIFY iconCloseWindowChanged)
     Q_PROPERTY(QVariantMap currentItems READ currentItems NOTIFY currentItemsChanged)
+    Q_PROPERTY(bool notAddCopyToName READ notAddCopyToName WRITE setNotAddCopyToName NOTIFY notAddCopyToNameChanged)
 
 private:
     QString m_cachePathName { "applicationtheme.cache" };
@@ -119,6 +120,7 @@ private:
     QList<QString>* m_localIds { new QList<QString>() };
     LocalThemesListModel* m_localThemes { new LocalThemesListModel(this) };
     QVariantMap m_currentItems { QVariantMap() };
+    bool m_notAddCopyToName { false };
 
 public:
     explicit ApplicationThemeViewModel(QObject *parent = nullptr);
@@ -203,6 +205,9 @@ public:
 
     QVariantMap currentItems() const noexcept { return m_currentItems; }
     void setCurrentItems() noexcept;
+
+    bool notAddCopyToName() const noexcept { return m_notAddCopyToName; }
+    void setNotAddCopyToName(bool notAddCopyToName) noexcept;
 
     LocalThemesListModel* localThemes() const noexcept { return m_localThemes; }
 
@@ -307,6 +312,7 @@ signals:
     void colorMaterialTextChanged();
     void colorPageIndexTextChanged();
     void currentItemsChanged();
+    void notAddCopyToNameChanged();
 
 };
 

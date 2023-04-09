@@ -244,6 +244,14 @@ void UserConfigurationViewModel::setHideRecommendedByVoices(bool hideRecommended
     emit hideRecommendedByVoicesChanged();
 }
 
+void UserConfigurationViewModel::setRemoveCopyFromName(bool removeCopyFromName) noexcept
+{
+    if (m_removeCopyFromName == removeCopyFromName) return;
+
+    m_removeCopyFromName = removeCopyFromName;
+    emit removeCopyFromNameChanged();
+}
+
 void UserConfigurationViewModel::refreshConfiguration() noexcept
 {
     readSettingsFromFile();
@@ -265,6 +273,11 @@ void UserConfigurationViewModel::refreshConfiguration() noexcept
     emit fixedControlPanelChanged();
     emit hideSkipOpeningChanged();
     emit isCroppedPlayerChanged();
+    emit removeCopyFromNameChanged();
+    emit hideRecommendedByVoicesChanged();
+    emit hideActualInCurrentSeasonChanged();
+    emit hideCurrentSeasonChanged();
+    emit hideNextInReleaseSeriesChanged();
 }
 
 void UserConfigurationViewModel::saveSettingsToFile()
@@ -298,6 +311,7 @@ void UserConfigurationViewModel::saveSettingsToFile()
     object[m_hideCurrentSeasonField] = m_hideCurrentSeason;
     object[m_hideActualInCurrentSeasonField] = m_hideActualInCurrentSeason;
     object[m_hideRecommendedByVoicesField] = m_hideRecommendedByVoices;
+    object[m_removeCopyFromNameField] = m_removeCopyFromName;
 
     QFile file(getCachePath(m_cacheFileName));
     file.open(QFile::WriteOnly | QFile::Text);
@@ -341,4 +355,5 @@ void UserConfigurationViewModel::readSettingsFromFile()
     m_hideCurrentSeason = object.contains(m_hideCurrentSeasonField) ? object[m_hideCurrentSeasonField].toBool() : false;
     m_hideActualInCurrentSeason = object.contains(m_hideActualInCurrentSeasonField) ? object[m_hideActualInCurrentSeasonField].toBool() : false;
     m_hideRecommendedByVoices = object.contains(m_hideRecommendedByVoicesField) ? object[m_hideRecommendedByVoicesField].toBool() : false;
+    m_removeCopyFromName = object.contains(m_removeCopyFromNameField) ? object[m_removeCopyFromNameField].toBool() : false;
 }

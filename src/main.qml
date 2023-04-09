@@ -1456,6 +1456,7 @@ ApplicationWindow {
 
     ApplicationThemeViewModel {
         id: applicationThemeViewModel
+        notAddCopyToName: userConfigurationViewModel.removeCopyFromName
         Component.onDestruction: {
             applicationThemeViewModel.saveCurrentState();
         }

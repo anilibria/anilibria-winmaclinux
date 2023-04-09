@@ -77,6 +77,45 @@ Page {
                         }
                     }
                 }
+
+                LeftPanelIconButton {
+                    iconPath: applicationThemeViewModel.currentItems.iconReleaseCatalogSettings
+                    overlayVisible: false
+                    iconWidth: 29
+                    iconHeight: 29
+                    tooltipMessage: "Настройки станицы Менеджер Тем"
+                    onButtonPressed: {
+                        themeMangerOptionsPopup.open();
+                    }
+
+                    DefaultPopup {
+                        id: themeMangerOptionsPopup
+                        width: 360
+                        height: 100
+                        modal: true
+                        focus: true
+                        closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
+
+                        Column {
+                            height: releaseSettingsPopup.height
+                            width: parent.width / 2
+                            spacing: 4
+
+                            PlainText {
+                                id: notificationForFavoritesLabel
+                                fontPointSize: 11
+                                text: "Не добавлять 'Копия' при копировании темы"
+                            }
+                            Switch {
+                                id: notificationForFavorites
+                                checked: userConfigurationViewModel.removeCopyFromName
+                                onCheckedChanged: {
+                                    userConfigurationViewModel.removeCopyFromName = checked;
+                                }
+                            }
+                        }
+                    }
+                }
             }
         }
         ColumnLayout {

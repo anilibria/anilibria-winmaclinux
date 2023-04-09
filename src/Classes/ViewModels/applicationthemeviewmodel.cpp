@@ -485,6 +485,14 @@ void ApplicationThemeViewModel::setCurrentItems() noexcept
     emit currentItemsChanged();
 }
 
+void ApplicationThemeViewModel::setNotAddCopyToName(bool notAddCopyToName) noexcept
+{
+    if (notAddCopyToName == m_notAddCopyToName) return;
+
+    m_notAddCopyToName = notAddCopyToName;
+    emit notAddCopyToNameChanged();
+}
+
 void ApplicationThemeViewModel::saveCurrentState()
 {
     QJsonArray themes;
@@ -690,7 +698,7 @@ void ApplicationThemeViewModel::copyThemeFromInstalled(const QString &name) noex
         m_copiedTheme.insert(field, fieldValue);
     }
 
-    m_fieldList->setValues(std::move(m_copiedTheme), name + " Копия", baseThemeName);
+    m_fieldList->setValues(std::move(m_copiedTheme), name + (m_notAddCopyToName ? "" : " Копия"), baseThemeName);
 }
 
 void ApplicationThemeViewModel::readCacheFile()

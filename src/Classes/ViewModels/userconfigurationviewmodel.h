@@ -52,6 +52,7 @@ class UserConfigurationViewModel : public QObject
     Q_PROPERTY(bool hideCurrentSeason READ hideCurrentSeason WRITE setHideCurrentSeason NOTIFY hideCurrentSeasonChanged)
     Q_PROPERTY(bool hideActualInCurrentSeason READ hideActualInCurrentSeason WRITE setHideActualInCurrentSeason NOTIFY hideActualInCurrentSeasonChanged)
     Q_PROPERTY(bool hideRecommendedByVoices READ hideRecommendedByVoices WRITE setHideRecommendedByVoices NOTIFY hideRecommendedByVoicesChanged)
+    Q_PROPERTY(bool removeCopyFromName READ removeCopyFromName WRITE setRemoveCopyFromName NOTIFY removeCopyFromNameChanged)
 
 private:
     QString m_cacheFileName { "userconfiguration.cache" };
@@ -82,6 +83,7 @@ private:
     const QString m_hideCurrentSeasonField { "m_hideCurrentSeason" };
     const QString m_hideActualInCurrentSeasonField { "hideActualInCurrentSeason" };
     const QString m_hideRecommendedByVoicesField { "hideRecommendedByVoices" };
+    const QString m_removeCopyFromNameField { "removeCopyFromName" };
     int m_opacityPlayerPanel { 50 };
     bool m_notCloseReleaseCardAfterWatch { false };
     bool m_usingScrollAcceleration { true };
@@ -109,6 +111,7 @@ private:
     bool m_hideCurrentSeason { false };
     bool m_hideActualInCurrentSeason { false };
     bool m_hideRecommendedByVoices { false };
+    bool m_removeCopyFromName { false };
 
 public:
     explicit UserConfigurationViewModel(QObject *parent = nullptr);
@@ -194,6 +197,9 @@ public:
     bool hideRecommendedByVoices() const noexcept { return m_hideRecommendedByVoices; }
     void setHideRecommendedByVoices(bool hideRecommendedByVoices) noexcept;
 
+    bool removeCopyFromName() const noexcept { return m_removeCopyFromName; }
+    void setRemoveCopyFromName(bool removeCopyFromName) noexcept;
+
     Q_INVOKABLE void refreshConfiguration() noexcept;
     Q_INVOKABLE void saveSettingsToFile();
 
@@ -228,6 +234,7 @@ signals:
     void hideCurrentSeasonChanged();
     void hideActualInCurrentSeasonChanged();
     void hideRecommendedByVoicesChanged();
+    void removeCopyFromNameChanged();
 
 };
 
