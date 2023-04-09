@@ -106,6 +106,15 @@ ApplicationWindow {
     }
 
     Component.onDestruction: {
+        if (userConfigurationViewModel.notSaveWindowPosition) {
+            applicationSettings.windowWidth = 0;
+            applicationSettings.windowHeight = 0;
+            applicationSettings.windowX = 0;
+            applicationSettings.windowY = 0;
+            applicationSettings.isMaximize = false;
+            return;
+        }
+
         if (onlinePlayerViewModel.isFullScreen) {
             applicationSettings.windowWidth = window.normalWindowSizeWidth;
             applicationSettings.windowHeight = window.normalWindowSizeHeight;

@@ -53,6 +53,7 @@ class UserConfigurationViewModel : public QObject
     Q_PROPERTY(bool hideActualInCurrentSeason READ hideActualInCurrentSeason WRITE setHideActualInCurrentSeason NOTIFY hideActualInCurrentSeasonChanged)
     Q_PROPERTY(bool hideRecommendedByVoices READ hideRecommendedByVoices WRITE setHideRecommendedByVoices NOTIFY hideRecommendedByVoicesChanged)
     Q_PROPERTY(bool removeCopyFromName READ removeCopyFromName WRITE setRemoveCopyFromName NOTIFY removeCopyFromNameChanged)
+    Q_PROPERTY(bool notSaveWindowPosition READ notSaveWindowPosition WRITE setNotSaveWindowPosition NOTIFY notSaveWindowPositionChanged)
 
 private:
     QString m_cacheFileName { "userconfiguration.cache" };
@@ -84,6 +85,7 @@ private:
     const QString m_hideActualInCurrentSeasonField { "hideActualInCurrentSeason" };
     const QString m_hideRecommendedByVoicesField { "hideRecommendedByVoices" };
     const QString m_removeCopyFromNameField { "removeCopyFromName" };
+    const QString m_notSaveWindowPositionField { "notSaveWindowPosition" };
     int m_opacityPlayerPanel { 50 };
     bool m_notCloseReleaseCardAfterWatch { false };
     bool m_usingScrollAcceleration { true };
@@ -112,6 +114,7 @@ private:
     bool m_hideActualInCurrentSeason { false };
     bool m_hideRecommendedByVoices { false };
     bool m_removeCopyFromName { false };
+    bool m_notSaveWindowPosition { false };
 
 public:
     explicit UserConfigurationViewModel(QObject *parent = nullptr);
@@ -200,6 +203,9 @@ public:
     bool removeCopyFromName() const noexcept { return m_removeCopyFromName; }
     void setRemoveCopyFromName(bool removeCopyFromName) noexcept;
 
+    bool notSaveWindowPosition() const noexcept { return m_notSaveWindowPosition; }
+    void setNotSaveWindowPosition(bool notSaveWindowPosition) noexcept;
+
     Q_INVOKABLE void refreshConfiguration() noexcept;
     Q_INVOKABLE void saveSettingsToFile();
 
@@ -235,6 +241,7 @@ signals:
     void hideActualInCurrentSeasonChanged();
     void hideRecommendedByVoicesChanged();
     void removeCopyFromNameChanged();
+    void notSaveWindowPositionChanged();
 
 };
 

@@ -252,6 +252,14 @@ void UserConfigurationViewModel::setRemoveCopyFromName(bool removeCopyFromName) 
     emit removeCopyFromNameChanged();
 }
 
+void UserConfigurationViewModel::setNotSaveWindowPosition(bool notSaveWindowPosition) noexcept
+{
+    if (m_notSaveWindowPosition == notSaveWindowPosition) return;
+
+    m_notSaveWindowPosition = notSaveWindowPosition;
+    emit notSaveWindowPositionChanged();
+}
+
 void UserConfigurationViewModel::refreshConfiguration() noexcept
 {
     readSettingsFromFile();
@@ -306,12 +314,12 @@ void UserConfigurationViewModel::saveSettingsToFile()
     object[m_torrentStreamPathField] = m_torrentStreamPath;
     object[m_removeAllDownloadedTorrentField] = m_removeAllDownloadedTorrent;
     object[m_isCroppedPlayerField] = m_isCroppedPlayer;
-
     object[m_hideNextInReleaseSeriesField] = m_hideNextInReleaseSeries;
     object[m_hideCurrentSeasonField] = m_hideCurrentSeason;
     object[m_hideActualInCurrentSeasonField] = m_hideActualInCurrentSeason;
     object[m_hideRecommendedByVoicesField] = m_hideRecommendedByVoices;
     object[m_removeCopyFromNameField] = m_removeCopyFromName;
+    object[m_notSaveWindowPositionField] = m_notSaveWindowPosition;
 
     QFile file(getCachePath(m_cacheFileName));
     file.open(QFile::WriteOnly | QFile::Text);
@@ -356,4 +364,5 @@ void UserConfigurationViewModel::readSettingsFromFile()
     m_hideActualInCurrentSeason = object.contains(m_hideActualInCurrentSeasonField) ? object[m_hideActualInCurrentSeasonField].toBool() : false;
     m_hideRecommendedByVoices = object.contains(m_hideRecommendedByVoicesField) ? object[m_hideRecommendedByVoicesField].toBool() : false;
     m_removeCopyFromName = object.contains(m_removeCopyFromNameField) ? object[m_removeCopyFromNameField].toBool() : false;
+    m_notSaveWindowPosition = object.contains(m_notSaveWindowPositionField) ? object[m_notSaveWindowPositionField].toBool() : false;
 }

@@ -1035,6 +1035,20 @@ Page {
                                 tooltipMessage: "Если настройка включена при нажатии на кнопку Смотреть из карточки сама карточка релизов не будет закрыта"
                             }
 
+                            PlainText {
+                                id: notSaveWindowPositionLabel
+                                fontPointSize: 11
+                                text: "Не сохранять позицию окна"
+                            }
+                            CommonSwitch {
+                                id: notSaveWindowPositionSwitch
+                                checked: userConfigurationViewModel.notSaveWindowPosition
+                                onCheckedChanged: {
+                                    userConfigurationViewModel.notSaveWindowPosition = checked;
+                                }
+                                tooltipMessage: "Если настройка включена то при закрытии окна не сохраняется позиция и размер окна"
+                            }
+
                             RoundedActionButton {
                                 text: "Настроить фон"
                                 onClicked: {

@@ -97,7 +97,7 @@ Page {
                         closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
 
                         Column {
-                            height: releaseSettingsPopup.height
+                            height: themeMangerOptionsPopup.height
                             width: parent.width / 2
                             spacing: 4
 
