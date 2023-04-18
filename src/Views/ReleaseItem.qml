@@ -117,6 +117,14 @@ Rectangle {
                     maskSource: mask
                 }
             }
+
+            Rectangle {
+                anchors.centerIn: parent
+                width: 180
+                height: 270
+                color: applicationThemeViewModel.currentItems.colorPosterFilter
+                radius: 12
+            }
         }
 
         Rectangle {
@@ -146,6 +154,15 @@ Rectangle {
                         maskSource: mask
                     }
                 }
+
+                Rectangle {
+                    anchors.centerIn: parent
+                    width: 150
+                    height: 230
+                    color: applicationThemeViewModel.currentItems.colorPosterFilter
+                    radius: 12
+                }
+
             }
         }
 

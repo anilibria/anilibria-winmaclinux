@@ -134,6 +134,14 @@ Page {
                                     layer.effect: OpacityMask {
                                         maskSource: mask
                                     }
+
+                                    Rectangle {
+                                        anchors.centerIn: parent
+                                        width: 140
+                                        height: 210
+                                        color: applicationThemeViewModel.currentItems.colorPosterFilter
+                                        radius: 12
+                                    }
                                 }
                                 Image {
                                     visible: !!secondPoster
@@ -149,6 +157,14 @@ Page {
                                     layer.effect: OpacityMask {
                                         maskSource: mask
                                     }
+
+                                    Rectangle {
+                                        anchors.centerIn: parent
+                                        width: 140
+                                        height: 210
+                                        color: applicationThemeViewModel.currentItems.colorPosterFilter
+                                        radius: 12
+                                    }
                                 }
                                 Image {
                                     visible: !!thirdPoster
@@ -163,6 +179,14 @@ Page {
                                     layer.enabled: true
                                     layer.effect: OpacityMask {
                                         maskSource: mask
+                                    }
+
+                                    Rectangle {
+                                        anchors.centerIn: parent
+                                        width: 140
+                                        height: 210
+                                        color: applicationThemeViewModel.currentItems.colorPosterFilter
+                                        radius: 12
                                     }
                                 }
                             }

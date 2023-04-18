@@ -145,6 +145,7 @@ ThemeFieldListModel::ThemeFieldListModel(QObject *parent)
     m_descriptions.insert(colorTooltipBackgroundField, "Цвет фона в подсказке:Цвет фона во всех подсказках");
     m_descriptions.insert(colorDrawerItemTextField, "Цвет текста в главном меню:Цвет текста для пунктов страниц, имени пользователя и версии в главном меню");
     m_descriptions.insert(colorDrawerItemHoveredField, "Цвет фона пункта главного меню:Цвет фона пункта главного меню в состоянии Мышка поверх элемента");
+    m_descriptions.insert(colorPosterFilterField, "Цвет фильтра постеров:Цвет фильтра над постерами в списках и в карточках");
 
     m_saveMenuItems.append("Сохранить и добавить тему в список");
     m_saveMenuItems.append("Сохранить в файл");

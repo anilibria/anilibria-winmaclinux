@@ -10,9 +10,10 @@ Item {
         height: 70
         source: assetsLocation.iconsPath + "emptybox.svg"
     }
-    Text {
+    PlainText {
         id: titleText
         anchors.top: icon.bottom
+        fontPointSize: 9
         anchors.horizontalCenter: icon.horizontalCenter
     }
 }

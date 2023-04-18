@@ -275,6 +275,14 @@ Page {
                                             maskSource: mask
                                         }
                                     }
+
+                                    Rectangle {
+                                        anchors.centerIn: parent
+                                        width: 150
+                                        height: 230
+                                        color: applicationThemeViewModel.currentItems.colorPosterFilter
+                                        radius: 12
+                                    }
                                 }
 
                                 Image {

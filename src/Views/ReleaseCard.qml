@@ -297,6 +297,13 @@ ColumnLayout {
                                 releasePosterPreview.isVisible = true;
                             }
                         }
+
+                        Rectangle {
+                            anchors.centerIn: parent
+                            width: 280
+                            height: 390
+                            color: applicationThemeViewModel.currentItems.colorPosterFilter
+                        }
                     }
                     Column {
                         id: descriptionColumn

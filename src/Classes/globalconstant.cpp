@@ -163,3 +163,5 @@ QString colorTooltipBackgroundField = "colorTooltipBackground";
 QString colorDrawerItemTextField = "colorDrawerItemText";
 QString colorDrawerItemHoveredField = "colorDrawerItemHovered";
 
+QString colorPosterFilterField = "colorPosterFilter";
+

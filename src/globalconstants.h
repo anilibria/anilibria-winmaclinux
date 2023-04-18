@@ -217,5 +217,6 @@ extern QString iconNotificationSelectedField;
 extern QString colorTooltipBackgroundField;
 extern QString colorDrawerItemTextField;
 extern QString colorDrawerItemHoveredField;
+extern QString colorPosterFilterField;
 
 #endif // GLOBALCONSTANTS_H
