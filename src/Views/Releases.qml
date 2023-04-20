@@ -256,16 +256,31 @@ Page {
                         }
                     }
 
-                    Rectangle {
-                        visible: releasesViewModel.hasCinemahallNotSeenVideos
-                        anchors.top: parent.top
-                        anchors.right: parent.right
-                        anchors.rightMargin: 4
-                        anchors.topMargin: 10
-                        color: "#4ca2c2"
-                        width: 16
-                        height: 16
-                        radius: 12
+                    transform: [
+                        Scale {
+                            id: scaleCinemahall
+                            origin.x: notificationsButton.width / 2
+                            origin.y: notificationsButton.height / 2
+                            xScale: 1
+                            yScale: 1
+                        }
+                    ]
+
+                    SequentialAnimation {
+                        running: window.active && releasesViewModel.hasCinemahallNotSeenVideos
+                        loops: Animation.Infinite
+                        ParallelAnimation {
+                            NumberAnimation { target: scaleCinemahall; property: "xScale"; to: 1.2; duration: 300 }
+                            NumberAnimation { target: scaleCinemahall; property: "yScale"; to: 1.2; duration: 300 }
+                        }
+                        ParallelAnimation {
+                            NumberAnimation { target: scaleCinemahall; property: "xScale"; to: 1; duration: 300 }
+                            NumberAnimation { target: scaleCinemahall; property: "yScale"; to: 1; duration: 300 }
+                        }
+                        ParallelAnimation {
+                            NumberAnimation { target: scaleCinemahall; property: "xScale"; to: 1; duration: 1200 }
+                            NumberAnimation { target: scaleCinemahall; property: "yScale"; to: 1; duration: 1200 }
+                        }
                     }
 
                     CommonMenu {
@@ -660,6 +675,7 @@ Page {
                     }
                 }
                 LeftPanelIconButton {
+                    id: notificationsButton
                     iconPath: applicationThemeViewModel.currentItems.iconReleaseCatalogNotification
                     iconWidth: 29
                     iconHeight: 29
@@ -676,16 +692,22 @@ Page {
                         }
                     }
 
-                    Rectangle {
-                        visible: releasesViewModel.isChangesExists
-                        anchors.top: parent.top
-                        anchors.right: parent.right
-                        anchors.rightMargin: 6
-                        anchors.topMargin: 10
-                        color: "#4ca2c2"
-                        width: 16
-                        height: 16
-                        radius: 12
+                    transform: [
+                        Rotation {
+                            id: notificationRotation
+                            origin.x: notificationsButton.width / 2
+                            origin.y: 0
+                            angle: 0
+                        }
+                    ]
+
+                    SequentialAnimation {
+                        running: window.active && releasesViewModel.isChangesExists
+                        loops: Animation.Infinite
+                        NumberAnimation { target: notificationRotation; property: "angle"; to: 10; duration: 300 }
+                        NumberAnimation { target: notificationRotation; property: "angle"; to: -10; duration: 300 }
+                        NumberAnimation { target: notificationRotation; property: "angle"; to: 0; duration: 300 }
+                        NumberAnimation { target: notificationRotation; property: "angle"; to: 0; duration: 1200 }
                     }
 
                     DefaultPopup {
