@@ -11,11 +11,15 @@ class CustomStyle : public QObject
     Q_PROPERTY(QString tooltipColor READ tooltipColor WRITE setTooltipColor NOTIFY tooltipColorChanged FINAL)
     Q_PROPERTY(QString colorTooltipText READ colorTooltipText WRITE setColorTooltipText NOTIFY colorTooltipTextChanged FINAL)
     Q_PROPERTY(QString labelColor READ labelColor WRITE setLabelColor NOTIFY labelColorChanged)
+    Q_PROPERTY(QString backgroundDimColor READ backgroundDimColor WRITE setBackgroundDimColor NOTIFY backgroundDimColorChanged)
+    Q_PROPERTY(QString popupBackgroundColor READ popupBackgroundColor WRITE setPopupBackgroundColor NOTIFY popupBackgroundColorChanged)
 
 private:
     QString m_tooltipColor { "black" };
     QString m_colorTooltipText { "black" };
     QString m_labelColor { "black" };
+    QString m_backgroundDimColor { "black" };
+    QString m_popupBackgroundColor { "balck" };
 
 public:
     explicit CustomStyle(QObject *parent = nullptr);
@@ -32,10 +36,18 @@ public:
     QString labelColor() const noexcept { return m_labelColor; }
     void setLabelColor(QString labelColor) noexcept;
 
+    QString backgroundDimColor() const noexcept { return m_backgroundDimColor; }
+    void setBackgroundDimColor(const QString& backgroundDimColor) noexcept;
+
+    QString popupBackgroundColor() const noexcept { return m_popupBackgroundColor; }
+    void setPopupBackgroundColor(const QString& popupBackgroundColor) noexcept;
+
 signals:
     void tooltipColorChanged();
     void colorTooltipTextChanged();
     void labelColorChanged();
+    void backgroundDimColorChanged();
+    void popupBackgroundColorChanged();
 
 };
 

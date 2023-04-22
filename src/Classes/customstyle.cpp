@@ -44,3 +44,19 @@ void CustomStyle::setLabelColor(QString labelColor) noexcept
     m_labelColor = labelColor;
     emit labelColorChanged();
 }
+
+void CustomStyle::setBackgroundDimColor(const QString &backgroundDimColor) noexcept
+{
+    if (m_backgroundDimColor == backgroundDimColor) return;
+
+    m_backgroundDimColor = backgroundDimColor;
+    emit backgroundDimColorChanged();
+}
+
+void CustomStyle::setPopupBackgroundColor(const QString &popupBackgroundColor) noexcept
+{
+    if (m_popupBackgroundColor == popupBackgroundColor) return;
+
+    m_popupBackgroundColor = popupBackgroundColor;
+    emit popupBackgroundColorChanged();
+}

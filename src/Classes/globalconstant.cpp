@@ -158,10 +158,12 @@ QString iconEditThemeFieldPlusField = "iconEditThemeFieldPlus";
 QString iconEmptyField = "iconEmpty";
 QString iconNotificationField = "iconNotification";
 QString iconNotificationSelectedField = "iconNotificationSelected";
-
 QString colorTooltipBackgroundField = "colorTooltipBackground";
 QString colorDrawerItemTextField = "colorDrawerItemText";
 QString colorDrawerItemHoveredField = "colorDrawerItemHovered";
-
 QString colorPosterFilterField = "colorPosterFilter";
+
+QString colorPopupBackgroundField = "colorPopupBackground";
+QString colorPopupBackgroundShadowField = "colorPopupBackgroundShadow";
+
 

@@ -250,6 +250,48 @@ ColumnLayout {
                     }
                 }
             }
+
+            IconButton {
+                height: 40
+                width: 40
+                overlayVisible: false
+                hoverColor: applicationThemeViewModel.currentItems.filterIconButtonHoverColor
+                iconPath: applicationThemeViewModel.currentItems.iconReleaseCatalogSettings
+                iconWidth: 26
+                iconHeight: 26
+                tooltipMessage: "Открыть настройки карточки релиза"
+                onButtonPressed: {
+                    releaseCardSettingsPopup.open();
+                }
+
+                DefaultPopup {
+                    id: releaseCardSettingsPopup
+                    x: -400
+                    width: 400
+                    height: 100
+                    modal: true
+                    focus: true
+                    closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
+
+                    Column {
+                        width: parent.width
+
+                        PlainText {
+                            id: notCloseReleaseCardAfterWatchLabel
+                            fontPointSize: 11
+                            text: "Не закрывать карточку релиза после просмотра"
+                        }
+                        CommonSwitch {
+                            id: notCloseReleaseCardAfterWatchSwitch
+                            checked: userConfigurationViewModel.notCloseReleaseCardAfterWatch
+                            onCheckedChanged: {
+                                userConfigurationViewModel.notCloseReleaseCardAfterWatch = checked;
+                            }
+                            tooltipMessage: "Если настройка включена при нажатии на кнопку Смотреть из карточки сама карточка релизов не будет закрыта"
+                        }
+                    }
+                }
+            }
         }
 
         Flickable {

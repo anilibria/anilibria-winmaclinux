@@ -1,5 +1,6 @@
 import QtQuick 2.12
 import QtQuick.Controls 2.12
+import CustomStyle 1.0
 
 Popup {
     Overlay.modal: Rectangle {
@@ -11,4 +12,6 @@ Popup {
             }
         }
     }
+    CustomStyle.popupBackgroundColor: applicationThemeViewModel.currentItems.colorPopupBackground
+    CustomStyle.backgroundDimColor: applicationThemeViewModel.currentItems.colorPopupBackgroundShadow
 }

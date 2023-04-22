@@ -1044,20 +1044,6 @@ Page {
                             }
 
                             PlainText {
-                                id: notCloseReleaseCardAfterWatchLabel
-                                fontPointSize: 11
-                                text: "Не закрывать карточку релиза после просмотра"
-                            }
-                            CommonSwitch {
-                                id: notCloseReleaseCardAfterWatchSwitch
-                                checked: userConfigurationViewModel.notCloseReleaseCardAfterWatch
-                                onCheckedChanged: {
-                                    userConfigurationViewModel.notCloseReleaseCardAfterWatch = checked;
-                                }
-                                tooltipMessage: "Если настройка включена при нажатии на кнопку Смотреть из карточки сама карточка релизов не будет закрыта"
-                            }
-
-                            PlainText {
                                 id: notSaveWindowPositionLabel
                                 fontPointSize: 11
                                 text: "Не сохранять позицию окна"

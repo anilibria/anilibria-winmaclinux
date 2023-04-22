@@ -212,5 +212,9 @@
         <file>CustomStyle/qmldir</file>
         <file>CustomStyle/ToolTip.qml</file>
         <file>CustomStyle/Label.qml</file>
+        <file>CustomStyle/Popup.qml</file>
+        <file>CustomStyle/BoxShadow.qml</file>
+        <file>CustomStyle/RectangularGlow.qml</file>
+        <file>CustomStyle/ElevationEffect.qml</file>
     </qresource>
 </RCC>
