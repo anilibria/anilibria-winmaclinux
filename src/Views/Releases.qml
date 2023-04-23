@@ -247,39 +247,13 @@ Page {
                     showCrossIcon: page.showButtonVisibleChanger && page.hideCinemahallButton
                     visible: page.showButtonVisibleChanger || !page.hideCinemahallButton
                     tooltipMessage: "Управление кинозалом"
+                    enablePulseAnimation: window.active && releasesViewModel.hasCinemahallNotSeenVideos
                     onButtonPressed: {
                         if (page.showButtonVisibleChanger) {
                             page.hideCinemahallButton = !page.hideCinemahallButton;
                             localStorage.setHideCinemhallButton(page.hideCinemahallButton);
                         } else {
                             cinemahallMenuPanel.open();
-                        }
-                    }
-
-                    transform: [
-                        Scale {
-                            id: scaleCinemahall
-                            origin.x: notificationsButton.width / 2
-                            origin.y: notificationsButton.height / 2
-                            xScale: 1
-                            yScale: 1
-                        }
-                    ]
-
-                    SequentialAnimation {
-                        running: window.active && releasesViewModel.hasCinemahallNotSeenVideos
-                        loops: Animation.Infinite
-                        ParallelAnimation {
-                            NumberAnimation { target: scaleCinemahall; property: "xScale"; to: 1.2; duration: 300 }
-                            NumberAnimation { target: scaleCinemahall; property: "yScale"; to: 1.2; duration: 300 }
-                        }
-                        ParallelAnimation {
-                            NumberAnimation { target: scaleCinemahall; property: "xScale"; to: 1; duration: 300 }
-                            NumberAnimation { target: scaleCinemahall; property: "yScale"; to: 1; duration: 300 }
-                        }
-                        ParallelAnimation {
-                            NumberAnimation { target: scaleCinemahall; property: "xScale"; to: 1; duration: 1200 }
-                            NumberAnimation { target: scaleCinemahall; property: "yScale"; to: 1; duration: 1200 }
                         }
                     }
 
@@ -683,6 +657,7 @@ Page {
                     showCrossIcon: page.showButtonVisibleChanger && page.hideNotificationButton
                     tooltipMessage: "Посмотреть уведомления о непросмотренных изменениях в релизах"
                     visible: page.showButtonVisibleChanger || !page.hideNotificationButton
+                    enablePulseAnimation: window.active && releasesViewModel.isChangesExists
                     onButtonPressed: {
                         if (page.showButtonVisibleChanger) {
                             page.hideNotificationButton = !page.hideNotificationButton;
@@ -690,24 +665,6 @@ Page {
                         } else {
                             notificationPopup.open();
                         }
-                    }
-
-                    transform: [
-                        Rotation {
-                            id: notificationRotation
-                            origin.x: notificationsButton.width / 2
-                            origin.y: 0
-                            angle: 0
-                        }
-                    ]
-
-                    SequentialAnimation {
-                        running: window.active && releasesViewModel.isChangesExists
-                        loops: Animation.Infinite
-                        NumberAnimation { target: notificationRotation; property: "angle"; to: 10; duration: 300 }
-                        NumberAnimation { target: notificationRotation; property: "angle"; to: -10; duration: 300 }
-                        NumberAnimation { target: notificationRotation; property: "angle"; to: 0; duration: 300 }
-                        NumberAnimation { target: notificationRotation; property: "angle"; to: 0; duration: 1200 }
                     }
 
                     DefaultPopup {

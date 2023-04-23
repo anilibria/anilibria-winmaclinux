@@ -84,18 +84,6 @@ void ApplicationSettings::setWindowY(int windowY)
     emit windowYChanged(windowY);
 }
 
-bool ApplicationSettings::isDarkTheme()
-{
-    return m_Settings->value("darktheme", false).toBool();
-}
-
-void ApplicationSettings::setIsDarkTheme(bool isDarkTheme)
-{
-    m_Settings->setValue("darktheme", isDarkTheme);
-
-    emit isDarkThemeChanged(isDarkTheme);
-}
-
 int ApplicationSettings::remotePort()
 {
     return m_Settings->value("remoteport", 12345).toInt();

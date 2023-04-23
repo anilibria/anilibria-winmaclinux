@@ -22,12 +22,15 @@ import CustomStyle 1.0
 import "../Controls"
 
 IconButton {
+    id: root
     property string tooltipMessage
     height: 45
     width: 40
     iconWidth: 30
     iconHeight: 30
     overlayVisible: false
+
+    property alias enablePulseAnimation: root.enablePulseAnimation
 
     ToolTip {
         delay: 2000

@@ -32,11 +32,21 @@ Item {
     property alias showCrossIcon: crossIcon.visible
     property color backgroundColor: "transparent"
     property string tooltipMessage: ""
+    property bool enablePulseAnimation: false
 
     signal buttonPressed()
     signal rightButtonPressed()
     signal buttonHoverEnter()
     signal buttonHoverExit()
+
+    onEnablePulseAnimationChanged: {
+        if (enablePulseAnimation) {
+            pulseAnimation.start();
+        } else {
+            pulseAnimation.stop();
+            pulseAnimation.complete();
+        }
+    }
 
     MouseArea {
         id: mouseArea
@@ -74,6 +84,33 @@ Item {
             width: 29
             height: 29
             mipmap: true
+            transform: [
+                Scale {
+                    id: scaleIconImage
+                    origin.x: iconImage.width / 2
+                    origin.y: iconImage.height / 2
+                    xScale: 1
+                    yScale: 1
+                }
+            ]
+
+            SequentialAnimation {
+                id: pulseAnimation
+                running: enablePulseAnimation
+                loops: Animation.Infinite
+                ParallelAnimation {
+                    NumberAnimation { target: scaleIconImage; property: "xScale"; to: 1.2; duration: 300 }
+                    NumberAnimation { target: scaleIconImage; property: "yScale"; to: 1.2; duration: 300 }
+                }
+                ParallelAnimation {
+                    NumberAnimation { target: scaleIconImage; property: "xScale"; to: 1; duration: 300 }
+                    NumberAnimation { target: scaleIconImage; property: "yScale"; to: 1; duration: 300 }
+                }
+                ParallelAnimation {
+                    NumberAnimation { target: scaleIconImage; property: "xScale"; to: 1; duration: 1200 }
+                    NumberAnimation { target: scaleIconImage; property: "yScale"; to: 1; duration: 1200 }
+                }
+            }
         }
 
         Canvas {
