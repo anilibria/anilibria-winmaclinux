@@ -39,20 +39,19 @@ void OfflineImageCacheService::imageLoaded(QString loadedPath, int id)
         m_Images->insert(id, m_Protocol + loadedPath);
     }
 
-    ImageLoader* imageLoader = m_RunningLoading->value(id);
-    imageLoader->deleteLater();
-    m_RunningLoading->remove(id);
+    m_RunningLoading.remove(id);
 }
 
-OfflineImageCacheService::OfflineImageCacheService(QObject *parent) : QObject(parent),
-    m_Images(new QHash<int, QString>()),
-    m_RunningLoading(new QHash<int, ImageLoader*>())
-{
+OfflineImageCacheService::OfflineImageCacheService(QObject *parent) : QObject(parent) {
     if (IsPortable) {
         m_CachePath = QDir::currentPath() + "/imagecache";
     } else {
         m_CachePath = QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation) + "/imagecache";
     }
+
+    m_imageLoader = new ImageLoader(this, m_CachePath);
+    connect(m_imageLoader, &ImageLoader::imageLoaded, this, &OfflineImageCacheService::imageLoaded);
+
 #ifdef Q_OS_WIN
     m_Protocol = "file:///";
 #else
@@ -85,11 +84,9 @@ void OfflineImageCacheService::clearPosterCache()
 QString OfflineImageCacheService::getReleasePath(int id, QString posterPath)
 {
     if (!m_Images->contains(id)) {
-        if (!m_RunningLoading->contains(id)) {
-            ImageLoader* imageLoader = new ImageLoader(this, m_CachePath);
-            m_RunningLoading->insert(id, imageLoader);
-            connect(imageLoader, &ImageLoader::imageLoaded, this, &OfflineImageCacheService::imageLoaded);
-            imageLoader->loadImage(id, posterPath);
+        if (!m_RunningLoading.contains(id)) {
+            m_imageLoader->loadImage(id, posterPath);
+            m_RunningLoading.insert(id);
         }
         return posterPath;
     }

@@ -42,6 +42,8 @@ Rectangle {
 
     property bool isCompactReleaseMode: compactModeSwitch.checked || mainViewModel.isSmallSizeMode
 
+    property string posterPath: localStorage.getReleasePosterPath(id, poster)
+
     signal leftClicked()
     signal rightClicked()
     signal addToFavorite(int id)
@@ -107,7 +109,7 @@ Rectangle {
 
             Image {
                 anchors.centerIn: parent
-                source: localStorage.getReleasePosterPath(id, poster)
+                source: releaseItem.posterPath
                 sourceSize: Qt.size(350, 500)
                 fillMode: Image.PreserveAspectCrop
                 width: 180
@@ -144,7 +146,7 @@ Rectangle {
 
                 Image {
                     anchors.centerIn: parent
-                    source: localStorage.getReleasePosterPath(id, poster)
+                    source: releaseItem.posterPath
                     sourceSize: Qt.size(350, 500)
                     fillMode: Image.PreserveAspectCrop
                     width: 150

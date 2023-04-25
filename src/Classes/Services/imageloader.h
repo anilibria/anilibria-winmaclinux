@@ -30,9 +30,8 @@ class ImageLoader : public QObject
     Q_OBJECT
 
 private:
-    int m_Id;
-    QString m_OriginalPath;
     QString m_Path;
+    QNetworkAccessManager* m_manager { new QNetworkAccessManager(this) };
 
 public:
     explicit ImageLoader(QObject *parent = nullptr, QString path = "");

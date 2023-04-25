@@ -21,6 +21,7 @@
 
 #include <QObject>
 #include <QHash>
+#include <QSet>
 #include <QDir>
 #include <QStandardPaths>
 #include "imageloader.h"
@@ -29,10 +30,11 @@ class OfflineImageCacheService : public QObject
 {
     Q_OBJECT
 private:
-    QHash<int, QString>* m_Images;
-    QHash<int, ImageLoader*>* m_RunningLoading;
+    QHash<int, QString>* m_Images { new QHash<int, QString>() };
+    QSet<int> m_RunningLoading { QSet<int>() };
     QString m_CachePath;
     QString m_Protocol;
+    ImageLoader* m_imageLoader { nullptr };
 
 private:
     void loadCache();

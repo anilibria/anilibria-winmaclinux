@@ -18,23 +18,19 @@
 
 #include "imageloader.h"
 
-ImageLoader::ImageLoader(QObject *parent, QString path) : QObject(parent), m_Id(0), m_OriginalPath(""), m_Path(path)
+ImageLoader::ImageLoader(QObject *parent, QString path) : QObject(parent), m_Path(path)
 {
+    connect(m_manager,&QNetworkAccessManager::finished,this,&ImageLoader::imageDownloaded);
 }
 
 void ImageLoader::loadImage(int id, const QString& originalPath)
 {
-    m_Id = id;
-    m_OriginalPath = originalPath;
-
-    auto networkManager = new QNetworkAccessManager(this);
     auto url = QUrl(originalPath);
     QNetworkRequest request(url);
     request.setRawHeader("User-Agent", "Anilibria CP Client");
 
-    connect(networkManager,&QNetworkAccessManager::finished,this,&ImageLoader::imageDownloaded);
-
-    networkManager->get(request);
+    auto reply = m_manager->get(request);
+    reply->setProperty("identifier", id);
 }
 
 void ImageLoader::imageDownloaded(QNetworkReply *reply)
@@ -43,11 +39,14 @@ void ImageLoader::imageDownloaded(QNetworkReply *reply)
     if (reply->error() == QNetworkReply::ProtocolFailure) return;
     if (reply->error() == QNetworkReply::HostNotFoundError) return;
 
+    auto idProperty = reply->property("identifier");
+    auto id = idProperty.toInt();
+
     QByteArray data = reply->readAll();
 
     if (data.length() == 0) return;
 
-    auto fullPath = m_Path + "/" + QString::number(m_Id) + ".image";
+    auto fullPath = m_Path + "/" + QString::number(id) + ".image";
     if (QFileInfo::exists(fullPath)) {
         QFile removedFile (fullPath);
         removedFile.remove();
@@ -58,5 +57,5 @@ void ImageLoader::imageDownloaded(QNetworkReply *reply)
     imageFile.write(data);
     imageFile.close();
 
-    emit imageLoaded(fullPath, m_Id);
+    emit imageLoaded(fullPath, id);
 }
