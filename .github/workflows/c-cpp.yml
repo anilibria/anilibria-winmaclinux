@@ -21,4 +21,12 @@ jobs:
       run: qmake -makefile -o src/Makefile src/AniLibria.pro
     - name: run make
       run: make -C src
+    - name: copy to deb package
+      run: mkdir specs/deb/tmp1/usr/bin; cp Anilibria specs/deb/tmp1/usr/bin/Anilibria
+    - name: build deb package
+      run: dpkg-deb -b specs/deb/tmp1 anilibria_amd64.deb
+    - uses: actions/upload-artifact@v3
+      with:
+        name: deb-package
+        path: anilibria_amd64.deb      
 
