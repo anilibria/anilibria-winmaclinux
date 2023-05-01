@@ -22,7 +22,7 @@ qmake-qt5
 sudo make install
 ```
 **Этап 4 (опциональный). Сборка с плеером VLC**  
-Необходимо заменить в файле src/Anilibria.pro следующие строчки
+Необходимо заменить в файле src/AniLibria.pro следующие строчки
 ```shell
 #unix {
 #    LIBS += -lvlc
