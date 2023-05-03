@@ -918,13 +918,13 @@ Page {
                                 onCheckedChanged: {
                                     applicationSettings.useCustomToolbar = checked;
 
-                                    if (applicationSettings.useCustomToolbar) {
-                                        window.flags = Qt.FramelessWindowHint | Qt.Window | Qt.WindowMinimizeButtonHint;
+                                    /*if (applicationSettings.useCustomToolbar) {
+                                        //window.flags = Qt.FramelessWindowHint | Qt.Window | Qt.WindowMinimizeButtonHint;
                                         toolBar.visible = true;
                                     } else {
-                                        window.flags = 1;
+                                        //window.flags = 1;
                                         toolBar.visible = false;
-                                    }
+                                    }*/
                                 }
                             }
 
