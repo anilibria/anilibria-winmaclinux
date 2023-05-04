@@ -53,24 +53,10 @@ ApplicationWindow {
     Material.theme: applicationThemeViewModel.basedOnDark ? Material.Dark : Material.Light
     Material.foreground: applicationThemeViewModel.colorMaterialText
 
-    onVisibilityChanged: {
-        /*if (window.visibility === Window.Windowed && applicationSettings.normalWidth > 0) {
-            console.log('windowed!!!');
-            window.width = applicationSettings.normalWidth;
-            window.height = applicationSettings.normalHeight;
-            window.x = applicationSettings.normalWindowSizeX;
-            window.y = applicationSettings.normalWindowSizeY;
-
-            applicationSettings.normalWidth = 0;
-            applicationSettings.normalHeight = 0;
-            applicationSettings.normalWindowSizeX = 0;
-            applicationSettings.normalWindowSizeY = 0;
-        }*/
-    }
-
     onClosing: {
         onlinePlayerWindow.closeWindow();
         onlinePlayerWindow.hide();
+        applicationSettings.isMaximize = window.visibility === Window.Maximized;
     }
 
     onActiveChanged: {
@@ -95,10 +81,6 @@ ApplicationWindow {
         if (!isInActiveScreen(savedX, savedY)) return;
 
         if (applicationSettings.isMaximize) {
-            window.normalWindowSizeX = applicationSettings.normalX;
-            window.normalWindowSizeY = applicationSettings.normalY;
-            window.normalWindowSizeWidth = applicationSettings.normalWidth;
-            window.normalWindowSizeHeight = applicationSettings.normalHeight;
             window.showMaximized();
         } else {
             if (savedWidth > 0 && savedHeight > 0) {
@@ -120,13 +102,11 @@ ApplicationWindow {
             return;
         }
 
-        applicationSettings.isMaximize = window.visibility === Window.Maximized;
-
-        if (onlinePlayerViewModel.isFullScreen || window.visibility === Window.Maximized) {
-            applicationSettings.windowWidth = window.normalWindowSizeWidth;
-            applicationSettings.windowHeight = window.normalWindowSizeHeight;
-            applicationSettings.windowX = window.normalWindowSizeX;
-            applicationSettings.windowY = window.normalWindowSizeY;
+        if (onlinePlayerViewModel.isFullScreen || applicationSettings.isMaximize) {
+            applicationSettings.windowWidth = 0;
+            applicationSettings.windowHeight = 0;
+            applicationSettings.windowX = 0;
+            applicationSettings.windowY = 0;
         } else {
             applicationSettings.windowWidth = window.width;
             applicationSettings.windowHeight = window.height;
@@ -158,9 +138,26 @@ ApplicationWindow {
             }
         }
         IconButton {
+            id: openDrawerButton
+            anchors.left: parent.left
+            anchors.leftMargin: 1
+            anchors.top: parent.top
+            anchors.topMargin: 1
+            hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
+            iconPath: applicationThemeViewModel.iconMainMenu
+            height: 34
+            width: 40
+            iconWidth: 20
+            iconHeight: 20
+            tooltipMessage: "Открыть меню приложения"
+            onButtonPressed: {
+                drawer.open();
+            }
+        }
+        IconButton {
             id: goToReleasePage
             overlayVisible: false
-            anchors.left: parent.left
+            anchors.left: openDrawerButton.right
             anchors.leftMargin: 1
             anchors.top: parent.top
             anchors.topMargin: 1
@@ -315,7 +312,7 @@ ApplicationWindow {
         IconButton {
             id: windowOrFullScreenSize
             visible: !mainViewModel.isSmallSizeMode
-            anchors.right: closeWindow.left
+            anchors.right: parent.right
             anchors.top: parent.top
             anchors.topMargin: 1
             height: 34
@@ -355,25 +352,6 @@ ApplicationWindow {
                 }
             }
         }
-        IconButton {
-            id: closeWindow
-            anchors.right: parent.right
-            anchors.rightMargin: 1
-            anchors.top: parent.top
-            anchors.topMargin: 1
-            height: 34
-            width: 40
-            overlayVisible: false
-            hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
-            iconPath: applicationThemeViewModel.iconCloseWindow
-            iconWidth: 24
-            iconHeight: 24
-            tooltipMessage: "Выйти из приложения"
-            onButtonPressed: {
-                window.close();
-            }
-        }
-
     }
 
     footer: Rectangle {
@@ -854,7 +832,6 @@ ApplicationWindow {
         userActivity: userActivityViewModel
         onReleaseCardOpened: {
             analyticsService.sendView("releasecard", "open", "%2Frelease");
-            releases.setWebViewUrl();
             userActivityViewModel.addOpenedCardToCounter();
         }
         onAfterSynchronizedReleases: {

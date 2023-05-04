@@ -50,7 +50,6 @@ Page {
     signal navigateTo()
     signal watchCinemahall()
     signal watchMultipleReleases()
-    signal setWebViewUrl()
 
     Keys.onPressed: {
         if (event.key === Qt.Key_Escape) {
@@ -75,10 +74,6 @@ Page {
     }
 
     onRefreshReleaseSchedules: {
-    }
-
-    onSetWebViewUrl: {
-        //REMOVE!!!!
     }
 
     background: Rectangle {
@@ -120,17 +115,6 @@ Page {
             Column {
                 visible: !compactModeSwitch.checked || releasesViewModel.showSidePanel
                 width: compactModeSwitch.checked && !releasesViewModel.showSidePanel ? 0 : 40
-
-                LeftPanelIconButton {
-                    iconPath: applicationThemeViewModel.iconMainMenu
-                    iconWidth: 28
-                    iconHeight: 28
-                    overlayVisible: false
-                    tooltipMessage: "Открыть меню приложения"
-                    onButtonPressed: {
-                        drawer.open();
-                    }
-                }
 
                 LeftPanelIconButton {
                     iconPath: applicationThemeViewModel.currentItems.iconReleaseCatalogSynchronization

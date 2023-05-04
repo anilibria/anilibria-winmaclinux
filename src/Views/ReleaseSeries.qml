@@ -45,23 +45,6 @@ Page {
         id: panelContainer
         anchors.fill: parent
         spacing: 0
-        Rectangle {
-            color: applicationThemeViewModel.pageVerticalPanel
-            width: 40
-            Layout.fillHeight: true
-            Column {
-                LeftPanelIconButton {
-                    iconPath: applicationThemeViewModel.iconMainMenu
-                    overlayVisible: false
-                    tooltipMessage: "Открыть меню приложения"
-                    iconWidth: 28
-                    iconHeight: 28
-                    onButtonPressed: {
-                        drawer.open();
-                    }
-                }
-            }
-        }
 
         ColumnLayout {
             id: itemContainer

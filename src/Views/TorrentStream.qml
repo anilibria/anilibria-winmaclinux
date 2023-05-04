@@ -32,18 +32,6 @@ Page {
             width: 40
             Layout.fillHeight: true
             Column {
-                IconButton {
-                    height: 45
-                    width: 40
-                    overlayVisible: false
-                    iconPath: applicationThemeViewModel.currentItems.iconMainMenu
-                    iconWidth: 28
-                    iconHeight: 28
-                    onButtonPressed: {
-                        drawer.open();
-                    }
-                }
-
                 LeftPanelIconButton {
                     iconPath: applicationThemeViewModel.currentItems.iconReleaseCatalogSynchronization
                     iconWidth: 34

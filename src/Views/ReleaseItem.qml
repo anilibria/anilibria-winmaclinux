@@ -19,7 +19,6 @@
 import QtQuick 2.12
 import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.12
-import QtGraphicalEffects 1.0
 import "../Controls"
 
 Item {
@@ -105,34 +104,12 @@ Item {
             topPadding: 4
             rightPadding: 4
 
-            Rectangle {
-                visible: id > -1 && !isCompactReleaseMode
+            CorneredImage {
+                visible: !isCompactReleaseMode
                 width: 182
                 height: 272
-                border.color: applicationThemeViewModel.posterBorder
-                border.width: 1
-                radius: 12
-
-                Image {
-                    anchors.centerIn: parent
-                    source: releaseItem.posterPath
-                    sourceSize: Qt.size(350, 500)
-                    fillMode: Image.PreserveAspectCrop
-                    width: 180
-                    height: 270
-                    /*layer.enabled: true
-                    layer.effect: OpacityMask {
-                        maskSource: mask
-                    }*/
-                }
-
-                Rectangle {
-                    anchors.centerIn: parent
-                    width: 180
-                    height: 270
-                    color: applicationThemeViewModel.currentItems.colorPosterFilter
-                    radius: 12
-                }
+                posterSource: releaseItem.posterPath
+                emptyBorderBackground: applicationThemeViewModel.currentItems.panelBackground
             }
 
             Rectangle {
@@ -141,36 +118,12 @@ Item {
                 height: 236
                 color: "transparent"
 
-                Rectangle {
-                    visible: id > -1
-                    anchors.horizontalCenter: parent.horizontalCenter
+                CorneredImage {
                     width: 152
                     height: 232
-                    border.color: applicationThemeViewModel.posterBorder
-                    border.width: 1
-                    radius: 12
-
-                    Image {
-                        anchors.centerIn: parent
-                        source: releaseItem.posterPath
-                        sourceSize: Qt.size(350, 500)
-                        fillMode: Image.PreserveAspectCrop
-                        width: 150
-                        height: 230
-                        layer.enabled: true
-                        layer.effect: OpacityMask {
-                            maskSource: mask
-                        }
-                    }
-
-                    Rectangle {
-                        anchors.centerIn: parent
-                        width: 150
-                        height: 230
-                        color: applicationThemeViewModel.currentItems.colorPosterFilter
-                        radius: 12
-                    }
-
+                    anchors.centerIn: parent
+                    posterSource: releaseItem.posterPath
+                    emptyBorderBackground: applicationThemeViewModel.currentItems.pageBackground
                 }
             }
 

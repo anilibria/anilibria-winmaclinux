@@ -747,18 +747,6 @@ Page {
                     IconButton {
                         width: 40
                         height: 40
-                        hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
-                        overlayVisible: false
-                        iconPath: applicationThemeViewModel.currentItems.iconPlayerDrawer
-                        iconWidth: 29
-                        iconHeight: 29
-                        onButtonPressed: {
-                            drawer.open();
-                        }
-                    }
-                    IconButton {
-                        width: 40
-                        height: 40
                         overlayVisible: false
                         hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
                         iconPath: onlinePlayerViewModel.muted ? applicationThemeViewModel.currentItems.iconPlayerMute : applicationThemeViewModel.currentItems.iconPlayerUnMute
@@ -1369,64 +1357,6 @@ Page {
             anchors.bottom: parent.bottom
             anchors.left: parent.left
             anchors.right: parent.right
-        }
-
-        MouseArea {
-            id: rightbottomWindowResize
-            enabled: applicationSettings.useCustomToolbar
-            width: 3
-            height: 50
-            anchors.right: parent.right
-            anchors.bottom: parent.bottom
-            cursorShape: Qt.SizeFDiagCursor
-            onPressed: {
-                window.previousX = mouseX
-                window.previousY = mouseY
-            }
-            onMouseXChanged: {
-                window.width += mouseX - window.previousX;
-            }
-            onMouseYChanged: {
-                window.height += mouseY - window.previousY;
-            }
-        }
-
-        MouseArea {
-            id: leftbottomWindowResize
-            enabled: applicationSettings.useCustomToolbar
-            width: 3
-            height: 50
-            anchors.left: parent.left
-            anchors.bottom: parent.bottom
-            cursorShape: Qt.SizeBDiagCursor
-            onPressed: {
-                window.previousX = mouseX
-                window.previousY = mouseY
-            }
-            onMouseXChanged: {
-                const delta = mouseX - window.previousX;
-                window.x = window.x + delta;
-                window.width = window.width - delta;
-            }
-            onMouseYChanged: {
-                window.height += mouseY - window.previousY;
-            }
-        }
-
-        MouseArea {
-            id: onlinePlayebottomWindowResize
-            enabled: applicationSettings.useCustomToolbar
-            height: 3
-            anchors.bottom: parent.bottom
-            anchors.left: parent.left
-            anchors.right: parent.right
-            cursorShape: Qt.SizeVerCursor
-            onPressed: {
-                window.previousY = mouseY;
-            }
-            onMouseYChanged: {
-                window.height += mouseY - window.previousY;
-            }
         }
 
         Behavior on opacity {
