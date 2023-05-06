@@ -253,14 +253,13 @@ ApplicationWindow {
             anchors.topMargin: 1
             height: 34
             width: 40
-            overlayVisible: false
             hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
-            iconPath: /*applicationThemeViewModel.currentItems.iconMinimizeWindowField */applicationThemeViewModel.currentItems.iconLeftHalfScreen
+            iconPath: mainViewModel.hasBackHistory ? applicationThemeViewModel.currentItems.iconLeftHalfScreen : applicationThemeViewModel.currentItems.iconMinimizeWindow
             iconWidth: 24
             iconHeight: 24
             tooltipMessage: "Вернуть назад в истории переходов"
             onButtonPressed: {
-
+                mainViewModel.backToPage();
             }
         }
         IconButton {
@@ -271,14 +270,13 @@ ApplicationWindow {
             anchors.topMargin: 1
             height: 34
             width: 40
-            overlayVisible: false
             hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
-            iconPath: /*applicationThemeViewModel.currentItems.iconMaximizeWindowField */applicationThemeViewModel.iconRightHalfScreen
+            iconPath: mainViewModel.hasForwardHistory ? applicationThemeViewModel.iconRightHalfScreen : applicationThemeViewModel.currentItems.iconMaximizeWindow
             iconWidth: 24
             iconHeight: 24
             tooltipMessage: "Перейти вперед в истории переходов"
             onButtonPressed: {
-
+                mainViewModel.forwardToPage();
             }
         }
     }

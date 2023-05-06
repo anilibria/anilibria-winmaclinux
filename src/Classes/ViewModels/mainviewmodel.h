@@ -27,6 +27,8 @@ class MainViewModel : public QObject
     Q_PROPERTY(bool isThemeManagerVisible READ isThemeManagerVisible NOTIFY isThemeManagerVisibleChanged)
     Q_PROPERTY(bool isSmallSizeMode READ isSmallSizeMode WRITE setIsSmallSizeMode NOTIFY isSmallSizeModeChanged)
     Q_PROPERTY(bool isTorrentStreamPageVisible READ isTorrentStreamPageVisible NOTIFY isTorrentStreamPageVisibleChanged)
+    Q_PROPERTY(bool hasBackHistory READ hasBackHistory NOTIFY hasBackHistoryChanged)
+    Q_PROPERTY(bool hasForwardHistory READ hasForwardHistory NOTIFY hasForwardHistoryChanged)
 
 private:
     MainMenuListModel* m_mainMenuListModel { new MainMenuListModel(this) };
@@ -36,6 +38,8 @@ private:
     QMap<QString, QString>* m_displayNames { new QMap<QString, QString>() };
     AnalyticsService* m_analyticsService { nullptr };
     bool m_isSmallSizeMode { false };
+    QStringList m_history { QStringList() };
+    int m_historyPosition { -1 };
 
 public:
     explicit MainViewModel(QObject *parent = nullptr);
@@ -56,6 +60,9 @@ public:
     bool isSmallSizeMode() const noexcept { return m_isSmallSizeMode; }
     void setIsSmallSizeMode(bool isSmallSizeMode) noexcept;
 
+    bool hasBackHistory() const noexcept { return !m_history.isEmpty() && m_historyPosition > 0; }
+    bool hasForwardHistory() const noexcept { return !m_history.isEmpty() && m_historyPosition < m_history.count() - 1; }
+
     bool isReleasesPageVisible() const noexcept { return m_currentPageId == "release"; }
     bool isOnlinePlayerPageVisible() const noexcept { return m_currentPageId == "videoplayer"; }
     bool isYoutubePageVisible() const noexcept { return m_currentPageId == "youtube"; }
@@ -70,10 +77,13 @@ public:
     bool isTorrentStreamPageVisible() const noexcept { return m_currentPageId == "torrentstream"; }
 
     Q_INVOKABLE void selectPage(const QString& pageId);
+    Q_INVOKABLE void backToPage();
+    Q_INVOKABLE void forwardToPage();
 
 private:
     void setPageDisplayName(const QString& pageId) noexcept;
     void refreshPageVisible() noexcept;
+    void selectToPage(const QString& pageId);
 
 public slots:
     void selectedItemInMainMenu(QString pageName);
@@ -101,6 +111,8 @@ signals:
     void isThemeManagerVisibleChanged();
     void isSmallSizeModeChanged();
     void isTorrentStreamPageVisibleChanged();
+    void hasBackHistoryChanged();
+    void hasForwardHistoryChanged();
 
 };
 

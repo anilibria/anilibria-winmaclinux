@@ -21,6 +21,9 @@ MainViewModel::MainViewModel(QObject *parent) : QObject(parent)
     m_displayNames->insert("torrentstream", "TorrentStream");
 
     m_currentPageDisplayName = m_displayNames->value(m_currentPageId);
+
+    m_history.append("release");
+    m_historyPosition = 0;
 }
 
 void MainViewModel::setNotVisibleSignin(bool notVisibleSignin)
@@ -68,26 +71,36 @@ void MainViewModel::setIsSmallSizeMode(bool isSmallSizeMode) noexcept
 
 void MainViewModel::selectPage(const QString& pageId)
 {
-    if (pageId == m_currentPageId) return;
+    selectToPage(pageId);
 
-    auto alreadyOnVideoPlayer = m_currentPageId == "videoplayer";
+    if (!m_history.isEmpty() && m_historyPosition != m_history.count() - 1) m_history.erase(m_history.begin() + (m_historyPosition + 1), m_history.end());
 
-    setCurrentPageId(pageId);
+    m_history.append(pageId);
+    m_historyPosition += 1;
+    emit hasBackHistoryChanged();
+    emit hasForwardHistoryChanged();
+}
 
-    refreshPageVisible();
+void MainViewModel::backToPage()
+{
+    if (m_historyPosition <= 0) return;
 
-    if (pageId == "videoplayer"){
-        emit onlinePlayerPageNavigated();
-    }
-    if (alreadyOnVideoPlayer) {
-        emit onlinePlayerPageFromNavigated();
-    }
+    m_historyPosition--;
 
-    if (pageId == "release") {
-        emit releasesPageToNavigated();
-    }
+    selectToPage(m_history.value(m_historyPosition));
+    emit hasBackHistoryChanged();
+    emit hasForwardHistoryChanged();
+}
 
-    m_analyticsService->sendView("page", "view", "%2F" + pageId);
+void MainViewModel::forwardToPage()
+{
+    if (m_historyPosition >= m_history.count() - 1) return;
+
+    m_historyPosition++;
+
+    selectToPage(m_history.value(m_historyPosition));
+    emit hasBackHistoryChanged();
+    emit hasForwardHistoryChanged();
 }
 
 void MainViewModel::setPageDisplayName(const QString &pageId) noexcept
@@ -109,6 +122,30 @@ void MainViewModel::refreshPageVisible() noexcept
     emit isMyAnilibriaPageVisibleChanged();
     emit isThemeManagerVisibleChanged();
     emit isTorrentStreamPageVisibleChanged();
+}
+
+void MainViewModel::selectToPage(const QString &pageId)
+{
+    if (pageId == m_currentPageId) return;
+
+    auto alreadyOnVideoPlayer = m_currentPageId == "videoplayer";
+
+    setCurrentPageId(pageId);
+
+    refreshPageVisible();
+
+    if (pageId == "videoplayer"){
+        emit onlinePlayerPageNavigated();
+    }
+    if (alreadyOnVideoPlayer) {
+        emit onlinePlayerPageFromNavigated();
+    }
+
+    if (pageId == "release") {
+        emit releasesPageToNavigated();
+    }
+
+    m_analyticsService->sendView("page", "view", "%2F" + pageId);
 }
 
 void MainViewModel::selectedItemInMainMenu(QString pageName)
