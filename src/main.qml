@@ -34,9 +34,9 @@ ApplicationWindow {
     id: window
     visible: true
     width: 800
-    minimumWidth: 800
-    minimumHeight: 600
     height: 600
+    minimumWidth: 300
+    minimumHeight: 300
     title: qsTr("AniLibria.Qt")
     font.capitalization: Font.MixedCase
     property var userModel: ({})
@@ -156,6 +156,7 @@ ApplicationWindow {
         }
         IconButton {
             id: goToReleasePage
+            visible: !mainViewModel.isSmallSizeMode
             overlayVisible: false
             anchors.left: openDrawerButton.right
             anchors.leftMargin: 1
@@ -174,6 +175,7 @@ ApplicationWindow {
         }
         IconButton {
             id: goToOnlineVideoPage
+            visible: !mainViewModel.isSmallSizeMode
             overlayVisible: false
             anchors.left: goToReleasePage.right
             anchors.top: parent.top
@@ -253,64 +255,16 @@ ApplicationWindow {
             width: 40
             overlayVisible: false
             hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
-            iconPath: applicationThemeViewModel.iconLeftHalfScreen
+            iconPath: /*applicationThemeViewModel.currentItems.iconMinimizeWindowField */applicationThemeViewModel.currentItems.iconLeftHalfScreen
             iconWidth: 24
             iconHeight: 24
-            tooltipMessage: "Выставить размер окна - левая половина экрана"
+            tooltipMessage: "Вернуть назад в истории переходов"
             onButtonPressed: {
-                let currentScreen = getCurrentScreen();
-                if (!currentScreen) return;
 
-                window.x = currentScreen.virtualX;
-                window.width = currentScreen.width / 2;
-                window.y = 0;
-                window.height = currentScreen.desktopAvailableHeight;
             }
         }
         IconButton {
             id: rightHalfScreenWindow
-            visible: !mainViewModel.isSmallSizeMode
-            anchors.right: minimizeWindow.left
-            anchors.top: parent.top
-            anchors.topMargin: 1
-            height: 34
-            width: 40
-            overlayVisible: false
-            hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
-            iconPath: applicationThemeViewModel.iconRightHalfScreen
-            iconWidth: 24
-            iconHeight: 24
-            tooltipMessage: "Выставить размер окна - правая половина экрана"
-            onButtonPressed: {
-                let currentScreen = getCurrentScreen();
-                if (!currentScreen) return;
-
-                window.x = currentScreen.virtualX + currentScreen.width / 2;
-                window.width = currentScreen.width / 2;
-                window.y = 0;
-                window.height = currentScreen.desktopAvailableHeight;
-            }
-        }
-        IconButton {
-            id: minimizeWindow
-            visible: !mainViewModel.isSmallSizeMode
-            anchors.right: windowOrFullScreenSize.left
-            anchors.top: parent.top
-            anchors.topMargin: 1
-            height: 34
-            width: 40
-            overlayVisible: false
-            hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
-            iconPath: applicationThemeViewModel.iconMinimizeWindow
-            iconWidth: 24
-            iconHeight: 24
-            tooltipMessage: "Минимизировать окно в панель задач"
-            onButtonPressed: {
-                window.showMinimized();
-            }
-        }
-        IconButton {
-            id: windowOrFullScreenSize
             visible: !mainViewModel.isSmallSizeMode
             anchors.right: parent.right
             anchors.top: parent.top
@@ -319,37 +273,12 @@ ApplicationWindow {
             width: 40
             overlayVisible: false
             hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
-            iconPath: window.isShowFullScreenSize ? applicationThemeViewModel.iconNormalWindow : applicationThemeViewModel.iconMaximizeWindow
+            iconPath: /*applicationThemeViewModel.currentItems.iconMaximizeWindowField */applicationThemeViewModel.iconRightHalfScreen
             iconWidth: 24
             iconHeight: 24
-            tooltipMessage: window.isShowFullScreenSize ? "Вернуть окну нормальный размер" : "Открыть окно на полный экран"
+            tooltipMessage: "Перейти вперед в истории переходов"
             onButtonPressed: {
-                let currentScreen = getCurrentScreen();
-                if (!currentScreen) return;
 
-                if (normalWindowSizeX === 0 && normalWindowSizeY === 0 && normalWindowSizeWidth === 0 && normalWindowSizeHeight === 0) {
-                    window.isShowFullScreenSize = true;
-                    normalWindowSizeX = window.x;
-                    normalWindowSizeY = window.y;
-                    normalWindowSizeWidth = window.width;
-                    normalWindowSizeHeight = window.height;
-
-                    window.x = currentScreen.virtualX;
-                    window.width = currentScreen.width;
-                    window.y = currentScreen.virtualY;
-                    window.height = currentScreen.desktopAvailableHeight;
-                } else {
-                    window.isShowFullScreenSize = false;
-                    window.x = normalWindowSizeX;
-                    window.y = normalWindowSizeY;
-                    window.width = normalWindowSizeWidth;
-                    window.height = normalWindowSizeHeight;
-
-                    normalWindowSizeX = 0;
-                    normalWindowSizeY = 0;
-                    normalWindowSizeWidth = 0;
-                    normalWindowSizeHeight = 0;
-                }
             }
         }
     }

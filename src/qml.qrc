@@ -217,5 +217,7 @@
         <file>CustomStyle/RectangularGlow.qml</file>
         <file>CustomStyle/ElevationEffect.qml</file>
         <file>Controls/CorneredImage.qml</file>
+        <file>Assets/Icons/grayedleftmenu.svg</file>
+        <file>Assets/Icons/grayedrightmenu.svg</file>
     </qresource>
 </RCC>
