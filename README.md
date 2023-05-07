@@ -72,11 +72,11 @@ $ flatpak install --user anilibria.flatpak
 
 ### Готовые инструкции для сборки под дистрибутивы:
 
-[Ubuntu/Linux Mint 20](https://github.com/anilibria/anilibria-winmaclinux/blob/master/linuxmint20.md)
-[openSUSE](https://github.com/anilibria/anilibria-winmaclinux/blob/master/openSUSE.md)
-[Fedora](https://github.com/anilibria/anilibria-winmaclinux/blob/master/fedora.md)
-[macOS](https://github.com/anilibria/anilibria-winmaclinux/blob/master/macosbuild.md)
-[PostmarketOs](https://github.com/Jaymz665/anilibria-winmaclinux/blob/patch-1/postmarketos.md)
+[Ubuntu/Linux Mint 20](https://github.com/anilibria/anilibria-winmaclinux/blob/master/linuxmint20.md)  
+[openSUSE](https://github.com/anilibria/anilibria-winmaclinux/blob/master/openSUSE.md)  
+[Fedora](https://github.com/anilibria/anilibria-winmaclinux/blob/master/fedora.md)  
+[macOS](https://github.com/anilibria/anilibria-winmaclinux/blob/master/macosbuild.md)  
+[PostmarketOs](https://github.com/Jaymz665/anilibria-winmaclinux/blob/patch-1/postmarketos.md)  
 
 ### Для сборки необходимо:
 - Минимальная поддерживаемая версия Qt 5.13.1
