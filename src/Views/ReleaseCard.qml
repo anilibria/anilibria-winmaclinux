@@ -3,7 +3,6 @@ import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.3
 import QtQuick.Controls.Styles 1.4
 import QtQuick.Dialogs 1.2
-import QtGraphicalEffects 1.0
 import Anilibria.ListModels 1.0
 import "../Controls"
 
@@ -312,20 +311,14 @@ ColumnLayout {
                     leftPadding: 4
                     topPadding: 4
                     rightPadding: 4
-                    Image {
+
+                    CorneredImage {
                         id: cardPoster
                         visible: !mainViewModel.isSmallSizeMode
-                        source: localStorage.getReleasePosterPath(releasesViewModel.openedReleaseId, releasesViewModel.openedReleasePoster)
-                        fillMode: Image.PreserveAspectCrop
                         width: 280
                         height: 390
-                        sourceSize.width: 280
-                        sourceSize.height: 390
-                        mipmap: true
-                        layer.enabled: true
-                        layer.effect: OpacityMask {
-                            maskSource: cardMask
-                        }
+                        posterSource: localStorage.getReleasePosterPath(releasesViewModel.openedReleaseId, releasesViewModel.openedReleasePoster)
+                        emptyBorderBackground:  applicationThemeViewModel.currentItems.pageBackground
 
                         MouseArea {
                             anchors.fill: parent
@@ -333,14 +326,8 @@ ColumnLayout {
                                 releasePosterPreview.isVisible = true;
                             }
                         }
-
-                        Rectangle {
-                            anchors.centerIn: parent
-                            width: 280
-                            height: 390
-                            color: applicationThemeViewModel.currentItems.colorPosterFilter
-                        }
                     }
+
                     Column {
                         id: descriptionColumn
                         width: page.width - cardButtons.width - (!mainViewModel.isSmallSizeMode ? cardPoster.width : 0)

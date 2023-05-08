@@ -1,6 +1,5 @@
 import QtQuick 2.12
 import QtQuick.Controls 2.12
-import QtGraphicalEffects 1.0
 import QtQuick.Layouts 1.3
 import "../Controls"
 
@@ -236,35 +235,13 @@ Page {
                                 height: 236
                                 color: "transparent"
 
-                                Rectangle {
+                                CorneredImage {
                                     id: posterContainer
                                     anchors.horizontalCenter: parent.horizontalCenter
                                     width: 152
                                     height: 232
-                                    border.color: applicationThemeViewModel.posterBorder
-                                    border.width: 1
-                                    radius: 12
-
-                                    Image {
-                                        anchors.centerIn: parent
-                                        source: localStorage.getReleasePosterPath(id, poster)
-                                        sourceSize: Qt.size(150, 230)
-                                        fillMode: Image.PreserveAspectCrop
-                                        width: 150
-                                        height: 230
-                                        layer.enabled: true
-                                        layer.effect: OpacityMask {
-                                            maskSource: mask
-                                        }
-                                    }
-
-                                    Rectangle {
-                                        anchors.centerIn: parent
-                                        width: 150
-                                        height: 230
-                                        color: applicationThemeViewModel.currentItems.colorPosterFilter
-                                        radius: 12
-                                    }
+                                    posterSource: localStorage.getReleasePosterPath(id, poster)
+                                    emptyBorderBackground: applicationThemeViewModel.currentItems.pageBackground
                                 }
 
                                 Image {

@@ -19,7 +19,6 @@
 import QtQuick 2.12
 import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.3
-import QtGraphicalEffects 1.0
 import "../Controls"
 
 Page {
@@ -88,20 +87,24 @@ Page {
                             height: scrollView.cellHeight
 
                             Rectangle {
+                                anchors.left: imageItemContainer.left
+                                anchors.top: imageItemContainer.top
+                                anchors.leftMargin: 2
+                                anchors.topMargin: 2
+                                width: 480
+                                height: 290
+                                radius: 10
+                                color: applicationThemeViewModel.currentItems.panelBackgroundShadow
+                            }
+
+                            Rectangle {
+                                id: imageItemContainer
                                 anchors.centerIn: parent
                                 width: 480
                                 height: 290
                                 radius: 10
                                 color: applicationThemeViewModel.panelBackground
-                                layer.enabled: true
-                                layer.effect: DropShadow {
-                                    transparentBorder: true
-                                    horizontalOffset: 2
-                                    verticalOffset: 2
-                                    radius: 1
-                                    samples: 3
-                                    color: applicationThemeViewModel.panelBackgroundShadow
-                                }
+
                                 MouseArea {
                                     width: 480
                                     height: 290
@@ -117,15 +120,11 @@ Page {
                                     topPadding: 4
                                     rightPadding: 4
 
-                                    Image {
-                                        source: image
-                                        fillMode: Image.PreserveAspectCrop
+                                    CorneredImage {
                                         width: 472
                                         height: 240
-                                        layer.enabled: true
-                                        layer.effect: OpacityMask {
-                                            maskSource: mask
-                                        }
+                                        posterSource: image
+                                        emptyBorderBackground: applicationThemeViewModel.currentItems.panelBackground
                                     }
 
                                     PlainText {

@@ -20,7 +20,6 @@ import QtQuick 2.12
 import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.3
 import QtMultimedia 5.12
-import QtGraphicalEffects 1.0
 import "../Controls"
 import "Videoplayer"
 
@@ -1398,15 +1397,15 @@ Page {
         }
     }
 
-    Rectangle {
+    Item {
         id: releasePosterArea
         anchors.right: parent.right
         anchors.top: parent.top
         width: 182
         height: 272
-        border.color: applicationThemeViewModel.posterBorder
-        border.width: 1
-        radius: 12
+        //border.color: applicationThemeViewModel.posterBorder
+        //border.width: 0
+        //radius: 12
         Image {
             anchors.centerIn: parent
             source: localStorage.getReleasePosterPath(onlinePlayerViewModel.selectedRelease, onlinePlayerViewModel.releasePoster)
@@ -1416,10 +1415,6 @@ Page {
             mipmap: true
             sourceSize.width: 180
             sourceSize.height: 270
-            layer.enabled: true
-            layer.effect: OpacityMask {
-                maskSource: mask
-            }
         }
         MouseArea {
             anchors.fill: parent
@@ -1471,22 +1466,17 @@ Page {
         Rectangle {
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.bottom: parent.bottom
-            anchors.bottomMargin: 2
+            anchors.bottomMargin: 4
             width: 182
             height: 272
             border.color: applicationThemeViewModel.posterBorder
             border.width: 1
-            radius: 12
             Image {
                 anchors.centerIn: parent
                 source: onlinePlayerViewModel.nextReleasePoster
                 fillMode: Image.PreserveAspectCrop
                 width: 180
                 height: 270
-                layer.enabled: true
-                layer.effect: OpacityMask {
-                    maskSource: mask
-                }
             }
         }
     }
