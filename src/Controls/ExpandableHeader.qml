@@ -59,7 +59,6 @@ Rectangle {
             height: root.height - 4
             iconWidth: 22
             iconHeight: 22
-            overlayVisible: false
             iconPath: applicationThemeViewModel.currentItems.iconMyAnilibriaButtonSortUp
             onButtonPressed: {
                 moveSection(1);
@@ -73,7 +72,6 @@ Rectangle {
             height: root.height - 4
             iconWidth: 22
             iconHeight: 22
-            overlayVisible: false
             iconPath: applicationThemeViewModel.currentItems.iconMyAnilibriaButtonSortBottom
             onButtonPressed: {
                 moveSection(-1);

@@ -33,7 +33,6 @@ ColumnLayout {
                 height: 40
                 width: 40
                 hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
-                overlayVisible: false
                 iconPath: applicationThemeViewModel.currentItems.iconReleaseCardClose
                 iconWidth: 28
                 iconHeight: 28
@@ -46,7 +45,6 @@ ColumnLayout {
                 height: 40
                 width: 40
                 hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
-                overlayVisible: false
                 iconPath: applicationThemeViewModel.currentItems.iconReleaseCardCopy
                 iconWidth: 26
                 iconHeight: 26
@@ -102,7 +100,6 @@ ColumnLayout {
                 width: 40
                 hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
                 iconPath: applicationThemeViewModel.currentItems.iconSeen
-                overlayVisible: false
                 iconWidth: 26
                 iconHeight: 26
                 tooltipMessage: "Управление просмотренным и видимостью релиза"
@@ -153,7 +150,6 @@ ColumnLayout {
             IconButton {
                 height: 40
                 width: 40
-                overlayVisible: false
                 hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
                 iconPath: applicationThemeViewModel.currentItems.iconFavorites
                 iconWidth: 26
@@ -188,7 +184,6 @@ ColumnLayout {
             IconButton {
                 height: 40
                 width: 40
-                overlayVisible: false
                 hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
                 iconPath: applicationThemeViewModel.currentItems.iconReleaseCardExternal
                 iconWidth: 26
@@ -254,7 +249,6 @@ ColumnLayout {
             IconButton {
                 height: 40
                 width: 40
-                overlayVisible: false
                 hoverColor: applicationThemeViewModel.currentItems.filterIconButtonHoverColor
                 iconPath: applicationThemeViewModel.currentItems.iconReleaseCatalogSettings
                 iconWidth: 26

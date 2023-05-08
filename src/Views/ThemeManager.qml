@@ -32,7 +32,6 @@ Page {
             Column {
                 LeftPanelIconButton {
                     iconPath: applicationThemeViewModel.currentItems.iconInfo
-                    overlayVisible: false
                     iconWidth: 29
                     iconHeight: 29
                     tooltipMessage: "Открыть ссылки на обучающие материалы"
@@ -69,7 +68,6 @@ Page {
 
                 LeftPanelIconButton {
                     iconPath: applicationThemeViewModel.currentItems.iconReleaseCatalogSettings
-                    overlayVisible: false
                     iconWidth: 29
                     iconHeight: 29
                     tooltipMessage: "Настройки станицы Менеджер Тем"
@@ -132,7 +130,6 @@ Page {
                     anchors.verticalCenter: parent.verticalCenter
                     height: 26
                     width: 26
-                    overlayVisible: false
                     hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
                     iconWidth: 22
                     iconHeight: 22
@@ -234,7 +231,6 @@ Page {
                                         FilterPanelIconButton {
                                             id: deleteLocalButton
                                             iconPath: applicationThemeViewModel.currentItems.iconDeleteItem
-                                            overlayVisible: false
                                             tooltipMessage: "Удалить тему"
                                             onButtonPressed: {
                                                 deleteLocalThemeConfirm.themeName = title;
@@ -373,7 +369,6 @@ Page {
                                             id: downloadButton
                                             visible: !isDownloaded
                                             iconPath: applicationThemeViewModel.currentItems.iconDownloadTheme
-                                            overlayVisible: false
                                             tooltipMessage: "Установить тему"
                                             onButtonPressed: {
                                                 applicationThemeViewModel.importThemeFromExternal(themeIndex);
@@ -381,7 +376,6 @@ Page {
                                         }
                                         /*FilterPanelIconButton {
                                             iconPath: assetsLocation.iconsPath + "updated.svg"
-                                            overlayVisible: false
                                             tooltipMessage: "Обновить тему"
                                             onButtonPressed: {
 
@@ -391,7 +385,6 @@ Page {
                                             id: deleteDownloadedButton
                                             visible: isDownloaded
                                             iconPath: applicationThemeViewModel.currentItems.iconDeleteItem
-                                            overlayVisible: false
                                             tooltipMessage: "Удалить тему"
                                             onButtonPressed: {
                                                 deleteExternalThemeConfirm.externalId = externalId;
@@ -773,7 +766,6 @@ Page {
                                             anchors.leftMargin: 10
                                             anchors.verticalCenter: parent.verticalCenter
                                             iconPath: isDefined ? applicationThemeViewModel.currentItems.iconDeleteItem : applicationThemeViewModel.currentItems.iconMyAnilibriaButtonPlus
-                                            overlayVisible: false
                                             tooltipMessage: tooltipOverride
                                             onButtonPressed: {
                                                 applicationThemeViewModel.fieldList.toggleDefinedField(identifier);
@@ -797,7 +789,6 @@ Page {
                                             iconHeight: 18
                                             anchors.verticalCenter: parent.verticalCenter
                                             iconPath: applicationThemeViewModel.currentItems.iconMainMenuThemeManager
-                                            overlayVisible: false
                                             tooltipMessage: "Выбрать файл изображения для иконки"
                                             onButtonPressed: {
                                                 openIconFileDialog.selectedIconIndex = identifier;
@@ -893,7 +884,6 @@ Page {
                                     width: 30
                                     hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
                                     iconPath: applicationThemeViewModel.currentItems.iconBackToTop
-                                    overlayVisible: false
                                     iconWidth: 24
                                     iconHeight: 24
                                     tooltipMessage: "Вернуться в начало списка полей"

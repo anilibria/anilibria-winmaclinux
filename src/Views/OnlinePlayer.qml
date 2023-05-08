@@ -408,7 +408,6 @@ Page {
                                     visible: !isGroup
                                     hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
                                     iconPath: isSeen ? applicationThemeViewModel.currentItems.iconPlayerSeen : applicationThemeViewModel.currentItems.iconPlayerUnseen
-                                    overlayVisible: false
                                     iconWidth: 22
                                     iconHeight: 22
                                     onButtonPressed: {
@@ -424,7 +423,6 @@ Page {
                                     visible: !isGroup
                                     hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
                                     iconPath: applicationThemeViewModel.currentItems.iconPlayerExternal
-                                    overlayVisible: false
                                     iconWidth: 22
                                     iconHeight: 22
                                     onButtonPressed: {
@@ -747,7 +745,6 @@ Page {
                     IconButton {
                         width: 40
                         height: 40
-                        overlayVisible: false
                         hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
                         iconPath: onlinePlayerViewModel.muted ? applicationThemeViewModel.currentItems.iconPlayerMute : applicationThemeViewModel.currentItems.iconPlayerUnMute
                         iconWidth: 24
@@ -780,7 +777,6 @@ Page {
                         visible: !mainViewModel.isSmallSizeMode
                         width: 40
                         height: 40
-                        overlayVisible: false
                         hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
                         iconPath: applicationThemeViewModel.currentItems.iconPlayerInfo
                         iconWidth: 24
@@ -830,7 +826,6 @@ Page {
                         width: 40
                         height: 40
                         visible: onlinePlayerViewModel.videoDuration > 0 && !mainViewModel.isSmallSizeMode
-                        overlayVisible: false
                         hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
                         iconPath: applicationThemeViewModel.currentItems.iconPlayerJumpLeft
                         iconWidth: 24
@@ -844,7 +839,6 @@ Page {
                         id: prevButton
                         width: 40
                         height: 40
-                        overlayVisible: false
                         hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
                         iconPath: applicationThemeViewModel.currentItems.iconPlayerPreviousSeria
                         iconWidth: 24
@@ -859,7 +853,6 @@ Page {
                         visible: false
                         width: 40
                         height: 40
-                        overlayVisible: false
                         hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
                         iconPath: applicationThemeViewModel.currentItems.iconPlayerPlay
                         iconWidth: 24
@@ -873,7 +866,6 @@ Page {
                         visible: false
                         width: 40
                         height: 40
-                        overlayVisible: false
                         hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
                         iconPath: applicationThemeViewModel.currentItems.iconPlayerPause
                         iconWidth: 24
@@ -886,7 +878,6 @@ Page {
                         id: nextButton
                         width: 40
                         height: 40
-                        overlayVisible: false
                         hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
                         iconPath: applicationThemeViewModel.currentItems.iconPlayerNextSeria
                         iconWidth: 24
@@ -900,7 +891,6 @@ Page {
                         width: 40
                         height: 40
                         visible: onlinePlayerViewModel.videoDuration > 0 && !mainViewModel.isSmallSizeMode
-                        overlayVisible: false
                         hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
                         iconPath: applicationThemeViewModel.currentItems.iconPlayerJumpRight
                         iconWidth: 24
@@ -923,7 +913,6 @@ Page {
                         width: 40
                         height: 40
                         visible: !autoTopMost.checked
-                        overlayVisible: false
                         hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
                         iconPath: applicationThemeViewModel.currentItems.iconPlayerRefresh
                         iconWidth: 29
@@ -939,7 +928,6 @@ Page {
                         width: 40
                         height: 40
                         visible: !autoTopMost.checked && !mainViewModel.isSmallSizeMode
-                        overlayVisible: false
                         hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
                         iconPath: applicationThemeViewModel.currentItems.iconPlayerTopMost
                         iconWidth: 29
@@ -955,7 +943,6 @@ Page {
                         visible: !mainViewModel.isSmallSizeMode
                         width: 40
                         height: 40
-                        overlayVisible: false
                         hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
                         iconPath: applicationThemeViewModel.currentItems.iconPlayerRemote
                         iconWidth: 24
@@ -1071,7 +1058,6 @@ Page {
                         id: optionsButton
                         width: 40
                         height: 40
-                        overlayVisible: false
                         hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
                         iconPath: applicationThemeViewModel.currentItems.iconPlayerSettings
                         iconWidth: 24
@@ -1313,7 +1299,6 @@ Page {
                         visible: !mainViewModel.isSmallSizeMode
                         width: 40
                         height: 40
-                        overlayVisible: false
                         hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
                         iconPath: applicationThemeViewModel.currentItems.iconPlayerCropMode
                         iconWidth: 29
@@ -1336,7 +1321,6 @@ Page {
                         id: fullScreenButton
                         width: 40
                         height: 40
-                        overlayVisible: false
                         hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
                         iconPath: applicationThemeViewModel.currentItems.iconPlayerFullscreen
                         iconWidth: 29

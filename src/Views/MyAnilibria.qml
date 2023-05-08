@@ -82,7 +82,6 @@ Page {
                                 width: 20
                                 height: 20
                                 iconPath: applicationThemeViewModel.currentItems.iconClearTextControl
-                                overlayVisible: false
                                 iconWidth: 16
                                 iconHeight: 16
                                 tooltipMessage: "Очистить фильтр"
@@ -97,7 +96,6 @@ Page {
                             anchors.right: closeAllButton.left
                             height: 45
                             width: 40
-                            overlayVisible: false
                             iconPath: applicationThemeViewModel.currentItems.iconMyAnilibriaButtonPlus
                             iconWidth: 28
                             iconHeight: 28
@@ -112,7 +110,6 @@ Page {
                             anchors.right: sectionVisibilities.left
                             height: 45
                             width: 40
-                            overlayVisible: false
                             iconPath: applicationThemeViewModel.currentItems.iconMyAnilibriaButtonMinus
                             iconWidth: 28
                             iconHeight: 28
@@ -127,7 +124,6 @@ Page {
                             anchors.right: parent.right
                             height: 45
                             width: 40
-                            overlayVisible: false
                             iconPath: applicationThemeViewModel.currentItems.iconMyAnilibriaButtonSortSections
                             iconWidth: 28
                             iconHeight: 28

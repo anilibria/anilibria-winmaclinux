@@ -157,7 +157,6 @@ ApplicationWindow {
         IconButton {
             id: goToReleasePage
             visible: !mainViewModel.isSmallSizeMode
-            overlayVisible: false
             anchors.left: openDrawerButton.right
             anchors.leftMargin: 1
             anchors.top: parent.top
@@ -176,7 +175,6 @@ ApplicationWindow {
         IconButton {
             id: goToOnlineVideoPage
             visible: !mainViewModel.isSmallSizeMode
-            overlayVisible: false
             anchors.left: goToReleasePage.right
             anchors.top: parent.top
             anchors.topMargin: 1
@@ -194,7 +192,6 @@ ApplicationWindow {
         IconButton {
             id: goToCinemaHall
             visible: !mainViewModel.isSmallSizeMode
-            overlayVisible: false
             anchors.left: goToOnlineVideoPage.right
             anchors.top: parent.top
             anchors.topMargin: 1
@@ -212,7 +209,6 @@ ApplicationWindow {
         IconButton {
             id: goToReleaseSeries
             visible: !mainViewModel.isSmallSizeMode
-            overlayVisible: false
             anchors.left: goToCinemaHall.right
             anchors.top: parent.top
             anchors.topMargin: 1
@@ -230,7 +226,6 @@ ApplicationWindow {
         IconButton {
             id: goToMyAnilibria
             visible: !mainViewModel.isSmallSizeMode
-            overlayVisible: false
             anchors.left: goToReleaseSeries.right
             anchors.top: parent.top
             anchors.topMargin: 1
@@ -318,7 +313,6 @@ ApplicationWindow {
                 width: 16
                 hoverColor: applicationThemeViewModel.filterIconButtonColor
                 iconPath: notificationViewModel.countNotifications > 0 ? applicationThemeViewModel.currentItems.iconNotificationSelected : applicationThemeViewModel.currentItems.iconNotification
-                overlayVisible: false
                 iconWidth: 14
                 iconHeight: 14
                 onButtonPressed: {
@@ -573,7 +567,6 @@ ApplicationWindow {
                 height: 40
                 width: 40
                 hoverColor: Qt.rgba(0, 0, 0, .1)
-                overlayVisible: false
                 iconPath: "Assets/Icons/logout.svg"
                 iconWidth: 28
                 iconHeight: 28
@@ -955,7 +948,6 @@ ApplicationWindow {
                     anchors.topMargin: 4
                     hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
                     iconPath: applicationThemeViewModel.currentItems.iconCloseWindow
-                    overlayVisible: false
                     iconWidth: 14
                     iconHeight: 14
                     onButtonPressed: {
@@ -1026,7 +1018,6 @@ ApplicationWindow {
                                     anchors.rightMargin: 4
                                     anchors.topMargin: 4
                                     hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
-                                    overlayVisible: false
                                     iconPath: applicationThemeViewModel.currentItems.iconCloseWindow
                                     iconWidth: 14
                                     iconHeight: 14

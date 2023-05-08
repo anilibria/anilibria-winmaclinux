@@ -233,7 +233,6 @@ Page {
 
                                     FilterPanelIconButton {
                                         iconPath: applicationThemeViewModel.currentItems.iconFavorites
-                                        overlayVisible: false
                                         tooltipMessage: "Открыть меню для операций по добавлению/удалению всей группы в избранное"
                                         onButtonPressed: {
                                             favoriteSeriesMenu.open();
@@ -270,7 +269,6 @@ Page {
                                     }
                                     FilterPanelIconButton {
                                         iconPath: applicationThemeViewModel.currentItems.iconMainMenuCinemahall
-                                        overlayVisible: false
                                         tooltipMessage: "Открыть меню для операций по добавлению/удалению всей группы в кинозал"
                                         onButtonPressed: {
                                             cinemahallSeriesMenu.open();
@@ -293,7 +291,6 @@ Page {
                                     }
                                     FilterPanelIconButton {
                                         iconPath: applicationThemeViewModel.currentItems.iconMainMenuVideoplayer
-                                        overlayVisible: false
                                         tooltipMessage: "Начать просмотр всей группы в видеоплеере"
                                         onButtonPressed: {
                                             mainViewModel.selectPage("videoplayer");

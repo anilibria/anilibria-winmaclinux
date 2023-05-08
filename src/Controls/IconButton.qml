@@ -18,7 +18,6 @@
 
 import QtQuick 2.12
 import QtQuick.Controls 2.12
-import QtGraphicalEffects 1.0
 import CustomStyle 1.0
 
 Item {
@@ -26,7 +25,6 @@ Item {
     property alias iconPath: iconImage.source
     property alias iconWidth: iconImage.width
     property alias iconHeight: iconImage.height
-    property bool overlayVisible: false
     property string hoverColor: "lightgray"
     property bool hovered: false
     property alias showCrossIcon: crossIcon.visible

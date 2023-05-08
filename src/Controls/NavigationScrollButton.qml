@@ -14,7 +14,6 @@ Rectangle {
         height: 40
         width: 40
         hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
-        overlayVisible: false
         iconPath: root.isLeft ? applicationThemeViewModel.currentItems.iconNavigationButtonLeft : applicationThemeViewModel.currentItems.iconNavigationButtonRight
         iconWidth: 30
         iconHeight: 30

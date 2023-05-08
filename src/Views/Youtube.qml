@@ -163,7 +163,6 @@ Page {
                     tooltipMessage: "Вернуться в начало списка релизов"
                     visible: scrollView.contentY > 100
                     iconPath: applicationThemeViewModel.currentItems.iconBackToTop
-                    overlayVisible: false
                     iconWidth: 24
                     iconHeight: 24
                     onButtonPressed: {

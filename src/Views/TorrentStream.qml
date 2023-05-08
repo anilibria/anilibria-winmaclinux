@@ -36,7 +36,6 @@ Page {
                     iconPath: applicationThemeViewModel.currentItems.iconReleaseCatalogSynchronization
                     iconWidth: 34
                     iconHeight: 34
-                    overlayVisible: false
                     tooltipMessage: "Обновить список"
                     onButtonPressed: {
                         torrentNotifierViewModel.startGetTorrentData();
@@ -47,7 +46,6 @@ Page {
                     iconPath: applicationThemeViewModel.currentItems.iconDeleteItem
                     iconWidth: 29
                     iconHeight: 29
-                    overlayVisible: false
                     tooltipMessage: "Удалить все торренты и скачанные файлы"
                     onButtonPressed: {
                         torrentNotifierViewModel.clearAllData();
@@ -58,7 +56,6 @@ Page {
                     iconPath: applicationThemeViewModel.currentItems.iconReleaseCatalogSettings
                     iconWidth: 29
                     iconHeight: 29
-                    overlayVisible: false
                     tooltipMessage: "Настройки страницы TorrentStream"
                     onButtonPressed: {
                         torrentStreamPopup.open();
@@ -202,7 +199,6 @@ Page {
 
                                     FilterPanelIconButton {
                                         iconPath: assetsLocation.iconsPath + "contextmenu.svg"
-                                        overlayVisible: false
                                         tooltipMessage: "Открыть меню операций доступных для торрента"
                                         onButtonPressed: {
                                             torrentActionsMenu.open();
@@ -235,7 +231,6 @@ Page {
                                     }
                                     FilterPanelIconButton {
                                         iconPath: assetsLocation.iconsPath + "videoplayermenu.svg"
-                                        overlayVisible: false
                                         tooltipMessage: "Начать просмотр скачанного торрента"
                                         onButtonPressed: {
                                             if (filesDownloaded < filesCount) {

@@ -213,7 +213,6 @@ Page {
                                     iconWidth: 20
                                     iconHeight: 20
                                     hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
-                                    overlayVisible: false
                                     iconPath: assetsLocation.iconsPath + "contextmenu.svg"
                                     onButtonPressed: {
                                         releasesViewModel.cinemahall.openedItemIndex = releaseNumber - 1;
