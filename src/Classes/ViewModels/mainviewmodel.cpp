@@ -71,6 +71,8 @@ void MainViewModel::setIsSmallSizeMode(bool isSmallSizeMode) noexcept
 
 void MainViewModel::selectPage(const QString& pageId)
 {
+    if (pageId == m_currentPageId) return;
+
     selectToPage(pageId);
 
     if (!m_history.isEmpty() && m_historyPosition != m_history.count() - 1) m_history.erase(m_history.begin() + (m_historyPosition + 1), m_history.end());
