@@ -20,7 +20,6 @@ import QtQuick 2.12
 import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.3
 import QtMultimedia 5.12
-import QtGraphicalEffects 1.0
 import "../Controls"
 import "Videoplayer"
 
@@ -408,7 +407,6 @@ Page {
                                     visible: !isGroup
                                     hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
                                     iconPath: isSeen ? applicationThemeViewModel.currentItems.iconPlayerSeen : applicationThemeViewModel.currentItems.iconPlayerUnseen
-                                    overlayVisible: false
                                     iconWidth: 22
                                     iconHeight: 22
                                     onButtonPressed: {
@@ -424,7 +422,6 @@ Page {
                                     visible: !isGroup
                                     hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
                                     iconPath: applicationThemeViewModel.currentItems.iconPlayerExternal
-                                    overlayVisible: false
                                     iconWidth: 22
                                     iconHeight: 22
                                     onButtonPressed: {
@@ -748,19 +745,6 @@ Page {
                         width: 40
                         height: 40
                         hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
-                        overlayVisible: false
-                        iconPath: applicationThemeViewModel.currentItems.iconPlayerDrawer
-                        iconWidth: 29
-                        iconHeight: 29
-                        onButtonPressed: {
-                            drawer.open();
-                        }
-                    }
-                    IconButton {
-                        width: 40
-                        height: 40
-                        overlayVisible: false
-                        hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
                         iconPath: onlinePlayerViewModel.muted ? applicationThemeViewModel.currentItems.iconPlayerMute : applicationThemeViewModel.currentItems.iconPlayerUnMute
                         iconWidth: 24
                         iconHeight: 24
@@ -792,7 +776,6 @@ Page {
                         visible: !mainViewModel.isSmallSizeMode
                         width: 40
                         height: 40
-                        overlayVisible: false
                         hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
                         iconPath: applicationThemeViewModel.currentItems.iconPlayerInfo
                         iconWidth: 24
@@ -842,7 +825,6 @@ Page {
                         width: 40
                         height: 40
                         visible: onlinePlayerViewModel.videoDuration > 0 && !mainViewModel.isSmallSizeMode
-                        overlayVisible: false
                         hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
                         iconPath: applicationThemeViewModel.currentItems.iconPlayerJumpLeft
                         iconWidth: 24
@@ -856,7 +838,6 @@ Page {
                         id: prevButton
                         width: 40
                         height: 40
-                        overlayVisible: false
                         hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
                         iconPath: applicationThemeViewModel.currentItems.iconPlayerPreviousSeria
                         iconWidth: 24
@@ -871,7 +852,6 @@ Page {
                         visible: false
                         width: 40
                         height: 40
-                        overlayVisible: false
                         hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
                         iconPath: applicationThemeViewModel.currentItems.iconPlayerPlay
                         iconWidth: 24
@@ -885,7 +865,6 @@ Page {
                         visible: false
                         width: 40
                         height: 40
-                        overlayVisible: false
                         hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
                         iconPath: applicationThemeViewModel.currentItems.iconPlayerPause
                         iconWidth: 24
@@ -898,7 +877,6 @@ Page {
                         id: nextButton
                         width: 40
                         height: 40
-                        overlayVisible: false
                         hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
                         iconPath: applicationThemeViewModel.currentItems.iconPlayerNextSeria
                         iconWidth: 24
@@ -912,7 +890,6 @@ Page {
                         width: 40
                         height: 40
                         visible: onlinePlayerViewModel.videoDuration > 0 && !mainViewModel.isSmallSizeMode
-                        overlayVisible: false
                         hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
                         iconPath: applicationThemeViewModel.currentItems.iconPlayerJumpRight
                         iconWidth: 24
@@ -935,7 +912,6 @@ Page {
                         width: 40
                         height: 40
                         visible: !autoTopMost.checked
-                        overlayVisible: false
                         hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
                         iconPath: applicationThemeViewModel.currentItems.iconPlayerRefresh
                         iconWidth: 29
@@ -951,7 +927,6 @@ Page {
                         width: 40
                         height: 40
                         visible: !autoTopMost.checked && !mainViewModel.isSmallSizeMode
-                        overlayVisible: false
                         hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
                         iconPath: applicationThemeViewModel.currentItems.iconPlayerTopMost
                         iconWidth: 29
@@ -967,7 +942,6 @@ Page {
                         visible: !mainViewModel.isSmallSizeMode
                         width: 40
                         height: 40
-                        overlayVisible: false
                         hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
                         iconPath: applicationThemeViewModel.currentItems.iconPlayerRemote
                         iconWidth: 24
@@ -1083,7 +1057,6 @@ Page {
                         id: optionsButton
                         width: 40
                         height: 40
-                        overlayVisible: false
                         hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
                         iconPath: applicationThemeViewModel.currentItems.iconPlayerSettings
                         iconWidth: 24
@@ -1325,7 +1298,6 @@ Page {
                         visible: !mainViewModel.isSmallSizeMode
                         width: 40
                         height: 40
-                        overlayVisible: false
                         hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
                         iconPath: applicationThemeViewModel.currentItems.iconPlayerCropMode
                         iconWidth: 29
@@ -1348,7 +1320,6 @@ Page {
                         id: fullScreenButton
                         width: 40
                         height: 40
-                        overlayVisible: false
                         hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
                         iconPath: applicationThemeViewModel.currentItems.iconPlayerFullscreen
                         iconWidth: 29
@@ -1369,64 +1340,6 @@ Page {
             anchors.bottom: parent.bottom
             anchors.left: parent.left
             anchors.right: parent.right
-        }
-
-        MouseArea {
-            id: rightbottomWindowResize
-            enabled: applicationSettings.useCustomToolbar
-            width: 3
-            height: 50
-            anchors.right: parent.right
-            anchors.bottom: parent.bottom
-            cursorShape: Qt.SizeFDiagCursor
-            onPressed: {
-                window.previousX = mouseX
-                window.previousY = mouseY
-            }
-            onMouseXChanged: {
-                window.width += mouseX - window.previousX;
-            }
-            onMouseYChanged: {
-                window.height += mouseY - window.previousY;
-            }
-        }
-
-        MouseArea {
-            id: leftbottomWindowResize
-            enabled: applicationSettings.useCustomToolbar
-            width: 3
-            height: 50
-            anchors.left: parent.left
-            anchors.bottom: parent.bottom
-            cursorShape: Qt.SizeBDiagCursor
-            onPressed: {
-                window.previousX = mouseX
-                window.previousY = mouseY
-            }
-            onMouseXChanged: {
-                const delta = mouseX - window.previousX;
-                window.x = window.x + delta;
-                window.width = window.width - delta;
-            }
-            onMouseYChanged: {
-                window.height += mouseY - window.previousY;
-            }
-        }
-
-        MouseArea {
-            id: onlinePlayebottomWindowResize
-            enabled: applicationSettings.useCustomToolbar
-            height: 3
-            anchors.bottom: parent.bottom
-            anchors.left: parent.left
-            anchors.right: parent.right
-            cursorShape: Qt.SizeVerCursor
-            onPressed: {
-                window.previousY = mouseY;
-            }
-            onMouseYChanged: {
-                window.height += mouseY - window.previousY;
-            }
         }
 
         Behavior on opacity {
@@ -1484,15 +1397,15 @@ Page {
         }
     }
 
-    Rectangle {
+    Item {
         id: releasePosterArea
         anchors.right: parent.right
         anchors.top: parent.top
         width: 182
         height: 272
-        border.color: applicationThemeViewModel.posterBorder
-        border.width: 1
-        radius: 12
+        //border.color: applicationThemeViewModel.posterBorder
+        //border.width: 0
+        //radius: 12
         Image {
             anchors.centerIn: parent
             source: localStorage.getReleasePosterPath(onlinePlayerViewModel.selectedRelease, onlinePlayerViewModel.releasePoster)
@@ -1502,10 +1415,6 @@ Page {
             mipmap: true
             sourceSize.width: 180
             sourceSize.height: 270
-            layer.enabled: true
-            layer.effect: OpacityMask {
-                maskSource: mask
-            }
         }
         MouseArea {
             anchors.fill: parent
@@ -1557,26 +1466,20 @@ Page {
         Rectangle {
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.bottom: parent.bottom
-            anchors.bottomMargin: 2
+            anchors.bottomMargin: 4
             width: 182
             height: 272
             border.color: applicationThemeViewModel.posterBorder
             border.width: 1
-            radius: 12
             Image {
                 anchors.centerIn: parent
                 source: onlinePlayerViewModel.nextReleasePoster
                 fillMode: Image.PreserveAspectCrop
                 width: 180
                 height: 270
-                layer.enabled: true
-                layer.effect: OpacityMask {
-                    maskSource: mask
-                }
             }
         }
     }
-
 
     Rectangle {
         width: 80

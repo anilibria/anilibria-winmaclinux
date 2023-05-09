@@ -21,7 +21,6 @@ import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.3
 import QtQuick.Controls.Styles 1.4
 import QtQuick.Dialogs 1.2
-import QtGraphicalEffects 1.0
 import Anilibria.ListModels 1.0
 import "../Controls"
 
@@ -50,7 +49,6 @@ Page {
     signal navigateTo()
     signal watchCinemahall()
     signal watchMultipleReleases()
-    signal setWebViewUrl()
 
     Keys.onPressed: {
         if (event.key === Qt.Key_Escape) {
@@ -75,10 +73,6 @@ Page {
     }
 
     onRefreshReleaseSchedules: {
-    }
-
-    onSetWebViewUrl: {
-        //REMOVE!!!!
     }
 
     background: Rectangle {
@@ -122,21 +116,9 @@ Page {
                 width: compactModeSwitch.checked && !releasesViewModel.showSidePanel ? 0 : 40
 
                 LeftPanelIconButton {
-                    iconPath: applicationThemeViewModel.iconMainMenu
-                    iconWidth: 28
-                    iconHeight: 28
-                    overlayVisible: false
-                    tooltipMessage: "Открыть меню приложения"
-                    onButtonPressed: {
-                        drawer.open();
-                    }
-                }
-
-                LeftPanelIconButton {
                     iconPath: applicationThemeViewModel.currentItems.iconReleaseCatalogSynchronization
                     iconWidth: 34
                     iconHeight: 34
-                    overlayVisible: false
                     tooltipMessage: "Выполнить синхронизацию релизов"
                     onButtonPressed: {
                         if (releasesViewModel.synchronizationEnabled) return;
@@ -150,7 +132,6 @@ Page {
                     iconPath: applicationThemeViewModel.currentItems.iconFavorites
                     iconWidth: 29
                     iconHeight: 29
-                    overlayVisible: false
                     tooltipMessage: "Добавить или удалить релизы из избранного"
                     onButtonPressed: {
                         favoriteMenu.open();
@@ -181,7 +162,6 @@ Page {
                 }
                 LeftPanelIconButton {
                     iconPath: applicationThemeViewModel.currentItems.iconSeen
-                    overlayVisible: false
                     iconWidth: 29
                     iconHeight: 29
                     tooltipMessage: "Отметить релизы как просмотренные или не просмотренные"
@@ -243,7 +223,6 @@ Page {
                 }
                 LeftPanelIconButton {
                     iconPath: applicationThemeViewModel.iconMainMenuCinemahall
-                    overlayVisible: false
                     showCrossIcon: page.showButtonVisibleChanger && page.hideCinemahallButton
                     visible: page.showButtonVisibleChanger || !page.hideCinemahallButton
                     tooltipMessage: "Управление кинозалом"
@@ -337,7 +316,6 @@ Page {
                 }
                 LeftPanelIconButton {
                     iconPath: applicationThemeViewModel.currentItems.iconReleaseCatalogSearch
-                    overlayVisible: false
                     iconWidth: 29
                     iconHeight: 29
                     showCrossIcon: page.showButtonVisibleChanger && page.hideFilterButton
@@ -653,7 +631,6 @@ Page {
                     iconPath: applicationThemeViewModel.currentItems.iconReleaseCatalogNotification
                     iconWidth: 29
                     iconHeight: 29
-                    overlayVisible: false
                     showCrossIcon: page.showButtonVisibleChanger && page.hideNotificationButton
                     tooltipMessage: "Посмотреть уведомления о непросмотренных изменениях в релизах"
                     visible: page.showButtonVisibleChanger || !page.hideNotificationButton
@@ -791,7 +768,6 @@ Page {
                     iconPath: applicationThemeViewModel.currentItems.iconReleaseCatalogRandom
                     iconWidth: 32
                     iconHeight: 32
-                    overlayVisible: false
                     showCrossIcon: page.showButtonVisibleChanger && page.hideRandomReleaseButton
                     visible: page.showButtonVisibleChanger || !page.hideRandomReleaseButton
                     tooltipMessage: "Открыть карточку релиза выбранного случайным образом"
@@ -838,7 +814,6 @@ Page {
                     iconPath: applicationThemeViewModel.currentItems.iconReleaseCatalogSettings
                     iconWidth: 29
                     iconHeight: 29
-                    overlayVisible: false
                     tooltipMessage: "Настройки страницы Каталог релизов"
                     onButtonPressed: {
                         releaseSettingsPopup.open();
@@ -918,13 +893,13 @@ Page {
                                 onCheckedChanged: {
                                     applicationSettings.useCustomToolbar = checked;
 
-                                    if (applicationSettings.useCustomToolbar) {
-                                        window.flags = Qt.FramelessWindowHint | Qt.Window | Qt.WindowMinimizeButtonHint;
+                                    /*if (applicationSettings.useCustomToolbar) {
+                                        //window.flags = Qt.FramelessWindowHint | Qt.Window | Qt.WindowMinimizeButtonHint;
                                         toolBar.visible = true;
                                     } else {
-                                        window.flags = 1;
+                                        //window.flags = 1;
                                         toolBar.visible = false;
-                                    }
+                                    }*/
                                 }
                             }
 
@@ -1041,7 +1016,6 @@ Page {
 
                 LeftPanelIconButton {
                     iconPath: applicationThemeViewModel.currentItems.iconInfo
-                    overlayVisible: false
                     iconWidth: 29
                     iconHeight: 29
                     showCrossIcon: page.showButtonVisibleChanger && page.hideInfoButton
@@ -1088,7 +1062,6 @@ Page {
                 }
                 LeftPanelIconButton {
                     iconPath: applicationThemeViewModel.currentItems.iconReleaseCatalogHidedButtons
-                    overlayVisible: false
                     iconWidth: 29
                     iconHeight: 29
                     backgroundColor: page.showButtonVisibleChanger ? "#8868b0ab" : "transparent"
@@ -1226,7 +1199,6 @@ Page {
                                 width: 20
                                 height: 20
                                 iconPath: applicationThemeViewModel.currentItems.iconClearTextControl
-                                overlayVisible: false
                                 iconWidth: 16
                                 iconHeight: 16
                                 tooltipMessage: "Очистить фильтр по названию"
@@ -1241,7 +1213,6 @@ Page {
                         FilterPanelIconButton {
                             visible: mainViewModel.isSmallSizeMode
                             iconPath: applicationThemeViewModel.currentItems.iconReleaseCatalogAllReleases
-                            overlayVisible: false
                             tooltipMessage: "Выберите раздел"
                             onButtonPressed: {
                                 allSectionsMenu.open();
@@ -1268,7 +1239,6 @@ Page {
                         FilterPanelIconButton {
                             visible: !mainViewModel.isSmallSizeMode
                             iconPath: applicationThemeViewModel.currentItems.iconReleaseCatalogAllReleases
-                            overlayVisible: false
                             tooltipMessage: "Все релизы"
                             onButtonPressed: {
                                 changeSection(0);
@@ -1277,7 +1247,6 @@ Page {
                         FilterPanelIconButton {
                             visible: !mainViewModel.isSmallSizeMode
                             iconPath: applicationThemeViewModel.currentItems.iconFavorites
-                            overlayVisible: false
                             tooltipMessage: "Избранное"
                             onButtonPressed: {
                                 changeSection(1);
@@ -1286,7 +1255,6 @@ Page {
                         FilterPanelIconButton {
                             visible: !mainViewModel.isSmallSizeMode
                             iconPath: applicationThemeViewModel.currentItems.iconReleaseCatalogNotification
-                            overlayVisible: false
                             tooltipMessage: "Показать меню с фильтрами по уведомлениям"
                             onButtonPressed: {
                                 notificationsMenuSections.open();
@@ -1326,7 +1294,6 @@ Page {
                         FilterPanelIconButton {
                             visible: !mainViewModel.isSmallSizeMode
                             iconPath: applicationThemeViewModel.currentItems.iconReleaseCatalogSchedule
-                            overlayVisible: false
                             iconWidth: 26
                             iconHeight: 26
                             tooltipMessage: "Расписание релизов"
@@ -1337,7 +1304,6 @@ Page {
                         FilterPanelIconButton {
                             visible: !mainViewModel.isSmallSizeMode
                             iconPath: applicationThemeViewModel.currentItems.iconReleaseCatalogHistory
-                            overlayVisible: false
                             tooltipMessage: "Показать меню с фильтрами по истории и истории просмотра"
                             onButtonPressed: {
                                 historyMenuSections.open();
@@ -1366,7 +1332,6 @@ Page {
                             id: seenMenuButton
                             visible: !mainViewModel.isSmallSizeMode
                             iconPath: applicationThemeViewModel.currentItems.iconSeen
-                            overlayVisible: false
                             tooltipMessage: "Показать меню с фильтрами по состоянию просмотра"
                             onButtonPressed: {
                                 seenMenuSections.open();
@@ -1420,7 +1385,6 @@ Page {
                             iconPath: applicationThemeViewModel.currentItems.iconReleaseCatalogAlphabet
                             iconWidth: 24
                             iconHeight: 24
-                            overlayVisible: false
                             tooltipMessage: "Показать фильтр для выбора букв алфавита для поиска по первой букве релиза"
                             onButtonPressed: {
                                 page.showAlpabeticalCharaters = true;
@@ -1429,7 +1393,6 @@ Page {
                         FilterPanelIconButton {
                             visible: !mainViewModel.isSmallSizeMode
                             iconPath: applicationThemeViewModel.currentItems.iconReleaseCatalogCompilation
-                            overlayVisible: false
                             iconWidth: 24
                             iconHeight: 24
                             tooltipMessage: "Показать тематические фильтры"
@@ -1694,16 +1657,15 @@ Page {
                 watchMultipleReleases();
             }
         }
-        IconButton {
+
+        FilterPanelIconButton {
             anchors.right: parent.right
             anchors.top: parent.top
             anchors.topMargin: 8
             visible: scrollview.contentY > 100
             height: 30
             width: 30
-            hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
             iconPath: applicationThemeViewModel.currentItems.iconBackToTop
-            overlayVisible: false
             iconWidth: 24
             iconHeight: 24
             tooltipMessage: "Вернуться в начало списка релизов"

@@ -89,8 +89,8 @@ ApplicationThemeViewModel::ApplicationThemeViewModel(QObject *parent)
     lightTheme->insert(iconMainMenuAuthorizationField, "qrc:/Assets/Icons/user.svg");
     lightTheme->insert(iconLeftHalfScreenField, "qrc:/Assets/Icons/coloredleftmenu.svg");
     lightTheme->insert(iconRightHalfScreenField, "qrc:/Assets/Icons/coloredrightmenu.svg");
-    lightTheme->insert(iconMinimizeWindowField, "qrc:/Assets/Icons/coloredminimize.svg");
-    lightTheme->insert(iconMaximizeWindowField, "qrc:/Assets/Icons/gotofullscreen.svg");
+    lightTheme->insert(iconMinimizeWindowField, "qrc:/Assets/Icons/grayedleftmenu.svg");
+    lightTheme->insert(iconMaximizeWindowField, "qrc:/Assets/Icons/grayedrightmenu.svg");
     lightTheme->insert(iconNormalWindowField, "qrc:/Assets/Icons/gofromfullscreen.svg");
     lightTheme->insert(iconCloseWindowField, "qrc:/Assets/Icons/coloredclosewindow.svg");
     lightTheme->insert(iconFavoritesField, "qrc:/Assets/Icons/ratingcolor.svg");
@@ -218,8 +218,8 @@ ApplicationThemeViewModel::ApplicationThemeViewModel(QObject *parent)
     darkTheme->insert(iconMainMenuAuthorizationField, "qrc:/Assets/Icons/user.svg");
     darkTheme->insert(iconLeftHalfScreenField, "qrc:/Assets/Icons/coloredleftmenu.svg");
     darkTheme->insert(iconRightHalfScreenField, "qrc:/Assets/Icons/coloredrightmenu.svg");
-    darkTheme->insert(iconMinimizeWindowField, "qrc:/Assets/Icons/coloredminimize.svg");
-    darkTheme->insert(iconMaximizeWindowField, "qrc:/Assets/Icons/gotofullscreen.svg");
+    darkTheme->insert(iconMinimizeWindowField, "qrc:/Assets/Icons/grayedleftmenu.svg");
+    darkTheme->insert(iconMaximizeWindowField, "qrc:/Assets/Icons/grayedrightmenu.svg");
     darkTheme->insert(iconNormalWindowField, "qrc:/Assets/Icons/gofromfullscreen.svg");
     darkTheme->insert(iconCloseWindowField, "qrc:/Assets/Icons/coloredclosewindow.svg");
     darkTheme->insert(iconFavoritesField, "qrc:/Assets/Icons/ratingcolor.svg");

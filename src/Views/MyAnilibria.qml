@@ -1,7 +1,6 @@
 import QtQuick 2.12
 import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.3
-import QtGraphicalEffects 1.0
 import "../Controls"
 
 Page {
@@ -30,24 +29,6 @@ Page {
                 id: panelContainer
                 anchors.fill: parent
                 spacing: 0
-                Rectangle {
-                    color: applicationThemeViewModel.pageVerticalPanel
-                    width: 40
-                    Layout.fillHeight: true
-                    Column {
-                        IconButton {
-                            height: 45
-                            width: 40
-                            overlayVisible: false
-                            iconPath: applicationThemeViewModel.iconMainMenu
-                            iconWidth: 28
-                            iconHeight: 28
-                            onButtonPressed: {
-                                drawer.open();
-                            }
-                        }
-                    }
-                }
 
                 ColumnLayout {
                     Layout.fillHeight: true
@@ -100,7 +81,6 @@ Page {
                                 width: 20
                                 height: 20
                                 iconPath: applicationThemeViewModel.currentItems.iconClearTextControl
-                                overlayVisible: false
                                 iconWidth: 16
                                 iconHeight: 16
                                 tooltipMessage: "Очистить фильтр"
@@ -115,7 +95,6 @@ Page {
                             anchors.right: closeAllButton.left
                             height: 45
                             width: 40
-                            overlayVisible: false
                             iconPath: applicationThemeViewModel.currentItems.iconMyAnilibriaButtonPlus
                             iconWidth: 28
                             iconHeight: 28
@@ -130,7 +109,6 @@ Page {
                             anchors.right: sectionVisibilities.left
                             height: 45
                             width: 40
-                            overlayVisible: false
                             iconPath: applicationThemeViewModel.currentItems.iconMyAnilibriaButtonMinus
                             iconWidth: 28
                             iconHeight: 28
@@ -145,7 +123,6 @@ Page {
                             anchors.right: parent.right
                             height: 45
                             width: 40
-                            overlayVisible: false
                             iconPath: applicationThemeViewModel.currentItems.iconMyAnilibriaButtonSortSections
                             iconWidth: 28
                             iconHeight: 28

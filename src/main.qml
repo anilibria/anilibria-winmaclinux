@@ -34,12 +34,11 @@ ApplicationWindow {
     id: window
     visible: true
     width: 800
-    minimumWidth: 800
-    minimumHeight: 600
     height: 600
+    minimumWidth: 300
+    minimumHeight: 300
     title: qsTr("AniLibria.Qt")
     font.capitalization: Font.MixedCase
-    flags: Qt.FramelessWindowHint | Qt.Window | Qt.WindowMinimizeButtonHint
     property var userModel: ({})
     property string tempTorrentPath: ""
     property bool isShowFullScreenSize: false
@@ -57,6 +56,7 @@ ApplicationWindow {
     onClosing: {
         onlinePlayerWindow.closeWindow();
         onlinePlayerWindow.hide();
+        applicationSettings.isMaximize = window.visibility === Window.Maximized;
     }
 
     onActiveChanged: {
@@ -72,8 +72,6 @@ ApplicationWindow {
     }
 
     Component.onCompleted: {
-        if (!applicationSettings.useCustomToolbar) window.flags = 1;
-
         const savedWidth = applicationSettings.windowWidth;
         const savedHeight = applicationSettings.windowHeight;
         const savedX = applicationSettings.windowX;
@@ -82,26 +80,15 @@ ApplicationWindow {
         //if coordinates not in active screen areas we restore default
         if (!isInActiveScreen(savedX, savedY)) return;
 
-        if (savedWidth > 0 && savedHeight > 0) {
-            window.x = savedX;
-            window.y = savedY;
-            window.width = savedWidth;
-            window.height = savedHeight;
-        }
         if (applicationSettings.isMaximize) {
-            window.isShowFullScreenSize = true;
-            let currentScreen = getCurrentScreen();
-            if (!currentScreen) return;
-
-            window.x = currentScreen.virtualX;
-            window.width = currentScreen.width;
-            window.y = currentScreen.virtualY;
-            window.height = currentScreen.desktopAvailableHeight;
-
-            window.normalWindowSizeX = applicationSettings.normalX;
-            window.normalWindowSizeY = applicationSettings.normalY;
-            window.normalWindowSizeWidth = applicationSettings.normalWidth;
-            window.normalWindowSizeHeight = applicationSettings.normalHeight;
+            window.showMaximized();
+        } else {
+            if (savedWidth > 0 && savedHeight > 0) {
+                window.x = savedX;
+                window.y = savedY;
+                window.width = savedWidth;
+                window.height = savedHeight;
+            }
         }
     }
 
@@ -115,56 +102,25 @@ ApplicationWindow {
             return;
         }
 
-        if (onlinePlayerViewModel.isFullScreen) {
-            applicationSettings.windowWidth = window.normalWindowSizeWidth;
-            applicationSettings.windowHeight = window.normalWindowSizeHeight;
-            applicationSettings.windowX = window.normalWindowSizeX;
-            applicationSettings.windowY = window.normalWindowSizeY;
+        if (onlinePlayerViewModel.isFullScreen || applicationSettings.isMaximize) {
+            applicationSettings.windowWidth = 0;
+            applicationSettings.windowHeight = 0;
+            applicationSettings.windowX = 0;
+            applicationSettings.windowY = 0;
         } else {
             applicationSettings.windowWidth = window.width;
             applicationSettings.windowHeight = window.height;
             applicationSettings.windowX = window.x;
             applicationSettings.windowY = window.y;
         }
-        applicationSettings.isMaximize = window.isShowFullScreenSize;
-        if (applicationSettings.isMaximize) {
-            applicationSettings.normalX = window.normalWindowSizeX;
-            applicationSettings.normalY = window.normalWindowSizeY;
-            applicationSettings.normalWidth = window.normalWindowSizeWidth;
-            applicationSettings.normalHeight = window.normalWindowSizeHeight;
-        }
     }
 
     header: Rectangle {
         id: toolBar
-        visible: applicationSettings.useCustomToolbar
+        visible: window.visibility !== Window.FullScreen
         width: window.width
         height: 35
         color: applicationThemeViewModel.notificationCenterBackground
-
-        Rectangle {
-            color: "black"
-            width: 1
-            anchors.left: parent.left
-            anchors.top: parent.top
-            anchors.bottom: parent.bottom
-        }
-
-        Rectangle {
-            color: "black"
-            width: 1
-            anchors.right: parent.right
-            anchors.top: parent.top
-            anchors.bottom: parent.bottom
-        }
-
-        Rectangle {
-            color: "black"
-            height: 1
-            anchors.left: parent.left
-            anchors.right: parent.right
-            anchors.top: parent.top
-        }
 
         Rectangle {
             id: titleArea
@@ -178,13 +134,30 @@ ApplicationWindow {
                 id: taskbarTitle
                 anchors.centerIn: parent
                 fontPointSize: mainViewModel.isSmallSizeMode ? 10 : 12
-                text: "AniLibria.Qt - " + mainViewModel.currentPageDisplayName
+                text: mainViewModel.currentPageDisplayName
+            }
+        }
+        IconButton {
+            id: openDrawerButton
+            anchors.left: parent.left
+            anchors.leftMargin: 1
+            anchors.top: parent.top
+            anchors.topMargin: 1
+            hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
+            iconPath: applicationThemeViewModel.iconMainMenu
+            height: 34
+            width: 40
+            iconWidth: 20
+            iconHeight: 20
+            tooltipMessage: "Открыть меню приложения"
+            onButtonPressed: {
+                drawer.open();
             }
         }
         IconButton {
             id: goToReleasePage
-            overlayVisible: false
-            anchors.left: parent.left
+            visible: !mainViewModel.isSmallSizeMode
+            anchors.left: openDrawerButton.right
             anchors.leftMargin: 1
             anchors.top: parent.top
             anchors.topMargin: 1
@@ -201,7 +174,7 @@ ApplicationWindow {
         }
         IconButton {
             id: goToOnlineVideoPage
-            overlayVisible: false
+            visible: !mainViewModel.isSmallSizeMode
             anchors.left: goToReleasePage.right
             anchors.top: parent.top
             anchors.topMargin: 1
@@ -219,7 +192,6 @@ ApplicationWindow {
         IconButton {
             id: goToCinemaHall
             visible: !mainViewModel.isSmallSizeMode
-            overlayVisible: false
             anchors.left: goToOnlineVideoPage.right
             anchors.top: parent.top
             anchors.topMargin: 1
@@ -237,7 +209,6 @@ ApplicationWindow {
         IconButton {
             id: goToReleaseSeries
             visible: !mainViewModel.isSmallSizeMode
-            overlayVisible: false
             anchors.left: goToCinemaHall.right
             anchors.top: parent.top
             anchors.topMargin: 1
@@ -255,7 +226,6 @@ ApplicationWindow {
         IconButton {
             id: goToMyAnilibria
             visible: !mainViewModel.isSmallSizeMode
-            overlayVisible: false
             anchors.left: goToReleaseSeries.right
             anchors.top: parent.top
             anchors.topMargin: 1
@@ -278,160 +248,30 @@ ApplicationWindow {
             anchors.topMargin: 1
             height: 34
             width: 40
-            overlayVisible: false
             hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
-            iconPath: applicationThemeViewModel.iconLeftHalfScreen
+            iconPath: mainViewModel.hasBackHistory ? applicationThemeViewModel.currentItems.iconLeftHalfScreen : applicationThemeViewModel.currentItems.iconMinimizeWindow
             iconWidth: 24
             iconHeight: 24
-            tooltipMessage: "Выставить размер окна - левая половина экрана"
+            tooltipMessage: "Вернуть назад в истории переходов"
             onButtonPressed: {
-                let currentScreen = getCurrentScreen();
-                if (!currentScreen) return;
-
-                window.x = currentScreen.virtualX;
-                window.width = currentScreen.width / 2;
-                window.y = 0;
-                window.height = currentScreen.desktopAvailableHeight;
+                mainViewModel.backToPage();
             }
         }
         IconButton {
             id: rightHalfScreenWindow
             visible: !mainViewModel.isSmallSizeMode
-            anchors.right: minimizeWindow.left
-            anchors.top: parent.top
-            anchors.topMargin: 1
-            height: 34
-            width: 40
-            overlayVisible: false
-            hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
-            iconPath: applicationThemeViewModel.iconRightHalfScreen
-            iconWidth: 24
-            iconHeight: 24
-            tooltipMessage: "Выставить размер окна - правая половина экрана"
-            onButtonPressed: {
-                let currentScreen = getCurrentScreen();
-                if (!currentScreen) return;
-
-                window.x = currentScreen.virtualX + currentScreen.width / 2;
-                window.width = currentScreen.width / 2;
-                window.y = 0;
-                window.height = currentScreen.desktopAvailableHeight;
-            }
-        }
-        IconButton {
-            id: minimizeWindow
-            visible: !mainViewModel.isSmallSizeMode
-            anchors.right: windowOrFullScreenSize.left
-            anchors.top: parent.top
-            anchors.topMargin: 1
-            height: 34
-            width: 40
-            overlayVisible: false
-            hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
-            iconPath: applicationThemeViewModel.iconMinimizeWindow
-            iconWidth: 24
-            iconHeight: 24
-            tooltipMessage: "Минимизировать окно в панель задач"
-            onButtonPressed: {
-                window.showMinimized();
-            }
-        }
-        IconButton {
-            id: windowOrFullScreenSize
-            visible: !mainViewModel.isSmallSizeMode
-            anchors.right: closeWindow.left
-            anchors.top: parent.top
-            anchors.topMargin: 1
-            height: 34
-            width: 40
-            overlayVisible: false
-            hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
-            iconPath: window.isShowFullScreenSize ? applicationThemeViewModel.iconNormalWindow : applicationThemeViewModel.iconMaximizeWindow
-            iconWidth: 24
-            iconHeight: 24
-            tooltipMessage: window.isShowFullScreenSize ? "Вернуть окну нормальный размер" : "Открыть окно на полный экран"
-            onButtonPressed: {
-                let currentScreen = getCurrentScreen();
-                if (!currentScreen) return;
-
-                if (normalWindowSizeX === 0 && normalWindowSizeY === 0 && normalWindowSizeWidth === 0 && normalWindowSizeHeight === 0) {
-                    window.isShowFullScreenSize = true;
-                    normalWindowSizeX = window.x;
-                    normalWindowSizeY = window.y;
-                    normalWindowSizeWidth = window.width;
-                    normalWindowSizeHeight = window.height;
-
-                    window.x = currentScreen.virtualX;
-                    window.width = currentScreen.width;
-                    window.y = currentScreen.virtualY;
-                    window.height = currentScreen.desktopAvailableHeight;
-                } else {
-                    window.isShowFullScreenSize = false;
-                    window.x = normalWindowSizeX;
-                    window.y = normalWindowSizeY;
-                    window.width = normalWindowSizeWidth;
-                    window.height = normalWindowSizeHeight;
-
-                    normalWindowSizeX = 0;
-                    normalWindowSizeY = 0;
-                    normalWindowSizeWidth = 0;
-                    normalWindowSizeHeight = 0;
-                }
-            }
-        }
-        IconButton {
-            id: closeWindow
             anchors.right: parent.right
-            anchors.rightMargin: 1
             anchors.top: parent.top
             anchors.topMargin: 1
             height: 34
             width: 40
-            overlayVisible: false
             hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
-            iconPath: applicationThemeViewModel.iconCloseWindow
+            iconPath: mainViewModel.hasForwardHistory ? applicationThemeViewModel.iconRightHalfScreen : applicationThemeViewModel.currentItems.iconMaximizeWindow
             iconWidth: 24
             iconHeight: 24
-            tooltipMessage: "Выйти из приложения"
+            tooltipMessage: "Перейти вперед в истории переходов"
             onButtonPressed: {
-                window.close();
-            }
-        }
-
-        MouseArea {
-            id: windowDraggingArea
-            enabled: applicationSettings.useCustomToolbar
-            anchors.left: goToMyAnilibria.right
-            anchors.right: leftHalfScreenWindow.left
-            height: parent.height
-            property variant clickPosition: "1,1"
-            onPressed: {
-                windowDraggingArea.clickPosition = Qt.point(mouse.x, mouse.y);
-            }
-            onPositionChanged: {
-                const delta = Qt.point(mouse.x - clickPosition.x, mouse.y - clickPosition.y);
-                const deltaPosition = Qt.point(window.x + delta.x, window.y + delta.y);
-                window.x = deltaPosition.x;
-                window.y = deltaPosition.y;
-            }
-        }
-
-        MouseArea {
-            id: topWindowResize
-            enabled: applicationSettings.useCustomToolbar
-            height: 3
-            anchors.left: parent.left
-            anchors.top: parent.top
-            anchors.right: parent.right
-            cursorShape: Qt.SizeVerCursor
-            onPressed: {
-                previousY = mouseY
-            }
-            onMouseYChanged: {
-                const delta = mouseY - previousY;
-                window.y += delta;
-                var newHeight = window.height - delta;
-                if (newHeight > 50) window.height = newHeight;
+                mainViewModel.forwardToPage();
             }
         }
     }
@@ -442,36 +282,8 @@ ApplicationWindow {
         height: mainViewModel.isSmallSizeMode ? 1 : 16
         color: applicationThemeViewModel.notificationCenterBackground
 
-        Rectangle {
-            visible: applicationSettings.useCustomToolbar
-            color: "black"
-            width: 1
-            anchors.left: parent.left
-            anchors.top: parent.top
-            anchors.bottom: parent.bottom
-        }
-
-        Rectangle {
-            visible: applicationSettings.useCustomToolbar
-            color: "black"
-            width: 1
-            anchors.right: parent.right
-            anchors.top: parent.top
-            anchors.bottom: parent.bottom
-        }
-
-        Rectangle {
-            visible: applicationSettings.useCustomToolbar
-            color: "black"
-            height: 1
-            anchors.left: parent.left
-            anchors.right: parent.right
-            anchors.bottom: parent.bottom
-        }
-
-        Rectangle {
+        Item {
             visible: !mainViewModel.isSmallSizeMode
-            color: "transparent"
             anchors.left: parent.left
             anchors.leftMargin: 4
             width: 100
@@ -501,7 +313,6 @@ ApplicationWindow {
                 width: 16
                 hoverColor: applicationThemeViewModel.filterIconButtonColor
                 iconPath: notificationViewModel.countNotifications > 0 ? applicationThemeViewModel.currentItems.iconNotificationSelected : applicationThemeViewModel.currentItems.iconNotification
-                overlayVisible: false
                 iconWidth: 14
                 iconHeight: 14
                 onButtonPressed: {
@@ -517,69 +328,6 @@ ApplicationWindow {
                 width: 6
                 height: 16
                 color: "transparent"
-            }
-        }
-
-        MouseArea {
-            id: rightbottomWindowResize
-            enabled: applicationSettings.useCustomToolbar
-            width: 3
-            anchors.right: parent.right
-            anchors.top: parent.top
-            anchors.bottom: parent.bottom
-            cursorShape: Qt.SizeFDiagCursor
-            onPressed: {
-                previousX = mouseX
-                previousY = mouseY
-            }
-            onMouseXChanged: {
-                var newWidth = window.width + mouseX - previousX;
-                if (newWidth > 100) window.width = newWidth;
-            }
-            onMouseYChanged: {
-                var newHeight = window.height + mouseY - previousY;
-                if (newHeight > 50) window.height = newHeight;
-            }
-        }
-
-        MouseArea {
-            id: leftbottomWindowResize
-            enabled: applicationSettings.useCustomToolbar
-            width: 3
-            anchors.left: parent.left
-            anchors.top: parent.top
-            anchors.bottom: parent.bottom
-            cursorShape: Qt.SizeBDiagCursor
-            onPressed: {
-                previousX = mouseX
-                previousY = mouseY
-            }
-            onMouseXChanged: {
-                const delta = mouseX - previousX;
-                window.x = window.x + delta;
-                const newWidth = window.width - delta;
-                if (newWidth > 100) window.width = newWidth;
-            }
-            onMouseYChanged: {
-                const newHeight = window.height + mouseY - previousY;
-                if (newHeight > 50) window.height = newHeight;
-            }
-        }
-
-        MouseArea {
-            id: bottomWindowResize
-            enabled: applicationSettings.useCustomToolbar
-            height: 3
-            anchors.left: parent.left
-            anchors.right: parent.right
-            anchors.bottom: parent.bottom
-            cursorShape: Qt.SizeVerCursor
-            onPressed: {
-                previousY = mouseY
-            }
-            onMouseYChanged: {
-                const newHeight = window.height + mouseY - previousY;
-                if (newHeight > 50) window.height = newHeight;
             }
         }
     }
@@ -625,11 +373,7 @@ ApplicationWindow {
         signal toggleStayOnTopMode();
 
         onSetStayOnTop: {
-            if (applicationSettings.useCustomToolbar) {
-                window.flags = Qt.FramelessWindowHint | Qt.Window | Qt.WindowMinimizeButtonHint | Qt.WindowStaysOnTopHint;
-            } else {
-                window.flags = Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint;
-            }
+            window.flags += Qt.WindowStaysOnTopHint;
 
             windowSettings.isTopMost = true;
         }
@@ -637,11 +381,7 @@ ApplicationWindow {
         onUnsetStayOnTop: {
             if (!windowSettings.isTopMost) return;
 
-            if (applicationSettings.useCustomToolbar) {
-                window.flags = Qt.FramelessWindowHint | Qt.Window | Qt.WindowMinimizeButtonHint;
-            } else {
-                window.flags = 1;
-            }
+            window.flags -= Qt.WindowStaysOnTopHint;
 
             windowSettings.isTopMost = false;
         }
@@ -778,113 +518,114 @@ ApplicationWindow {
             }
         }
 
-        Column {            
-            anchors.fill: parent
+        Item {
+            id: authorizationPanel
+            visible: mainViewModel.notVisibleSignin
+            anchors.top: parent.top
+            width: drawer.width
+            height: mainViewModel.notVisibleSignin ? 64 : 0
 
-            Item {
-                visible: mainViewModel.notVisibleSignin
-                width: drawer.width
-                height: 64
-
-                Image {
-                    id: userAvatarImage
-                    anchors.leftMargin: 6
-                    anchors.topMargin: 2
-                    anchors.left: parent.left
-                    anchors.verticalCenter: parent.verticalCenter
-                    source: userModel.avatar ? userModel.avatar : '../Assets/Icons/donate.jpg'
-                    fillMode: Image.PreserveAspectCrop
-                    width: 60
-                    height: 60
-                    layer.enabled: true
-                    layer.effect: OpacityMask {
-                        maskSource: Rectangle {
-                            width: 60
-                            height: 60
-                            radius: 30
-                            visible: false
-                        }
-                    }
-                }
-
-                Text {
-                    anchors.left: userAvatarImage.right
-                    anchors.leftMargin: 10
-                    anchors.verticalCenter: parent.verticalCenter
-                    text: "Вы авторизованы как:\n" + (userModel.login ? userModel.login : "")
-                    color: applicationThemeViewModel.currentItems.colorDrawerItemText
-                    elide: Text.ElideRight
-                    antialiasing: true
-                    wrapMode: Text.WordWrap
-                    width: drawer.width - userAvatarImage.width - logoutButton.width - 40
-                    maximumLineCount: 2
-                }
-
-                IconButton {
-                    id: logoutButton
-                    anchors.right: parent.right
-                    anchors.rightMargin: 1
-                    anchors.verticalCenter: parent.verticalCenter
-                    height: 40
-                    width: 40
-                    hoverColor: Qt.rgba(0, 0, 0, .1)
-                    overlayVisible: false
-                    iconPath: "Assets/Icons/logout.svg"
-                    iconWidth: 28
-                    iconHeight: 28
-                    tooltipMessage: "Выйти из аккаунта"
-                    onButtonPressed: {
-                        synchronizationService.signout(applicationSettings.userToken);
-                        drawer.close();
+            Image {
+                id: userAvatarImage
+                anchors.leftMargin: 6
+                anchors.topMargin: 2
+                anchors.left: parent.left
+                anchors.verticalCenter: parent.verticalCenter
+                source: userModel.avatar ? userModel.avatar : '../Assets/Icons/donate.jpg'
+                fillMode: Image.PreserveAspectCrop
+                width: 60
+                height: 60
+                layer.enabled: true
+                layer.effect: OpacityMask {
+                    maskSource: Rectangle {
+                        width: 60
+                        height: 60
+                        radius: 30
+                        visible: false
                     }
                 }
             }
 
-            Column {
-                Repeater {
-                    model: mainViewModel.mainMenuListModel
-                    delegate: Control {
-                        id: mainMenuControl
+            Text {
+                anchors.left: userAvatarImage.right
+                anchors.leftMargin: 10
+                anchors.verticalCenter: parent.verticalCenter
+                text: "Вы авторизованы как:\n" + (userModel.login ? userModel.login : "")
+                color: applicationThemeViewModel.currentItems.colorDrawerItemText
+                elide: Text.ElideRight
+                antialiasing: true
+                wrapMode: Text.WordWrap
+                width: drawer.width - userAvatarImage.width - logoutButton.width - 40
+                maximumLineCount: 2
+            }
 
-                        property bool isHovered
+            IconButton {
+                id: logoutButton
+                anchors.right: parent.right
+                anchors.rightMargin: 1
+                anchors.verticalCenter: parent.verticalCenter
+                height: 40
+                width: 40
+                hoverColor: Qt.rgba(0, 0, 0, .1)
+                iconPath: "Assets/Icons/logout.svg"
+                iconWidth: 28
+                iconHeight: 28
+                tooltipMessage: "Выйти из аккаунта"
+                onButtonPressed: {
+                    synchronizationService.signout(applicationSettings.userToken);
+                    drawer.close();
+                }
+            }
+        }
 
-                        width: drawer.width
-                        height: 50
-                        Rectangle {
-                            id: mainMenuDelegate
-                            color: mainMenuControl.isHovered ? applicationThemeViewModel.currentItems.colorDrawerItemHovered : "transparent"
-                            anchors.fill: parent
-                            MouseArea {
-                                hoverEnabled: true
-                                anchors.fill: parent
-                                onClicked: {
-                                    mainViewModel.mainMenuListModel.selectItem(pageIndex);
-                                    drawer.close();
-                                }
-                                onEntered: {
-                                    mainMenuControl.isHovered = true;
-                                }
-                                onExited: {
-                                    mainMenuControl.isHovered = false;
-                                }
-                            }
-                            Row {
-                                anchors.leftMargin: 16
-                                anchors.fill: parent
-                                spacing: 10
-                                Image {
-                                    anchors.verticalCenter: parent.verticalCenter
-                                    source: applicationThemeViewModel.currentItems[icon] ? applicationThemeViewModel.currentItems[icon] : '../Assets/Icons/donate.jpg'
-                                    sourceSize.width: 30
-                                    sourceSize.height: 30
-                                }
-                                Label {
-                                    anchors.verticalCenter: parent.verticalCenter
-                                    text: title
-                                    font.pointSize: 10
-                                    CustomStyle.labelColor: applicationThemeViewModel.currentItems.colorDrawerItemText
-                                }
-                            }
+        ListView {
+            id: mainMenuItems
+            anchors.top: authorizationPanel.bottom
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: 60
+            width: drawer.width
+            clip: true
+            model: mainViewModel.mainMenuListModel
+            delegate: Control {
+                id: mainMenuControl
+
+                property bool isHovered
+
+                width: drawer.width
+                height: 50
+                Rectangle {
+                    id: mainMenuDelegate
+                    color: mainMenuControl.isHovered ? applicationThemeViewModel.currentItems.colorDrawerItemHovered : "transparent"
+                    anchors.fill: parent
+                    MouseArea {
+                        hoverEnabled: true
+                        anchors.fill: parent
+                        onClicked: {
+                            mainViewModel.mainMenuListModel.selectItem(pageIndex);
+                            drawer.close();
+                        }
+                        onEntered: {
+                            mainMenuControl.isHovered = true;
+                        }
+                        onExited: {
+                            mainMenuControl.isHovered = false;
+                        }
+                    }
+                    Row {
+                        anchors.leftMargin: 16
+                        anchors.fill: parent
+                        spacing: 10
+                        Image {
+                            anchors.verticalCenter: parent.verticalCenter
+                            source: applicationThemeViewModel.currentItems[icon] ? applicationThemeViewModel.currentItems[icon] : '../Assets/Icons/donate.jpg'
+                            sourceSize.width: 30
+                            sourceSize.height: 30
+                        }
+                        Label {
+                            anchors.verticalCenter: parent.verticalCenter
+                            text: title
+                            font.pointSize: 10
+                            CustomStyle.labelColor: applicationThemeViewModel.currentItems.colorDrawerItemText
                         }
                     }
                 }
@@ -892,7 +633,10 @@ ApplicationWindow {
         }
 
         Row {
+            id: aboutPanel
+            anchors.top: mainMenuItems.bottom
             anchors.bottom: parent.bottom
+            height: 60
 
             Item {
                 width: 60
@@ -949,16 +693,6 @@ ApplicationWindow {
         needProxified: userConfigurationViewModel.usingVideoProxy && onlinePlayerWindowViewModel.isSelectedQtAv && torrentNotifierViewModel.activated
         onIsFullScreenChanged: {
             if (isFullScreen) {
-                if (applicationSettings.useCustomToolbar) {
-                    toolBar.visible = false;
-                    if (!window.isShowFullScreenSize) {
-                        window.normalWindowSizeX = window.x;
-                        window.normalWindowSizeY = window.y;
-                        window.normalWindowSizeWidth = window.width;
-                        window.normalWindowSizeHeight = window.height;
-                    }
-                }
-
                 window.showFullScreen();
 
             } else {
@@ -966,27 +700,6 @@ ApplicationWindow {
                 if (!currentScreen) return;
 
                 window.showNormal();
-
-                if (applicationSettings.useCustomToolbar) {
-                    if (window.isShowFullScreenSize) {
-                        window.x = currentScreen.virtualX;
-                        window.width = currentScreen.width;
-                        window.y = currentScreen.virtualY;
-                        window.height = currentScreen.desktopAvailableHeight;
-                    } else {
-                        window.x = window.normalWindowSizeX;
-                        window.y = window.normalWindowSizeY;
-                        window.width = window.normalWindowSizeWidth;
-                        window.height = window.normalWindowSizeHeight;
-
-                        window.normalWindowSizeX = 0;
-                        window.normalWindowSizeY = 0;
-                        window.normalWindowSizeWidth = 0;
-                        window.normalWindowSizeHeight = 0;
-                    }
-
-                    toolBar.visible = true;
-                }
             }
         }
         onNeedProxifiedChanged: {
@@ -1027,25 +740,6 @@ ApplicationWindow {
         }
     }
 
-    Rectangle {
-        id: leftWindowResizeArea
-        visible: applicationSettings.useCustomToolbar
-        color: "black"
-        width: 1
-        anchors.left: parent.left
-        anchors.top: parent.top
-        anchors.bottom: parent.bottom
-    }
-
-    Rectangle {
-        color: "black"
-        visible: applicationSettings.useCustomToolbar
-        width: 1
-        anchors.right: parent.right
-        anchors.top: parent.top
-        anchors.bottom: parent.bottom
-    }
-
     ReleasesViewModel {
         id: releasesViewModel
         synchronizationService: synchronizationService
@@ -1058,7 +752,6 @@ ApplicationWindow {
         userActivity: userActivityViewModel
         onReleaseCardOpened: {
             analyticsService.sendView("releasecard", "open", "%2Frelease");
-            releases.setWebViewUrl();
             userActivityViewModel.addOpenedCardToCounter();
         }
         onAfterSynchronizedReleases: {
@@ -1076,8 +769,6 @@ ApplicationWindow {
     Rectangle {
         color: "transparent"
         anchors.fill: parent
-        anchors.leftMargin: applicationSettings.useCustomToolbar ? 1 : 0
-        anchors.rightMargin: applicationSettings.useCustomToolbar ? 1 : 0
 
         OnlinePlayer {
             id: videoplayer
@@ -1163,43 +854,6 @@ ApplicationWindow {
         TorrentStream {
             id: torrentStream
             visible: mainViewModel.isTorrentStreamPageVisible
-        }
-
-        MouseArea {
-            id: leftWindowResize
-            enabled: applicationSettings.useCustomToolbar && !onlinePlayerViewModel.isFullScreen
-            width: 1
-            anchors.left: parent.left
-            anchors.top: parent.top
-            anchors.bottom: parent.bottom
-            cursorShape: !onlinePlayerViewModel.isFullScreen ? Qt.SizeHorCursor : Qt.BlankCursor
-            onPressed: {
-                previousX = mouseX
-            }
-
-            onMouseXChanged: {
-                const delta = mouseX - previousX;
-                window.x = window.x + delta;
-                const newWidth = window.width - delta;
-                if (newWidth > 100) window.width = newWidth;
-            }
-        }
-
-        MouseArea {
-            id: rightWindowResize
-            enabled: applicationSettings.useCustomToolbar
-            width: 1
-            anchors.right: parent.right
-            anchors.top: parent.top
-            anchors.bottom: parent.bottom
-            cursorShape: !onlinePlayerViewModel.isFullScreen ? Qt.SizeHorCursor : Qt.BlankCursor
-            onPressed: {
-                previousX = mouseX
-            }
-            onMouseXChanged: {
-                const newWidth = window.width + mouseX - previousX;
-                if (newWidth > 100) window.width = newWidth;
-            }
         }
     }
 
@@ -1294,7 +948,6 @@ ApplicationWindow {
                     anchors.topMargin: 4
                     hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
                     iconPath: applicationThemeViewModel.currentItems.iconCloseWindow
-                    overlayVisible: false
                     iconWidth: 14
                     iconHeight: 14
                     onButtonPressed: {
@@ -1365,7 +1018,6 @@ ApplicationWindow {
                                     anchors.rightMargin: 4
                                     anchors.topMargin: 4
                                     hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
-                                    overlayVisible: false
                                     iconPath: applicationThemeViewModel.currentItems.iconCloseWindow
                                     iconWidth: 14
                                     iconHeight: 14

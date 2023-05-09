@@ -28,7 +28,6 @@ IconButton {
     width: 40
     iconWidth: 30
     iconHeight: 30
-    overlayVisible: false
 
     property alias enablePulseAnimation: root.enablePulseAnimation
 

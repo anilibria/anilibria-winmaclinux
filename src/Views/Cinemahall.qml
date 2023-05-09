@@ -1,6 +1,5 @@
 import QtQuick 2.12
 import QtQuick.Controls 2.12
-import QtGraphicalEffects 1.0
 import QtQuick.Layouts 1.3
 import "../Controls"
 
@@ -19,23 +18,6 @@ Page {
         id: panelContainer
         anchors.fill: parent
         spacing: 0
-        Rectangle {
-            color: applicationThemeViewModel.pageVerticalPanel
-            width: 40
-            Layout.fillHeight: true
-            Column {
-                LeftPanelIconButton {
-                    tooltipMessage: "Открыть меню приложения"
-                    iconPath: applicationThemeViewModel.iconMainMenu
-                    overlayVisible: false
-                    iconWidth: 28
-                    iconHeight: 28
-                    onButtonPressed: {
-                        drawer.open();
-                    }
-                }
-            }
-        }
 
         ColumnLayout {
             Layout.fillHeight: true
@@ -230,7 +212,6 @@ Page {
                                     iconWidth: 20
                                     iconHeight: 20
                                     hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
-                                    overlayVisible: false
                                     iconPath: assetsLocation.iconsPath + "contextmenu.svg"
                                     onButtonPressed: {
                                         releasesViewModel.cinemahall.openedItemIndex = releaseNumber - 1;
@@ -254,35 +235,13 @@ Page {
                                 height: 236
                                 color: "transparent"
 
-                                Rectangle {
+                                CorneredImage {
                                     id: posterContainer
                                     anchors.horizontalCenter: parent.horizontalCenter
                                     width: 152
                                     height: 232
-                                    border.color: applicationThemeViewModel.posterBorder
-                                    border.width: 1
-                                    radius: 12
-
-                                    Image {
-                                        anchors.centerIn: parent
-                                        source: localStorage.getReleasePosterPath(id, poster)
-                                        sourceSize: Qt.size(150, 230)
-                                        fillMode: Image.PreserveAspectCrop
-                                        width: 150
-                                        height: 230
-                                        layer.enabled: true
-                                        layer.effect: OpacityMask {
-                                            maskSource: mask
-                                        }
-                                    }
-
-                                    Rectangle {
-                                        anchors.centerIn: parent
-                                        width: 150
-                                        height: 230
-                                        color: applicationThemeViewModel.currentItems.colorPosterFilter
-                                        radius: 12
-                                    }
+                                    posterSource: localStorage.getReleasePosterPath(id, poster)
+                                    emptyBorderBackground: applicationThemeViewModel.currentItems.pageBackground
                                 }
 
                                 Image {

@@ -1,7 +1,6 @@
 import QtQuick 2.12
 import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.3
-import QtGraphicalEffects 1.0
 import QtQuick.Controls.Material 2.0
 import "../Controls"
 
@@ -32,23 +31,10 @@ Page {
             width: 40
             Layout.fillHeight: true
             Column {
-                IconButton {
-                    height: 45
-                    width: 40
-                    overlayVisible: false
-                    iconPath: applicationThemeViewModel.currentItems.iconMainMenu
-                    iconWidth: 28
-                    iconHeight: 28
-                    onButtonPressed: {
-                        drawer.open();
-                    }
-                }
-
                 LeftPanelIconButton {
                     iconPath: applicationThemeViewModel.currentItems.iconReleaseCatalogSynchronization
                     iconWidth: 34
                     iconHeight: 34
-                    overlayVisible: false
                     tooltipMessage: "Обновить список"
                     onButtonPressed: {
                         torrentNotifierViewModel.startGetTorrentData();
@@ -59,7 +45,6 @@ Page {
                     iconPath: applicationThemeViewModel.currentItems.iconDeleteItem
                     iconWidth: 29
                     iconHeight: 29
-                    overlayVisible: false
                     tooltipMessage: "Удалить все торренты и скачанные файлы"
                     onButtonPressed: {
                         torrentNotifierViewModel.clearAllData();
@@ -70,7 +55,6 @@ Page {
                     iconPath: applicationThemeViewModel.currentItems.iconReleaseCatalogSettings
                     iconWidth: 29
                     iconHeight: 29
-                    overlayVisible: false
                     tooltipMessage: "Настройки страницы TorrentStream"
                     onButtonPressed: {
                         torrentStreamPopup.open();
@@ -134,27 +118,21 @@ Page {
                         RowLayout {
                             anchors.fill: parent
 
-                            Rectangle {
-                                color: "transparent"
+                            Item {
                                 height: parent.height
                                 Layout.topMargin: 6
                                 Layout.preferredWidth: 200
                                 Layout.fillHeight: true
                                 Layout.leftMargin: 6
 
-                                Image {
+                                CorneredImage {
                                     anchors.top: parent.top
                                     anchors.left: parent.left
                                     anchors.leftMargin: 0
-                                    source: localStorage.getReleasePosterPath(releaseId, poster)
-                                    sourceSize: Qt.size(180, 270)
-                                    fillMode: Image.PreserveAspectCrop
                                     width: 140
                                     height: 210
-                                    layer.enabled: true
-                                    layer.effect: OpacityMask {
-                                        maskSource: mask
-                                    }
+                                    posterSource: localStorage.getReleasePosterPath(releaseId, poster)
+                                    emptyBorderBackground: applicationThemeViewModel.panelBackground
                                 }
                             }
 
@@ -214,7 +192,6 @@ Page {
 
                                     FilterPanelIconButton {
                                         iconPath: assetsLocation.iconsPath + "contextmenu.svg"
-                                        overlayVisible: false
                                         tooltipMessage: "Открыть меню операций доступных для торрента"
                                         onButtonPressed: {
                                             torrentActionsMenu.open();
@@ -247,7 +224,6 @@ Page {
                                     }
                                     FilterPanelIconButton {
                                         iconPath: assetsLocation.iconsPath + "videoplayermenu.svg"
-                                        overlayVisible: false
                                         tooltipMessage: "Начать просмотр скачанного торрента"
                                         onButtonPressed: {
                                             if (filesDownloaded < filesCount) {

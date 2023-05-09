@@ -19,7 +19,6 @@
 import QtQuick 2.12
 import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.3
-import QtGraphicalEffects 1.0
 import "../Controls"
 
 Page {
@@ -45,24 +44,6 @@ Page {
             id: panelContainer
             anchors.fill: parent
             spacing: 0
-            Rectangle {
-                color: applicationThemeViewModel.pageVerticalPanel
-                width: 40
-                Layout.fillHeight: true
-                Column {
-                    IconButton {
-                        height: 45
-                        width: 40
-                        overlayVisible: false
-                        iconPath: applicationThemeViewModel.iconMainMenu
-                        iconWidth: 28
-                        iconHeight: 28
-                        onButtonPressed: {
-                            drawer.open();
-                        }
-                    }
-                }
-            }
 
             ColumnLayout {
                 Layout.fillHeight: true

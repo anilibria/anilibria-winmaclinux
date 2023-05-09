@@ -3,7 +3,6 @@ import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.3
 import QtQuick.Controls.Styles 1.4
 import QtQuick.Dialogs 1.2
-import QtGraphicalEffects 1.0
 import Anilibria.ListModels 1.0
 import "../Controls"
 
@@ -33,7 +32,6 @@ ColumnLayout {
                 height: 40
                 width: 40
                 hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
-                overlayVisible: false
                 iconPath: applicationThemeViewModel.currentItems.iconReleaseCardClose
                 iconWidth: 28
                 iconHeight: 28
@@ -46,7 +44,6 @@ ColumnLayout {
                 height: 40
                 width: 40
                 hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
-                overlayVisible: false
                 iconPath: applicationThemeViewModel.currentItems.iconReleaseCardCopy
                 iconWidth: 26
                 iconHeight: 26
@@ -102,7 +99,6 @@ ColumnLayout {
                 width: 40
                 hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
                 iconPath: applicationThemeViewModel.currentItems.iconSeen
-                overlayVisible: false
                 iconWidth: 26
                 iconHeight: 26
                 tooltipMessage: "Управление просмотренным и видимостью релиза"
@@ -153,7 +149,6 @@ ColumnLayout {
             IconButton {
                 height: 40
                 width: 40
-                overlayVisible: false
                 hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
                 iconPath: applicationThemeViewModel.currentItems.iconFavorites
                 iconWidth: 26
@@ -188,7 +183,6 @@ ColumnLayout {
             IconButton {
                 height: 40
                 width: 40
-                overlayVisible: false
                 hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
                 iconPath: applicationThemeViewModel.currentItems.iconReleaseCardExternal
                 iconWidth: 26
@@ -254,7 +248,6 @@ ColumnLayout {
             IconButton {
                 height: 40
                 width: 40
-                overlayVisible: false
                 hoverColor: applicationThemeViewModel.currentItems.filterIconButtonHoverColor
                 iconPath: applicationThemeViewModel.currentItems.iconReleaseCatalogSettings
                 iconWidth: 26
@@ -318,20 +311,14 @@ ColumnLayout {
                     leftPadding: 4
                     topPadding: 4
                     rightPadding: 4
-                    Image {
+
+                    CorneredImage {
                         id: cardPoster
                         visible: !mainViewModel.isSmallSizeMode
-                        source: localStorage.getReleasePosterPath(releasesViewModel.openedReleaseId, releasesViewModel.openedReleasePoster)
-                        fillMode: Image.PreserveAspectCrop
                         width: 280
                         height: 390
-                        sourceSize.width: 280
-                        sourceSize.height: 390
-                        mipmap: true
-                        layer.enabled: true
-                        layer.effect: OpacityMask {
-                            maskSource: cardMask
-                        }
+                        posterSource: localStorage.getReleasePosterPath(releasesViewModel.openedReleaseId, releasesViewModel.openedReleasePoster)
+                        emptyBorderBackground:  applicationThemeViewModel.currentItems.pageBackground
 
                         MouseArea {
                             anchors.fill: parent
@@ -339,14 +326,8 @@ ColumnLayout {
                                 releasePosterPreview.isVisible = true;
                             }
                         }
-
-                        Rectangle {
-                            anchors.centerIn: parent
-                            width: 280
-                            height: 390
-                            color: applicationThemeViewModel.currentItems.colorPosterFilter
-                        }
                     }
+
                     Column {
                         id: descriptionColumn
                         width: page.width - cardButtons.width - (!mainViewModel.isSmallSizeMode ? cardPoster.width : 0)

@@ -150,7 +150,6 @@ ApplicationWindow {
                         id: previousButton
                         width: 40
                         height: 40
-                        overlayVisible: false
                         hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
                         iconPath: applicationThemeViewModel.currentItems.iconPlayerPreviousSeria
                         iconWidth: 24
@@ -166,7 +165,6 @@ ApplicationWindow {
                         visible: onlinePlayerWindowViewModel.playerButtonVisible
                         width: 40
                         height: 40
-                        overlayVisible: false
                         hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
                         iconPath: applicationThemeViewModel.currentItems.iconPlayerPlay
                         iconWidth: 24
@@ -180,7 +178,6 @@ ApplicationWindow {
                         visible: onlinePlayerWindowViewModel.pauseButtonVisible
                         width: 40
                         height: 40
-                        overlayVisible: false
                         hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
                         iconPath: applicationThemeViewModel.currentItems.iconPlayerPause
                         iconWidth: 24
@@ -194,7 +191,6 @@ ApplicationWindow {
                         id: nextButton
                         width: 40
                         height: 40
-                        overlayVisible: false
                         hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
                         iconPath: applicationThemeViewModel.currentItems.iconPlayerNextSeria
                         iconWidth: 24
@@ -218,7 +214,6 @@ ApplicationWindow {
                     anchors.centerIn: parent
                     width: 40
                     height: 40
-                    overlayVisible: false
                     hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
                     iconPath: applicationThemeViewModel.currentItems.iconPlayerTopMost
                     iconWidth: 29
