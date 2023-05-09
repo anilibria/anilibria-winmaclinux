@@ -71,9 +71,8 @@ void MainViewModel::setIsSmallSizeMode(bool isSmallSizeMode) noexcept
 
 void MainViewModel::selectPage(const QString& pageId)
 {
+    //fix duplicates for changing page
     if (pageId == m_currentPageId) return;
-
-
 
     selectToPage(pageId);
 
