@@ -1,7 +1,6 @@
 import QtQuick 2.12
 import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.3
-import QtGraphicalEffects 1.0
 import QtQuick.Controls.Material 2.0
 import "../Controls"
 
@@ -119,27 +118,21 @@ Page {
                         RowLayout {
                             anchors.fill: parent
 
-                            Rectangle {
-                                color: "transparent"
+                            Item {
                                 height: parent.height
                                 Layout.topMargin: 6
                                 Layout.preferredWidth: 200
                                 Layout.fillHeight: true
                                 Layout.leftMargin: 6
 
-                                Image {
+                                CorneredImage {
                                     anchors.top: parent.top
                                     anchors.left: parent.left
                                     anchors.leftMargin: 0
-                                    source: localStorage.getReleasePosterPath(releaseId, poster)
-                                    sourceSize: Qt.size(180, 270)
-                                    fillMode: Image.PreserveAspectCrop
                                     width: 140
                                     height: 210
-                                    layer.enabled: true
-                                    layer.effect: OpacityMask {
-                                        maskSource: mask
-                                    }
+                                    posterSource: localStorage.getReleasePosterPath(releaseId, poster)
+                                    emptyBorderBackground: applicationThemeViewModel.panelBackground
                                 }
                             }
 
