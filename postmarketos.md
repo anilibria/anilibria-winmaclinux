@@ -23,8 +23,6 @@ ApplicationWindow {
     id: window
     visible: true
     width: 800
-    minimumWidth: 800
-    minimumHeight: 600
     height: 600
 ```
 на эти
@@ -33,8 +31,6 @@ ApplicationWindow {
     id: window
     visible: true
     width: 300
-    minimumWidth: 300
-    minimumHeight: 300
     height: 300
 ```
 
