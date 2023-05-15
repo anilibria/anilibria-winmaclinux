@@ -120,23 +120,6 @@ void ApplicationSettings::setSendPlaybackToRemote(bool sendPlaybackToRemote)
     emit sendPlaybackToRemoteChanged(sendPlaybackToRemote);
 }
 
-bool ApplicationSettings::useCustomToolbar()
-{
-#ifdef Q_OS_LINUX
-    bool defaultValue = false;
-#else
-    bool defaultValue = true;
-#endif
-    return m_Settings->value("usecustomtoolbar", defaultValue).toBool();
-}
-
-void ApplicationSettings::setUseCustomToolbar(bool useCustomToolbar)
-{
-    m_Settings->setValue("usecustomtoolbar", useCustomToolbar);
-
-    emit useCustomToolbarChanged(useCustomToolbar);
-}
-
 bool ApplicationSettings::isMaximize() noexcept
 {
     return m_Settings->value("ismaximaze", false).toBool();

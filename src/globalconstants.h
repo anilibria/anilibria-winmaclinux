@@ -221,4 +221,13 @@ extern QString colorPosterFilterField;
 extern QString colorPopupBackgroundField;
 extern QString colorPopupBackgroundShadowField;
 
+extern QString colorSwitchHighlightedRippleField;
+extern QString colorSwitchRippleField;
+extern QString colorSwitchCheckedTrackField;
+extern QString colorSwitchUncheckedTrackField;
+extern QString colorSwitchDisabledTrackField;
+extern QString colorSwitchCheckedHandleField;
+extern QString colorSwitchUncheckedHandleField;
+extern QString colorSwitchDisabledHandleField;
+
 #endif // GLOBALCONSTANTS_H

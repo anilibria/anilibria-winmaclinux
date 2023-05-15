@@ -75,6 +75,16 @@ ApplicationThemeViewModel::ApplicationThemeViewModel(QObject *parent)
     lightTheme->insert(colorPosterFilterField, "transparent");
     lightTheme->insert(colorPopupBackgroundField, "#ffffff");
     lightTheme->insert(colorPopupBackgroundShadowField, "#99303030");
+
+    lightTheme->insert(colorSwitchHighlightedRippleField, "#1ef44336");
+    lightTheme->insert(colorSwitchRippleField, "#1ef44336");
+    lightTheme->insert(colorSwitchCheckedTrackField, "#80f44336");
+    lightTheme->insert(colorSwitchUncheckedTrackField, "#42000000");
+    lightTheme->insert(colorSwitchDisabledTrackField, "#1e000000");
+    lightTheme->insert(colorSwitchCheckedHandleField, "#f44336");
+    lightTheme->insert(colorSwitchUncheckedHandleField, "#fafafa");
+    lightTheme->insert(colorSwitchDisabledHandleField, "#bdbdbd");
+
     lightTheme->insert(iconMainMenuField, "qrc:/Assets/Icons/coloreddrawer.svg");
     lightTheme->insert(iconMainMenuReleasesField, "qrc:/Assets/Icons/catalogmenu.svg");
     lightTheme->insert(iconMainMenuCinemahallField, "qrc:/Assets/Icons/cinemahallmenu.svg");
@@ -204,6 +214,16 @@ ApplicationThemeViewModel::ApplicationThemeViewModel(QObject *parent)
     darkTheme->insert(colorPosterFilterField, "#50000000");
     darkTheme->insert(colorPopupBackgroundField, "#424242");
     darkTheme->insert(colorPopupBackgroundShadowField, "#99fafafa");
+
+    darkTheme->insert(colorSwitchHighlightedRippleField, "#32f44336");
+    darkTheme->insert(colorSwitchRippleField, "#32f44336");
+    darkTheme->insert(colorSwitchCheckedTrackField, "#80f44336");
+    darkTheme->insert(colorSwitchUncheckedTrackField, "#4cffffff");
+    darkTheme->insert(colorSwitchDisabledTrackField, "#19ffffff");
+    darkTheme->insert(colorSwitchCheckedHandleField, "#f44336");
+    darkTheme->insert(colorSwitchUncheckedHandleField, "#bdbdbd");
+    darkTheme->insert(colorSwitchDisabledHandleField, "#424242");
+
     darkTheme->insert(iconMainMenuField, "qrc:/Assets/Icons/coloreddrawer.svg");
     darkTheme->insert(iconMainMenuReleasesField, "qrc:/Assets/Icons/catalogmenu.svg");
     darkTheme->insert(iconMainMenuCinemahallField, "qrc:/Assets/Icons/cinemahallmenu.svg");
@@ -337,6 +357,16 @@ ApplicationThemeViewModel::ApplicationThemeViewModel(QObject *parent)
     m_fields.append(colorPosterFilterField);
     m_fields.append(colorPopupBackgroundField);
     m_fields.append(colorPopupBackgroundShadowField);
+
+    m_fields.append(colorSwitchHighlightedRippleField);
+    m_fields.append(colorSwitchRippleField);
+    m_fields.append(colorSwitchCheckedTrackField);
+    m_fields.append(colorSwitchUncheckedTrackField);
+    m_fields.append(colorSwitchDisabledTrackField);
+    m_fields.append(colorSwitchCheckedHandleField);
+    m_fields.append(colorSwitchUncheckedHandleField);
+    m_fields.append(colorSwitchDisabledHandleField);
+
     m_fields.append(iconMainMenuField);
     m_fields.append(iconMainMenuReleasesField);
     m_fields.append(iconMainMenuCinemahallField);

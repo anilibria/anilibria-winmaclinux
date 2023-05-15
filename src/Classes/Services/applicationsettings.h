@@ -34,7 +34,6 @@ class ApplicationSettings : public QObject
     Q_PROPERTY(int remotePort READ remotePort WRITE setRemotePort NOTIFY remotePortChanged)
     Q_PROPERTY(bool sendVolumeToRemote READ sendVolumeToRemote WRITE setSendVolumeToRemote NOTIFY sendVolumeToRemoteChanged)
     Q_PROPERTY(bool sendPlaybackToRemote READ sendPlaybackToRemote WRITE setSendPlaybackToRemote NOTIFY sendPlaybackToRemoteChanged);
-    Q_PROPERTY(bool useCustomToolbar READ useCustomToolbar WRITE setUseCustomToolbar NOTIFY useCustomToolbarChanged)
     Q_PROPERTY(bool isMaximize READ isMaximize WRITE setIsMaximize NOTIFY isMaximizeChanged)
     Q_PROPERTY(int normalX READ normalX WRITE setNormalX NOTIFY normalXChanged)
     Q_PROPERTY(int normalY READ normalY WRITE setNormalY NOTIFY normalYChanged)
@@ -71,9 +70,6 @@ public:
     bool sendPlaybackToRemote();
     void setSendPlaybackToRemote(bool sendPlaybackToRemote);
 
-    bool useCustomToolbar();
-    void setUseCustomToolbar(bool useCustomToolbar);
-
     bool isMaximize() noexcept;
     void setIsMaximize(bool isMaximize) noexcept;
 
@@ -99,7 +95,6 @@ signals:
     void remotePortChanged(int remotePort);
     void sendVolumeToRemoteChanged(bool sendVolumeToRemote);
     void sendPlaybackToRemoteChanged(bool sendPlaybackToRemote);
-    void useCustomToolbarChanged(bool useCustomToolbar);
     void isMaximizeChanged();
     void normalXChanged();
     void normalYChanged();

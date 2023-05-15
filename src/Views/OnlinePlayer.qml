@@ -972,7 +972,7 @@ Page {
                                     text: "Включить удаленный плеер"
                                 }
 
-                                Switch {
+                                CommonSwitch {
                                     id: stateRemotePlayer
                                     onCheckedChanged: {
                                         if (checked) {
@@ -1019,7 +1019,7 @@ Page {
                                     text: "Передавать громкость"
                                 }
 
-                                Switch {
+                                CommonSwitch {
                                     id: sendVolumeToRemoteSwitch
                                     onCheckedChanged: {
                                         applicationSettings.sendVolumeToRemote = checked;
@@ -1034,7 +1034,7 @@ Page {
                                     text: "Передавать воспроизведение/пауза"
                                 }
 
-                                Switch {
+                                CommonSwitch {
                                     id: sendPlaybackToRemoteSwitch
                                     onCheckedChanged: {
                                         applicationSettings.sendPlaybackToRemote = checked;
@@ -1148,7 +1148,7 @@ Page {
                                     text: "Автопереход между сериями"
                                 }
 
-                                Switch {
+                                CommonSwitch {
                                     id: autoNextVideo
                                     onCheckedChanged: {
                                         localStorage.setAutoNextVideo(checked);
@@ -1161,7 +1161,7 @@ Page {
                                     text: "Автопереход в режим поверх всех окон"
                                 }
 
-                                Switch {
+                                CommonSwitch {
                                     id: autoTopMost
                                     onCheckedChanged: {
                                         localStorage.setAutoTopMost(checked);
@@ -1175,7 +1175,7 @@ Page {
                                     text: "Показывать постер релиза"
                                 }
 
-                                Switch {
+                                CommonSwitch {
                                     id: showReleaseInfo
                                     onCheckedChanged: {
                                         localStorage.setShowReleaseInfo(checked);
@@ -1189,7 +1189,7 @@ Page {
                                     text: "Показывать видео превью"
                                 }
 
-                                Switch {
+                                CommonSwitch {
                                     id: showVideoPreview
                                     onCheckedChanged: {
                                         localStorage.setShowVideoPreview(checked);
@@ -1233,7 +1233,7 @@ Page {
                                     fontPointSize: 10
                                     text: "Автопропуск опенинга"
                                 }
-                                Switch {
+                                CommonSwitch {
                                     id: autoSkipOpeningSwitch
                                     checked: userConfigurationViewModel.autoSkipOpening
                                     onCheckedChanged: {
@@ -1245,7 +1245,7 @@ Page {
                                     fontPointSize: 10
                                     text: "Выравнивание списка серий по центру"
                                 }
-                                Switch {
+                                CommonSwitch {
                                     id: fixedControlPanelSwitch
                                     checked: userConfigurationViewModel.fixedControlPanel
                                     onCheckedChanged: {
@@ -1257,7 +1257,7 @@ Page {
                                     fontPointSize: 10
                                     text: "Скрывать кнопку Пропуcтить опенинг"
                                 }
-                                Switch {
+                                CommonSwitch {
                                     id: hideSkipOpeningSwitch
                                     checked: userConfigurationViewModel.hideSkipOpening
                                     onCheckedChanged: {
@@ -1331,15 +1331,6 @@ Page {
                     }
                 }
             }
-        }
-
-        Rectangle {
-            visible: applicationSettings.useCustomToolbar
-            color: "black"
-            height: 1
-            anchors.bottom: parent.bottom
-            anchors.left: parent.left
-            anchors.right: parent.right
         }
 
         Behavior on opacity {

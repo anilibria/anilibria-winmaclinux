@@ -149,6 +149,15 @@ ThemeFieldListModel::ThemeFieldListModel(QObject *parent)
     m_descriptions.insert(colorPopupBackgroundField, "Цвет фона попапов:Цвет фона всех всплывающих окон в приложении");
     m_descriptions.insert(colorPopupBackgroundShadowField, "Цвет тени попапов:Цвет тени для всех всплывающих окон в приложении");
 
+    m_descriptions.insert(colorSwitchHighlightedRippleField, "Цвет переключателя 1:Цвет подсветки переключателя основного элемента контрола");
+    m_descriptions.insert(colorSwitchRippleField, "Цвет переключателя 2:Цвет переключателя основного элемента контрола");
+    m_descriptions.insert(colorSwitchCheckedTrackField, "Цвет переключателя 3:Цвет ползунка в состянии выбрано");
+    m_descriptions.insert(colorSwitchUncheckedTrackField, "Цвет тени попапов 4:Цвет ползунка в состянии не выбрано");
+    m_descriptions.insert(colorSwitchDisabledTrackField, "Цвет тени попапов 5:Цвет ползунка в состянии не активно");
+    m_descriptions.insert(colorSwitchCheckedHandleField, "Цвет тени попапов 6:Цвет бара в состоянии выбрано");
+    m_descriptions.insert(colorSwitchUncheckedHandleField, "Цвет тени попапов 7:Цвет бара в состоянии не выбрано");
+    m_descriptions.insert(colorSwitchDisabledHandleField, "Цвет тени попапов 8:Цвет бара в состоянии не активно");
+
     m_saveMenuItems.append("Сохранить и добавить тему в список");
     m_saveMenuItems.append("Сохранить в файл");
 }

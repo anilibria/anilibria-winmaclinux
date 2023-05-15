@@ -162,8 +162,13 @@ QString colorTooltipBackgroundField = "colorTooltipBackground";
 QString colorDrawerItemTextField = "colorDrawerItemText";
 QString colorDrawerItemHoveredField = "colorDrawerItemHovered";
 QString colorPosterFilterField = "colorPosterFilter";
-
 QString colorPopupBackgroundField = "colorPopupBackground";
 QString colorPopupBackgroundShadowField = "colorPopupBackgroundShadow";
-
-
+QString colorSwitchHighlightedRippleField = "colorSwitchHighlightedRipple";
+QString colorSwitchRippleField = "colorSwitchRipple";
+QString colorSwitchCheckedTrackField = "colorSwitchCheckedTrack";
+QString colorSwitchUncheckedTrackField = "colorSwitchUncheckedTrack";
+QString colorSwitchDisabledTrackField = "colorSwitchDisabledTrack";
+QString colorSwitchCheckedHandleField = "colorSwitchCheckedHandle";
+QString colorSwitchUncheckedHandleField = "colorSwitchUncheckedHandle";
+QString colorSwitchDisabledHandleField = "colorSwitchDisabledHandle";

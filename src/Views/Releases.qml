@@ -435,7 +435,7 @@ Page {
                                 fontPointSize: 11
                                 text: qsTr("ИЛИ/И")
                             }
-                            Switch {
+                            CommonSwitch {
                                 id: orAndGenresSearchField
                                 anchors.top: labelGenresSearchField.bottom
                                 anchors.left: labelOrAndGenresSearchField.right
@@ -469,7 +469,7 @@ Page {
                                 fontPointSize: 11
                                 text: qsTr("ИЛИ/И")
                             }
-                            Switch {
+                            CommonSwitch {
                                 id: orAndVoicesSearchField
                                 anchors.top: labelVoicesSearchField.bottom
                                 anchors.left: labelOrAndVoicesSearchField.right
@@ -597,7 +597,7 @@ Page {
                                 text: "Часть связанного релиза"
                             }
 
-                            Switch {
+                            CommonSwitch {
                                 id: releaseSeriesFilterField
                                 anchors.top: labelReleaseSeriesFilterField.bottom
                                 onCheckedChanged: {
@@ -839,7 +839,7 @@ Page {
                                 fontPointSize: 11
                                 text: "Уведомления по избранным"
                             }
-                            Switch {
+                            CommonSwitch {
                                 id: notificationForFavorites
                                 onCheckedChanged: {
                                     releasesViewModel.items.filterByFavorites = checked;
@@ -879,27 +879,6 @@ Page {
                                 tooltipMessage: "Компактный режим позволяет уменьшить количество элементов на странице"
                                 onCheckedChanged: {
                                     localStorage.setCompactMode(checked);
-                                }
-                            }
-
-                            PlainText {
-                                id: useCustomToolbarLabel
-                                fontPointSize: 11
-                                text: "Использовать кастомный тулбар"
-                            }
-                            CommonSwitch {
-                                id: useCustomToolbarSwitch
-                                tooltipMessage: "Если настройка включена будет использоваться кастомный тулбар окна с дополнительным функционалом"
-                                onCheckedChanged: {
-                                    applicationSettings.useCustomToolbar = checked;
-
-                                    /*if (applicationSettings.useCustomToolbar) {
-                                        //window.flags = Qt.FramelessWindowHint | Qt.Window | Qt.WindowMinimizeButtonHint;
-                                        toolBar.visible = true;
-                                    } else {
-                                        //window.flags = 1;
-                                        toolBar.visible = false;
-                                    }*/
                                 }
                             }
 
@@ -1859,7 +1838,6 @@ Page {
         page.hideInfoButton = userSettings.hideInfoButton;
         page.hideFilterButton = userSettings.hideFilterButton;
         showReleaseDescriptionSwitch.checked = userSettings.showReleaseDescription;
-        useCustomToolbarSwitch.checked = applicationSettings.useCustomToolbar;
 
         const startedSection = userSettings.startedSection;
         if (startedSection) changeSection(startedSection);

@@ -93,7 +93,7 @@ Page {
                                 fontPointSize: 11
                                 text: "Не добавлять 'Копия' при копировании темы"
                             }
-                            Switch {
+                            CommonSwitch {
                                 id: notificationForFavorites
                                 checked: userConfigurationViewModel.removeCopyFromName
                                 onCheckedChanged: {

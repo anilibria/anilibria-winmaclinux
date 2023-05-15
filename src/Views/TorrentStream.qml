@@ -333,7 +333,7 @@ Page {
                 width: torrentStreamPopup.width
                 height: 15
 
-                Switch {
+                CommonSwitch {
                     id: usingVideoProxySwitch
                     height: 15
                     checked: userConfigurationViewModel.usingVideoProxy
@@ -352,7 +352,7 @@ Page {
                 width: torrentStreamPopup.width
                 height: 15
 
-                Switch {
+                CommonSwitch {
                     id: removeAllDownloadedTorrentSwitch
                     height: 15
                     checked: userConfigurationViewModel.removeAllDownloadedTorrent

@@ -60,3 +60,67 @@ void CustomStyle::setPopupBackgroundColor(const QString &popupBackgroundColor) n
     m_popupBackgroundColor = popupBackgroundColor;
     emit popupBackgroundColorChanged();
 }
+
+void CustomStyle::setSwitchHighlightedRippleColor(const QString &switchHighlightedRippleColor) noexcept
+{
+    if (m_switchHighlightedRippleColor == switchHighlightedRippleColor) return;
+
+    m_switchHighlightedRippleColor = switchHighlightedRippleColor;
+    emit switchHighlightedRippleColorChanged();
+}
+
+void CustomStyle::setSwitchRippleColor(const QString &switchRippleColor) noexcept
+{
+    if (m_switchRippleColor == switchRippleColor) return;
+
+    m_switchRippleColor = switchRippleColor;
+    emit switchRippleColorChanged();
+}
+
+void CustomStyle::setSwitchCheckedTrack(const QString &switchCheckedTrack) noexcept
+{
+    if (m_switchCheckedTrack == switchCheckedTrack) return;
+
+    m_switchCheckedTrack = switchCheckedTrack;
+    emit switchCheckedTrackChanged();
+}
+
+void CustomStyle::setSwitchUncheckedTrack(const QString &switchUncheckedTrack) noexcept
+{
+    if (m_switchUncheckedTrack == switchUncheckedTrack) return;
+
+    m_switchUncheckedTrack = switchUncheckedTrack;
+    emit switchUncheckedTrackChanged();
+}
+
+void CustomStyle::setSwitchDisabledTrack(const QString &switchDisabledTrack) noexcept
+{
+    if (m_switchDisabledTrack == switchDisabledTrack) return;
+
+    m_switchDisabledTrack = switchDisabledTrack;
+    emit switchDisabledTrackChanged();
+}
+
+void CustomStyle::setSwitchCheckedHandle(const QString &switchCheckedHandle) noexcept
+{
+    if (m_switchCheckedHandle == switchCheckedHandle) return;
+
+    m_switchCheckedHandle = switchCheckedHandle;
+    emit switchCheckedHandleChanged();
+}
+
+void CustomStyle::setSwitchUncheckedHandle(const QString &switchUncheckedHandle) noexcept
+{
+    if (m_switchUncheckedHandle == switchUncheckedHandle) return;
+
+    m_switchUncheckedHandle = switchUncheckedHandle;
+    emit switchUncheckedHandleChanged();
+}
+
+void CustomStyle::setSwitchDisabledHandle(const QString &switchDisabledHandle) noexcept
+{
+    if (m_switchDisabledHandle == switchDisabledHandle) return;
+
+    m_switchDisabledHandle = switchDisabledHandle;
+    emit switchDisabledHandleChanged();
+}

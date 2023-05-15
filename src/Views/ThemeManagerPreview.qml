@@ -572,12 +572,12 @@ ApplicationWindow {
                             anchors.leftMargin: 10
                             anchors.top: playlistControls.bottom
 
-                            Switch {
+                            /*CommonSwitch {
                                 id: previewSwitch
                                 ToolTip.delay: 1000
                                 ToolTip.visible: hovered
                                 ToolTip.text: "<font color='" + applicationThemeViewModel.previewItems.colorTooltipText + "'>Текст в тултипе</font>"
-                            }
+                            }*/
 
                             TextField {
                                 id: textField
