@@ -377,7 +377,7 @@ Page {
             id: numbersColumnnContainer
             width: setupNumberToMove.width - 20
 
-            TextField {
+            CommonTextField {
                 id: movedIndexTextField
                 width: numbersColumnnContainer.width
                 placeholderText: releasesViewModel.cinemahall.movedPositionPlaceholder

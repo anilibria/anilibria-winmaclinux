@@ -62,7 +62,7 @@ Page {
                             }
                         }
 
-                        TextField {
+                        CommonTextField {
                             id: filterTextField
                             anchors.left: makeStartPageButton.right
                             anchors.leftMargin: 10

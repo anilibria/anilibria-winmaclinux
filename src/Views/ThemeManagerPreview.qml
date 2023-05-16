@@ -3,6 +3,7 @@ import QtQuick.Controls 2.12
 import QtQuick.Controls.Material 2.0
 import QtQuick.Layouts 1.12
 import QtGraphicalEffects 1.0
+import CustomStyle 1.0
 import "../Controls"
 
 ApplicationWindow {
@@ -572,12 +573,21 @@ ApplicationWindow {
                             anchors.leftMargin: 10
                             anchors.top: playlistControls.bottom
 
-                            /*CommonSwitch {
+                            Switch {
                                 id: previewSwitch
                                 ToolTip.delay: 1000
                                 ToolTip.visible: hovered
                                 ToolTip.text: "<font color='" + applicationThemeViewModel.previewItems.colorTooltipText + "'>Текст в тултипе</font>"
-                            }*/
+
+                                CustomStyle.switchHighlightedRippleColor: applicationThemeViewModel.previewItems.colorSwitchHighlightedRipple
+                                CustomStyle.switchRippleColor: applicationThemeViewModel.previewItems.colorSwitchRipple
+                                CustomStyle.switchCheckedTrack: applicationThemeViewModel.previewItems.colorSwitchCheckedTrack
+                                CustomStyle.switchUncheckedTrack: applicationThemeViewModel.previewItems.colorSwitchUncheckedTrack
+                                CustomStyle.switchDisabledTrack: applicationThemeViewModel.previewItems.colorSwitchDisabledTrack
+                                CustomStyle.switchCheckedHandle: applicationThemeViewModel.previewItems.colorSwitchCheckedHandle
+                                CustomStyle.switchUncheckedHandle: applicationThemeViewModel.previewItems.colorSwitchUncheckedHandle
+                                CustomStyle.switchDisabledHandle: applicationThemeViewModel.previewItems.colorSwitchDisabledHandle
+                            }
 
                             TextField {
                                 id: textField
@@ -587,6 +597,11 @@ ApplicationWindow {
                                 ToolTip.delay: 1000
                                 ToolTip.visible: hovered
                                 ToolTip.text: "<font color='" + applicationThemeViewModel.previewItems.colorTooltipText + "'>Текст в тултипе</font>"
+                                CustomStyle.textFieldAccent: applicationThemeViewModel.previewItems.colorTextFieldAccent
+                                CustomStyle.textFieldForeground: applicationThemeViewModel.previewItems.colorTextFieldForeground
+                                CustomStyle.textFieldHint: applicationThemeViewModel.previewItems.colorTextFieldHint
+                                CustomStyle.textFieldHighlight: applicationThemeViewModel.previewItems.colorTextFieldHighlight
+                                CustomStyle.textFieldText: applicationThemeViewModel.previewItems.colorTextFieldText
                             }
 
                             ComboBox {

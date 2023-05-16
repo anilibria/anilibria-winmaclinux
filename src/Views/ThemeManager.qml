@@ -549,7 +549,7 @@ Page {
                                 }
                             }
 
-                            TextField {
+                            CommonTextField {
                                 anchors.left: parent.left
                                 anchors.leftMargin: 10
                                 anchors.verticalCenter: parent.verticalCenter                                
@@ -610,7 +610,7 @@ Page {
                                         text: "Имя темы"
                                     }
 
-                                    TextField {
+                                    CommonTextField {
                                         id: themeNameTextField
                                         anchors.top: parent.top
                                         anchors.topMargin: 10
@@ -727,7 +727,7 @@ Page {
                                             text: description
                                         }
 
-                                        TextField {
+                                        CommonTextField {
                                             id: valueTextField
                                             anchors.verticalCenter: parent.verticalCenter
                                             anchors.left: titleText.right

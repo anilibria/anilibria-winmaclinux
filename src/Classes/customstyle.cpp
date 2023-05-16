@@ -124,3 +124,43 @@ void CustomStyle::setSwitchDisabledHandle(const QString &switchDisabledHandle) n
     m_switchDisabledHandle = switchDisabledHandle;
     emit switchDisabledHandleChanged();
 }
+
+void CustomStyle::setTextFieldForeground(const QString &textFieldForeground) noexcept
+{
+    if (m_textFieldForeground == textFieldForeground) return;
+
+    m_textFieldForeground = textFieldForeground;
+    emit textFieldForegroundChanged();
+}
+
+void CustomStyle::setTextFieldHint(const QString &textFieldHint) noexcept
+{
+    if (m_textFieldHint == textFieldHint) return;
+
+    m_textFieldHint = textFieldHint;
+    emit textFieldHintChanged();
+}
+
+void CustomStyle::setTextFieldHighlight(const QString &textFieldHighlight) noexcept
+{
+    if (m_textFieldHighlight == textFieldHighlight) return;
+
+    m_textFieldHighlight = textFieldHighlight;
+    emit textFieldHighlightChanged();
+}
+
+void CustomStyle::setTextFieldText(const QString &textFieldText) noexcept
+{
+    if (m_textFieldText == textFieldText) return;
+
+    m_textFieldText = textFieldText;
+    emit textFieldTextChanged();
+}
+
+void CustomStyle::setTextFieldAccent(const QString &textFieldAccent) noexcept
+{
+    if (m_textFieldAccent == textFieldAccent) return;
+
+    m_textFieldAccent = textFieldAccent;
+    emit textFieldAccentChanged();
+}

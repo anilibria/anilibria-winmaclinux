@@ -221,5 +221,8 @@
         <file>Assets/Icons/grayedrightmenu.svg</file>
         <file>CustomStyle/Switch.qml</file>
         <file>CustomStyle/SwitchIndicator.qml</file>
+        <file>CustomStyle/TextField.qml</file>
+        <file>CustomStyle/CursorDelegate.qml</file>
+        <file>Controls/CommonTextField.qml</file>
     </qresource>
 </RCC>

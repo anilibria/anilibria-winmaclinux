@@ -28,7 +28,7 @@ Rectangle {
 
     signal completeEditing()
 
-    TextField {
+    CommonTextField {
         id: textBox
         anchors.fill: parent
         font.pointSize: 10

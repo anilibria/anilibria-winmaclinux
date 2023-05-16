@@ -354,7 +354,7 @@ Page {
                             width: apiAddressPopup.width - 30
                             height: apiAddress.height
 
-                            TextField {
+                            CommonTextField {
                                 id: apiAddress
                                 width: parent.width
                                 readOnly: serversComboBox.currentIndex > 0
@@ -375,7 +375,7 @@ Page {
                             width: apiAddressPopup.width - 30
                             height: apiAddress.height
 
-                            TextField {
+                            CommonTextField {
                                 id: staticAddress
                                 width: parent.width
                                 readOnly: serversComboBox.currentIndex > 0
@@ -523,7 +523,7 @@ Page {
                             width: proxyPopup.width - 30
                             height: proxyAddress.height
 
-                            TextField {
+                            CommonTextField {
                                 id: proxyAddress
                                 width: parent.width
                                 placeholderText: "Введите url"
@@ -542,7 +542,7 @@ Page {
                             width: proxyPopup.width - 30
                             height: proxyPort.height
 
-                            TextField {
+                            CommonTextField {
                                 id: proxyPort
                                 width: parent.width
                                 inputMethodHints: Qt.ImhFormattedNumbersOnly
@@ -562,7 +562,7 @@ Page {
                             width: proxyPopup.width - 30
                             height: proxyUsername.height
 
-                            TextField {
+                            CommonTextField {
                                 id: proxyUsername
                                 width: parent.width
                                 placeholderText: "Введите имя пользователя"
@@ -581,7 +581,7 @@ Page {
                             width: proxyPopup.width - 30
                             height: proxyPassword.height
 
-                            TextField {
+                            CommonTextField {
                                 id: proxyPassword
                                 width: parent.width
                                 placeholderText: "Введите пароль"

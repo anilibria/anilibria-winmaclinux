@@ -388,7 +388,7 @@ Page {
                                 fontPointSize: 11
                                 text: qsTr("Тип")
                             }
-                            TextField {
+                            CommonTextField {
                                 id: descriptionSearchField
                                 width: parent.width / 2 - 5
                                 anchors.top: labelDescriptionSearchField.bottom
@@ -398,7 +398,7 @@ Page {
                                     releasesViewModel.items.descriptionFilter = text;
                                 }
                             }
-                            TextField {
+                            CommonTextField {
                                 id: typeSearchField
                                 width: parent.width / 2 - 5
                                 anchors.top: labelTypeSearchField.bottom
@@ -417,7 +417,7 @@ Page {
                                 fontPointSize: 11
                                 text: qsTr("Жанры")
                             }
-                            TextField {
+                            CommonTextField {
                                 id: genresSearchField
                                 width: parent.width * 0.7
                                 anchors.top: labelGenresSearchField.bottom
@@ -451,7 +451,7 @@ Page {
                                 fontPointSize: 11
                                 text: qsTr("Озвучка")
                             }
-                            TextField {
+                            CommonTextField {
                                 id: voicesSearchField
                                 width: parent.width * 0.7
                                 anchors.top: labelVoicesSearchField.bottom
@@ -491,7 +491,7 @@ Page {
                                 fontPointSize: 11
                                 text: qsTr("Сезоны")
                             }
-                            TextField {
+                            CommonTextField {
                                 id: yearsSearchField
                                 width: parent.width / 2 - 5
                                 anchors.top: labelYearsSearchField.bottom
@@ -501,7 +501,7 @@ Page {
                                     releasesViewModel.items.yearsFilter = text;
                                 }
                             }
-                            TextField {
+                            CommonTextField {
                                 id: seasonesSearchField
                                 width: parent.width / 2 - 5
                                 anchors.top: labelSeasonsSearchField.bottom
@@ -518,7 +518,7 @@ Page {
                                 fontPointSize: 11
                                 text: qsTr("Статусы")
                             }
-                            TextField {
+                            CommonTextField {
                                 id: statusesSearchField
                                 anchors.top: labelStatusesSearchField.bottom
                                 anchors.right: parent.right
@@ -613,7 +613,7 @@ Page {
                                 fontPointSize: 11
                                 text: "День недели"
                             }
-                            TextField {
+                            CommonTextField {
                                 id: scheduleDayFilterField
                                 width: parent.width / 2 - 5
                                 anchors.top: labelReleaseSeriesFilterField.bottom

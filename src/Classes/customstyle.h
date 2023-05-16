@@ -21,6 +21,11 @@ class CustomStyle : public QObject
     Q_PROPERTY(QString switchCheckedHandle READ switchCheckedHandle WRITE setSwitchCheckedHandle NOTIFY switchCheckedHandleChanged)
     Q_PROPERTY(QString switchUncheckedHandle READ switchUncheckedHandle WRITE setSwitchUncheckedHandle NOTIFY switchUncheckedHandleChanged)
     Q_PROPERTY(QString switchDisabledHandle READ switchDisabledHandle WRITE setSwitchDisabledHandle NOTIFY switchDisabledHandleChanged)
+    Q_PROPERTY(QString textFieldForeground READ textFieldForeground WRITE setTextFieldForeground NOTIFY textFieldForegroundChanged)
+    Q_PROPERTY(QString textFieldHint READ textFieldHint WRITE setTextFieldHint NOTIFY textFieldHintChanged)
+    Q_PROPERTY(QString textFieldHighlight READ textFieldHighlight WRITE setTextFieldHighlight NOTIFY textFieldHighlightChanged)
+    Q_PROPERTY(QString textFieldText READ textFieldText WRITE setTextFieldText NOTIFY textFieldTextChanged)
+    Q_PROPERTY(QString textFieldAccent READ textFieldAccent WRITE setTextFieldAccent NOTIFY textFieldAccentChanged)
 
 private:
     QString m_tooltipColor { "black" };
@@ -30,13 +35,18 @@ private:
     QString m_popupBackgroundColor { "black" };
     QString m_switchHighlightedRippleColor { "black" };
     QString m_switchRippleColor { "black" };
-
     QString m_switchCheckedTrack { "black" };
     QString m_switchUncheckedTrack { "black" };
     QString m_switchDisabledTrack { "black" };
     QString m_switchCheckedHandle { "black" };
     QString m_switchUncheckedHandle { "black" };
     QString m_switchDisabledHandle { "black" };
+
+    QString m_textFieldForeground { "black" };
+    QString m_textFieldHint { "black" };
+    QString m_textFieldHighlight { "black" };
+    QString m_textFieldText { "black" };
+    QString m_textFieldAccent { "black" };
 
 public:
     explicit CustomStyle(QObject *parent = nullptr);
@@ -83,6 +93,21 @@ public:
     QString switchDisabledHandle() const noexcept { return m_switchDisabledHandle; }
     void setSwitchDisabledHandle(const QString& switchDisabledHandle) noexcept;
 
+    QString textFieldForeground() const noexcept { return m_textFieldForeground; }
+    void setTextFieldForeground(const QString& textFieldForeground) noexcept;
+
+    QString textFieldHint() const noexcept { return m_textFieldHint; }
+    void setTextFieldHint(const QString& textFieldHint) noexcept;
+
+    QString textFieldHighlight() const noexcept { return m_textFieldHighlight; }
+    void setTextFieldHighlight(const QString& textFieldHighlight) noexcept;
+
+    QString textFieldText() const noexcept { return m_textFieldText; }
+    void setTextFieldText(const QString& textFieldText) noexcept;
+
+    QString textFieldAccent() const noexcept { return m_textFieldAccent; }
+    void setTextFieldAccent(const QString& textFieldAccent) noexcept;
+
 signals:
     void tooltipColorChanged();
     void colorTooltipTextChanged();
@@ -91,7 +116,6 @@ signals:
     void popupBackgroundColorChanged();
     void switchHighlightedRippleColorChanged();
     void switchRippleColorChanged();
-
     void switchCheckedTrackChanged();
     void switchUncheckedTrackChanged();
     void switchDisabledTrackChanged();
@@ -99,7 +123,11 @@ signals:
     void switchUncheckedHandleChanged();
     void switchDisabledHandleChanged();
 
-};
+    void textFieldForegroundChanged();
+    void textFieldHintChanged();
+    void textFieldHighlightChanged();
+    void textFieldTextChanged();
+    void textFieldAccentChanged();};
 
 QML_DECLARE_TYPEINFO(CustomStyle, QML_HAS_ATTACHED_PROPERTIES)
 

@@ -64,7 +64,7 @@ Page {
                     id: authForm
                     anchors.fill: parent
                     anchors.margins: 8
-                    TextField {
+                    CommonTextField {
                         id: emailTextBox
                         Layout.fillWidth: true
                         placeholderText: "Логин"
@@ -73,7 +73,7 @@ Page {
                             authorizationViewModel.login = text;
                         }
                     }
-                    TextField {
+                    CommonTextField {
                         id: passwordTextBox
                         Layout.fillWidth: true
                         echoMode: "PasswordEchoOnEdit"
@@ -83,7 +83,7 @@ Page {
                             authorizationViewModel.password = text;
                         }
                     }
-                    TextField {
+                    CommonTextField {
                         id: fa2codeTextBox
                         Layout.fillWidth: true
                         placeholderText: "2fa код (оставить пустым если не настроено)"

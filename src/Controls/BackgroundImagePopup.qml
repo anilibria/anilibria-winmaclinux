@@ -1,6 +1,5 @@
 import QtQuick 2.12
 import QtQuick.Controls 2.12
-import QtQuick.Controls.Material 2.0
 
 DefaultPopup {
     id: backgroundPopup
@@ -18,7 +17,7 @@ DefaultPopup {
         text: "Изображение"
     }
 
-    TextField {
+    CommonTextField {
         id: imagePathTextField
         width: parent.width
         anchors.top: imagePathLabel.bottom

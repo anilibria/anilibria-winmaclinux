@@ -152,11 +152,17 @@ ThemeFieldListModel::ThemeFieldListModel(QObject *parent)
     m_descriptions.insert(colorSwitchHighlightedRippleField, "Цвет переключателя 1:Цвет подсветки переключателя основного элемента контрола");
     m_descriptions.insert(colorSwitchRippleField, "Цвет переключателя 2:Цвет переключателя основного элемента контрола");
     m_descriptions.insert(colorSwitchCheckedTrackField, "Цвет переключателя 3:Цвет ползунка в состянии выбрано");
-    m_descriptions.insert(colorSwitchUncheckedTrackField, "Цвет тени попапов 4:Цвет ползунка в состянии не выбрано");
-    m_descriptions.insert(colorSwitchDisabledTrackField, "Цвет тени попапов 5:Цвет ползунка в состянии не активно");
-    m_descriptions.insert(colorSwitchCheckedHandleField, "Цвет тени попапов 6:Цвет бара в состоянии выбрано");
-    m_descriptions.insert(colorSwitchUncheckedHandleField, "Цвет тени попапов 7:Цвет бара в состоянии не выбрано");
-    m_descriptions.insert(colorSwitchDisabledHandleField, "Цвет тени попапов 8:Цвет бара в состоянии не активно");
+    m_descriptions.insert(colorSwitchUncheckedTrackField, "Цвет переключателя 4:Цвет ползунка в состянии не выбрано");
+    m_descriptions.insert(colorSwitchDisabledTrackField, "Цвет переключателя 5:Цвет ползунка в состянии не активно");
+    m_descriptions.insert(colorSwitchCheckedHandleField, "Цвет переключателя 6:Цвет бара в состоянии выбрано");
+    m_descriptions.insert(colorSwitchUncheckedHandleField, "Цвет переключателя 7:Цвет бара в состоянии не выбрано");
+    m_descriptions.insert(colorSwitchDisabledHandleField, "Цвет переключателя 8:Цвет бара в состоянии не активно");
+
+    m_descriptions.insert(colorTextFieldAccentField, "Цвет текстового поля 1: Цвет акцента в текстовых полях в фокусе");
+    m_descriptions.insert(colorTextFieldForegroundField, "Цвет текстового поля 2: Цвет текста в текстовом поле в состоянии Активно");
+    m_descriptions.insert(colorTextFieldHintField, "Цвет текстового поля 2: Цвет текста подсказки");
+    m_descriptions.insert(colorTextFieldHighlightField, "Цвет текстового поля 2: Цвет выделенного текста в текстовом поле");
+    m_descriptions.insert(colorTextFieldTextField, "Цвет текстового поля 2: Цвет текста в текстовом поле");
 
     m_saveMenuItems.append("Сохранить и добавить тему в список");
     m_saveMenuItems.append("Сохранить в файл");

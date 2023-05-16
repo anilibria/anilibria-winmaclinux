@@ -288,7 +288,7 @@ Page {
                 width: torrentStreamPopup.width - 30
                 height: torrentStreamPath.height
 
-                TextField {
+                CommonTextField {
                     id: torrentStreamPath
                     width: parent.width
                     placeholderText: "Введите полный путь"
@@ -309,7 +309,7 @@ Page {
                 width: torrentStreamPopup.width - 30
                 height: torrentStreamPort.height
 
-                TextField {
+                CommonTextField {
                     id: torrentStreamPort
                     width: parent.width
                     placeholderText: "Введите порт приложения TorrentStream"
