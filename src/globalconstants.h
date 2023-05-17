@@ -235,4 +235,12 @@ extern QString colorTextFieldHintField;
 extern QString colorTextFieldHighlightField;
 extern QString colorTextFieldTextField;
 
+extern QString colorMenuDialogBackgroundField;
+extern QString colorMenuOverlayBackgroundField;
+extern QString colorMenuForegroundField;
+extern QString colorMenuItemHintField;
+extern QString colorMenuRippleField;
+extern QString colorMenuHighlightField;
+
+
 #endif // GLOBALCONSTANTS_H

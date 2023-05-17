@@ -26,6 +26,12 @@ class CustomStyle : public QObject
     Q_PROPERTY(QString textFieldHighlight READ textFieldHighlight WRITE setTextFieldHighlight NOTIFY textFieldHighlightChanged)
     Q_PROPERTY(QString textFieldText READ textFieldText WRITE setTextFieldText NOTIFY textFieldTextChanged)
     Q_PROPERTY(QString textFieldAccent READ textFieldAccent WRITE setTextFieldAccent NOTIFY textFieldAccentChanged)
+    Q_PROPERTY(QString menuDialogBackground READ menuDialogBackground WRITE setMenuDialogBackground NOTIFY menuDialogBackgroundChanged)
+    Q_PROPERTY(QString menuOverlayBackground READ menuOverlayBackground WRITE setMenuOverlayBackground NOTIFY menuOverlayBackgroundChanged)
+    Q_PROPERTY(QString menuForeground READ menuForeground WRITE setMenuForeground NOTIFY menuForegroundChanged)
+    Q_PROPERTY(QString menuItemHint READ menuItemHint WRITE setMenuItemHint NOTIFY menuItemHintChanged)
+    Q_PROPERTY(QString menuRipple READ menuRipple WRITE setMenuRipple NOTIFY menuRippleChanged)
+    Q_PROPERTY(QString menuHighlight READ menuHighlight WRITE setMenuHighlight NOTIFY menuHighlightChanged)
 
 private:
     QString m_tooltipColor { "black" };
@@ -41,12 +47,17 @@ private:
     QString m_switchCheckedHandle { "black" };
     QString m_switchUncheckedHandle { "black" };
     QString m_switchDisabledHandle { "black" };
-
     QString m_textFieldForeground { "black" };
     QString m_textFieldHint { "black" };
     QString m_textFieldHighlight { "black" };
     QString m_textFieldText { "black" };
     QString m_textFieldAccent { "black" };
+    QString m_menuDialogBackground { "black" };
+    QString m_menuOverlayBackground { "black" };
+    QString m_menuForeground { "black" };
+    QString m_menuItemHint { "black" };
+    QString m_menuRipple { "black" };
+    QString m_menuHighlight { "black" };
 
 public:
     explicit CustomStyle(QObject *parent = nullptr);
@@ -108,6 +119,24 @@ public:
     QString textFieldAccent() const noexcept { return m_textFieldAccent; }
     void setTextFieldAccent(const QString& textFieldAccent) noexcept;
 
+    QString menuDialogBackground() const noexcept { return m_menuDialogBackground; }
+    void setMenuDialogBackground(const QString& menuDialogBackground) noexcept;
+
+    QString menuOverlayBackground() const noexcept { return m_menuOverlayBackground; }
+    void setMenuOverlayBackground(const QString& menuOverlayBackground) noexcept;
+
+    QString menuForeground() const noexcept { return m_menuForeground; }
+    void setMenuForeground(const QString& menuForeground) noexcept;
+
+    QString menuItemHint() const noexcept { return m_menuItemHint; }
+    void setMenuItemHint(const QString& menuItemHint) noexcept;
+
+    QString menuRipple() const noexcept { return m_menuRipple; }
+    void setMenuRipple(const QString& menuRipple) noexcept;
+
+    QString menuHighlight() const noexcept { return m_menuHighlight; }
+    void setMenuHighlight(const QString& menuHighlight) noexcept;
+
 signals:
     void tooltipColorChanged();
     void colorTooltipTextChanged();
@@ -127,7 +156,14 @@ signals:
     void textFieldHintChanged();
     void textFieldHighlightChanged();
     void textFieldTextChanged();
-    void textFieldAccentChanged();};
+    void textFieldAccentChanged();
+    void menuDialogBackgroundChanged();
+    void menuOverlayBackgroundChanged();
+    void menuForegroundChanged();
+    void menuItemHintChanged();
+    void menuRippleChanged();
+    void menuHighlightChanged();
+};
 
 QML_DECLARE_TYPEINFO(CustomStyle, QML_HAS_ATTACHED_PROPERTIES)
 

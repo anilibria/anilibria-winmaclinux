@@ -164,6 +164,13 @@ ThemeFieldListModel::ThemeFieldListModel(QObject *parent)
     m_descriptions.insert(colorTextFieldHighlightField, "Цвет текстового поля 2: Цвет выделенного текста в текстовом поле");
     m_descriptions.insert(colorTextFieldTextField, "Цвет текстового поля 2: Цвет текста в текстовом поле");
 
+    m_descriptions.insert(colorMenuDialogBackgroundField, "Цвет меню 1: Цвет фона попапа меню");
+    m_descriptions.insert(colorMenuOverlayBackgroundField, "Цвет меню 2: Цвет фона оверлея меню");
+    m_descriptions.insert(colorMenuForegroundField, "Цвет меню 3: Цвет текста в пунктах меню");
+    m_descriptions.insert(colorMenuItemHintField, "Цвет меню 4: Цвет подсказки");
+    m_descriptions.insert(colorMenuRippleField, "Цвет меню 5: Цвет рассеивания");
+    m_descriptions.insert(colorMenuHighlightField, "Цвет меню 6: Цвет выбранного пункта");
+
     m_saveMenuItems.append("Сохранить и добавить тему в список");
     m_saveMenuItems.append("Сохранить в файл");
 }

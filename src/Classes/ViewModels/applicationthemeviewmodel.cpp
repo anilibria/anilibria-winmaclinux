@@ -83,12 +83,18 @@ ApplicationThemeViewModel::ApplicationThemeViewModel(QObject *parent)
     lightTheme->insert(colorSwitchCheckedHandleField, "#f44336");
     lightTheme->insert(colorSwitchUncheckedHandleField, "#fafafa");
     lightTheme->insert(colorSwitchDisabledHandleField, "#bdbdbd");
-
     lightTheme->insert(colorTextFieldAccentField, "#f44336");
     lightTheme->insert(colorTextFieldForegroundField, "#000000");
     lightTheme->insert(colorTextFieldHintField, "#60000000");
     lightTheme->insert(colorTextFieldHighlightField, "#dd000000");
     lightTheme->insert(colorTextFieldTextField, "#dd000000");
+
+    lightTheme->insert(colorMenuDialogBackgroundField, "#ffffff");
+    lightTheme->insert(colorMenuOverlayBackgroundField, "#99303030");
+    lightTheme->insert(colorMenuForegroundField, "#000000");
+    lightTheme->insert(colorMenuItemHintField, "#60000000");
+    lightTheme->insert(colorMenuRippleField, "#10000000");
+    lightTheme->insert(colorMenuHighlightField, "#1e000000");
 
     lightTheme->insert(iconMainMenuField, "qrc:/Assets/Icons/coloreddrawer.svg");
     lightTheme->insert(iconMainMenuReleasesField, "qrc:/Assets/Icons/catalogmenu.svg");
@@ -227,12 +233,18 @@ ApplicationThemeViewModel::ApplicationThemeViewModel(QObject *parent)
     darkTheme->insert(colorSwitchCheckedHandleField, "#f44336");
     darkTheme->insert(colorSwitchUncheckedHandleField, "#bdbdbd");
     darkTheme->insert(colorSwitchDisabledHandleField, "#424242");
-
     darkTheme->insert(colorTextFieldAccentField, "#f44336");
     darkTheme->insert(colorTextFieldForegroundField, "#ffffff");
     darkTheme->insert(colorTextFieldHintField, "#4cffffff");
     darkTheme->insert(colorTextFieldHighlightField, "#ffffff");
     darkTheme->insert(colorTextFieldTextField, "#ffffff");
+
+    darkTheme->insert(colorMenuDialogBackgroundField, "#424242");
+    darkTheme->insert(colorMenuOverlayBackgroundField, "#99fafafa");
+    darkTheme->insert(colorMenuForegroundField, "#ffffff");
+    darkTheme->insert(colorMenuItemHintField, "#4cffffff");
+    darkTheme->insert(colorMenuRippleField, "#20ffffff");
+    darkTheme->insert(colorMenuHighlightField, "#1effffff");
 
     darkTheme->insert(iconMainMenuField, "qrc:/Assets/Icons/coloreddrawer.svg");
     darkTheme->insert(iconMainMenuReleasesField, "qrc:/Assets/Icons/catalogmenu.svg");
@@ -381,6 +393,13 @@ ApplicationThemeViewModel::ApplicationThemeViewModel(QObject *parent)
     m_fields.append(colorTextFieldHintField);
     m_fields.append(colorTextFieldHighlightField);
     m_fields.append(colorTextFieldTextField);
+    m_fields.append(colorMenuDialogBackgroundField);
+    m_fields.append(colorMenuOverlayBackgroundField);
+
+    m_fields.append(colorMenuForegroundField);
+    m_fields.append(colorMenuItemHintField);
+    m_fields.append(colorMenuRippleField);
+    m_fields.append(colorMenuHighlightField);
 
     m_fields.append(iconMainMenuField);
     m_fields.append(iconMainMenuReleasesField);

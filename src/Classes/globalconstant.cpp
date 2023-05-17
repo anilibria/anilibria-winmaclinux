@@ -172,9 +172,16 @@ QString colorSwitchDisabledTrackField = "colorSwitchDisabledTrack";
 QString colorSwitchCheckedHandleField = "colorSwitchCheckedHandle";
 QString colorSwitchUncheckedHandleField = "colorSwitchUncheckedHandle";
 QString colorSwitchDisabledHandleField = "colorSwitchDisabledHandle";
-
 QString colorTextFieldAccentField = "colorTextFieldAccent";
 QString colorTextFieldForegroundField = "colorTextFieldForeground";
 QString colorTextFieldHintField = "colorTextFieldHint";
 QString colorTextFieldHighlightField = "colorTextFieldHighlight";
 QString colorTextFieldTextField = "colorTextFieldText";
+
+QString colorMenuDialogBackgroundField = "colorMenuDialogBackground";
+QString colorMenuOverlayBackgroundField = "colorMenuOverlayBackground";
+
+QString colorMenuForegroundField = "colorMenuForeground";
+QString colorMenuItemHintField = "colorMenuItemHint";
+QString colorMenuRippleField = "colorMenuRipple";
+QString colorMenuHighlightField = "colorMenuHighlight";

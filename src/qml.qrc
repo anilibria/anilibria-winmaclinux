@@ -224,5 +224,7 @@
         <file>CustomStyle/TextField.qml</file>
         <file>CustomStyle/CursorDelegate.qml</file>
         <file>Controls/CommonTextField.qml</file>
+        <file>CustomStyle/Menu.qml</file>
+        <file>CustomStyle/MenuItem.qml</file>
     </qresource>
 </RCC>

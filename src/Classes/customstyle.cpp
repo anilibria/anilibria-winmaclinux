@@ -164,3 +164,52 @@ void CustomStyle::setTextFieldAccent(const QString &textFieldAccent) noexcept
     m_textFieldAccent = textFieldAccent;
     emit textFieldAccentChanged();
 }
+
+void CustomStyle::setMenuDialogBackground(const QString &menuDialogBackground) noexcept
+{
+    if (m_menuDialogBackground == menuDialogBackground) return;
+
+    m_menuDialogBackground = menuDialogBackground;
+    emit menuDialogBackgroundChanged();
+}
+
+void CustomStyle::setMenuOverlayBackground(const QString &menuOverlayBackground) noexcept
+{
+    if (m_menuOverlayBackground == menuOverlayBackground) return;
+
+    m_menuOverlayBackground = menuOverlayBackground;
+    emit menuOverlayBackgroundChanged();
+}
+
+void CustomStyle::setMenuForeground(const QString &menuForeground) noexcept
+{
+    if (m_menuForeground == menuForeground) return;
+
+    m_menuForeground = menuForeground;
+    emit menuForegroundChanged();
+}
+
+void CustomStyle::setMenuItemHint(const QString &menuItemHint) noexcept
+{
+    if (m_menuItemHint == menuItemHint) return;
+
+    m_menuItemHint = menuItemHint;
+    emit menuItemHintChanged();
+}
+
+void CustomStyle::setMenuRipple(const QString &menuRipple) noexcept
+{
+    if (m_menuRipple == menuRipple) return;
+
+    m_menuRipple = menuRipple;
+    emit menuRippleChanged();
+}
+
+void CustomStyle::setMenuHighlight(const QString &menuHighlight) noexcept
+{
+    if (m_menuHighlight == menuHighlight) return;
+
+    m_menuHighlight = menuHighlight;
+    emit menuHighlightChanged();
+}
+
