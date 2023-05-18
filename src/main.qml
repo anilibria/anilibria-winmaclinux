@@ -1161,6 +1161,15 @@ ApplicationWindow {
         }
     }
 
+    GlobalEventTrackerViewModel {
+        onBackButtonPressed: {
+            mainViewModel.backToPage();
+        }
+        onForwardButtonPressed: {
+            mainViewModel.forwardToPage();
+        }
+    }
+
     Item {
         id: assetsLocation
         property string path: Qt.resolvedUrl("../Assets/")
