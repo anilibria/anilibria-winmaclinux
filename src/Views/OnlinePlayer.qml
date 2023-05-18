@@ -1394,18 +1394,12 @@ Page {
         anchors.top: parent.top
         width: 182
         height: 272
-        //border.color: applicationThemeViewModel.posterBorder
-        //border.width: 0
-        //radius: 12
-        Image {
+
+        CorneredImage {
             anchors.centerIn: parent
-            source: localStorage.getReleasePosterPath(onlinePlayerViewModel.selectedRelease, onlinePlayerViewModel.releasePoster)
-            fillMode: Image.PreserveAspectCrop
             width: 180
             height: 270
-            mipmap: true
-            sourceSize.width: 180
-            sourceSize.height: 270
+            posterSource: localStorage.getReleasePosterPath(onlinePlayerViewModel.selectedRelease, onlinePlayerViewModel.releasePoster)
         }
         MouseArea {
             anchors.fill: parent

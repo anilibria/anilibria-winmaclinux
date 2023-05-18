@@ -103,74 +103,32 @@ Page {
                                 Layout.fillHeight: true
                                 Layout.leftMargin: 6
 
-                                Image {
+                                CorneredImage {
                                     visible: !!firstPoster
                                     anchors.top: parent.top
                                     anchors.left: parent.left
                                     anchors.leftMargin: 0
-                                    source: localStorage.getReleasePosterPath(releaseIds[0], firstPoster)
-                                    sourceSize: Qt.size(180, 270)
-                                    fillMode: Image.PreserveAspectCrop
+                                    posterSource: localStorage.getReleasePosterPath(releaseIds[0], firstPoster)
                                     width: 140
                                     height: 210
-                                    layer.enabled: true
-                                    layer.effect: OpacityMask {
-                                        maskSource: mask
-                                    }
-
-                                    Rectangle {
-                                        anchors.centerIn: parent
-                                        width: 140
-                                        height: 210
-                                        color: applicationThemeViewModel.currentItems.colorPosterFilter
-                                        radius: 12
-                                    }
                                 }
-                                Image {
+                                CorneredImage {
                                     visible: !!secondPoster
                                     anchors.top: parent.top
                                     anchors.left: parent.left
                                     anchors.leftMargin: thirdPoster ? 80 : 160
-                                    source: localStorage.getReleasePosterPath(releaseIds[1], secondPoster)
-                                    sourceSize: Qt.size(180, 270)
-                                    fillMode: Image.PreserveAspectCrop
+                                    posterSource: localStorage.getReleasePosterPath(releaseIds[1], secondPoster)
                                     width: 140
                                     height: 210
-                                    layer.enabled: true
-                                    layer.effect: OpacityMask {
-                                        maskSource: mask
-                                    }
-
-                                    Rectangle {
-                                        anchors.centerIn: parent
-                                        width: 140
-                                        height: 210
-                                        color: applicationThemeViewModel.currentItems.colorPosterFilter
-                                        radius: 12
-                                    }
                                 }
-                                Image {
+                                CorneredImage {
                                     visible: !!thirdPoster
                                     anchors.top: parent.top
                                     anchors.left: parent.left
                                     anchors.leftMargin: 160
-                                    source: localStorage.getReleasePosterPath(releaseIds[2], thirdPoster)
-                                    sourceSize: Qt.size(180, 270)
-                                    fillMode: Image.PreserveAspectCrop
+                                    posterSource: localStorage.getReleasePosterPath(releaseIds[2], thirdPoster)
                                     width: 140
                                     height: 210
-                                    layer.enabled: true
-                                    layer.effect: OpacityMask {
-                                        maskSource: mask
-                                    }
-
-                                    Rectangle {
-                                        anchors.centerIn: parent
-                                        width: 140
-                                        height: 210
-                                        color: applicationThemeViewModel.currentItems.colorPosterFilter
-                                        radius: 12
-                                    }
                                 }
                             }
 

@@ -9,45 +9,24 @@ Item {
         id: imagePoster
         sourceSize: Qt.size(350, 500)
         fillMode: Image.PreserveAspectCrop
-        width: root.width
-        height: root.height
-        clip: true
-    }
-
-    Rectangle {
-        anchors.centerIn: root
-        width: root.width
-        height: root.height
-        border.color: root.emptyBorderBackground
-        border.width: 4
-        color: "transparent"
-    }
-
-    Rectangle {
-        anchors.centerIn: root
-        width: root.width
-        height: root.height
-        border.color: root.emptyBorderBackground
-        border.width: 4
-        radius: 12
-        color: "transparent"
-    }
-
-    Rectangle {
-        anchors.centerIn: root
-        width: root.width - 6
-        height: root.height - 6
-        border.color: applicationThemeViewModel.posterBorder
-        border.width: 1
-        color: "transparent"
-        radius: 11
+        anchors.centerIn: parent
+        width: parent.width - 4
+        height: parent.height - 4
         clip: true
 
         Rectangle {
             anchors.fill: parent
             color: applicationThemeViewModel.currentItems.colorPosterFilter
-            radius: 12
         }
+    }
+
+    Rectangle {
+        anchors.fill: parent
+        border.color: applicationThemeViewModel.posterBorder
+        border.width: 2
+        color: "transparent"
+        radius: 4
+        clip: true
     }
 }
 

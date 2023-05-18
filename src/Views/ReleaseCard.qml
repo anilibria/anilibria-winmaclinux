@@ -318,7 +318,7 @@ ColumnLayout {
                         width: 280
                         height: 390
                         posterSource: localStorage.getReleasePosterPath(releasesViewModel.openedReleaseId, releasesViewModel.openedReleasePoster)
-                        emptyBorderBackground:  applicationThemeViewModel.currentItems.pageBackground
+                        emptyBorderBackground: applicationThemeViewModel.currentItems.pageBackground
 
                         MouseArea {
                             anchors.fill: parent

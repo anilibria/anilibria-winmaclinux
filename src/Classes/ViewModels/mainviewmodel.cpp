@@ -22,7 +22,6 @@ MainViewModel::MainViewModel(QObject *parent) : QObject(parent)
 
     m_currentPageDisplayName = m_displayNames->value(m_currentPageId);
 
-    m_history.append("release");
     m_historyPosition = 0;
 }
 
@@ -67,6 +66,19 @@ void MainViewModel::setIsSmallSizeMode(bool isSmallSizeMode) noexcept
 
     m_isSmallSizeMode = isSmallSizeMode;
     emit isSmallSizeModeChanged();
+}
+
+void MainViewModel::setStartPage(const QString &startPage) noexcept
+{
+    if (m_startPage == startPage) return;
+
+    m_startPage = startPage;
+    emit startPageChanged();
+
+    if (!m_startPageFilled) {
+        m_history.append(startPage);
+        m_startPageFilled = true;
+    }
 }
 
 void MainViewModel::selectPage(const QString& pageId)

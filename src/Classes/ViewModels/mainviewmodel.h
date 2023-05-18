@@ -29,6 +29,7 @@ class MainViewModel : public QObject
     Q_PROPERTY(bool isTorrentStreamPageVisible READ isTorrentStreamPageVisible NOTIFY isTorrentStreamPageVisibleChanged)
     Q_PROPERTY(bool hasBackHistory READ hasBackHistory NOTIFY hasBackHistoryChanged)
     Q_PROPERTY(bool hasForwardHistory READ hasForwardHistory NOTIFY hasForwardHistoryChanged)
+    Q_PROPERTY(QString startPage READ startPage WRITE setStartPage NOTIFY startPageChanged)
 
 private:
     MainMenuListModel* m_mainMenuListModel { new MainMenuListModel(this) };
@@ -40,6 +41,8 @@ private:
     bool m_isSmallSizeMode { false };
     QStringList m_history { QStringList() };
     int m_historyPosition { -1 };
+    QString m_startPage { "" };
+    bool m_startPageFilled { false };
 
 public:
     explicit MainViewModel(QObject *parent = nullptr);
@@ -75,6 +78,9 @@ public:
     bool isAuthorizationPageVisible() const noexcept { return m_currentPageId == "authorization"; }
     bool isThemeManagerVisible() const noexcept { return m_currentPageId == "thememanager"; }
     bool isTorrentStreamPageVisible() const noexcept { return m_currentPageId == "torrentstream"; }
+
+    QString startPage() const noexcept { return m_startPage; }
+    void setStartPage(const QString& startPage) noexcept;
 
     Q_INVOKABLE void selectPage(const QString& pageId);
     Q_INVOKABLE void backToPage();
@@ -113,6 +119,7 @@ signals:
     void isTorrentStreamPageVisibleChanged();
     void hasBackHistoryChanged();
     void hasForwardHistoryChanged();
+    void startPageChanged();
 
 };
 
