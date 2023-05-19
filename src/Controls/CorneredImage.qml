@@ -4,11 +4,12 @@ Item {
     id: root
     property alias posterSource: imagePoster.source
     property string emptyBorderBackground: "transparent"
+    property bool preserveAspectCrop: true
 
     Image {
         id: imagePoster
         sourceSize: Qt.size(350, 500)
-        fillMode: Image.PreserveAspectCrop
+        fillMode: root.preserveAspectCrop ? Image.PreserveAspectCrop : Image.Stretch
         anchors.centerIn: parent
         width: parent.width - 4
         height: parent.height - 4

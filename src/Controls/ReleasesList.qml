@@ -34,7 +34,7 @@ Item {
             width: 200
             height: 300
 
-            Rectangle {
+            Item {
                 id: posterImage
                 anchors.top: parent.top
                 anchors.topMargin: 8
@@ -42,23 +42,14 @@ Item {
                 anchors.leftMargin: 8
                 width: 182
                 height: 272
-                border.color: applicationThemeViewModel.posterBorder
-                border.width: 1
-                radius: 12
 
                 property bool posterHovered: false
 
-                Image {
+                CorneredImage {
                     anchors.centerIn: parent
-                    source: localStorage.getReleasePosterPath(id, poster)
-                    sourceSize: Qt.size(350, 500)
-                    fillMode: Image.PreserveAspectCrop
+                    posterSource: localStorage.getReleasePosterPath(id, poster)
                     width: 180
                     height: 270
-                    layer.enabled: true
-                    layer.effect: OpacityMask {
-                        maskSource: mask
-                    }
                 }
 
                 Rectangle {

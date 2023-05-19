@@ -48,29 +48,25 @@ Item {
 
             Rectangle {
                 id: posterImage
+                color: "transparent"
                 anchors.top: parent.top
                 anchors.topMargin: 8
                 anchors.left: parent.left
                 anchors.leftMargin: 8
                 width: isCurrentVideo ? 404 : 400
                 height: isCurrentVideo ? 274 : 272
-                border.color: isCurrentVideo ? applicationThemeViewModel.selectedItem : "#adadad"
-                border.width: isCurrentVideo ? 2 : 1
-                radius: 14
+                border.color: isCurrentVideo ? applicationThemeViewModel.selectedItem : "transparent"
+                border.width: isCurrentVideo ? 2 : 0
+                radius: 4
 
                 property bool posterHovered: false
 
-                Image {
+                CorneredImage {
                     anchors.centerIn: parent
-                    source: poster
-                    sourceSize: Qt.size(400, 270)
-                    fillMode: isEmptyPoster ? Image.Stretch : Image.PreserveAspectCrop
+                    posterSource: poster
+                    preserveAspectCrop: isEmptyPoster ? Image.Stretch : Image.PreserveAspectCrop
                     width: isEmptyPoster ? 100 : 400
                     height: isEmptyPoster ? 100 : 270
-                    layer.enabled: true
-                    layer.effect: OpacityMask {
-                        maskSource: mask
-                    }
                 }
 
                 Image {

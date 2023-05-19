@@ -44,7 +44,9 @@ Item {
         anchors.topMargin: 2
         width: releaseItem.width
         height: releaseItem.height
-        color: applicationThemeViewModel.panelBackgroundShadow
+        color: "transparent"
+        border.color: applicationThemeViewModel.panelBackgroundShadow
+        border.width: 2
         radius: 10
     }
 
