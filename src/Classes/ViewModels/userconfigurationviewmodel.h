@@ -54,6 +54,8 @@ class UserConfigurationViewModel : public QObject
     Q_PROPERTY(bool hideRecommendedByVoices READ hideRecommendedByVoices WRITE setHideRecommendedByVoices NOTIFY hideRecommendedByVoicesChanged)
     Q_PROPERTY(bool removeCopyFromName READ removeCopyFromName WRITE setRemoveCopyFromName NOTIFY removeCopyFromNameChanged)
     Q_PROPERTY(bool notSaveWindowPosition READ notSaveWindowPosition WRITE setNotSaveWindowPosition NOTIFY notSaveWindowPositionChanged)
+    Q_PROPERTY(bool needSavePlayer READ needSavePlayer WRITE setNeedSavePlayer NOTIFY needSavePlayerChanged)
+    Q_PROPERTY(QString lastSelectedPlayer READ lastSelectedPlayer WRITE setLastSelectedPlayer NOTIFY lastSelectedPlayerChanged)
 
 private:
     QString m_cacheFileName { "userconfiguration.cache" };
@@ -86,6 +88,8 @@ private:
     const QString m_hideRecommendedByVoicesField { "hideRecommendedByVoices" };
     const QString m_removeCopyFromNameField { "removeCopyFromName" };
     const QString m_notSaveWindowPositionField { "notSaveWindowPosition" };
+    const QString m_needSavePlayerField { "needSavePlayer" };
+    const QString m_lastSelectedPlayerField { "lastSelectedPlayer" };
     int m_opacityPlayerPanel { 50 };
     bool m_notCloseReleaseCardAfterWatch { false };
     bool m_usingScrollAcceleration { true };
@@ -115,6 +119,8 @@ private:
     bool m_hideRecommendedByVoices { false };
     bool m_removeCopyFromName { false };
     bool m_notSaveWindowPosition { false };
+    bool m_needSavePlayer { false };
+    QString m_lastSelectedPlayer { "" };
 
 public:
     explicit UserConfigurationViewModel(QObject *parent = nullptr);
@@ -206,6 +212,12 @@ public:
     bool notSaveWindowPosition() const noexcept { return m_notSaveWindowPosition; }
     void setNotSaveWindowPosition(bool notSaveWindowPosition) noexcept;
 
+    bool needSavePlayer() const noexcept { return m_needSavePlayer; }
+    void setNeedSavePlayer(bool needSavePlayer) noexcept;
+
+    QString lastSelectedPlayer() const noexcept { return m_lastSelectedPlayer; }
+    void setLastSelectedPlayer(const QString& lastSelectedPlayer);
+
     Q_INVOKABLE void refreshConfiguration() noexcept;
     Q_INVOKABLE void saveSettingsToFile();
 
@@ -242,6 +254,8 @@ signals:
     void hideRecommendedByVoicesChanged();
     void removeCopyFromNameChanged();
     void notSaveWindowPositionChanged();
+    void needSavePlayerChanged();
+    void lastSelectedPlayerChanged();
 
 };
 

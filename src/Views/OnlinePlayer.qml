@@ -219,7 +219,8 @@ Page {
                 playerLoader.item.statusChanged.connect(loaderStatusChanged);
                 playerLoader.item.positionChanged.connect(loaderPositionChanged);
 
-                playerLoader.item.volume = onlinePlayerViewModel.volumeSlider / 100;
+                const loadedVolumeState = onlinePlayerViewModel.volumeSlider / 100;
+                if (loadedVolumeState >= 0) playerLoader.item.volume = loadedVolumeState;
                 playerLoader.item.muted = onlinePlayerViewModel.muted;
                 if (userConfigurationViewModel.isCroppedPlayer) playerLoader.item.fillMode = VideoOutput.PreserveAspectCrop;
             }
@@ -1280,6 +1281,7 @@ Page {
                                         onlinePlayerViewModel.restorePosition = onlinePlayerViewModel.videoPosition;
                                         const newPlayer = onlinePlayerWindowViewModel.players[currentIndex];
                                         onlinePlayerWindowViewModel.changePlayer(newPlayer);
+                                        if (userConfigurationViewModel.needSavePlayer) userConfigurationViewModel.lastSelectedPlayer = newPlayer;
                                     }
 
                                     Connections {
@@ -1287,6 +1289,27 @@ Page {
                                         function onSelectedPlayerChanged() {
                                             const playerIndex = onlinePlayerWindowViewModel.players.indexOf(onlinePlayerWindowViewModel.selectedPlayer);
                                             if (playersComboBox.currentIndex !== playerIndex) playersComboBox.currentIndex = playerIndex;
+                                        }
+                                    }
+
+                                    Component.onCompleted: {
+                                        const playerIndex = onlinePlayerWindowViewModel.players.indexOf(onlinePlayerWindowViewModel.selectedPlayer);
+                                        if (playersComboBox.currentIndex !== playerIndex) playersComboBox.currentIndex = playerIndex;
+                                    }
+                                }
+
+                                PlainText {
+                                    width: rightColumn.width - 20
+                                    fontPointSize: 10
+                                    text: "Сохранять выбранный плеер"
+                                }
+                                CommonSwitch {
+                                    id: keepSelectedPlayerSwitch
+                                    checked: userConfigurationViewModel.needSavePlayer
+                                    onCheckedChanged: {
+                                        userConfigurationViewModel.needSavePlayer = checked;
+                                        if (!checked) {
+                                            userConfigurationViewModel.lastSelectedPlayer = "";
                                         }
                                     }
                                 }

@@ -260,6 +260,22 @@ void UserConfigurationViewModel::setNotSaveWindowPosition(bool notSaveWindowPosi
     emit notSaveWindowPositionChanged();
 }
 
+void UserConfigurationViewModel::setNeedSavePlayer(bool needSavePlayer) noexcept
+{
+    if (m_needSavePlayer == needSavePlayer) return;
+
+    m_needSavePlayer = needSavePlayer;
+    emit needSavePlayerChanged();
+}
+
+void UserConfigurationViewModel::setLastSelectedPlayer(const QString &lastSelectedPlayer)
+{
+    if (m_lastSelectedPlayer == lastSelectedPlayer) return;
+
+    m_lastSelectedPlayer = lastSelectedPlayer;
+    emit lastSelectedPlayerChanged();
+}
+
 void UserConfigurationViewModel::refreshConfiguration() noexcept
 {
     readSettingsFromFile();
@@ -320,6 +336,8 @@ void UserConfigurationViewModel::saveSettingsToFile()
     object[m_hideRecommendedByVoicesField] = m_hideRecommendedByVoices;
     object[m_removeCopyFromNameField] = m_removeCopyFromName;
     object[m_notSaveWindowPositionField] = m_notSaveWindowPosition;
+    object[m_needSavePlayerField] = m_needSavePlayer;
+    object[m_lastSelectedPlayerField] = m_lastSelectedPlayer;
 
     QFile file(getCachePath(m_cacheFileName));
     file.open(QFile::WriteOnly | QFile::Text);
@@ -365,4 +383,6 @@ void UserConfigurationViewModel::readSettingsFromFile()
     m_hideRecommendedByVoices = object.contains(m_hideRecommendedByVoicesField) ? object[m_hideRecommendedByVoicesField].toBool() : false;
     m_removeCopyFromName = object.contains(m_removeCopyFromNameField) ? object[m_removeCopyFromNameField].toBool() : false;
     m_notSaveWindowPosition = object.contains(m_notSaveWindowPositionField) ? object[m_notSaveWindowPositionField].toBool() : false;
+    m_needSavePlayer = object.contains(m_needSavePlayerField) ? object[m_needSavePlayerField].toBool() : false;
+    m_lastSelectedPlayer = object.contains(m_lastSelectedPlayerField) ? object[m_lastSelectedPlayerField].toString() : "";
 }

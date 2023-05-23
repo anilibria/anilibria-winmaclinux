@@ -95,6 +95,19 @@ void OnlinePlayerWindowViewModel::setPanelOpacity(int panelOpacity) noexcept
     }
 }
 
+void OnlinePlayerWindowViewModel::setStartupPlayer(const QString &startupPlayer) noexcept
+{
+    if (m_startupPlayer == startupPlayer) return;
+
+    m_startupPlayer = startupPlayer;
+    emit startupPlayerChanged();
+
+    if (!m_alreadyRestorePlayer && !startupPlayer.isEmpty()) {
+        m_alreadyRestorePlayer = true;
+        if (m_players.contains(startupPlayer)) changePlayer(startupPlayer);
+    }
+}
+
 void OnlinePlayerWindowViewModel::playbackStateChanged(const bool &isPlaying)
 {
     setPlayerButtonVisible(!isPlaying);

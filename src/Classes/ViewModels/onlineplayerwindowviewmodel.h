@@ -40,6 +40,7 @@ class OnlinePlayerWindowViewModel : public QObject
     Q_PROPERTY(bool isHasVlc READ isHasVlc NOTIFY isHasVlcChanged)
     Q_PROPERTY(bool isSelectedQtAv READ isSelectedQtAv NOTIFY isSelectedQtAvChanged)
     Q_PROPERTY(bool isSelectedVlc READ isSelectedVlc NOTIFY isSelectedVlcChanged)
+    Q_PROPERTY(QString startupPlayer READ startupPlayer WRITE setStartupPlayer NOTIFY startupPlayerChanged)
 
 private:
     bool m_playerButtonVisible;
@@ -60,6 +61,8 @@ private:
     bool m_isSelectedVlc { false };
     const QString nameVLCPlayer { "VLC" };
     const QString nameQtAvPlayer { "QtAv" };
+    QString m_startupPlayer { "" };
+    bool m_alreadyRestorePlayer { false };
 
 public:
     explicit OnlinePlayerWindowViewModel(QObject *parent = nullptr);
@@ -89,6 +92,9 @@ public:
     bool isSelectedQtAv() const noexcept { return m_isSelectedQtAv; }
     bool isSelectedVlc() const noexcept { return m_isSelectedVlc; }
 
+    QString startupPlayer() const noexcept { return m_startupPlayer; }
+    void setStartupPlayer(const QString& startupPlayer) noexcept;
+
     Q_INVOKABLE void playbackStateChanged(const bool& isPlaying);
     Q_INVOKABLE void hideControlPanel();
     Q_INVOKABLE void showPanel();
@@ -114,6 +120,7 @@ signals:
     void isHasVlcChanged();
     void isSelectedQtAvChanged();
     void isSelectedVlcChanged();
+    void startupPlayerChanged();
 
 };
 

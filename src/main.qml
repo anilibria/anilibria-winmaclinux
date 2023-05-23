@@ -1093,6 +1093,7 @@ ApplicationWindow {
 
     OnlinePlayerWindowViewModel {
         id: onlinePlayerWindowViewModel
+        startupPlayer: userConfigurationViewModel.needSavePlayer ? userConfigurationViewModel.lastSelectedPlayer : ""
     }
 
     OnlinePlayerWindow {
