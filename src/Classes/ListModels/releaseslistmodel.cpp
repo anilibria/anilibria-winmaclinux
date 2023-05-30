@@ -391,7 +391,7 @@ void ReleasesListModel::setReleaseLinkedSeries(ReleaseLinkedSeries *releaseLinke
     m_releaseLinkedSeries = releaseLinkedSeries;
     emit releaseLinkedSeriesChanged();
 
-    m_releaseLinkedSeries->setup(m_releases);
+    m_releaseLinkedSeries->setup(m_releases, m_userFavorites);
 }
 
 void ReleasesListModel::setScheduleDayFilter(const QString &scheduleDayFilter) noexcept

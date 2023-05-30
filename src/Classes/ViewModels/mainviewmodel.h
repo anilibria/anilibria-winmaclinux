@@ -30,6 +30,7 @@ class MainViewModel : public QObject
     Q_PROPERTY(bool hasBackHistory READ hasBackHistory NOTIFY hasBackHistoryChanged)
     Q_PROPERTY(bool hasForwardHistory READ hasForwardHistory NOTIFY hasForwardHistoryChanged)
     Q_PROPERTY(QString startPage READ startPage WRITE setStartPage NOTIFY startPageChanged)
+    Q_PROPERTY(QString pageParameters READ pageParameters NOTIFY pageParametersChanged)
 
 private:
     MainMenuListModel* m_mainMenuListModel { new MainMenuListModel(this) };
@@ -43,6 +44,7 @@ private:
     int m_historyPosition { -1 };
     QString m_startPage { "" };
     bool m_startPageFilled { false };
+    QString m_pageParameters { "" };
 
 public:
     explicit MainViewModel(QObject *parent = nullptr);
@@ -82,6 +84,8 @@ public:
     QString startPage() const noexcept { return m_startPage; }
     void setStartPage(const QString& startPage) noexcept;
 
+    QString pageParameters() const noexcept { return m_pageParameters; }
+
     Q_INVOKABLE void selectPage(const QString& pageId);
     Q_INVOKABLE void backToPage();
     Q_INVOKABLE void forwardToPage();
@@ -120,6 +124,8 @@ signals:
     void hasBackHistoryChanged();
     void hasForwardHistoryChanged();
     void startPageChanged();
+    void pageParametersChanged();
+    void changeReleasesParameters(QString parameters);
 
 };
 

@@ -173,6 +173,16 @@ Page {
                                         text: genres
                                     }
 
+                                    PlainText {
+                                        Layout.preferredHeight: 20
+                                        Layout.fillWidth: true
+                                        maximumLineCount: 2
+                                        elide: Text.ElideRight
+                                        wrapMode: Text.Wrap
+                                        fontPointSize: 9
+                                        text: countInFavorites
+                                    }
+
                                     Item {
                                         Layout.fillHeight: true
                                     }

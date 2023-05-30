@@ -751,6 +751,8 @@ ApplicationWindow {
         items.releaseLinkedSeries: releaseLinkedSeries
         userActivity: userActivityViewModel
         onReleaseCardOpened: {
+            mainViewModel.selectPage("release:" + releasesViewModel.openedReleaseId);
+
             analyticsService.sendView("releasecard", "open", "%2Frelease");
             userActivityViewModel.addOpenedCardToCounter();
         }
@@ -1068,7 +1070,13 @@ ApplicationWindow {
         onReleasesPageToNavigated: {
             releases.navigateTo();
         }
-        onIsOnlinePlayerPageVisibleChanged: {
+        onChangeReleasesParameters: {
+            if (!parameters.length) {
+                releasesViewModel.closeReleaseCard();
+                return;
+            }
+
+            releasesViewModel.showReleaseCard(parseInt(parameters), false);
         }
     }
 

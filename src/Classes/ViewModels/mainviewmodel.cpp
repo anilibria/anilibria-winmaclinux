@@ -83,10 +83,19 @@ void MainViewModel::setStartPage(const QString &startPage) noexcept
 
 void MainViewModel::selectPage(const QString& pageId)
 {
-    //fix duplicates for changing page
-    if (pageId == m_currentPageId) return;
+    auto pageIdentifier = QString(pageId);
+    auto parameters = QString("");
+    if (pageIdentifier.contains(":")) {
+        pageIdentifier = pageIdentifier.mid(0, pageIdentifier.indexOf(":"));
+        parameters = pageId.mid(pageId.indexOf(":") + 1);
+    } else {
+        parameters = "";
+    }
 
-    selectToPage(pageId);
+    //fix duplicates for changing page
+    if (pageIdentifier == m_currentPageId && parameters == m_pageParameters) return;
+
+    if (pageIdentifier != m_currentPageId) selectToPage(pageIdentifier);
 
     if (!m_history.isEmpty() && m_historyPosition != m_history.count() - 1) m_history.erase(m_history.begin() + (m_historyPosition + 1), m_history.end());
 
@@ -94,6 +103,13 @@ void MainViewModel::selectPage(const QString& pageId)
     m_historyPosition += 1;
     emit hasBackHistoryChanged();
     emit hasForwardHistoryChanged();
+
+    if (m_pageParameters != parameters) {
+        m_pageParameters = parameters;
+        if (pageIdentifier == "release") emit changeReleasesParameters(m_pageParameters);
+    }
+
+    m_analyticsService->sendView("page", "view", "%2F" + pageId);
 }
 
 void MainViewModel::backToPage()
@@ -141,26 +157,38 @@ void MainViewModel::refreshPageVisible() noexcept
 
 void MainViewModel::selectToPage(const QString &pageId)
 {
-    if (pageId == m_currentPageId) return;
+    auto pageIdentifier = QString(pageId);
+    auto parameters = QString("");
+    if (pageIdentifier.contains(":")) {
+        pageIdentifier = pageIdentifier.mid(0, pageIdentifier.indexOf(":"));
+        parameters = pageId.mid(pageId.indexOf(":") + 1);
+    } else {
+        parameters = "";
+    }
+
+    //fix duplicates for changing page
+    if (pageIdentifier == m_currentPageId && parameters == m_pageParameters) return;
 
     auto alreadyOnVideoPlayer = m_currentPageId == "videoplayer";
 
-    setCurrentPageId(pageId);
+    setCurrentPageId(pageIdentifier);
 
     refreshPageVisible();
 
-    if (pageId == "videoplayer"){
+    if (pageIdentifier == "videoplayer"){
         emit onlinePlayerPageNavigated();
     }
     if (alreadyOnVideoPlayer) {
         emit onlinePlayerPageFromNavigated();
     }
 
-    if (pageId == "release") {
+    if (pageIdentifier == "release") {
         emit releasesPageToNavigated();
+        if (m_pageParameters != parameters) {
+            m_pageParameters = parameters;
+            emit changeReleasesParameters(m_pageParameters);
+        }
     }
-
-    m_analyticsService->sendView("page", "view", "%2F" + pageId);
 }
 
 void MainViewModel::selectedItemInMainMenu(QString pageName)

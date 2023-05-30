@@ -32,18 +32,6 @@ ColumnLayout {
                 height: 40
                 width: 40
                 hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
-                iconPath: applicationThemeViewModel.currentItems.iconReleaseCardClose
-                iconWidth: 28
-                iconHeight: 28
-                tooltipMessage: "Закрыть карточку релиза"
-                onButtonPressed: {
-                    releasesViewModel.closeReleaseCard();
-                }
-            }
-            IconButton {
-                height: 40
-                width: 40
-                hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
                 iconPath: applicationThemeViewModel.currentItems.iconReleaseCardCopy
                 iconWidth: 26
                 iconHeight: 26
@@ -723,7 +711,7 @@ ColumnLayout {
                         width: parent.width
                         releaseId: releasesViewModel.openedReleaseId
                         onOpenRelease: {
-                            releasesViewModel.showReleaseCard(releaseId);
+                            mainViewModel.selectPage("release:" + releaseId);
                         }
                     }
                 }

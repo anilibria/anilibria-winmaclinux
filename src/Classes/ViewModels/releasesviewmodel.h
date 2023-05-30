@@ -257,7 +257,7 @@ public:
     Q_INVOKABLE void removeSelectedReleaseFromFavorites() noexcept;
     Q_INVOKABLE void closeReleaseCard() noexcept;
     Q_INVOKABLE void openDescriptionLink(const QString& link) noexcept;
-    Q_INVOKABLE void showReleaseCard(int id) noexcept;
+    Q_INVOKABLE void showReleaseCard(int id, bool needHandle = true) noexcept;
     Q_INVOKABLE void showRandomRelease() noexcept;
     Q_INVOKABLE void showRandomReleaseFromFavorites() noexcept;
     Q_INVOKABLE void showRandomReleaseInFiltered() noexcept;

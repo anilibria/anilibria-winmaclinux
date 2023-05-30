@@ -906,7 +906,7 @@ void ReleasesViewModel::openDescriptionLink(const QString &link) noexcept
     }
 }
 
-void ReleasesViewModel::showReleaseCard(int id) noexcept
+void ReleasesViewModel::showReleaseCard(int id, bool needHandle) noexcept
 {
     auto release = getReleaseById(id);
     m_openedRelease = release;
@@ -921,7 +921,7 @@ void ReleasesViewModel::showReleaseCard(int id) noexcept
 
     emit isOpenedCardChanged();
 
-    emit releaseCardOpened();
+    if (needHandle) emit releaseCardOpened();
 }
 
 void ReleasesViewModel::showRandomRelease() noexcept

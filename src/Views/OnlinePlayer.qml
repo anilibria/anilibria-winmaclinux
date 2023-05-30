@@ -1427,8 +1427,7 @@ Page {
         MouseArea {
             anchors.fill: parent
             onPressed: {
-                releasesViewModel.showReleaseCard(onlinePlayerViewModel.selectedRelease);
-                mainViewModel.selectPage("release");
+                mainViewModel.selectPage("release:" + onlinePlayerViewModel.selectedRelease);
             }
         }
     }

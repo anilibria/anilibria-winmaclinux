@@ -52,6 +52,8 @@ QVariant ReleaseLinkedSeries::data(const QModelIndex &index, int role) const
 
     auto element = series.at(index.row());
 
+    int countInFavorites = 0;
+
     switch (role) {
         case CountReleasesRole: {
             return QVariant(element->countReleases());
@@ -99,6 +101,20 @@ QVariant ReleaseLinkedSeries::data(const QModelIndex &index, int role) const
         case GenresRole: {
             return QVariant(element->genresAsString());
         }
+        case CountInFavoritesRole: {
+            auto ids = element->releaseIds();
+            auto countReleases = element->countReleases();
+
+            foreach (auto id, *ids) {
+                if (m_userFavorites->contains(id.toInt())) {
+                    countInFavorites++;
+                }
+            }
+
+            if (countInFavorites == countReleases) return QVariant("Все в избранном");
+            if (countInFavorites <= countReleases && countInFavorites > 0) return QVariant(QString::number(countInFavorites) + " в избранном");
+            return QVariant("Не добавлено в избранное");
+        }
     }
 
     return QVariant();
@@ -142,13 +158,18 @@ QHash<int, QByteArray> ReleaseLinkedSeries::roleNames() const
         {
             GenresRole,
             "genres"
+        },
+        {
+            CountInFavoritesRole,
+            "countInFavorites"
         }
     };
 }
 
-void ReleaseLinkedSeries::setup(QSharedPointer<QList<FullReleaseModel *> > releases)
+void ReleaseLinkedSeries::setup(QSharedPointer<QList<FullReleaseModel *> > releases, QVector<int>* userFavorites)
 {
     m_releases = releases;
+    m_userFavorites = userFavorites;
 }
 
 void ReleaseLinkedSeries::setNameFilter(const QString& nameFilter) noexcept

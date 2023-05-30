@@ -33,10 +33,12 @@ class ReleaseLinkedSeries : public QAbstractListModel
     Q_OBJECT
 
     Q_PROPERTY(QString nameFilter READ nameFilter WRITE setNameFilter NOTIFY nameFilterChanged)
+
 private:
     QString m_nameFilter;
     QScopedPointer<QVector<ReleaseSeriesModel*>> m_series;
     QScopedPointer<QVector<ReleaseSeriesModel*>> m_filteredSeries;
+    QVector<int>* m_userFavorites { nullptr };
     bool m_filtering = false;
     QSharedPointer<QList<FullReleaseModel *>> m_releases;
     QScopedPointer<QFutureWatcher<bool>> m_cacheUpdateWatcher { new QFutureWatcher<bool>(this) };
@@ -51,6 +53,7 @@ private:
         ThirdPosterRole,
         OtherReleasesRole,
         GenresRole,
+        CountInFavoritesRole
     };
 
 public:
@@ -60,7 +63,7 @@ public:
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
     QHash<int,QByteArray> roleNames() const override;
 
-    void setup(QSharedPointer<QList<FullReleaseModel *>> releases);
+    void setup(QSharedPointer<QList<FullReleaseModel *>> releases, QVector<int>* userFavorites);
 
     QString nameFilter() const { return m_nameFilter; }
     void setNameFilter(const QString& nameFilter) noexcept;

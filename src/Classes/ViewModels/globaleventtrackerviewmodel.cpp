@@ -1,5 +1,6 @@
 #include "globaleventtrackerviewmodel.h"
 #include <QMouseEvent>
+#include <QKeyEvent>
 
 GlobalEventTrackerViewModel::GlobalEventTrackerViewModel(QObject *parent)
     : QObject{parent}
@@ -17,6 +18,17 @@ bool GlobalEventTrackerViewModel::eventFilter(QObject *watched, QEvent *event)
             emit backButtonPressed();
         }
         if (button == Qt::XButton2) {
+            emit forwardButtonPressed();
+        }
+    }
+
+    if (t == QEvent::KeyRelease && event->spontaneous()) {
+        auto keyEvent = static_cast<QKeyEvent*>(event);
+        auto button = keyEvent->key();
+        if (button == Qt::Key_Minus || button == Qt::Key_Underscore) {
+            emit backButtonPressed();
+        }
+        if (button == Qt::Key_Plus || button == Qt::Key_Equal) {
             emit forwardButtonPressed();
         }
     }
