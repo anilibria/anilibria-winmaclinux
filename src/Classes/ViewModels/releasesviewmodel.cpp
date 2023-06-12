@@ -986,14 +986,6 @@ void ReleasesViewModel::hideReleaseCard() noexcept
     emit isOpenedCardChanged();
 }
 
-void ReleasesViewModel::hideAfterWatchReleaseCard() noexcept
-{
-    if (m_notCloseReleaseCardAfterWatch) return;
-
-    m_openedRelease = nullptr;
-    emit isOpenedCardChanged();
-}
-
 void ReleasesViewModel::setSeenMarkAllSeries(int id, int countSeries, bool marked)
 {
     setSeenMarkForRelease(id, countSeries, marked);

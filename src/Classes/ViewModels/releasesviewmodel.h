@@ -263,7 +263,6 @@ public:
     Q_INVOKABLE void showRandomReleaseInFiltered() noexcept;
     Q_INVOKABLE void showRandomReleaseInSeen() noexcept;
     Q_INVOKABLE void hideReleaseCard() noexcept;
-    Q_INVOKABLE void hideAfterWatchReleaseCard() noexcept;
     Q_INVOKABLE void setSeenMarkAllSeries(int id, int countSeries, bool marked);
     Q_INVOKABLE void setSeenMarkAllSeriesSelectedReleases(bool marked);
     Q_INVOKABLE void setSeenMarkForSingleRelease(int id, bool marked);

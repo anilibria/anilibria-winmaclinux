@@ -234,6 +234,7 @@ ColumnLayout {
             }
 
             IconButton {
+                visible: false
                 height: 40
                 width: 40
                 hoverColor: applicationThemeViewModel.currentItems.filterIconButtonHoverColor
@@ -257,19 +258,6 @@ ColumnLayout {
                     Column {
                         width: parent.width
 
-                        PlainText {
-                            id: notCloseReleaseCardAfterWatchLabel
-                            fontPointSize: 11
-                            text: "Не закрывать карточку релиза после просмотра"
-                        }
-                        CommonSwitch {
-                            id: notCloseReleaseCardAfterWatchSwitch
-                            checked: userConfigurationViewModel.notCloseReleaseCardAfterWatch
-                            onCheckedChanged: {
-                                userConfigurationViewModel.notCloseReleaseCardAfterWatch = checked;
-                            }
-                            tooltipMessage: "Если настройка включена при нажатии на кнопку Смотреть из карточки сама карточка релизов не будет закрыта"
-                        }
                     }
                 }
             }
@@ -485,7 +473,6 @@ ColumnLayout {
                                 onClicked: {
                                     watchSingleRelease(releasesViewModel.openedReleaseId, releasesViewModel.openedReleaseVideos, -1, releasesViewModel.openedReleasePoster)
 
-                                    releasesViewModel.hideAfterWatchReleaseCard();
                                     releasePosterPreview.isVisible = false;
                                 }
                             }
@@ -596,7 +583,6 @@ ColumnLayout {
 
                                                 onlinePlayerViewModel.quickSetupForSingleTorrentRelease(releasesViewModel.openedReleaseId, identifier, userConfigurationViewModel.playerBuffer);
 
-                                                releasesViewModel.hideAfterWatchReleaseCard();
                                                 releasePosterPreview.isVisible = false;
 
                                                 mainViewModel.selectPage("videoplayer");
@@ -685,8 +671,6 @@ ColumnLayout {
                         releaseId: releasesViewModel.openedReleaseId
                         onOpenVideo: {
                             watchSingleRelease(releasesViewModel.openedReleaseId, releasesViewModel.openedReleaseVideos, videoId, releasesViewModel.openedReleasePoster);
-
-                            releasesViewModel.hideAfterWatchReleaseCard();
                         }
                     }
                 }
