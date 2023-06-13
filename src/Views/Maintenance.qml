@@ -499,7 +499,7 @@ Page {
                             elide: Text.ElideRight
                         }
 
-                        Rectangle {
+                        Item {
                             width: proxyPopup.width - 30
                             height: proxyType.height
 
@@ -519,7 +519,7 @@ Page {
                             elide: Text.ElideRight
                         }
 
-                        Rectangle {
+                        Item {
                             width: proxyPopup.width - 30
                             height: proxyAddress.height
 
@@ -538,7 +538,7 @@ Page {
                             elide: Text.ElideRight
                         }
 
-                        Rectangle {
+                        Item {
                             width: proxyPopup.width - 30
                             height: proxyPort.height
 
@@ -558,7 +558,7 @@ Page {
                             elide: Text.ElideRight
                         }
 
-                        Rectangle {
+                        Item {
                             width: proxyPopup.width - 30
                             height: proxyUsername.height
 

@@ -106,7 +106,7 @@ void MainViewModel::selectPage(const QString& pageId)
 
     if (m_pageParameters != parameters) {
         m_pageParameters = parameters;
-        if (pageIdentifier == "release") emit changeReleasesParameters(m_pageParameters);
+        emit changeReleasesParameters(m_pageParameters);
     }
 
     m_analyticsService->sendView("page", "view", "%2F" + pageId);

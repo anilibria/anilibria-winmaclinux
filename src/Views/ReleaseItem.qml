@@ -370,6 +370,8 @@ Item {
                     Item {
                         id: favoritesItem
                         anchors.bottom: parent.bottom
+                        anchors.left: parent.left
+                        anchors.leftMargin: 8
                         width: 90
                         height: 20
 
