@@ -824,7 +824,7 @@ Page {
                         x: 40
                         y: -480
                         width: 720
-                        height: 520
+                        height: 450
                         modal: true
                         focus: true
                         closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
@@ -845,27 +845,6 @@ Page {
                                     releasesViewModel.items.filterByFavorites = checked;
                                     localStorage.setNotificationForFavorites(checked);
                                     releasesViewModel.notificationForFavorites = checked;
-                                }
-                            }
-
-                            PlainText {
-                                id: darkModeLabel
-                                fontPointSize: 11
-                                text: "Тема"
-                            }
-                            CommonComboBox {
-                                id: themes
-                                width: 320
-                                model: applicationThemeViewModel.themes
-
-                                onActivated: {
-                                    applicationThemeViewModel.selectedTheme = applicationThemeViewModel.themes[currentIndex]
-                                }
-                                onModelChanged: {
-                                    currentIndex = applicationThemeViewModel.themes.indexOf(applicationThemeViewModel.selectedTheme);
-                                }
-                                Component.onCompleted: {
-                                    currentIndex = applicationThemeViewModel.themes.indexOf(applicationThemeViewModel.selectedTheme);
                                 }
                             }
 

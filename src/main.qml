@@ -241,6 +241,61 @@ ApplicationWindow {
             }
         }
         IconButton {
+            id: selectThemeButton
+            visible: !mainViewModel.isSmallSizeMode
+            anchors.right: leftHalfScreenWindow.left
+            anchors.top: parent.top
+            anchors.topMargin: 1
+            height: 34
+            width: 40
+            hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
+            iconPath: applicationThemeViewModel.currentItems.iconMainMenuThemeManager
+            iconWidth: 24
+            iconHeight: 24
+            tooltipMessage: "Выбрать тему"
+            onButtonPressed: {
+                selectThemePopup.open();
+            }
+
+            DefaultPopup {
+                id: selectThemePopup
+                x: -250
+                y: 40
+                width: 350
+                height: 100
+                modal: true
+                focus: true
+                closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
+
+                Column {
+                    height: 80
+                    width: 120
+                    spacing: 4
+
+                    PlainText {
+                        id: selectThemeLabel
+                        fontPointSize: 11
+                        text: "Тема"
+                    }
+                    CommonComboBox {
+                        id: selectThemeComboBox
+                        width: 320
+                        model: applicationThemeViewModel.themes
+
+                        onActivated: {
+                            applicationThemeViewModel.selectedTheme = applicationThemeViewModel.themes[currentIndex]
+                        }
+                        onModelChanged: {
+                            currentIndex = applicationThemeViewModel.themes.indexOf(applicationThemeViewModel.selectedTheme);
+                        }
+                        Component.onCompleted: {
+                            currentIndex = applicationThemeViewModel.themes.indexOf(applicationThemeViewModel.selectedTheme);
+                        }
+                    }
+                }
+            }
+        }
+        IconButton {
             id: leftHalfScreenWindow
             visible: !mainViewModel.isSmallSizeMode
             anchors.right: rightHalfScreenWindow.left
