@@ -26,6 +26,7 @@ IconButton {
     property string tooltipMessage
     height: 45
     width: 40
+    hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
     iconWidth: 30
     iconHeight: 30
 

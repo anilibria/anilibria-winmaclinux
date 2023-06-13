@@ -53,13 +53,6 @@ Item {
                 }
 
                 Rectangle {
-                    anchors.centerIn: parent
-                    width: 180
-                    height: 270
-                    color: applicationThemeViewModel.currentItems.colorPosterFilter
-                }
-
-                Rectangle {
                     id: blockedContainer
                     visible: posterImage.posterHovered
                     anchors.fill: parent

@@ -59,13 +59,6 @@ Item {
                     height: 270
                 }
 
-                Rectangle {
-                    anchors.centerIn: parent
-                    width: 180
-                    height: 270
-                    color: applicationThemeViewModel.currentItems.colorPosterFilter
-                }
-
                 Image {
                     id: bookmarkImage
                     anchors.left: posterImage.left

@@ -114,11 +114,10 @@ Item {
                 emptyBorderBackground: applicationThemeViewModel.currentItems.panelBackground
             }
 
-            Rectangle {
+            Item {
                 visible: isCompactReleaseMode
                 width: mainViewModel.isSmallSizeMode ? 280 : 460
                 height: 236
-                color: "transparent"
 
                 CorneredImage {
                     width: 152
