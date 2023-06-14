@@ -169,7 +169,9 @@ ApplicationThemeViewModel::ApplicationThemeViewModel(QObject *parent)
     lightTheme->insert(iconPlayerPreviousSeriaField, "qrc:/Assets/Icons/videoplayer/previousseria.svg");
     lightTheme->insert(iconPlayerDrawerField, "qrc:/Assets/Icons/videoplayer/menu.svg");
     lightTheme->insert(iconNotificationField, "qrc:/Assets/Icons/notification/notification.svg");
-    lightTheme->insert(iconNotificationSelectedField, "qrc:/Assets/Icons/notification/notificationselected.svg");    
+    lightTheme->insert(iconNotificationSelectedField, "qrc:/Assets/Icons/notification/notificationselected.svg");
+
+    lightTheme->insert(iconLogoutField, "qrc:/Assets/Icons/logout.svg");
 
     lightTheme->insert(colorTooltipTextField, "white");
     lightTheme->insert(colorSeenReleaseItemTextField, "green");
@@ -320,6 +322,8 @@ ApplicationThemeViewModel::ApplicationThemeViewModel(QObject *parent)
     darkTheme->insert(iconPlayerDrawerField, "qrc:/Assets/Icons/videoplayer/darkmenu.svg");
     darkTheme->insert(iconNotificationField, "qrc:/Assets/Icons/notification/darknotification.svg");
     darkTheme->insert(iconNotificationSelectedField, "qrc:/Assets/Icons/notification/notificationselected.svg");
+
+    darkTheme->insert(iconLogoutField, "qrc:/Assets/Icons/logout.svg");
 
     darkTheme->insert(colorTooltipTextField, "white");
     darkTheme->insert(colorSeenReleaseItemTextField, "green");
@@ -475,7 +479,7 @@ ApplicationThemeViewModel::ApplicationThemeViewModel(QObject *parent)
     m_fields.append(iconNotificationField);
     m_fields.append(iconNotificationSelectedField);
     m_fields.append(iconEmptyField);
-
+    m_fields.append(iconLogoutField);
     m_fields.append(externalIdField);
 
     readCacheFile();

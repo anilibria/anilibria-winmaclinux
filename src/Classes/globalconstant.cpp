@@ -185,3 +185,5 @@ QString colorMenuForegroundField = "colorMenuForeground";
 QString colorMenuItemHintField = "colorMenuItemHint";
 QString colorMenuRippleField = "colorMenuRipple";
 QString colorMenuHighlightField = "colorMenuHighlight";
+
+QString iconLogoutField = "iconLogout";

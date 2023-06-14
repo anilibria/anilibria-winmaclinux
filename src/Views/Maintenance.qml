@@ -84,7 +84,7 @@ Page {
                         width: scrollview.width - 10
                         height: 840
                         color: "transparent"
-                        border.color: "white"
+                        border.color: applicationThemeViewModel.colorBorderInPanel
                         border.width: 1
 
                         GridLayout {

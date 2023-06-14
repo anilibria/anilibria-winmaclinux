@@ -622,7 +622,7 @@ ApplicationWindow {
                 height: 40
                 width: 40
                 hoverColor: Qt.rgba(0, 0, 0, .1)
-                iconPath: "Assets/Icons/logout.svg"
+                iconPath: applicationThemeViewModel.currentItems.iconLogout
                 iconWidth: 28
                 iconHeight: 28
                 tooltipMessage: "Выйти из аккаунта"
