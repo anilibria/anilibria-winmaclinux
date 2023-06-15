@@ -560,6 +560,9 @@ ApplicationWindow {
         width: 300
         dragMargin: 0
         height: window.height
+        CustomStyle.drawerDialogColor: applicationThemeViewModel.currentItems.colorDrawerDivider
+        CustomStyle.drawerDimColor: applicationThemeViewModel.currentItems.colorDrawerDim
+        CustomStyle.drawerDividerColor: applicationThemeViewModel.currentItems.colorDrawerDialog
         background: LinearGradient {
             anchors.fill: parent
             start: Qt.point(0, 0)

@@ -187,3 +187,7 @@ QString colorMenuRippleField = "colorMenuRipple";
 QString colorMenuHighlightField = "colorMenuHighlight";
 
 QString iconLogoutField = "iconLogout";
+QString colorDrawerDividerColorField = "colorDrawerDivider";
+QString colorDrawerDimColorField = "colorDrawerDim";
+QString colorDrawerDialogColorField = "colorDrawerDialog";
+

@@ -243,6 +243,9 @@ extern QString colorMenuRippleField;
 extern QString colorMenuHighlightField;
 
 extern QString iconLogoutField;
+extern QString colorDrawerDividerColorField;
+extern QString colorDrawerDimColorField;
+extern QString colorDrawerDialogColorField;
 
 
 #endif // GLOBALCONSTANTS_H

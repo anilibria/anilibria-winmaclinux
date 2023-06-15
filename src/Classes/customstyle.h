@@ -32,6 +32,9 @@ class CustomStyle : public QObject
     Q_PROPERTY(QString menuItemHint READ menuItemHint WRITE setMenuItemHint NOTIFY menuItemHintChanged)
     Q_PROPERTY(QString menuRipple READ menuRipple WRITE setMenuRipple NOTIFY menuRippleChanged)
     Q_PROPERTY(QString menuHighlight READ menuHighlight WRITE setMenuHighlight NOTIFY menuHighlightChanged)
+    Q_PROPERTY(QString drawerDividerColor READ drawerDividerColor WRITE setDrawerDividerColor NOTIFY drawerDividerColorChanged)
+    Q_PROPERTY(QString drawerDimColor READ drawerDimColor WRITE setDrawerDimColor NOTIFY drawerDimColorChanged)
+    Q_PROPERTY(QString drawerDialogColor READ drawerDialogColor WRITE setDrawerDialogColor NOTIFY drawerDialogColorChanged)
 
 private:
     QString m_tooltipColor { "black" };
@@ -58,6 +61,9 @@ private:
     QString m_menuItemHint { "black" };
     QString m_menuRipple { "black" };
     QString m_menuHighlight { "black" };
+    QString m_drawerDividerColor { "black" };
+    QString m_drawerDimColor { "black" };
+    QString m_drawerDialogColor { "black" };
 
 public:
     explicit CustomStyle(QObject *parent = nullptr);
@@ -137,6 +143,15 @@ public:
     QString menuHighlight() const noexcept { return m_menuHighlight; }
     void setMenuHighlight(const QString& menuHighlight) noexcept;
 
+    QString drawerDividerColor() const noexcept { return m_drawerDividerColor; }
+    void setDrawerDividerColor(const QString& drawerDividerColor) noexcept;
+
+    QString drawerDimColor() const noexcept { return m_drawerDimColor; }
+    void setDrawerDimColor(const QString& drawerDimColor) noexcept;
+
+    QString drawerDialogColor() const noexcept { return m_drawerDialogColor; }
+    void setDrawerDialogColor(const QString& drawerDialogColor) noexcept;
+
 signals:
     void tooltipColorChanged();
     void colorTooltipTextChanged();
@@ -163,6 +178,9 @@ signals:
     void menuItemHintChanged();
     void menuRippleChanged();
     void menuHighlightChanged();
+    void drawerDividerColorChanged();
+    void drawerDimColorChanged();
+    void drawerDialogColorChanged();
 };
 
 QML_DECLARE_TYPEINFO(CustomStyle, QML_HAS_ATTACHED_PROPERTIES)

@@ -176,6 +176,10 @@ ApplicationThemeViewModel::ApplicationThemeViewModel(QObject *parent)
     lightTheme->insert(colorTooltipTextField, "white");
     lightTheme->insert(colorSeenReleaseItemTextField, "green");
 
+    lightTheme->insert(colorDrawerDividerColorField, "#1e000000");
+    lightTheme->insert(colorDrawerDimColorField, "#99303030");
+    lightTheme->insert(colorDrawerDialogColorField, "#ffffff");
+
     lightTheme->insert(basedOnThemeField, m_lightTheme);
     lightTheme->insert(externalIdField, "");
     m_themes.insert(m_lightTheme, lightTheme);
@@ -328,6 +332,10 @@ ApplicationThemeViewModel::ApplicationThemeViewModel(QObject *parent)
     darkTheme->insert(colorTooltipTextField, "white");
     darkTheme->insert(colorSeenReleaseItemTextField, "green");
 
+    darkTheme->insert(colorDrawerDividerColorField, "#1effffff");
+    darkTheme->insert(colorDrawerDimColorField, "#99fafafa");
+    darkTheme->insert(colorDrawerDialogColorField, "#424242");
+
     darkTheme->insert(basedOnThemeField, m_darkTheme);
     darkTheme->insert(externalIdField, "");
     m_themes.insert(m_darkTheme, darkTheme);
@@ -399,11 +407,14 @@ ApplicationThemeViewModel::ApplicationThemeViewModel(QObject *parent)
     m_fields.append(colorTextFieldTextField);
     m_fields.append(colorMenuDialogBackgroundField);
     m_fields.append(colorMenuOverlayBackgroundField);
-
     m_fields.append(colorMenuForegroundField);
     m_fields.append(colorMenuItemHintField);
     m_fields.append(colorMenuRippleField);
     m_fields.append(colorMenuHighlightField);
+
+    m_fields.append(colorDrawerDividerColorField);
+    m_fields.append(colorDrawerDimColorField);
+    m_fields.append(colorDrawerDialogColorField);
 
     m_fields.append(iconMainMenuField);
     m_fields.append(iconMainMenuReleasesField);

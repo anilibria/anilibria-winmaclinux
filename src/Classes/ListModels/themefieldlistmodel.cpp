@@ -171,6 +171,10 @@ ThemeFieldListModel::ThemeFieldListModel(QObject *parent)
     m_descriptions.insert(colorMenuRippleField, "Цвет меню 5: Цвет рассеивания");
     m_descriptions.insert(colorMenuHighlightField, "Цвет меню 6: Цвет выбранного пункта");
 
+    m_descriptions.insert(colorDrawerDividerColorField, "Цвет главного меню 1:Цвет разделителя");
+    m_descriptions.insert(colorDrawerDimColorField, "Цвет главного меню 2:Цвет затенения");
+    m_descriptions.insert(colorDrawerDialogColorField, "Цвет главного меню 3:Цвет диалога");
+
     m_descriptions.insert(iconLogoutField, "Иконка выхода:Иконка для кнопки выхода");
 
     m_saveMenuItems.append("Сохранить и добавить тему в список");

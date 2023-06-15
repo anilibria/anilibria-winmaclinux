@@ -226,5 +226,6 @@
         <file>Controls/CommonTextField.qml</file>
         <file>CustomStyle/Menu.qml</file>
         <file>CustomStyle/MenuItem.qml</file>
+        <file>CustomStyle/Drawer.qml</file>
     </qresource>
 </RCC>

@@ -213,3 +213,30 @@ void CustomStyle::setMenuHighlight(const QString &menuHighlight) noexcept
     emit menuHighlightChanged();
 }
 
+void CustomStyle::setDrawerDividerColor(const QString &drawerDividerColor) noexcept
+{
+    if (m_drawerDividerColor == drawerDividerColor) return;
+
+    m_drawerDividerColor = drawerDividerColor;
+    emit drawerDividerColorChanged();
+}
+
+void CustomStyle::setDrawerDimColor(const QString &drawerDimColor) noexcept
+{
+    if (m_drawerDimColor == drawerDimColor) return;
+
+    m_drawerDimColor = drawerDimColor;
+    emit drawerDimColorChanged();
+}
+
+void CustomStyle::setDrawerDialogColor(const QString &drawerDialogColor) noexcept
+{
+    if (m_drawerDialogColor == drawerDialogColor) return;
+
+    m_drawerDialogColor = drawerDialogColor;
+    emit drawerDialogColorChanged();
+}
+
+
+
+
