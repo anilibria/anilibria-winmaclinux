@@ -26,7 +26,6 @@
 #include "../ListModels/onlineplayervideolist.h"
 #include "../RemotePlayer/remoteplayer.h"
 #include "../Models/seenmodel.h"
-#include "../../globalconstants.h"
 #include "../ViewModels/releasesviewmodel.h"
 
 class OnlinePlayerViewModel : public QObject

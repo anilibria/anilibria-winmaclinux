@@ -238,6 +238,7 @@ SOURCES += \
     Classes/Services/versionchecker.cpp \
     Classes/ViewModels/applicationthemeviewmodel.cpp \
     Classes/ViewModels/authorizationviewmodel.cpp \
+    Classes/ViewModels/externalplayerviewmodel.cpp \
     Classes/ViewModels/globaleventtrackerviewmodel.cpp \
     Classes/ViewModels/imagebackgroundviewmodel.cpp \
     Classes/ViewModels/mainviewmodel.cpp \
@@ -344,6 +345,7 @@ HEADERS += \
     Classes/ListModels/alphabetlistmodel.h \
     Classes/ViewModels/applicationthemeviewmodel.h \
     Classes/ViewModels/authorizationviewmodel.h \
+    Classes/ViewModels/externalplayerviewmodel.h \
     Classes/ViewModels/globaleventtrackerviewmodel.h \
     Classes/ViewModels/imagebackgroundviewmodel.h \
     Classes/ViewModels/mainviewmodel.h \
