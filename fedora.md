@@ -64,3 +64,11 @@ sudo rm -rf anilibria/
 
 ### Как обновить приложение?
 Для того чтобы обновить приложение можно выполнить шаги начиная с этапа 2. Первый этап в таком случае выполнять не надо!
+
+### Если видео в плеере не работает (картинка не отображается и звука нет)?
+Для решения проблемы воспользуйтесь следующими командами:
+```shell
+sudo dnf install gstreamer1-plugins-{bad-\*,good-\*,base} gstreamer1-plugin-openh264 gstreamer1-libav --exclude=gstreamer1-plugins-bad-free-devel
+sudo dnf install lame\* --exclude=lame-devel
+sudo dnf group upgrade --with-optional Multimedia
+```
