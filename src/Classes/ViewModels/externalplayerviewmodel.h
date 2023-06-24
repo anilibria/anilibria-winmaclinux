@@ -2,6 +2,7 @@
 #define EXTERNALPLAYERVIEWMODEL_H
 
 #include <QObject>
+#include "../RemotePlayer/externalplayerbase.h"
 
 class ExternalPlayerViewModel : public QObject
 {
@@ -18,6 +19,7 @@ private:
     const QString playingState { "playing" };
     int m_volume { 50 };
     QString m_state { stoppedState };
+    QList<ExternalPlayerBase*> m_players { QList<ExternalPlayerBase*>() };
 
 public:
     explicit ExternalPlayerViewModel(QObject *parent = nullptr);

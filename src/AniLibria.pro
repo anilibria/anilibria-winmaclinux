@@ -219,8 +219,10 @@ SOURCES += \
     Classes/Models/themeitemmodel.cpp \
     Classes/Models/usersettingsmodel.cpp \
     Classes/Models/youtubevideomodel.cpp \
+    Classes/RemotePlayer/externalplayerbase.cpp \
     Classes/RemotePlayer/remoteplayer.cpp \
     Classes/RemotePlayer/remoteplayertransport.cpp \
+    Classes/RemotePlayer/rutubeexternalplayer.cpp \
     Classes/Services/analyticsservice.cpp \
     Classes/Services/anilibriaapiservice.cpp \
     Classes/Services/apiserviceconfigurator.cpp \
@@ -325,8 +327,10 @@ HEADERS += \
     Classes/Models/themeitemmodel.h \
     Classes/Models/usersettingsmodel.h \
     Classes/Models/youtubevideomodel.h \
+    Classes/RemotePlayer/externalplayerbase.h \
     Classes/RemotePlayer/remoteplayer.h \
     Classes/RemotePlayer/remoteplayertransport.h \
+    Classes/RemotePlayer/rutubeexternalplayer.h \
     Classes/Services/analyticsservice.h \
     Classes/Services/anilibriaapiservice.h \
     Classes/Services/apiserviceconfigurator.h \
