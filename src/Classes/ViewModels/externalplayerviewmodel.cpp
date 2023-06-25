@@ -28,25 +28,35 @@ void ExternalPlayerViewModel::setState(const QString &state) noexcept
 
 void ExternalPlayerViewModel::pause() noexcept
 {
-
+    foreach (auto player, m_players) {
+        player->trySetNewState(pausedState);
+    }
 }
 
 void ExternalPlayerViewModel::stop() noexcept
 {
-
+    foreach (auto player, m_players) {
+        player->trySetNewState(stoppedState);
+    }
 }
 
 void ExternalPlayerViewModel::play() noexcept
 {
-
+    foreach (auto player, m_players) {
+        player->trySetNewState(playingState);
+    }
 }
 
 void ExternalPlayerViewModel::seek(int position) noexcept
 {
-
+    foreach (auto player, m_players) {
+        player->trySetSeek(position);
+    }
 }
 
 void ExternalPlayerViewModel::open(const QString &source) noexcept
 {
-
+    foreach (auto player, m_players) {
+        player->trySetSource(source);
+    }
 }

@@ -20,3 +20,8 @@ void RutubeExternalPlayer::trySetSource(const QString &path)
 {
     emit sourceChanged(path);
 }
+
+void RutubeExternalPlayer::trySetSeek(int position)
+{
+    emit positionChanged(0);
+}

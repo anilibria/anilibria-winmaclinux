@@ -13,6 +13,7 @@ public:
     void trySetNewState(const QString& state) override;
     void trySetNewVolume(int volume) override;
     void trySetSource(const QString& path) override;
+    void trySetSeek(int position) override;
 
 signals:
 
