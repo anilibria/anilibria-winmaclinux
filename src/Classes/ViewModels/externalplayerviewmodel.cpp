@@ -1,4 +1,5 @@
 #include "externalplayerviewmodel.h"
+#include "../RemotePlayer/rutubeexternalplayer.h"
 
 ExternalPlayerViewModel::ExternalPlayerViewModel(QObject *parent)
     : QObject{parent}
@@ -59,4 +60,10 @@ void ExternalPlayerViewModel::open(const QString &source) noexcept
     foreach (auto player, m_players) {
         player->trySetSource(source);
     }
+}
+
+void ExternalPlayerViewModel::addRutubePlayer() noexcept
+{
+    auto player = new RutubeExternalPlayer(this);
+    m_players.append(player);
 }

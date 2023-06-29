@@ -39,6 +39,7 @@ public:
     Q_INVOKABLE void play() noexcept;
     Q_INVOKABLE void seek(int position) noexcept;
     Q_INVOKABLE void open(const QString& source) noexcept;
+    Q_INVOKABLE void addRutubePlayer() noexcept;
 
 signals:
     void volumeChanged();

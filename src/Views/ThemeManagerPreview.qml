@@ -2,7 +2,6 @@ import QtQuick 2.12
 import QtQuick.Controls 2.12
 import QtQuick.Controls.Material 2.0
 import QtQuick.Layouts 1.12
-import QtGraphicalEffects 1.0
 import CustomStyle 1.0
 import "../Controls"
 
@@ -17,8 +16,6 @@ ApplicationWindow {
     title: "Предпросмотр темы"
     Material.accent: applicationThemeViewModel.previewItems.materialAccent
     Material.foreground: applicationThemeViewModel.previewItems.colorMaterialText
-    //Material.background: "red"
-    //Material.hintTextColor
     Material.theme: applicationThemeViewModel.fieldList.basedOnTheme === 'Темная' ? Material.Dark : Material.Light
     background: Rectangle {
         color: applicationThemeViewModel.previewItems.pageBackground
@@ -82,12 +79,6 @@ ApplicationWindow {
                     width: 14
                     height: 14
                     mipmap: true
-                }
-
-                ColorOverlay {
-                    anchors.fill: notificationIconImage
-                    source: notificationIconImage
-                    color: "#9e2323"
                 }
             }
         }
@@ -192,115 +183,130 @@ ApplicationWindow {
                         Layout.fillWidth: true
                         Layout.fillHeight: true
 
-                        Rectangle {
+                        Item {
                             id: plainReleaseItem
                             anchors.left: parent.left
                             anchors.leftMargin: 8
                             width: 280
                             height: 280
-                            radius: 10
-                            color: applicationThemeViewModel.previewItems.panelBackground
-                            layer.enabled: true
-                            layer.effect: DropShadow {
-                                transparentBorder: true
-                                horizontalOffset: 2
-                                verticalOffset: 2
-                                radius: 1
-                                samples: 3
-                                color: applicationThemeViewModel.previewItems.panelBackgroundShadow
-                            }
 
                             Rectangle {
                                 anchors.left: parent.left
+                                anchors.leftMargin: 2
                                 anchors.top: parent.top
-                                anchors.leftMargin: 4
-                                anchors.topMargin: 4
-                                width: 182
-                                height: 272
-                                border.color: applicationThemeViewModel.previewItems.posterBorder
-                                border.width: 1
-                                radius: 12
+                                anchors.topMargin: 2
+                                width: parent.width
+                                height: parent.height
+                                color: "transparent"
+                                border.color: applicationThemeViewModel.previewItems.panelBackgroundShadow
+                                border.width: 2
+                                radius: 10
+                            }
+
+                            Rectangle {
+                                width: parent.width
+                                height: parent.height
+                                radius: 10
+                                color: applicationThemeViewModel.previewItems.panelBackground
 
                                 Rectangle {
-                                    id: mask
-                                    width: 180
-                                    height: 260
-                                    radius: 10
-                                    visible: false
-                                }
+                                    anchors.left: parent.left
+                                    anchors.top: parent.top
+                                    anchors.leftMargin: 4
+                                    anchors.topMargin: 4
+                                    width: 182
+                                    height: 272
+                                    border.color: applicationThemeViewModel.previewItems.posterBorder
+                                    border.width: 1
+                                    radius: 12
 
-                                Image {
-                                    anchors.centerIn: parent
-                                    source: "https://kawai.shikimori.one/system/animes/original/51306.jpg"
-                                    sourceSize: Qt.size(350, 500)
-                                    fillMode: Image.PreserveAspectCrop
-                                    width: 180
-                                    height: 270
-                                    layer.enabled: true
-                                    layer.effect: OpacityMask {
-                                        maskSource: mask
+                                    Rectangle {
+                                        id: mask
+                                        width: 180
+                                        height: 260
+                                        radius: 10
+                                        visible: false
+                                    }
+
+                                    Image {
+                                        anchors.centerIn: parent
+                                        source: "https://kawai.shikimori.one/system/animes/original/51306.jpg"
+                                        sourceSize: Qt.size(350, 500)
+                                        fillMode: Image.PreserveAspectCrop
+                                        width: 180
+                                        height: 270
+                                    }
+
+                                    Image {
+                                        id: bookmarkImage
+                                        anchors.left: parent.left
+                                        anchors.leftMargin: -7
+                                        width: 50
+                                        height: 50
+                                        source: assetsLocation.iconsPath + "numberbookmark.svg"
+                                    }
+
+                                    PlainText {
+                                        anchors.left: bookmarkImage.left
+                                        anchors.top: bookmarkImage.top
+                                        anchors.topMargin: 22
+                                        width: 40
+                                        horizontalAlignment: Qt.AlignHCenter
+                                        text: "10"
+                                        fontPointSize: 10
+                                        color: applicationThemeViewModel.previewItems.colorPageIndexText
                                     }
                                 }
-
-                                Image {
-                                    id: bookmarkImage
-                                    anchors.left: parent.left
-                                    anchors.leftMargin: -7
-                                    width: 50
-                                    height: 50
-                                    source: assetsLocation.iconsPath + "numberbookmark.svg"
-                                }
-
-                                PlainText {
-                                    anchors.left: bookmarkImage.left
-                                    anchors.top: bookmarkImage.top
-                                    anchors.topMargin: 22
-                                    width: 40
-                                    horizontalAlignment: Qt.AlignHCenter
-                                    text: "10"
-                                    fontPointSize: 10
-                                    color: applicationThemeViewModel.previewItems.colorPageIndexText
-                                }
                             }
+
                         }
-                        Rectangle {
+
+                        Item {
                             id: selectedReleaseItem
                             anchors.left: plainReleaseItem.right
                             anchors.leftMargin: 10
                             width: 280
                             height: 280
-                            radius: 10
-                            border.color: applicationThemeViewModel.previewItems.selectedItem
-                            border.width: 3
-                            color: applicationThemeViewModel.previewItems.panelBackground
-                            layer.enabled: true
-                            layer.effect: DropShadow {
-                                transparentBorder: true
-                                horizontalOffset: 2
-                                verticalOffset: 2
-                                radius: 1
-                                samples: 3
-                                color: applicationThemeViewModel.previewItems.panelBackgroundShadow
-                            }
 
-                            Text {
-                                id: headerText
+                            Rectangle {
                                 anchors.left: parent.left
+                                anchors.leftMargin: 2
                                 anchors.top: parent.top
-                                anchors.leftMargin: 10
-                                anchors.topMargin: 10
-                                font.pointSize: 11 + windowSettings.dpiSeparation
-                                color: applicationThemeViewModel.previewItems.headerTextColor
-                                text: "Текст заголовка"
+                                anchors.topMargin: 2
+                                width: parent.width
+                                height: parent.height
+                                color: "transparent"
+                                border.color: applicationThemeViewModel.previewItems.panelBackgroundShadow
+                                border.width: 2
+                                radius: 10
                             }
-                            Text {
-                                anchors.top: headerText.bottom
-                                anchors.left: parent.left
-                                anchors.leftMargin: 10
-                                text: "Обычный текст <br><b>Жирный обычный текст</b><br><a href='https://anilibria.tv'>Обычный текст со ссылкой</a>"
-                                font.pointSize: 10 + windowSettings.dpiSeparation
-                                color: applicationThemeViewModel.previewItems.plainTextColor
-                                linkColor: applicationThemeViewModel.previewItems.linkTextColor
+                            Rectangle {
+                                width: 280
+                                height: 280
+                                radius: 10
+                                border.color: applicationThemeViewModel.previewItems.selectedItem
+                                border.width: 3
+                                color: applicationThemeViewModel.previewItems.panelBackground
+
+                                Text {
+                                    id: headerText
+                                    anchors.left: parent.left
+                                    anchors.top: parent.top
+                                    anchors.leftMargin: 10
+                                    anchors.topMargin: 10
+                                    font.pointSize: 11 + windowSettings.dpiSeparation
+                                    color: applicationThemeViewModel.previewItems.headerTextColor
+                                    text: "Текст заголовка"
+                                }
+                                Text {
+                                    anchors.top: headerText.bottom
+                                    anchors.left: parent.left
+                                    anchors.leftMargin: 10
+                                    text: "Обычный текст <br><b>Жирный обычный текст</b><br><a href='https://anilibria.tv'>Обычный текст со ссылкой</a>"
+                                    font.pointSize: 10 + windowSettings.dpiSeparation
+                                    color: applicationThemeViewModel.previewItems.plainTextColor
+                                    linkColor: applicationThemeViewModel.previewItems.linkTextColor
+                                }
                             }
                         }
 
@@ -436,13 +442,6 @@ ApplicationWindow {
                                                 height: 22
                                                 mipmap: true
                                             }
-
-                                            ColorOverlay {
-                                                id: colorOverlay
-                                                anchors.fill: activeIconImage
-                                                source: activeIconImage
-                                                color: applicationThemeViewModel.previewItems.filterIconButtonGreenColor
-                                            }
                                         }
                                     }
                                 }
@@ -492,13 +491,6 @@ ApplicationWindow {
                                                 width: 22
                                                 height: 22
                                                 mipmap: true
-                                            }
-
-                                            ColorOverlay {
-                                                id: selectedColorOverlay
-                                                anchors.fill: selectedIconImage
-                                                source: selectedIconImage
-                                                color: applicationThemeViewModel.previewItems.filterIconButtonColor
                                             }
                                         }
                                     }
@@ -594,6 +586,7 @@ ApplicationWindow {
                                 anchors.left: previewSwitch.right
                                 anchors.leftMargin: 10
                                 width: 300
+                                font.pointSize: 10
                                 ToolTip.delay: 1000
                                 ToolTip.visible: hovered
                                 ToolTip.text: "<font color='" + applicationThemeViewModel.previewItems.colorTooltipText + "'>Текст в тултипе</font>"
@@ -717,6 +710,9 @@ ApplicationWindow {
         width: 300
         dragMargin: 0
         height: window.height
+        CustomStyle.drawerDialogColor: applicationThemeViewModel.previewItems.colorDrawerDivider
+        CustomStyle.drawerDimColor: applicationThemeViewModel.previewItems.colorDrawerDim
+        CustomStyle.drawerDividerColor: applicationThemeViewModel.previewItems.colorDrawerDialog
         background: Canvas {
             id: canvas
             anchors.fill: parent

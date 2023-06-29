@@ -3,6 +3,7 @@ import QtQuick.Controls 2.12
 import CustomStyle 1.0
 
 TextField {
+    font.pointSize: 10
     CustomStyle.textFieldAccent: applicationThemeViewModel.currentItems.colorTextFieldAccent
     CustomStyle.textFieldForeground: applicationThemeViewModel.currentItems.colorTextFieldForeground
     CustomStyle.textFieldHint: applicationThemeViewModel.currentItems.colorTextFieldHint

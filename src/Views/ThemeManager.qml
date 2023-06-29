@@ -2,7 +2,6 @@ import QtQuick 2.12
 import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.3
 import QtQuick.Dialogs 1.3
-import QtGraphicalEffects 1.0
 import "../Controls"
 
 Page {
@@ -573,6 +572,19 @@ Page {
                                 height: 120
 
                                 Rectangle {
+                                    anchors.left: parent.left
+                                    anchors.top: parent.top
+                                    anchors.leftMargin: 2
+                                    anchors.topMargin: 2
+                                    width: headerFields.width - 3
+                                    height: headerFields.height - 2
+                                    color: "transparent"
+                                    border.color: applicationThemeViewModel.panelBackgroundShadow
+                                    border.width: 2
+                                    radius: 10
+                                }
+
+                                Rectangle {
                                     anchors.fill: parent
                                     anchors.leftMargin: 2
                                     anchors.rightMargin: 2
@@ -580,15 +592,6 @@ Page {
                                     anchors.bottomMargin: 2
                                     radius: 10
                                     color: applicationThemeViewModel.panelBackground
-                                    layer.enabled: true
-                                    layer.effect: DropShadow {
-                                        transparentBorder: true
-                                        horizontalOffset: 2
-                                        verticalOffset: 2
-                                        radius: 1
-                                        samples: 3
-                                        color: applicationThemeViewModel.panelBackgroundShadow
-                                    }
                                 }
 
                                 Item {
@@ -670,6 +673,7 @@ Page {
                                 anchors.left: parent.left
                                 anchors.right: parent.right
                                 clip: true
+                                spacing: 1
                                 model: applicationThemeViewModel.fieldList
                                 ScrollBar.vertical: ScrollBar {
                                     active: true
@@ -679,6 +683,19 @@ Page {
                                     height: 120
 
                                     Rectangle {
+                                        anchors.left: parent.left
+                                        anchors.top: parent.top
+                                        anchors.leftMargin: 2
+                                        anchors.topMargin: 2
+                                        width: parent.width - 3
+                                        height: parent.height - 2
+                                        color: "transparent"
+                                        border.color: applicationThemeViewModel.panelBackgroundShadow
+                                        border.width: 2
+                                        radius: 10
+                                    }
+
+                                    Rectangle {
                                         anchors.fill: parent
                                         anchors.leftMargin: 2
                                         anchors.rightMargin: 2
@@ -686,15 +703,6 @@ Page {
                                         anchors.bottomMargin: 2
                                         radius: 10
                                         color: applicationThemeViewModel.panelBackground
-                                        layer.enabled: true
-                                        layer.effect: DropShadow {
-                                            transparentBorder: true
-                                            horizontalOffset: 2
-                                            verticalOffset: 2
-                                            radius: 1
-                                            samples: 3
-                                            color: applicationThemeViewModel.panelBackgroundShadow
-                                        }
                                     }
 
                                     Item {
