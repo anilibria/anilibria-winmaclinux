@@ -21,7 +21,6 @@ import QtQuick.Window 2.12
 import QtQuick.Controls 2.5
 import QtQuick.Layouts 1.3
 import QtQuick.Controls.Material 2.0
-import QtGraphicalEffects 1.12
 import QtQuick.Dialogs 1.2
 import Anilibria.Services 1.0
 import Anilibria.ListModels 1.0
@@ -574,6 +573,7 @@ ApplicationWindow {
             if (window.userModel.avatar) {
                 synchronizationService.synchronizeUserFavorites(applicationSettings.userToken);
                 mainViewModel.notVisibleSignin = true;
+                userAvatarCanvas.loadImage(window.userModel.avatar);
             }
         }
 
@@ -608,16 +608,20 @@ ApplicationWindow {
         CustomStyle.drawerDialogColor: applicationThemeViewModel.currentItems.colorDrawerDivider
         CustomStyle.drawerDimColor: applicationThemeViewModel.currentItems.colorDrawerDim
         CustomStyle.drawerDividerColor: applicationThemeViewModel.currentItems.colorDrawerDialog
-        background: LinearGradient {
-            anchors.fill: parent
-            start: Qt.point(0, 0)
-            end: Qt.point(0, parent.height)
-            gradient: Gradient {
-                GradientStop { position: 0.0; color: applicationThemeViewModel.drawerGradiendStep0 }
-                GradientStop { position: 0.3; color: applicationThemeViewModel.drawerGradiendStep1 }
-                GradientStop { position: 0.5; color: applicationThemeViewModel.drawerGradiendStep2 }
-                GradientStop { position: 0.7; color: applicationThemeViewModel.drawerGradiendStep3 }
-                GradientStop { position: 1.0; color: applicationThemeViewModel.drawerGradiendStep4 }
+        background: Canvas {
+            height: drawer.height
+            width: drawer.width
+            onPaint: {
+                const ctx = getContext("2d");
+
+                const gradient = ctx.createLinearGradient(0,0,drawer.width,drawer.height);
+                gradient.addColorStop(0.0, applicationThemeViewModel.drawerGradiendStep0);
+                gradient.addColorStop(0.3, applicationThemeViewModel.drawerGradiendStep1);
+                gradient.addColorStop(0.5, applicationThemeViewModel.drawerGradiendStep2);
+                gradient.addColorStop(0.7, applicationThemeViewModel.drawerGradiendStep3);
+                gradient.addColorStop(1.0, applicationThemeViewModel.drawerGradiendStep4);
+                ctx.fillStyle = gradient;
+                ctx.fillRect(0,0,drawer.width,drawer.height);
             }
         }
 
@@ -628,29 +632,38 @@ ApplicationWindow {
             width: drawer.width
             height: mainViewModel.notVisibleSignin ? 64 : 0
 
-            Image {
-                id: userAvatarImage
+            Canvas {
+                id: userAvatarCanvas
                 anchors.leftMargin: 6
                 anchors.topMargin: 2
                 anchors.left: parent.left
                 anchors.verticalCenter: parent.verticalCenter
-                source: userModel.avatar ? userModel.avatar : '../Assets/Icons/donate.jpg'
-                fillMode: Image.PreserveAspectCrop
                 width: 60
                 height: 60
-                layer.enabled: true
-                layer.effect: OpacityMask {
-                    maskSource: Rectangle {
-                        width: 60
-                        height: 60
-                        radius: 30
-                        visible: false
-                    }
+                onPaint: {
+                    const ctx = getContext("2d");
+
+                    ctx.save();
+                    ctx.beginPath();
+                    ctx.arc(30, 30, 30, 0, Math.PI * 2, true);
+                    ctx.closePath();
+                    ctx.clip();
+
+                    ctx.drawImage(window.userModel.avatar, 0, 0, 60, 60);
+
+                    ctx.beginPath();
+                    ctx.arc(0, 0, 30, 0, Math.PI * 2, true);
+                    ctx.clip();
+                    ctx.closePath();
+                    ctx.restore();
+                }
+                onImageLoaded: {
+                    requestPaint();
                 }
             }
 
             Text {
-                anchors.left: userAvatarImage.right
+                anchors.left: userAvatarCanvas.right
                 anchors.leftMargin: 10
                 anchors.verticalCenter: parent.verticalCenter
                 text: "Вы авторизованы как:\n" + (userModel.login ? userModel.login : "")
@@ -658,7 +671,7 @@ ApplicationWindow {
                 elide: Text.ElideRight
                 antialiasing: true
                 wrapMode: Text.WordWrap
-                width: drawer.width - userAvatarImage.width - logoutButton.width - 40
+                width: drawer.width - userAvatarCanvas.width - logoutButton.width - 40
                 maximumLineCount: 2
             }
 
