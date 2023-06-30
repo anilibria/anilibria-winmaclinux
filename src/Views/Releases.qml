@@ -973,52 +973,6 @@ Page {
                 }
 
                 LeftPanelIconButton {
-                    iconPath: applicationThemeViewModel.currentItems.iconInfo
-                    iconWidth: 29
-                    iconHeight: 29
-                    showCrossIcon: page.showButtonVisibleChanger && page.hideInfoButton
-                    tooltipMessage: "Просмотреть полезные ссылки связанные с приложением"
-                    visible: page.showButtonVisibleChanger || !page.hideInfoButton
-                    onButtonPressed: {
-                        if (page.showButtonVisibleChanger) {
-                            page.hideInfoButton = !page.hideInfoButton;
-                            localStorage.setHideInfoButton(page.hideInfoButton);
-                        } else {
-                            informationPopup.open();
-                        }
-                    }
-
-                    DefaultPopup {
-                        id: informationPopup
-                        x: 40
-                        y: parent.height - 100
-                        width: 320
-                        height: 96
-                        modal: true
-                        focus: true
-                        closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
-
-                        Column {
-                            LinkedText {
-                                fontPointSize: 11
-                                text: "<a href='http://anilibriadesktop.reformal.ru/'>Написать идею, ошибку, вопрос?</a>"
-                            }
-                            LinkedText {
-                                fontPointSize: 11
-                                text: "<a href='https://t.me/Libria911Bot'>Техподдержка Анилибрии</a>"
-                            }
-                            LinkedText {
-                                fontPointSize: 11
-                                text: "<a href='https://t.me/desktopclientanilibria'>Telegram канал о приложении</a>"
-                            }
-                            LinkedText {
-                                fontPointSize: 11
-                                text: "<a href='https://t.me/desktopclientanilibria/259'>Видео для новых пользователей</a>"
-                            }
-                        }
-                    }
-                }
-                LeftPanelIconButton {
                     iconPath: applicationThemeViewModel.currentItems.iconReleaseCatalogHidedButtons
                     iconWidth: 29
                     iconHeight: 29

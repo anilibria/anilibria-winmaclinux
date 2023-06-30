@@ -241,6 +241,51 @@ ApplicationWindow {
             }
         }
         IconButton {
+            visible: !mainViewModel.isSmallSizeMode
+            anchors.right: selectThemeButton.left
+            anchors.top: parent.top
+            anchors.topMargin: 1
+            iconPath: applicationThemeViewModel.currentItems.iconInfo
+            height: 34
+            width: 40
+            iconWidth: 24
+            iconHeight: 24
+            tooltipMessage: "Просмотреть полезные ссылки связанные с приложением"
+            onButtonPressed: {
+                informationPopup.open();
+            }
+
+            DefaultPopup {
+                id: informationPopup
+                x: -300
+                y: 40
+                width: 320
+                height: 96
+                modal: true
+                focus: true
+                closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
+
+                Column {
+                    LinkedText {
+                        fontPointSize: 11
+                        text: "<a href='https://t.me/+Le_oNL4Tw745YWUy'>Написать идею, ошибку, вопрос?</a>"
+                    }
+                    LinkedText {
+                        fontPointSize: 11
+                        text: "<a href='https://t.me/desktopclientanilibria'>Telegram канал с новостями</a>"
+                    }
+                    LinkedText {
+                        fontPointSize: 11
+                        text: "<a href='https://t.me/desktopclientanilibria/259'>Видео для новых пользователей</a>"
+                    }
+                    LinkedText {
+                        fontPointSize: 11
+                        text: "<a href='https://t.me/Libria911Bot'>Общая техподдержка Анилибрии</a>"
+                    }
+                }
+            }
+        }
+        IconButton {
             id: selectThemeButton
             visible: !mainViewModel.isSmallSizeMode
             anchors.right: leftHalfScreenWindow.left
