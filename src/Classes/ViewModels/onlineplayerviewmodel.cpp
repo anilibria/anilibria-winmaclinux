@@ -1118,6 +1118,14 @@ void OnlinePlayerViewModel::quickSetupForSingleDownloadedTorrent(const QStringLi
     m_releasesViewModel->resetReleaseChanges(m_selectedRelease);
 }
 
+bool OnlinePlayerViewModel::releaseHasVideos(int releaseId) noexcept
+{
+    auto release = m_releasesViewModel->getReleaseById(releaseId);
+    if (release == nullptr) return false;
+
+    return release->countOnlineVideos() > 0;
+}
+
 void OnlinePlayerViewModel::saveVideoSeens()
 {
     QJsonArray array;

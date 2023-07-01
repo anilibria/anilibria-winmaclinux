@@ -96,6 +96,8 @@ Item {
                         myAnilibriaViewModel.hoveredDescription = ""
                     }
                     onPressed: {
+                        if (!onlinePlayerViewModel.releaseHasVideos(id)) return;
+
                         mainViewModel.selectPage("videoplayer");
                         onlinePlayerViewModel.quickSetupForSingleRelease(id);
                     }

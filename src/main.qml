@@ -904,6 +904,8 @@ ApplicationWindow {
             visible: mainViewModel.isReleasesPageVisible
             focus: true
             onWatchSingleRelease: {
+                if (!onlinePlayerViewModel.releaseHasVideos(releaseId)) return;
+
                 mainViewModel.selectPage("videoplayer");
                 onlinePlayerViewModel.quickSetupForSingleRelease(releaseId, startSeria);
             }

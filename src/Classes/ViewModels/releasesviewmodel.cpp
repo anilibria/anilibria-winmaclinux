@@ -479,6 +479,7 @@ void ReleasesViewModel::fillNewInFavorites(QList<FullReleaseModel *>* list) cons
     }
 
     foreach (auto release, *m_releases) {
+        if (release->countOnlineVideos() == 0) continue;
         if (!favorites.contains(release->id())) continue;
 
         auto seenVideos = m_items->getReleaseSeenMarkCount(release->id());
@@ -494,6 +495,7 @@ void ReleasesViewModel::fillNewFromStart(QList<FullReleaseModel *> *list) const 
 
     auto applicationStart = m_userActivity->previousApplicationStart();
     foreach (auto release, *m_releases) {
+        if (release->countOnlineVideos() == 0) continue;
         if (release->timestamp() < applicationStart) continue;
 
         list->append(release);
@@ -505,6 +507,7 @@ void ReleasesViewModel::fillNewFromLastTwoDays(QList<FullReleaseModel *> *list) 
     auto now = QDateTime::currentDateTimeUtc().addDays(-3);
     auto timestamp = static_cast<int>(now.toTime_t());
     foreach (auto release, *m_releases) {
+        if (release->countOnlineVideos() == 0) continue;
         if (release->timestamp() < timestamp) continue;
 
         list->append(release);
@@ -517,6 +520,7 @@ void ReleasesViewModel::fillAbandonedSeens(QList<FullReleaseModel *> *list) cons
     auto timestamp = static_cast<int>(now.toTime_t());
 
     foreach (auto release, *m_releases) {
+        if (release->countOnlineVideos() == 0) continue;
         if (!m_historyItems->contains(release->id())) continue;
 
         auto historyItem = m_historyItems->value(release->id());
@@ -541,6 +545,7 @@ void ReleasesViewModel::fillRecommendsByGenres(QList<FullReleaseModel *> *list) 
     }
 
     foreach (auto release, *m_releases) {
+        if (release->countOnlineVideos() == 0) continue;
         auto historyItem = m_historyItems->value(release->id());
         if (historyItem == nullptr || historyItem->watchTimestamp() != 0) continue; // if you opened release in video player it means it not fit our condition
 
@@ -574,6 +579,7 @@ void ReleasesViewModel::fillRecommendsByGenres(QList<FullReleaseModel *> *list) 
 void ReleasesViewModel::fillWillWatch(QList<FullReleaseModel *> *list) noexcept
 {
     foreach (auto release, *m_releases) {
+        if (release->countOnlineVideos() == 0) continue;
         auto releaseId = release->id();
         if (!m_userFavorites->contains(releaseId)) continue;
 
@@ -601,6 +607,7 @@ void ReleasesViewModel::fillNextInReleaseSeries(QList<FullReleaseModel *> *list)
         foreach (auto releaseId, group) {
             if (!releasesMap->contains(releaseId)) continue;
             auto release = releasesMap->value(releaseId);
+            if (release->countOnlineVideos() == 0) continue;
 
             auto countSeens = items->getReleaseSeenMarkCount(releaseId);
             auto isFullWatch = release->countOnlineVideos() == countSeens;
@@ -621,6 +628,7 @@ void ReleasesViewModel::fillCurrentSeason(QList<FullReleaseModel *> *list) noexc
     auto currentSeason = m_items->getCurrentSeason();
 
     foreach (auto release, *m_releases) {
+        if (release->countOnlineVideos() == 0) continue;
         if (release->year() != currentYear) continue;
         if (release->status().toLower() != "в работе") continue;
         if (release->season() != currentSeason) continue;
