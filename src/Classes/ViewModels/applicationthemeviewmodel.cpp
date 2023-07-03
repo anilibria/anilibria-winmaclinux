@@ -171,6 +171,9 @@ ApplicationThemeViewModel::ApplicationThemeViewModel(QObject *parent)
     lightTheme->insert(iconNotificationField, "qrc:/Assets/Icons/notification/notification.svg");
     lightTheme->insert(iconNotificationSelectedField, "qrc:/Assets/Icons/notification/notificationselected.svg");
 
+    lightTheme->insert(iconDisabledNotificationsField, "qrc:/Assets/Icons/coloredbell.svg");
+    lightTheme->insert(iconDisabledCinemahallField, "qrc:/Assets/Icons/cinemahallmenu.svg");
+
     lightTheme->insert(iconLogoutField, "qrc:/Assets/Icons/logout.svg");
 
     lightTheme->insert(colorTooltipTextField, "white");
@@ -336,6 +339,9 @@ ApplicationThemeViewModel::ApplicationThemeViewModel(QObject *parent)
     darkTheme->insert(colorDrawerDimColorField, "#99fafafa");
     darkTheme->insert(colorDrawerDialogColorField, "#424242");
 
+    darkTheme->insert(iconDisabledNotificationsField, "qrc:/Assets/Icons/coloredbell.svg");
+    darkTheme->insert(iconDisabledCinemahallField, "qrc:/Assets/Icons/cinemahallmenu.svg");
+
     darkTheme->insert(basedOnThemeField, m_darkTheme);
     darkTheme->insert(externalIdField, "");
     m_themes.insert(m_darkTheme, darkTheme);
@@ -490,6 +496,9 @@ ApplicationThemeViewModel::ApplicationThemeViewModel(QObject *parent)
     m_fields.append(iconNotificationField);
     m_fields.append(iconNotificationSelectedField);
     m_fields.append(iconEmptyField);
+    m_fields.append(iconDisabledNotificationsField);
+    m_fields.append(iconDisabledCinemahallField);
+
     m_fields.append(iconLogoutField);
     m_fields.append(externalIdField);
 

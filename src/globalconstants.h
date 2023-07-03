@@ -247,5 +247,7 @@ extern QString colorDrawerDividerColorField;
 extern QString colorDrawerDimColorField;
 extern QString colorDrawerDialogColorField;
 
+extern QString iconDisabledNotificationsField;
+extern QString iconDisabledCinemahallField;
 
 #endif // GLOBALCONSTANTS_H

@@ -82,6 +82,7 @@ Item {
             width: 29
             height: 29
             mipmap: true
+            asynchronous: true
             transform: [
                 Scale {
                     id: scaleIconImage

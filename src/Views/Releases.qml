@@ -222,7 +222,7 @@ Page {
                     }
                 }
                 LeftPanelIconButton {
-                    iconPath: applicationThemeViewModel.iconMainMenuCinemahall
+                    iconPath: releasesViewModel.hasCinemahallNotSeenVideos ? applicationThemeViewModel.currentItems.iconMainMenuCinemahall : applicationThemeViewModel.currentItems.iconDisabledCinemahall
                     showCrossIcon: page.showButtonVisibleChanger && page.hideCinemahallButton
                     visible: page.showButtonVisibleChanger || !page.hideCinemahallButton
                     tooltipMessage: "Управление кинозалом"
@@ -628,7 +628,7 @@ Page {
                 }
                 LeftPanelIconButton {
                     id: notificationsButton
-                    iconPath: applicationThemeViewModel.currentItems.iconReleaseCatalogNotification
+                    iconPath: releasesViewModel.isChangesExists ? applicationThemeViewModel.currentItems.iconReleaseCatalogNotification : applicationThemeViewModel.currentItems.iconDisabledNotifications
                     iconWidth: 29
                     iconHeight: 29
                     showCrossIcon: page.showButtonVisibleChanger && page.hideNotificationButton

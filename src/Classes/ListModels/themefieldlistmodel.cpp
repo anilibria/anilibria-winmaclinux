@@ -175,6 +175,9 @@ ThemeFieldListModel::ThemeFieldListModel(QObject *parent)
     m_descriptions.insert(colorDrawerDimColorField, "Цвет главного меню 2:Цвет затенения");
     m_descriptions.insert(colorDrawerDialogColorField, "Цвет главного меню 3:Цвет диалога");
 
+    m_descriptions.insert(iconDisabledNotificationsField, "Иконка Нет уведомлений: Иконка для состояния Нет уведомлений");
+    m_descriptions.insert(iconDisabledCinemahallField, "Иконка Кинозал Нет Уведомлений: Иконка для состояния Нет уведомлений");
+
     m_descriptions.insert(iconLogoutField, "Иконка выхода:Иконка для кнопки выхода");
 
     m_saveMenuItems.append("Сохранить и добавить тему в список");

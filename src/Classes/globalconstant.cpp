@@ -191,3 +191,6 @@ QString colorDrawerDividerColorField = "colorDrawerDivider";
 QString colorDrawerDimColorField = "colorDrawerDim";
 QString colorDrawerDialogColorField = "colorDrawerDialog";
 
+QString iconDisabledNotificationsField = "iconDisabledNotifications";
+QString iconDisabledCinemahallField = "iconDisabledCinemahall";
+
