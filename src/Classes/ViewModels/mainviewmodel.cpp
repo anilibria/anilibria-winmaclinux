@@ -109,7 +109,7 @@ void MainViewModel::selectPage(const QString& pageId)
         emit changeReleasesParameters(m_pageParameters);
     }
 
-    m_analyticsService->sendView("page", "view", "%2F" + pageId);
+    m_analyticsService->sendView("page", "view", "%2F" + pageIdentifier);
 }
 
 void MainViewModel::backToPage()
