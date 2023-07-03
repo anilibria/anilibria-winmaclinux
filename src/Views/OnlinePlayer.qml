@@ -49,7 +49,7 @@ Page {
         playerLoader.item.stop();
     }
 
-    Keys.onSpacePressed: {
+    function togglePlayback() {
         if (playerLoader.item.playbackState === MediaPlayer.PlayingState) {
             playerLoader.item.pause();
             return;
@@ -59,12 +59,16 @@ Page {
         }
     }
 
+    Keys.onSpacePressed: {
+        togglePlayback();
+    }
+
     Keys.onPressed: {
-        if (event.key === Qt.Key_PageDown || event.key === Qt.Key_N || event.key === 1058) {
+        if (event.key === Qt.Key_PageDown || event.key === Qt.Key_N || event.key === 1058 || event.key === Qt.Key_MediaNext) {
             onlinePlayerViewModel.nextVideo();
             event.accepted = true;
         }
-        if (event.key === Qt.Key_PageUp || event.key === Qt.Key_P || event.key === 1047) {
+        if (event.key === Qt.Key_PageUp || event.key === Qt.Key_P || event.key === 1047 || event.key === Qt.Key_MediaPrevious) {
             onlinePlayerViewModel.previousVideo();
             event.accepted = true;
         }
@@ -74,13 +78,13 @@ Page {
         if (event.key === Qt.Key_F11 || event.key === Qt.Key_F || event.key === 1040) {
             onlinePlayerViewModel.toggleFullScreen();
         }
-        if (event.key === Qt.Key_Up) {
+        if (event.key === Qt.Key_Up || event.key === Qt.Key_VolumeUp) {
             if (playerLoader.item.volume < 1) playerLoader.item.volume += .1;
             if (playerLoader.item.volume > 1) playerLoader.item.volume = 1;
 
             volumeSlider.value = playerLoader.item.volume * 100;
         }
-        if (event.key === Qt.Key_Down) {
+        if (event.key === Qt.Key_Down || event.key === Qt.Key_VolumeDown) {
             let newVolume = playerLoader.item.volume;
             if (newVolume > 0) newVolume -= .1;
             if (newVolume < 0) newVolume = 0;
@@ -89,12 +93,15 @@ Page {
 
             volumeSlider.value = playerLoader.item.volume * 100;
         }
-        if (event.key === Qt.Key_M || event.key === 1068) playerLoader.item.muted = !playerLoader.item.muted;
+        if (event.key === Qt.Key_M || event.key === 1068 || event.key === Qt.Key_VolumeMute) playerLoader.item.muted = !playerLoader.item.muted;
         if ((event.key === Qt.Key_T || event.key === 1045) && !autoTopMost.checked) windowSettings.toggleStayOnTopMode();
         if (event.key === Qt.Key_Left) playerLoader.item.seek(onlinePlayerViewModel.jumpInPlayer(jumpMinuteComboBox.currentIndex, jumpSecondComboBox.currentIndex, true));
         if (event.key === Qt.Key_Right) playerLoader.item.seek(onlinePlayerViewModel.jumpInPlayer(jumpMinuteComboBox.currentIndex, jumpSecondComboBox.currentIndex, false));
         if (event.key === Qt.Key_Home && !autoTopMost.checked) windowSettings.setStayOnTop();
         if (event.key === Qt.Key_End && !autoTopMost.checked) windowSettings.unsetStayOnTop();
+        if (event.key === Qt.Key_Play) playerLoader.item.play();
+        if (event.key === Qt.Key_MediaPause) playerLoader.item.pause();
+        if (event.key === Qt.Key_MediaTogglePlayPause) togglePlayback();
     }
 
     onWindowNotActived: {
