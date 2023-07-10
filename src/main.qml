@@ -525,10 +525,6 @@ ApplicationWindow {
         id: analyticsService
     }
 
-    AlphabetListModel {
-        id: alphabetListModel
-    }
-
     ReleaseLinkedSeries {
         id: releaseLinkedSeries
 

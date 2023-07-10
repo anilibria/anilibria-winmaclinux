@@ -18,9 +18,11 @@
 
 import QtQuick 2.12
 import QtQuick.Layouts 1.3
+import Anilibria.ListModels 1.0
 import "../Controls"
 
 Item {
+    id: root
     anchors.fill: parent
 
     MouseArea {
@@ -37,13 +39,21 @@ Item {
     }
 
     GridView {
+        id: mainGrid
         width: 800
         height: 300
         cellWidth: 80
         cellHeight: 80
         anchors.centerIn: parent
-        model: alphabetListModel
-        delegate: Rectangle {
+        model: AlphabetListModel {
+        }
+        delegate: itemDelegate
+    }
+
+    Component {
+        id: itemDelegate
+
+        Rectangle {
             width: 78
             height: 78
 
@@ -52,10 +62,16 @@ Item {
                 text: alphabetCharacter
                 isChecked: characterSelected
                 onButtonClicked: {
-                    alphabetListModel.selectCharacter(alphabetCharacter)
+                    mainGrid.model.selectCharacter(alphabetCharacter);
 
-                    releasesViewModel.items.alphabetsFilter = alphabetListModel.getSelectedCharactersAsString();
+                    releasesViewModel.items.alphabetsFilter = mainGrid.model.getSelectedCharactersAsString();
 
+                    releasesViewModel.items.refresh();
+                }
+                onButtonAlreadyClicked: {
+                    mainGrid.model.selectCharacter(alphabetCharacter);
+
+                    releasesViewModel.items.alphabetsFilter = mainGrid.model.getSelectedCharactersAsString();
                     releasesViewModel.items.refresh();
                 }
             }
