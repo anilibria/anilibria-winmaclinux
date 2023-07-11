@@ -1400,6 +1400,7 @@ Page {
             anchors.fill: parent
             onPressed: {
                 const position = onlinePlayerViewModel.skipOpening();
+                if (onlinePlayerViewModel.restorePosition != 0) onlinePlayerViewModel.restorePosition = 0;
                 playerLoader.item.seek(position);
             }
         }
