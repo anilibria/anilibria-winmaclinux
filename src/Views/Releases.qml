@@ -1738,8 +1738,6 @@ Page {
         seenMarkSearchField.currentIndex = 0;
         releaseSeriesFilterField.checked = false;
         scheduleDayFilterField.text = "";
-
-        alphabetListModel.clearCharacters();
     }
 
     function changeSection(section) {
