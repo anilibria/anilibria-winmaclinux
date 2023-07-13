@@ -25,6 +25,13 @@ Item {
     id: root
     anchors.fill: parent
 
+    signal clearFilters()
+
+    onClearFilters: {
+        mainGrid.model.clearCharacters();
+        releasesViewModel.items.alphabetsFilter = "";
+    }
+
     MouseArea {
         anchors.fill: parent
         onPressed: {

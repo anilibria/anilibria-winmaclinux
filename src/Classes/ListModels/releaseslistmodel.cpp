@@ -40,6 +40,7 @@ const int MostPopular2022Section = 20;
 const int AddedToCinemahall = 21;
 const int CurrentSeasonSection = 22;
 const int NotCurrentSeasonSection = 23;
+const int CustomScriptSection = 24;
 
 const int winter = 0;
 const int autumn = 1;
@@ -686,6 +687,36 @@ void ReleasesListModel::refresh()
 
         if (m_section == NotCurrentSeasonSection &&
             !((release->year() != currentYear || (release->year() == currentYear && release->season() != currentSeason)) && release->status().toLower() == "в работе")) continue;
+
+        if (m_section == CustomScriptSection) {
+            QJSValue releaseObject = m_engine->newObject();
+            releaseObject.setProperty("title", release->title());
+            releaseObject.setProperty("code", release->code());
+            releaseObject.setProperty("season", release->season());
+            releaseObject.setProperty("status", release->status());
+            releaseObject.setProperty("year", release->year());
+            releaseObject.setProperty("description", release->description());
+            releaseObject.setProperty("releaseType", release->releaseType());
+            releaseObject.setProperty("id", release->id());
+            releaseObject.setProperty("countOnlineVideos", release->countOnlineVideos());
+            releaseObject.setProperty("countTorrents", release->countTorrents());
+            releaseObject.setProperty("announce", release->announce());
+            releaseObject.setProperty("originalName", release->originalName());
+            releaseObject.setProperty("rating", release->rating());
+            releaseObject.setProperty("timestamp", release->timestamp());
+            releaseObject.setProperty("type", release->type());
+            releaseObject.setProperty("series", release->series());
+            releaseObject.setProperty("genres", release->genres());
+            releaseObject.setProperty("voicers", release->voicers());
+            m_engine->globalObject().setProperty("release", releaseObject);
+
+            auto scriptResult = m_engine->evaluate("release.year == 2022");
+            if (scriptResult.isError() || !scriptResult.isBool()) continue;
+            auto isBool = scriptResult.isBool();
+            auto toBool = scriptResult.toBool();
+            if (!isBool || !toBool) continue;
+        }
+
 
         m_filteredReleases->append(release);
     }

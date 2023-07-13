@@ -60,6 +60,7 @@ ReleasesViewModel::ReleasesViewModel(QObject *parent) : QObject(parent)
     m_sectionNames.append("В кинозале");
     m_sectionNames.append("Текущий сезон");
     m_sectionNames.append("Не текущий сезон");
+    m_sectionNames.append("Свой скрипт");
 
     int sectionIterator = 0;
     foreach (auto section, m_sectionNames) {
@@ -93,6 +94,7 @@ ReleasesViewModel::ReleasesViewModel(QObject *parent) : QObject(parent)
     m_sectionSorting->append(std::make_tuple<int, int>(0, 1));
     m_sectionSorting->append(std::make_tuple<int, int>(0, 1));
     m_sectionSorting->append(std::make_tuple<int, int>(4, 1));
+    m_sectionSorting->append(std::make_tuple<int, int>(0, 1));
     m_sectionSorting->append(std::make_tuple<int, int>(0, 1));
     m_sectionSorting->append(std::make_tuple<int, int>(0, 1));
     m_sectionSorting->append(std::make_tuple<int, int>(0, 1));

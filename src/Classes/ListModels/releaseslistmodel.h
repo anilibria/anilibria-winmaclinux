@@ -23,6 +23,7 @@
 #include <QAbstractListModel>
 #include <QSet>
 #include <QMap>
+#include <QJSEngine>
 #include "../Models/fullreleasemodel.h"
 #include "../Models/changesmodel.h"
 #include "../Models/historymodel.h"
@@ -87,6 +88,7 @@ private:
     bool m_hasReleaseSeriesFilter { false };
     bool m_filterByFavorites { false };
     QString m_scheduleDayFilter { "" };
+    QJSEngine* m_engine { new QJSEngine(this) };
     QSharedPointer<QSet<int>> m_selectedReleases { new QSet<int>() };
     enum FullReleaseRoles {
         ReleaseIdRole = Qt::UserRole + 1,

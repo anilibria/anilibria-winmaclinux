@@ -1365,6 +1365,12 @@ Page {
                                         page.changeSection(23);
                                     }
                                 }
+                                CommonMenuItem {
+                                    text: releasesViewModel.sectionNames[24]
+                                    onPressed: {
+                                        page.changeSection(24);
+                                    }
+                                }
                             }
                         }
                     }
@@ -1738,6 +1744,8 @@ Page {
         seenMarkSearchField.currentIndex = 0;
         releaseSeriesFilterField.checked = false;
         scheduleDayFilterField.text = "";
+
+        releaseAlphabeticalCharacters.clearFilters();
     }
 
     function changeSection(section) {
