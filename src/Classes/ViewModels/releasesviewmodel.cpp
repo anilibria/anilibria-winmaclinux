@@ -60,7 +60,7 @@ ReleasesViewModel::ReleasesViewModel(QObject *parent) : QObject(parent)
     m_sectionNames.append("В кинозале");
     m_sectionNames.append("Текущий сезон");
     m_sectionNames.append("Не текущий сезон");
-    m_sectionNames.append("Свой скрипт");
+    m_sectionNames.append("Свой фильтр");
 
     int sectionIterator = 0;
     foreach (auto section, m_sectionNames) {

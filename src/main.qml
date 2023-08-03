@@ -861,6 +861,7 @@ ApplicationWindow {
         imageBackgroundViewModel.containerWidth: releases.backgroundImageWidth
         imageBackgroundViewModel.containerHeight: releases.backgroundImageHeight
         items.releaseLinkedSeries: releaseLinkedSeries
+        items.scriptFilePath: userConfigurationViewModel.customScriptFile
         userActivity: userActivityViewModel
         onReleaseCardOpened: {
             mainViewModel.selectPage("release:" + releasesViewModel.openedReleaseId);

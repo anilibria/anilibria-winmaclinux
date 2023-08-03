@@ -56,6 +56,7 @@ class UserConfigurationViewModel : public QObject
     Q_PROPERTY(bool notSaveWindowPosition READ notSaveWindowPosition WRITE setNotSaveWindowPosition NOTIFY notSaveWindowPositionChanged)
     Q_PROPERTY(bool needSavePlayer READ needSavePlayer WRITE setNeedSavePlayer NOTIFY needSavePlayerChanged)
     Q_PROPERTY(QString lastSelectedPlayer READ lastSelectedPlayer WRITE setLastSelectedPlayer NOTIFY lastSelectedPlayerChanged)
+    Q_PROPERTY(QString customScriptFile READ customScriptFile WRITE setCustomScriptFile NOTIFY customScriptFileChanged)
 
 private:
     QString m_cacheFileName { "userconfiguration.cache" };
@@ -90,6 +91,7 @@ private:
     const QString m_notSaveWindowPositionField { "notSaveWindowPosition" };
     const QString m_needSavePlayerField { "needSavePlayer" };
     const QString m_lastSelectedPlayerField { "lastSelectedPlayer" };
+    const QString m_customScriptFileField { "customScriptFile" };
     int m_opacityPlayerPanel { 50 };
     bool m_notCloseReleaseCardAfterWatch { false };
     bool m_usingScrollAcceleration { true };
@@ -121,6 +123,7 @@ private:
     bool m_notSaveWindowPosition { false };
     bool m_needSavePlayer { false };
     QString m_lastSelectedPlayer { "" };
+    QString m_customScriptFile { "" };
 
 public:
     explicit UserConfigurationViewModel(QObject *parent = nullptr);
@@ -218,6 +221,9 @@ public:
     QString lastSelectedPlayer() const noexcept { return m_lastSelectedPlayer; }
     void setLastSelectedPlayer(const QString& lastSelectedPlayer);
 
+    QString customScriptFile() const noexcept  { return m_customScriptFile; }
+    void setCustomScriptFile(const QString& customScriptFile) noexcept;
+
     Q_INVOKABLE void refreshConfiguration() noexcept;
     Q_INVOKABLE void saveSettingsToFile();
 
@@ -256,6 +262,7 @@ signals:
     void notSaveWindowPositionChanged();
     void needSavePlayerChanged();
     void lastSelectedPlayerChanged();
+    void customScriptFileChanged();
 
 };
 

@@ -276,6 +276,14 @@ void UserConfigurationViewModel::setLastSelectedPlayer(const QString &lastSelect
     emit lastSelectedPlayerChanged();
 }
 
+void UserConfigurationViewModel::setCustomScriptFile(const QString &customScriptFile) noexcept
+{
+    if (m_customScriptFile == customScriptFile) return;
+
+    m_customScriptFile = customScriptFile;
+    emit customScriptFileChanged();
+}
+
 void UserConfigurationViewModel::refreshConfiguration() noexcept
 {
     readSettingsFromFile();
@@ -302,6 +310,7 @@ void UserConfigurationViewModel::refreshConfiguration() noexcept
     emit hideActualInCurrentSeasonChanged();
     emit hideCurrentSeasonChanged();
     emit hideNextInReleaseSeriesChanged();
+    emit customScriptFileChanged();
 }
 
 void UserConfigurationViewModel::saveSettingsToFile()
@@ -338,6 +347,7 @@ void UserConfigurationViewModel::saveSettingsToFile()
     object[m_notSaveWindowPositionField] = m_notSaveWindowPosition;
     object[m_needSavePlayerField] = m_needSavePlayer;
     object[m_lastSelectedPlayerField] = m_lastSelectedPlayer;
+    object[m_customScriptFileField] = m_customScriptFile;
 
     QFile file(getCachePath(m_cacheFileName));
     file.open(QFile::WriteOnly | QFile::Text);
@@ -385,4 +395,5 @@ void UserConfigurationViewModel::readSettingsFromFile()
     m_notSaveWindowPosition = object.contains(m_notSaveWindowPositionField) ? object[m_notSaveWindowPositionField].toBool() : false;
     m_needSavePlayer = object.contains(m_needSavePlayerField) ? object[m_needSavePlayerField].toBool() : false;
     m_lastSelectedPlayer = object.contains(m_lastSelectedPlayerField) ? object[m_lastSelectedPlayerField].toString() : "";
+    m_customScriptFile = object.contains(m_customScriptFileField) ? object[m_customScriptFileField].toString() : "";
 }

@@ -56,6 +56,7 @@ class ReleasesListModel : public QAbstractListModel
     Q_PROPERTY(ReleaseLinkedSeries* releaseLinkedSeries READ releaseLinkedSeries WRITE setReleaseLinkedSeries NOTIFY releaseLinkedSeriesChanged)
     Q_PROPERTY(QString scheduleDayFilter READ scheduleDayFilter WRITE setScheduleDayFilter NOTIFY scheduleDayFilterChanged)
     Q_PROPERTY(bool filterByFavorites READ filterByFavorites WRITE setFilterByFavorites NOTIFY filterByFavoritesChanged)
+    Q_PROPERTY(QString scriptFilePath READ scriptFilePath WRITE setScriptFilePath NOTIFY scriptFilePathChanged)
 
 private:
     QSharedPointer<QList<FullReleaseModel*>> m_releases;
@@ -89,6 +90,7 @@ private:
     bool m_filterByFavorites { false };
     QString m_scheduleDayFilter { "" };
     QJSEngine* m_engine { new QJSEngine(this) };
+    QString m_scriptFilePath { "" };
     QSharedPointer<QSet<int>> m_selectedReleases { new QSet<int>() };
     enum FullReleaseRoles {
         ReleaseIdRole = Qt::UserRole + 1,
@@ -190,6 +192,9 @@ public:
     bool isHasReleases() const noexcept { return m_isHasReleases; }
     void setIsHasReleases(const bool& isHasReleases) noexcept;
 
+    QString scriptFilePath() const noexcept { return m_scriptFilePath; }
+    void setScriptFilePath(const QString& scriptFilePath) noexcept;
+
     void refreshItem(int id);
     int getReleaseSeenMarkCount(int releaseId) const noexcept;
 
@@ -259,6 +264,8 @@ signals:
     void hasReleaseSeriesFilterChanged();
     void scheduleDayFilterChanged();
     void filterByFavoritesChanged();
+    void scriptFilePathChanged();
+    void scriptError(const QString& message);
 
 };
 

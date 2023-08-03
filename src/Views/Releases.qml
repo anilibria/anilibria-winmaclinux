@@ -824,7 +824,7 @@ Page {
                         x: 40
                         y: -480
                         width: 720
-                        height: 450
+                        height: 470
                         modal: true
                         focus: true
                         closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
@@ -881,6 +881,39 @@ Page {
                                 checked: userConfigurationViewModel.markAsReadAfterDownload
                                 onCheckedChanged: {
                                     userConfigurationViewModel.markAsReadAfterDownload = checked;
+                                }
+                            }
+
+                            PlainText {
+                                id: customScriptFilterLabel
+                                fontPointSize: 11
+                                text: "Файл со своим фильтром"
+                            }
+                            Item {
+                                width: 350
+                                height: 40
+
+                                CommonTextField {
+                                    id: customScriptFilterTextBox
+                                    anchors.left: parent.left
+                                    anchors.right: scriptOpenButton.left
+                                    anchors.rightMargin: 8
+                                    placeholderText: "Полный путь к файлу"
+                                    text: userConfigurationViewModel.customScriptFile
+                                    onTextChanged: {
+                                        userConfigurationViewModel.customScriptFile = text;
+                                    }
+                                }
+
+                                RoundedActionButton {
+                                    id: scriptOpenButton
+                                    width: 100
+                                    anchors.right: parent.right
+                                    anchors.rightMargin: 20
+                                    text: "Выбрать"
+                                    onClicked: {
+                                        openScriptFileDialog.open();
+                                    }
                                 }
                             }
                         }
@@ -1762,6 +1795,17 @@ Page {
 
         releasesViewModel.items.refresh();
     }
+
+    FileDialog {
+        id: openScriptFileDialog
+        title: "Выбрать файл скрипта для раздела Свой скрипт"
+        selectExisting: true
+        nameFilters: [ "Файлы скрипта (*.ajs)", "Image files (*.jpg *.png)" ]
+        onAccepted: {
+            userConfigurationViewModel.customScriptFile = openScriptFileDialog.fileUrl;
+        }
+    }
+
 
     Component.onCompleted: {
         const userSettings = JSON.parse(localStorage.getUserSettings());

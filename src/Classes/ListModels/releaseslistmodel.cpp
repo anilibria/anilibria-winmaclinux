@@ -363,6 +363,14 @@ void ReleasesListModel::setIsHasReleases(const bool& isHasReleases) noexcept
     emit isHasReleasesChanged();
 }
 
+void ReleasesListModel::setScriptFilePath(const QString &scriptFilePath) noexcept
+{
+    if (m_scriptFilePath == scriptFilePath) return;
+
+    m_scriptFilePath = scriptFilePath;
+    emit scriptFilePathChanged();
+}
+
 void ReleasesListModel::refreshItem(int id)
 {
     refreshFilteredReleaseById(id);
@@ -538,6 +546,14 @@ void ReleasesListModel::refresh()
         voicesFilter = m_voicesFilter.split(",");
         removeTrimsInStringCollection(voicesFilter);
     }
+    QString filterScript = "";
+    if (!m_scriptFilePath.isEmpty() && m_section == CustomScriptSection) {
+        QFile file(m_scriptFilePath);
+        if (file.open(QIODevice::ReadOnly | QIODevice::Text)){
+            filterScript = file.readAll();
+            file.close();
+        }        
+    }
 
     foreach (auto release, *m_releases) {
         if (m_hiddenReleases->contains(release->id()) && m_section != HiddenReleasesSection) continue;
@@ -689,6 +705,8 @@ void ReleasesListModel::refresh()
             !((release->year() != currentYear || (release->year() == currentYear && release->season() != currentSeason)) && release->status().toLower() == "в работе")) continue;
 
         if (m_section == CustomScriptSection) {
+            if (filterScript.isEmpty()) continue;
+
             QJSValue releaseObject = m_engine->newObject();
             releaseObject.setProperty("title", release->title());
             releaseObject.setProperty("code", release->code());
@@ -710,7 +728,7 @@ void ReleasesListModel::refresh()
             releaseObject.setProperty("voicers", release->voicers());
             m_engine->globalObject().setProperty("release", releaseObject);
 
-            auto scriptResult = m_engine->evaluate("release.year == 2022");
+            auto scriptResult = m_engine->evaluate(filterScript);
             if (scriptResult.isError() || !scriptResult.isBool()) continue;
             auto isBool = scriptResult.isBool();
             auto toBool = scriptResult.toBool();
