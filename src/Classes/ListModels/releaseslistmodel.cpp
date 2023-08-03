@@ -555,6 +555,8 @@ void ReleasesListModel::refresh()
         }        
     }
 
+    bool isShowedScriptError = false;
+
     foreach (auto release, *m_releases) {
         if (m_hiddenReleases->contains(release->id()) && m_section != HiddenReleasesSection) continue;
         if (!m_titleFilter.isEmpty()) {
@@ -729,10 +731,18 @@ void ReleasesListModel::refresh()
             m_engine->globalObject().setProperty("release", releaseObject);
 
             auto scriptResult = m_engine->evaluate(filterScript);
-            if (scriptResult.isError() || !scriptResult.isBool()) continue;
+            if (scriptResult.isError() && !isShowedScriptError) {
+                isShowedScriptError = true;
+                emit scriptError("Ошибка в скрипте на строке " + scriptResult.property("lineNumber").toString() + " " + scriptResult.toString());
+                continue;
+            }
             auto isBool = scriptResult.isBool();
-            auto toBool = scriptResult.toBool();
-            if (!isBool || !toBool) continue;
+            if (!isBool && !isShowedScriptError) {
+                isShowedScriptError = true;
+                emit scriptError("Скрипт должен возвращать булевое значение!");
+                continue;
+            }
+            if (!scriptResult.toBool()) continue;
         }
 
 

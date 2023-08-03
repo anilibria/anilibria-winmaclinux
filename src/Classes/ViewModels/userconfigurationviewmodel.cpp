@@ -281,6 +281,11 @@ void UserConfigurationViewModel::setCustomScriptFile(const QString &customScript
     if (m_customScriptFile == customScriptFile) return;
 
     m_customScriptFile = customScriptFile;
+#ifdef Q_OS_WIN
+    m_customScriptFile = m_customScriptFile.replace("file:///", "");
+#else
+    m_customScriptFile = m_customScriptFile.replace("file://", "");
+#endif
     emit customScriptFileChanged();
 }
 

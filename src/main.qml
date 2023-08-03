@@ -862,6 +862,9 @@ ApplicationWindow {
         imageBackgroundViewModel.containerHeight: releases.backgroundImageHeight
         items.releaseLinkedSeries: releaseLinkedSeries
         items.scriptFilePath: userConfigurationViewModel.customScriptFile
+        items.onScriptError: {
+            notificationViewModel.sendInfoNotification(message);
+        }
         userActivity: userActivityViewModel
         onReleaseCardOpened: {
             mainViewModel.selectPage("release:" + releasesViewModel.openedReleaseId);
