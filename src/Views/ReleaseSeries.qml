@@ -91,6 +91,13 @@ Page {
                         radius: 10
                         color: applicationThemeViewModel.panelBackground
 
+                        MouseArea {
+                            anchors.fill: parent
+                            onPressed: {
+                                releaseLinkedSeries.selectByIndex(identifier);
+                            }
+                        }
+
                         RowLayout {
                             anchors.fill: parent
 
@@ -272,5 +279,10 @@ Page {
                 }
             }
         }
+    }
+
+    ReleaseSeriesCard {
+        id: releaseSeriesCard
+        visible: releaseLinkedSeries.isCardShowed
     }
 }

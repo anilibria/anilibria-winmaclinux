@@ -937,11 +937,6 @@ ApplicationWindow {
             visible: mainViewModel.isAboutPageVisible
         }
 
-        Downloads {
-            id: download
-            visible: mainViewModel.isDownloadPageVisible
-        }
-
         Cinemahall {
             id: cinemahall
             visible: mainViewModel.isCinemahallPageVisible

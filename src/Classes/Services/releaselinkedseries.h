@@ -27,12 +27,15 @@
 #include <QFutureWatcher>
 #include "../Models/fullreleasemodel.h"
 #include "../Models/releaseseriesmodel.h"
+#include "../ListModels/releaseseriescardlistmodel.h"
 
 class ReleaseLinkedSeries : public QAbstractListModel
 {
     Q_OBJECT
 
     Q_PROPERTY(QString nameFilter READ nameFilter WRITE setNameFilter NOTIFY nameFilterChanged)
+    Q_PROPERTY(bool isCardShowed READ isCardShowed NOTIFY isCardShowedChanged)
+    Q_PROPERTY(ReleaseSeriesCardListModel* cardList READ cardList NOTIFY cardListChanged)
 
 private:
     QString m_nameFilter;
@@ -42,6 +45,8 @@ private:
     bool m_filtering = false;
     QSharedPointer<QList<FullReleaseModel *>> m_releases;
     QScopedPointer<QFutureWatcher<bool>> m_cacheUpdateWatcher { new QFutureWatcher<bool>(this) };
+    bool m_isCardShowed { false };
+    ReleaseSeriesCardListModel* m_releaseSeriesCardList { new ReleaseSeriesCardListModel(this) };
 
     enum ItemRoles {
         CountReleasesRole = Qt::UserRole + 1,
@@ -53,7 +58,8 @@ private:
         ThirdPosterRole,
         OtherReleasesRole,
         GenresRole,
-        CountInFavoritesRole
+        CountInFavoritesRole,
+        IdentifierRole
     };
 
 public:
@@ -68,6 +74,10 @@ public:
     QString nameFilter() const { return m_nameFilter; }
     void setNameFilter(const QString& nameFilter) noexcept;
 
+    int isCardShowed() const noexcept { return m_isCardShowed; }
+
+    ReleaseSeriesCardListModel* cardList() const noexcept { return m_releaseSeriesCardList; }
+
     QSharedPointer<QList<int>> getAllLinkedReleases() const noexcept;
     QList<QList<int>> getFullLinkedReleases() const noexcept;
     int getSortedOrder(int id) const noexcept;
@@ -78,7 +88,9 @@ public:
     Q_INVOKABLE void refreshSeries();
     Q_INVOKABLE bool isReleaseInSeries(int id);
     Q_INVOKABLE void filterSeries();
-    Q_INVOKABLE void clearFilters();    
+    Q_INVOKABLE void clearFilters();
+    Q_INVOKABLE void selectByIndex(int index);
+    Q_INVOKABLE void closeCard();
 
 private:
     QString getSeriesCachePath() const noexcept;
@@ -93,6 +105,8 @@ private slots:
 
 signals:
     void nameFilterChanged();
+    void isCardShowedChanged();
+    void cardListChanged();
 
 };
 

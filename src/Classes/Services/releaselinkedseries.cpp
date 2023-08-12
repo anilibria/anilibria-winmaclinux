@@ -115,6 +115,9 @@ QVariant ReleaseLinkedSeries::data(const QModelIndex &index, int role) const
             if (countInFavorites <= countReleases && countInFavorites > 0) return QVariant(QString::number(countInFavorites) + " в избранном");
             return QVariant("Не добавлено в избранное");
         }
+        case IdentifierRole: {
+            return QVariant(index.row());
+        }
     }
 
     return QVariant();
@@ -162,6 +165,10 @@ QHash<int, QByteArray> ReleaseLinkedSeries::roleNames() const
         {
             CountInFavoritesRole,
             "countInFavorites"
+        },
+        {
+            IdentifierRole,
+            "identifier"
         }
     };
 }
@@ -342,6 +349,42 @@ void ReleaseLinkedSeries::clearFilters()
     m_filtering = false;
 
     filterSeries();
+}
+
+void ReleaseLinkedSeries::selectByIndex(int index)
+{
+    if (index < 0 || index >= m_series->count()) return;
+
+    m_isCardShowed = true;
+
+    QList<FullReleaseModel*> selectedReleases;
+
+    auto series = m_series->at(index);
+
+    for (auto i = 0; i < series->countReleases(); i++) {
+        selectedReleases.append(nullptr);
+    }
+
+    auto ids = series->releaseIds();
+    foreach (auto release, *m_releases) {
+        auto releaseId = release->id();
+        if (ids->contains(releaseId)) {
+            auto releaseIndex = ids->indexOf(releaseId);
+            selectedReleases[releaseIndex] = release;
+        }
+    }
+
+    m_releaseSeriesCardList->setup(selectedReleases);
+
+    emit isCardShowedChanged();
+}
+
+void ReleaseLinkedSeries::closeCard()
+{
+    m_isCardShowed = false;
+    emit isCardShowedChanged();
+
+    m_releaseSeriesCardList->clear();
 }
 
 QString ReleaseLinkedSeries::getSeriesCachePath() const noexcept

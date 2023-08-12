@@ -59,7 +59,6 @@
         <file>Controls/CommonMenu.qml</file>
         <file>Views/ReleaseItem.qml</file>
         <file>Assets/Icons/arrowup.svg</file>
-        <file>Views/Downloads.qml</file>
         <file>Controls/CommonComboBox.qml</file>
         <file>Assets/Icons/popcorn.svg</file>
         <file>Views/Cinemahall.qml</file>
@@ -227,5 +226,6 @@
         <file>CustomStyle/MenuItem.qml</file>
         <file>CustomStyle/Drawer.qml</file>
         <file>Views/Videoplayer/ExternalPlayer.qml</file>
+        <file>Views/ReleaseSeriesCard.qml</file>
     </qresource>
 </RCC>
