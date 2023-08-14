@@ -95,6 +95,7 @@ Page {
                             anchors.fill: parent
                             onPressed: {
                                 releaseLinkedSeries.selectByIndex(identifier);
+                                mainViewModel.selectPage("releaseseries:" + identifier);
                             }
                         }
 

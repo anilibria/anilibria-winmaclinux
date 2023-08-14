@@ -106,7 +106,8 @@ void MainViewModel::selectPage(const QString& pageId)
 
     if (m_pageParameters != parameters) {
         m_pageParameters = parameters;
-        emit changeReleasesParameters(m_pageParameters);
+        if (pageIdentifier == "release") emit changeReleasesParameters(m_pageParameters);
+        if (pageIdentifier == "releaseseries") emit changeReleaseSeriesParameters(m_pageParameters);
     }
 
     m_analyticsService->sendView("page", "view", "%2F" + pageIdentifier);
@@ -187,6 +188,13 @@ void MainViewModel::selectToPage(const QString &pageId)
         if (m_pageParameters != parameters) {
             m_pageParameters = parameters;
             emit changeReleasesParameters(m_pageParameters);
+        }
+    }
+    if (pageIdentifier == "releaseseries") {
+        emit releasesSeriesPageToNavigated();
+        if (m_pageParameters != parameters) {
+            m_pageParameters = parameters;
+            emit changeReleaseSeriesParameters(m_pageParameters);
         }
     }
 }

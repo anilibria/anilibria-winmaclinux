@@ -1191,6 +1191,17 @@ ApplicationWindow {
 
             releasesViewModel.showReleaseCard(parseInt(parameters), false);
         }
+        onReleasesSeriesPageToNavigated: {
+            releaseseries.navigateTo();
+        }
+        onChangeReleaseSeriesParameters: {
+            if (!parameters.length) {
+                releaseLinkedSeries.closeCard();
+                return;
+            }
+
+            releaseLinkedSeries.selectByIndex(parseInt(parameters));
+        }
     }
 
     OsExtras {

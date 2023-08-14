@@ -126,6 +126,8 @@ signals:
     void startPageChanged();
     void pageParametersChanged();
     void changeReleasesParameters(QString parameters);
+    void releasesSeriesPageToNavigated();
+    void changeReleaseSeriesParameters(QString parameters);
 
 };
 
