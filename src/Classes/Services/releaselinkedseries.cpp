@@ -116,7 +116,7 @@ QVariant ReleaseLinkedSeries::data(const QModelIndex &index, int role) const
             return QVariant("Не добавлено в избранное");
         }
         case IdentifierRole: {
-            return QVariant(index.row());
+            return QVariant(m_series->indexOf(element));
         }
     }
 
@@ -356,6 +356,7 @@ void ReleaseLinkedSeries::selectByIndex(int index)
     if (index < 0 || index >= m_series->count()) return;
 
     m_isCardShowed = true;
+    m_selectedIndex = index;
 
     QList<FullReleaseModel*> selectedReleases;
 
@@ -365,16 +366,19 @@ void ReleaseLinkedSeries::selectByIndex(int index)
         selectedReleases.append(nullptr);
     }
 
+    QSet<int> inFavorites;
+
     auto ids = series->releaseIds();
     foreach (auto release, *m_releases) {
         auto releaseId = release->id();
         if (ids->contains(releaseId)) {
             auto releaseIndex = ids->indexOf(releaseId);
             selectedReleases[releaseIndex] = release;
+            if (m_userFavorites->contains(releaseId)) inFavorites.insert(releaseId);
         }
     }
 
-    m_releaseSeriesCardList->setup(selectedReleases);
+    m_releaseSeriesCardList->setup(selectedReleases, inFavorites);
 
     emit isCardShowedChanged();
 }
@@ -385,6 +389,13 @@ void ReleaseLinkedSeries::closeCard()
     emit isCardShowedChanged();
 
     m_releaseSeriesCardList->clear();
+}
+
+void ReleaseLinkedSeries::refreshCard()
+{
+    m_releaseSeriesCardList->clear();
+
+    selectByIndex(m_selectedIndex);
 }
 
 QString ReleaseLinkedSeries::getSeriesCachePath() const noexcept

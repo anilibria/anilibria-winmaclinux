@@ -32,7 +32,9 @@ ColumnLayout {
                 iconHeight: 26
                 tooltipMessage: "Смотреть сразу все релизы"
                 onButtonPressed: {
+                    mainViewModel.selectPage("videoplayer");
 
+                    onlinePlayerViewModel.quickSetupForMultipleRelease(releaseLinkedSeries.cardList.releaseIds);
                 }
             }
         }
@@ -105,7 +107,7 @@ ColumnLayout {
                                 }
 
                                 AccentText {
-                                    fontPointSize: 10
+                                    fontPointSize: 11
                                     text: title
                                     Layout.fillWidth: true
                                     maximumLineCount: 2
@@ -114,11 +116,17 @@ ColumnLayout {
                                 }
 
                                 PlainText {
-                                    Layout.preferredHeight: inFavorites ? 20 : 0
                                     Layout.fillWidth: true
-                                    maximumLineCount: 2
+                                    maximumLineCount: 4
                                     elide: Text.ElideRight
                                     wrapMode: Text.Wrap
+                                    fontPointSize: 9
+                                    text: description
+                                }
+
+                                AccentText {
+                                    Layout.preferredHeight: inFavorites ? 20 : 0
+                                    Layout.fillWidth: true
                                     fontPointSize: 9
                                     text: inFavorites ? "В избранном" : ""
                                 }
@@ -152,21 +160,25 @@ ColumnLayout {
                                         width: 300
 
                                         CommonMenuItem {
-                                            enabled: !!window.userModel.login
+                                            enabled: !inFavorites
                                             text: "Добавить в избранное"
                                             onPressed: {
                                                 releasesViewModel.addReleaseToFavorites(releaseId);
 
                                                 favoriteSeriesMenu.close();
+
+                                                releaseLinkedSeries.refreshCard();
                                             }
                                         }
                                         CommonMenuItem {
-                                            enabled: !!window.userModel.login
+                                            enabled: inFavorites
                                             text: "Удалить из избранного"
                                             onPressed: {
                                                 releasesViewModel.removeReleaseFromFavorites(releaseId);
 
                                                 favoriteSeriesMenu.close();
+
+                                                releaseLinkedSeries.refreshCard();
                                             }
                                         }
                                     }
@@ -186,7 +198,7 @@ ColumnLayout {
                                         CommonMenuItem {
                                             text: "Добавить в кинозал"
                                             onPressed: {
-                                                //releasesViewModel.cinemahall.addReleases(releaseIds);
+                                                releasesViewModel.cinemahall.addReleases([releaseId]);
 
                                                 cinemahallSeriesMenu.close();
                                             }

@@ -227,5 +227,6 @@
         <file>CustomStyle/Drawer.qml</file>
         <file>Views/Videoplayer/ExternalPlayer.qml</file>
         <file>Views/ReleaseSeriesCard.qml</file>
+        <file>CustomStyle/ComboBox.qml</file>
     </qresource>
 </RCC>

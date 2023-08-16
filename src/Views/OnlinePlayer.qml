@@ -280,6 +280,7 @@ Page {
                 onlinePlayerViewModel.isBuffering = false;
                 if (onlinePlayerViewModel.restorePosition > 0){
                     playerLoader.item.seek(onlinePlayerViewModel.restorePosition);
+                    console.log('playerLoader.item.seek(onlinePlayerViewModel.restorePosition);')
                     if (playerLoader.item.position >= onlinePlayerViewModel.restorePosition) onlinePlayerViewModel.restorePosition = 0;
                 } else {
                     if (onlinePlayerViewModel.isFromNavigated) {
@@ -288,6 +289,7 @@ Page {
                         const videoPosition = onlinePlayerViewModel.getCurrentVideoSeenVideoPosition();
                         if (videoPosition > 0) {
                             playerLoader.item.seek(videoPosition);
+                            console.log('playerLoader.item.seek(videoPosition);')
                         }
                     }
                 }
@@ -526,6 +528,7 @@ Page {
                 onPressedChanged: {
                     if (!pressed && onlinePlayerViewModel.lastMovedPosition > 0) {
                         playerLoader.item.seek(onlinePlayerViewModel.lastMovedPosition);
+                        console.log('playerLoader.item.seek(onlinePlayerViewModel.lastMovedPosition);');
                         onlinePlayerViewModel.lastMovedPosition = 0;
                         onlinePlayerViewModel.broadcastVideoPosition(onlinePlayerViewModel.lastMovedPosition.toString() + `/` + playerLoader.item.duration.toString());                        
                     }
@@ -1402,6 +1405,7 @@ Page {
                 const position = onlinePlayerViewModel.skipOpening();
                 if (onlinePlayerViewModel.restorePosition != 0) onlinePlayerViewModel.restorePosition = 0;
                 playerLoader.item.seek(position);
+                console.log('playerLoader.item.seek(position);');
             }
         }
     }
@@ -1413,6 +1417,7 @@ Page {
                 if (onlinePlayerViewModel.displaySkipOpening && !onlinePlayerViewModel.endSkipOpening) {
                     const position = onlinePlayerViewModel.skipOpening();
                     playerLoader.item.seek(position);
+                    console.log('playerLoader.item.seek(position); автопропуск');
                     notificationViewModel.sendInfoNotification(`Произошел автоматический пропуск опенинга`);
                 }
             }

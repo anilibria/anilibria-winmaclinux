@@ -88,13 +88,16 @@ ApplicationThemeViewModel::ApplicationThemeViewModel(QObject *parent)
     lightTheme->insert(colorTextFieldHintField, "#60000000");
     lightTheme->insert(colorTextFieldHighlightField, "#dd000000");
     lightTheme->insert(colorTextFieldTextField, "#dd000000");
-
     lightTheme->insert(colorMenuDialogBackgroundField, "#ffffff");
     lightTheme->insert(colorMenuOverlayBackgroundField, "#99303030");
     lightTheme->insert(colorMenuForegroundField, "#000000");
     lightTheme->insert(colorMenuItemHintField, "#60000000");
     lightTheme->insert(colorMenuRippleField, "#10000000");
     lightTheme->insert(colorMenuHighlightField, "#1e000000");
+
+    lightTheme->insert(colorComboBoxAccentField, "#f44336");
+    lightTheme->insert(colorComboBoxHintField, "#60000000");
+    lightTheme->insert(colorComboBoxBackgroundField, "#ffffff");
 
     lightTheme->insert(iconMainMenuField, "qrc:/Assets/Icons/coloreddrawer.svg");
     lightTheme->insert(iconMainMenuReleasesField, "qrc:/Assets/Icons/catalogmenu.svg");
@@ -247,13 +250,16 @@ ApplicationThemeViewModel::ApplicationThemeViewModel(QObject *parent)
     darkTheme->insert(colorTextFieldHintField, "#4cffffff");
     darkTheme->insert(colorTextFieldHighlightField, "#ffffff");
     darkTheme->insert(colorTextFieldTextField, "#ffffff");
-
     darkTheme->insert(colorMenuDialogBackgroundField, "#424242");
     darkTheme->insert(colorMenuOverlayBackgroundField, "#99fafafa");
     darkTheme->insert(colorMenuForegroundField, "#ffffff");
     darkTheme->insert(colorMenuItemHintField, "#4cffffff");
     darkTheme->insert(colorMenuRippleField, "#20ffffff");
     darkTheme->insert(colorMenuHighlightField, "#1effffff");
+
+    darkTheme->insert(colorComboBoxAccentField, "#f44336");
+    darkTheme->insert(colorComboBoxHintField, "#4cffffff");
+    darkTheme->insert(colorComboBoxBackgroundField, "#424242");
 
     darkTheme->insert(iconMainMenuField, "qrc:/Assets/Icons/coloreddrawer.svg");
     darkTheme->insert(iconMainMenuReleasesField, "qrc:/Assets/Icons/catalogmenu.svg");
@@ -417,10 +423,13 @@ ApplicationThemeViewModel::ApplicationThemeViewModel(QObject *parent)
     m_fields.append(colorMenuItemHintField);
     m_fields.append(colorMenuRippleField);
     m_fields.append(colorMenuHighlightField);
-
     m_fields.append(colorDrawerDividerColorField);
     m_fields.append(colorDrawerDimColorField);
     m_fields.append(colorDrawerDialogColorField);
+
+    m_fields.append(colorComboBoxAccentField);
+    m_fields.append(colorComboBoxHintField);
+    m_fields.append(colorComboBoxBackgroundField);
 
     m_fields.append(iconMainMenuField);
     m_fields.append(iconMainMenuReleasesField);

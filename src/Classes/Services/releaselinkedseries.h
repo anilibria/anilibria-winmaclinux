@@ -46,6 +46,7 @@ private:
     QSharedPointer<QList<FullReleaseModel *>> m_releases;
     QScopedPointer<QFutureWatcher<bool>> m_cacheUpdateWatcher { new QFutureWatcher<bool>(this) };
     bool m_isCardShowed { false };
+    int m_selectedIndex { -1 };
     ReleaseSeriesCardListModel* m_releaseSeriesCardList { new ReleaseSeriesCardListModel(this) };
 
     enum ItemRoles {
@@ -91,6 +92,7 @@ public:
     Q_INVOKABLE void clearFilters();
     Q_INVOKABLE void selectByIndex(int index);
     Q_INVOKABLE void closeCard();
+    Q_INVOKABLE void refreshCard();
 
 private:
     QString getSeriesCachePath() const noexcept;

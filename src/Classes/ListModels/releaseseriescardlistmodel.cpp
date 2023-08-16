@@ -1,5 +1,4 @@
 #include "releaseseriescardlistmodel.h"
-#include "../../globalconstants.h"
 
 ReleaseSeriesCardListModel::ReleaseSeriesCardListModel(QObject *parent)
     : QAbstractListModel{parent}
@@ -33,10 +32,13 @@ QVariant ReleaseSeriesCardListModel::data(const QModelIndex &index, int role) co
             return QVariant(item->title());
         }
         case InFavoritesRole: {
-            return QVariant(false);
+            return QVariant(m_inFavorites.contains(item->id()));
         }
         case DescriptionRole: {
-            return item->description();
+            return QVariant(item->description());
+        }
+        case ReleaseIdRole:{
+            return QVariant(item->id());
         }
     }
 
@@ -73,7 +75,7 @@ QHash<int, QByteArray> ReleaseSeriesCardListModel::roleNames() const
     };
 }
 
-void ReleaseSeriesCardListModel::setup(QList<FullReleaseModel *> releases)
+void ReleaseSeriesCardListModel::setup(QList<FullReleaseModel *> releases, QSet<int> inFavorites)
 {
     beginResetModel();
 
@@ -81,7 +83,19 @@ void ReleaseSeriesCardListModel::setup(QList<FullReleaseModel *> releases)
 
     m_items.append(releases);
 
+    m_releaseIds.clear();
+    foreach (auto item, m_items) {
+        m_releaseIds.append(item->id());
+    }
+
+    m_inFavorites.clear();
+    foreach (auto inFavorite, inFavorites) {
+        m_inFavorites.insert(inFavorite);
+    }
+
     endResetModel();
+
+    emit releaseIdsChanged();
 }
 
 void ReleaseSeriesCardListModel::clear()
@@ -91,4 +105,7 @@ void ReleaseSeriesCardListModel::clear()
     m_items.clear();
 
     endResetModel();
+
+    m_releaseIds.clear();
+    emit releaseIdsChanged();
 }

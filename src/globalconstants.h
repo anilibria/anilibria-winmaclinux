@@ -250,4 +250,8 @@ extern QString colorDrawerDialogColorField;
 extern QString iconDisabledNotificationsField;
 extern QString iconDisabledCinemahallField;
 
+extern QString colorComboBoxAccentField;
+extern QString colorComboBoxHintField;
+extern QString colorComboBoxBackgroundField;
+
 #endif // GLOBALCONSTANTS_H

@@ -237,6 +237,26 @@ void CustomStyle::setDrawerDialogColor(const QString &drawerDialogColor) noexcep
     emit drawerDialogColorChanged();
 }
 
+void CustomStyle::setComboBoxAccent(const QString &comboBoxAccent) noexcept
+{
+    if (m_comboBoxAccent == comboBoxAccent) return;
 
+    m_comboBoxAccent = comboBoxAccent;
+    emit comboBoxAccentChanged();
+}
 
+void CustomStyle::setComboBoxHint(const QString &comboBoxHint) noexcept
+{
+    if (m_comboBoxHint == comboBoxHint) return;
 
+    m_comboBoxHint = comboBoxHint;
+    emit comboBoxHintChanged();
+}
+
+void CustomStyle::setComboBoxBackgroundColor(const QString &comboBoxBackgroundColor) noexcept
+{
+    if (m_comboBoxBackgroundColor == comboBoxBackgroundColor) return;
+
+    m_comboBoxBackgroundColor = comboBoxBackgroundColor;
+    emit comboBoxBackgroundColorChanged();
+}

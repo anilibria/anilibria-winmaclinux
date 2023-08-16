@@ -35,6 +35,9 @@ class CustomStyle : public QObject
     Q_PROPERTY(QString drawerDividerColor READ drawerDividerColor WRITE setDrawerDividerColor NOTIFY drawerDividerColorChanged)
     Q_PROPERTY(QString drawerDimColor READ drawerDimColor WRITE setDrawerDimColor NOTIFY drawerDimColorChanged)
     Q_PROPERTY(QString drawerDialogColor READ drawerDialogColor WRITE setDrawerDialogColor NOTIFY drawerDialogColorChanged)
+    Q_PROPERTY(QString comboBoxAccent READ comboBoxAccent WRITE setComboBoxAccent NOTIFY comboBoxAccentChanged)
+    Q_PROPERTY(QString comboBoxHint READ comboBoxHint WRITE setComboBoxHint NOTIFY comboBoxHintChanged)
+    Q_PROPERTY(QString comboBoxBackgroundColor READ comboBoxBackgroundColor WRITE setComboBoxBackgroundColor NOTIFY comboBoxBackgroundColorChanged)
 
 private:
     QString m_tooltipColor { "black" };
@@ -64,6 +67,9 @@ private:
     QString m_drawerDividerColor { "black" };
     QString m_drawerDimColor { "black" };
     QString m_drawerDialogColor { "black" };
+    QString m_comboBoxAccent { "black" };
+    QString m_comboBoxHint { "black" };
+    QString m_comboBoxBackgroundColor { "black" };
 
 public:
     explicit CustomStyle(QObject *parent = nullptr);
@@ -152,6 +158,15 @@ public:
     QString drawerDialogColor() const noexcept { return m_drawerDialogColor; }
     void setDrawerDialogColor(const QString& drawerDialogColor) noexcept;
 
+    QString comboBoxAccent() const noexcept { return m_comboBoxAccent; }
+    void setComboBoxAccent(const QString& comboBoxAccent) noexcept;
+
+    QString comboBoxHint() const noexcept { return m_comboBoxHint; }
+    void setComboBoxHint(const QString& comboBoxHint) noexcept;
+
+    QString comboBoxBackgroundColor() const noexcept { return m_comboBoxBackgroundColor; }
+    void setComboBoxBackgroundColor(const QString& comboBoxBackgroundColor) noexcept;
+
 signals:
     void tooltipColorChanged();
     void colorTooltipTextChanged();
@@ -166,7 +181,6 @@ signals:
     void switchCheckedHandleChanged();
     void switchUncheckedHandleChanged();
     void switchDisabledHandleChanged();
-
     void textFieldForegroundChanged();
     void textFieldHintChanged();
     void textFieldHighlightChanged();
@@ -181,6 +195,10 @@ signals:
     void drawerDividerColorChanged();
     void drawerDimColorChanged();
     void drawerDialogColorChanged();
+
+    void comboBoxAccentChanged();
+    void comboBoxHintChanged();
+    void comboBoxBackgroundColorChanged();
 };
 
 QML_DECLARE_TYPEINFO(CustomStyle, QML_HAS_ATTACHED_PROPERTIES)

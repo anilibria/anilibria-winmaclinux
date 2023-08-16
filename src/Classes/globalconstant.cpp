@@ -194,3 +194,6 @@ QString colorDrawerDialogColorField = "colorDrawerDialog";
 QString iconDisabledNotificationsField = "iconDisabledNotifications";
 QString iconDisabledCinemahallField = "iconDisabledCinemahall";
 
+QString colorComboBoxAccentField = "colorComboBoxAccent";
+QString colorComboBoxHintField = "colorComboBoxHint";
+QString colorComboBoxBackgroundField = "colorComboBoxBackground";
