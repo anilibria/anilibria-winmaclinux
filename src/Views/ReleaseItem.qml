@@ -344,12 +344,11 @@ Item {
                             fontPointSize: 12
                             text: '' + countTorrents
                         }
-                        Image {
+                        TooltipedImage {
                             visible: inSchedule
                             source: applicationThemeViewModel.currentItems.iconReleaseCatalogSchedule
                             width: 22
                             height: 22
-                            mipmap: true
                         }
                         PlainText {
                             visible: inSchedule

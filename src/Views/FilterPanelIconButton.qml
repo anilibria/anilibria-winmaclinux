@@ -33,7 +33,7 @@ IconButton {
         delay: 2000
         visible: hovered && tooltipMessage
         text: tooltipMessage
-        CustomStyle.tooltipColor: applicationThemeViewModel.currentItems.colorTooltipBackground
-        CustomStyle.colorTooltipText: applicationThemeViewModel.currentItems.colorTooltipText
+        CustomStyle.tooltipColor: window.tooltipColor
+        CustomStyle.colorTooltipText: window.tooltipColorText
     }
 }

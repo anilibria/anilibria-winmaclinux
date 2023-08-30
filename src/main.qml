@@ -47,6 +47,13 @@ ApplicationWindow {
     property int normalWindowSizeHeight: 0
     property int previousX
     property int previousY
+    property color tooltipColor: applicationThemeViewModel.currentItems.colorTooltipBackground
+    property color tooltipColorText: applicationThemeViewModel.currentItems.colorTooltipText
+    property color colorMenuForeground: applicationThemeViewModel.currentItems.colorMenuForeground
+    property color colorMenuItemHint: applicationThemeViewModel.currentItems.colorMenuItemHint
+    property color colorMenuRipple: applicationThemeViewModel.currentItems.colorMenuRipple
+    property color colorMenuHighlight: applicationThemeViewModel.currentItems.colorMenuHighlight
+    property color colorPosterFilter: applicationThemeViewModel.currentItems.colorPosterFilter
 
     Material.accent: applicationThemeViewModel.materialAccent
     Material.theme: applicationThemeViewModel.basedOnDark ? Material.Dark : Material.Light
@@ -180,7 +187,7 @@ ApplicationWindow {
             height: 34
             width: 40
             hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
-            iconPath: applicationThemeViewModel.iconMainMenuVideoplayer
+            iconPath: applicationThemeViewModel.currentItems.iconMainMenuVideoplayer
             iconWidth: 20
             iconHeight: 20
             tooltipMessage: "Перейти на страницу Видеоплеер"
@@ -197,7 +204,7 @@ ApplicationWindow {
             height: 34
             width: 40
             hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
-            iconPath: applicationThemeViewModel.iconMainMenuCinemahall
+            iconPath: applicationThemeViewModel.currentItems.iconMainMenuCinemahall
             iconWidth: 20
             iconHeight: 20
             tooltipMessage: "Перейти на страницу Кинозал"
@@ -214,7 +221,7 @@ ApplicationWindow {
             height: 34
             width: 40
             hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
-            iconPath: applicationThemeViewModel.iconMainMenuReleasesSeries
+            iconPath: applicationThemeViewModel.currentItems.iconMainMenuReleasesSeries
             iconWidth: 20
             iconHeight: 20
             tooltipMessage: "Перейти на страницу Связанные релизы"
@@ -231,7 +238,7 @@ ApplicationWindow {
             height: 34
             width: 40
             hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
-            iconPath: applicationThemeViewModel.iconMainMenuMyAnilibria
+            iconPath: applicationThemeViewModel.currentItems.iconMainMenuMyAnilibria
             iconWidth: 20
             iconHeight: 20
             tooltipMessage: "Перейти на страницу Моя Анилибрия"
@@ -365,7 +372,7 @@ ApplicationWindow {
             height: 34
             width: 40
             hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
-            iconPath: mainViewModel.hasForwardHistory ? applicationThemeViewModel.iconRightHalfScreen : applicationThemeViewModel.currentItems.iconMaximizeWindow
+            iconPath: mainViewModel.hasForwardHistory ? applicationThemeViewModel.currentItems.iconRightHalfScreen : applicationThemeViewModel.currentItems.iconMaximizeWindow
             iconWidth: 24
             iconHeight: 24
             tooltipMessage: "Перейти вперед в истории переходов"
@@ -1251,6 +1258,7 @@ ApplicationWindow {
 
     ApplicationThemeViewModel {
         id: applicationThemeViewModel
+        objectName: "applicationThemeViewModel"
         notAddCopyToName: userConfigurationViewModel.removeCopyFromName
         Component.onDestruction: {
             applicationThemeViewModel.saveCurrentState();

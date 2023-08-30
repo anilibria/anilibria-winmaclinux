@@ -23,10 +23,10 @@ import CustomStyle 1.0
 MenuItem {
     property bool notVisible: false
 
-    CustomStyle.menuForeground: applicationThemeViewModel.currentItems.colorMenuForeground
-    CustomStyle.menuItemHint: applicationThemeViewModel.currentItems.colorMenuItemHint
-    CustomStyle.menuRipple: applicationThemeViewModel.currentItems.colorMenuRipple
-    CustomStyle.menuHighlight: applicationThemeViewModel.currentItems.colorMenuHighlight
+    CustomStyle.menuForeground: window.colorMenuForeground
+    CustomStyle.menuItemHint: window.colorMenuItemHint
+    CustomStyle.menuRipple: window.colorMenuRipple
+    CustomStyle.menuHighlight: window.colorMenuHighlight
 
     width: parent.width
     height: notVisible ? 0 : undefined
