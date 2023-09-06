@@ -223,7 +223,7 @@ SOURCES += \
     Classes/RemotePlayer/externalplayerbase.cpp \
     Classes/RemotePlayer/remoteplayer.cpp \
     Classes/RemotePlayer/remoteplayertransport.cpp \
-    Classes/RemotePlayer/rutubeexternalplayer.cpp \
+    Classes/RemotePlayer/websocketexternalplayer.cpp \
     Classes/Services/analyticsservice.cpp \
     Classes/Services/anilibriaapiservice.cpp \
     Classes/Services/apiserviceconfigurator.cpp \
@@ -332,7 +332,7 @@ HEADERS += \
     Classes/RemotePlayer/externalplayerbase.h \
     Classes/RemotePlayer/remoteplayer.h \
     Classes/RemotePlayer/remoteplayertransport.h \
-    Classes/RemotePlayer/rutubeexternalplayer.h \
+    Classes/RemotePlayer/websocketexternalplayer.h \
     Classes/Services/analyticsservice.h \
     Classes/Services/anilibriaapiservice.h \
     Classes/Services/apiserviceconfigurator.h \

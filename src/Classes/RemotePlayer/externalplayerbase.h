@@ -13,6 +13,7 @@ public:
     virtual void trySetNewVolume(int volume) = 0;
     virtual void trySetSource(const QString& path) = 0;
     virtual void trySetSeek(int position) = 0;
+    virtual void tryMuted(bool mute) = 0;
 
 signals:
     void stateChanged(const QString& state);
