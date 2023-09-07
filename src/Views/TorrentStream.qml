@@ -84,10 +84,20 @@ Page {
                     id: connectButton
                     visible: !torrentNotifierViewModel.activated
                     anchors.left: statusText.right
+                    anchors.verticalCenter: parent.verticalCenter
                     text: "Подключиться"
                     onClicked: {
                         torrentNotifierViewModel.startGetNotifiers(userConfigurationViewModel.playerBuffer);
                     }
+                }
+                LinkedText {
+                    id: guideText
+                    visible: !torrentNotifierViewModel.activated && !mainViewModel.isSmallSizeMode
+                    anchors.left: connectButton.right
+                    anchors.leftMargin: 4
+                    anchors.verticalCenter: parent.verticalCenter
+                    fontPointSize: 10
+                    text: "<a href='https://github.com/anilibria/anilibria-winmaclinux/blob/master/torrentstream.md'>Инструкция об установке</a>"
                 }
             }
 
