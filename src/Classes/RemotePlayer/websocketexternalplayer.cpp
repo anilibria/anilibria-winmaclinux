@@ -5,6 +5,7 @@ WebSocketExternalPlayer::WebSocketExternalPlayer(QObject *parent)
 {
     m_socket->open(QUrl(""));
     connect(m_socket, &QWebSocket::textMessageReceived, this, &WebSocketExternalPlayer::onTextMessageReceived);
+    //connect(&m_webSocket, &QWebSocket::connected, this, &EchoClient::onConnected);
 }
 
 void WebSocketExternalPlayer::trySetNewState(const QString &state)

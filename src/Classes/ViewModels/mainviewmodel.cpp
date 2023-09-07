@@ -104,11 +104,9 @@ void MainViewModel::selectPage(const QString& pageId)
     emit hasBackHistoryChanged();
     emit hasForwardHistoryChanged();
 
-    if (m_pageParameters != parameters) {
-        m_pageParameters = parameters;
-        if (pageIdentifier == "release") emit changeReleasesParameters(m_pageParameters);
-        if (pageIdentifier == "releaseseries") emit changeReleaseSeriesParameters(m_pageParameters);
-    }
+    m_pageParameters = parameters;
+    if (pageIdentifier == "release") emit changeReleasesParameters(m_pageParameters);
+    if (pageIdentifier == "releaseseries") emit changeReleaseSeriesParameters(m_pageParameters);
 
     m_analyticsService->sendView("page", "view", "%2F" + pageIdentifier);
 }
