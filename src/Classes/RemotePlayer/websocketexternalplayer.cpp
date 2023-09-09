@@ -1,11 +1,15 @@
 #include "websocketexternalplayer.h"
 
-WebSocketExternalPlayer::WebSocketExternalPlayer(QObject *parent)
+WebSocketExternalPlayer::WebSocketExternalPlayer(QObject *parent, const QString& host, int port, const QString& client)
     : ExternalPlayerBase{parent}
 {
-    m_socket->open(QUrl(""));
+    m_host = host;
+    m_port = port;
+    m_client = client;
     connect(m_socket, &QWebSocket::textMessageReceived, this, &WebSocketExternalPlayer::onTextMessageReceived);
-    //connect(&m_webSocket, &QWebSocket::connected, this, &EchoClient::onConnected);
+    connect(m_socket, &QWebSocket::connected, this, &WebSocketExternalPlayer::onConnected);
+
+    m_socket->open(QUrl("ws://" + m_host + ":" + QString::number(m_port) + "/playerws"));
 }
 
 void WebSocketExternalPlayer::trySetNewState(const QString &state)
@@ -35,7 +39,7 @@ void WebSocketExternalPlayer::tryMuted(bool mute)
 
 void WebSocketExternalPlayer::sendCommand(const QString &command, const QString &parameter)
 {
-    auto message = command + ":" + parameter;
+    auto message = m_client + ":" + command + ":" + parameter;
     m_socket->sendTextMessage(message);
 }
 
@@ -50,4 +54,9 @@ void WebSocketExternalPlayer::onTextMessageReceived(const QString &message)
     if (command == "svm") emit volumeChanged(parameter.toInt());
     if (command == "sst") emit stateChanged(parameter);
     if (command == "ssk") emit positionChanged(parameter.toInt());
+}
+
+void WebSocketExternalPlayer::onConnected()
+{
+    m_socket->sendTextMessage("ro:qt"); // define role for client
 }

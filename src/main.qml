@@ -913,6 +913,16 @@ ApplicationWindow {
             onWatchSingleRelease: {
                 if (!onlinePlayerViewModel.releaseHasVideos(releaseId)) return;
 
+                if (onlinePlayerViewModel.releaseIsRutube(releaseId)) {
+                    if (!externalPlayerViewModel.torrentStreamActive) {
+                        //TODO: show error message
+                        return;
+                    }
+                    externalPlayerViewModel.addWebSocketPlayer();
+                    externalPlayerWindow.showWindow();
+                    return;
+                }
+
                 mainViewModel.selectPage("videoplayer");
                 onlinePlayerViewModel.quickSetupForSingleRelease(releaseId, startSeria);
             }
@@ -1266,6 +1276,17 @@ ApplicationWindow {
         fieldList.onErrorMessage: {
             notificationViewModel.sendInfoNotification(message);
         }
+    }
+
+    ExternalPlayerViewModel {
+        id: externalPlayerViewModel
+        torrentStreamActive: torrentNotifierViewModel.activated
+        torrentStreamPort: userConfigurationViewModel.playerBuffer
+        torrentStreamHost: "localhost"
+    }
+
+    ExternalPlayerWindow {
+        id: externalPlayerWindow
     }
 
     TorrentNotifierViewModel {

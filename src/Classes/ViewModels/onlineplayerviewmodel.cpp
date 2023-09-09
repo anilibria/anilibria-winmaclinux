@@ -1126,6 +1126,18 @@ bool OnlinePlayerViewModel::releaseHasVideos(int releaseId) noexcept
     return release->countOnlineVideos() > 0;
 }
 
+bool OnlinePlayerViewModel::releaseIsRutube(int releaseId) noexcept
+{
+    auto release = m_releasesViewModel->getReleaseById(releaseId);
+    if (release == nullptr) return false;
+
+    //\"rutube_id\": \"
+    static QRegularExpression re(R"arg("rutube_id\": \")arg");
+    QRegularExpressionMatch match = re.match(release->videos());
+
+    return match.hasMatch();
+}
+
 void OnlinePlayerViewModel::saveVideoSeens()
 {
     QJsonArray array;

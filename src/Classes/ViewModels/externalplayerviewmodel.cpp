@@ -17,6 +17,30 @@ void ExternalPlayerViewModel::setVolume(int volume) noexcept
     emit volumeChanged();
 }
 
+void ExternalPlayerViewModel::setTorrentStreamHost(QString torrentStreamHost) noexcept
+{
+    if (m_torrentStreamHost == torrentStreamHost) return;
+
+    m_torrentStreamHost = torrentStreamHost;
+    emit torrentStreamHostChanged();
+}
+
+void ExternalPlayerViewModel::setTorrentStreamPort(int torrentStreamPort) noexcept
+{
+    if (m_torrentStreamPort == torrentStreamPort) return;
+
+    m_torrentStreamPort = torrentStreamPort;
+    emit torrentStreamPortChanged();
+}
+
+void ExternalPlayerViewModel::setTorrentStreamActive(bool torrentStreamActive) noexcept
+{
+    if (m_torrentStreamActive == torrentStreamActive) return;
+
+    m_torrentStreamActive = torrentStreamActive;
+    emit torrentStreamActiveChanged();
+}
+
 void ExternalPlayerViewModel::setState(const QString &state) noexcept
 {
     if (state != stoppedState && m_state != pausedState && m_state != playingState) return;
@@ -29,41 +53,58 @@ void ExternalPlayerViewModel::setState(const QString &state) noexcept
 
 void ExternalPlayerViewModel::pause() noexcept
 {
-    foreach (auto player, m_players) {
-        player->trySetNewState(pausedState);
-    }
+    if (m_player == nullptr) return;
+
+    m_player->trySetNewState(pausedState);
 }
 
 void ExternalPlayerViewModel::stop() noexcept
 {
-    foreach (auto player, m_players) {
-        player->trySetNewState(stoppedState);
-    }
+    if (m_player == nullptr) return;
+
+    m_player->trySetNewState(stoppedState);
 }
 
 void ExternalPlayerViewModel::play() noexcept
 {
-    foreach (auto player, m_players) {
-        player->trySetNewState(playingState);
-    }
+    if (m_player == nullptr) return;
+
+    m_player->trySetNewState(playingState);
 }
 
 void ExternalPlayerViewModel::seek(int position) noexcept
 {
-    foreach (auto player, m_players) {
-        player->trySetSeek(position);
-    }
+    if (m_player == nullptr) return;
+
+    m_player->trySetSeek(position);
 }
 
 void ExternalPlayerViewModel::open(const QString &source) noexcept
 {
-    foreach (auto player, m_players) {
-        player->trySetSource(source);
-    }
+    if (m_player == nullptr) return;
+
+    m_player->trySetSource(source);
+}
+
+void ExternalPlayerViewModel::changeVolume(int value) noexcept
+{
+    m_player->trySetNewVolume(value);
+}
+
+void ExternalPlayerViewModel::nextVideo() noexcept
+{
+
+}
+
+void ExternalPlayerViewModel::previousVideo() noexcept
+{
+
 }
 
 void ExternalPlayerViewModel::addWebSocketPlayer() noexcept
 {
-    auto player = new WebSocketExternalPlayer(this);
-    m_players.append(player);
+    if (!m_torrentStreamActive) return;
+
+    auto player = new WebSocketExternalPlayer(this, m_torrentStreamHost, m_torrentStreamPort, "rt");
+    m_player = player;
 }
