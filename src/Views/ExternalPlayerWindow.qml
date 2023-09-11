@@ -10,9 +10,9 @@ import "Videoplayer"
 ApplicationWindow {
     id: root
     title: '  '
-    width: 350
-    height: 200
-    flags: Qt.Dialog
+    width: 450
+    height: 250
+    flags: Qt.Dialog | Qt.CustomizeWindowHint | Qt.WindowTitleHint | Qt.WindowCloseButtonHint
     minimumWidth: 350
     minimumHeight: 200
     maximumWidth: 500
@@ -21,17 +21,48 @@ ApplicationWindow {
     signal showWindow()
     signal closeWindow()
 
-    Rectangle {
-        id: controlPanel
-        color: applicationThemeViewModel.playerControlBackground
-        anchors.bottom: parent.bottom
-        opacity: onlinePlayerWindowViewModel.panelOpacity
-        width: root.width
-        height: 60
+    background: Rectangle {
+        color: applicationThemeViewModel.pageBackground
+    }
+
+    Item {
+        anchors.fill: parent
+
+        Item {
+            id: releaseNameItem
+            width: parent.width
+            height: 60
+
+            AccentText {
+                id: headerLabel
+                anchors.centerIn: parent
+                text: externalPlayerViewModel.releaseName
+                horizontalAlignment: Text.AlignHCenter
+                verticalAlignment: Text.AlignVCenter
+                maximumLineCount: 2
+                fontPointSize: 10
+            }
+
+            PlainText {
+                id: seriaLabel
+                anchors.top: headerLabel.bottom
+                anchors.horizontalCenter: parent.horizontalCenter
+                fontPointSize: 9
+                text: "Серия " + externalPlayerViewModel.currentSeria
+            }
+
+            PlainText {
+                anchors.top: seriaLabel.bottom
+                anchors.horizontalCenter: parent.horizontalCenter
+                fontPointSize: 8
+                text: externalPlayerViewModel.status
+            }
+        }
 
         RowLayout {
+            anchors.top: releaseNameItem.bottom
             width: parent.width
-            height: parent.height
+            height: parent.height - releaseNameItem.height
 
             Rectangle {
                 id: leftPart
@@ -47,9 +78,6 @@ ApplicationWindow {
                     from: 0
                     value: externalPlayerViewModel.volume
                     to: 100
-                    onPressedChanged: {
-                        controlPanel.forceActiveFocus();
-                    }
                     onMoved: {
                         externalPlayerViewModel.changeVolume(value);
                     }
@@ -144,10 +172,6 @@ ApplicationWindow {
                 }
             }
         }
-
-        Behavior on opacity {
-            NumberAnimation { duration: 200 }
-        }
     }
 
     /*Rectangle {
@@ -176,6 +200,7 @@ ApplicationWindow {
     }
 
     onCloseWindow: {
+        externalPlayerViewModel.closePlayer();
         hide();
     }
 }

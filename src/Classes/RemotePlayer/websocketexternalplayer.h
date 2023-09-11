@@ -13,6 +13,7 @@ private:
     QString m_host { "" };
     int m_port { 0 };
     QString m_client { "" };
+    QString m_initialVideo { "" };
 
 public:
     explicit WebSocketExternalPlayer(QObject *parent = nullptr, const QString& host = "", int port = 0, const QString& client = "");
@@ -22,6 +23,8 @@ public:
     void trySetSource(const QString& path) override;
     void trySetSeek(int position) override;
     void tryMuted(bool mute) override;
+    void closePlayer() override;
+    void setInitialVideo(const QString& path);
 
 private:
     void sendCommand(const QString& command, const QString& parameter);

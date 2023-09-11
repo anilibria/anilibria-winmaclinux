@@ -71,7 +71,6 @@ void TorrentNotifierViewModel::setReleasesViewModel(const ReleasesViewModel *vie
 
 void TorrentNotifierViewModel::startGetNotifiers()
 {
-    qDebug() << "startGetNotifiers";
     m_webSocket->open(QUrl("ws://localhost:" + QString::number(m_port) + "/ws"));
 }
 
@@ -86,31 +85,34 @@ void TorrentNotifierViewModel::closeConnectionsAndApplication()
 
 void TorrentNotifierViewModel::tryStartTorrentStreamApplication()
 {
-    if (m_torrentStreamPath.isEmpty()) return;
+    if (!m_torrentStreamPath.isEmpty()) {
+        QFileInfo fileInfo(m_torrentStreamPath);
+        auto absolutePath = fileInfo.absoluteFilePath();
+        if (!QFile::exists(absolutePath)) {
+            qInfo() << "TorrentStream path not correct";
+            emit torrentStreamNotConfigured();
+            return;
+        }
 
-    QFileInfo fileInfo(m_torrentStreamPath);
-    auto absolutePath = fileInfo.absoluteFilePath();
-    if (!QFile::exists(absolutePath)) {
-        qInfo() << "TorrentStream path not configured";
-        emit torrentStreamNotConfigured();
-        return;
-    }
-
-    QStringList arguments;
+        QStringList arguments;
 #ifdef Q_OS_WIN
-    arguments.append("-noconsole");
+        arguments.append("-noconsole");
 #endif
 
-    m_torrentStreamProcess = new QProcess(this);
-    m_torrentStreamProcess->setWorkingDirectory(fileInfo.absolutePath());
-    m_torrentStreamProcess->start(absolutePath, arguments);
+        m_torrentStreamProcess = new QProcess(this);
+        m_torrentStreamProcess->setWorkingDirectory(fileInfo.absolutePath());
+        m_torrentStreamProcess->start(absolutePath, arguments);
 
-    if (!m_torrentStreamProcess->waitForStarted(10000)) {
-        qInfo () << "Failing to start TorrentStream: " << m_torrentStreamProcess->errorString();
-        return;
+        if (!m_torrentStreamProcess->waitForStarted(10000)) {
+            qInfo () << "Failing to start TorrentStream: " << m_torrentStreamProcess->errorString();
+            return;
+        }
+
+        emit torrentStreamStarted();
+    } else {
+        qInfo() << "TorrentStream path not configured";
+        emit torrentStreamNotConfigured();
     }
-
-    emit torrentStreamStarted();
 }
 
 void TorrentNotifierViewModel::startGetTorrentData()

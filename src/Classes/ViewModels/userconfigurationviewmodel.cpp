@@ -289,6 +289,30 @@ void UserConfigurationViewModel::setCustomScriptFile(const QString &customScript
     emit customScriptFileChanged();
 }
 
+void UserConfigurationViewModel::setRemotePort(int remotePort) noexcept
+{
+    if (m_remotePort == remotePort) return;
+
+    m_remotePort = remotePort;
+    emit remotePortChanged();
+}
+
+void UserConfigurationViewModel::setSendVolumeToRemote(bool sendVolumeToRemote) noexcept
+{
+    if (m_sendVolumeToRemote == sendVolumeToRemote) return;
+
+    m_sendVolumeToRemote = sendVolumeToRemote;
+    emit sendVolumeToRemoteChanged();
+}
+
+void UserConfigurationViewModel::setSendPlaybackToRemote(bool sendPlaybackToRemote) noexcept
+{
+    if (m_sendPlaybackToRemote == sendPlaybackToRemote) return;
+
+    m_sendPlaybackToRemote = sendPlaybackToRemote;
+    emit sendPlaybackToRemoteChanged();
+}
+
 void UserConfigurationViewModel::refreshConfiguration() noexcept
 {
     readSettingsFromFile();
@@ -353,6 +377,9 @@ void UserConfigurationViewModel::saveSettingsToFile()
     object[m_needSavePlayerField] = m_needSavePlayer;
     object[m_lastSelectedPlayerField] = m_lastSelectedPlayer;
     object[m_customScriptFileField] = m_customScriptFile;
+    object[m_remotePortField] = m_remotePort;
+    object[m_sendVolumeToRemoteField] = m_sendVolumeToRemote;
+    object[m_sendPlaybackToRemoteField] = m_sendPlaybackToRemote;
 
     QFile file(getCachePath(m_cacheFileName));
     file.open(QFile::WriteOnly | QFile::Text);
@@ -401,4 +428,7 @@ void UserConfigurationViewModel::readSettingsFromFile()
     m_needSavePlayer = object.contains(m_needSavePlayerField) ? object[m_needSavePlayerField].toBool() : false;
     m_lastSelectedPlayer = object.contains(m_lastSelectedPlayerField) ? object[m_lastSelectedPlayerField].toString() : "";
     m_customScriptFile = object.contains(m_customScriptFileField) ? object[m_customScriptFileField].toString() : "";
+    m_remotePort = object.contains(m_remotePortField) ? object[m_remotePortField].toInt() : 12345;
+    m_sendVolumeToRemote = object.contains(m_sendVolumeToRemoteField) ? object[m_sendVolumeToRemoteField].toBool() : true;
+    m_sendPlaybackToRemote = object.contains(m_sendPlaybackToRemoteField) ? object[m_sendPlaybackToRemoteField].toBool() : false;
 }

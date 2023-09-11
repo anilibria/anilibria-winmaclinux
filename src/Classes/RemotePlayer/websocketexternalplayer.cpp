@@ -6,6 +6,7 @@ WebSocketExternalPlayer::WebSocketExternalPlayer(QObject *parent, const QString&
     m_host = host;
     m_port = port;
     m_client = client;
+    m_socket = new QWebSocket(QString(),QWebSocketProtocol::VersionLatest, this);
     connect(m_socket, &QWebSocket::textMessageReceived, this, &WebSocketExternalPlayer::onTextMessageReceived);
     connect(m_socket, &QWebSocket::connected, this, &WebSocketExternalPlayer::onConnected);
 
@@ -37,6 +38,16 @@ void WebSocketExternalPlayer::tryMuted(bool mute)
     sendCommand("mt", mute ? "true" : "false");
 }
 
+void WebSocketExternalPlayer::closePlayer()
+{
+    m_socket->close(QWebSocketProtocol::CloseCodeNormal, "");
+}
+
+void WebSocketExternalPlayer::setInitialVideo(const QString &path)
+{
+    m_initialVideo = path;
+}
+
 void WebSocketExternalPlayer::sendCommand(const QString &command, const QString &parameter)
 {
     auto message = m_client + ":" + command + ":" + parameter;
@@ -54,9 +65,11 @@ void WebSocketExternalPlayer::onTextMessageReceived(const QString &message)
     if (command == "svm") emit volumeChanged(parameter.toInt());
     if (command == "sst") emit stateChanged(parameter);
     if (command == "ssk") emit positionChanged(parameter.toInt());
+    if (command == "smt") emit mutedChanged(parameter == "true" ? true : false);
 }
 
 void WebSocketExternalPlayer::onConnected()
 {
     m_socket->sendTextMessage("ro:qt"); // define role for client
+    trySetSource(m_initialVideo);
 }

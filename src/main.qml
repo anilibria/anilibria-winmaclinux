@@ -810,6 +810,9 @@ ApplicationWindow {
         releasesViewModel: releasesViewModel
         proxyPort: userConfigurationViewModel.playerBuffer
         needProxified: userConfigurationViewModel.usingVideoProxy && onlinePlayerWindowViewModel.isSelectedQtAv && torrentNotifierViewModel.activated
+        sendVolumeToRemote: userConfigurationViewModel.sendVolumeToRemote
+        sendPlaybackToRemoteSwitch: userConfigurationViewModel.sendPlaybackToRemote
+        remotePlayer.port: userConfigurationViewModel.remotePort
         onIsFullScreenChanged: {
             if (isFullScreen) {
                 window.showFullScreen();
@@ -918,7 +921,7 @@ ApplicationWindow {
                         //TODO: show error message
                         return;
                     }
-                    externalPlayerViewModel.addWebSocketPlayer();
+                    externalPlayerViewModel.setWebSocketPlayer(releaseId);
                     externalPlayerWindow.showWindow();
                     return;
                 }
@@ -1283,6 +1286,7 @@ ApplicationWindow {
         torrentStreamActive: torrentNotifierViewModel.activated
         torrentStreamPort: userConfigurationViewModel.playerBuffer
         torrentStreamHost: "localhost"
+        releasesViewModel: releasesViewModel
     }
 
     ExternalPlayerWindow {
@@ -1300,8 +1304,6 @@ ApplicationWindow {
             torrentNotifierViewModel.startGetTorrentData();
         }
         onTorrentStreamNotConfigured: {
-            if (!userConfigurationViewModel.playerBuffer) return
-
             torrentNotifierViewModel.startGetNotifiers();
         }
         onTorrentStreamStarted: {
@@ -1315,9 +1317,7 @@ ApplicationWindow {
             mainViewModel.selectPage("videoplayer");
         }
         Component.onCompleted: {
-            if (userConfigurationViewModel.torrentStreamPath) {
-                torrentNotifierViewModel.tryStartTorrentStreamApplication();
-            }
+            torrentNotifierViewModel.tryStartTorrentStreamApplication();
         }
         Component.onDestruction: {
             torrentNotifierViewModel.closeConnectionsAndApplication();

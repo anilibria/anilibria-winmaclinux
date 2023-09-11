@@ -57,6 +57,9 @@ class UserConfigurationViewModel : public QObject
     Q_PROPERTY(bool needSavePlayer READ needSavePlayer WRITE setNeedSavePlayer NOTIFY needSavePlayerChanged)
     Q_PROPERTY(QString lastSelectedPlayer READ lastSelectedPlayer WRITE setLastSelectedPlayer NOTIFY lastSelectedPlayerChanged)
     Q_PROPERTY(QString customScriptFile READ customScriptFile WRITE setCustomScriptFile NOTIFY customScriptFileChanged)
+    Q_PROPERTY(int remotePort READ remotePort WRITE setRemotePort NOTIFY remotePortChanged)
+    Q_PROPERTY(bool sendVolumeToRemote READ sendVolumeToRemote WRITE setSendVolumeToRemote NOTIFY sendVolumeToRemoteChanged)
+    Q_PROPERTY(bool sendPlaybackToRemote READ sendPlaybackToRemote WRITE setSendPlaybackToRemote NOTIFY sendPlaybackToRemoteChanged)
 
 private:
     QString m_cacheFileName { "userconfiguration.cache" };
@@ -92,6 +95,9 @@ private:
     const QString m_needSavePlayerField { "needSavePlayer" };
     const QString m_lastSelectedPlayerField { "lastSelectedPlayer" };
     const QString m_customScriptFileField { "customScriptFile" };
+    const QString m_remotePortField { "remotePort" };
+    const QString m_sendVolumeToRemoteField { "sendVolumeToRemote" };
+    const QString m_sendPlaybackToRemoteField { "sendPlaybackToRemote" };
     int m_opacityPlayerPanel { 50 };
     bool m_notCloseReleaseCardAfterWatch { false };
     bool m_usingScrollAcceleration { true };
@@ -124,6 +130,9 @@ private:
     bool m_needSavePlayer { false };
     QString m_lastSelectedPlayer { "" };
     QString m_customScriptFile { "" };
+    int m_remotePort { 0 };
+    bool m_sendVolumeToRemote { false };
+    bool m_sendPlaybackToRemote { false };
 
 public:
     explicit UserConfigurationViewModel(QObject *parent = nullptr);
@@ -224,6 +233,15 @@ public:
     QString customScriptFile() const noexcept  { return m_customScriptFile; }
     void setCustomScriptFile(const QString& customScriptFile) noexcept;
 
+    int remotePort() const noexcept  { return m_remotePort; }
+    void setRemotePort(int remotePort) noexcept;
+
+    bool sendVolumeToRemote() const noexcept  { return m_sendVolumeToRemote; }
+    void setSendVolumeToRemote(bool sendVolumeToRemote) noexcept;
+
+    bool sendPlaybackToRemote() const noexcept  { return m_sendPlaybackToRemote; }
+    void setSendPlaybackToRemote(bool sendPlaybackToRemote) noexcept;
+
     Q_INVOKABLE void refreshConfiguration() noexcept;
     Q_INVOKABLE void saveSettingsToFile();
 
@@ -263,6 +281,9 @@ signals:
     void needSavePlayerChanged();
     void lastSelectedPlayerChanged();
     void customScriptFileChanged();
+    void remotePortChanged();
+    void sendVolumeToRemoteChanged();
+    void sendPlaybackToRemoteChanged();
 
 };
 

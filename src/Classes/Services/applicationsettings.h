@@ -35,10 +35,6 @@ class ApplicationSettings : public QObject
     Q_PROPERTY(bool sendVolumeToRemote READ sendVolumeToRemote WRITE setSendVolumeToRemote NOTIFY sendVolumeToRemoteChanged)
     Q_PROPERTY(bool sendPlaybackToRemote READ sendPlaybackToRemote WRITE setSendPlaybackToRemote NOTIFY sendPlaybackToRemoteChanged);
     Q_PROPERTY(bool isMaximize READ isMaximize WRITE setIsMaximize NOTIFY isMaximizeChanged)
-    Q_PROPERTY(int normalX READ normalX WRITE setNormalX NOTIFY normalXChanged)
-    Q_PROPERTY(int normalY READ normalY WRITE setNormalY NOTIFY normalYChanged)
-    Q_PROPERTY(int normalWidth READ normalWidth WRITE setNormalWidth NOTIFY normalWidthChanged)
-    Q_PROPERTY(int normalHeight READ normalHeight WRITE setNormalHeight NOTIFY normalHeightChanged)
 
 private:
     QSettings* m_Settings;
@@ -73,18 +69,6 @@ public:
     bool isMaximize() noexcept;
     void setIsMaximize(bool isMaximize) noexcept;
 
-    int normalX() noexcept;
-    void setNormalX(int normalX) noexcept;
-
-    int normalY() noexcept;
-    void setNormalY(int normalY) noexcept;
-
-    int normalWidth() noexcept;
-    void setNormalWidth(int normalWidth) noexcept;
-
-    int normalHeight() noexcept;
-    void setNormalHeight(int normalHeight) noexcept;
-
 
 signals:
     void userTokenChanged(QString& token);
@@ -96,10 +80,6 @@ signals:
     void sendVolumeToRemoteChanged(bool sendVolumeToRemote);
     void sendPlaybackToRemoteChanged(bool sendPlaybackToRemote);
     void isMaximizeChanged();
-    void normalXChanged();
-    void normalYChanged();
-    void normalWidthChanged();
-    void normalHeightChanged();
 
 };
 

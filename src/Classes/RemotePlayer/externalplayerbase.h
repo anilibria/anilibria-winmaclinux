@@ -14,12 +14,14 @@ public:
     virtual void trySetSource(const QString& path) = 0;
     virtual void trySetSeek(int position) = 0;
     virtual void tryMuted(bool mute) = 0;
+    virtual void closePlayer() = 0;
 
 signals:
     void stateChanged(const QString& state);
     void volumeChanged(int volume);
     void sourceChanged(const QString& path);
     void positionChanged(int position);
+    void mutedChanged(bool muted);
 
 };
 

@@ -41,9 +41,17 @@ void ExternalPlayerViewModel::setTorrentStreamActive(bool torrentStreamActive) n
     emit torrentStreamActiveChanged();
 }
 
+void ExternalPlayerViewModel::setReleasesViewModel(const ReleasesViewModel *viewmodel) noexcept
+{
+    if (m_releases != nullptr) return;
+
+    m_releases = const_cast<ReleasesViewModel *>(viewmodel);
+    emit releasesViewModelChanged();
+}
+
 void ExternalPlayerViewModel::setState(const QString &state) noexcept
 {
-    if (state != stoppedState && m_state != pausedState && m_state != playingState) return;
+    if (state != stoppedState && state != pausedState && state != playingState) return;
 
     m_state = state;
     emit isPlayingChanged();
@@ -93,18 +101,80 @@ void ExternalPlayerViewModel::changeVolume(int value) noexcept
 
 void ExternalPlayerViewModel::nextVideo() noexcept
 {
+    if (m_currentSeria >= m_series.count() - 1) return;
 
+    m_currentSeria++;
+    open(m_series[m_currentSeria]);
 }
 
 void ExternalPlayerViewModel::previousVideo() noexcept
 {
+    if (m_currentSeria == 0) return;
 
+    m_currentSeria--;
+    open(m_series[m_currentSeria]);
 }
 
-void ExternalPlayerViewModel::addWebSocketPlayer() noexcept
+void ExternalPlayerViewModel::setWebSocketPlayer(int releaseId) noexcept
 {
     if (!m_torrentStreamActive) return;
 
+    m_series.clear();
+
+    auto release = m_releases->getReleaseById(releaseId);
+    if (release == nullptr) return;
+
+    m_releaseName = release->title();
+    emit releaseNameChanged();
+
+    auto document = QJsonDocument::fromJson(release->videos().toUtf8());
+    auto videosArray = document.array();
+
+    foreach (auto item, videosArray) {
+        if (!item.isObject()) continue;
+        auto object = item.toObject();
+        if (!object.contains("rutube_id")) continue;
+
+        auto id = object["rutube_id"];
+        if (!id.isString()) continue;
+
+        m_series.append(id.toString());
+    }
+
     auto player = new WebSocketExternalPlayer(this, m_torrentStreamHost, m_torrentStreamPort, "rt");
+    player->setInitialVideo(m_series.first());
+    connect(player, &WebSocketExternalPlayer::stateChanged, this, &ExternalPlayerViewModel::stateSynchronizedChanged);
+    connect(player, &WebSocketExternalPlayer::volumeChanged, this, &ExternalPlayerViewModel::volumeSynchronizedChanged);
+    connect(player, &WebSocketExternalPlayer::positionChanged, this, &ExternalPlayerViewModel::positionSynchronizedChanged);
+
     m_player = player;
+    m_status = "Ожидание плеера";
+    emit statusChanged();
+}
+
+void ExternalPlayerViewModel::closePlayer() noexcept
+{
+    if (m_player == nullptr) return;
+
+    m_player->closePlayer();
+    m_player = nullptr;
+}
+
+void ExternalPlayerViewModel::stateSynchronizedChanged(const QString &newState) noexcept
+{
+    setState(newState);
+    if (m_status == "Ожидание плеера") {
+        m_status = "";
+        emit statusChanged();
+    }
+}
+
+void ExternalPlayerViewModel::volumeSynchronizedChanged(int volume) noexcept
+{
+    setVolume(volume);
+}
+
+void ExternalPlayerViewModel::positionSynchronizedChanged(int position) noexcept
+{
+
 }

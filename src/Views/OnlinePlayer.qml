@@ -130,11 +130,7 @@ Page {
         jumpMinuteComboBox.currentIndex = onlinePlayerViewModel.jumpMinutes.indexOf(userSettings.jumpMinute);
         jumpSecondComboBox.currentIndex = onlinePlayerViewModel.jumpSeconds.indexOf(userSettings.jumpSecond);
         showReleaseInfo.checked = userSettings.showReleaseInfo;
-        sendVolumeToRemoteSwitch.checked = applicationSettings.sendVolumeToRemote;
-        onlinePlayerViewModel.sendPlaybackToRemoteSwitch = sendVolumeToRemoteSwitch.checked;
-        sendPlaybackToRemoteSwitch.checked = applicationSettings.sendPlaybackToRemote;
-        onlinePlayerViewModel.remotePlayer.port = applicationSettings.remotePort;
-        remotePlayerPortComboBox.currentIndex = onlinePlayerViewModel.ports.indexOf(applicationSettings.remotePort);
+        remotePlayerPortComboBox.currentIndex = onlinePlayerViewModel.ports.indexOf(userConfigurationViewModel.remotePort);
         showVideoPreview.checked = userSettings.showVideoPreview;
 
         if (autoTopMost.checked && playerLoader.item.playbackState === MediaPlayer.PlayingState) windowSettings.setStayOnTop();
@@ -261,7 +257,7 @@ Page {
         function loaderVolumeChanged() {
             volumeSlider.value = playerLoader.item.volume * 100;
             onlinePlayerViewModel.volumeSlider = volumeSlider.value;
-            if (applicationSettings.sendVolumeToRemote) onlinePlayerViewModel.broadcastVolume(onlinePlayerViewModel.volumeSlider);
+            if (userConfigurationViewModel.sendVolumeToRemote) onlinePlayerViewModel.broadcastVolume(onlinePlayerViewModel.volumeSlider);
         }
 
         function loaderStatusChanged() {
@@ -987,7 +983,7 @@ Page {
                                     id: stateRemotePlayer
                                     onCheckedChanged: {
                                         if (checked) {
-                                            onlinePlayerViewModel.remotePlayer.port = applicationSettings.remotePort;
+                                            onlinePlayerViewModel.remotePlayer.port = userConfigurationViewModel.remotePort;
                                             onlinePlayerViewModel.remotePlayer.startServer();
                                         } else {
                                             onlinePlayerViewModel.remotePlayer.stopServer();
@@ -1020,7 +1016,7 @@ Page {
                                         }
                                     }
                                     onActivated: {
-                                        applicationSettings.remotePort = _page.ports[index];
+                                        userConfigurationViewModel.remotePort = onlinePlayerViewModel.ports[index];
                                     }
                                 }
 
@@ -1032,10 +1028,9 @@ Page {
 
                                 CommonSwitch {
                                     id: sendVolumeToRemoteSwitch
+                                    checked: userConfigurationViewModel.sendVolumeToRemote
                                     onCheckedChanged: {
-                                        applicationSettings.sendVolumeToRemote = checked;
-
-                                        onlinePlayerViewModel.sendVolumeToRemote = checked;
+                                        userConfigurationViewModel.sendVolumeToRemote = checked;
                                     }
                                 }
 
@@ -1047,10 +1042,9 @@ Page {
 
                                 CommonSwitch {
                                     id: sendPlaybackToRemoteSwitch
+                                    checked: userConfigurationViewModel.sendPlaybackToRemote
                                     onCheckedChanged: {
-                                        applicationSettings.sendPlaybackToRemote = checked;
-
-                                        onlinePlayerViewModel.sendPlaybackToRemoteSwitch = checked;
+                                        userConfigurationViewModel.sendPlaybackToRemote = checked;
                                     }
                                 }
 
