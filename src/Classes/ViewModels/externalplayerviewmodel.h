@@ -13,6 +13,8 @@ class ExternalPlayerViewModel : public QObject
     Q_PROPERTY(bool isPaused READ isPaused NOTIFY isPausedChanged)
     Q_PROPERTY(bool isStopped READ isStopped NOTIFY isStoppedChanged)
     Q_PROPERTY(bool opened READ opened NOTIFY openedChanged)
+    Q_PROPERTY(bool muted READ muted NOTIFY mutedChanged)
+    Q_PROPERTY(QString position READ position NOTIFY positionChanged)
     Q_PROPERTY(bool torrentStreamActive READ torrentStreamActive WRITE setTorrentStreamActive NOTIFY torrentStreamActiveChanged)
     Q_PROPERTY(QString torrentStreamHost READ torrentStreamHost WRITE setTorrentStreamHost NOTIFY torrentStreamHostChanged)
     Q_PROPERTY(int torrentStreamPort READ torrentStreamPort WRITE setTorrentStreamPort NOTIFY torrentStreamPortChanged)
@@ -36,6 +38,8 @@ private:
     QString m_releaseName { "" };
     int m_currentSeria { 0 };
     QString m_status { "" };
+    bool m_muted { false };
+    int m_position { 0 };
 
 public:
     explicit ExternalPlayerViewModel(QObject *parent = nullptr);
@@ -63,6 +67,8 @@ public:
     bool isStopped() const noexcept { return m_state == stoppedState; }
     bool opened() const noexcept { return false; }
     QString status() const noexcept { return m_status; }
+    bool muted() const noexcept { return m_muted; }
+    QString position() const noexcept { return "00:00:00"; }
 
     void setState(const QString& state) noexcept;
 
@@ -72,6 +78,7 @@ public:
     Q_INVOKABLE void seek(int position) noexcept;
     Q_INVOKABLE void open(const QString& source) noexcept;
     Q_INVOKABLE void changeVolume(int value) noexcept;
+    Q_INVOKABLE void changeMute(bool muted) noexcept;
     Q_INVOKABLE void nextVideo() noexcept;
     Q_INVOKABLE void previousVideo() noexcept;
     Q_INVOKABLE void setWebSocketPlayer(int releaseId) noexcept;
@@ -81,6 +88,8 @@ private slots:
     void stateSynchronizedChanged(const QString& newState) noexcept;
     void volumeSynchronizedChanged(int volume) noexcept;
     void positionSynchronizedChanged(int position) noexcept;
+    void mutedPlayerChanged(bool muted) noexcept;
+    void playerConnected() noexcept;
 
 signals:
     void volumeChanged();
@@ -95,6 +104,8 @@ signals:
     void releaseNameChanged();
     void currentSeriaChanged();
     void statusChanged();
+    void mutedChanged();
+    void positionChanged();
 
 };
 

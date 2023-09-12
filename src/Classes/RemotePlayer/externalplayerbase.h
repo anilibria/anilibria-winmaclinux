@@ -22,6 +22,7 @@ signals:
     void sourceChanged(const QString& path);
     void positionChanged(int position);
     void mutedChanged(bool muted);
+    void playerConnected();
 
 };
 

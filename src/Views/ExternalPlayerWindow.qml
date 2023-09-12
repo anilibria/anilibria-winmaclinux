@@ -10,13 +10,13 @@ import "Videoplayer"
 ApplicationWindow {
     id: root
     title: '  '
-    width: 450
+    width: 500
     height: 250
     flags: Qt.Dialog | Qt.CustomizeWindowHint | Qt.WindowTitleHint | Qt.WindowCloseButtonHint
-    minimumWidth: 350
-    minimumHeight: 200
+    minimumWidth: 450
+    minimumHeight: 150
     maximumWidth: 500
-    maximumHeight: 350
+    maximumHeight: 300
 
     signal showWindow()
     signal closeWindow()
@@ -52,10 +52,18 @@ ApplicationWindow {
             }
 
             PlainText {
+                id: statusLabel
                 anchors.top: seriaLabel.bottom
                 anchors.horizontalCenter: parent.horizontalCenter
                 fontPointSize: 8
                 text: externalPlayerViewModel.status
+            }
+
+            PlainText {
+                anchors.top: statusLabel.bottom
+                anchors.horizontalCenter: parent.horizontalCenter
+                fontPointSize: 8
+                text: externalPlayerViewModel.position
             }
         }
 
@@ -67,12 +75,12 @@ ApplicationWindow {
             Rectangle {
                 id: leftPart
                 color: "transparent"
-                Layout.preferredWidth: 60
+                Layout.preferredWidth: 80
                 Layout.fillHeight: true
 
                 Slider {
                     id: volumeSlider
-                    anchors.centerIn: parent
+                    anchors.bottom: parent.bottom
                     width: parent.width
                     height: 40
                     from: 0
@@ -90,10 +98,13 @@ ApplicationWindow {
                 Layout.fillHeight: true
 
                 Row {
-                    anchors.centerIn: parent
+                    width: previousButton.width + playButton.width + nextButton.width
+                    height: parent.height
+                    anchors.horizontalCenter: parent.horizontalCenter
 
                     IconButton {
                         id: previousButton
+                        anchors.bottom: parent.bottom
                         width: 40
                         height: 40
                         hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
@@ -108,6 +119,7 @@ ApplicationWindow {
 
                     IconButton {
                         id: playButton
+                        anchors.bottom: parent.bottom
                         visible: externalPlayerViewModel.isPaused || externalPlayerViewModel.isStopped
                         width: 40
                         height: 40
@@ -122,6 +134,7 @@ ApplicationWindow {
                     }
                     IconButton {
                         id: pauseButton
+                        anchors.bottom: parent.bottom
                         visible: externalPlayerViewModel.isPlaying
                         width: 40
                         height: 40
@@ -137,6 +150,7 @@ ApplicationWindow {
 
                     IconButton {
                         id: nextButton
+                        anchors.bottom: parent.bottom
                         width: 40
                         height: 40
                         hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
@@ -154,12 +168,28 @@ ApplicationWindow {
             Rectangle {
                 id: rightPart
                 color: "transparent"
-                Layout.preferredWidth: 45
+                Layout.preferredWidth: 80
                 Layout.fillHeight: true
 
                 IconButton {
+                    anchors.right: topmostButton.left
+                    anchors.bottom: parent.bottom
+                    width: 40
+                    height: 40
+                    hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
+                    iconPath: externalPlayerViewModel.muted ? applicationThemeViewModel.currentItems.iconPlayerMute : applicationThemeViewModel.currentItems.iconPlayerUnMute
+                    iconWidth: 24
+                    iconHeight: 24
+                    onButtonPressed: {
+                        const newstate = !externalPlayerViewModel.muted;
+                        externalPlayerViewModel.changeMute(newstate);
+                    }
+                }
+
+                IconButton {
                     id: topmostButton
-                    anchors.centerIn: parent
+                    anchors.right: parent.right
+                    anchors.bottom: parent.bottom
                     width: 40
                     height: 40
                     hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
@@ -173,23 +203,6 @@ ApplicationWindow {
             }
         }
     }
-
-    /*Rectangle {
-        width: 80
-        height: 80
-        color: "white"
-        radius: 20
-        opacity: 0.8
-        visible: onlinePlayerViewModel.isBuffering
-        anchors.centerIn: parent
-        AnimatedImage {
-            id: spinner
-            anchors.centerIn: parent
-            paused: !onlinePlayerWindowViewModel.opened
-            playing: onlinePlayerWindowViewModel.opened
-            source: assetsLocation.path + "Icons/spinner.gif"
-        }
-    }*/
 
     onShowWindow:  {
         show();

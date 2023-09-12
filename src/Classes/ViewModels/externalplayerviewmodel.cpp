@@ -99,12 +99,18 @@ void ExternalPlayerViewModel::changeVolume(int value) noexcept
     m_player->trySetNewVolume(value);
 }
 
+void ExternalPlayerViewModel::changeMute(bool muted) noexcept
+{
+    m_player->tryMuted(muted);
+}
+
 void ExternalPlayerViewModel::nextVideo() noexcept
 {
     if (m_currentSeria >= m_series.count() - 1) return;
 
     m_currentSeria++;
     open(m_series[m_currentSeria]);
+    emit currentSeriaChanged();
 }
 
 void ExternalPlayerViewModel::previousVideo() noexcept
@@ -113,6 +119,7 @@ void ExternalPlayerViewModel::previousVideo() noexcept
 
     m_currentSeria--;
     open(m_series[m_currentSeria]);
+    emit currentSeriaChanged();
 }
 
 void ExternalPlayerViewModel::setWebSocketPlayer(int releaseId) noexcept
@@ -146,6 +153,8 @@ void ExternalPlayerViewModel::setWebSocketPlayer(int releaseId) noexcept
     connect(player, &WebSocketExternalPlayer::stateChanged, this, &ExternalPlayerViewModel::stateSynchronizedChanged);
     connect(player, &WebSocketExternalPlayer::volumeChanged, this, &ExternalPlayerViewModel::volumeSynchronizedChanged);
     connect(player, &WebSocketExternalPlayer::positionChanged, this, &ExternalPlayerViewModel::positionSynchronizedChanged);
+    connect(player, &WebSocketExternalPlayer::playerConnected, this, &ExternalPlayerViewModel::playerConnected);
+    connect(player, &WebSocketExternalPlayer::mutedChanged, this, &ExternalPlayerViewModel::mutedPlayerChanged);
 
     m_player = player;
     m_status = "Ожидание плеера";
@@ -176,5 +185,17 @@ void ExternalPlayerViewModel::volumeSynchronizedChanged(int volume) noexcept
 
 void ExternalPlayerViewModel::positionSynchronizedChanged(int position) noexcept
 {
+    m_position = position;
+    emit positionChanged();
+}
 
+void ExternalPlayerViewModel::mutedPlayerChanged(bool muted) noexcept
+{
+    m_muted = muted;
+    emit mutedChanged();
+}
+
+void ExternalPlayerViewModel::playerConnected() noexcept
+{
+    changeVolume(m_volume);
 }

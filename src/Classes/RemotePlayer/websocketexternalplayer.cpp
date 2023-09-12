@@ -72,4 +72,5 @@ void WebSocketExternalPlayer::onConnected()
 {
     m_socket->sendTextMessage("ro:qt"); // define role for client
     trySetSource(m_initialVideo);
+    emit playerConnected();
 }
