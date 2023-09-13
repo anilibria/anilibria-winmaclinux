@@ -2,6 +2,8 @@
 #include <QString>
 #include <QDir>
 #include <QStandardPaths>
+#include <QRegularExpression>
+#include "globalconstants.h"
 
 QString getCachePath(const QString& filename) noexcept
 {
@@ -27,3 +29,11 @@ QString removeFileProtocol(QString &path) noexcept
 {
     return path.replace("file:///", "").replace("file://", "");
 }
+
+bool isRutubeHasVideos(const QString& videos) noexcept {
+    static QRegularExpression re(R"arg("rutube_id\": \")arg");
+    QRegularExpressionMatch match = re.match(videos);
+
+    return match.hasMatch();
+}
+

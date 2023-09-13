@@ -359,6 +359,13 @@ bool ReleasesViewModel::openedReleaseIsAllSeen() const noexcept
     return m_openedRelease->countOnlineVideos() == m_items->getReleaseSeenMarkCount(m_openedRelease->id());
 }
 
+bool ReleasesViewModel::openedReleaseIsRutube() const noexcept
+{
+    if (m_openedRelease == nullptr) return false;
+
+    return isRutubeHasVideos(m_openedRelease->videos());
+}
+
 QStringList ReleasesViewModel::getMostPopularGenres() const noexcept
 {
     QStringList allGenres;
@@ -1070,6 +1077,7 @@ void ReleasesViewModel::refreshOpenedReleaseCard()
     emit openedReleaseVideosChanged();
     emit openedReleaseSeenCountVideosChanged();
     emit openedReleaseAnnounceChanged();
+    emit openedReleaseIsRutubeChanged();
 }
 
 void ReleasesViewModel::setSeenMark(int id, int seriaId, bool marked)

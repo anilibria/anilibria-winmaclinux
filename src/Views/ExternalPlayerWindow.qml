@@ -10,13 +10,13 @@ import "Videoplayer"
 ApplicationWindow {
     id: root
     title: '  '
-    width: 500
-    height: 250
+    width: 450
+    height: 150
     flags: Qt.Dialog | Qt.CustomizeWindowHint | Qt.WindowTitleHint | Qt.WindowCloseButtonHint
-    minimumWidth: 450
+    minimumWidth: 400
     minimumHeight: 150
-    maximumWidth: 500
-    maximumHeight: 300
+    maximumWidth: 450
+    maximumHeight: 150
 
     signal showWindow()
     signal closeWindow()
@@ -46,6 +46,7 @@ ApplicationWindow {
             PlainText {
                 id: seriaLabel
                 anchors.top: headerLabel.bottom
+                anchors.topMargin: 2
                 anchors.horizontalCenter: parent.horizontalCenter
                 fontPointSize: 9
                 text: "Серия " + externalPlayerViewModel.currentSeria
@@ -54,16 +55,10 @@ ApplicationWindow {
             PlainText {
                 id: statusLabel
                 anchors.top: seriaLabel.bottom
+                anchors.topMargin: 2
                 anchors.horizontalCenter: parent.horizontalCenter
                 fontPointSize: 8
-                text: externalPlayerViewModel.status
-            }
-
-            PlainText {
-                anchors.top: statusLabel.bottom
-                anchors.horizontalCenter: parent.horizontalCenter
-                fontPointSize: 8
-                text: externalPlayerViewModel.position
+                text: externalPlayerViewModel.status ? externalPlayerViewModel.status : externalPlayerViewModel.position
             }
         }
 
@@ -81,6 +76,7 @@ ApplicationWindow {
                 Slider {
                     id: volumeSlider
                     anchors.bottom: parent.bottom
+                    anchors.bottomMargin: 4
                     width: parent.width
                     height: 40
                     from: 0
@@ -105,6 +101,7 @@ ApplicationWindow {
                     IconButton {
                         id: previousButton
                         anchors.bottom: parent.bottom
+                        anchors.bottomMargin: 4
                         width: 40
                         height: 40
                         hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
@@ -120,6 +117,7 @@ ApplicationWindow {
                     IconButton {
                         id: playButton
                         anchors.bottom: parent.bottom
+                        anchors.bottomMargin: 4
                         visible: externalPlayerViewModel.isPaused || externalPlayerViewModel.isStopped
                         width: 40
                         height: 40
@@ -135,6 +133,7 @@ ApplicationWindow {
                     IconButton {
                         id: pauseButton
                         anchors.bottom: parent.bottom
+                        anchors.bottomMargin: 4
                         visible: externalPlayerViewModel.isPlaying
                         width: 40
                         height: 40
@@ -151,6 +150,7 @@ ApplicationWindow {
                     IconButton {
                         id: nextButton
                         anchors.bottom: parent.bottom
+                        anchors.bottomMargin: 4
                         width: 40
                         height: 40
                         hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
@@ -174,6 +174,7 @@ ApplicationWindow {
                 IconButton {
                     anchors.right: topmostButton.left
                     anchors.bottom: parent.bottom
+                    anchors.bottomMargin: 4
                     width: 40
                     height: 40
                     hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
@@ -190,6 +191,7 @@ ApplicationWindow {
                     id: topmostButton
                     anchors.right: parent.right
                     anchors.bottom: parent.bottom
+                    anchors.bottomMargin: 4
                     width: 40
                     height: 40
                     hoverColor: applicationThemeViewModel.filterIconButtonHoverColor

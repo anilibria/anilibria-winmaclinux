@@ -49,6 +49,11 @@ void ExternalPlayerViewModel::setReleasesViewModel(const ReleasesViewModel *view
     emit releasesViewModelChanged();
 }
 
+QString ExternalPlayerViewModel::position() const noexcept
+{
+    return getDisplayTimeFromSeconds(m_position);
+}
+
 void ExternalPlayerViewModel::setState(const QString &state) noexcept
 {
     if (state != stoppedState && state != pausedState && state != playingState) return;
@@ -145,7 +150,24 @@ void ExternalPlayerViewModel::setWebSocketPlayer(int releaseId) noexcept
         auto id = object["rutube_id"];
         if (!id.isString()) continue;
 
-        m_series.append(id.toString());
+        if (!object.contains("ordinal")) continue;
+        auto ordinal = object["ordinal"];
+        auto order = ordinal.toInt();
+
+        m_seriesMap.insert(order, id.toString());
+    }
+
+    auto keys = m_seriesMap.keys();
+    std::sort(
+        keys.begin(),
+        keys.end(),
+        [](int left, int right) {
+            return left < right;
+        }
+    );
+
+    foreach (auto key, keys) {
+        m_series.append(m_seriesMap[key]);
     }
 
     auto player = new WebSocketExternalPlayer(this, m_torrentStreamHost, m_torrentStreamPort, "rt");
@@ -167,6 +189,30 @@ void ExternalPlayerViewModel::closePlayer() noexcept
 
     m_player->closePlayer();
     m_player = nullptr;
+}
+
+QString ExternalPlayerViewModel::getZeroBasedDigit(int digit) const
+{
+    if (digit < 10) return "0" + QString::number(digit);
+    return QString::number(digit);
+}
+
+QString ExternalPlayerViewModel::getDisplayTimeFromSeconds(int seconds) const
+{
+    int days = floor(seconds / (3600 * 24));
+    seconds -= days * 3600 * 24;
+    int hours = floor(seconds / 3600);
+    seconds -= hours * 3600;
+    int minutes = floor(seconds / 60);
+    seconds  -= minutes * 60;
+
+    QString result;
+    result.append(getZeroBasedDigit(hours));
+    result.append(":");
+    result.append(getZeroBasedDigit(minutes));
+    result.append(":");
+    result.append(getZeroBasedDigit(seconds));
+    return result;
 }
 
 void ExternalPlayerViewModel::stateSynchronizedChanged(const QString &newState) noexcept

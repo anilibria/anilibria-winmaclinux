@@ -35,6 +35,7 @@ private:
     ExternalPlayerBase* m_player { nullptr };
     ReleasesViewModel* m_releases { nullptr };
     QStringList m_series { QStringList() };
+    QMap<int, QString> m_seriesMap { QMap<int, QString>() };
     QString m_releaseName { "" };
     int m_currentSeria { 0 };
     QString m_status { "" };
@@ -60,7 +61,7 @@ public:
     void setReleasesViewModel(const ReleasesViewModel* viewmodel) noexcept;
 
     QString releaseName() const noexcept { return m_releaseName; }
-    int currentSeria() const noexcept { return m_currentSeria; }
+    int currentSeria() const noexcept { return m_currentSeria + 1; }
 
     bool isPlaying() const noexcept { return m_state == playingState; }
     bool isPaused() const noexcept { return m_state == pausedState; }
@@ -68,7 +69,7 @@ public:
     bool opened() const noexcept { return false; }
     QString status() const noexcept { return m_status; }
     bool muted() const noexcept { return m_muted; }
-    QString position() const noexcept { return "00:00:00"; }
+    QString position() const noexcept;
 
     void setState(const QString& state) noexcept;
 
@@ -83,6 +84,10 @@ public:
     Q_INVOKABLE void previousVideo() noexcept;
     Q_INVOKABLE void setWebSocketPlayer(int releaseId) noexcept;
     Q_INVOKABLE void closePlayer() noexcept;
+
+private:
+    QString getDisplayTimeFromSeconds(int seconds) const;
+    QString getZeroBasedDigit(int digit) const;
 
 private slots:
     void stateSynchronizedChanged(const QString& newState) noexcept;

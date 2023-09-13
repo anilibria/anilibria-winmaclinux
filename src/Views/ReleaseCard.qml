@@ -484,6 +484,19 @@ ColumnLayout {
                                 fontPointSize: 11
                                 text: (!mainViewModel.isSmallSizeMode ? "Доступно " : "" ) + releasesViewModel.openedReleaseCountVideos + " серий"
                             }
+
+                            RoundedActionButton {
+                                id: watchRutubeButton
+                                visible: releasesViewModel.openedReleaseIsRutube
+                                text: qsTr("Открыть Rutube")
+                                textSize: mainViewModel.isSmallSizeMode ? 10 : 11
+                                anchors.verticalCenter: parent.verticalCenter
+                                anchors.left: onlineLabel.right
+                                anchors.leftMargin: 4
+                                onClicked: {
+                                    Qt.openUrlExternally("https://trueromanus.github.io/rutube-remote-player/rutubeplayer.html#localhost:" + userConfigurationViewModel.playerBuffer);
+                                }
+                            }
                         }
 
                         Item {

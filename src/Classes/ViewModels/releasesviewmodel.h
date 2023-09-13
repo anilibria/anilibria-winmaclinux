@@ -89,6 +89,7 @@ class ReleasesViewModel : public QObject
     Q_PROPERTY(bool openedReleaseInFavorites READ openedReleaseInFavorites NOTIFY openedReleaseInFavoritesChanged)
     Q_PROPERTY(QString openedReleaseVideos READ openedReleaseVideos NOTIFY openedReleaseVideosChanged)
     Q_PROPERTY(QString openedReleaseAnnounce READ openedReleaseAnnounce NOTIFY openedReleaseAnnounceChanged)
+    Q_PROPERTY(bool openedReleaseIsRutube READ openedReleaseIsRutube NOTIFY openedReleaseIsRutubeChanged)
     Q_PROPERTY(bool synchronizationEnabled READ synchronizationEnabled WRITE setSynchronizationEnabled NOTIFY synchronizationEnabledChanged)
     Q_PROPERTY(QString newEntities READ newEntities WRITE setNewEntities NOTIFY newEntitiesChanged)
     Q_PROPERTY(bool notCloseReleaseCardAfterWatch READ notCloseReleaseCardAfterWatch WRITE setNotCloseReleaseCardAfterWatch NOTIFY notCloseReleaseCardAfterWatchChanged)
@@ -228,6 +229,7 @@ public:
     bool openedReleaseInFavorites() const noexcept { return m_openedRelease != nullptr ? m_userFavorites->contains(m_openedRelease->id()) : false; }
     QString openedReleaseVideos() const noexcept { return m_openedRelease != nullptr ? m_openedRelease->videos() : ""; }
     QString openedReleaseAnnounce() const noexcept { return m_openedRelease != nullptr ? m_openedRelease->announce() : ""; }
+    bool openedReleaseIsRutube() const noexcept;
     QStringList getMostPopularGenres() const noexcept;
     QStringList getMostPopularVoices() const noexcept;
     QList<int> countSections() const noexcept { return m_sectionCounters; };
@@ -397,6 +399,7 @@ signals:
     void openedReleaseAnnounceChanged();
     void countSectionsChanged();
     void openedReleaseSeenCountVideosChanged();
+    void openedReleaseIsRutubeChanged();
 
 };
 
