@@ -31,6 +31,7 @@ class MainViewModel : public QObject
     Q_PROPERTY(bool hasForwardHistory READ hasForwardHistory NOTIFY hasForwardHistoryChanged)
     Q_PROPERTY(QString startPage READ startPage WRITE setStartPage NOTIFY startPageChanged)
     Q_PROPERTY(QString pageParameters READ pageParameters NOTIFY pageParametersChanged)
+    Q_PROPERTY(QVariantList leftToolbar READ leftToolbar NOTIFY leftToolbarChanged)
 
 private:
     MainMenuListModel* m_mainMenuListModel { new MainMenuListModel(this) };
@@ -45,6 +46,8 @@ private:
     QString m_startPage { "" };
     bool m_startPageFilled { false };
     QString m_pageParameters { "" };
+    const QString toolbarItemCacheFileName { "lefttoolbar.cache" };
+    QVariantList m_leftToolbar { QVariantList() };
 
 public:
     explicit MainViewModel(QObject *parent = nullptr);
@@ -80,6 +83,7 @@ public:
     bool isAuthorizationPageVisible() const noexcept { return m_currentPageId == "authorization"; }
     bool isThemeManagerVisible() const noexcept { return m_currentPageId == "thememanager"; }
     bool isTorrentStreamPageVisible() const noexcept { return m_currentPageId == "torrentstream"; }
+    QVariantList leftToolbar() const noexcept { return m_leftToolbar; }
 
     QString startPage() const noexcept { return m_startPage; }
     void setStartPage(const QString& startPage) noexcept;
@@ -94,6 +98,7 @@ private:
     void setPageDisplayName(const QString& pageId) noexcept;
     void refreshPageVisible() noexcept;
     void selectToPage(const QString& pageId);
+    void loadLeftToolbar();
 
 public slots:
     void selectedItemInMainMenu(QString pageName);
@@ -128,6 +133,7 @@ signals:
     void changeReleasesParameters(QString parameters);
     void releasesSeriesPageToNavigated();
     void changeReleaseSeriesParameters(QString parameters);
+    void leftToolbarChanged();
 
 };
 

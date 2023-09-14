@@ -1,6 +1,7 @@
 #include <QDesktopServices>
 #include <QUrl>
 #include "mainviewmodel.h"
+#include "../../globalhelpers.h"
 
 MainViewModel::MainViewModel(QObject *parent) : QObject(parent)
 {
@@ -19,6 +20,10 @@ MainViewModel::MainViewModel(QObject *parent) : QObject(parent)
     m_displayNames->insert("thememanager", "Менеджер Тем");
     m_displayNames->insert("authorization", "Авторизация");
     m_displayNames->insert("torrentstream", "TorrentStream");
+
+    createIfNotExistsFile(getCachePath(toolbarItemCacheFileName), "[\"release\",\"videoplayer\",\"cinemahall\",\"releaseseries\",\"myanilibria\"]");
+
+    loadLeftToolbar();
 
     m_currentPageDisplayName = m_displayNames->value(m_currentPageId);
 
@@ -194,6 +199,25 @@ void MainViewModel::selectToPage(const QString &pageId)
             m_pageParameters = parameters;
             emit changeReleaseSeriesParameters(m_pageParameters);
         }
+    }
+}
+
+void MainViewModel::loadLeftToolbar()
+{
+    m_leftToolbar.clear();
+
+    auto content = getJsonContentFromFile(toolbarItemCacheFileName);
+    auto itemsArray = QJsonDocument::fromJson(content.toUtf8()).array();
+
+    foreach (auto item, itemsArray) {
+        if (!item.isString()) continue;
+
+        auto id = item.toString();
+        QVariantMap map;
+        map.insert("identifier", id);
+        map.insert("title", m_displayNames->value(id));
+        map.insert("itemIcon", m_mainMenuListModel->getIcon(id));
+        m_leftToolbar.append(map);
     }
 }
 

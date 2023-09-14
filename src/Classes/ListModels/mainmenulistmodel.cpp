@@ -112,6 +112,19 @@ void MainMenuListModel::setAuthorizeItemVisible(bool visible)
     endResetModel();
 }
 
+QString MainMenuListModel::getIcon(const QString &id)
+{
+    auto item = std::find_if(
+        m_items->cbegin(),
+        m_items->cend(),
+        [id](MainMenuItemModel* item) {
+            return item->pageName() == id;
+        }
+    );
+
+    return (*item)->icon();
+}
+
 void MainMenuListModel::selectItem(int index)
 {
     m_selectedItem = index;

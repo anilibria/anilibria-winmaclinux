@@ -160,41 +160,29 @@ ApplicationWindow {
                 drawer.open();
             }
         }
-        IconButton {
-            id: goToReleasePage
-            visible: !mainViewModel.isSmallSizeMode
+        ListView {
+            height: parent.height
             anchors.left: openDrawerButton.right
-            anchors.leftMargin: 1
-            anchors.top: parent.top
-            anchors.topMargin: 1
-            height: 34
-            width: 40
-            hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
-            iconPath: applicationThemeViewModel.iconMainMenuReleases
-            iconWidth: 20
-            iconHeight: 20
-            tooltipMessage: "Перейти на страницу Каталог Релизов"
-            onButtonPressed: {
-                mainViewModel.selectPage("release");
+            anchors.right: openInfoButton.left
+            model: mainViewModel.leftToolbar
+            orientation: ListView.Horizontal
+            clip: true
+            delegate: IconButton {
+                visible: !mainViewModel.isSmallSizeMode
+                height: 34
+                width: 40
+                hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
+                iconPath: applicationThemeViewModel.currentItems[modelData.itemIcon]
+                iconWidth: 20
+                iconHeight: 20
+                tooltipMessage: modelData.title
+                onButtonPressed: {
+                    mainViewModel.selectPage(modelData.identifier);
+                }
             }
         }
-        IconButton {
-            id: goToOnlineVideoPage
-            visible: !mainViewModel.isSmallSizeMode
-            anchors.left: goToReleasePage.right
-            anchors.top: parent.top
-            anchors.topMargin: 1
-            height: 34
-            width: 40
-            hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
-            iconPath: applicationThemeViewModel.currentItems.iconMainMenuVideoplayer
-            iconWidth: 20
-            iconHeight: 20
-            tooltipMessage: "Перейти на страницу Видеоплеер"
-            onButtonPressed: {
-                mainViewModel.selectPage("videoplayer");
-            }
-        }
+
+        /*
         IconButton {
             id: goToCinemaHall
             visible: !mainViewModel.isSmallSizeMode
@@ -211,42 +199,9 @@ ApplicationWindow {
             onButtonPressed: {
                 mainViewModel.selectPage("cinemahall");
             }
-        }
+        }*/
         IconButton {
-            id: goToReleaseSeries
-            visible: !mainViewModel.isSmallSizeMode
-            anchors.left: goToCinemaHall.right
-            anchors.top: parent.top
-            anchors.topMargin: 1
-            height: 34
-            width: 40
-            hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
-            iconPath: applicationThemeViewModel.currentItems.iconMainMenuReleasesSeries
-            iconWidth: 20
-            iconHeight: 20
-            tooltipMessage: "Перейти на страницу Связанные релизы"
-            onButtonPressed: {
-                mainViewModel.selectPage("releaseseries");
-            }
-        }
-        IconButton {
-            id: goToMyAnilibria
-            visible: !mainViewModel.isSmallSizeMode
-            anchors.left: goToReleaseSeries.right
-            anchors.top: parent.top
-            anchors.topMargin: 1
-            height: 34
-            width: 40
-            hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
-            iconPath: applicationThemeViewModel.currentItems.iconMainMenuMyAnilibria
-            iconWidth: 20
-            iconHeight: 20
-            tooltipMessage: "Перейти на страницу Моя Анилибрия"
-            onButtonPressed: {
-                mainViewModel.selectPage("myanilibria");
-            }
-        }
-        IconButton {
+            id: openInfoButton
             visible: !mainViewModel.isSmallSizeMode
             anchors.right: selectThemeButton.left
             anchors.top: parent.top

@@ -37,3 +37,14 @@ bool isRutubeHasVideos(const QString& videos) noexcept {
     return match.hasMatch();
 }
 
+QString getJsonContentFromFile(const QString& path) noexcept {
+    QFile releasesCacheFile(getCachePath(path));
+
+    if (!releasesCacheFile.open(QFile::ReadOnly | QFile::Text)) return "";
+
+    QString releasesJson = releasesCacheFile.readAll();
+    releasesCacheFile.close();
+
+    return releasesJson;
+}
+

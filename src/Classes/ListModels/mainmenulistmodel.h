@@ -52,6 +52,8 @@ public:
 
     void setAuthorizeItemVisible(bool visible);
 
+    QString getIcon(const QString& id);
+
     Q_INVOKABLE void selectItem(int index);
 
 signals:    

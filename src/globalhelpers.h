@@ -7,3 +7,5 @@ void createIfNotExistsFile(const QString& path, const QString& defaultContent) n
 QString removeFileProtocol(QString& path) noexcept;
 
 bool isRutubeHasVideos(const QString& videos) noexcept;
+
+QString getJsonContentFromFile(const QString& path) noexcept;
