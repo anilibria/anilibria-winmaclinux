@@ -177,29 +177,54 @@ ApplicationWindow {
                 iconHeight: 20
                 tooltipMessage: modelData.title
                 onButtonPressed: {
-                    mainViewModel.selectPage(modelData.identifier);
+                    if (modelData.identifier === `additem`) {
+                        addItemToToolbarPopup.open();
+                    } else {
+                        mainViewModel.selectPage(modelData.identifier);
+                    }
+                }
+                onRightButtonPressed: {
+                    mainViewModel.toggleEditToolBarMode();
+                }
+            }
+
+            DefaultPopup {
+                id: addItemToToolbarPopup
+                width: 400
+                height: 130
+                modal: true
+                focus: true
+                closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
+
+                PlainText {
+                    id: addPageLabel
+                    text: "Выберите страницу"
+                    fontPointSize: 10
+                }
+
+                CommonComboBox {
+                    id: addPageComboBox
+                    anchors.top: addPageLabel.bottom
+                    anchors.topMargin: 4
+                    width: parent.width
+                    displayText: addPageComboBox.currentIndex > -1 ? mainViewModel.otherLeftToolbar[addPageComboBox.currentIndex].key : ""
+                    model: mainViewModel.otherLeftToolbar
+                    usePropertyKey: true
+                }
+
+                RoundedActionButton {
+                    anchors.top: addPageComboBox.bottom
+                    anchors.right: parent.right
+                    anchors.topMargin: 4
+                    text: "Добавить"
+                    onClicked: {
+                        mainViewModel.addOptionToToolbar(addPageComboBox.currentIndex);
+                        addItemToToolbarPopup.close();
+                    }
                 }
             }
         }
 
-        /*
-        IconButton {
-            id: goToCinemaHall
-            visible: !mainViewModel.isSmallSizeMode
-            anchors.left: goToOnlineVideoPage.right
-            anchors.top: parent.top
-            anchors.topMargin: 1
-            height: 34
-            width: 40
-            hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
-            iconPath: applicationThemeViewModel.currentItems.iconMainMenuCinemahall
-            iconWidth: 20
-            iconHeight: 20
-            tooltipMessage: "Перейти на страницу Кинозал"
-            onButtonPressed: {
-                mainViewModel.selectPage("cinemahall");
-            }
-        }*/
         IconButton {
             id: openInfoButton
             visible: !mainViewModel.isSmallSizeMode

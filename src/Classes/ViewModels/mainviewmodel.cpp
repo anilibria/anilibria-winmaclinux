@@ -86,7 +86,7 @@ void MainViewModel::setStartPage(const QString &startPage) noexcept
     }
 }
 
-void MainViewModel::selectPage(const QString& pageId)
+void MainViewModel::selectPage(const QString& pageId) noexcept
 {
     auto pageIdentifier = QString(pageId);
     auto parameters = QString("");
@@ -116,7 +116,7 @@ void MainViewModel::selectPage(const QString& pageId)
     m_analyticsService->sendView("page", "view", "%2F" + pageIdentifier);
 }
 
-void MainViewModel::backToPage()
+void MainViewModel::backToPage() noexcept
 {
     if (m_historyPosition <= 0) return;
 
@@ -127,7 +127,7 @@ void MainViewModel::backToPage()
     emit hasForwardHistoryChanged();
 }
 
-void MainViewModel::forwardToPage()
+void MainViewModel::forwardToPage() noexcept
 {
     if (m_historyPosition >= m_history.count() - 1) return;
 
@@ -136,6 +136,58 @@ void MainViewModel::forwardToPage()
     selectToPage(m_history.value(m_historyPosition));
     emit hasBackHistoryChanged();
     emit hasForwardHistoryChanged();
+}
+
+void MainViewModel::toggleEditToolBarMode() noexcept
+{
+    m_editLeftToolbar = !m_editLeftToolbar;
+    emit editLeftToolbarChanged();
+
+    if (m_editLeftToolbar) {
+        QVariantMap map;
+        map.insert("identifier", "additem");
+        map.insert("title", "Добавить страницу в тулбар");
+        map.insert("itemIcon", "iconEditThemeFieldPlus");
+        m_leftToolbar.append(map);
+    } else {
+        m_leftToolbar.removeAt(m_leftToolbar.count() - 1);
+    }
+
+    emit leftToolbarChanged();
+}
+
+void MainViewModel::addOptionToToolbar(int index) noexcept
+{
+    auto item = m_otherLeftToolbar.value(index).toMap();
+
+    auto id = item.value("value").toString();
+    QVariantMap map;
+    map.insert("identifier", id);
+    map.insert("title", item.value("key"));
+    map.insert("itemIcon", m_mainMenuListModel->getIcon(id));
+    m_leftToolbar.insert(m_leftToolbar.count() - 1, map);
+    m_otherLeftToolbar.removeAt(index);
+    emit leftToolbarChanged();
+    emit otherLeftToolbarChanged();
+}
+
+void MainViewModel::removeOptionFromToolbar(const QString &id) noexcept
+{
+    QVariantMap toolbarItem;
+    foreach (auto item, m_leftToolbar) {
+        auto map = item.toMap();
+        if (map.value("identifier") == id) {
+            toolbarItem = map;
+        }
+    }
+    m_leftToolbar.removeOne(toolbarItem);
+
+    QVariantMap map;
+    map.insert("key", m_displayNames->value(id));
+    map.insert("value", id);
+    m_otherLeftToolbar.append(map);
+
+    emit leftToolbarChanged();
 }
 
 void MainViewModel::setPageDisplayName(const QString &pageId) noexcept
@@ -218,6 +270,25 @@ void MainViewModel::loadLeftToolbar()
         map.insert("title", m_displayNames->value(id));
         map.insert("itemIcon", m_mainMenuListModel->getIcon(id));
         m_leftToolbar.append(map);
+    }
+
+    auto keys = m_displayNames->keys();
+    foreach (auto displayItem, keys) {
+        if (displayItem == "about" || displayItem == "authorization") continue;
+
+        auto haveInMenu = std::find_if(
+            m_leftToolbar.cbegin(),
+            m_leftToolbar.cend(),
+            [displayItem](QVariant variant) {
+                return displayItem == variant.toMap().value("identifier");
+            }
+        );
+        if (haveInMenu != m_leftToolbar.cend()) continue;
+
+        QVariantMap map;
+        map.insert("key", m_displayNames->value(displayItem));
+        map.insert("value", displayItem);
+        m_otherLeftToolbar.append(map);
     }
 }
 

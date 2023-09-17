@@ -32,6 +32,8 @@ class MainViewModel : public QObject
     Q_PROPERTY(QString startPage READ startPage WRITE setStartPage NOTIFY startPageChanged)
     Q_PROPERTY(QString pageParameters READ pageParameters NOTIFY pageParametersChanged)
     Q_PROPERTY(QVariantList leftToolbar READ leftToolbar NOTIFY leftToolbarChanged)
+    Q_PROPERTY(bool editLeftToolbar READ editLeftToolbar NOTIFY editLeftToolbarChanged)
+    Q_PROPERTY(QVariantList otherLeftToolbar  READ otherLeftToolbar NOTIFY otherLeftToolbarChanged)
 
 private:
     MainMenuListModel* m_mainMenuListModel { new MainMenuListModel(this) };
@@ -48,6 +50,8 @@ private:
     QString m_pageParameters { "" };
     const QString toolbarItemCacheFileName { "lefttoolbar.cache" };
     QVariantList m_leftToolbar { QVariantList() };
+    bool m_editLeftToolbar { false };
+    QVariantList m_otherLeftToolbar { QVariantList() };
 
 public:
     explicit MainViewModel(QObject *parent = nullptr);
@@ -84,15 +88,20 @@ public:
     bool isThemeManagerVisible() const noexcept { return m_currentPageId == "thememanager"; }
     bool isTorrentStreamPageVisible() const noexcept { return m_currentPageId == "torrentstream"; }
     QVariantList leftToolbar() const noexcept { return m_leftToolbar; }
+    bool editLeftToolbar() const noexcept { return m_editLeftToolbar; }
+    QVariantList otherLeftToolbar() const noexcept { return m_otherLeftToolbar; }
 
     QString startPage() const noexcept { return m_startPage; }
     void setStartPage(const QString& startPage) noexcept;
 
     QString pageParameters() const noexcept { return m_pageParameters; }
 
-    Q_INVOKABLE void selectPage(const QString& pageId);
-    Q_INVOKABLE void backToPage();
-    Q_INVOKABLE void forwardToPage();
+    Q_INVOKABLE void selectPage(const QString& pageId) noexcept;
+    Q_INVOKABLE void backToPage() noexcept;
+    Q_INVOKABLE void forwardToPage() noexcept;
+    Q_INVOKABLE void toggleEditToolBarMode() noexcept;
+    Q_INVOKABLE void addOptionToToolbar(int index) noexcept;
+    Q_INVOKABLE void removeOptionFromToolbar(const QString& id) noexcept;
 
 private:
     void setPageDisplayName(const QString& pageId) noexcept;
@@ -134,6 +143,8 @@ signals:
     void releasesSeriesPageToNavigated();
     void changeReleaseSeriesParameters(QString parameters);
     void leftToolbarChanged();
+    void editLeftToolbarChanged();
+    void otherLeftToolbarChanged();
 
 };
 

@@ -6,6 +6,7 @@ import CustomStyle 1.0
 ComboBox {
     id: control
     property real fontPointSize: 11
+    property bool usePropertyKey: false
     font.pointSize: fontPointSize + windowSettings.dpiSeparation
 
     CustomStyle.comboBoxAccent: applicationThemeViewModel.currentItems.colorComboBoxAccent
@@ -22,8 +23,8 @@ ComboBox {
     delegate: ItemDelegate {
         width: control.width
         contentItem: Text {
-            text: modelData
-            color: control.currentIndex === index ? Material.accent : Material.foreground
+            text: control.usePropertyKey ? (modelData["key"] ? modelData.key : "") : modelData
+            color: control.currentIndex === index ? applicationThemeViewModel.currentItems.colorTextFieldAccent : applicationThemeViewModel.currentItems.colorTextFieldForeground
             font.pointSize: fontPointSize + windowSettings.dpiSeparation
             elide: Text.ElideRight
             verticalAlignment: Text.AlignVCenter
