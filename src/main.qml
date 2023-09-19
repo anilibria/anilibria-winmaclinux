@@ -177,13 +177,12 @@ ApplicationWindow {
 
                 Loader {
                     anchors.fill: parent
-                    sourceComponent: mainViewModel.editLeftToolbar ? editPageButton : pageButton
+                    sourceComponent: modelData.identifier !== `additem` && mainViewModel.editLeftToolbar ? editPageButton : pageButton
                 }
 
                 DropArea {
                     anchors.fill: parent
                     onEntered: {
-                        console.log('dropped', modelData.identifier);
                         mainViewModel.dropIndex = modelData.identifier;
                     }
                 }
@@ -221,17 +220,16 @@ ApplicationWindow {
                             acceptedButtons: Qt.LeftButton | Qt.RightButton
                             drag.target: parent
                             drag.onActiveChanged: {
-                                console.log("active changed " + modelData.identifier);
-
                                 if (itemMouseArea.drag.active) {
                                     mainViewModel.dragIndex = modelData.identifier;
                                     mainViewModel.dropIndex = "";
-                                    /*dragContainer.parent = leftToolbarListView;
-                                    dragContainer.opacity = .7;*/
                                     return;
                                 }
 
                                 mainViewModel.reorderMenu();
+                            }
+                            onClicked: {
+                                if(mouse.button & Qt.RightButton) mainViewModel.toggleEditToolBarMode();
                             }
                         }
 
