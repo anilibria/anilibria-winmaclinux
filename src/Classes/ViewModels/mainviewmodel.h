@@ -34,6 +34,8 @@ class MainViewModel : public QObject
     Q_PROPERTY(QVariantList leftToolbar READ leftToolbar NOTIFY leftToolbarChanged)
     Q_PROPERTY(bool editLeftToolbar READ editLeftToolbar NOTIFY editLeftToolbarChanged)
     Q_PROPERTY(QVariantList otherLeftToolbar  READ otherLeftToolbar NOTIFY otherLeftToolbarChanged)
+    Q_PROPERTY(QString dropIndex READ dropIndex WRITE setDropIndex NOTIFY dropIndexChanged)
+    Q_PROPERTY(QString dragIndex READ dragIndex WRITE setDragIndex NOTIFY dragIndexChanged)
 
 private:
     MainMenuListModel* m_mainMenuListModel { new MainMenuListModel(this) };
@@ -52,6 +54,8 @@ private:
     QVariantList m_leftToolbar { QVariantList() };
     bool m_editLeftToolbar { false };
     QVariantList m_otherLeftToolbar { QVariantList() };
+    QString m_dropIndex { -1 };
+    QString m_dragIndex { -1 };
 
 public:
     explicit MainViewModel(QObject *parent = nullptr);
@@ -96,18 +100,27 @@ public:
 
     QString pageParameters() const noexcept { return m_pageParameters; }
 
+    QString dropIndex() const noexcept { return m_dropIndex; }
+    void setDropIndex(const QString& dropIndex) noexcept;
+
+    QString dragIndex() const noexcept { return m_dragIndex; }
+    void setDragIndex(const QString& dragIndex) noexcept;
+
     Q_INVOKABLE void selectPage(const QString& pageId) noexcept;
     Q_INVOKABLE void backToPage() noexcept;
     Q_INVOKABLE void forwardToPage() noexcept;
     Q_INVOKABLE void toggleEditToolBarMode() noexcept;
     Q_INVOKABLE void addOptionToToolbar(int index) noexcept;
     Q_INVOKABLE void removeOptionFromToolbar(const QString& id) noexcept;
+    Q_INVOKABLE void saveState() noexcept;
+    Q_INVOKABLE void reorderMenu() noexcept;
 
 private:
     void setPageDisplayName(const QString& pageId) noexcept;
     void refreshPageVisible() noexcept;
     void selectToPage(const QString& pageId);
     void loadLeftToolbar();
+    void saveLeftToolbar();
 
 public slots:
     void selectedItemInMainMenu(QString pageName);
@@ -145,6 +158,8 @@ signals:
     void leftToolbarChanged();
     void editLeftToolbarChanged();
     void otherLeftToolbarChanged();
+    void dropIndexChanged();
+    void dragIndexChanged();
 
 };
 

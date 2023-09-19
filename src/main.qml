@@ -161,30 +161,117 @@ ApplicationWindow {
             }
         }
         ListView {
+            id: leftToolbarListView
             height: parent.height
             anchors.left: openDrawerButton.right
             anchors.right: openInfoButton.left
             model: mainViewModel.leftToolbar
             orientation: ListView.Horizontal
+            boundsBehavior: Flickable.StopAtBounds
             clip: true
-            delegate: IconButton {
+            delegate: Item {
+                id: itemContainer
                 visible: !mainViewModel.isSmallSizeMode
                 height: 34
                 width: 40
-                hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
-                iconPath: applicationThemeViewModel.currentItems[modelData.itemIcon]
-                iconWidth: 20
-                iconHeight: 20
-                tooltipMessage: modelData.title
-                onButtonPressed: {
-                    if (modelData.identifier === `additem`) {
-                        addItemToToolbarPopup.open();
-                    } else {
-                        mainViewModel.selectPage(modelData.identifier);
+
+                Loader {
+                    anchors.fill: parent
+                    sourceComponent: mainViewModel.editLeftToolbar ? editPageButton : pageButton
+                }
+
+                DropArea {
+                    anchors.fill: parent
+                    onEntered: {
+                        console.log('dropped', modelData.identifier);
+                        mainViewModel.dropIndex = modelData.identifier;
                     }
                 }
-                onRightButtonPressed: {
-                    mainViewModel.toggleEditToolBarMode();
+
+                Component {
+                    id: editPageButton
+
+                    Item {
+                        id: dragContainer
+                        anchors.verticalCenter: parent.verticalCenter
+                        Drag.active: itemMouseArea.drag.active
+                        Drag.hotSpot.x: width / 2
+                        Drag.hotSpot.y: height / 2
+
+                        Rectangle {
+                            anchors.fill: parent
+                            color: mainViewModel.dropIndex !== mainViewModel.dragIndex &&
+                                mainViewModel.dropIndex === modelData.identifier ? applicationThemeViewModel.currentItems.filterIconButtonHoverColor : "transparent"
+                        }
+
+                        Image {
+                            id: iconImage
+                            anchors.verticalCenter: parent.verticalCenter
+                            anchors.horizontalCenter: parent.horizontalCenter
+                            width: 20
+                            height: 20
+                            mipmap: true
+                            asynchronous: true
+                            source: applicationThemeViewModel.currentItems[modelData.itemIcon]
+                        }
+
+                        MouseArea {
+                            id: itemMouseArea
+                            anchors.fill: parent
+                            acceptedButtons: Qt.LeftButton | Qt.RightButton
+                            drag.target: parent
+                            drag.onActiveChanged: {
+                                console.log("active changed " + modelData.identifier);
+
+                                if (itemMouseArea.drag.active) {
+                                    mainViewModel.dragIndex = modelData.identifier;
+                                    mainViewModel.dropIndex = "";
+                                    /*dragContainer.parent = leftToolbarListView;
+                                    dragContainer.opacity = .7;*/
+                                    return;
+                                }
+
+                                mainViewModel.reorderMenu();
+                            }
+                        }
+
+                        states: [
+                            State {
+                                when: itemMouseArea.drag.active
+                                ParentChange {
+                                    target: dragContainer
+                                    parent: leftToolbarListView
+                                }
+                            }
+                        ]
+                    }
+                }
+
+                Component {
+                    id: pageButton
+
+                    IconButton {
+                        anchors.fill: parent
+                        hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
+                        iconPath: applicationThemeViewModel.currentItems[modelData.itemIcon]
+                        iconWidth: 20
+                        iconHeight: 20
+                        tooltipMessage: modelData.title
+                        onButtonPressed: {
+                            if (mainViewModel.isSmallSizeMode) return;
+
+                            if (modelData.identifier === `additem`) {
+                                addItemToToolbarPopup.open();
+                            } else {
+                                mainViewModel.selectPage(modelData.identifier);
+                            }
+                        }
+                        onRightButtonPressed: {
+                            if (mainViewModel.isSmallSizeMode) return;
+
+                            mainViewModel.toggleEditToolBarMode();
+                        }
+                    }
                 }
             }
 
@@ -1201,6 +1288,9 @@ ApplicationWindow {
             }
 
             releaseLinkedSeries.selectByIndex(parseInt(parameters));
+        }
+        Component.onDestruction: {
+            mainViewModel.saveState();
         }
     }
 

@@ -14,7 +14,6 @@ MainViewModel::MainViewModel(QObject *parent) : QObject(parent)
     m_displayNames->insert("youtube", "Youtube");
     m_displayNames->insert("about", "О Программе");
     m_displayNames->insert("cinemahall", "Кинозал");
-    m_displayNames->insert("download", "Менеджер загрузок");
     m_displayNames->insert("maintenance", "Обслуживание");
     m_displayNames->insert("releaseseries", "Связанные релизы");
     m_displayNames->insert("thememanager", "Менеджер Тем");
@@ -84,6 +83,22 @@ void MainViewModel::setStartPage(const QString &startPage) noexcept
         m_history.append(startPage);
         m_startPageFilled = true;
     }
+}
+
+void MainViewModel::setDropIndex(const QString& dropIndex) noexcept
+{
+    if (m_dropIndex == dropIndex) return;
+
+    m_dropIndex = dropIndex;
+    emit dropIndexChanged();
+}
+
+void MainViewModel::setDragIndex(const QString& dragIndex) noexcept
+{
+    if (m_dragIndex == dragIndex) return;
+
+    m_dragIndex = dragIndex;
+    emit dragIndexChanged();
 }
 
 void MainViewModel::selectPage(const QString& pageId) noexcept
@@ -190,6 +205,33 @@ void MainViewModel::removeOptionFromToolbar(const QString &id) noexcept
     emit leftToolbarChanged();
 }
 
+void MainViewModel::saveState() noexcept
+{
+    saveLeftToolbar();
+}
+
+void MainViewModel::reorderMenu() noexcept
+{
+    auto leftIndexOf = -1;
+    auto rightIndexOf = -1;
+    auto iterator = 0;
+    foreach (auto item, m_leftToolbar) {
+        auto identifier = item.toMap().value("identifier");
+        if (identifier == m_dropIndex) leftIndexOf = iterator;
+        if (identifier == m_dragIndex) rightIndexOf = iterator;
+        iterator++;
+    }
+
+    auto exchangedItem = m_leftToolbar.value(rightIndexOf);
+    m_leftToolbar.removeAt(rightIndexOf);
+    m_leftToolbar.insert(leftIndexOf, exchangedItem);
+    m_dropIndex = "";
+    m_dragIndex = "";
+    emit leftToolbarChanged();
+    emit dragIndexChanged();
+    emit dropIndexChanged();
+}
+
 void MainViewModel::setPageDisplayName(const QString &pageId) noexcept
 {
     setCurrentPageDisplayName(m_displayNames->value(pageId, ""));
@@ -290,6 +332,20 @@ void MainViewModel::loadLeftToolbar()
         map.insert("value", displayItem);
         m_otherLeftToolbar.append(map);
     }
+}
+
+void MainViewModel::saveLeftToolbar()
+{
+    QJsonArray array;
+    foreach (auto item, m_leftToolbar) {
+        auto identifier = item.toMap().value("identifier").toString();
+        if (identifier == "additem") continue;
+
+        auto value = QJsonValue(identifier);
+        array.append(value);
+    }
+
+    saveJsonArrayToFile(toolbarItemCacheFileName, array);
 }
 
 void MainViewModel::selectedItemInMainMenu(QString pageName)

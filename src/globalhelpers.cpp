@@ -3,6 +3,7 @@
 #include <QDir>
 #include <QStandardPaths>
 #include <QRegularExpression>
+#include <QJsonDocument>
 #include "globalconstants.h"
 
 QString getCachePath(const QString& filename) noexcept
@@ -48,3 +49,13 @@ QString getJsonContentFromFile(const QString& path) noexcept {
     return releasesJson;
 }
 
+
+void saveJsonArrayToFile(const QString &path, const QJsonArray &array) noexcept
+{
+    QJsonDocument document(array);
+
+    QFile scheduleCacheFile(getCachePath(path));
+    scheduleCacheFile.open(QFile::WriteOnly | QFile::Text);
+    scheduleCacheFile.write(document.toJson());
+    scheduleCacheFile.close();
+}
