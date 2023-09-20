@@ -159,12 +159,18 @@ void MainViewModel::toggleEditToolBarMode() noexcept
     emit editLeftToolbarChanged();
 
     if (m_editLeftToolbar) {
+        QVariantMap removeMap;
+        removeMap.insert("identifier", removeItemButton);
+        removeMap.insert("title", "Перенесите сюда кнопки чтобы удалить из тулбара");
+        removeMap.insert("itemIcon", "iconDeleteItem");
+        m_leftToolbar.append(removeMap);
         QVariantMap map;
-        map.insert("identifier", "additem");
+        map.insert("identifier", addItemButton);
         map.insert("title", "Добавить страницу в тулбар");
         map.insert("itemIcon", "iconEditThemeFieldPlus");
         m_leftToolbar.append(map);
     } else {
+        m_leftToolbar.removeAt(m_leftToolbar.count() - 1);
         m_leftToolbar.removeAt(m_leftToolbar.count() - 1);
     }
 
@@ -180,29 +186,10 @@ void MainViewModel::addOptionToToolbar(int index) noexcept
     map.insert("identifier", id);
     map.insert("title", item.value("key"));
     map.insert("itemIcon", m_mainMenuListModel->getIcon(id));
-    m_leftToolbar.insert(m_leftToolbar.count() - 1, map);
+    m_leftToolbar.insert(m_leftToolbar.count() - 2, map);
     m_otherLeftToolbar.removeAt(index);
     emit leftToolbarChanged();
     emit otherLeftToolbarChanged();
-}
-
-void MainViewModel::removeOptionFromToolbar(const QString &id) noexcept
-{
-    QVariantMap toolbarItem;
-    foreach (auto item, m_leftToolbar) {
-        auto map = item.toMap();
-        if (map.value("identifier") == id) {
-            toolbarItem = map;
-        }
-    }
-    m_leftToolbar.removeOne(toolbarItem);
-
-    QVariantMap map;
-    map.insert("key", m_displayNames->value(id));
-    map.insert("value", id);
-    m_otherLeftToolbar.append(map);
-
-    emit leftToolbarChanged();
 }
 
 void MainViewModel::saveState() noexcept
@@ -214,22 +201,45 @@ void MainViewModel::reorderMenu() noexcept
 {
     auto leftIndexOf = -1;
     auto rightIndexOf = -1;
+    auto isDeleted = false;
+    auto deletedId = "";
     auto iterator = 0;
+    if (m_dragIndex == removeItemButton) {
+        m_dragIndex = m_dropIndex;
+        m_dropIndex = removeItemButton;
+    }
     foreach (auto item, m_leftToolbar) {
         auto identifier = item.toMap().value("identifier");
-        if (identifier == m_dropIndex) leftIndexOf = iterator;
+        if (identifier == m_dropIndex) {
+            if (identifier == removeItemButton) {
+                isDeleted = true;
+            } else {
+                leftIndexOf = iterator;
+            }
+        }
         if (identifier == m_dragIndex) rightIndexOf = iterator;
         iterator++;
     }
 
-    auto exchangedItem = m_leftToolbar.value(rightIndexOf);
-    m_leftToolbar.removeAt(rightIndexOf);
-    m_leftToolbar.insert(leftIndexOf, exchangedItem);
+    if (isDeleted) {
+        m_leftToolbar.removeAt(rightIndexOf);
+        addOptionsToOtherToolbar(m_dragIndex);
+    } else {
+        auto exchangedItem = m_leftToolbar.value(rightIndexOf);
+        m_leftToolbar.removeAt(rightIndexOf);
+        m_leftToolbar.insert(leftIndexOf, exchangedItem);
+    }
+
     m_dropIndex = "";
     m_dragIndex = "";
     emit leftToolbarChanged();
     emit dragIndexChanged();
     emit dropIndexChanged();
+}
+
+bool MainViewModel::isControlButton(const QString &id) noexcept
+{
+    return id == addItemButton;
 }
 
 void MainViewModel::setPageDisplayName(const QString &pageId) noexcept
@@ -339,13 +349,23 @@ void MainViewModel::saveLeftToolbar()
     QJsonArray array;
     foreach (auto item, m_leftToolbar) {
         auto identifier = item.toMap().value("identifier").toString();
-        if (identifier == "additem") continue;
+        if (identifier == addItemButton || identifier == removeItemButton) continue;
 
         auto value = QJsonValue(identifier);
         array.append(value);
     }
 
     saveJsonArrayToFile(toolbarItemCacheFileName, array);
+}
+
+void MainViewModel::addOptionsToOtherToolbar(const QString &id)
+{
+    QVariantMap map;
+    map.insert("key", m_displayNames->value(id));
+    map.insert("value", id);
+    m_otherLeftToolbar.append(map);
+
+    emit otherLeftToolbarChanged();
 }
 
 void MainViewModel::selectedItemInMainMenu(QString pageName)

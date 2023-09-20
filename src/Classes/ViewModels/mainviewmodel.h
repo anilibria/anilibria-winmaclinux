@@ -56,6 +56,8 @@ private:
     QVariantList m_otherLeftToolbar { QVariantList() };
     QString m_dropIndex { -1 };
     QString m_dragIndex { -1 };
+    const QString addItemButton { "additem" };
+    const QString removeItemButton { "removeitem" };
 
 public:
     explicit MainViewModel(QObject *parent = nullptr);
@@ -111,9 +113,9 @@ public:
     Q_INVOKABLE void forwardToPage() noexcept;
     Q_INVOKABLE void toggleEditToolBarMode() noexcept;
     Q_INVOKABLE void addOptionToToolbar(int index) noexcept;
-    Q_INVOKABLE void removeOptionFromToolbar(const QString& id) noexcept;
     Q_INVOKABLE void saveState() noexcept;
     Q_INVOKABLE void reorderMenu() noexcept;
+    Q_INVOKABLE bool isControlButton(const QString& id) noexcept;
 
 private:
     void setPageDisplayName(const QString& pageId) noexcept;
@@ -121,6 +123,7 @@ private:
     void selectToPage(const QString& pageId);
     void loadLeftToolbar();
     void saveLeftToolbar();
+    void addOptionsToOtherToolbar(const QString& id);
 
 public slots:
     void selectedItemInMainMenu(QString pageName);

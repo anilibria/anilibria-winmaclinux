@@ -177,7 +177,7 @@ ApplicationWindow {
 
                 Loader {
                     anchors.fill: parent
-                    sourceComponent: modelData.identifier !== `additem` && mainViewModel.editLeftToolbar ? editPageButton : pageButton
+                    sourceComponent: !mainViewModel.isControlButton(modelData.identifier) && mainViewModel.editLeftToolbar ? editPageButton : pageButton
                 }
 
                 DropArea {
