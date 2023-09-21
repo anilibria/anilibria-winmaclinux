@@ -202,7 +202,6 @@ void MainViewModel::reorderMenu() noexcept
     auto leftIndexOf = -1;
     auto rightIndexOf = -1;
     auto isDeleted = false;
-    auto deletedId = "";
     auto iterator = 0;
     if (m_dragIndex == removeItemButton) {
         m_dragIndex = m_dropIndex;
