@@ -1,0 +1,23 @@
+export component App inherits Window {
+    min-width: 400px;
+    min-height: 400px;
+    max-width: 800px;
+    icon: @image-url("../images/icon.png");
+    title: "AniLibria.Qt Installer";
+    
+    VerticalLayout {
+        spacing: 2px;
+
+        Text {
+            font-family: "sans-serif";
+            font-size: 24px;
+            text: "Available versions";
+        }
+        /*Image {
+            width: 100px;
+            height: 100px;
+            source: @image-url("../images/test.jpg");
+        } */   
+    }
+
+}

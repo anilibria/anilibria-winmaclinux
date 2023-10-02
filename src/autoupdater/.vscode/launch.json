@@ -1,0 +1,45 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug executable 'autoupdater'",
+            "cargo": {
+                "args": [
+                    "build",
+                    "--bin=autoupdater",
+                    "--package=autoupdater"
+                ],
+                "filter": {
+                    "name": "autoupdater",
+                    "kind": "bin"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug unit tests in executable 'autoupdater'",
+            "cargo": {
+                "args": [
+                    "test",
+                    "--no-run",
+                    "--bin=autoupdater",
+                    "--package=autoupdater"
+                ],
+                "filter": {
+                    "name": "autoupdater",
+                    "kind": "bin"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        }
+    ]
+}
