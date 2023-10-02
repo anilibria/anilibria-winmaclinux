@@ -30,15 +30,15 @@ export component App inherits Window {
         background: transparent;
         width: parent.width;
         height: parent.height;
-
-        VerticalLayout {
-            spacing: 2px;
     
+    VerticalLayout {
+        spacing: 2px;
+
             CenterBox {
                 width: parent.width;
                 height: 40px;
 
-                Text {
+        Text {
                     font-size: 18px;
                     text: "Install version " + downloadVersion;
                 }    
@@ -62,9 +62,14 @@ export component App inherits Window {
                     width: parent.width - 40px;
                     height: 20px;
                     progress: (downloadProgressValue / 100);
-                }
-            }
-                
+        }
+        /*Image {
+            width: 100px;
+            height: 100px;
+            source: @image-url("../images/test.jpg");
+        } */   
+    }
+
             Rectangle {
             }
         }    
