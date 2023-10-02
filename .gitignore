@@ -72,6 +72,8 @@ src/.vs/AniLibria
 
 mdk-sdk
 
+src/autoupdater/target
+
 .vs
 
 pac.deb
