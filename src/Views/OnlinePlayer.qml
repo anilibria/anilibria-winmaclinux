@@ -1398,7 +1398,7 @@ Page {
             onPressed: {
                 const position = onlinePlayerViewModel.skipOpening();
                 if (onlinePlayerViewModel.restorePosition != 0) onlinePlayerViewModel.restorePosition = 0;
-                if (!onlinePlayerViewModel.isFromNavigated) onlinePlayerViewModel.isFromNavigated = false;
+                if (onlinePlayerViewModel.isFromNavigated) onlinePlayerViewModel.isFromNavigated = false;
                 playerLoader.item.seek(position);
             }
         }
@@ -1411,7 +1411,7 @@ Page {
                 if (onlinePlayerViewModel.displaySkipOpening && !onlinePlayerViewModel.endSkipOpening) {
                     const position = onlinePlayerViewModel.skipOpening();
                     if (onlinePlayerViewModel.restorePosition != 0) onlinePlayerViewModel.restorePosition = 0;
-                    if (!onlinePlayerViewModel.isFromNavigated) onlinePlayerViewModel.isFromNavigated = false;
+                    if (onlinePlayerViewModel.isFromNavigated) onlinePlayerViewModel.isFromNavigated = true;
                     playerLoader.item.seek(position);
                     notificationViewModel.sendInfoNotification(`Произошел автоматический пропуск опенинга`);
                 }
