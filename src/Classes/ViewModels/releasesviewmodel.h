@@ -246,6 +246,7 @@ public:
     QString getReleaseCodeFromUrl(const QString& url) const noexcept;
     void fillFullSearch(QList<FullReleaseModel*>& list, const QString& filter) noexcept;
     bool fullSearchCheck(const QString& word, const FullReleaseModel* release) noexcept;
+    void iterateOnReleases(std::function<void (FullReleaseModel *)> func) noexcept;
 
     Q_INVOKABLE void copyToClipboard(const QString& text) const noexcept;
     Q_INVOKABLE void copyImageToClipboard(const QString& imagePath) const;

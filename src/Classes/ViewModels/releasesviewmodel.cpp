@@ -777,6 +777,13 @@ bool ReleasesViewModel::fullSearchCheck(const QString &word, const FullReleaseMo
     return false;
 }
 
+void ReleasesViewModel::iterateOnReleases(std::function<void (FullReleaseModel *)> func) noexcept
+{
+    foreach (auto release, *m_releases) {
+        func(release);
+    }
+}
+
 void ReleasesViewModel::copyToClipboard(const QString &text) const noexcept
 {
     if (text.isEmpty()) return;

@@ -425,6 +425,46 @@ Page {
                                 onTextChanged: {
                                     releasesViewModel.items.genresFilter = text;
                                 }
+
+                                MouseArea {
+                                    anchors.fill: parent
+                                    acceptedButtons: Qt.RightButton
+                                    onPressed: {
+                                        genresFiltersComboBox.editText = "";
+                                        genresFilters.open();
+                                    }
+                                }
+
+                                DefaultPopup {
+                                    id: genresFilters
+                                    x: 100
+                                    width: 250
+                                    height: 70
+                                    modal: true
+                                    focus: true
+                                    closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
+
+                                    CommonComboBox {
+                                        id: genresFiltersComboBox
+                                        anchors.fill: parent
+                                        editable: true
+                                        model: filterDictionariesViewModel.genres
+                                        onCurrentIndexChanged: {
+                                            if (!filtersPopup.opened) return;
+
+                                            const value = filterDictionariesViewModel.genres[currentIndex];
+                                            if (!value) return;
+
+                                            const currentValue = releasesViewModel.items.genresFilter;
+                                            if (!currentValue) {
+                                                genresSearchField.text = value;
+                                            } else {
+                                                genresSearchField.text = currentValue + ", " + value;
+                                            }
+                                            genresFilters.close();
+                                        }
+                                    }
+                                }
                             }
                             PlainText {
                                 id: labelOrAndGenresSearchField
@@ -458,6 +498,46 @@ Page {
                                 placeholderText: "Вводите войсеров через запятую"
                                 onTextChanged: {
                                     releasesViewModel.items.voicesFilter = text;
+                                }
+
+                                MouseArea {
+                                    anchors.fill: parent
+                                    acceptedButtons: Qt.RightButton
+                                    onPressed: {
+                                        voicesFiltersComboBox.editText = "";
+                                        voicesFilters.open();
+                                    }
+                                }
+
+                                DefaultPopup {
+                                    id: voicesFilters
+                                    x: 100
+                                    width: 250
+                                    height: 70
+                                    modal: true
+                                    focus: true
+                                    closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
+
+                                    CommonComboBox {
+                                        id: voicesFiltersComboBox
+                                        anchors.fill: parent
+                                        editable: true
+                                        model: filterDictionariesViewModel.voices
+                                        onCurrentIndexChanged: {
+                                            if (!filtersPopup.opened) return;
+
+                                            const value = filterDictionariesViewModel.voices[currentIndex];
+                                            if (!value) return;
+
+                                            const currentValue = releasesViewModel.items.voicesFilter;
+                                            if (!currentValue) {
+                                                voicesSearchField.text = value;
+                                            } else {
+                                                voicesSearchField.text = currentValue + ", " + value;
+                                            }
+                                            voicesFilters.close();
+                                        }
+                                    }
                                 }
                             }
                             PlainText {
@@ -500,6 +580,42 @@ Page {
                                 onTextChanged: {
                                     releasesViewModel.items.yearsFilter = text;
                                 }
+
+                                MouseArea {
+                                    anchors.fill: parent
+                                    acceptedButtons: Qt.RightButton
+                                    onPressed: {
+                                        yearsFilters.open();
+                                    }
+                                }
+
+                                DefaultPopup {
+                                    id: yearsFilters
+                                    x: 100
+                                    width: 150
+                                    height: 70
+                                    modal: true
+                                    focus: true
+                                    closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
+
+                                    CommonComboBox {
+                                        model: filterDictionariesViewModel.years
+                                        onCurrentIndexChanged: {
+                                            if (!filtersPopup.opened) return;
+
+                                            const value = filterDictionariesViewModel.years[currentIndex];
+                                            if (!value) return;
+
+                                            const currentValue = releasesViewModel.items.yearsFilter;
+                                            if (!currentValue) {
+                                                yearsSearchField.text = value;
+                                            } else {
+                                                yearsSearchField.text = currentValue + ", " + value;
+                                            }
+                                            yearsFilters.close();
+                                        }
+                                    }
+                                }
                             }
                             CommonTextField {
                                 id: seasonesSearchField
@@ -509,6 +625,40 @@ Page {
                                 placeholderText: "Вводите через запятую"
                                 onTextChanged: {
                                     releasesViewModel.items.seasonesFilter = text;
+                                }
+
+                                MouseArea {
+                                    anchors.fill: parent
+                                    acceptedButtons: Qt.RightButton
+                                    onPressed: {
+                                        seasonsFilters.open();
+                                    }
+                                }
+
+                                DefaultPopup {
+                                    id: seasonsFilters
+                                    x: 100
+                                    width: 150
+                                    height: 70
+                                    modal: true
+                                    focus: true
+                                    closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
+
+                                    CommonComboBox {
+                                        model: filterDictionariesViewModel.seasons
+                                        onCurrentIndexChanged: {
+                                            if (!filtersPopup.opened) return;
+
+                                            const value = filterDictionariesViewModel.seasons[currentIndex];
+                                            const currentValue = releasesViewModel.items.seasonesFilter;
+                                            if (!currentValue) {
+                                                seasonesSearchField.text = value;
+                                            } else {
+                                                seasonesSearchField.text = currentValue + ", " + value;
+                                            }
+                                            seasonsFilters.close();
+                                        }
+                                    }
                                 }
                             }
                             PlainText {
@@ -526,6 +676,40 @@ Page {
                                 placeholderText: "Вводите статусы через запятую"
                                 onTextChanged: {
                                     releasesViewModel.items.statusesFilter = text;
+                                }
+
+                                MouseArea {
+                                    anchors.fill: parent
+                                    acceptedButtons: Qt.RightButton
+                                    onPressed: {
+                                        statusesFilters.open();
+                                    }
+                                }
+
+                                DefaultPopup {
+                                    id: statusesFilters
+                                    x: 100
+                                    width: 150
+                                    height: 70
+                                    modal: true
+                                    focus: true
+                                    closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
+
+                                    CommonComboBox {
+                                        model: filterDictionariesViewModel.statuses
+                                        onCurrentIndexChanged: {
+                                            if (!filtersPopup.opened) return;
+
+                                            const value = filterDictionariesViewModel.statuses[currentIndex];
+                                            const currentValue = releasesViewModel.items.statusesFilter;
+                                            if (!currentValue) {
+                                                statusesSearchField.text = value;
+                                            } else {
+                                                statusesSearchField.text = currentValue + ", " + value;
+                                            }
+                                            statusesFilters.close();
+                                        }
+                                    }
                                 }
                             }
 

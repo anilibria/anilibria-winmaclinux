@@ -666,6 +666,10 @@ ApplicationWindow {
                 saveTorrentFileDialog.open();
             }
         }
+
+        onSynchronizationCompleted: {
+            filterDictionariesViewModel.refreshDictionaries();
+        }
     }
 
     Drawer {
@@ -1347,6 +1351,11 @@ ApplicationWindow {
         fieldList.onErrorMessage: {
             notificationViewModel.sendInfoNotification(message);
         }
+    }
+
+    FilterDictionariesViewModel {
+        id: filterDictionariesViewModel
+        releases: releasesViewModel
     }
 
     ExternalPlayerViewModel {
