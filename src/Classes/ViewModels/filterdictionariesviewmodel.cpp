@@ -1,4 +1,4 @@
-#include "filterDictionariesViewModel.h"
+#include "filterdictionariesviewmodel.h"
 
 FilterDictionariesViewModel::FilterDictionariesViewModel(QObject *parent)
     : QObject{parent}
