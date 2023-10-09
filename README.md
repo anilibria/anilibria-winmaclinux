@@ -80,11 +80,11 @@ $ flatpak install --user anilibria.flatpak
 [Void Linux](https://github.com/anilibria/anilibria-winmaclinux/blob/master/voidlinux.md)
 
 ### Для сборки необходимо:
-- Минимальная поддерживаемая версия Qt 5.13.1
+- Минимальная поддерживаемая версия Qt 5.15.2
 - Поддержка C++11 (минимальные версии компиляторов MSVC15, GCC 4.8 или CLANG 3.3)
-- Модули Qt - multimedia, graphicaleffects, svg, websocket
+- Модули Qt - multimedia, graphicaleffects, svg, websocket, particleeffects
 - Для сборки проекта используется qmake
-- Для Windows сборки требуется зависимость libVLC версии 3.0.18
+- Для Windows сборки требуется зависимость libVLC версии 3.0.18 и QtAV
 
 ### Linux
 
