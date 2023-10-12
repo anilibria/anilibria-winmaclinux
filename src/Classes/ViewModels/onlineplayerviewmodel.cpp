@@ -1225,7 +1225,7 @@ OnlineVideoModel* OnlinePlayerViewModel::nextNotSeenVideo()
 
     auto currentIndex = m_videos->getVideoIndex(currentVideo);
 
-    return m_videos->getFirstReleaseWithPredicate(
+    auto nextVideo = m_videos->getFirstReleaseWithPredicate(
         [seenMarks, currentIndex, videos](OnlineVideoModel* video) {
             auto videoIndex = videos->getVideoIndex(video);
             if (videoIndex <= currentIndex) return false;
@@ -1237,6 +1237,10 @@ OnlineVideoModel* OnlinePlayerViewModel::nextNotSeenVideo()
             return true;
         }
     );
+
+    if (currentVideo->releaseId() != nextVideo->releaseId()) emit saveToWatchHistory(nextVideo->releaseId());
+
+    return nextVideo;
 }
 
 OnlineVideoModel *OnlinePlayerViewModel::previousNotSeenVideo()
@@ -1252,7 +1256,7 @@ OnlineVideoModel *OnlinePlayerViewModel::previousNotSeenVideo()
     );
     auto currentIndex = m_videos->getVideoIndex(currentVideo);
 
-    return m_videos->getFirstReleaseWithPredicate(
+    auto previousVideo = m_videos->getFirstReleaseWithPredicate(
         [seenMarks, currentIndex, videos](OnlineVideoModel* video) {
             if (video->isGroup()) return false;
 
@@ -1266,6 +1270,10 @@ OnlineVideoModel *OnlinePlayerViewModel::previousNotSeenVideo()
         },
         true
     );
+
+    if (currentVideo->releaseId() != previousVideo->releaseId()) emit saveToWatchHistory(previousVideo->releaseId());
+
+    return previousVideo;
 }
 
 void OnlinePlayerViewModel::receiveCommand(const unsigned int id, const QString &command, const QString &argument)

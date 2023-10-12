@@ -38,7 +38,7 @@ public:
     Q_INVOKABLE void refreshDictionaries();
 
 private:
-    void fillDictinaries();
+    void fillDictionaries();
 
 signals:
     void releasesChanged();

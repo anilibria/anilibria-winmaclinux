@@ -12,7 +12,7 @@ void FilterDictionariesViewModel::setReleases(const ReleasesViewModel *releases)
 
     m_releases = const_cast<ReleasesViewModel *>(releases);
 
-    fillDictinaries();
+    fillDictionaries();
 }
 
 void FilterDictionariesViewModel::refreshDictionaries()
@@ -23,10 +23,10 @@ void FilterDictionariesViewModel::refreshDictionaries()
     m_voices.clear();
     m_seasons.clear();
 
-    fillDictinaries();
+    fillDictionaries();
 }
 
-void FilterDictionariesViewModel::fillDictinaries()
+void FilterDictionariesViewModel::fillDictionaries()
 {
     QSet<QString> years;
     QSet<QString> genres;
