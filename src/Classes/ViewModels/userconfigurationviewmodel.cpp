@@ -313,6 +313,14 @@ void UserConfigurationViewModel::setSendPlaybackToRemote(bool sendPlaybackToRemo
     emit sendPlaybackToRemoteChanged();
 }
 
+void UserConfigurationViewModel::setUsingVideoProxyVLC(bool usingVideoProxyVLC) noexcept
+{
+    if (m_usingVideoProxyVLC == usingVideoProxyVLC) return;
+
+    m_usingVideoProxyVLC = usingVideoProxyVLC;
+    emit usingVideoProxyVLCChanged();
+}
+
 void UserConfigurationViewModel::refreshConfiguration() noexcept
 {
     readSettingsFromFile();
@@ -340,6 +348,8 @@ void UserConfigurationViewModel::refreshConfiguration() noexcept
     emit hideCurrentSeasonChanged();
     emit hideNextInReleaseSeriesChanged();
     emit customScriptFileChanged();
+    emit usingVideoProxyChanged();
+    emit usingVideoProxyVLCChanged();
 }
 
 void UserConfigurationViewModel::saveSettingsToFile()
@@ -380,6 +390,7 @@ void UserConfigurationViewModel::saveSettingsToFile()
     object[m_remotePortField] = m_remotePort;
     object[m_sendVolumeToRemoteField] = m_sendVolumeToRemote;
     object[m_sendPlaybackToRemoteField] = m_sendPlaybackToRemote;
+    object[m_usingVideoProxyVLCField] = m_usingVideoProxyVLC;
 
     QFile file(getCachePath(m_cacheFileName));
     file.open(QFile::WriteOnly | QFile::Text);
@@ -431,4 +442,5 @@ void UserConfigurationViewModel::readSettingsFromFile()
     m_remotePort = object.contains(m_remotePortField) ? object[m_remotePortField].toInt() : 12345;
     m_sendVolumeToRemote = object.contains(m_sendVolumeToRemoteField) ? object[m_sendVolumeToRemoteField].toBool() : true;
     m_sendPlaybackToRemote = object.contains(m_sendPlaybackToRemoteField) ? object[m_sendPlaybackToRemoteField].toBool() : false;
+    m_usingVideoProxyVLC = object.contains(m_usingVideoProxyVLCField) ? object[m_usingVideoProxyVLCField].toBool() : false;
 }

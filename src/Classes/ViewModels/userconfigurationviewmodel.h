@@ -45,6 +45,7 @@ class UserConfigurationViewModel : public QObject
     Q_PROPERTY(bool hidedSpeed READ hidedSpeed WRITE setHidedSpeed NOTIFY hidedSpeedChanged)
     Q_PROPERTY(int playerBuffer READ playerBuffer WRITE setPlayerBuffer NOTIFY playerBufferChanged)
     Q_PROPERTY(bool usingVideoProxy READ usingVideoProxy WRITE setUsingVideoProxy NOTIFY usingVideoProxyChanged)
+    Q_PROPERTY(bool usingVideoProxyVLC READ usingVideoProxyVLC WRITE setUsingVideoProxyVLC NOTIFY usingVideoProxyVLCChanged)
     Q_PROPERTY(QString torrentStreamPath READ torrentStreamPath WRITE setTorrentStreamPath NOTIFY torrentStreamPathChanged)
     Q_PROPERTY(bool removeAllDownloadedTorrent READ removeAllDownloadedTorrent WRITE setRemoveAllDownloadedTorrent NOTIFY removeAllDownloadedTorrentChanged)
     Q_PROPERTY(bool isCroppedPlayer READ isCroppedPlayer WRITE setIsCroppedPlayer NOTIFY isCroppedPlayerChanged)
@@ -98,6 +99,7 @@ private:
     const QString m_remotePortField { "remotePort" };
     const QString m_sendVolumeToRemoteField { "sendVolumeToRemote" };
     const QString m_sendPlaybackToRemoteField { "sendPlaybackToRemote" };
+    const QString m_usingVideoProxyVLCField { "usingVideoProxyVLC" };
     int m_opacityPlayerPanel { 50 };
     bool m_notCloseReleaseCardAfterWatch { false };
     bool m_usingScrollAcceleration { true };
@@ -133,6 +135,7 @@ private:
     int m_remotePort { 0 };
     bool m_sendVolumeToRemote { false };
     bool m_sendPlaybackToRemote { false };
+    bool m_usingVideoProxyVLC { false };
 
 public:
     explicit UserConfigurationViewModel(QObject *parent = nullptr);
@@ -242,6 +245,9 @@ public:
     bool sendPlaybackToRemote() const noexcept  { return m_sendPlaybackToRemote; }
     void setSendPlaybackToRemote(bool sendPlaybackToRemote) noexcept;
 
+    bool usingVideoProxyVLC() const noexcept { return m_usingVideoProxyVLC; }
+    void setUsingVideoProxyVLC(bool usingVideoProxyVLC) noexcept;
+
     Q_INVOKABLE void refreshConfiguration() noexcept;
     Q_INVOKABLE void saveSettingsToFile();
 
@@ -284,6 +290,7 @@ signals:
     void remotePortChanged();
     void sendVolumeToRemoteChanged();
     void sendPlaybackToRemoteChanged();
+    void usingVideoProxyVLCChanged();
 
 };
 

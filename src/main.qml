@@ -878,7 +878,11 @@ ApplicationWindow {
         id: onlinePlayerViewModel
         releasesViewModel: releasesViewModel
         proxyPort: userConfigurationViewModel.playerBuffer
-        needProxified: userConfigurationViewModel.usingVideoProxy && onlinePlayerWindowViewModel.isSelectedQtAv && torrentNotifierViewModel.activated
+        needProxified: (
+                (userConfigurationViewModel.usingVideoProxy && onlinePlayerWindowViewModel.isSelectedQtAv) ||
+                (userConfigurationViewModel.usingVideoProxyVLC && onlinePlayerWindowViewModel.isSelectedVlc)
+            ) &&
+            torrentNotifierViewModel.activated
         sendVolumeToRemote: userConfigurationViewModel.sendVolumeToRemote
         sendPlaybackToRemoteSwitch: userConfigurationViewModel.sendPlaybackToRemote
         remotePlayer.port: userConfigurationViewModel.remotePort
