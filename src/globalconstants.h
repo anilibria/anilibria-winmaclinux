@@ -253,5 +253,6 @@ extern QString iconDisabledCinemahallField;
 extern QString colorComboBoxAccentField;
 extern QString colorComboBoxHintField;
 extern QString colorComboBoxBackgroundField;
+extern QString iconCustomGroupField;
 
 #endif // GLOBALCONSTANTS_H

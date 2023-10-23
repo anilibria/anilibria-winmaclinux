@@ -197,3 +197,5 @@ QString iconDisabledCinemahallField = "iconDisabledCinemahall";
 QString colorComboBoxAccentField = "colorComboBoxAccent";
 QString colorComboBoxHintField = "colorComboBoxHint";
 QString colorComboBoxBackgroundField = "colorComboBoxBackground";
+
+QString iconCustomGroupField = "iconCustomGroup";
