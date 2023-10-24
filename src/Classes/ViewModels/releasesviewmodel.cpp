@@ -30,7 +30,7 @@
 ReleasesViewModel::ReleasesViewModel(QObject *parent) : QObject(parent)
 {
     m_items = new ReleasesListModel(this);
-    m_items->setup(m_releases, m_scheduleReleases, m_userFavorites, m_hiddenReleases, m_seenMarks, m_historyItems, m_releaseChanges, m_cinemahall);
+    m_items->setup(m_releases, m_scheduleReleases, m_userFavorites, m_hiddenReleases, m_seenMarks, m_historyItems, m_releaseChanges, m_cinemahall, m_customGroups);
     m_cinemahall->setup(m_releases, m_seenMarks);
     connect(m_cinemahall.get(), &CinemahallListModel::hasItemsChanged, this, &ReleasesViewModel::cinemahallItemsChanged);
 
@@ -1229,6 +1229,7 @@ uint32_t ReleasesViewModel::getCountFromChanges(const QList<int> *releases, bool
         foreach (auto releaseId, *releases) {
             if (m_userFavorites->contains(releaseId)) count++;
         }
+        return count;
     }
     return releases->count();
 }

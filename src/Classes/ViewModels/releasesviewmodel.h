@@ -22,6 +22,8 @@
 #include <QObject>
 #include <QScopedPointer>
 #include <QSharedPointer>
+#include <QMultiMap>
+#include <QMap>
 #include "../ListModels/releasetorrentslist.h"
 #include "imagebackgroundviewmodel.h"
 #include "../Models/fullreleasemodel.h"
@@ -33,6 +35,7 @@
 #include "../Services/synchronizationservice.h"
 #include "../Services/applicationsettings.h"
 #include "../Services/localstorageservice.h"
+#include "releasecustomgroupsviewmodel.h"
 #include "useractivityviewmodel.h"
 
 class ReleasesViewModel : public QObject
@@ -94,6 +97,7 @@ class ReleasesViewModel : public QObject
     Q_PROPERTY(QString newEntities READ newEntities WRITE setNewEntities NOTIFY newEntitiesChanged)
     Q_PROPERTY(bool notCloseReleaseCardAfterWatch READ notCloseReleaseCardAfterWatch WRITE setNotCloseReleaseCardAfterWatch NOTIFY notCloseReleaseCardAfterWatchChanged)
     Q_PROPERTY(QList<int> countSections READ countSections NOTIFY countSectionsChanged)
+    Q_PROPERTY(ReleaseCustomGroupsViewModel* customGroups READ customGroups NOTIFY customGroupsChanged)
 
 private:
     const QString releasesCacheFileName { "releases.cache" };
@@ -111,6 +115,7 @@ private:
     ImageBackgroundViewModel* m_imageBackgroundViewModel { new ImageBackgroundViewModel(this) };
     QSharedPointer<QList<FullReleaseModel*>> m_releases { new QList<FullReleaseModel*>() };
     QScopedPointer<QMap<int, FullReleaseModel*>> m_releasesMap { new QMap<int, FullReleaseModel*>() };
+    ReleaseCustomGroupsViewModel* m_customGroups { new ReleaseCustomGroupsViewModel(this) };
     int m_countReleases { 0 };
     int m_countSeens { 0 };
     int m_countFavorites { 0 };
@@ -199,6 +204,8 @@ public:
 
     bool notCloseReleaseCardAfterWatch() const noexcept { return m_notCloseReleaseCardAfterWatch; }
     void setNotCloseReleaseCardAfterWatch(const bool notCloseReleaseCardAfterWatch) noexcept;
+
+    ReleaseCustomGroupsViewModel* customGroups() const noexcept { return m_customGroups; }
 
     bool isOpenedCard() const noexcept { return m_openedRelease != nullptr; }
     int openedReleaseId() const noexcept { return m_openedRelease != nullptr ? m_openedRelease->id() : 0; }
@@ -323,6 +330,10 @@ private:
 
     void loadChanges();
     void saveChanges();
+
+    void loadGroups();
+    void saveGroups();
+    void refreshGroups();
     int getCountOnlyFavorites(QList<int>* changes) const noexcept;
     QString getMultipleLinks(QString text) const noexcept;
     FullReleaseModel* getReleaseByCode(QString code) const noexcept;
@@ -401,6 +412,7 @@ signals:
     void countSectionsChanged();
     void openedReleaseSeenCountVideosChanged();
     void openedReleaseIsRutubeChanged();
+    void customGroupsChanged();
 
 };
 

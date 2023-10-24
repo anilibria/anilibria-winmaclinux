@@ -230,5 +230,7 @@
         <file>CustomStyle/ComboBox.qml</file>
         <file>Views/ExternalPlayerWindow.qml</file>
         <file>Assets/Icons/toolbaroptions.svg</file>
+        <file>Assets/Icons/releases/customgroup.svg</file>
+        <file>Views/ReleaseCustomGroups.qml</file>
     </qresource>
 </RCC>

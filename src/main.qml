@@ -945,6 +945,9 @@ ApplicationWindow {
         imageBackgroundViewModel.containerHeight: releases.backgroundImageHeight
         items.releaseLinkedSeries: releaseLinkedSeries
         items.scriptFilePath: userConfigurationViewModel.customScriptFile
+        Component.onDestruction: {
+            releasesViewModel.customGroups.saveState();
+        }
         items.onScriptError: {
             notificationViewModel.sendInfoNotification(message);
         }
@@ -1343,7 +1346,6 @@ ApplicationWindow {
         id: myAnilibriaSearchListModel
         releases: releasesViewModel
     }
-
 
     ApplicationThemeViewModel {
         id: applicationThemeViewModel

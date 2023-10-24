@@ -29,6 +29,7 @@
 #include "../Models/historymodel.h"
 #include "../Services/releaselinkedseries.h"
 #include "cinemahalllistmodel.h"
+#include "../ViewModels/releasecustomgroupsviewmodel.h"
 
 class ReleasesListModel : public QAbstractListModel
 {
@@ -59,6 +60,10 @@ class ReleasesListModel : public QAbstractListModel
     Q_PROPERTY(QString scriptFilePath READ scriptFilePath WRITE setScriptFilePath NOTIFY scriptFilePathChanged)
 
 private:
+    const QString winterValue { "зима" };
+    const QString autumnValue { "осень" };
+    const QString springValue { "весна" };
+    const QString summerValue { "лето" };
     QSharedPointer<QList<FullReleaseModel*>> m_releases;
     QScopedPointer<QList<FullReleaseModel*>> m_filteredReleases { new QList<FullReleaseModel*>() };
     QVector<int>* m_userFavorites { nullptr };
@@ -88,6 +93,7 @@ private:
     bool m_isHasReleases { false };
     bool m_hasReleaseSeriesFilter { false };
     bool m_filterByFavorites { false };
+    ReleaseCustomGroupsViewModel* m_customGroups { nullptr };
     QString m_scheduleDayFilter { "" };
     QJSEngine* m_engine { new QJSEngine(this) };
     QString m_scriptFilePath { "" };
@@ -133,7 +139,7 @@ private:
 public:
     explicit ReleasesListModel(QObject *parent = nullptr);
 
-    void setup(QSharedPointer<QList<FullReleaseModel*>> releases, QMap<int, int>* schedules, QVector<int>* userFavorites, QVector<int>* hidedReleases, QHash<QString, bool>* seenMarks, QSharedPointer<QHash<int, HistoryModel*>> historyItems, QSharedPointer<ChangesModel> changes, QSharedPointer<CinemahallListModel> cinemahall);
+    void setup(QSharedPointer<QList<FullReleaseModel*>> releases, QMap<int, int>* schedules, QVector<int>* userFavorites, QVector<int>* hidedReleases, QHash<QString, bool>* seenMarks, QSharedPointer<QHash<int, HistoryModel*>> historyItems, QSharedPointer<ChangesModel> changes, QSharedPointer<CinemahallListModel> cinemahall, ReleaseCustomGroupsViewModel* customGroups);
 
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
 

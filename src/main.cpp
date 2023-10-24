@@ -66,6 +66,7 @@
 #include "Classes/ListModels/releaseserieslistmodel.h"
 #include "Classes/ViewModels/externalplayerviewmodel.h"
 #include "Classes/ViewModels/filterdictionariesviewmodel.h"
+#include "Classes/ViewModels/releasecustomgroupsviewmodel.h"
 #include "Classes/customstyle.h"
 #ifdef USE_VLC_PLAYER
 #include "vlc-qt/qml/VlcQmlPlayer.h"
@@ -154,6 +155,7 @@ int main(int argc, char *argv[])
     qmlRegisterType<ReleaseSeriesListModel>("Anilibria.ListModels", 1, 0 , "ReleaseSeriesListModel");
     qmlRegisterType<ExternalPlayerViewModel>("Anilibria.ViewModels", 1, 0 , "ExternalPlayerViewModel");
     qmlRegisterType<FilterDictionariesViewModel>("Anilibria.ViewModels", 1, 0 , "FilterDictionariesViewModel");
+    qmlRegisterType<ReleaseCustomGroupsViewModel>("Anilibria.ViewModels", 1, 0 , "ReleaseCustomGroupsViewModel");
 
     qmlRegisterUncreatableType<CustomStyle>("CustomStyle", 1, 0, "CustomStyle", "CustomStyle is an attached property");
 

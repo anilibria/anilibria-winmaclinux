@@ -47,16 +47,11 @@ const int autumn = 1;
 const int spring = 2;
 const int summer = 3;
 
-const QString winterValue = "зима";
-const QString autumnValue = "осень";
-const QString springValue = "весна";
-const QString summerValue = "лето";
-
 ReleasesListModel::ReleasesListModel(QObject *parent) : QAbstractListModel(parent)
 {
 }
 
-void ReleasesListModel::setup(QSharedPointer<QList<FullReleaseModel *>> releases, QMap<int, int> *schedules, QVector<int> *userFavorites, QVector<int> *hidedReleases, QHash<QString, bool> *seenMarks, QSharedPointer<QHash<int, HistoryModel *>> historyItems, QSharedPointer<ChangesModel> changes, QSharedPointer<CinemahallListModel> cinemahall)
+void ReleasesListModel::setup(QSharedPointer<QList<FullReleaseModel *>> releases, QMap<int, int> *schedules, QVector<int> *userFavorites, QVector<int> *hidedReleases, QHash<QString, bool> *seenMarks, QSharedPointer<QHash<int, HistoryModel *>> historyItems, QSharedPointer<ChangesModel> changes, QSharedPointer<CinemahallListModel> cinemahall, ReleaseCustomGroupsViewModel* customGroups)
 {
     m_releases = releases;
     m_scheduleReleases = schedules;
@@ -66,6 +61,7 @@ void ReleasesListModel::setup(QSharedPointer<QList<FullReleaseModel *>> releases
     m_historyModels = historyItems;
     m_changesModel = changes;
     m_cinemahall = cinemahall;
+    m_customGroups = customGroups;
 }
 
 int ReleasesListModel::rowCount(const QModelIndex &parent) const

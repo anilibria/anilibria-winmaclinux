@@ -585,6 +585,7 @@ Page {
                                     anchors.fill: parent
                                     acceptedButtons: Qt.RightButton
                                     onPressed: {
+                                        yearsFilterComboBox.currentIndex = -1;
                                         yearsFilters.open();
                                     }
                                 }
@@ -599,9 +600,11 @@ Page {
                                     closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
 
                                     CommonComboBox {
+                                        id: yearsFilterComboBox
                                         model: filterDictionariesViewModel.years
                                         onCurrentIndexChanged: {
                                             if (!filtersPopup.opened) return;
+                                            if (currentIndex < 0) return;
 
                                             const value = filterDictionariesViewModel.years[currentIndex];
                                             if (!value) return;
@@ -631,6 +634,7 @@ Page {
                                     anchors.fill: parent
                                     acceptedButtons: Qt.RightButton
                                     onPressed: {
+                                        seasonsFiltersComboBox.currentIndex = -1;
                                         seasonsFilters.open();
                                     }
                                 }
@@ -645,9 +649,11 @@ Page {
                                     closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
 
                                     CommonComboBox {
+                                        id: seasonsFiltersComboBox
                                         model: filterDictionariesViewModel.seasons
                                         onCurrentIndexChanged: {
                                             if (!filtersPopup.opened) return;
+                                            if (currentIndex < 0) return;
 
                                             const value = filterDictionariesViewModel.seasons[currentIndex];
                                             const currentValue = releasesViewModel.items.seasonesFilter;
@@ -682,6 +688,7 @@ Page {
                                     anchors.fill: parent
                                     acceptedButtons: Qt.RightButton
                                     onPressed: {
+                                        statusesFiltersComboBox.currentIndex = -1;
                                         statusesFilters.open();
                                     }
                                 }
@@ -696,9 +703,11 @@ Page {
                                     closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
 
                                     CommonComboBox {
+                                        id: statusesFiltersComboBox
                                         model: filterDictionariesViewModel.statuses
                                         onCurrentIndexChanged: {
                                             if (!filtersPopup.opened) return;
+                                            if (currentIndex < 0) return;
 
                                             const value = filterDictionariesViewModel.statuses[currentIndex];
                                             const currentValue = releasesViewModel.items.statusesFilter;
@@ -1312,7 +1321,7 @@ Page {
                         spacing: 8
                         RoundedTextBox {
                             id: filterByTitle
-                            width: mainViewModel.isSmallSizeMode ? 180 : 210
+                            width: mainViewModel.isSmallSizeMode ? 180 : 190
                             height: 40
                             placeholder: "Введите название релиза"
                             onCompleteEditing: {
@@ -1590,6 +1599,17 @@ Page {
                                 }
                             }
                         }
+
+                        FilterPanelIconButton {
+                            visible: !mainViewModel.isSmallSizeMode
+                            iconPath: applicationThemeViewModel.currentItems.iconCustomGroup
+                            iconWidth: 24
+                            iconHeight: 24
+                            tooltipMessage: "Управление пользовательскими группами"
+                            onButtonPressed: {
+                                releasesViewModel.customGroups.visible = true;
+                            }
+                        }
                     }
                 }
 
@@ -1840,6 +1860,10 @@ Page {
     ReleaseAlphabeticalCharacters {
         id: releaseAlphabeticalCharacters
         visible: page.showAlpabeticalCharaters
+    }
+
+    ReleaseCustomGroups {
+        id: releaseCustomGroups
     }
 
     ReleasePosterPreview {

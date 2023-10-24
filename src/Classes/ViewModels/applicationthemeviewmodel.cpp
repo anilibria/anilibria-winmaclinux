@@ -94,11 +94,9 @@ ApplicationThemeViewModel::ApplicationThemeViewModel(QObject *parent)
     lightTheme->insert(colorMenuItemHintField, "#60000000");
     lightTheme->insert(colorMenuRippleField, "#10000000");
     lightTheme->insert(colorMenuHighlightField, "#1e000000");
-
     lightTheme->insert(colorComboBoxAccentField, "#f44336");
     lightTheme->insert(colorComboBoxHintField, "#60000000");
     lightTheme->insert(colorComboBoxBackgroundField, "#ffffff");
-
     lightTheme->insert(iconMainMenuField, "qrc:/Assets/Icons/coloreddrawer.svg");
     lightTheme->insert(iconMainMenuReleasesField, "qrc:/Assets/Icons/catalogmenu.svg");
     lightTheme->insert(iconMainMenuCinemahallField, "qrc:/Assets/Icons/cinemahallmenu.svg");
@@ -173,18 +171,16 @@ ApplicationThemeViewModel::ApplicationThemeViewModel(QObject *parent)
     lightTheme->insert(iconPlayerDrawerField, "qrc:/Assets/Icons/videoplayer/menu.svg");
     lightTheme->insert(iconNotificationField, "qrc:/Assets/Icons/notification/notification.svg");
     lightTheme->insert(iconNotificationSelectedField, "qrc:/Assets/Icons/notification/notificationselected.svg");
-
     lightTheme->insert(iconDisabledNotificationsField, "qrc:/Assets/Icons/coloredbell.svg");
     lightTheme->insert(iconDisabledCinemahallField, "qrc:/Assets/Icons/cinemahallmenu.svg");
-
     lightTheme->insert(iconLogoutField, "qrc:/Assets/Icons/logout.svg");
-
     lightTheme->insert(colorTooltipTextField, "white");
     lightTheme->insert(colorSeenReleaseItemTextField, "green");
-
     lightTheme->insert(colorDrawerDividerColorField, "#1e000000");
     lightTheme->insert(colorDrawerDimColorField, "#99303030");
     lightTheme->insert(colorDrawerDialogColorField, "#ffffff");
+
+    lightTheme->insert(iconCustomGroupField, "qrc:/Assets/Icons/releases/customgroup.svg");
 
     lightTheme->insert(basedOnThemeField, m_lightTheme);
     lightTheme->insert(externalIdField, "");
@@ -335,18 +331,16 @@ ApplicationThemeViewModel::ApplicationThemeViewModel(QObject *parent)
     darkTheme->insert(iconPlayerDrawerField, "qrc:/Assets/Icons/videoplayer/darkmenu.svg");
     darkTheme->insert(iconNotificationField, "qrc:/Assets/Icons/notification/darknotification.svg");
     darkTheme->insert(iconNotificationSelectedField, "qrc:/Assets/Icons/notification/notificationselected.svg");
-
     darkTheme->insert(iconLogoutField, "qrc:/Assets/Icons/logout.svg");
-
     darkTheme->insert(colorTooltipTextField, "white");
     darkTheme->insert(colorSeenReleaseItemTextField, "green");
-
     darkTheme->insert(colorDrawerDividerColorField, "#1effffff");
     darkTheme->insert(colorDrawerDimColorField, "#99fafafa");
     darkTheme->insert(colorDrawerDialogColorField, "#424242");
-
     darkTheme->insert(iconDisabledNotificationsField, "qrc:/Assets/Icons/coloredbell.svg");
     darkTheme->insert(iconDisabledCinemahallField, "qrc:/Assets/Icons/cinemahallmenu.svg");
+
+    darkTheme->insert(iconCustomGroupField, "qrc:/Assets/Icons/releases/customgroup.svg");
 
     darkTheme->insert(basedOnThemeField, m_darkTheme);
     darkTheme->insert(externalIdField, "");
@@ -507,6 +501,7 @@ ApplicationThemeViewModel::ApplicationThemeViewModel(QObject *parent)
     m_fields.append(iconEmptyField);
     m_fields.append(iconDisabledNotificationsField);
     m_fields.append(iconDisabledCinemahallField);
+    m_fields.append(iconCustomGroupField);
 
     m_fields.append(iconLogoutField);
     m_fields.append(externalIdField);

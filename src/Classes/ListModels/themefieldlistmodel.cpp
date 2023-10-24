@@ -183,6 +183,7 @@ ThemeFieldListModel::ThemeFieldListModel(QObject *parent)
     m_descriptions.insert(colorComboBoxAccentField, "Цвет выпадающий список 1:Цвет акцента на области элемента");
     m_descriptions.insert(colorComboBoxHintField, "Цвет выпадающий список 2:Цвет подсказки");
     m_descriptions.insert(colorComboBoxBackgroundField, "Цвет выпадающий список 3:Цвет фона области элемента");
+    m_descriptions.insert(iconCustomGroupField, "Иконка пользовательских групп:Иконка для кнопки управления пользовательскими группами");
 
     m_saveMenuItems.append("Сохранить и добавить тему в список");
     m_saveMenuItems.append("Сохранить в файл");
