@@ -232,5 +232,6 @@
         <file>Assets/Icons/toolbaroptions.svg</file>
         <file>Assets/Icons/releases/customgroup.svg</file>
         <file>Views/ReleaseCustomGroups.qml</file>
+        <file>Assets/Icons/colorededit.svg</file>
     </qresource>
 </RCC>

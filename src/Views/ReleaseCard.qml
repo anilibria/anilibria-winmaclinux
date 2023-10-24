@@ -232,7 +232,36 @@ ColumnLayout {
                     }
                 }
             }
+            IconButton {
+                height: 40
+                width: 40
+                hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
+                iconPath: applicationThemeViewModel.currentItems.iconCustomGroup
+                iconWidth: 26
+                iconHeight: 26
+                tooltipMessage: "Добавить в группу"
+                onButtonPressed: {
+                    releasesViewModel.customGroups.setupReleaseId(releasesViewModel.openedReleaseId);
 
+                    customGroupMenu.open();
+                }
+
+                CommonMenu {
+                    id: customGroupMenu
+                    width: 380
+
+                    Repeater {
+                        model: releasesViewModel.customGroups.releaseNotUsedGroups
+                        delegate: CommonMenuItem {
+                            text: modelData.name
+                            onPressed: {
+                                releasesViewModel.customGroups.addReleaseIdToGroup(modelData.identifier, releasesViewModel.openedReleaseId);
+                                customGroupMenu.close();
+                            }
+                        }
+                    }
+                }
+            }
             IconButton {
                 visible: false
                 height: 40

@@ -20,18 +20,34 @@ void ReleaseCustomGroupsViewModel::setVisible(bool visible) noexcept
     emit visibleChanged();
 }
 
-void ReleaseCustomGroupsViewModel::addGroup(const QString& name) noexcept
+bool ReleaseCustomGroupsViewModel::releaseInFilter(int releaseId) const noexcept
 {
+    if (m_selectedGroups.isEmpty()) return true;
+
     auto keys = m_groupNames.keys();
-    auto index = std::max_element(keys.begin(), keys.end());
-    if (index != keys.end()) {
-        m_groupNames.insert(*index + 1, name);
-    } else {
-        m_groupNames.insert(0, name);
+    foreach (auto groupKey, keys) {
+        if (m_groupValues.contains(groupKey, releaseId)) return true;
     }
 
-    m_addGroupEditMode = false;
-    emit addGroupEditModeChanged();
+    return false;
+}
+
+void ReleaseCustomGroupsViewModel::saveGroup(const QString& name) noexcept
+{
+    if (m_editedItem == -1) {
+        auto keys = m_groupNames.keys();
+        auto index = std::max_element(keys.begin(), keys.end());
+        if (index != keys.end()) {
+            m_groupNames.insert(*index + 1, name);
+        } else {
+            m_groupNames.insert(0, name);
+        }
+    } else {
+        m_groupNames[m_editedItem] = name;
+    }
+
+    m_groupEditMode = false;
+    emit groupEditModeChanged();
 
     refreshGroups();
 }
@@ -45,13 +61,88 @@ void ReleaseCustomGroupsViewModel::addReleaseIdToGroup(int index, int releaseId)
 
 void ReleaseCustomGroupsViewModel::startEditNewGroup() noexcept
 {
-    m_addGroupEditMode = true;
-    emit addGroupEditModeChanged();
+    m_editedItem = -1;
+    m_groupEditMode = true;
+    emit groupEditModeChanged();
+}
+
+void ReleaseCustomGroupsViewModel::startEditGroup(int index) noexcept
+{
+    m_editedItem = index;
+    m_groupEditMode = true;
+    emit groupEditModeChanged();
 }
 
 void ReleaseCustomGroupsViewModel::saveState() noexcept
 {
     saveGroups();
+}
+
+void ReleaseCustomGroupsViewModel::deleteGroup(int index) noexcept
+{
+    if (!m_groupNames.contains(index)) return;
+
+    m_groupNames.remove(index);
+    m_groupValues.remove(index);
+
+    refreshGroups();
+}
+
+void ReleaseCustomGroupsViewModel::editGroup(int index, const QString& name) noexcept
+{
+    if (!m_groupNames.contains(index)) return;
+
+    m_groupNames[index] = name;
+
+    refreshGroups();
+}
+
+void ReleaseCustomGroupsViewModel::toggleSelectGroup(int index) noexcept
+{
+    if (m_selectedGroups.contains(index)) {
+        m_selectedGroups.remove(index);
+    } else {
+        m_selectedGroups.insert(index);
+    }
+
+    refreshGroups();
+}
+
+void ReleaseCustomGroupsViewModel::cancelEdit() noexcept
+{
+    m_groupEditMode = false;
+    emit groupEditModeChanged();
+}
+
+void ReleaseCustomGroupsViewModel::clearFilters() noexcept
+{
+    m_selectedGroups.clear();
+
+    refreshGroups();
+}
+
+void ReleaseCustomGroupsViewModel::setupReleaseId(int releaseId) noexcept
+{
+    m_releaseNotUsedGroups.clear();
+    m_releaseUsedGroups.clear();
+
+    auto keys = m_groupNames.keys();
+    foreach (auto groupKey, keys) {
+        if (m_groupValues.contains(groupKey, releaseId)) {
+            QVariantMap map;
+            map["name"] = m_groupNames.value(groupKey);
+            map["identifier"] = groupKey;
+            m_releaseUsedGroups.append(map);
+        } else {
+            QVariantMap map;
+            map["name"] = m_groupNames.value(groupKey);
+            map["identifier"] = groupKey;
+            m_releaseNotUsedGroups.append(map);
+        }
+    }
+
+    emit releaseNotUsedGroupsChanged();
+    emit releaseUsedGroupsChanged();
 }
 
 void ReleaseCustomGroupsViewModel::refreshGroups()
@@ -63,6 +154,7 @@ void ReleaseCustomGroupsViewModel::refreshGroups()
         QVariantMap value;
         value["index"] = key;
         value["groupName"] = m_groupNames[key];
+        value["isSelected"] = m_selectedGroups.contains(key);
         m_groups.append(value);
     }
 
@@ -121,6 +213,7 @@ void ReleaseCustomGroupsViewModel::saveGroups()
             }
             item["items"] = identifiers;
         }
+        array.append(item);
     }
 
     QJsonDocument document(array);

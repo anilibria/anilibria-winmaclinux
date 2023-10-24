@@ -4,6 +4,7 @@
 #include <QObject>
 #include <QMap>
 #include <QMultiMap>
+#include <QSet>
 #include <QVariantList>
 
 class ReleaseCustomGroupsViewModel : public QObject
@@ -12,7 +13,9 @@ class ReleaseCustomGroupsViewModel : public QObject
     Q_PROPERTY(QVariantList groups READ groups NOTIFY groupsChanged)
     Q_PROPERTY(bool visible READ visible WRITE setVisible NOTIFY visibleChanged)
     Q_PROPERTY(bool hasGroups READ hasGroups NOTIFY hasGroupsChanged)
-    Q_PROPERTY(bool addGroupEditMode READ addGroupEditMode NOTIFY addGroupEditModeChanged)
+    Q_PROPERTY(bool groupEditMode READ groupEditMode NOTIFY groupEditModeChanged)
+    Q_PROPERTY(QVariantList releaseNotUsedGroups READ releaseNotUsedGroups NOTIFY releaseNotUsedGroupsChanged)
+    Q_PROPERTY(QVariantList releaseUsedGroups READ releaseUsedGroups NOTIFY releaseUsedGroupsChanged)
 
 private:
     const QString groupsCacheFileName { "groups.cache" };
@@ -20,7 +23,11 @@ private:
     QMultiMap<int, int> m_groupValues { QMultiMap<int, int>() };
     QVariantList m_groups { QVariantList() };
     bool m_visible { false };
-    bool m_addGroupEditMode { false };
+    bool m_groupEditMode { false };
+    int m_editedItem { -1 };
+    QSet<int> m_selectedGroups { QSet<int>() };
+    QVariantList m_releaseNotUsedGroups { QVariantList() };
+    QVariantList m_releaseUsedGroups { QVariantList() };
 
 public:
     explicit ReleaseCustomGroupsViewModel(QObject *parent = nullptr);
@@ -32,12 +39,24 @@ public:
     bool visible() const noexcept { return m_visible; }
     void setVisible(bool visible) noexcept;
 
-    bool addGroupEditMode() const noexcept { return m_addGroupEditMode; }
+    bool releaseInFilter(int releaseId) const noexcept;
 
-    Q_INVOKABLE void addGroup(const QString& name) noexcept;
+    bool groupEditMode() const noexcept { return m_groupEditMode; }
+
+    QVariantList releaseNotUsedGroups() const noexcept { return m_releaseNotUsedGroups; }
+    QVariantList releaseUsedGroups() const noexcept { return m_releaseUsedGroups; }
+
+    Q_INVOKABLE void saveGroup(const QString& name) noexcept;
     Q_INVOKABLE void addReleaseIdToGroup(int index, int releaseId) noexcept;
     Q_INVOKABLE void startEditNewGroup() noexcept;
+    Q_INVOKABLE void startEditGroup(int index) noexcept;
     Q_INVOKABLE void saveState() noexcept;
+    Q_INVOKABLE void deleteGroup(int index) noexcept;
+    Q_INVOKABLE void editGroup(int index, const QString& name) noexcept;
+    Q_INVOKABLE void toggleSelectGroup(int index) noexcept;
+    Q_INVOKABLE void cancelEdit() noexcept;
+    Q_INVOKABLE void clearFilters() noexcept;
+    Q_INVOKABLE void setupReleaseId(int releaseId) noexcept;
 
 private:
     void refreshGroups();
@@ -48,7 +67,9 @@ signals:
     void groupsChanged();
     void visibleChanged();
     void hasGroupsChanged();
-    void addGroupEditModeChanged();
+    void groupEditModeChanged();
+    void releaseNotUsedGroupsChanged();
+    void releaseUsedGroupsChanged();
 
 };
 

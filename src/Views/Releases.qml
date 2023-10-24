@@ -1987,6 +1987,7 @@ Page {
         scheduleDayFilterField.text = "";
 
         releaseAlphabeticalCharacters.clearFilters();
+        releaseCustomGroups.clearFilters();
     }
 
     function changeSection(section) {

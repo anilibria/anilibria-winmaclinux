@@ -10,6 +10,11 @@ build = "build.rs"
 slint = "1.2.1"
 i-slint-backend-winit = "1.2.2"
 winit = "0.28"
+reqwest = { version = "0.11.21", features = ["json"] }
+futures = "0.3.28"
+tokio = "1.32.0"
+serde = { version = "1.0.188", features = ["derive"] }
+serde_json = "1.0.107"
 
 [build-dependencies]
 slint-build = "1.0"

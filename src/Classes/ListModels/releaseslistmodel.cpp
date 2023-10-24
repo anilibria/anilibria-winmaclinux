@@ -741,6 +741,7 @@ void ReleasesListModel::refresh()
             if (!scriptResult.toBool()) continue;
         }
 
+        if (!m_customGroups->releaseInFilter(release->id())) continue;
 
         m_filteredReleases->append(release);
     }

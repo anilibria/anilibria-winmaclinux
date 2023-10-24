@@ -147,6 +147,8 @@ void OnlinePlayerViewModel::setDisplayEndVideoPosition(const QString &displayEnd
 
 void OnlinePlayerViewModel::setVideoSource(const QString &videoSource)
 {
+    if (videoSource == "") return;
+
     auto isLocalFile = videoSource.startsWith("file://");
     auto source = !isLocalFile && m_needProxified && m_proxyPort > 0 ? QString("http://localhost:") + QString::number(m_proxyPort) + "/proxyvideolist?path=" + videoSource : videoSource;
     if (m_videoSource == source) return;

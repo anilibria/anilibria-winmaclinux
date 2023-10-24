@@ -199,3 +199,4 @@ QString colorComboBoxHintField = "colorComboBoxHint";
 QString colorComboBoxBackgroundField = "colorComboBoxBackground";
 
 QString iconCustomGroupField = "iconCustomGroup";
+QString iconEditField = "iconEdit";

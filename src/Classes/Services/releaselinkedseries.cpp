@@ -458,7 +458,7 @@ void ReleaseLinkedSeries::processReleasesFromDescription(const QString& descript
     auto cuttedDescription = description.midRef(watchOrderIndex + startToken.length());
     auto parts = cuttedDescription.split("#").mid(1);
 
-    QRegularExpression linkRegexp(R"((https|http)\:\/\/(www\.anilibriaqt|anilibriaqt\.|www\.|)(anilib\.top|anilibria\.tv)\/release\/(.*)\.html)");
+    static QRegularExpression linkRegexp(R"(\/release\/(.*)\.html)");
 
     //if already have series that have greater releases it means that don't need processing
     auto seriesItem = std::find_if(
@@ -480,7 +480,7 @@ void ReleaseLinkedSeries::processReleasesFromDescription(const QString& descript
         auto match = linkRegexp.match(partString);
 
         if (match.hasMatch()) {
-            auto link = match.captured(4);
+            auto link = match.captured(1);
             if (releases.contains(link)) {
                 auto release = releases[link];
                 if (series->appendReleaseId(release->id())) {

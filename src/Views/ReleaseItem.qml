@@ -45,7 +45,7 @@ Item {
         width: releaseItem.width
         height: releaseItem.height
         color: "transparent"
-        border.color: applicationThemeViewModel.panelBackgroundShadow
+        border.color: applicationThemeViewModel.currentItems.panelBackgroundShadow
         border.width: 2
         radius: 10
     }
@@ -53,7 +53,7 @@ Item {
     Rectangle {
         anchors.fill: parent
         radius: 10
-        border.color: applicationThemeViewModel.selectedItem
+        border.color: applicationThemeViewModel.currentItems.selectedItem
         border.width: inSelected ? 3 : 0
         color: !releaseItem.isCompactReleaseMode ? applicationThemeViewModel.panelBackground : "transparent"
 

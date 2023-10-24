@@ -81,3 +81,5 @@ pac.deb
 /src/vlc-qt/vlc/*
 
 *.TMP
+
+Cargo.lock

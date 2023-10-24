@@ -150,6 +150,7 @@ ApplicationThemeViewModel::ApplicationThemeViewModel(QObject *parent)
     lightTheme->insert(iconDownloadThemeField, "qrc:/Assets/Icons/downloadtheme.svg");
     lightTheme->insert(iconEditThemeFieldPlusField, "qrc:/Assets/Icons/plus.svg");
     lightTheme->insert(iconEmptyField, "qrc:/Assets/Icons/emptybox.svg");
+    lightTheme->insert(iconEditField, "qrc:/Assets/Icons/colorededit.svg");
     lightTheme->insert(iconPlayerFullscreenField, "qrc:/Assets/Icons/videoplayer/fullscreen.svg");
     lightTheme->insert(iconPlayerCropModeField, "qrc:/Assets/Icons/videoplayer/resize.svg");
     lightTheme->insert(iconPlayerSettingsField, "qrc:/Assets/Icons/videoplayer/settings.svg");
@@ -310,6 +311,7 @@ ApplicationThemeViewModel::ApplicationThemeViewModel(QObject *parent)
     darkTheme->insert(iconDownloadThemeField, "qrc:/Assets/Icons/downloadtheme.svg");
     darkTheme->insert(iconEditThemeFieldPlusField, "qrc:/Assets/Icons/plus.svg");
     darkTheme->insert(iconEmptyField, "qrc:/Assets/Icons/emptybox.svg");
+    darkTheme->insert(iconEditField, "qrc:/Assets/Icons/colorededit.svg");
     darkTheme->insert(iconPlayerFullscreenField, "qrc:/Assets/Icons/videoplayer/darkfullscreen.svg");
     darkTheme->insert(iconPlayerCropModeField, "qrc:/Assets/Icons/videoplayer/darkresize.svg");
     darkTheme->insert(iconPlayerSettingsField, "qrc:/Assets/Icons/videoplayer/darksettings.svg");
@@ -499,6 +501,7 @@ ApplicationThemeViewModel::ApplicationThemeViewModel(QObject *parent)
     m_fields.append(iconNotificationField);
     m_fields.append(iconNotificationSelectedField);
     m_fields.append(iconEmptyField);
+    m_fields.append(iconEditField);
     m_fields.append(iconDisabledNotificationsField);
     m_fields.append(iconDisabledCinemahallField);
     m_fields.append(iconCustomGroupField);

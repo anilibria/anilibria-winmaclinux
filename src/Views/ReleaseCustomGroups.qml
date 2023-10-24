@@ -11,8 +11,7 @@ Item {
     signal clearFilters()
 
     onClearFilters: {
-        //mainGrid.model.clearCharacters();
-        //releasesViewModel.items.alphabetsFilter = "";
+        releasesViewModel.customGroups.clearFilters();
     }
 
     Loader {
@@ -40,8 +39,8 @@ Item {
 
             Item {
                 id: panelContainer
-                width: 400
-                height: 300
+                width: mainViewModel.isSmallSizeMode ? 300 : 400
+                height: mainViewModel.isSmallSizeMode ? 200 : 300
                 anchors.centerIn: parent
 
                 Rectangle {
@@ -68,29 +67,45 @@ Item {
                     width: parent.width
                     height: 44
 
+                    CommonTextField {
+                        id: groupNameTextField
+                        visible: releasesViewModel.customGroups.groupEditMode
+                        width: 180
+                        anchors.right: cancelButton.left
+                        anchors.left: parent.left
+                        anchors.leftMargin: 10
+                    }
+
+                    RoundedActionButton {
+                        id: cancelButton
+                        visible: releasesViewModel.customGroups.groupEditMode
+                        width: 110
+                        text: "Отмена"
+                        textSize: 9
+                        anchors.right: saveOrEditButton.left
+                        onClicked: {
+                            groupNameTextField.text = "";
+                            releasesViewModel.customGroups.cancelEdit();
+                        }
+                    }
+
                     RoundedActionButton {
                         id: saveOrEditButton
-                        width: 180
-                        text: releasesViewModel.customGroups.addGroupEditMode ? "Сохранить группу" : "Добавить группу"
-                        anchors.left: parent.left
-                        anchors.leftMargin: 4
+                        width: 110
+                        text: releasesViewModel.customGroups.groupEditMode ? "Сохранить" : "Добавить"
+                        textSize: 9
+                        anchors.right: parent.right
+                        anchors.rightMargin: 4
                         onClicked: {
-                            if (releasesViewModel.customGroups.addGroupEditMode) {
+                            if (releasesViewModel.customGroups.groupEditMode) {
                                 if (groupNameTextField.text) {
-                                    releasesViewModel.customGroups.addGroup(groupNameTextField.text);
+                                    releasesViewModel.customGroups.saveGroup(groupNameTextField.text);
                                     groupNameTextField.text = "";
                                 }
                             } else {
                                 releasesViewModel.customGroups.startEditNewGroup();
                             }
                         }
-                    }
-
-                    CommonTextField {
-                        id: groupNameTextField
-                        visible: releasesViewModel.customGroups.addGroupEditMode
-                        width: 180
-                        anchors.left: saveOrEditButton.right
                     }
                 }
 
@@ -101,27 +116,74 @@ Item {
                     anchors.leftMargin: 4
                     anchors.rightMargin: 4
                     anchors.bottomMargin: 4
+                    spacing: 2
                     clip: true
                     model: releasesViewModel.customGroups.groups
                     delegate: Item {
                         width: ListView.view.width
-                        height: 20
+                        height: 30
+
+                        Rectangle {
+                            anchors.left: parent.left
+                            anchors.right: parent.right
+                            anchors.leftMargin: 4
+                            anchors.rightMargin: 54
+                            anchors.top: parent.top
+                            anchors.bottom: parent.bottom
+                            color: "transparent"
+                            radius: 4
+                            border.color: applicationThemeViewModel.currentItems.selectedItem
+                            border.width: modelData.isSelected ? 2 : 0
+                        }
 
                         PlainText {
                             anchors.left: parent.left
                             anchors.right: parent.right
                             anchors.leftMargin: 10
-                            anchors.rightMargin: 10
+                            anchors.rightMargin: 60
+                            anchors.verticalCenter: parent.verticalCenter
                             text: modelData.groupName
                             fontPointSize: 10
                             maximumLineCount: 1
                             elide: Text.ElideRight
+
+                            MouseArea {
+                                anchors.fill: parent
+                                onPressed: {
+                                    releasesViewModel.customGroups.toggleSelectGroup(modelData.index);
+                                }
+                            }
                         }
 
-                        MouseArea {
-                            anchors.fill: parent
-                            onPressed: {
-                                console.log(modelData.index);
+                        IconButton {
+                            anchors.right: deleteGroupButton.left
+                            anchors.verticalCenter: parent.verticalCenter
+                            width: 20
+                            height: 20
+                            iconWidth: 20
+                            iconHeight: 20
+                            iconPath: applicationThemeViewModel.currentItems.iconEdit
+                            tooltipMessage: "Изменить название"
+                            onButtonPressed: {
+                                if (releasesViewModel.customGroups.groupEditMode) return;
+
+                                releasesViewModel.customGroups.startEditGroup(modelData.index);
+                            }
+                        }
+
+                        IconButton {
+                            id: deleteGroupButton
+                            anchors.right: parent.right
+                            anchors.rightMargin: 10
+                            anchors.verticalCenter: parent.verticalCenter
+                            width: 20
+                            height: 20
+                            iconWidth: 20
+                            iconHeight: 20
+                            iconPath: applicationThemeViewModel.currentItems.iconDeleteItem
+                            tooltipMessage: "Удалить группу"
+                            onButtonPressed: {
+                                releasesViewModel.customGroups.deleteGroup(modelData.index);
                             }
                         }
                     }
