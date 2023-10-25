@@ -684,7 +684,7 @@ void ReleasesListModel::refresh()
 
         if (m_section == WithinSeriesSection && linkedReleases != nullptr && !(linkedReleases->contains(release->id()))) continue;
 
-        if (m_section == MostPopular2021Section && !(release->year() == "2021" && release->rating() > 0)) continue;
+        if (m_section == MostPopular2021Section && !(release->status().toLower() == "завершен")) continue;
 
         if (m_section == MostPopular2022Section && !(release->year() == "2022" && release->rating() > 0)) continue;
 
