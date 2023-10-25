@@ -150,7 +150,9 @@ Item {
                             MouseArea {
                                 anchors.fill: parent
                                 onPressed: {
+                                    const items = releasesViewModel.items;
                                     releasesViewModel.customGroups.toggleSelectGroup(modelData.index);
+                                    items.refresh();
                                 }
                             }
                         }

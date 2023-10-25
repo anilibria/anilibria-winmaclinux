@@ -26,6 +26,8 @@ bool ReleaseCustomGroupsViewModel::releaseInFilter(int releaseId) const noexcept
 
     auto keys = m_groupNames.keys();
     foreach (auto groupKey, keys) {
+        if (!m_selectedGroups.contains(groupKey)) continue;
+
         if (m_groupValues.contains(groupKey, releaseId)) return true;
     }
 
