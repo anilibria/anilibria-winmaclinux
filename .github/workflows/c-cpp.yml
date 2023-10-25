@@ -1,4 +1,4 @@
-name: C/C++ CI
+name: Linux and macOS CI
 
 on:
   push:
@@ -18,7 +18,7 @@ jobs:
     - name: run qmake
       run: qmake -makefile -o src/Makefile src/AniLibria.pro
     - name: run make
-      run: make -C src
+      run: make -j2 -C src
 #    - name: copy to deb package
 #      run: mkdir specs/deb/tmp1/usr/bin; cp src/AniLibria specs/deb/tmp1/usr/bin
 #    - name: build deb package
@@ -40,5 +40,5 @@ jobs:
     - name: run qmake
       run: qmake -makefile -o src/Makefile src/AniLibria.pro
     - name: run make
-      run: make -C src
+      run: make -j2 -C src
 
