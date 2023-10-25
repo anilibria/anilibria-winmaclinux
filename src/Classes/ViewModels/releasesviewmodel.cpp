@@ -943,6 +943,8 @@ void ReleasesViewModel::showReleaseCard(int id, bool needHandle) noexcept
 
     refreshOpenedReleaseCard();
 
+    m_customGroups->setupReleaseId(id);
+
     emit isOpenedCardChanged();
 
     if (needHandle) emit releaseCardOpened();

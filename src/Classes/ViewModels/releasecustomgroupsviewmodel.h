@@ -16,6 +16,7 @@ class ReleaseCustomGroupsViewModel : public QObject
     Q_PROPERTY(bool groupEditMode READ groupEditMode NOTIFY groupEditModeChanged)
     Q_PROPERTY(QVariantList releaseNotUsedGroups READ releaseNotUsedGroups NOTIFY releaseNotUsedGroupsChanged)
     Q_PROPERTY(QVariantList releaseUsedGroups READ releaseUsedGroups NOTIFY releaseUsedGroupsChanged)
+    Q_PROPERTY(QString releaseGroupsLink READ releaseGroupsLink NOTIFY releaseGroupsLinkChanged)
 
 private:
     const QString groupsCacheFileName { "groups.cache" };
@@ -28,6 +29,7 @@ private:
     QSet<int> m_selectedGroups { QSet<int>() };
     QVariantList m_releaseNotUsedGroups { QVariantList() };
     QVariantList m_releaseUsedGroups { QVariantList() };
+    QString m_releaseGroupsLink { "" };
 
 public:
     explicit ReleaseCustomGroupsViewModel(QObject *parent = nullptr);
@@ -35,6 +37,8 @@ public:
     QVariantList groups() const noexcept { return m_groups; }
 
     bool hasGroups() const noexcept { return !m_groups.isEmpty(); }
+
+    QString releaseGroupsLink() const noexcept { return m_releaseGroupsLink; }
 
     bool visible() const noexcept { return m_visible; }
     void setVisible(bool visible) noexcept;
@@ -48,6 +52,7 @@ public:
 
     Q_INVOKABLE void saveGroup(const QString& name) noexcept;
     Q_INVOKABLE void addReleaseIdToGroup(int index, int releaseId) noexcept;
+    Q_INVOKABLE void deleteReleaseIdFromGroup(int index, int releaseId) noexcept;
     Q_INVOKABLE void startEditNewGroup() noexcept;
     Q_INVOKABLE void startEditGroup(int index) noexcept;
     Q_INVOKABLE void saveState() noexcept;
@@ -70,6 +75,7 @@ signals:
     void groupEditModeChanged();
     void releaseNotUsedGroupsChanged();
     void releaseUsedGroupsChanged();
+    void releaseGroupsLinkChanged();
 
 };
 

@@ -239,15 +239,40 @@ ColumnLayout {
                 iconPath: applicationThemeViewModel.currentItems.iconCustomGroup
                 iconWidth: 26
                 iconHeight: 26
-                tooltipMessage: "Добавить в группу"
+                tooltipMessage: "Для добавления в группу нажмите ЛКМ, для удаления нажмите ПКМ"
                 onButtonPressed: {
                     releasesViewModel.customGroups.setupReleaseId(releasesViewModel.openedReleaseId);
 
-                    customGroupMenu.open();
+                    if (releasesViewModel.customGroups.releaseNotUsedGroups.length) {
+                        customAddGroupMenu.open();
+                    } else {
+                        emptyGroupMenu.open();
+                    }
+                }
+                onRightButtonPressed: {
+                    releasesViewModel.customGroups.setupReleaseId(releasesViewModel.openedReleaseId);
+
+                    if (releasesViewModel.customGroups.releaseUsedGroups.length) {
+                        customDeleteGroupMenu.open();
+                    } else {
+                        emptyGroupMenu.open();
+                    }
                 }
 
                 CommonMenu {
-                    id: customGroupMenu
+                    id: emptyGroupMenu
+                    width: 380
+
+                    CommonMenuItem {
+                        text: "Нет групп для выполнения операции"
+                        onPressed: {
+                            emptyGroupMenu.close();
+                        }
+                    }
+                }
+
+                CommonMenu {
+                    id: customAddGroupMenu
                     width: 380
 
                     Repeater {
@@ -256,9 +281,32 @@ ColumnLayout {
                             text: modelData.name
                             onPressed: {
                                 releasesViewModel.customGroups.addReleaseIdToGroup(modelData.identifier, releasesViewModel.openedReleaseId);
-                                customGroupMenu.close();
+                                customAddGroupMenu.close();
                             }
                         }
+                    }
+
+                    onClosed: {
+                        releasesViewModel.customGroups.setupReleaseId(releasesViewModel.openedReleaseId);
+                    }
+                }
+                CommonMenu {
+                    id: customDeleteGroupMenu
+                    width: 380
+
+                    Repeater {
+                        model: releasesViewModel.customGroups.releaseUsedGroups
+                        delegate: CommonMenuItem {
+                            text: modelData.name
+                            onPressed: {
+                                releasesViewModel.customGroups.deleteReleaseIdFromGroup(modelData.identifier, releasesViewModel.openedReleaseId);
+                                customDeleteGroupMenu.close();
+                            }
+                        }
+                    }
+
+                    onClosed: {
+                        releasesViewModel.customGroups.setupReleaseId(releasesViewModel.openedReleaseId);
                     }
                 }
             }
@@ -482,6 +530,34 @@ ColumnLayout {
                                 cursorShape: parent.hoveredLink ? Qt.PointingHandCursor : Qt.ArrowCursor
                             }
                         }
+
+                        PlainText {
+                            visible: releasesViewModel.customGroups.releaseGroupsLink
+                            fontPointSize: 10
+                            leftPadding: 8
+                            topPadding: 4
+                            width: parent.width
+                            wrapMode: Text.WordWrap
+                            maximumLineCount: 2
+                            text: releasesViewModel.customGroups.releaseGroupsLink
+                            onLinkActivated: {
+                                /*if (voicesSearchField.text.length) {
+                                    voicesSearchField.text += ", " + link;
+                                } else {
+                                    voicesSearchField.text = link;
+                                }
+                                releasesViewModel.closeReleaseCard();
+                                releasesViewModel.items.refresh();*/
+                            }
+
+                            MouseArea {
+                                anchors.fill: parent
+                                acceptedButtons: Qt.NoButton
+                                cursorShape: parent.hoveredLink ? Qt.PointingHandCursor : Qt.ArrowCursor
+                            }
+                        }
+
+
 
                         Item {
                             width: 1

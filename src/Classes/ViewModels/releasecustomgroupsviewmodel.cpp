@@ -59,6 +59,13 @@ void ReleaseCustomGroupsViewModel::addReleaseIdToGroup(int index, int releaseId)
     m_groupValues.insert(index, releaseId);
 }
 
+void ReleaseCustomGroupsViewModel::deleteReleaseIdFromGroup(int index, int releaseId) noexcept
+{
+    if (!m_groupValues.contains(index, releaseId)) return;
+
+    m_groupValues.remove(index, releaseId);
+}
+
 void ReleaseCustomGroupsViewModel::startEditNewGroup() noexcept
 {
     m_editedItem = -1;
@@ -126,6 +133,8 @@ void ReleaseCustomGroupsViewModel::setupReleaseId(int releaseId) noexcept
     m_releaseNotUsedGroups.clear();
     m_releaseUsedGroups.clear();
 
+    QStringList result;
+
     auto keys = m_groupNames.keys();
     foreach (auto groupKey, keys) {
         if (m_groupValues.contains(groupKey, releaseId)) {
@@ -133,6 +142,7 @@ void ReleaseCustomGroupsViewModel::setupReleaseId(int releaseId) noexcept
             map["name"] = m_groupNames.value(groupKey);
             map["identifier"] = groupKey;
             m_releaseUsedGroups.append(map);
+            result.append("<a href=\"http://group/" + QString::number(groupKey) + "\">" + m_groupNames.value(groupKey) + "</a>");
         } else {
             QVariantMap map;
             map["name"] = m_groupNames.value(groupKey);
@@ -141,8 +151,11 @@ void ReleaseCustomGroupsViewModel::setupReleaseId(int releaseId) noexcept
         }
     }
 
+    m_releaseGroupsLink = result.isEmpty() ? "" : "<b>Группы:</b> " + result.join(", ");
+
     emit releaseNotUsedGroupsChanged();
     emit releaseUsedGroupsChanged();
+    emit releaseGroupsLinkChanged();
 }
 
 void ReleaseCustomGroupsViewModel::refreshGroups()
