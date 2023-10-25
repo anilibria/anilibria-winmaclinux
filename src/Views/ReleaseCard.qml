@@ -541,13 +541,11 @@ ColumnLayout {
                             maximumLineCount: 2
                             text: releasesViewModel.customGroups.releaseGroupsLink
                             onLinkActivated: {
-                                /*if (voicesSearchField.text.length) {
-                                    voicesSearchField.text += ", " + link;
-                                } else {
-                                    voicesSearchField.text = link;
-                                }
+                                const groupId = parseInt(link.replace("http://group/", ""));
+                                releasesViewModel.customGroups.addGroupToSelect(groupId);
+
                                 releasesViewModel.closeReleaseCard();
-                                releasesViewModel.items.refresh();*/
+                                releasesViewModel.items.refresh();
                             }
 
                             MouseArea {

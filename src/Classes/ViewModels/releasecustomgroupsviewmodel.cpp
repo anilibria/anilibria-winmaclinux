@@ -117,6 +117,15 @@ void ReleaseCustomGroupsViewModel::toggleSelectGroup(int index) noexcept
     refreshGroups();
 }
 
+void ReleaseCustomGroupsViewModel::addGroupToSelect(int index) noexcept
+{
+    if (m_selectedGroups.contains(index)) return;
+
+    m_selectedGroups.insert(index);
+
+    refreshGroups();
+}
+
 void ReleaseCustomGroupsViewModel::cancelEdit() noexcept
 {
     m_groupEditMode = false;

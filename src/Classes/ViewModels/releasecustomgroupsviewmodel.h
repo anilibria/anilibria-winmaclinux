@@ -59,6 +59,7 @@ public:
     Q_INVOKABLE void deleteGroup(int index) noexcept;
     Q_INVOKABLE void editGroup(int index, const QString& name) noexcept;
     Q_INVOKABLE void toggleSelectGroup(int index) noexcept;
+    Q_INVOKABLE void addGroupToSelect(int index) noexcept;
     Q_INVOKABLE void cancelEdit() noexcept;
     Q_INVOKABLE void clearFilters() noexcept;
     Q_INVOKABLE void setupReleaseId(int releaseId) noexcept;
