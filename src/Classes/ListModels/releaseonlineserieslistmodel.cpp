@@ -45,7 +45,6 @@ QVariant ReleaseOnlineSeriesListModel::data(const QModelIndex &index, int role) 
     auto seens = m_onlinePlayer->getSeenVideoPosition(m_releaseId);
     auto videoId = std::get<0>(seens);
     auto videoPosition = std::get<1>(seens);
-    auto currentVideoId = onlineVideo->id() - 1;
     auto isEmptyPoster = onlineVideo->videoPoster().isEmpty();
 
     switch (role) {
@@ -53,7 +52,7 @@ QVariant ReleaseOnlineSeriesListModel::data(const QModelIndex &index, int role) 
             return QVariant(onlineVideo->id());
         }
         case IndexRole: {
-            return QVariant(currentVideoId);
+            return QVariant(onlineVideo->order());
         }
         case PosterRole: {
             if (isEmptyPoster) {
@@ -66,13 +65,13 @@ QVariant ReleaseOnlineSeriesListModel::data(const QModelIndex &index, int role) 
             return QVariant(isEmptyPoster);
         }
         case IsSeensRole: {
-            return QVariant(m_releases->getSeriaSeenMark(m_releaseId, currentVideoId));
+            return QVariant(m_releases->getSeriaSeenMark(m_releaseId, onlineVideo->order()));
         }
         case IsCurrentVideoRole: {
-            return QVariant(videoId == currentVideoId);
+            return QVariant(videoId == onlineVideo->order());
         }
         case CurrentTimeVideoRole: {
-            return videoId == currentVideoId && videoPosition > 0 ? QVariant("Остановились на " + getDisplayTime(videoPosition)) : QVariant("");
+            return videoId == onlineVideo->order() && videoPosition > 0 ? QVariant("Остановились на " + getDisplayTime(videoPosition)) : QVariant("");
         }
         case DescriptionRole: {
             return onlineVideo->description();
@@ -195,6 +194,12 @@ void ReleaseOnlineSeriesListModel::refresh()
             return first->id() < second->id();
         }
     );
+
+    auto order = 0;
+    foreach (auto item, m_items) {
+        item->setOrder(order);
+        order++;
+    }
 
     endResetModel();
 
