@@ -20,15 +20,9 @@
 #define LOCALSTORAGESERVICE_H
 
 #include <QObject>
-#include "../Models/onlinevideomodel.h"
-#include "../Models/releasemodel.h"
-#include "../Models/releasetorrentmodel.h"
 #include "../Models/fullreleasemodel.h"
-#include "../Models/changesmodel.h"
-#include "../Models/seenmodel.h"
 #include "../Models/usersettingsmodel.h"
 #include "../Models/downloaditemmodel.h"
-#include "../../globalconstants.h"
 #include "../Services/offlineimagecacheservice.h"
 
 class LocalStorageService : public QObject

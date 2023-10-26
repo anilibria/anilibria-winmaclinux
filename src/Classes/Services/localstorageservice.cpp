@@ -33,13 +33,10 @@
 #include <QProcess>
 #include <QCoreApplication>
 #include <QOperatingSystemVersion>
-#include "../Models/releasemodel.h"
 #include "../Models/fullreleasemodel.h"
-#include "../Models/changesmodel.h"
-#include "../Models/seenmodel.h"
-#include "../Models/seenmarkmodel.h"
 #include "../Models/externalplaylistvideo.h"
 #include "../../globalhelpers.h"
+#include "../../globalconstants.h"
 
 LocalStorageService::LocalStorageService(QObject *parent) : QObject(parent),
     m_UserSettingsModel(new UserSettingsModel()),
@@ -81,6 +78,8 @@ LocalStorageService::LocalStorageService(QObject *parent) : QObject(parent),
     m_cacheFiles.append("usersettings.cache");
     m_cacheFiles.append("youtube.cache");
     m_cacheFiles.append("applicationtheme.cache");
+    m_cacheFiles.append("groups.cache");
+    m_cacheFiles.append("lefttoolbar.cache");
 }
 
 void LocalStorageService::setup(QSharedPointer<QList<FullReleaseModel*>> releases)
