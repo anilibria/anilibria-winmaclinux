@@ -2,9 +2,11 @@
 
 slint::include_modules!();
 
-use i_slint_backend_winit::WinitWindowAccessor;
+//use i_slint_backend_winit::WinitWindowAccessor;
 use std::env;
 use reqwest;
+use std::fs;
+use std::path::Path;
 use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -19,26 +21,26 @@ struct VersionResponse {
     assets: Vec<VersionAsset>
 }
 
-async fn getLatestVersion() {
-
-    /*match env::consts::OS {
-        "windows" => println!("windows"),
-        "macos" => println!("macos"),
-        "linux" => println!("linux"),
-        _ => println!("anything"),
-    }*/
-
-    let result = reqwest::get("https://api.github.com/repos/anilibria/anilibria-winmaclinux/releases/latest").await;
-    let response = result.unwrap();
+async fn get_latest_version() -> VersionResponse {
+    let client = reqwest::Client::builder()
+        .user_agent("Anilibria.Qt AutoUpdater")
+        .build()
+        .expect("Builder not created!");
+    let response = client.get("https://api.github.com/repos/anilibria/anilibria-winmaclinux/releases/latest")
+        .send()
+        .await
+        .unwrap();
     match response.status() {
         reqwest::StatusCode::OK => {
             match response.json::<VersionResponse>().await {
-                Ok(parsed) => println!("Success! {:?}", parsed),
-                Err(_) => println!("Hm, the response didn't match the shape we expected."),
+                Ok(parsed) => {
+                    return parsed;
+                },
+                Err(_) => panic!("Something went wrong while parsing github data"),
             };
         }
         other => {
-            panic!("Uh oh! Something unexpected happened: {:?}", other);
+            panic!("Something went wrong with request: {:?}", other);
         }
     };
 }
@@ -92,8 +94,33 @@ pub async fn download_file(client: &Client, url: &str, path: &str) -> Result<(),
     return Ok(());
 */
 
-fn main() {
-    let app:App = App::new().unwrap();
+#[tokio::main]
+async fn main() {
+    let path = Path::new("savedversion");
+    let mut saved_version = "".to_string();
+    if path.exists() {
+        saved_version = fs::read_to_string(path).expect("Should have been able to read the file");
+    }
+    let version = get_latest_version().await;
+    if version.tag_name != saved_version {
+        println!("New version {} is available!", version.tag_name);
+        
+        //TODO: need download latest version
+        match env::consts::OS {
+            "windows" => println!("windows"),
+            "macos" => println!("macos"),
+            "linux" => println!("linux"),
+            _ => println!("anything"),
+        }
+
+        fs::write("savedversion", version.tag_name).expect("Unable to write version file");
+    }
+    
+}
+
+/*#[tokio::main]
+async fn main() {
+    /* let app:App = App::new().unwrap();
 
     app.window().with_winit_window(|winit_win: &winit::window::Window| {
         //winit_win.set_fullscreen(Some(winit::window::Fullscreen::Borderless(winit_win.current_monitor())));
@@ -107,5 +134,6 @@ fn main() {
         app.window().set_position(slint::PhysicalPosition::new(center_width, center_height));
     });
 
-    app.run().unwrap();
-}
+    app.run().unwrap(); */
+
+}*/
