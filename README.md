@@ -110,7 +110,7 @@ sudo make install
 
 ### Контрибуторы проекта
 Большое спасибо Всем контрибуторам и волонтерам проекта!  
-Вы можете [посмотреть вклад каждого из них.](https://github.com/gamecreature/qtawesome/graphs/contributors)  
+Вы можете [посмотреть вклад каждого из них.](https://github.com/anilibria/anilibria-winmaclinux/graphs/contributors)  
 Если Вы хотите стать одним из контрибуторов или волонтеров то любая помощь приветствуется!
   
 ![list of conributors](https://contrib.rocks/image?repo=anilibria/anilibria-winmaclinux)  
