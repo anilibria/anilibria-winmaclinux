@@ -42,7 +42,7 @@ SynchronizationService::SynchronizationService(QObject *parent) : QObject(parent
 
 void SynchronizationService::synchronizeReleases()
 {
-    m_AnilibriaApiService->getAllReleases(3, 500);
+    m_AnilibriaApiService->getAllReleases(4, 500);
 }
 
 void SynchronizationService::synchronizeSchedule()

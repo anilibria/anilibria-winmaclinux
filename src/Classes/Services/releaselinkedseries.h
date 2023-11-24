@@ -36,6 +36,9 @@ class ReleaseLinkedSeries : public QAbstractListModel
     Q_PROPERTY(QString nameFilter READ nameFilter WRITE setNameFilter NOTIFY nameFilterChanged)
     Q_PROPERTY(bool isCardShowed READ isCardShowed NOTIFY isCardShowedChanged)
     Q_PROPERTY(ReleaseSeriesCardListModel* cardList READ cardList NOTIFY cardListChanged)
+    Q_PROPERTY(int sortingField READ sortingField WRITE setSortingField NOTIFY sortingFieldChanged)
+    Q_PROPERTY(bool sortingDirection READ sortingDirection WRITE setSortingDirection NOTIFY sortingDirectionChanged)
+    Q_PROPERTY(int countGroups READ countGroups NOTIFY countGroupsChanged)
 
 private:
     QString m_nameFilter;
@@ -47,6 +50,8 @@ private:
     QScopedPointer<QFutureWatcher<bool>> m_cacheUpdateWatcher { new QFutureWatcher<bool>(this) };
     bool m_isCardShowed { false };
     int m_selectedIndex { -1 };
+    int m_sortingField { 0 };
+    bool m_sortingDirection { false };
     ReleaseSeriesCardListModel* m_releaseSeriesCardList { new ReleaseSeriesCardListModel(this) };
 
     enum ItemRoles {
@@ -75,7 +80,15 @@ public:
     QString nameFilter() const { return m_nameFilter; }
     void setNameFilter(const QString& nameFilter) noexcept;
 
+    int sortingField() const { return m_sortingField; }
+    void setSortingField(int sortingField) noexcept;
+
+    bool sortingDirection() const { return m_sortingDirection; }
+    void setSortingDirection(bool sortingDirection) noexcept;
+
     int isCardShowed() const noexcept { return m_isCardShowed; }
+
+    int countGroups() const noexcept { return m_filteredSeries->size(); }
 
     ReleaseSeriesCardListModel* cardList() const noexcept { return m_releaseSeriesCardList; }
 
@@ -101,6 +114,7 @@ private:
     void createCacheFileIfNotExists() const noexcept;
     void processReleasesFromDescription(const QString& description, const QMap<QString, FullReleaseModel*>& releases, int currentRelease, const QString currentReleaseTitle, const QString& poster, const QString& genres) noexcept;
     void saveSeries();
+    void sortNonFiltered();
 
 private slots:
     void cacheUpdated();
@@ -109,6 +123,9 @@ signals:
     void nameFilterChanged();
     void isCardShowedChanged();
     void cardListChanged();
+    void sortingFieldChanged();
+    void sortingDirectionChanged();
+    void countGroupsChanged();
 
 };
 

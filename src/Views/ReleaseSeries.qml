@@ -57,6 +57,15 @@ Page {
                 height: 45
                 color: applicationThemeViewModel.pageUpperPanel
 
+                PlainText {
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.left: parent.left
+                    anchors.leftMargin: 14
+                    visible: releaseLinkedSeries.nameFilter && !mainViewModel.isSmallSizeMode
+                    text: "Найдено: " + releaseLinkedSeries.countGroups
+                    fontPointSize: 10
+                }
+
                 RoundedTextBox {
                     id: filterByTitle
                     anchors.centerIn: parent
@@ -66,6 +75,43 @@ Page {
                     onCompleteEditing: {
                         releaseLinkedSeries.nameFilter = textContent;
                         releaseLinkedSeries.filterSeries();
+                    }
+                }
+
+                CommonComboBox {
+                    id: sortingComboBox
+                    visible: !mainViewModel.isSmallSizeMode
+                    width: 160
+                    height: parent.height
+                    fontPointSize: 9
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.right: sortingDirectionButton.left
+                    anchors.rightMargin: 2
+                    model: ListModel {
+                        ListElement {
+                            text: "Количеству релизов"
+                        }
+                        ListElement {
+                            text: "Названию"
+                        }
+                        ListElement {
+                            text: "Жанрам"
+                        }
+                    }
+                    onCurrentIndexChanged: {
+                        releaseLinkedSeries.sortingField = currentIndex;
+                    }
+                }
+
+                FilterPanelIconButton {
+                    id: sortingDirectionButton
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.right: parent.right
+                    anchors.rightMargin: 14
+                    iconPath: releaseLinkedSeries.sortingDirection ? applicationThemeViewModel.currentItems.iconReleaseCatalogSortDesc : applicationThemeViewModel.currentItems.iconReleaseCatalogSortAsc
+                    tooltipMessage: "Направление сортировки списка"
+                    onButtonPressed: {
+                        releaseLinkedSeries.sortingDirection = !releaseLinkedSeries.sortingDirection;
                     }
                 }
             }

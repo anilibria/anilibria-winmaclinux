@@ -42,6 +42,16 @@ void ImageLoader::imageDownloaded(QNetworkReply *reply)
     auto idProperty = reply->property("identifier");
     auto id = idProperty.toInt();
 
+    QVariant statusCode = reply->attribute( QNetworkRequest::HttpStatusCodeAttribute );
+    if ( statusCode.isValid() && statusCode.toInt() != 200) return;
+
+    auto contentTypeHeader = reply->header(QNetworkRequest::ContentTypeHeader);
+    if (contentTypeHeader.isValid() && contentTypeHeader.userType() == QMetaType::QString) {
+        auto contentType = contentTypeHeader.toString().toLower().trimmed();
+
+        if (!(contentType == "image/jpeg" || contentType == "image/webp" || contentType == "image/png")) return;
+    }
+
     QByteArray data = reply->readAll();
 
     if (data.length() == 0) return;

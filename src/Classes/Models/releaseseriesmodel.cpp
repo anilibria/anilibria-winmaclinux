@@ -16,6 +16,24 @@ ReleaseSeriesModel::~ReleaseSeriesModel()
     m_titles->clear();
 }
 
+QString ReleaseSeriesModel::titleAsString()
+{
+    if (m_titlesAsString.isEmpty() && !m_titles->isEmpty()) {
+        m_titlesAsString = m_titles->join(", ");
+    }
+
+    return m_titlesAsString;
+}
+
+QString ReleaseSeriesModel::genresAsString()
+{
+    if (m_genresAsString.isEmpty() && !m_genres->isEmpty()) {
+        m_genresAsString = m_genres->join(", ");
+    }
+
+    return m_genresAsString;
+}
+
 void ReleaseSeriesModel::recalculateCountReleases()
 {
     m_countReleases = m_releaseIds->length();
@@ -60,11 +78,21 @@ void ReleaseSeriesModel::readFromJson(const QJsonObject &jsonObject) noexcept
     auto titles = jsonObject.value("titles").toArray();
     m_titles->clear();
     foreach (auto title, titles) m_titles->append(title.toString());
+    m_titlesAsString = m_titles->join(", ");
 
     if (jsonObject.contains("genres")) {
         auto genres = jsonObject.value("genres").toArray();
         m_genres->clear();
         foreach (auto genre, genres) m_genres->append(genre.toString());
+
+        std::sort(
+            m_genres->begin(),
+            m_genres->end(),
+            [](const QString & left, const QString & right) {
+                return left < right;
+            }
+        );
+        m_genresAsString = m_genres->join(", ");
     }
 }
 

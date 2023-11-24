@@ -187,6 +187,28 @@ void ReleaseLinkedSeries::setNameFilter(const QString& nameFilter) noexcept
     emit nameFilterChanged();
 }
 
+void ReleaseLinkedSeries::setSortingField(int sortingField) noexcept
+{
+    if (m_sortingField == sortingField) return;
+
+    m_sortingField = sortingField;
+    emit sortingFieldChanged();
+
+    sortNonFiltered();
+    filterSeries();
+}
+
+void ReleaseLinkedSeries::setSortingDirection(bool sortingDirection) noexcept
+{
+    if (m_sortingDirection == sortingDirection) return;
+
+    m_sortingDirection = sortingDirection;
+    emit sortingDirectionChanged();
+
+    sortNonFiltered();
+    filterSeries();
+}
+
 QSharedPointer<QList<int>> ReleaseLinkedSeries::getAllLinkedReleases() const noexcept
 {
     auto allReleases = QSharedPointer<QList<int>>(new QList<int>());
@@ -341,6 +363,7 @@ void ReleaseLinkedSeries::filterSeries()
     );
 
     endResetModel();
+    emit countGroupsChanged();
 }
 
 void ReleaseLinkedSeries::clearFilters()
@@ -349,6 +372,7 @@ void ReleaseLinkedSeries::clearFilters()
     m_filtering = false;
 
     filterSeries();
+    emit countGroupsChanged();
 }
 
 void ReleaseLinkedSeries::selectByIndex(int index)
@@ -436,6 +460,8 @@ void ReleaseLinkedSeries::loadSeries()
 
         m_series->append(seriaModel);
     }
+
+    sortNonFiltered();
 }
 
 void ReleaseLinkedSeries::createCacheFileIfNotExists() const noexcept
@@ -542,9 +568,32 @@ void ReleaseLinkedSeries::saveSeries()
     file.close();
 }
 
+void ReleaseLinkedSeries::sortNonFiltered()
+{
+    auto sortingField = m_sortingField;
+    auto sortingDirection = m_sortingDirection;
+    std::sort(
+        m_series->begin(),
+        m_series->end(),
+        [sortingField, sortingDirection](ReleaseSeriesModel* left, ReleaseSeriesModel* right) {
+            if (sortingField == 1) {
+                return  sortingDirection ? left->titleAsString() > right->titleAsString() : left->titleAsString() < right->titleAsString();
+            }
+
+            if (sortingField == 2) {
+                return sortingDirection ? left->genresAsString() > right->genresAsString() : left->genresAsString() < right->genresAsString();
+            }
+
+            return  sortingDirection ? left->countReleases() > right->countReleases() : left->countReleases() < right->countReleases();
+        }
+    );
+}
+
 void ReleaseLinkedSeries::cacheUpdated()
 {
     if (!m_cacheUpdateWatcher->result()) return;
+
+    sortNonFiltered();
 
     filterSeries();
 }

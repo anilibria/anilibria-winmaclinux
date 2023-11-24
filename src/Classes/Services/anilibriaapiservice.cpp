@@ -55,8 +55,6 @@ void AnilibriaApiService::getAllReleases(const int countPages, const int perPage
     auto networkManager = new QNetworkAccessManager(this);
     connect(networkManager,&QNetworkAccessManager::finished,this,&AnilibriaApiService::getAllReleasesResponse);
 
-    auto iterator = 0;
-
     for (auto i = 0; i < countPages; i++) {
         QNetworkRequest request(QUrl(AnilibriaApiPath + "public/api/index.php"));
         request.setRawHeader("User-Agent", "Anilibria CP Client");
@@ -69,8 +67,6 @@ void AnilibriaApiService::getAllReleases(const int countPages, const int perPage
 
         auto reply = networkManager->post(request, params.query(QUrl::FullyEncoded).toUtf8());
         reply->setProperty("page", i);
-
-        iterator++;
     }
 }
 

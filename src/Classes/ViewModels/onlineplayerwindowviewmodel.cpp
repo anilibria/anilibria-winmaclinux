@@ -30,12 +30,10 @@ OnlinePlayerWindowViewModel::OnlinePlayerWindowViewModel(QObject *parent) : QObj
     m_playerComponents.insert(nameVLCPlayer, "Videoplayer/QtVlcPlayer.qml");
     m_playerComponents.insert(nameQtAvPlayer, "Videoplayer/QtAvPlayer.qml");
     m_playerComponents.insert("Default", "Videoplayer/QtPlayer515.qml");
-    m_playerComponents.insert("Old default", "Videoplayer/QtPlayer.qml");
 
     m_playerOutputComponents.insert(nameVLCPlayer, "Videoplayer/QtVlcVideoOutput.qml");
     m_playerOutputComponents.insert(nameQtAvPlayer, "Videoplayer/QtAvVideoOutput.qml");
     m_playerOutputComponents.insert("Default", "Videoplayer/QtVideo515Output.qml");
-    m_playerOutputComponents.insert("Old default", "Videoplayer/QtVideoOutput.qml");
 
     fillSupportedPlayers();
 
@@ -158,22 +156,16 @@ void OnlinePlayerWindowViewModel::fillSupportedPlayers()
 {
     bool isVlc = false;
     bool isQtAv = false;
-    bool isQt515 = false;
 #ifdef USE_VLC_PLAYER
     isVlc = true;
 #endif
 #ifdef USE_QTAV_PLAYER
     isQtAv = true;
 #endif
-#if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
-    isQt515 = false;
-#else
-    isQt515 = true;
-#endif
 
     if (isVlc) m_players.append(nameVLCPlayer);
     if (isQtAv) m_players.append(nameQtAvPlayer);
 #ifndef NO_NEED_STANDART_PLAYER
-    m_players.append(isQt515 ? "Default" : "Old default");
+    m_players.append("Default");
 #endif
 }

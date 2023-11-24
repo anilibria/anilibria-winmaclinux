@@ -14,6 +14,8 @@ private:
     QScopedPointer<QStringList> m_titles { new QStringList() };
     QScopedPointer<QStringList> m_genres { new QStringList() };
     qint32 m_countReleases;
+    QString m_genresAsString { "" };
+    QString m_titlesAsString { "" };
 
 public:
     explicit ReleaseSeriesModel();
@@ -22,9 +24,10 @@ public:
     QList<QVariant>* releaseIds() const { return m_releaseIds; }
     QList<QVariant>* posters() const { return m_posters; }
     QStringList* titles() const { return m_titles.get(); }
+    QString titleAsString();
     qint32 countReleases() const { return m_countReleases; }
     QStringList* genres() const { return m_genres.get(); }
-    QString genresAsString() const { return m_genres->join(", "); }
+    QString genresAsString();
 
     void recalculateCountReleases();
     bool appendReleaseId(const int id);
