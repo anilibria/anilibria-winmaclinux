@@ -97,6 +97,18 @@ Page {
                         ListElement {
                             text: "Жанрам"
                         }
+                        ListElement {
+                            text: "Рейтингу"
+                        }
+                        ListElement {
+                            text: "Количество сидов"
+                        }
+                        ListElement {
+                            text: "Сезонам"
+                        }
+                        ListElement {
+                            text: "Годам"
+                        }
                     }
                     onCurrentIndexChanged: {
                         releaseLinkedSeries.sortingField = currentIndex;

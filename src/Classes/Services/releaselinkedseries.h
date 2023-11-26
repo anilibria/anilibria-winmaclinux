@@ -41,11 +41,11 @@ class ReleaseLinkedSeries : public QAbstractListModel
     Q_PROPERTY(int countGroups READ countGroups NOTIFY countGroupsChanged)
 
 private:
-    QString m_nameFilter;
-    QScopedPointer<QVector<ReleaseSeriesModel*>> m_series;
-    QScopedPointer<QVector<ReleaseSeriesModel*>> m_filteredSeries;
+    QString m_nameFilter { "" };
+    QVector<ReleaseSeriesModel*> m_series { QVector<ReleaseSeriesModel*>() };
+    QVector<ReleaseSeriesModel*> m_filteredSeries { QVector<ReleaseSeriesModel*>() };
     QVector<int>* m_userFavorites { nullptr };
-    bool m_filtering = false;
+    bool m_filtering { false };
     QSharedPointer<QList<FullReleaseModel *>> m_releases;
     QScopedPointer<QFutureWatcher<bool>> m_cacheUpdateWatcher { new QFutureWatcher<bool>(this) };
     bool m_isCardShowed { false };
@@ -65,7 +65,7 @@ private:
         OtherReleasesRole,
         GenresRole,
         CountInFavoritesRole,
-        IdentifierRole
+        IdentifierRole,
     };
 
 public:
@@ -88,7 +88,7 @@ public:
 
     int isCardShowed() const noexcept { return m_isCardShowed; }
 
-    int countGroups() const noexcept { return m_filteredSeries->size(); }
+    int countGroups() const noexcept { return m_filteredSeries.size(); }
 
     ReleaseSeriesCardListModel* cardList() const noexcept { return m_releaseSeriesCardList; }
 
@@ -115,6 +115,8 @@ private:
     void processReleasesFromDescription(const QString& description, const QMap<QString, FullReleaseModel*>& releases, int currentRelease, const QString currentReleaseTitle, const QString& poster, const QString& genres) noexcept;
     void saveSeries();
     void sortNonFiltered();
+    void refreshDataFromReleases();
+    int getSeeders(FullReleaseModel *release);
 
 private slots:
     void cacheUpdated();

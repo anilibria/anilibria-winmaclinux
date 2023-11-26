@@ -1,10 +1,7 @@
 #include "releaseseriesmodel.h"
 #include <QJsonArray>
 
-ReleaseSeriesModel::ReleaseSeriesModel() :
-    m_releaseIds(new QList<QVariant>()),
-    m_posters(new QList<QVariant>()),
-    m_countReleases(0)
+ReleaseSeriesModel::ReleaseSeriesModel()
 {
 
 }

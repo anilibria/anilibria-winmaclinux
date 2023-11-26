@@ -1,4 +1,5 @@
-#![windows_subsystem = "windows"]
+//uncomment for avoid open console window
+// #![windows_subsystem = "windows"]
 
 slint::include_modules!();
 

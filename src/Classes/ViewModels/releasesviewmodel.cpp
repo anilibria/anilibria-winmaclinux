@@ -1156,7 +1156,7 @@ void ReleasesViewModel::updateAllReleases(const QList<QString> &releases, bool i
                 if (jsonError.error != 0) {
                     setSynchronizationEnabled(false);
                     emit errorWhileReleaseSynchronization();
-                    qDebug() << "updateAllReleases 3 " << jsonPage;
+                    //qDebug() << "updateAllReleases 3 " << jsonPage;
                     return false;
                 }
             }

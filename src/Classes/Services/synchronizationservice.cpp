@@ -21,7 +21,6 @@
 #include <QJsonDocument>
 #include "synchronizationservice.h"
 #include "anilibriaapiservice.h"
-//#include "../Models/releasemodel.h"
 #include "../../globalconstants.h"
 
 SynchronizationService::SynchronizationService(QObject *parent) : QObject(parent),
