@@ -101,7 +101,7 @@ void AnalyticsService::sendPostEvent(QString category, QString message, QString 
 
     auto documentTitle = "&dt=Page%20-%20" + cutPath;
 
-    auto sessionStart = "&sid=" + QString::number(m_startTime.toTime_t());
+    auto sessionStart = "&sid=" + QString::number(m_startTime.toSecsSinceEpoch());
 
     auto url = QUrl(AnalyticsService::googleAnalyticsAddress + language + screenResolution + eventName + pageName+ sessionCounter + documentTitle + sessionStart + uniqueClientId);
 

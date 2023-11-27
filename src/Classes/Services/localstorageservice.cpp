@@ -391,8 +391,9 @@ QString LocalStorageService::packAsM3UAndOpen(int id, QString quality)
     QList<ExternalPlaylistVideo> videos;
     foreach (auto jsonVideo, videosArray) {
         ExternalPlaylistVideo video;
-        video.setAddress(jsonVideo[quality].toString());
-        video.setOrder(jsonVideo["id"].toInt());
+        auto item = jsonVideo.toObject();
+        video.setAddress(item.value(quality).toString());
+        video.setOrder(item.value("id").toInt());
         auto videoObject = jsonVideo.toObject();
         if(videoObject.contains("name") && !videoObject["name"].toString().isEmpty()) {
             video.setName(videoObject["name"].toString());
@@ -429,8 +430,9 @@ QString LocalStorageService::packAsMPCPLAndOpen(int id, QString quality)
     QList<ExternalPlaylistVideo> videos;
     foreach (auto jsonVideo, videosArray) {
         ExternalPlaylistVideo video;
-        video.setAddress(jsonVideo[quality].toString());
-        video.setOrder(jsonVideo["id"].toInt());
+        auto item = jsonVideo.toObject();
+        video.setAddress(item.value(quality).toString());
+        video.setOrder(item.value("id").toInt());
         video.setName("Серия " + QString::number(video.order()));
         videos.append(video);
     }

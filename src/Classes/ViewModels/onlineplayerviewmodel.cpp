@@ -611,7 +611,7 @@ int OnlinePlayerViewModel::getLastVideoSeen()
 void OnlinePlayerViewModel::setVideoSeens(int id, int videoId, double videoPosition)
 {
     QDateTime now = QDateTime::currentDateTime();
-    auto timestamp = now.toTime_t();
+    auto timestamp = now.toSecsSinceEpoch();
     if (!m_seenModels->contains(id)) {
         SeenModel* seenModel = new SeenModel();
         seenModel->setId(id);

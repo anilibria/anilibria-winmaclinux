@@ -514,7 +514,7 @@ void ReleasesViewModel::fillNewFromStart(QList<FullReleaseModel *> *list) const 
 void ReleasesViewModel::fillNewFromLastTwoDays(QList<FullReleaseModel *> *list) const noexcept
 {
     auto now = QDateTime::currentDateTimeUtc().addDays(-3);
-    auto timestamp = static_cast<int>(now.toTime_t());
+    auto timestamp = static_cast<int>(now.toSecsSinceEpoch());
     foreach (auto release, *m_releases) {
         if (release->countOnlineVideos() == 0) continue;
         if (release->timestamp() < timestamp) continue;
@@ -526,7 +526,7 @@ void ReleasesViewModel::fillNewFromLastTwoDays(QList<FullReleaseModel *> *list) 
 void ReleasesViewModel::fillAbandonedSeens(QList<FullReleaseModel *> *list) const noexcept
 {
     auto now = QDateTime::currentDateTimeUtc().addDays(-18);
-    auto timestamp = static_cast<int>(now.toTime_t());
+    auto timestamp = static_cast<int>(now.toSecsSinceEpoch());
 
     foreach (auto release, *m_releases) {
         if (release->countOnlineVideos() == 0) continue;
@@ -1319,7 +1319,7 @@ void ReleasesViewModel::setToReleaseHistory(int id, int type) noexcept
     }
 
     QDateTime now = QDateTime::currentDateTime();
-    int timestamp = static_cast<int>(now.toTime_t());
+    int timestamp = static_cast<int>(now.toSecsSinceEpoch());
 
     switch (type) {
         case HistoryReleaseCardMode:

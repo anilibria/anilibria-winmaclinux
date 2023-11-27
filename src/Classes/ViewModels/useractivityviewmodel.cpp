@@ -46,7 +46,7 @@ void UserActivityViewModel::saveUsingApplication() noexcept
     auto now = QDateTime::currentDateTime();
     auto difference = m_watchUsingApplicationStart.secsTo(now);
     m_watchUsingApplicationMinutes += difference / 60;
-    m_previousApplicationStart = QDateTime::currentDateTimeUtc().toTime_t();
+    m_previousApplicationStart = QDateTime::currentDateTimeUtc().toSecsSinceEpoch();
     writeUserActivity();
 }
 
@@ -119,7 +119,7 @@ void UserActivityViewModel::readUserActivity() noexcept
     m_countOpenedReleaseCard = object.contains("countOpenedReleaseCard") ? object["countOpenedReleaseCard"].toInt() : 0;
     m_countDownloadTorrent = object.contains("countDownloadTorrent") ? object["countDownloadTorrent"].toInt() : 0;
     m_countAddedToCinemahall = object.contains("countAddedToCinemahall") ? object["countAddedToCinemahall"].toInt() : 0;
-    m_previousApplicationStart = object.contains("previousApplicationStart") ? object["previousApplicationStart"].toInt() : QDateTime::currentDateTimeUtc().toTime_t();
+    m_previousApplicationStart = object.contains("previousApplicationStart") ? object["previousApplicationStart"].toInt() : QDateTime::currentDateTimeUtc().toSecsSinceEpoch();
 }
 
 void UserActivityViewModel::writeUserActivity() noexcept
