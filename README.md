@@ -71,6 +71,24 @@ $ su - -c 'apt-get install anilibria-winmaclinux'
 $ sudo dpkg -i ~/anilibria_0.0.0_amd64.deb
 $ sudo apt-get install -f
 ```
+
+### NixOS
+Добавить пакет `anilibria-winmaclinux` в список пакетов:
+
+* Общесистемно:
+
+    ```nix
+    environment.systemPackages = with pkgs; [ anilibria-winmaclinux ];
+    ```
+
+* Для определенного пользователя (в примере имя пользователя - bob)
+
+    ```nix
+    users.users.bob.packages = with pkgs; [ anilibria-winmaclinux ];
+    ```
+
+### [Nix](nix.md)
+
 ### Flatpak
 Скачайте flatpack пакет со страницы релиза и выполните следующую команду:
 ```console
