@@ -22,8 +22,7 @@
 #include <QQmlListProperty>
 #include <QObject>
 #include "anilibriaapiservice.h"
-#include "dlservice.h"
-#include "../Models/releasemodel.h"
+//#include "../Models/releasemodel.h"
 
 class SynchronizationService : public QObject
 {
@@ -31,7 +30,6 @@ class SynchronizationService : public QObject
 
 private:
     AnilibriaApiService* m_AnilibriaApiService;
-    DLService* m_dlService;
     QString m_synchronizedReleases;
 public:    
     explicit SynchronizationService(QObject *parent = nullptr);
@@ -47,7 +45,6 @@ public:
     Q_INVOKABLE QString combineWithWebSiteUrl(QString path);
     Q_INVOKABLE void downloadTorrent(QString torrentPath);
     Q_INVOKABLE void synchronizeYoutube();
-    Q_INVOKABLE void synchronizeDL();
 
     QString&& getSynchronizedReleases();
     QList<QString> getSynchronizedReleasePages();
@@ -67,7 +64,6 @@ signals:
 
 public slots:
     void saveReleasesToCache();
-    void saveReleasesFromDLToCache();
     void saveScheduleToCache(QString data);
     void saveYoutubeToCache(QString data);
     void handleSignout();

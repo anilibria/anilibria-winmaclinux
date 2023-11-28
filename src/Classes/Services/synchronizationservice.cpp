@@ -24,8 +24,7 @@
 #include "../../globalconstants.h"
 
 SynchronizationService::SynchronizationService(QObject *parent) : QObject(parent),
-    m_AnilibriaApiService(new AnilibriaApiService(this)),
-    m_dlService(new DLService(this))
+    m_AnilibriaApiService(new AnilibriaApiService(this))
 {
 
     connect(m_AnilibriaApiService,&AnilibriaApiService::allReleasesReceived,this,&SynchronizationService::saveReleasesToCache);
@@ -36,7 +35,6 @@ SynchronizationService::SynchronizationService(QObject *parent) : QObject(parent
     connect(m_AnilibriaApiService,&AnilibriaApiService::userFavoritesUpdated,this,&SynchronizationService::handleEditUserFavorites);
     connect(m_AnilibriaApiService,&AnilibriaApiService::torrentDownloaded,this,&SynchronizationService::handleTorrentDownloaded);
     connect(m_AnilibriaApiService,&AnilibriaApiService::allYoutubeItemReceived,this,&SynchronizationService::saveYoutubeToCache);
-    connect(m_dlService, &DLService::allSynchronized, this, &SynchronizationService::saveReleasesFromDLToCache);
 }
 
 void SynchronizationService::synchronizeReleases()
@@ -94,11 +92,6 @@ void SynchronizationService::synchronizeYoutube()
     m_AnilibriaApiService->getYoutubeVideos();
 }
 
-void SynchronizationService::synchronizeDL()
-{
-    m_dlService->synchronize();
-}
-
 QString &&SynchronizationService::getSynchronizedReleases()
 {
     return std::move(m_synchronizedReleases);
@@ -112,10 +105,6 @@ QList<QString> SynchronizationService::getSynchronizedReleasePages()
 void SynchronizationService::saveReleasesToCache()
 {
     emit synchronizedReleases();
-}
-
-void SynchronizationService::saveReleasesFromDLToCache()
-{
 }
 
 void SynchronizationService::saveScheduleToCache(QString data)

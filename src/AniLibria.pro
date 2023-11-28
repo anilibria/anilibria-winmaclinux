@@ -228,7 +228,6 @@ SOURCES += \
     Classes/Services/anilibriaapiservice.cpp \
     Classes/Services/apiserviceconfigurator.cpp \
     Classes/Services/applicationsettings.cpp \
-    Classes/Services/dlservice.cpp \
     Classes/Services/downloadmanager.cpp \
     Classes/Services/imageloader.cpp \
     Classes/Services/localstorageservice.cpp \
@@ -339,7 +338,6 @@ HEADERS += \
     Classes/Services/anilibriaapiservice.h \
     Classes/Services/apiserviceconfigurator.h \
     Classes/Services/applicationsettings.h \
-    Classes/Services/dlservice.h \
     Classes/Services/downloadmanager.h \
     Classes/Services/imageloader.h \
     Classes/Services/localstorageservice.h \
