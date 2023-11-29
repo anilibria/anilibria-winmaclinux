@@ -64,7 +64,7 @@
             anilibria-winmaclinux = genPkgs pkgs pkgs.anilibria-winmaclinux;
             default = anilibria-winmaclinux.auto;
           };
-          defaultPackage = packages.anilibria-winmaclinux-auto;
+          defaultPackage = packages.anilibria-winmaclinux.auto;
           devShells.default = throw "TODO" pkgs.mkShell {
             nativeBuildInputs = with pkgs; [ ];
             buildInputs = with pkgs; [ ];
