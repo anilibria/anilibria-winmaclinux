@@ -102,7 +102,7 @@ $ flatpak install --user anilibria.flatpak
 [openSUSE](https://github.com/anilibria/anilibria-winmaclinux/blob/master/openSUSE.md)  
 [Fedora](https://github.com/anilibria/anilibria-winmaclinux/blob/master/fedora.md)  
 [macOS](https://github.com/anilibria/anilibria-winmaclinux/blob/master/macosbuild.md)  
-[PostmarketOs](https://github.com/Jaymz665/anilibria-winmaclinux/blob/patch-1/postmarketos.md)  
+[PostmarketOs](https://github.com/anilibria/anilibria-winmaclinux/blob/master/postmarketos.md)  
 [Void Linux](https://github.com/anilibria/anilibria-winmaclinux/blob/master/voidlinux.md)
 
 ### Для сборки необходимо:
