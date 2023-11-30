@@ -22,7 +22,7 @@
     Выполнить команду
 
     ```nix
-    nix profile install "github:anilibria/anilibria-winmaclinux#anilibria-winmaclinux-<gpu>"
+    nix profile install "github:anilibria/anilibria-winmaclinux#anilibria-winmaclinux.<gpu>"
     ```
 
     Где `<gpu>` заменить на:
@@ -35,21 +35,24 @@
     Автоматический выбор в зависимости от видеокарты (НЕ РЕКОМЕНДУЕТСЯ):
 
     ```nix
-    nix profile install "github:anilibria/anilibria-winmaclinux#anilibria-winmaclinux-auto" --impure
+    nix profile install "github:anilibria/anilibria-winmaclinux#anilibria-winmaclinux.auto" --impure
     ```
 
 3. Добавление приложения в меню приложений
 
     Чтобы приложение появилось в меню приложений нужно добавить директорию ~/.nix-profile/share в переменную окружения $XDG_DATA_DIRS.
 
-    Для этого надо добавить строчку `export XDG_DATA_DIRS=$HOME/.nix-profile/share:$XDG_DATA_DIRS` в файл `~/.profile`
+    Для этого надо добавить строчку `export XDG_DATA_DIRS="$HOME/.nix-profile/share:$XDG_DATA_DIRS"` в файл `~/.profile`
 
     Сделать это можно вручную, через текстовый редактор или командой
+
     ```sh
-    echo 'export XDG_DATA_DIRS=$HOME/.nix-profile/share:$XDG_DATA_DIRS' > ~/.profile
+    echo 'export XDG_DATA_DIRS="$HOME/.nix-profile/share:$XDG_DATA_DIRS"' >> ~/.profile
     ```
 
     Вероятно после этого надо будет перезапустить сессию
+
+    Если после этого приложение не появилось в меню приложений, проконсультируйтесь в документации вашего дистрибутива или графической оболочки про выставление переменных окружения. Не смотря на отсутствие в меню, приложение должно быть доступно по команде `AniLibria` в терминале.
 
 ### Как найти приложение?
 
