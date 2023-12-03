@@ -1152,13 +1152,16 @@ void ReleasesViewModel::updateAllReleases(const QList<QString> &releases, bool i
 
             foreach (auto jsonPage, releases) {
                 QJsonParseError jsonError;
-                jsons.append(QJsonDocument::fromJson(jsonPage.toUtf8(), &jsonError));
-                if (jsonError.error != 0) {
-                    setSynchronizationEnabled(false);
-                    emit errorWhileReleaseSynchronization();
-                    //qDebug() << "updateAllReleases 3 " << jsonPage;
-                    return false;
-                }
+                auto document = QJsonDocument::fromJson(jsonPage.toUtf8(), &jsonError);
+                if (jsonError.error == 0) jsons.append(document);
+            }
+
+            qDebug() << "count parsed pages " << jsons.size();
+            if (jsons.isEmpty()) {
+                setSynchronizationEnabled(false);
+                emit errorWhileReleaseSynchronization();
+                //qDebug() << "updateAllReleases 3 " << jsonPage;
+                return false;
             }
 
             QJsonArray jsonReleases;
