@@ -23,6 +23,7 @@
 #include <QString>
 #include <QQuickStyle>
 #include <QQmlFileSelector>
+#include <QQuickWindow>
 #include "Classes/Services/synchronizationservice.h"
 #include "Classes/Services/localstorageservice.h"
 #include "Classes/Services/applicationsettings.h"
@@ -79,6 +80,10 @@ int main(int argc, char *argv[])
 {
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     QCoreApplication::setAttribute(Qt::AA_ShareOpenGLContexts);
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+    QQuickWindow::setGraphicsApi(QSGRendererInterface::OpenGL);
+    QQuickWindow::setSceneGraphBackend("opengl");
+#endif
 
 #ifdef Q_OS_WIN
     if (argc == 2 && QString(argv[1]) == "outputlog") {
