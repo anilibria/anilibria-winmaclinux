@@ -12,7 +12,6 @@
 #include <QQuickOpenGLUtils>
 #endif
 #include "mpvobject.h"
-#include "qthelper.h"
 
 void on_mpv_events(void *ctx)
 {
@@ -244,7 +243,7 @@ MpvObject::MpvObject(QQuickItem * parent)
     mpv_set_option_string(mpv, "terminal", "yes");
     mpv_set_option_string(mpv, "msg-level", "all=v");
     mpv_set_option_string(mpv, "cache", "yes");
-    mpv_set_option_string(mpv, "cache-secs", "4");
+    mpv_set_option_string(mpv, "cache-secs", "10");
 
     if (mpv_initialize(mpv) < 0) throw std::runtime_error("could not initialize mpv context");
 
@@ -255,7 +254,7 @@ MpvObject::MpvObject(QQuickItem * parent)
     mpv_observe_property(mpv, 0, "mute", MPV_FORMAT_FLAG);
     mpv_observe_property(mpv, 0, "pause", MPV_FORMAT_FLAG);
 
-    m_checkTimer = startTimer(80);
+    m_checkTimer = startTimer(100);
 
     connect(this, &MpvObject::onUpdate, this, &MpvObject::doUpdate, Qt::QueuedConnection);
 }
@@ -276,17 +275,20 @@ void MpvObject::on_update(void *ctx)
 // connected to onUpdate(); signal makes sure it runs on the GUI thread
 void MpvObject::doUpdate()
 {
-    update();
+    if (m_updateEnabled) {
+        qDebug() << "main doUpdate";
+        update();
+    }
 }
 
 void MpvObject::command(const QVariant& params)
 {
-    mpv::qt::command(mpv, params);
+    makeMpvCommand(params);
 }
 
 void MpvObject::setProperty(const QString& name, const QVariant& value)
 {
-    setMpvProperty(mpv, name, value);
+    setMpvProperty(name, value);
 }
 
 QQuickFramebufferObject::Renderer *MpvObject::createRenderer() const
@@ -301,9 +303,9 @@ QQuickFramebufferObject::Renderer *MpvObject::createRenderer() const
     return new MpvRenderer(const_cast<MpvObject *>(this));
 }
 
-int MpvObject::volume() const noexcept
+int MpvObject::volume() noexcept
 {
-    auto value = mpv::qt::get_property(mpv, "volume");
+    auto value = getMpvProperty("volume");
     if (value.userType() == QMetaType::Int) value = value.toInt();
 
     return 100;
@@ -311,14 +313,14 @@ int MpvObject::volume() const noexcept
 
 void MpvObject::setVolume(int volume) noexcept
 {
-    setMpvProperty(mpv, "volume", volume);
+    setMpvProperty("volume", volume);
 
     emit volumeChanged();
 }
 
-bool MpvObject::muted() const noexcept
+bool MpvObject::muted() noexcept
 {
-    auto value = mpv::qt::get_property(mpv, "mute");
+    auto value = getMpvProperty("mute");
     if (value.userType() == QMetaType::Bool) return value.toBool();
 
     return false;
@@ -326,7 +328,7 @@ bool MpvObject::muted() const noexcept
 
 void MpvObject::setMuted(bool muted) noexcept
 {
-    setMpvProperty(mpv, "mute", muted);
+    setMpvProperty("mute", muted);
 
     emit mutedChanged();
 }
@@ -340,14 +342,14 @@ void MpvObject::setSource(const QString& source) noexcept
     QStringList items;
     items.append("loadfile");
     items.append(source);
-    mpv::qt::command(mpv, QVariant(items));
+    makeMpvCommand(QVariant(items));
 
     emit sourceChanged();
 }
 
-float MpvObject::playbackRate() const noexcept
+float MpvObject::playbackRate() noexcept
 {
-    auto value = mpv::qt::get_property(mpv, "speed");
+    auto value = getMpvProperty("speed");
     if (value.userType() == QMetaType::Double) return value.toFloat();
 
     return 1.0;
@@ -355,29 +357,37 @@ float MpvObject::playbackRate() const noexcept
 
 void MpvObject::setPlaybackRate(float playbackRate) noexcept
 {
-    setMpvProperty(mpv, "speed", (double)playbackRate);
+    setMpvProperty("speed", (double)playbackRate);
 
     emit playbackRateChanged();
 }
 
+void MpvObject::setUpdateEnabled(bool updateEnabled) noexcept
+{
+    if (m_updateEnabled == updateEnabled) return;
+
+    m_updateEnabled = updateEnabled;
+    emit updateEnabledChanged();
+}
+
 void MpvObject::play()
 {
-    setMpvProperty(mpv, "pause", false);
+    setMpvProperty("pause", false);
 }
 
 void MpvObject::pause()
 {
-    setMpvProperty(mpv, "pause", true);
+    setMpvProperty("pause", true);
 }
 
 void MpvObject::stop()
 {
-    setMpvProperty(mpv, "pause", true);
+    setMpvProperty("pause", true);
 }
 
 void MpvObject::seek(int position) noexcept
 {
-    setMpvProperty(mpv, "time-pos", position);
+    setMpvProperty("time-pos", position);
 }
 
 void MpvObject::timerEvent(QTimerEvent *event)
@@ -387,6 +397,9 @@ void MpvObject::timerEvent(QTimerEvent *event)
     auto playerEvent = mpv_wait_event(mpv, 0);
     if (playerEvent == nullptr) return;
 
+    if (playerEvent->event_id == MPV_EVENT_START_FILE) {
+        qDebug() << "File Started!!!!";
+    }
     if(playerEvent->event_id == MPV_EVENT_FILE_LOADED) {
         qDebug() << "File Loaded!!!!";
     }
@@ -406,11 +419,15 @@ void MpvObject::timerEvent(QTimerEvent *event)
         if (propertyName == "duration") {
             auto duration = getDoubleFromEventData(eventData->data);
             m_duration = duration * 1000;
+            emit durationChanged();
         }
         if (propertyName == "time-pos") {
             auto position = getDoubleFromEventData(eventData->data);
-            m_position = position * 1000;
-            qDebug() << "Position: " + QString::number(position) + " <> " + QString::number(m_position);
+            auto newPosition = position * 1000;
+            if (newPosition != m_position) {
+                m_position = newPosition;
+                if (m_duration > 0) emit positionChanged();
+            }
         }
 
         //eof-reached
@@ -445,16 +462,16 @@ bool MpvObject::getBoolFromEventData(void *data) const noexcept
     return value == 1 ? true : false;
 }
 
-int MpvObject::setMpvProperty(mpv_handle *ctx, const QString &name, const QVariant &v)
+int MpvObject::setMpvProperty(const QString &name, const QVariant &v)
 {
     nodeBuilder node(v);
-    return mpv_set_property(ctx, name.toUtf8().data(), MPV_FORMAT_NODE, node.node());
+    return mpv_set_property(mpv, name.toUtf8().data(), MPV_FORMAT_NODE, node.node());
 }
 
-QVariant MpvObject::getMpvProperty(mpv_handle *ctx, const QString &name)
+QVariant MpvObject::getMpvProperty(const QString &name)
 {
     mpv_node node;
-    int err = mpv_get_property(ctx, name.toUtf8().data(), MPV_FORMAT_NODE, &node);
+    int err = mpv_get_property(mpv, name.toUtf8().data(), MPV_FORMAT_NODE, &node);
     if (err < 0) return QVariant::fromValue(ErrorReturn(err));
     nodeAutoFree f(&node);
     return nodeToVariant(&node);
@@ -488,5 +505,15 @@ QVariant MpvObject::nodeToVariant(const mpv_node *node)
             return QVariant(qmap);
         }
         default: return QVariant();
-    }
+        }
+}
+
+QVariant MpvObject::makeMpvCommand(const QVariant &params)
+{
+    nodeBuilder node(params);
+    mpv_node res;
+    int err = mpv_command_node(mpv, node.node(), &res);
+    if (err < 0) return QVariant::fromValue(ErrorReturn(err));
+    nodeAutoFree f(&res);
+    return nodeToVariant(&res);
 }

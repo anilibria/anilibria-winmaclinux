@@ -1150,14 +1150,21 @@ void ReleasesViewModel::updateAllReleases(const QList<QString> &releases, bool i
         [=] {
             auto jsons = QList<QJsonDocument>();
 
+            bool isHasFirstPage = false;
+            int pageIndex = 0;
             foreach (auto jsonPage, releases) {
                 QJsonParseError jsonError;
                 auto document = QJsonDocument::fromJson(jsonPage.toUtf8(), &jsonError);
-                if (jsonError.error == 0) jsons.append(document);
+                if (jsonError.error == 0) {
+                    jsons.append(document);
+                    if (pageIndex == 0) isHasFirstPage = true;
+                }
+
+                pageIndex++;
             }
 
             qDebug() << "count parsed pages " << jsons.size();
-            if (jsons.isEmpty()) {
+            if (jsons.isEmpty() || !isHasFirstPage) {
                 setSynchronizationEnabled(false);
                 emit errorWhileReleaseSynchronization();
                 //qDebug() << "updateAllReleases 3 " << jsonPage;
