@@ -186,6 +186,9 @@ ThemeFieldListModel::ThemeFieldListModel(QObject *parent)
     m_descriptions.insert(iconCustomGroupField, "Иконка пользовательских групп:Иконка для кнопки управления пользовательскими группами");
     m_descriptions.insert(iconEditField, "Иконка редактирования:Иконка для кнопки редактирования");
 
+    m_descriptions.insert(iconReleaseCatalogSearchFoundedField, "Иконка Поиск:Иконка для кнопки открытия поисковых полей в Каталоге релизов для состояния Фильтр выбран");
+    m_descriptions.insert(iconCustomGroupFoundedField, "Иконка пользовательских групп:Иконка для кнопки управления пользовательскими группами для состояния Фильтр выбран");
+
     m_saveMenuItems.append("Сохранить и добавить тему в список");
     m_saveMenuItems.append("Сохранить в файл");
 }

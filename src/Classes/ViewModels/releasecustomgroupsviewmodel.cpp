@@ -115,6 +115,7 @@ void ReleaseCustomGroupsViewModel::toggleSelectGroup(int index) noexcept
     }
 
     refreshGroups();
+    emit hasGroupsSelectedChanged();
 }
 
 void ReleaseCustomGroupsViewModel::addGroupToSelect(int index) noexcept

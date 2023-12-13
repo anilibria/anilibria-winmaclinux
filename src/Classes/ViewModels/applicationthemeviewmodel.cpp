@@ -180,8 +180,10 @@ ApplicationThemeViewModel::ApplicationThemeViewModel(QObject *parent)
     lightTheme->insert(colorDrawerDividerColorField, "#1e000000");
     lightTheme->insert(colorDrawerDimColorField, "#99303030");
     lightTheme->insert(colorDrawerDialogColorField, "#ffffff");
-
     lightTheme->insert(iconCustomGroupField, "qrc:/Assets/Icons/releases/customgroup.svg");
+
+    lightTheme->insert(iconReleaseCatalogSearchFoundedField, "qrc:/Assets/Icons/search.svg");
+    lightTheme->insert(iconCustomGroupFoundedField, "qrc:/Assets/Icons/releases/customgroup.svg");
 
     lightTheme->insert(basedOnThemeField, m_lightTheme);
     lightTheme->insert(externalIdField, "");
@@ -253,11 +255,9 @@ ApplicationThemeViewModel::ApplicationThemeViewModel(QObject *parent)
     darkTheme->insert(colorMenuItemHintField, "#4cffffff");
     darkTheme->insert(colorMenuRippleField, "#20ffffff");
     darkTheme->insert(colorMenuHighlightField, "#1effffff");
-
     darkTheme->insert(colorComboBoxAccentField, "#f44336");
     darkTheme->insert(colorComboBoxHintField, "#4cffffff");
     darkTheme->insert(colorComboBoxBackgroundField, "#424242");
-
     darkTheme->insert(iconMainMenuField, "qrc:/Assets/Icons/coloreddrawer.svg");
     darkTheme->insert(iconMainMenuReleasesField, "qrc:/Assets/Icons/catalogmenu.svg");
     darkTheme->insert(iconMainMenuCinemahallField, "qrc:/Assets/Icons/cinemahallmenu.svg");
@@ -341,8 +341,10 @@ ApplicationThemeViewModel::ApplicationThemeViewModel(QObject *parent)
     darkTheme->insert(colorDrawerDialogColorField, "#424242");
     darkTheme->insert(iconDisabledNotificationsField, "qrc:/Assets/Icons/coloredbell.svg");
     darkTheme->insert(iconDisabledCinemahallField, "qrc:/Assets/Icons/cinemahallmenu.svg");
-
     darkTheme->insert(iconCustomGroupField, "qrc:/Assets/Icons/releases/customgroup.svg");
+
+    darkTheme->insert(iconReleaseCatalogSearchFoundedField, "qrc:/Assets/Icons/search.svg");
+    darkTheme->insert(iconCustomGroupFoundedField, "qrc:/Assets/Icons/releases/customgroup.svg");
 
     darkTheme->insert(basedOnThemeField, m_darkTheme);
     darkTheme->insert(externalIdField, "");
@@ -505,6 +507,8 @@ ApplicationThemeViewModel::ApplicationThemeViewModel(QObject *parent)
     m_fields.append(iconDisabledNotificationsField);
     m_fields.append(iconDisabledCinemahallField);
     m_fields.append(iconCustomGroupField);
+    m_fields.append(iconReleaseCatalogSearchFoundedField);
+    m_fields.append(iconCustomGroupFoundedField);
 
     m_fields.append(iconLogoutField);
     m_fields.append(externalIdField);

@@ -200,3 +200,6 @@ QString colorComboBoxBackgroundField = "colorComboBoxBackground";
 
 QString iconCustomGroupField = "iconCustomGroup";
 QString iconEditField = "iconEdit";
+
+QString iconReleaseCatalogSearchFoundedField = "iconReleaseCatalogSearchFounded";
+QString iconCustomGroupFoundedField = "iconCustomGroupFounded";

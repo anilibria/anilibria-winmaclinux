@@ -58,6 +58,7 @@ class ReleasesListModel : public QAbstractListModel
     Q_PROPERTY(QString scheduleDayFilter READ scheduleDayFilter WRITE setScheduleDayFilter NOTIFY scheduleDayFilterChanged)
     Q_PROPERTY(bool filterByFavorites READ filterByFavorites WRITE setFilterByFavorites NOTIFY filterByFavoritesChanged)
     Q_PROPERTY(QString scriptFilePath READ scriptFilePath WRITE setScriptFilePath NOTIFY scriptFilePathChanged)
+    Q_PROPERTY(bool hasFilters READ hasFilters NOTIFY hasFiltersChanged)
 
 private:
     const QString winterValue { "зима" };
@@ -222,6 +223,8 @@ public:
     bool filterByFavorites() const noexcept { return m_filterByFavorites; }
     void setFilterByFavorites(bool filterByFavorites) noexcept;
 
+    bool hasFilters() const noexcept;
+
     int getReleaseIdByIndex(int index) noexcept;
 
     QSharedPointer<QSet<int>> getSelectedReleases();
@@ -272,6 +275,7 @@ signals:
     void filterByFavoritesChanged();
     void scriptFilePathChanged();
     void scriptError(const QString& message);
+    void hasFiltersChanged();
 
 };
 

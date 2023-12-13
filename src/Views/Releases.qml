@@ -315,11 +315,14 @@ Page {
                     }
                 }
                 LeftPanelIconButton {
-                    iconPath: applicationThemeViewModel.currentItems.iconReleaseCatalogSearch
+                    iconPath: releasesViewModel.items.hasFilters ?
+                        applicationThemeViewModel.currentItems.iconReleaseCatalogSearchFounded :
+                        applicationThemeViewModel.currentItems.iconReleaseCatalogSearch
                     iconWidth: 29
                     iconHeight: 29
                     showCrossIcon: page.showButtonVisibleChanger && page.hideFilterButton
                     visible: page.showButtonVisibleChanger || !page.hideFilterButton
+                    enablePulseAnimation: releasesViewModel.items.hasFilters
                     tooltipMessage: "Добавить фильтры по дополнительным полям релиза таким как жанры озвучка и т.п."
                     onButtonPressed: {
                         if (page.showButtonVisibleChanger) {
@@ -328,22 +331,6 @@ Page {
                         } else {
                             filtersPopup.open();
                         }
-                    }
-
-                    Rectangle {
-                        id: filtersExistsMark
-                        visible: descriptionSearchField.text || typeSearchField.text || genresSearchField.text ||
-                                 voicesSearchField.text || yearsSearchField.text || seasonesSearchField.text ||
-                                 statusesSearchField.text || favoriteMarkSearchField.currentIndex > 0 || seenMarkSearchField.currentIndex > 0 ||
-                                 releaseSeriesFilterField.checked || scheduleDayFilterField.text
-                        anchors.top: parent.top
-                        anchors.right: parent.right
-                        anchors.rightMargin: 6
-                        anchors.topMargin: 10
-                        color: "#4ca2c2"
-                        width: 16
-                        height: 16
-                        radius: 12
                     }
 
                     DefaultPopup {
@@ -1602,10 +1589,14 @@ Page {
 
                         FilterPanelIconButton {
                             visible: !mainViewModel.isSmallSizeMode
-                            iconPath: applicationThemeViewModel.currentItems.iconCustomGroup
+                            iconPath: releasesViewModel.customGroups.hasGroupsSelected ?
+                                applicationThemeViewModel.currentItems.iconCustomGroupFounded :
+                                applicationThemeViewModel.currentItems.iconCustomGroup
                             iconWidth: 24
                             iconHeight: 24
+                            enablePulseAnimation: releasesViewModel.customGroups.hasGroupsSelected
                             tooltipMessage: "Управление пользовательскими группами"
+
                             onButtonPressed: {
                                 releasesViewModel.customGroups.visible = true;
                             }

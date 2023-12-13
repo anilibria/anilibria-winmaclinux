@@ -96,6 +96,7 @@ Item {
             SequentialAnimation {
                 id: pulseAnimation
                 running: enablePulseAnimation
+                alwaysRunToEnd: true
                 loops: Animation.Infinite
                 ParallelAnimation {
                     NumberAnimation { target: scaleIconImage; property: "xScale"; to: 1.2; duration: 300 }

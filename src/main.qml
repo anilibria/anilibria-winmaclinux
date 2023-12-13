@@ -55,6 +55,9 @@ ApplicationWindow {
     property color colorMenuHighlight: applicationThemeViewModel.currentItems.colorMenuHighlight
     property color colorPosterFilter: applicationThemeViewModel.currentItems.colorPosterFilter
 
+    property color iconReleaseCatalogSearchFounded: applicationThemeViewModel.currentItems.iconReleaseCatalogSearchFounded
+    property color iconCustomGroupFounded: applicationThemeViewModel.currentItems.iconCustomGroupFounded
+
     Material.accent: applicationThemeViewModel.materialAccent
     Material.theme: applicationThemeViewModel.basedOnDark ? Material.Dark : Material.Light
     Material.foreground: applicationThemeViewModel.colorMaterialText

@@ -237,6 +237,7 @@ void ReleasesListModel::setDescriptionFilter(const QString &descriptionFilter) n
 
     m_descriptionFilter = descriptionFilter;
     emit descriptionFilterChanged();
+    emit hasFiltersChanged();
 }
 
 void ReleasesListModel::setTypeFilter(const QString &typeFilter) noexcept
@@ -245,6 +246,7 @@ void ReleasesListModel::setTypeFilter(const QString &typeFilter) noexcept
 
     m_typeFilter = typeFilter;
     emit typeFilterChanged();
+    emit hasFiltersChanged();
 }
 
 void ReleasesListModel::setYearsFilter(const QString &yearsFilter) noexcept
@@ -253,6 +255,7 @@ void ReleasesListModel::setYearsFilter(const QString &yearsFilter) noexcept
 
     m_yearsFilter = yearsFilter;
     emit yearsFilterChanged();
+    emit hasFiltersChanged();
 }
 
 void ReleasesListModel::setStatusesFilter(const QString &statusesFilter) noexcept
@@ -261,6 +264,7 @@ void ReleasesListModel::setStatusesFilter(const QString &statusesFilter) noexcep
 
     m_statusesFilter = statusesFilter;
     emit statusesFilterChanged();
+    emit hasFiltersChanged();
 }
 
 void ReleasesListModel::setSeasonesFilter(const QString &seasonesFilter) noexcept
@@ -269,6 +273,7 @@ void ReleasesListModel::setSeasonesFilter(const QString &seasonesFilter) noexcep
 
     m_seasonesFilter = seasonesFilter;
     emit seasonesFilterChanged();
+    emit hasFiltersChanged();
 }
 
 void ReleasesListModel::setGenresFilter(const QString &genresFilter) noexcept
@@ -277,6 +282,7 @@ void ReleasesListModel::setGenresFilter(const QString &genresFilter) noexcept
 
     m_genresFilter = genresFilter;
     emit genresFilterChanged();
+    emit hasFiltersChanged();
 }
 
 void ReleasesListModel::setGenresFilterOr(bool genresFilterOr) noexcept
@@ -293,6 +299,7 @@ void ReleasesListModel::setVoicesFilter(const QString &voicesFilter) noexcept
 
     m_voicesFilter = voicesFilter;
     emit voicesFilterChanged();
+    emit hasFiltersChanged();
 }
 
 void ReleasesListModel::setVoicesFilterOr(bool voicesFilterOr) noexcept
@@ -317,6 +324,7 @@ void ReleasesListModel::setFavoriteMarkFilter(int favoriteMarkFilter) noexcept
 
     m_favoriteMarkFilter = favoriteMarkFilter;
     emit favoriteMarkFilterChanged();
+    emit hasFiltersChanged();
 }
 
 void ReleasesListModel::setSeenMarkFilter(int seenMarkFilter) noexcept
@@ -325,6 +333,7 @@ void ReleasesListModel::setSeenMarkFilter(int seenMarkFilter) noexcept
 
     m_seenMarkFilter = seenMarkFilter;
     emit seenMarkFilterChanged();
+    emit hasFiltersChanged();
 }
 
 void ReleasesListModel::setSection(int section) noexcept
@@ -387,6 +396,7 @@ void ReleasesListModel::setHasReleaseSeriesFilter(bool hasReleaseSeriesFilter) n
 
     m_hasReleaseSeriesFilter = hasReleaseSeriesFilter;
     emit hasReleaseSeriesFilterChanged();
+    emit hasFiltersChanged();
 }
 
 void ReleasesListModel::setReleaseLinkedSeries(ReleaseLinkedSeries *releaseLinkedSeries) noexcept
@@ -405,6 +415,7 @@ void ReleasesListModel::setScheduleDayFilter(const QString &scheduleDayFilter) n
 
     m_scheduleDayFilter = scheduleDayFilter;
     emit scheduleDayFilterChanged();
+    emit hasFiltersChanged();
 }
 
 QString ReleasesListModel::getScheduleDay(int dayNumber) const noexcept
@@ -441,6 +452,15 @@ void ReleasesListModel::setFilterByFavorites(bool filterByFavorites) noexcept
 
     m_filterByFavorites = filterByFavorites;
     emit filterByFavoritesChanged();
+}
+
+bool ReleasesListModel::hasFilters() const noexcept
+{
+    return !m_descriptionFilter.isEmpty() || !m_genresFilter.isEmpty() ||
+        !m_typeFilter.isEmpty() || !m_voicesFilter.isEmpty() ||
+        !m_yearsFilter.isEmpty() || !m_seasonesFilter.isEmpty() ||
+        !m_statusesFilter.isEmpty() || !m_scheduleDayFilter.isEmpty() ||
+        m_hasReleaseSeriesFilter || m_favoriteMarkFilter > 0 || m_seenMarkFilter > 0;
 }
 
 int ReleasesListModel::getReleaseIdByIndex(int index) noexcept
