@@ -26,6 +26,7 @@ import Anilibria.Services 1.0
 import Anilibria.ListModels 1.0
 import Anilibria.ViewModels 1.0
 import CustomStyle 1.0
+import QtQuick.Particles 2.13
 import "Views"
 import "Controls"
 
@@ -36,7 +37,7 @@ ApplicationWindow {
     height: 600
     minimumWidth: 300
     minimumHeight: 300
-    title: qsTr("AniLibria.Qt")
+    title: qsTr("AniLibria.Qt CE")
     font.capitalization: Font.MixedCase
     property var userModel: ({})
     property string tempTorrentPath: ""
@@ -1282,6 +1283,17 @@ ApplicationWindow {
         onReleasesPageToNavigated: {
             releases.navigateTo();
         }
+        onIsOnlinePlayerPageVisibleChanged: {
+            if (mainViewModel.isOnlinePlayerPageVisible) {
+                particleEffect.visible = false;
+                particleSystem.reset();
+                emitter.reset();
+                particleSystem.running = false;
+            } else {
+                particleEffect.visible = true;
+                particleSystem.running = true;
+            }
+        }
         onChangeReleasesParameters: {
             if (!parameters.length) {
                 releasesViewModel.closeReleaseCard();
@@ -1424,5 +1436,43 @@ ApplicationWindow {
         property string path: Qt.resolvedUrl("../Assets/")
         property string backgroundsPath: Qt.resolvedUrl("../Assets/Backgrounds/")
         property string iconsPath: Qt.resolvedUrl("../Assets/Icons/")
+    }
+
+    Item {
+        id: particleEffect
+        anchors.fill: parent
+
+        ParticleSystem {
+            id: particleSystem
+        }
+
+        Emitter {
+            id: emitter
+            anchors.top: parent.top
+            anchors.horizontalCenter: parent.horizontalCenter
+            width: parent.width
+            height: 80
+            system: particleSystem
+            emitRate: 1
+            lifeSpan: 25000
+            lifeSpanVariation: 10
+            size: 15
+            endSize: 20
+            velocity: AngleDirection {
+                angle: 90
+                angleVariation: 40
+                magnitude: 30
+                magnitudeVariation: 10
+            }
+        }
+
+        ImageParticle {
+            source: assetsLocation.iconsPath + "snowflake.svg"
+            system: particleSystem
+            rotation: 15
+            rotationVariation: 5
+            rotationVelocity: 60
+            rotationVelocityVariation: 15
+        }
     }
 }
