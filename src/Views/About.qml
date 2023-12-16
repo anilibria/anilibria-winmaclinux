@@ -87,7 +87,7 @@ Page {
                                 id: anilibriaLogoImage
                                 anchors.verticalCenter: parent.verticalCenter
                                 anchors.horizontalCenter: parent.horizontalCenter
-                                source: assetsLocation.iconsPath + "anilibrialogodefault.svg"
+                                source: applicationThemeViewModel.basedOnDark ? assetsLocation.iconsPath + "anilibrialogodark.svg" : assetsLocation.iconsPath + "anilibrialogodefault.svg"
                                 mipmap: true
                                 width: 200
                                 height: 200

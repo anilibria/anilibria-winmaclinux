@@ -231,5 +231,6 @@
         <file>Assets/Icons/releases/customgroup.svg</file>
         <file>Views/ReleaseCustomGroups.qml</file>
         <file>Assets/Icons/colorededit.svg</file>
+        <file>Assets/Icons/anilibrialogodark.svg</file>
     </qresource>
 </RCC>

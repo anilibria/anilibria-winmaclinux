@@ -843,7 +843,7 @@ ApplicationWindow {
                 Image {
                     anchors.verticalCenter: parent.verticalCenter
                     anchors.horizontalCenter: parent.horizontalCenter
-                    source: "Assets/Icons/anilibrialogodefault.svg"
+                    source: applicationThemeViewModel.basedOnDark ? assetsLocation.iconsPath + "anilibrialogodark.svg" : assetsLocation.iconsPath + "anilibrialogodefault.svg"
                     mipmap: true
                     width: 50
                     height: 50
