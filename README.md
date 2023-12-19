@@ -38,7 +38,7 @@ xattr -d com.apple.quarantine AniLibria.dmg
 Для обновления выполняем ровно тоже действие, старую версию можно будет удалить или сохранить это остается на Ваше усмотрение.
 
 ## Связанные проекты
-[TorrentStream](https://github.com/trueromanus/TorrentStream) - приложение веб сервер позволяющий скачивать торренты, стримить их а также проксировать видео для плеера
+[TorrentStream](https://github.com/trueromanus/TorrentStream) - приложение веб сервер позволяющий скачивать торренты, стримить их а также проксировать видео для плеера  
 [AnilibriaQtInstaller](https://github.com/trueromanus/AnilibriaQtInstaller) - веб инсталлер/апдейтер для приложения
 
 ### Linux (пакеты и сборка из исходников)
