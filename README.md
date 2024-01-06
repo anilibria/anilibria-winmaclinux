@@ -111,7 +111,7 @@ $ flatpak install --user anilibria.flatpak
 
 ### Для сборки необходимо:
 - Минимальная поддерживаемая версия Qt 5.15.2
-- Поддержка C++11 (минимальные версии компиляторов MSVC17, GCC 6 или CLANG 3.4)
+- Поддержка C++14 (минимальные версии компиляторов MSVC17, GCC 6 или CLANG 3.4)
 - Модули Qt - multimedia, graphicaleffects, svg, websocket, particleeffects
 - Для сборки проекта используется qmake
 - Для Windows сборки требуется зависимость libVLC версии 3.0.18 и QtAV
