@@ -1,5 +1,5 @@
 QT += quick multimedia network concurrent svg websockets quickcontrols2
-CONFIG += c++11
+CONFIG += c++14
 
 macx {
     QT -= virualkeyboard
@@ -60,16 +60,16 @@ buildwithvlc {
         vlc-qt/core/TrackModel.cpp \
         vlc-qt/core/Video.cpp \
         vlc-qt/core/VideoFrame.cpp \
-        vlc-qt/core/VideoMemoryStream.cpp \
+        #vlc-qt/core/VideoMemoryStream.cpp \
         vlc-qt/core/VideoStream.cpp \
         vlc-qt/core/YUVVideoFrame.cpp \
         vlc-qt/qml/QmlSource.cpp \
-        vlc-qt/qml/QmlVideoObject.cpp \
-        vlc-qt/qml/QmlVideoPlayer.cpp \
+        #vlc-qt/qml/QmlVideoObject.cpp \
+        #vlc-qt/qml/QmlVideoPlayer.cpp \
         vlc-qt/qml/VlcQmlPlayer.cpp \
         vlc-qt/qml/VlcQmlVideoOutput.cpp \
-        vlc-qt/qml/painter/GlPainter.cpp \
-        vlc-qt/qml/painter/GlslPainter.cpp \
+        #vlc-qt/qml/painter/GlPainter.cpp \
+        #vlc-qt/qml/painter/GlslPainter.cpp \
         vlc-qt/qml/rendering/QmlVideoStream.cpp \
         vlc-qt/qml/rendering/VideoMaterial.cpp \
         vlc-qt/qml/rendering/VideoMaterialShader.cpp \
@@ -96,18 +96,18 @@ buildwithvlc {
         vlc-qt/core/Video.h \
         vlc-qt/core/VideoDelegate.h \
         vlc-qt/core/VideoFrame.h \
-        vlc-qt/core/VideoMemoryStream.h \
+        #vlc-qt/core/VideoMemoryStream.h \
         vlc-qt/core/VideoStream.h \
         vlc-qt/core/YUVVideoFrame.h \
         vlc-qt/core/compat/asprintf.h \
         vlc-qt/core/compat/poll.h \
         vlc-qt/qml/QmlSource.h \
-        vlc-qt/qml/QmlVideoObject.h \
-        vlc-qt/qml/QmlVideoPlayer.h \
+        #vlc-qt/qml/QmlVideoObject.h \
+        #vlc-qt/qml/QmlVideoPlayer.h \
         vlc-qt/qml/VlcQmlPlayer.h \
         vlc-qt/qml/VlcQmlVideoOutput.h \
-        vlc-qt/qml/painter/GlPainter.h \
-        vlc-qt/qml/painter/GlslPainter.h \
+        #vlc-qt/qml/painter/GlPainter.h \
+        #vlc-qt/qml/painter/GlslPainter.h \
         vlc-qt/qml/rendering/QmlVideoStream.h \
         vlc-qt/qml/rendering/VideoMaterial.h \
         vlc-qt/qml/rendering/VideoMaterialShader.h \
