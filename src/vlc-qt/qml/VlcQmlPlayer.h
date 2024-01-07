@@ -29,6 +29,7 @@ class VlcMediaPlayer;
 class VlcTrackModel;
 
 #include "QmlSource.h"
+#include "../core/TrackModel.h"
 
 class VlcQmlPlayer : public VlcQmlSource
 {

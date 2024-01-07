@@ -34,23 +34,23 @@ VlcQmlVideoOutput::~VlcQmlVideoOutput()
     setSource(0);
 }
 
-VlcQmlSource *VlcQmlVideoOutput::source() const
+void *VlcQmlVideoOutput::source() const
 {
     return _source;
 }
 
-void VlcQmlVideoOutput::setSource(VlcQmlSource *source)
+void VlcQmlVideoOutput::setSource(void *source)
 {
-    if (source == _source)
-        return;
+    if (source == _source) return;
 
-    if (_source)
-        _source->deregisterVideoOutput(this);
+    auto oldCastedSource = static_cast<VlcQmlSource*>(_source);
+    auto newCastedSource = static_cast<VlcQmlSource*>(source);
+
+    if (oldCastedSource != nullptr) oldCastedSource->deregisterVideoOutput(this);
 
     _source = source;
 
-    if (_source)
-        _source->registerVideoOutput(this);
+    if (newCastedSource) newCastedSource->registerVideoOutput(this);
 
     emit sourceChanged();
 }

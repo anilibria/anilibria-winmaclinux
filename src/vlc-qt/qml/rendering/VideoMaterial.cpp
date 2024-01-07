@@ -48,6 +48,7 @@ QSGMaterialType *VideoMaterial::type() const
 
 QSGMaterialShader *VideoMaterial::createShader(QSGRendererInterface::RenderMode renderMode) const
 {
+    Q_UNUSED(renderMode)
     return new VideoMaterialShader;
 }
 

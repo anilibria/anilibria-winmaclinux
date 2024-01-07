@@ -50,6 +50,7 @@ void VlcQmlVideoStream::frameUpdated()
 #else
         std::bind(
             std::mem_fn(&VlcQmlVideoOutput::presentFrame),
+            std::placeholders::_1,
             frame
         )
 #endif
