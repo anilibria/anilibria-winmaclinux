@@ -4,7 +4,7 @@ layout(location = 0) in vec2 texCoord;
 layout(location = 0) out vec4 fragColor;
 layout(std140, binding = 0) uniform buf {
     mat4 colorMatrix;
-	float opacity;
+    float opacity;
 } ubuf;
 layout(binding = 1) uniform sampler2D texY;
 layout(binding = 2) uniform sampler2D texU;
@@ -18,5 +18,5 @@ void main(void)
        texture(texV, texCoord).r,
        1.0		
 	);
-    fragColor = colorMatrix * color * opacity;
-};
+    fragColor = ubuf.colorMatrix * color * ubuf.opacity;
+}

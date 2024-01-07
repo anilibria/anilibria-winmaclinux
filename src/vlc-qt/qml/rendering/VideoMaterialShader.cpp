@@ -25,8 +25,8 @@
 
 VideoMaterialShader::VideoMaterialShader()
 {
-    setShaderFileName(VertexStage, QLatin1String(":/shaders/vlc.vert.qsb"));
-    setShaderFileName(FragmentStage, QLatin1String(":/shaders/vlc.frag.qsb"));
+    setShaderFileName(VertexStage, QLatin1String("qrc:/Shaders/vlc.frag.qsb"));
+    setShaderFileName(FragmentStage, QLatin1String("qrc:/Shaders/vlc.vert.qsb"));
 }
 
 /*char const *const *VideoMaterialShader::attributeNames() const
