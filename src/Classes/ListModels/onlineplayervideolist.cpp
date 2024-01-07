@@ -278,11 +278,19 @@ void OnlinePlayerVideoList::setVideosFromSingleTorrent(const ReleaseTorrentModel
     auto countSeries = 0;
     auto series = torrent.series();
     if (series.indexOf("-") > -1) {
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+        auto parts = series.split("-");
+        auto start = parts[0].toInt();
+        auto end = parts[1].toInt();
+
+        countSeries = start == 1 && end == 1 ? 1 : end;
+#else
         auto parts = series.splitRef("-");
         auto start = parts[0].toInt();
         auto end = parts[1].toInt();
 
         countSeries = start == 1 && end == 1 ? 1 : end;
+#endif
     } else {
         countSeries = series.toInt();
     }

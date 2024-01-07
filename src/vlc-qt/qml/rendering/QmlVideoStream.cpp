@@ -20,10 +20,10 @@
 *****************************************************************************/
 
 #include <functional>
-
 #include "../../core/YUVVideoFrame.h"
 #include "../VlcQmlVideoOutput.h"
 #include "QmlVideoStream.h"
+#include <functional>
 
 VlcQmlVideoStream::VlcQmlVideoStream(QObject *parent)
     : VlcVideoStream(Vlc::YUVFormat, parent) {}
@@ -39,8 +39,21 @@ void VlcQmlVideoStream::frameUpdated()
         return; // LCOV_EXCL_LINE
     }
 
-    std::for_each(_attachedOutputs.begin(), _attachedOutputs.end(),
-                  std::bind2nd(std::mem_fun(&VlcQmlVideoOutput::presentFrame), frame));
+    std::for_each(
+        _attachedOutputs.begin(),
+        _attachedOutputs.end(),
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+        std::bind2nd(
+            std::mem_fun(&VlcQmlVideoOutput::presentFrame),
+            frame
+        )
+#else
+        std::bind(
+            std::mem_fn(&VlcQmlVideoOutput::presentFrame),
+            frame
+        )
+#endif
+    );
 }
 
 void VlcQmlVideoStream::registerVideoOutput(VlcQmlVideoOutput *output)

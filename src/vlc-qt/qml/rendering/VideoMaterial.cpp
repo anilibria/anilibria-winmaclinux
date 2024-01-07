@@ -31,18 +31,7 @@ VideoMaterial::VideoMaterial()
     memset(_planeTexIds, 0, sizeof(_planeTexIds));
     setFlag(Blending, false);
 
-#if QT_VERSION < 0x050300
-#if defined(QT_OPENGL_ES_2)
-    _glF = QOpenGLContext::currentContext()->versionFunctions<QOpenGLFunctions_ES2>();
-#else
-    _glF = QOpenGLContext::currentContext()->versionFunctions<QOpenGLFunctions_1_3>();
-#endif
-    Q_ASSERT(_glF);
-
-    _glF->initializeOpenGLFunctions();
-#else
     _glF = QOpenGLContext::currentContext()->functions();
-#endif
 }
 
 VideoMaterial::~VideoMaterial()
@@ -57,7 +46,7 @@ QSGMaterialType *VideoMaterial::type() const
     return &theType;
 }
 
-QSGMaterialShader *VideoMaterial::createShader() const
+QSGMaterialShader *VideoMaterial::createShader(QSGRendererInterface::RenderMode renderMode) const
 {
     return new VideoMaterialShader;
 }

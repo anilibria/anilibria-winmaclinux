@@ -161,7 +161,7 @@ void FullReleaseModel::writeToJson(QJsonObject &json) const noexcept
     json["isDeleted"] = m_isDeleted;
 }
 
-void FullReleaseModel::readFromJson(QJsonValue &json)
+void FullReleaseModel::readFromJson(const QJsonObject &json)
 {
     setId(json["id"].toInt());
     setTitle(json["title"].toString());

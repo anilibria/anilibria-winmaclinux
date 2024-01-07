@@ -23,7 +23,13 @@
 #include "VideoMaterial.h"
 #include "VideoMaterialShader.h"
 
-char const *const *VideoMaterialShader::attributeNames() const
+VideoMaterialShader::VideoMaterialShader()
+{
+    setShaderFileName(VertexStage, QLatin1String(":/shaders/vlc.vert.qsb"));
+    setShaderFileName(FragmentStage, QLatin1String(":/shaders/vlc.frag.qsb"));
+}
+
+/*char const *const *VideoMaterialShader::attributeNames() const
 {
     static const char *names[] = {
         "targetVertex",
@@ -62,19 +68,9 @@ const char *VideoMaterialShader::fragmentShader() const
            "           1.0);"
            "    gl_FragColor = colorMatrix * color * opacity;"
            "}";
-}
+}*/
 
-void VideoMaterialShader::initialize()
-{
-    _positionMatrixId = program()->uniformLocation("positionMatrix");
-    _colorMatrixId = program()->uniformLocation("colorMatrix");
-    _opacityId = program()->uniformLocation("opacity");
-    _texYId = program()->uniformLocation("texY");
-    _texUId = program()->uniformLocation("texU");
-    _texVId = program()->uniformLocation("texV");
-}
-
-void VideoMaterialShader::updateState(const RenderState &state,
+/*void VideoMaterialShader::updateState(const RenderState &state,
                                       QSGMaterial *newMaterial,
                                       QSGMaterial *oldMaterial)
 {
@@ -101,4 +97,47 @@ void VideoMaterialShader::updateState(const RenderState &state,
     program()->setUniformValue(_texVId, 2);
 
     material->bindPlanes();
+}*/
+
+bool VideoMaterialShader::updateUniformData(RenderState &state, QSGMaterial *newMaterial, QSGMaterial *oldMaterial)
+{
+    Q_UNUSED(oldMaterial)
+
+    static const QMatrix4x4 colorMatrix(
+        1.164383561643836f, 0.000000000000000f, 1.792741071428571f, -0.972945075016308f,
+        1.164383561643836f, -0.213248614273730f, -0.532909328559444f, 0.301482665475862f,
+        1.164383561643836f, 2.112401785714286f, 0.000000000000000f, -1.133402217873451f,
+        0.000000000000000f, 0.000000000000000f, 0.000000000000000f, 1.000000000000000f);
+    static const int texY = 0;
+    static const int texU = 1;
+    static const int texV = 2;
+
+    bool changed = false;
+    QByteArray *buf = state.uniformData();
+
+    if (state.isMatrixDirty()) {
+        const QMatrix4x4 m = state.combinedMatrix();
+        memcpy(buf->data(), m.constData(), 64);
+        changed = true;
+    }
+
+    if (state.isOpacityDirty()) {
+        const float opacity = state.opacity();
+        memcpy(buf->data() + 64, &opacity, 4);
+        changed = true;
+    }
+
+    VideoMaterial *material = static_cast<VideoMaterial *>(newMaterial);
+
+    if (oldMaterial != newMaterial /*|| material->uniforms.dirty*/) {
+        memcpy(buf->data() + 68, &texY, 4); // texY
+        memcpy(buf->data() + 72, &texU, 8); // texU
+        memcpy(buf->data() + 80, &texV, 4); // texV
+        memcpy(buf->data() + 80, &colorMatrix, 4); // texV
+        changed = true;
+    }
+
+    material->bindPlanes();
+
+    return changed;
 }

@@ -62,7 +62,7 @@ void YoutubeVideoModel::writeToJson(QJsonObject &json) const noexcept
     json["image"] = m_Image;
 }
 
-void YoutubeVideoModel::readFromJson(QJsonValue &json)
+void YoutubeVideoModel::readFromJson(const QJsonObject &json)
 {
     setId(json["id"].toInt());
     setTitle(json["title"].toString());

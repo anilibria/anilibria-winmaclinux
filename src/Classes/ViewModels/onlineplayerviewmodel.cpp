@@ -21,6 +21,7 @@
 #include <QFile>
 #include <QStandardPaths>
 #include <QJsonDocument>
+#include <QJsonObject>
 #include <QJsonArray>
 #include <QUuid>
 #include <QDesktopServices>
@@ -644,7 +645,12 @@ void OnlinePlayerViewModel::quickSetupForSingleRelease(int releaseId, int custom
     m_customPlaylistPosition = customPosition;
 
     QDateTime timestamp;
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+    timestamp.setSecsSinceEpoch(release->timestamp());
+#else
     timestamp.setTime_t(release->timestamp());
+#endif
+
     auto year = timestamp.date().year();
     m_isReleaseLess2022 = year > 0 && year < 2022;
 
@@ -1315,7 +1321,7 @@ void OnlinePlayerViewModel::loadSeens()
 
     foreach (auto item, jsonSeens) {
         SeenModel* seenModel = new SeenModel();
-        seenModel->readFromJson(item);
+        seenModel->readFromJson(item.toObject());
         if (!m_seenModels->contains(seenModel->id())) {
             m_seenModels->insert(seenModel->id(), seenModel);
         }

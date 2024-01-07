@@ -54,8 +54,8 @@ private:
     QVariantList m_leftToolbar { QVariantList() };
     bool m_editLeftToolbar { false };
     QVariantList m_otherLeftToolbar { QVariantList() };
-    QString m_dropIndex { -1 };
-    QString m_dragIndex { -1 };
+    QString m_dropIndex { "" };
+    QString m_dragIndex { "" };
     const QString addItemButton { "additem" };
     const QString removeItemButton { "removeitem" };
 

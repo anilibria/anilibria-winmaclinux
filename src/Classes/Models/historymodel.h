@@ -42,7 +42,7 @@ public:
     void setWatchTimestamp(const int watchTimestamp) noexcept;
 
     void writeToJson(QJsonObject &json) const noexcept;
-    void readFromJson(QJsonValue &json);
+    void readFromJson(const QJsonObject &json);
 
 };
 

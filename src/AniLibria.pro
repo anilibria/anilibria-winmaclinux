@@ -16,7 +16,7 @@ windows {
     DEPENDPATH += $$PWD/vlc-qt/vlc/include
 
     CONFIG += buildwithvlc
-    QT += av
+    #QT += av
     DEFINES += USE_QTAV_PLAYER
     DEFINES += NO_NEED_STANDART_PLAYER
 }
