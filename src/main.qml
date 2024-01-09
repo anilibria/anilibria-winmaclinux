@@ -21,7 +21,6 @@ import QtQuick.Window 2.12
 import QtQuick.Controls 2.5
 import QtQuick.Layouts 1.3
 import QtQuick.Controls.Material 2.0
-import QtQuick.Dialogs 1.2
 import Anilibria.Services 1.0
 import Anilibria.ListModels 1.0
 import Anilibria.ViewModels 1.0
@@ -606,24 +605,12 @@ ApplicationWindow {
 
     }
 
-    FileDialog {
+    SystemSaveFileDialog {
         id: saveTorrentFileDialog
         title: "Выберите куда и как сохранить торрент файл"
-        selectExisting: false
         nameFilters: [ "Torrents (*.torrent)" ]
-
-        onAccepted: {
-            localStorage.copyTorrentToFile(window.tempTorrentPath, saveTorrentFileDialog.fileUrl);
-        }
-    }
-
-    FileDialog {
-        id: importReleasesFileDialog
-        title: "Выберите файл для импорта"
-        selectExisting: true
-        nameFilters: [ "Releases (*.releases)" ]
-        onAccepted: {
-            releasesViewModel.importReleasesFromFile(importReleasesFileDialog.fileUrl);
+        onNeedSaveFile: {
+            localStorage.copyTorrentToFile(window.tempTorrentPath, fileUrl);
         }
     }
 

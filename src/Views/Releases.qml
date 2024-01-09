@@ -20,7 +20,6 @@ import QtQuick 2.12
 import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.3
 import QtQuick.Controls.Styles 1.4
-import QtQuick.Dialogs 1.2
 import Anilibria.ListModels 1.0
 import "../Controls"
 
@@ -1996,16 +1995,14 @@ Page {
         releasesViewModel.items.refresh();
     }
 
-    FileDialog {
+    SystemOpenFileDialog {
         id: openScriptFileDialog
         title: "Выбрать файл скрипта для раздела Свой скрипт"
-        selectExisting: true
         nameFilters: [ "Файлы скрипта (*.ajs)", "Image files (*.jpg *.png)" ]
-        onAccepted: {
-            userConfigurationViewModel.customScriptFile = openScriptFileDialog.fileUrl;
+        onNeedOpenFile: {
+            userConfigurationViewModel.customScriptFile = fileUrl;
         }
     }
-
 
     Component.onCompleted: {
         const userSettings = JSON.parse(localStorage.getUserSettings());

@@ -19,7 +19,6 @@
 import QtQuick 2.12
 import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.3
-import QtQuick.Dialogs 1.2
 import Anilibria.Services 1.0
 import "../Controls"
 
@@ -119,37 +118,6 @@ Page {
                                     width: parent.width
                                     wrapMode: Text.WordWrap
                                     text: "Удалить все сохраненные локально сохраненные постеры, после выполнения операции необходимо перезапустить приложение"
-                                }
-                            }
-
-                            Item {
-                                width: 220
-                                height: 100
-
-                                RoundedActionButton {
-                                    anchors.verticalCenter: parent.verticalCenter
-                                    anchors.left: parent.left
-                                    anchors.leftMargin: 10
-                                    width: parent.width - 10
-                                    text: "Импорт релизов из файла"
-                                    onClicked: {
-                                        importReleasesFileDialog.open();
-                                    }
-                                }
-                            }
-
-                            Rectangle {
-                                color: "transparent"
-                                Layout.fillWidth: true
-                                Layout.fillHeight: true
-
-                                PlainText {
-                                    fontPointSize: 12
-                                    anchors.verticalCenter: parent.verticalCenter
-                                    anchors.left: parent.left
-                                    width: parent.width
-                                    wrapMode: Text.WordWrap
-                                    text: "Позволяет импортировать релизы из файла. Импортированные релизы не будут обновляться."
                                 }
                             }
 
@@ -655,23 +623,19 @@ Page {
         }
     }
 
-    FileDialog {
+    SystemOpenFolderDialog {
         id: selectFolderBackupDialog
         title: "Выберите папку для создания бэкапа"
-        selectExisting: true
-        selectFolder: true
-        onAccepted: {
-            localStorage.backupCache(selectFolderBackupDialog.fileUrl);
+        onNeedOpenFolder: {
+            localStorage.backupCache(folderUrl);
         }
     }
 
-    FileDialog {
+    SystemOpenFolderDialog {
         id: selectFolderRestoreDialog
         title: "Выберите папку для восстановления из бэкапа"
-        selectExisting: true
-        selectFolder: true
-        onAccepted: {
-            localStorage.restoreBackupCache(selectFolderRestoreDialog.fileUrl);
+        onNeedOpenFolder: {
+            localStorage.restoreBackupCache(folderUrl);
         }
     }
 }
