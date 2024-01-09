@@ -1,7 +1,6 @@
 import QtQuick 2.12
 import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.3
-import QtQuick.Dialogs 1.3
 import "../Controls"
 
 Page {
@@ -866,8 +865,8 @@ Page {
                                                 anchors.fill: parent
                                                 onPressed: {
                                                     applicationThemeViewModel.fieldList.selectedIndex = identifier;
-                                                    colorDialog.color = fieldValue;
-                                                    colorDialog.visible = true;
+                                                    colorDialog.selectedColor = fieldValue;
+                                                    colorDialog.open();
                                                 }
                                             }
                                         }
@@ -966,47 +965,45 @@ Page {
         }
     }
 
-    FileDialog {
+    SystemOpenFileDialog {
         id: openThemeToFileDialog
-        selectExisting: true
+        title: "Open theme from file"
         nameFilters: ["Theme files (*.theme)"]
-        onAccepted: {
-            applicationThemeViewModel.importThemeFromFile(openThemeToFileDialog.fileUrl);
+        onNeedOpenFile: {
+            applicationThemeViewModel.importThemeFromFile(fileUrl);
         }
     }
 
-    FileDialog {
+    SystemSaveFileDialog {
         id: saveThemeToFileDialog
-        selectExisting: false
         nameFilters: ["Theme files (*.theme)"]
-        onAccepted: {
-            applicationThemeViewModel.fieldList.saveThemeToFile(saveThemeToFileDialog.fileUrl);
+        onNeedSaveFile: {
+            applicationThemeViewModel.fieldList.saveThemeToFile(fileUrl);
         }
     }
 
-    FileDialog {
+    SystemOpenFileDialog {
         id: openIconFileDialog
-        selectExisting: true
         nameFilters: ["Image files (*.jpg *.jpeg *.gif *.svg *.png)"]
 
         property int selectedIconIndex
 
-        onAccepted: {
+        onNeedOpenFile: {
             applicationThemeViewModel.fieldList.addIconFromFile(
-                openIconFileDialog.fileUrl,
+                fileUrl,
                 openIconFileDialog.selectedIconIndex
             );
         }
     }
 
-    ColorDialog {
+    SystemColorDialog {
         id: colorDialog
         title: "Выберите цвет из палитры"
         showAlphaChannel: true
-        onAccepted: {
-            applicationThemeViewModel.fieldList.setValueToItem(colorDialog.color);
+        onColorSelected: {
+            applicationThemeViewModel.fieldList.setValueToItem(color);
         }
-        onRejected: {
+        onCancelDialog: {
             applicationThemeViewModel.fieldList.selectedIndex = -1;
         }
     }
@@ -1028,7 +1025,6 @@ Page {
             }
         }
     }
-
 
     Connections {
         target: applicationThemeViewModel.fieldList

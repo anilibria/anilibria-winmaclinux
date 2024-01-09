@@ -182,10 +182,10 @@ int main(int argc, char *argv[])
     QQmlApplicationEngine engine;    
     engine.rootContext()->setContextProperty("ApplicationVersion", ApplicationVersion);
 
-#if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
     auto selector = QQmlFileSelector::get(&engine);
     QStringList qtOldVersionSelector;
-    qtOldVersionSelector.append("qtless515");
+    qtOldVersionSelector.append("qtis6");
     selector->setExtraSelectors(qtOldVersionSelector);
 #endif
 
