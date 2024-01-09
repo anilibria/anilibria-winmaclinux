@@ -15,7 +15,7 @@ Item {
 
     FileDialog {
         id: saveFileDialog
-        selectExisting: true
+        fileMode: FileDialog.SaveFile
         onAccepted: {
             root.needSaveFile(saveFileDialog.fileUrl);
         }

@@ -1,9 +1,10 @@
 import QtQuick
 import QtQuick.Dialogs
 
-Item {   
+Item {
+    id: root
     property alias title: colorDialog.title
-    property alias showAlphaChannel: colorDialog.showAlphaChannel
+    property bool showAlphaChannel: false
 
     signal colorSelected(int color)
     signal cancelDialog()
@@ -16,10 +17,18 @@ Item {
     ColorDialog {
         id: colorDialog
         onAccepted: {
-            colorSelected(colorDialog.color);
+            colorSelected(colorDialog.selectedColor);
         }
         onRejected: {
             cancelDialog();
+        }
+    }
+
+    onShowAlphaChannelChanged: {
+        if (root.showAlphaChannel) {
+            colorDialog.options = ColorDialog.ShowAlphaChannel;
+        } else {
+            colorDialog.options = 0;
         }
     }
 
