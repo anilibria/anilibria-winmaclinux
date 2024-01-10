@@ -725,7 +725,7 @@ ApplicationWindow {
                 }
             }
 
-            Text {
+            PlainText {
                 anchors.left: userAvatarCanvas.right
                 anchors.leftMargin: 10
                 anchors.verticalCenter: parent.verticalCenter
@@ -849,12 +849,12 @@ ApplicationWindow {
                 }
                 Column {
                     anchors.verticalCenter: parent.verticalCenter
-                    Text {
+                    PlainText {
                         color: applicationThemeViewModel.currentItems.colorDrawerItemText
                         font.pointSize: 11
                         text: qsTr("AniLibria.Qt")
                     }
-                    Text {
+                    PlainText {
                         color: applicationThemeViewModel.currentItems.colorDrawerItemText
                         font.pointSize: 11
                         text: qsTr("версия " + ApplicationVersion)

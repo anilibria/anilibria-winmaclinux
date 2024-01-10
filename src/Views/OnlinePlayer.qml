@@ -373,7 +373,7 @@ Page {
                                     onlinePlayerViewModel.selectVideo(releaseId, order);
                                 }
                             }
-                            Text {
+                            PlainText {
                                 visible: !isGroup
                                 color: selectedVideo ? applicationThemeViewModel.playlistSelectedText : applicationThemeViewModel.playlistText
                                 anchors.verticalCenter: parent.verticalCenter
@@ -388,7 +388,7 @@ Page {
                                 anchors.leftMargin: 10
                                 anchors.rightMargin: 10
 
-                                Text {
+                                PlainText {
                                     visible: isGroup
                                     color: selectedVideo ? applicationThemeViewModel.playlistSelectedText : applicationThemeViewModel.playlistText
                                     text: title
