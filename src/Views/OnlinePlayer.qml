@@ -379,6 +379,7 @@ Page {
                                 anchors.verticalCenter: parent.verticalCenter
                                 anchors.left: parent.left
                                 anchors.leftMargin: 10
+                                fontPointSize: 9
                                 text: title
                             }
 
@@ -398,6 +399,7 @@ Page {
                                     font.bold: true
                                     elide: Text.ElideRight
                                     wrapMode: Text.WordWrap
+                                    fontPointSize: 9
                                 }
                             }
 

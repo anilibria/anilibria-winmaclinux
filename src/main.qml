@@ -736,6 +736,7 @@ ApplicationWindow {
                 wrapMode: Text.WordWrap
                 width: drawer.width - userAvatarCanvas.width - logoutButton.width - 40
                 maximumLineCount: 2
+                fontPointSize: 10
             }
 
             IconButton {
@@ -851,12 +852,12 @@ ApplicationWindow {
                     anchors.verticalCenter: parent.verticalCenter
                     PlainText {
                         color: applicationThemeViewModel.currentItems.colorDrawerItemText
-                        font.pointSize: 11
+                        fontPointSize: 11
                         text: qsTr("AniLibria.Qt")
                     }
                     PlainText {
                         color: applicationThemeViewModel.currentItems.colorDrawerItemText
-                        font.pointSize: 11
+                        fontPointSize: 11
                         text: qsTr("версия " + ApplicationVersion)
                     }
                 }                
