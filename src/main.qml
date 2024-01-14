@@ -36,7 +36,7 @@ ApplicationWindow {
     height: 600
     minimumWidth: 300
     minimumHeight: 300
-    title: qsTr("AniLibria.Qt CE")
+    title: qsTr("AniLibria.Qt")
     font.capitalization: Font.MixedCase
     property var userModel: ({})
     property string tempTorrentPath: ""
@@ -1271,7 +1271,8 @@ ApplicationWindow {
         onReleasesPageToNavigated: {
             releases.navigateTo();
         }
-        onIsOnlinePlayerPageVisibleChanged: {
+        //uncomment for christmas version
+        /*onIsOnlinePlayerPageVisibleChanged: {
             if (mainViewModel.isOnlinePlayerPageVisible) {
                 particleEffect.visible = false;
                 particleSystem.reset();
@@ -1281,7 +1282,7 @@ ApplicationWindow {
                 particleEffect.visible = true;
                 particleSystem.running = true;
             }
-        }
+        }*/
         onChangeReleasesParameters: {
             if (!parameters.length) {
                 releasesViewModel.closeReleaseCard();
@@ -1426,7 +1427,8 @@ ApplicationWindow {
         property string iconsPath: Qt.resolvedUrl("../Assets/Icons/")
     }
 
-    Item {
+    //uncomment for christmas version
+    /*Item {
         id: particleEffect
         anchors.fill: parent
 
@@ -1462,5 +1464,5 @@ ApplicationWindow {
             rotationVelocity: 60
             rotationVelocityVariation: 15
         }
-    }
+    }*/
 }
