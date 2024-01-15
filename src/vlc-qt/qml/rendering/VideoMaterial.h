@@ -45,7 +45,7 @@ public:
     ~VideoMaterial();
 
     virtual QSGMaterialType *type() const;
-    virtual QSGMaterialShader *createShader() const;
+    virtual QSGMaterialShader *createShader(QSGRendererInterface::RenderMode renderMode) const;
     virtual int compare(const QSGMaterial *other) const;
 
     void setFrame(const std::shared_ptr<const VlcYUVVideoFrame> &frame);
@@ -60,15 +60,7 @@ private:
                    quint16 height);
 
 private:
-#if QT_VERSION < 0x050300
-#if defined(QT_OPENGL_ES_2)
-    QOpenGLFunctions_ES2 *_glF;
-#else
-    QOpenGLFunctions_1_3 *_glF;
-#endif
-#else
     QOpenGLFunctions *_glF;
-#endif
 
     std::shared_ptr<const VlcYUVVideoFrame> _frame;
     GLuint _planeTexIds[3];

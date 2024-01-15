@@ -484,8 +484,11 @@ void ReleaseLinkedSeries::processReleasesFromDescription(const QString& descript
     QString startToken = "Порядок просмотра";
     int watchOrderIndex = description.indexOf(startToken);
     if (watchOrderIndex == -1) return;
-
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+    auto cuttedDescription = description.mid(watchOrderIndex + startToken.length());
+#else
     auto cuttedDescription = description.midRef(watchOrderIndex + startToken.length());
+#endif
     auto parts = cuttedDescription.split("#").mid(1);
 
     static QRegularExpression linkRegexp(R"(\/release\/(.*)\.html)");
@@ -505,7 +508,11 @@ void ReleaseLinkedSeries::processReleasesFromDescription(const QString& descript
     auto series = new ReleaseSeriesModel();
 
     foreach (auto part, parts) {
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+        auto partString = part;
+#else
         auto partString = part.toString();
+#endif
 
         auto match = linkRegexp.match(partString);
 

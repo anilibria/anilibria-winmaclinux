@@ -1,0 +1,2 @@
+C:\IDEs\opensourceqt\6.6.0\msvc2019_64\bin\qsb.exe --qt6 -o ../Views/Shaders/vlc.frag.qsb fragment.frag
+C:\IDEs\opensourceqt\6.6.0\msvc2019_64\bin\qsb.exe --qt6 -o ../Views/Shaders/vlc.frag.qsb vertex.vert

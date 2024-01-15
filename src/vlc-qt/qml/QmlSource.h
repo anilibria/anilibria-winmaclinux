@@ -40,8 +40,7 @@ class VlcQmlVideoStream;
 
     \since VLC-Qt 1.1
  */
-class VlcQmlSource : public QObject,
-                                      public QQmlParserStatus
+class VlcQmlSource : public QObject, public QQmlParserStatus
 {
     Q_OBJECT
     Q_INTERFACES(QQmlParserStatus)

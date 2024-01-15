@@ -33,7 +33,7 @@ void SeenModel::writeToJson(QJsonObject &json) const noexcept
     json["timestamp"] = m_Timestamp;
 }
 
-void SeenModel::readFromJson(QJsonValue &json)
+void SeenModel::readFromJson(const QJsonObject &json)
 {
     setId(json["id"].toInt());
     setVideoId(json["videoId"].toInt());

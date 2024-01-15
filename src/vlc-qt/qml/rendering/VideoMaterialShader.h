@@ -30,22 +30,24 @@
 class VideoMaterialShader : public QSGMaterialShader // LCOV_EXCL_LINE
 {
 public:
-    virtual char const *const *attributeNames() const;
+    VideoMaterialShader();
+    /*virtual char const *const *attributeNames() const;
     virtual const char *vertexShader() const;
     virtual const char *fragmentShader() const;
-    virtual void initialize();
+    virtual void initialize();*/
 
-    virtual void updateState(const RenderState &state,
+    /*virtual void updateState(const RenderState &state,
                              QSGMaterial *newMaterial,
-                             QSGMaterial *oldMaterial);
+                             QSGMaterial *oldMaterial);*/
+    bool updateUniformData(RenderState &state, QSGMaterial *newMaterial, QSGMaterial *oldMaterial) override;
 
 private:
-    int _positionMatrixId;
+    /*int _positionMatrixId;
     int _colorMatrixId;
     int _opacityId;
     int _texYId;
     int _texUId;
-    int _texVId;
+    int _texVId;*/
 };
 
 #endif // VLCQT_QMLRENDERING_VIDEOMATERIALSHADER_H_

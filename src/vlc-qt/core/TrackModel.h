@@ -21,8 +21,6 @@
 
 #include <QAbstractListModel>
 
-#include "SharedExportCore.h"
-
 /*!
     \class VlcTrackModel TrackModel.h VLCQtCore/TrackModel.h
     \ingroup VLCQtCore

@@ -171,8 +171,11 @@ void TorrentNotifierViewModel::messageReceived(const QString &message)
 
     auto firstSeparator = message.indexOf(":");
     if (firstSeparator == -1) return;
-
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+    auto response = message.mid(0, firstSeparator);
+#else
     auto response = message.midRef(0, firstSeparator);
+#endif
 
     if (response == "ds") {
         auto document = QJsonDocument::fromJson(message.mid(3).toUtf8());

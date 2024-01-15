@@ -27,13 +27,12 @@
 #include "../core/Enums.h"
 
 struct VlcYUVVideoFrame;
-class VlcQmlSource;
 
 class VlcQmlVideoOutput : public QQuickItem
 {
     Q_OBJECT
 
-    Q_PROPERTY(VlcQmlSource *source READ source WRITE setSource NOTIFY sourceChanged)
+    Q_PROPERTY(void *source READ source WRITE setSource NOTIFY sourceChanged)
     Q_PROPERTY(int fillMode READ fillMode WRITE setFillMode NOTIFY fillModeChanged)
     Q_PROPERTY(int aspectRatio READ aspectRatio WRITE setAspectRatio NOTIFY aspectRatioChanged)
     Q_PROPERTY(int cropRatio READ cropRatio WRITE setCropRatio NOTIFY cropRatioChanged)
@@ -43,7 +42,7 @@ private:
     Vlc::Ratio _aspectRatio;
     Vlc::Ratio _cropRatio;
 
-    QPointer<VlcQmlSource> _source;
+    void* _source;
 
     bool _frameUpdated;
     std::shared_ptr<const VlcYUVVideoFrame> _frame;
@@ -52,8 +51,8 @@ public:
     VlcQmlVideoOutput();
     ~VlcQmlVideoOutput();
 
-    VlcQmlSource *source() const;
-    void setSource(VlcQmlSource *source);
+    void *source() const;
+    void setSource(void *source);
 
     int fillMode() const;
     void setFillMode(int mode);

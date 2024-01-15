@@ -23,7 +23,7 @@
 #include <QDesktopServices>
 #include <QtConcurrent>
 #include <QFuture>
-#include <QMutableStringListIterator>
+#include <QMutableListIterator>
 #include "releasesviewmodel.h"
 #include "../../globalhelpers.h"
 
@@ -377,7 +377,11 @@ QStringList ReleasesViewModel::getMostPopularGenres() const noexcept
         iterator.next();
 
         QString key = iterator.key();
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+        auto parts = key.split(".");
+#else
         auto parts = key.splitRef(".");
+#endif
 
         auto id = parts[0].toInt();
         if (alreadyProcessed.contains(id)) continue;
@@ -434,8 +438,11 @@ QStringList ReleasesViewModel::getMostPopularVoices() const noexcept
         iterator.next();
 
         QString key = iterator.key();
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+        auto parts = key.split(".");
+#else
         auto parts = key.splitRef(".");
-
+#endif
         auto id = parts[0].toInt();
         if (alreadyProcessed.contains(id)) continue;
 
@@ -547,7 +554,7 @@ void ReleasesViewModel::fillRecommendsByGenres(QList<FullReleaseModel *> *list) 
     auto genres = getMostPopularGenres();
     if (genres.isEmpty()) return;
 
-    QMutableStringListIterator iterator(genres);
+    QMutableListIterator<QString> iterator(genres);
     while (iterator.hasNext()) {
         auto value = iterator.next();
         iterator.setValue(value.toLower());
@@ -651,7 +658,7 @@ void ReleasesViewModel::fillRecommendedByVoices(QList<FullReleaseModel *> *list)
     auto voices = getMostPopularVoices();
     if (voices.isEmpty()) return;
 
-    QMutableStringListIterator iterator(voices);
+    QMutableListIterator<QString> iterator(voices);
     while (iterator.hasNext()) {
         auto value = iterator.next();
         iterator.setValue(value.toLower());
@@ -1494,7 +1501,7 @@ void ReleasesViewModel::loadReleasesWithoutReactive()
 
     foreach (auto release, releasesArray) {
         FullReleaseModel* jsonRelease = new FullReleaseModel();
-        jsonRelease->readFromJson(release);
+        jsonRelease->readFromJson(release.toObject());
 
         m_releases->append(jsonRelease);
         m_releasesMap->insert(jsonRelease->id(), jsonRelease);
@@ -1531,10 +1538,12 @@ void ReleasesViewModel::saveSchedule(QString json)
 
     QJsonObject savedObject;
 
-    foreach (auto dataItem, data) {
+    foreach (auto mainItem, data) {
+        auto dataItem = mainItem.toObject();
         auto day = dataItem["day"].toString();
         auto items = dataItem["items"].toArray();
-        foreach (auto item, items) {
+        foreach (auto subItem, items) {
+            auto item = subItem.toObject();
             auto key = QString::number(item["id"].toInt());
             savedObject[key] = day;
         }
@@ -1564,7 +1573,8 @@ void ReleasesViewModel::saveFavoritesFromJson(QString data)
     auto items = responseData["items"].toArray();
 
     QVector<int> ids;
-    foreach (auto item, items) {
+    foreach (auto arrayItem, items) {
+        auto item = arrayItem.toObject();
         ids.append(item["id"].toInt());
     }
 
@@ -1676,8 +1686,8 @@ void ReleasesViewModel::recalculateSeenCounts()
     QMap<int, int> seenMap;
     auto keys = m_seenMarks->keys();
     foreach(auto item, keys) {
-#if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
-        auto parts = item.splitRef(".");
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+        auto parts = item.split(".");
 #else
         auto parts = item.splitRef(".", Qt::SkipEmptyParts);
 #endif
@@ -1740,7 +1750,7 @@ void ReleasesViewModel::loadHistory()
 
     foreach (auto item, historyItems) {
         HistoryModel* historyModel = new HistoryModel();
-        historyModel->readFromJson(item);
+        historyModel->readFromJson(item.toObject());
 
         m_historyItems->insert(historyModel->id(), historyModel);
     }

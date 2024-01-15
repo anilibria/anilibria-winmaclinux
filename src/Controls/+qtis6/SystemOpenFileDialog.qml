@@ -15,7 +15,7 @@ Item {
 
     FileDialog {
         id: saveFileDialog
-        selectExisting: true
+        fileMode: FileDialog.OpenFile
         onAccepted: {
             root.needOpenFile(saveFileDialog.selectedFile);
         }
