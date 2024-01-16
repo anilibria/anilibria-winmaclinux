@@ -19,6 +19,8 @@
 #include <QFile>
 #include <QJsonDocument>
 #include <QJsonObject>
+#include <QFont>
+#include <QGuiApplication>
 #include "userconfigurationviewmodel.h"
 #include "../../globalhelpers.h"
 
@@ -321,6 +323,16 @@ void UserConfigurationViewModel::setUsingVideoProxyVLC(bool usingVideoProxyVLC) 
     emit usingVideoProxyVLCChanged();
 }
 
+void UserConfigurationViewModel::setTextFont(const QString& textFont) noexcept
+{
+    if (m_textFont == textFont) return;
+
+    m_textFont = textFont;
+    emit textFontChanged();
+
+    changeFont(m_textFont);
+}
+
 void UserConfigurationViewModel::refreshConfiguration() noexcept
 {
     readSettingsFromFile();
@@ -350,6 +362,7 @@ void UserConfigurationViewModel::refreshConfiguration() noexcept
     emit customScriptFileChanged();
     emit usingVideoProxyChanged();
     emit usingVideoProxyVLCChanged();
+    emit textFontChanged();
 }
 
 void UserConfigurationViewModel::saveSettingsToFile()
@@ -391,6 +404,7 @@ void UserConfigurationViewModel::saveSettingsToFile()
     object[m_sendVolumeToRemoteField] = m_sendVolumeToRemote;
     object[m_sendPlaybackToRemoteField] = m_sendPlaybackToRemote;
     object[m_usingVideoProxyVLCField] = m_usingVideoProxyVLC;
+    object[m_textFontField] = m_textFont;
 
     QFile file(getCachePath(m_cacheFileName));
     file.open(QFile::WriteOnly | QFile::Text);
@@ -443,4 +457,14 @@ void UserConfigurationViewModel::readSettingsFromFile()
     m_sendVolumeToRemote = object.contains(m_sendVolumeToRemoteField) ? object[m_sendVolumeToRemoteField].toBool() : true;
     m_sendPlaybackToRemote = object.contains(m_sendPlaybackToRemoteField) ? object[m_sendPlaybackToRemoteField].toBool() : false;
     m_usingVideoProxyVLC = object.contains(m_usingVideoProxyVLCField) ? object[m_usingVideoProxyVLCField].toBool() : false;
+    m_textFont = object.contains(m_textFontField) ? object[m_textFontField].toString() : "Default";
+
+    if (m_textFont != "Default") changeFont(m_textFont);
+}
+
+void UserConfigurationViewModel::changeFont(const QString &family)
+{
+    auto instance = QGuiApplication::instance();
+    auto guiInstance = static_cast<QGuiApplication*>(instance);
+    guiInstance->setFont(QFont(m_textFont));
 }

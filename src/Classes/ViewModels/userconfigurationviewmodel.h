@@ -61,6 +61,7 @@ class UserConfigurationViewModel : public QObject
     Q_PROPERTY(int remotePort READ remotePort WRITE setRemotePort NOTIFY remotePortChanged)
     Q_PROPERTY(bool sendVolumeToRemote READ sendVolumeToRemote WRITE setSendVolumeToRemote NOTIFY sendVolumeToRemoteChanged)
     Q_PROPERTY(bool sendPlaybackToRemote READ sendPlaybackToRemote WRITE setSendPlaybackToRemote NOTIFY sendPlaybackToRemoteChanged)
+    Q_PROPERTY(QString textFont READ textFont WRITE setTextFont NOTIFY textFontChanged)
 
 private:
     QString m_cacheFileName { "userconfiguration.cache" };
@@ -100,6 +101,7 @@ private:
     const QString m_sendVolumeToRemoteField { "sendVolumeToRemote" };
     const QString m_sendPlaybackToRemoteField { "sendPlaybackToRemote" };
     const QString m_usingVideoProxyVLCField { "usingVideoProxyVLC" };
+    const QString m_textFontField { "textFont" };
     int m_opacityPlayerPanel { 50 };
     bool m_notCloseReleaseCardAfterWatch { false };
     bool m_usingScrollAcceleration { true };
@@ -136,6 +138,7 @@ private:
     bool m_sendVolumeToRemote { false };
     bool m_sendPlaybackToRemote { false };
     bool m_usingVideoProxyVLC { false };
+    QString m_textFont { "" };
 
 public:
     explicit UserConfigurationViewModel(QObject *parent = nullptr);
@@ -248,11 +251,15 @@ public:
     bool usingVideoProxyVLC() const noexcept { return m_usingVideoProxyVLC; }
     void setUsingVideoProxyVLC(bool usingVideoProxyVLC) noexcept;
 
+    QString textFont() const noexcept { return m_textFont; }
+    void setTextFont(const QString& textFont) noexcept;
+
     Q_INVOKABLE void refreshConfiguration() noexcept;
     Q_INVOKABLE void saveSettingsToFile();
 
 private:
     void readSettingsFromFile();
+    void changeFont(const QString& family);
 
 signals:
     void opacityPlayerPanelChanged();
@@ -291,6 +298,7 @@ signals:
     void sendVolumeToRemoteChanged();
     void sendPlaybackToRemoteChanged();
     void usingVideoProxyVLCChanged();
+    void textFontChanged();
 
 };
 

@@ -35,6 +35,7 @@ ApplicationWindow {
     width: 800
     height: 600
     minimumWidth: 300
+    font.family: userConfigurationViewModel.textFont
     minimumHeight: 300
     title: qsTr("AniLibria.Qt")
     font.capitalization: Font.MixedCase
@@ -381,7 +382,7 @@ ApplicationWindow {
                 x: -250
                 y: 40
                 width: 350
-                height: 100
+                height: 180
                 modal: true
                 focus: true
                 closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
@@ -409,6 +410,27 @@ ApplicationWindow {
                         }
                         Component.onCompleted: {
                             currentIndex = applicationThemeViewModel.themes.indexOf(applicationThemeViewModel.selectedTheme);
+                        }
+                    }
+
+                    PlainText {
+                        id: selectFontLabel
+                        fontPointSize: 11
+                        text: "Шрифт"
+                    }
+                    CommonComboBox {
+                        id: selectFontComboBox
+                        width: 320
+                        model: mainViewModel.fontFamilies
+
+                        onActivated: {
+                            userConfigurationViewModel.textFont = mainViewModel.fontFamilies[currentIndex]
+                        }
+                        onModelChanged: {
+                            currentIndex = mainViewModel.fontFamilies.indexOf(userConfigurationViewModel.textFont);
+                        }
+                        Component.onCompleted: {
+                            currentIndex = mainViewModel.fontFamilies.indexOf(userConfigurationViewModel.textFont);
                         }
                     }
                 }

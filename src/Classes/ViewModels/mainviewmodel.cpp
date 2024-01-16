@@ -1,5 +1,6 @@
 #include <QDesktopServices>
 #include <QUrl>
+#include <QFontDatabase>
 #include "mainviewmodel.h"
 #include "../../globalhelpers.h"
 
@@ -27,6 +28,10 @@ MainViewModel::MainViewModel(QObject *parent) : QObject(parent)
     m_currentPageDisplayName = m_displayNames->value(m_currentPageId);
 
     m_historyPosition = 0;
+
+    QFontDatabase database;
+    m_fontFamilies.append("Default");
+    m_fontFamilies.append(database.families(QFontDatabase::Cyrillic));
 }
 
 void MainViewModel::setNotVisibleSignin(bool notVisibleSignin)
@@ -99,6 +104,14 @@ void MainViewModel::setDragIndex(const QString& dragIndex) noexcept
 
     m_dragIndex = dragIndex;
     emit dragIndexChanged();
+}
+
+void MainViewModel::setGlobalTextFont(const QString &globalTextFont) noexcept
+{
+    if (m_globalTextFont == globalTextFont) return;
+
+    m_globalTextFont = globalTextFont;
+    emit globalTextFontChanged();
 }
 
 void MainViewModel::selectPage(const QString& pageId) noexcept

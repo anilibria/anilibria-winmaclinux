@@ -36,6 +36,8 @@ class MainViewModel : public QObject
     Q_PROPERTY(QVariantList otherLeftToolbar  READ otherLeftToolbar NOTIFY otherLeftToolbarChanged)
     Q_PROPERTY(QString dropIndex READ dropIndex WRITE setDropIndex NOTIFY dropIndexChanged)
     Q_PROPERTY(QString dragIndex READ dragIndex WRITE setDragIndex NOTIFY dragIndexChanged)
+    Q_PROPERTY(QString globalTextFont READ globalTextFont WRITE setGlobalTextFont NOTIFY globalTextFontChanged)
+    Q_PROPERTY(QStringList fontFamilies READ fontFamilies NOTIFY fontFamiliesChanged FINAL)
 
 private:
     MainMenuListModel* m_mainMenuListModel { new MainMenuListModel(this) };
@@ -56,6 +58,8 @@ private:
     QVariantList m_otherLeftToolbar { QVariantList() };
     QString m_dropIndex { -1 };
     QString m_dragIndex { -1 };
+    QString m_globalTextFont { "" };
+    QStringList m_fontFamilies { QStringList() };
     const QString addItemButton { "additem" };
     const QString removeItemButton { "removeitem" };
 
@@ -107,6 +111,11 @@ public:
 
     QString dragIndex() const noexcept { return m_dragIndex; }
     void setDragIndex(const QString& dragIndex) noexcept;
+
+    QString globalTextFont() const noexcept { return m_globalTextFont; }
+    void setGlobalTextFont(const QString& globalTextFont) noexcept;
+
+    QStringList fontFamilies() const noexcept { return m_fontFamilies; }
 
     Q_INVOKABLE void selectPage(const QString& pageId) noexcept;
     Q_INVOKABLE void backToPage() noexcept;
@@ -163,6 +172,8 @@ signals:
     void otherLeftToolbarChanged();
     void dropIndexChanged();
     void dragIndexChanged();
+    void globalTextFontChanged();
+    void fontFamiliesChanged();
 
 };
 

@@ -11,7 +11,7 @@ Image {
 
     ToolTip {
         delay: 2000
-        visible: tooltipMessageVisible
+        visible: tooltipMessageVisible && tooltipMessage
         text: tooltipMessage
         CustomStyle.tooltipColor: applicationThemeViewModel.currentItems.colorTooltipBackground
         CustomStyle.colorTooltipText: applicationThemeViewModel.currentItems.colorTooltipText
