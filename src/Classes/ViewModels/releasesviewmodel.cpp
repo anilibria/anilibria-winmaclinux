@@ -118,6 +118,7 @@ ReleasesViewModel::ReleasesViewModel(QObject *parent) : QObject(parent)
     m_items->refresh();
 
     connect(m_releasesUpdateWatcher, &QFutureWatcher<bool>::finished, this, &ReleasesViewModel::releasesUpdated);
+    connect(m_cinemahall.get(), &CinemahallListModel::needDeleteFavorites, this, &ReleasesViewModel::needDeleteFavorites);
 }
 
 void ReleasesViewModel::setUserActivity(const UserActivityViewModel *viewModel) noexcept
@@ -2052,4 +2053,11 @@ void ReleasesViewModel::userFavoritesReceived(const QString &data)
 void ReleasesViewModel::cinemahallItemsChanged()
 {
     emit hasCinemahallNotSeenVideosChanged();
+}
+
+void ReleasesViewModel::needDeleteFavorites(const QList<int> &ids)
+{
+    foreach (auto id, ids) {
+        removeReleaseFromFavorites(id);
+    }
 }

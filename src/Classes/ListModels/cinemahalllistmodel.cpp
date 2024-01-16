@@ -385,6 +385,31 @@ void CinemahallListModel::deletedSeenReleases()
     deleteReleases(ids);
 }
 
+void CinemahallListModel::deletedSeenAndFavoritesReleases()
+{
+    QList<int> ids;
+    auto releases = getCinemahallReleases();
+    foreach (auto release, releases) {
+        if (release->countOnlineVideos() == getReleaseSeenMarkCount(release->id())){
+            ids.append(release->id());
+        }
+    }
+    deleteReleases(ids);
+    emit needDeleteFavorites(ids);
+}
+
+void CinemahallListModel::deletedSeenOnlyFromFavorites()
+{
+    QList<int> ids;
+    auto releases = getCinemahallReleases();
+    foreach (auto release, releases) {
+        if (release->countOnlineVideos() == getReleaseSeenMarkCount(release->id())){
+            ids.append(release->id());
+        }
+    }
+    emit needDeleteFavorites(ids);
+}
+
 void CinemahallListModel::moveToTypedNumber()
 {
     auto index = m_movedPositionIndex - 1;
@@ -392,6 +417,11 @@ void CinemahallListModel::moveToTypedNumber()
     if (index == m_openedItemIndex) return;
 
     reorderElements(index, m_openedItemIndex);
+}
+
+void CinemahallListModel::refreshCinemahall()
+{
+    refreshItems();
 }
 
 void CinemahallListModel::itemMenuSelected(const int index)

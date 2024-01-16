@@ -30,8 +30,10 @@ Rectangle {
     property bool buttonHovered: false
     property bool buttonEnabled: true
     property bool disableHover: false
+    property bool allowedRightClick: false
 
     signal clicked()
+    signal rightClicked()
 
     Rectangle {
 
@@ -55,6 +57,7 @@ Rectangle {
         MouseArea {
             hoverEnabled: !disableHover
             anchors.fill: parent
+            acceptedButtons: root.allowedRightClick ? Qt.LeftButton | Qt.RightButton : Qt.LeftButton
             onEntered: {
                 root.buttonHovered = true;
             }
@@ -64,7 +67,11 @@ Rectangle {
             onPressed: {
                 if (!root.buttonEnabled) return;
 
-                root.clicked();
+                if (mouse.button == Qt.RightButton) {
+                    root.rightClicked();
+                } else {
+                    root.clicked();
+                }
             }
         }
     }

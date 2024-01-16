@@ -1957,6 +1957,7 @@ Page {
         releasesViewModel.setSeenMarkAllSeriesSelectedReleases(newState);
         releasesViewModel.items.refreshSelectedItems();
         releasesViewModel.clearSelectedReleases();
+        releasesViewModel.cinemahall.refreshCinemahall();
         seenMarkMenuPanel.close();
     }
 

@@ -351,6 +351,7 @@ private slots:
     void synchronizedSchedule(const QString& data);
     void userFavoritesReceived(const QString& data);
     void cinemahallItemsChanged();
+    void needDeleteFavorites(const QList<int>& ids);
 
 signals:
     void openedCardTorrentsChanged();

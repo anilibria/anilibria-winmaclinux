@@ -115,7 +115,10 @@ public:
     Q_INVOKABLE void selectItem(const int releaseId);
     Q_INVOKABLE void deselectItems();
     Q_INVOKABLE void deletedSeenReleases();
+    Q_INVOKABLE void deletedSeenAndFavoritesReleases();
+    Q_INVOKABLE void deletedSeenOnlyFromFavorites();
     Q_INVOKABLE void moveToTypedNumber();
+    Q_INVOKABLE void refreshCinemahall();
 
 private slots:
     void itemMenuSelected(const int index);
@@ -134,6 +137,7 @@ signals:
     void validMovedPositionChanged();
     void restoreScrollPositionChanged();
     void needRestoreScrollPosition();
+    void needDeleteFavorites(const QList<int>& ids);
 
 };
 

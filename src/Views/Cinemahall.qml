@@ -61,10 +61,60 @@ Page {
                     buttonEnabled: releasesViewModel.cinemahall.hasItems
                     textSize: 10
                     text: "Удалить просмотренное"
+                    allowedRightClick: true
                     onClicked: {
                         releasesViewModel.cinemahall.restoreScrollPosition = listViewReleases.contentX;
                         releasesViewModel.cinemahall.deletedSeenReleases();
                     }
+                    onRightClicked: {
+                        deleteSeensPopup.open();
+                    }
+
+                    DefaultPopup {
+                        id: deleteSeensPopup
+                        width: 390
+                        height: 130
+                        modal: true
+                        focus: true
+                        closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
+
+                        Column {
+                            width: parent.width
+                            spacing: 10
+
+                            PlainText {
+                                width: deleteSeensPopup.width - 20
+                                fontPointSize: 10
+                                text: "Другие варианты удаления"
+                            }
+
+                            RoundedActionButton {
+                                anchors.right: parent.right
+                                anchors.left: parent.left
+                                buttonEnabled: releasesViewModel.cinemahall.hasItems
+                                textSize: 10
+                                text: "Удалить из кинозала и избранного"
+                                onClicked: {
+                                    releasesViewModel.cinemahall.restoreScrollPosition = listViewReleases.contentX;
+                                    releasesViewModel.cinemahall.deletedSeenAndFavoritesReleases();
+                                    deleteSeensPopup.close();
+                                }
+                            }
+
+                            RoundedActionButton {
+                                anchors.right: parent.right
+                                anchors.left: parent.left
+                                buttonEnabled: releasesViewModel.cinemahall.hasItems
+                                textSize: 10
+                                text: "Удалить только из избранного"
+                                onClicked: {
+                                    releasesViewModel.cinemahall.deletedSeenOnlyFromFavorites();
+                                    deleteSeensPopup.close();
+                                }
+                            }
+                        }
+                    }
+
                 }
 
                 RoundedActionButton {
