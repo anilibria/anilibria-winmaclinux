@@ -543,6 +543,28 @@ void ThemeFieldListModel::addIconFromFile(const QString &path, int itemIndex) no
     refreshRowByField(field);
 }
 
+void ThemeFieldListModel::undefineAllFields() noexcept
+{
+    foreach (auto field, m_colorFields) {
+        if (m_values.contains(field)) m_values.remove(field);
+    }
+
+    refresh();
+    emit hasValuesChanged();
+}
+
+void ThemeFieldListModel::undefineSelectedFields() noexcept
+{
+    if (m_filteredColorFields.isEmpty()) return;
+
+    foreach (auto field, m_filteredColorFields) {
+        if (m_values.contains(field)) m_values.remove(field);
+    }
+
+    refresh();
+    emit hasValuesChanged();
+}
+
 void ThemeFieldListModel::refreshRowByField(const QString &field) noexcept
 {
     if (m_filteredColorFields.contains(field)) {

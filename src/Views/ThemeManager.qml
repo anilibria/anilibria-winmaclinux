@@ -548,6 +548,7 @@ Page {
                             }
 
                             CommonTextField {
+                                id: searchTextField
                                 anchors.left: parent.left
                                 anchors.leftMargin: 10
                                 anchors.verticalCenter: parent.verticalCenter                                
@@ -556,6 +557,35 @@ Page {
                                 placeholderText: "Фильтр для полей"
                                 onTextChanged: {
                                     applicationThemeViewModel.fieldList.filter = text;
+                                }
+                            }
+                            RoundedActionButton {
+                                anchors.left: searchTextField.right
+                                anchors.leftMargin: 4
+                                anchors.verticalCenter: parent.verticalCenter
+                                text: "..."
+                                onClicked: {
+                                    multipleOperationsMenu.open();
+                                }
+
+                                CommonMenu {
+                                    id: multipleOperationsMenu
+                                    autoWidth: true
+
+                                    CommonMenuItem {
+                                        text: "Убрать перекрытие со всех полей"
+                                        onClicked: {
+                                            applicationThemeViewModel.fieldList.undefineAllFields();
+                                            multipleOperationsMenu.close();
+                                        }
+                                    }
+                                    CommonMenuItem {
+                                        text: "Убрать перекрытие с отфильтрованных полей"
+                                        onClicked: {
+                                            applicationThemeViewModel.fieldList.undefineSelectedFields();
+                                            multipleOperationsMenu.close();
+                                        }
+                                    }
                                 }
                             }
                         }
