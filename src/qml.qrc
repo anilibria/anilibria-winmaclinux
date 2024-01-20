@@ -230,13 +230,13 @@
         <file>Views/ReleaseCustomGroups.qml</file>
         <file>Assets/Icons/colorededit.svg</file>
         <file>Assets/Icons/anilibrialogodark.svg</file>
-        <file>Controls/+qtis6/SystemOpenFileDialog.qml</file>
+        <!--<file>Controls/+qtis6/SystemOpenFileDialog.qml</file>-->
         <file>Controls/SystemOpenFileDialog.qml</file>
-        <file>Controls/+qtis6/SystemSaveFileDialog.qml</file>
+        <!--<file>Controls/+qtis6/SystemSaveFileDialog.qml</file>-->
         <file>Controls/SystemSaveFileDialog.qml</file>
         <file>Controls/SystemOpenFolderDialog.qml</file>
-        <file>Controls/+qtis6/SystemOpenFolderDialog.qml</file>
+        <!--<file>Controls/+qtis6/SystemOpenFolderDialog.qml</file>-->
         <file>Controls/SystemColorDialog.qml</file>
-        <file>Controls/+qtis6/SystemColorDialog.qml</file>
+        <!--<file>Controls/+qtis6/SystemColorDialog.qml</file>-->
     </qresource>
 </RCC>
