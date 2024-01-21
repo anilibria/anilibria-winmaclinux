@@ -21,17 +21,18 @@ windows {
     DEFINES += NO_NEED_STANDART_PLAYER
 }
 
-#unix {
-#    LIBS += -lvlc
+unixvlc {
+    CONFIG += link_pkgconfig
+    PKGCONFIG += libvlc
 
-#    INCLUDEPATH += /usr/include/
-#    DEPENDPATH += /usr/include/
+    QMAKE_CXXFLAGS += $$system(pkg-config --cflags libvlc)
+    QMAKE_CXXFLAGS += $$system(pkg-config --cflags vlc-plugin)
 
-#    INCLUDEPATH += /usr/include/vlc/plugins
-#    DEPENDPATH += /usr/include/vlc/plugins
+    DEPENDPATH += $$system(pkg-config --variable=includedir libvlc)
+    DEPENDPATH += $$system(pkg-config --variable=includedir vlc-plugin)/plugins
 
-#    CONFIG += buildwithvlc
-#}
+    CONFIG += buildwithvlc
+}
 
 buildwithvlc {
     DEFINES += USE_VLC_PLAYER
