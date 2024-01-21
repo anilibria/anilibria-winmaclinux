@@ -6,7 +6,7 @@
 **Этап 1. Устанавливаем зависимости необходимые для сборки**
 ```shell
 sudo apk add qt5-qtbase-devel qt5-qtwebview-devel qt5-qtwebengine-devel qt5-qtmultimedia-devel qt5-qtsvg-devel qt5-qtwebsockets-devel qt5-qtdeclarative-devel qt5-qtquickcontrols2-devel qt5-qtquickcontrols 
-sudo apk add vlc vlc-qt vlc-dev g++ make git 
+sudo apk add vlc vlc-qt vlc-dev g++ make git pkgconf
 ```
 **Этап 2. Создаем папку для проекта, переходим в нее и извлекаем исходники (предполагается что Вы находитесь в домашней папке)**
 ```shell
@@ -34,44 +34,17 @@ ApplicationWindow {
     height: 300
 ```
 
-Так же заменить в файле src/AniLibria.pro следующие строчки:
-```shell
-#unix {
-#    LIBS += -lvlc
-
-#    INCLUDEPATH += /usr/include/
-#    DEPENDPATH += /usr/include/
-
-#    INCLUDEPATH += /usr/include/vlc/plugins
-#    DEPENDPATH += /usr/include/vlc/plugins
-
-#    CONFIG += buildwithvlc
-#}
-```
-на эти
-```shell
-unix {
-    LIBS += -lvlc
-
-    INCLUDEPATH += /usr/include/
-    DEPENDPATH += /usr/include/
-
-    INCLUDEPATH += /usr/include/vlc/plugins
-    DEPENDPATH += /usr/include/vlc/plugins
-
-    CONFIG += buildwithvlc
-}
-```
 **Этап 4. Выполняем сборку**
 ```shell
-qmake-qt5
+qmake-qt5 CONFIG+=unixvlc
+make
 sudo make install
 ```
 
 **Необязательный последний этап. После всех манипуляций можно удалить созданную папку командой**
 ```shell
 cd ~
-sudo rm -rf anilibria/
+rm -rf anilibria/
 ```
 
 

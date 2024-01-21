@@ -5,7 +5,7 @@
 
 **Этап 1. Устанавливаем зависимости необходимые для сборки**
 ```shell
-sudo xbps-install -S gcc git qt5-declarative-devel qt5-webview-devel qt5-webengine-devel qt5-multimedia-devel qt5-svg-devel qt5-websockets-devel qt5-declarative-devel qt5-quickcontrols2-devel qt5-quickcontrols  vlc vlc-devel gstreamer1
+sudo xbps-install -S gcc git qt5-declarative-devel qt5-webview-devel qt5-webengine-devel qt5-multimedia-devel qt5-svg-devel qt5-websockets-devel qt5-declarative-devel qt5-quickcontrols2-devel qt5-quickcontrols gstreamer1
 ```
 **Этап 2. Создаем папку для проекта, переходим в нее и извлекаем исходники (предполагается что Вы находитесь в домашней папке)**
 ```shell
@@ -14,45 +14,31 @@ cd anilibria/
 git clone https://github.com/anilibria/anilibria-winmaclinux.git
 cd anilibria-winmaclinux/src/
 ```
-**Этап 3. (опциональный). Сборка с плеером VLC**  
-Необходимо заменить в файле src/AniLibria.pro следующие строчки
+**Этап 3. Настройка сборки**
+
+Сборка с VLC:
+
 ```shell
-#unix {
-#    LIBS += -lvlc
-
-#    INCLUDEPATH += /usr/include/
-#    DEPENDPATH += /usr/include/
-
-#    INCLUDEPATH += /usr/include/vlc/plugins
-#    DEPENDPATH += /usr/include/vlc/plugins
-
-#    CONFIG += buildwithvlc
-#}
+sudo xbps-install -S vlc vlc-devel pkg-config
+qmake CONFIG+=unixvlc
 ```
-на эти
-```shell
-unix {
-    LIBS += -lvlc
 
-    INCLUDEPATH += /usr/include/
-    DEPENDPATH += /usr/include/
+без VLC:
 
-    INCLUDEPATH += /usr/include/vlc/plugins
-    DEPENDPATH += /usr/include/vlc/plugins
-
-    CONFIG += buildwithvlc
-}
-```
-**Этап 4. Выполняем сборку**
 ```shell
 qmake
+```
+
+**Этап 4. Выполняем сборку и установку**
+```shell
+make
 sudo make install
 ```
 
 **Необязательный последний этап. После всех манипуляций можно удалить созданную папку командой**
 ```shell
 cd ~
-sudo rm -rf anilibria/
+rm -rf anilibria/
 ```
 
 ### Как найти приложение?

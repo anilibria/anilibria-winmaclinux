@@ -5,7 +5,7 @@
 
 **Этап 1. Устанавливаем зависимости необходимые для сборки**
 ```shell
-sudo apt install git build-essential qt5-default qtdeclarative5-dev qtmultimedia5-dev libqt5multimedia5-plugins libqt5svg5-dev libqt5webview5-dev qtwebengine5-dev qml-module-qtgraphicaleffects  qml-module-qtquick-layouts qml-module-qtquick-dialogs qml-module-qtquick-controls qml-module-qtquick-controls2 qml-module-qt-labs-folderlistmodel qml-module-qt-labs-settings qml-module-qtmultimedia qml-module-qtwebview libqt5websockets5-dev qdbus-qt5 qdbus qtquickcontrols2-5-dev libvlccore-dev libvlc-dev vlc
+sudo apt install git build-essential qt5-default qtdeclarative5-dev qtmultimedia5-dev libqt5multimedia5-plugins libqt5svg5-dev libqt5webview5-dev qtwebengine5-dev qml-module-qtgraphicaleffects  qml-module-qtquick-layouts qml-module-qtquick-dialogs qml-module-qtquick-controls qml-module-qtquick-controls2 qml-module-qt-labs-folderlistmodel qml-module-qt-labs-settings qml-module-qtmultimedia qml-module-qtwebview libqt5websockets5-dev qdbus-qt5 qdbus qtquickcontrols2-5-dev libvlccore-dev libvlc-dev vlc pkg-config
 ```
 **Этап 2. Создаем папку для проекта, переходим в нее и извлекаем исходники (предполагается что Вы находитесь в домашней папке)**
 ```shell
@@ -14,44 +14,28 @@ cd anilibria/
 git clone https://github.com/anilibria/anilibria-winmaclinux.git
 cd anilibria-winmaclinux/src/
 ```
-**Этап 3. Выполняем сборку**
+**Этап 3. Настройка сборки**
+Сборка с VLC:
+```shell
+qmake CONFIG+=unixvlc
+```
+Без VLC:
+
 ```shell
 qmake
+```
+
+**Этап 4. Выполняем сборку и установку**
+
+```shell
+make
 sudo make install
-```
-**Этап 4 (опциональный). Сборка с плеером VLC**  
-Необходимо заменить в файле src/AniLibria.pro следующие строчки
-```shell
-#unix {
-#    LIBS += -lvlc
+````
 
-#    INCLUDEPATH += /usr/include/
-#    DEPENDPATH += /usr/include/
-
-#    INCLUDEPATH += /usr/include/vlc/plugins
-#    DEPENDPATH += /usr/include/vlc/plugins
-
-#    CONFIG += buildwithvlc
-#}
-```
-на эти
-```shell
-unix {
-    LIBS += -lvlc
-
-    INCLUDEPATH += /usr/include/
-    DEPENDPATH += /usr/include/
-
-    INCLUDEPATH += /usr/include/vlc/plugins
-    DEPENDPATH += /usr/include/vlc/plugins
-
-    CONFIG += buildwithvlc
-}
-```
 **Необязательный последний этап. После всех манипуляций можно удалить созданную папку командой**
 ```shell
 cd ~
-sudo rm -rf anilibria/
+rm -rf anilibria/
 ```
 
 ### Как найти приложение?
