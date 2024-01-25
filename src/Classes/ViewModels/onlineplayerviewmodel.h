@@ -77,6 +77,7 @@ class OnlinePlayerViewModel : public QObject
     Q_PROPERTY(bool needProxified READ needProxified WRITE setNeedProxified NOTIFY needProxifiedChanged)
     Q_PROPERTY(int proxyPort READ proxyPort WRITE setProxyPort NOTIFY proxyPortChanged)
     Q_PROPERTY(bool muted READ muted WRITE setMuted NOTIFY mutedChanged)
+    Q_PROPERTY(bool needProxyFallback READ needProxyFallback WRITE setNeedProxyFallback NOTIFY needProxyFallbackChanged FINAL)
 
 private:
     bool m_isFullScreen;
@@ -131,6 +132,7 @@ private:
     int m_proxyPort { -1 };
     bool m_muted { false };
     bool m_endSkipOpening { false };
+    bool m_needProxyFallback { false };
 
 public:
     explicit OnlinePlayerViewModel(QObject *parent = nullptr);
@@ -263,6 +265,9 @@ public:
     bool muted() const noexcept { return m_muted; }
     void setMuted(bool muted) noexcept;
 
+    bool needProxyFallback() const noexcept { return m_needProxyFallback; }
+    void setNeedProxyFallback(bool needProxyFallback) noexcept;
+
     bool endSkipOpening() const noexcept { return m_endSkipOpening; }
 
     Q_INVOKABLE void toggleFullScreen();
@@ -374,6 +379,7 @@ signals:
     void proxyPortChanged();
     void mutedChanged();
     void endSkipOpeningChanged();
+    void needProxyFallbackChanged();
 
 };
 

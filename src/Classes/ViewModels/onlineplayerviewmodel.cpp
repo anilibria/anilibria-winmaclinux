@@ -150,7 +150,8 @@ void OnlinePlayerViewModel::setVideoSource(const QString &videoSource)
     if (videoSource == "") return;
 
     auto isLocalFile = videoSource.startsWith("file://");
-    auto source = !isLocalFile && m_needProxified && m_proxyPort > 0 ? QString("http://localhost:") + QString::number(m_proxyPort) + "/proxyvideolist?path=" + videoSource : videoSource;
+    auto needFallback = m_needProxyFallback ? "fallback=true&" : "";
+    auto source = !isLocalFile && m_needProxified && m_proxyPort > 0 ? QString("http://localhost:") + QString::number(m_proxyPort) + "/proxyvideolist?" + needFallback + "path=" + videoSource : videoSource;
     if (m_videoSource == source) return;
 
     m_endSkipOpening = false;
@@ -409,6 +410,14 @@ void OnlinePlayerViewModel::setMuted(bool muted) noexcept
 
     m_muted = muted;
     emit mutedChanged();
+}
+
+void OnlinePlayerViewModel::setNeedProxyFallback(bool needProxyFallback) noexcept
+{
+    if (m_needProxyFallback == needProxyFallback) return;
+
+    m_needProxyFallback = needProxyFallback;
+    emit needProxyFallbackChanged();
 }
 
 void OnlinePlayerViewModel::toggleFullScreen()

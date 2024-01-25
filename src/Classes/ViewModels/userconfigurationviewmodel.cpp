@@ -333,6 +333,14 @@ void UserConfigurationViewModel::setTextFont(const QString& textFont) noexcept
     changeFont(m_textFont);
 }
 
+void UserConfigurationViewModel::setUsingStrongProxy(bool usingStrongProxy) noexcept
+{
+    if (m_usingStrongProxy == usingStrongProxy) return;
+
+    m_usingStrongProxy = usingStrongProxy;
+    emit usingStrongProxyChanged();
+}
+
 void UserConfigurationViewModel::refreshConfiguration() noexcept
 {
     readSettingsFromFile();
@@ -405,6 +413,7 @@ void UserConfigurationViewModel::saveSettingsToFile()
     object[m_sendPlaybackToRemoteField] = m_sendPlaybackToRemote;
     object[m_usingVideoProxyVLCField] = m_usingVideoProxyVLC;
     object[m_textFontField] = m_textFont;
+    object[m_usingStrongProxyField] = m_usingStrongProxy;
 
     QFile file(getCachePath(m_cacheFileName));
     file.open(QFile::WriteOnly | QFile::Text);
@@ -458,6 +467,7 @@ void UserConfigurationViewModel::readSettingsFromFile()
     m_sendPlaybackToRemote = object.contains(m_sendPlaybackToRemoteField) ? object[m_sendPlaybackToRemoteField].toBool() : false;
     m_usingVideoProxyVLC = object.contains(m_usingVideoProxyVLCField) ? object[m_usingVideoProxyVLCField].toBool() : false;
     m_textFont = object.contains(m_textFontField) ? object[m_textFontField].toString() : "Default";
+    m_usingStrongProxy = object.contains(m_usingStrongProxyField) ? object[m_usingStrongProxyField].toBool() : false;
 
     if (m_textFont != "Default") changeFont(m_textFont);
 }

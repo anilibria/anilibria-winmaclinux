@@ -279,7 +279,7 @@ Page {
                 x: window.width / 2 - torrentStreamPopup.width / 2
                 y: window.height / 2 - torrentStreamPopup.height / 2
                 width: 550
-                height: 380
+                height: 440
                 modal: true
                 focus: true
                 closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
@@ -373,6 +373,25 @@ Page {
 
                     AccentText {
                         width: torrentStreamPopup.width
+                        text: "Использовать надежное проксирование видео"
+                        fontPointSize: 12
+                        font.bold: true
+                        elide: Text.ElideRight
+                    }
+
+                    Item {
+                        width: torrentStreamPopup.width
+                        height: 15
+
+                        CommonSwitch {
+                            id: usingStrongProxySwitch
+                            height: 15
+                            checked: userConfigurationViewModel.usingStrongProxy
+                        }
+                    }
+
+                    AccentText {
+                        width: torrentStreamPopup.width
                         text: "Удалять скачанное после каждого запуска приложения"
                         fontPointSize: 12
                         font.bold: true
@@ -409,6 +428,7 @@ Page {
                                 userConfigurationViewModel.torrentStreamPath = torrentStreamPath.text;
                                 userConfigurationViewModel.removeAllDownloadedTorrent = removeAllDownloadedTorrentSwitch.checked;
                                 userConfigurationViewModel.usingVideoProxyVLC = usingVideoProxyVLCSwitch.checked;
+                                userConfigurationViewModel.usingStrongProxy = usingStrongProxySwitch.checked;
 
                                 torrentStreamPopup.close();
                             }

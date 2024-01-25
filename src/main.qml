@@ -897,6 +897,7 @@ ApplicationWindow {
                 (userConfigurationViewModel.usingVideoProxyVLC && onlinePlayerWindowViewModel.isSelectedVlc)
             ) &&
             torrentNotifierViewModel.activated
+        needProxyFallback: userConfigurationViewModel.usingStrongProxy
         sendVolumeToRemote: userConfigurationViewModel.sendVolumeToRemote
         sendPlaybackToRemoteSwitch: userConfigurationViewModel.sendPlaybackToRemote
         remotePlayer.port: userConfigurationViewModel.remotePort
