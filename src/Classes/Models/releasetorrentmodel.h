@@ -31,6 +31,7 @@ private:
     QString m_Series;
     long long m_Size;
     QString m_Url;
+    int m_ctime;
 public:
     ReleaseTorrentModel();
 
@@ -55,6 +56,9 @@ public:
 
     QString url() const { return m_Url; }
     void setUrl(const QString &url) noexcept;
+
+    int ctime() const { return m_ctime; }
+    void setCtime(int ctime) noexcept { m_ctime = ctime; }
 };
 
 #endif // RELEASETORRENTMODEL_H

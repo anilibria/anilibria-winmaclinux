@@ -2,6 +2,7 @@
 #include <QDesktopServices>
 #include "releasetorrentcommonlist.h"
 #include "../../globalconstants.h"
+#include "../../globalhelpers.h"
 
 ReleaseTorrentCommonList::ReleaseTorrentCommonList(QObject *parent)
     : QAbstractListModel{parent}
@@ -41,6 +42,15 @@ QVariant ReleaseTorrentCommonList::data(const QModelIndex &index, int role) cons
         case IndexRole: {
             return QVariant(index.row());
         }
+        case TimeCreationRole: {
+            QDateTime timestamp;
+            timestamp.setSecsSinceEpoch(torrent->ctime());
+            auto date = timestamp.date();
+            auto dateAsString = getLeadingZeroDigit(date.day()) + "." + getLeadingZeroDigit(date.month()) + "." + getLeadingZeroDigit(date.year());
+            auto time = timestamp.time();
+            auto timeAsString = getLeadingZeroDigit(time.hour()) + ":" + getLeadingZeroDigit(time.minute());
+            return QVariant(dateAsString + " " + timeAsString);
+        }
     }
 
     return QVariant();
@@ -72,6 +82,10 @@ QHash<int, QByteArray> ReleaseTorrentCommonList::roleNames() const
         {
             IndexRole,
             "currentIndex"
+        },
+        {
+            TimeCreationRole,
+            "timecreation"
         }
     };
 }

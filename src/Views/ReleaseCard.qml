@@ -627,12 +627,12 @@ ColumnLayout {
                                 CommonMenu {
                                     id: dowloadTorrent
                                     y: parent.height - parent.height
-                                    width: 380
+                                    autoWidth: true
 
                                     Repeater {
                                         model: releasesViewModel.openedCardTorrents
                                         CommonMenuItem {
-                                            text: "Скачать " + quality + " [" + series + "] " + size
+                                            text: "Скачать " + quality + " [" + series + "] " + size + " " + timecreation
                                             onPressed: {
                                                 const torrentUri = synchronizationService.combineWithWebSiteUrl(url);
                                                 if (localStorage.isUseTorrentStreamMode()) {

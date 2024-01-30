@@ -313,12 +313,12 @@ Item {
 
                                     CommonMenu {
                                         id: torrentsMenu
-                                        width: 320
+                                        autoWidth: true
 
                                         Repeater {
                                             model: releasesViewModel.itemTorrents
                                             delegate: CommonMenuItem {
-                                                text: "Скачать " + quality + " [" + series + "] " + size
+                                                text: "Скачать " + quality + " [" + series + "] " + size + " " + timecreation
                                                 onPressed: {
                                                     releasesViewModel.itemTorrents.downloadTorrent(currentIndex);
                                                     torrentsMenu.close();

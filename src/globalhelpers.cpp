@@ -59,3 +59,11 @@ void saveJsonArrayToFile(const QString &path, const QJsonArray &array) noexcept
     scheduleCacheFile.write(document.toJson());
     scheduleCacheFile.close();
 }
+
+QString getLeadingZeroDigit(int number) noexcept
+{
+    auto result = QString::number(number);
+    if (number < 10) result.insert(0, "0");
+
+    return result;
+}

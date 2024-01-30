@@ -34,6 +34,7 @@ private:
         SeriesRole,
         UrlRole,
         IdentifierRole,
+        TimeCreationRole,
     };
     QList<ReleaseTorrentModel*>* m_torrents { new QList<ReleaseTorrentModel*>() };
 

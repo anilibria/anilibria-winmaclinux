@@ -12,3 +12,5 @@ bool isRutubeHasVideos(const QString& videos) noexcept;
 QString getJsonContentFromFile(const QString& path) noexcept;
 
 void saveJsonArrayToFile(const QString& path, const QJsonArray& array) noexcept;
+
+QString getLeadingZeroDigit(int number) noexcept;

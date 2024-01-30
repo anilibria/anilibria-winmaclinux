@@ -17,7 +17,8 @@ private:
         QualityRole,
         SeriesRole,
         UrlRole,
-        IndexRole
+        IndexRole,
+        TimeCreationRole,
     };
     QScopedPointer<QList<ReleaseTorrentModel*>> m_torrents { new QList<ReleaseTorrentModel*>() };
     QScopedPointer<QNetworkAccessManager> m_networkManager { new QNetworkAccessManager() };

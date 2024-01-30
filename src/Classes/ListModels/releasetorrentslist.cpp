@@ -19,6 +19,7 @@
 #include <QJsonDocument>
 #include <QJsonArray>
 #include "releasetorrentslist.h"
+#include "../../globalhelpers.h"
 
 ReleaseTorrentsList::ReleaseTorrentsList(QObject *parent) : QAbstractListModel(parent)
 {
@@ -57,6 +58,15 @@ QVariant ReleaseTorrentsList::data(const QModelIndex &index, int role) const
         case IdentifierRole: {
             return QVariant(index.row());
         }
+        case TimeCreationRole: {
+            QDateTime timestamp;
+            timestamp.setSecsSinceEpoch(torrent->ctime());
+            auto date = timestamp.date();
+            auto dateAsString = getLeadingZeroDigit(date.day()) + "." + getLeadingZeroDigit(date.month()) + "." + getLeadingZeroDigit(date.year());
+            auto time = timestamp.time();
+            auto timeAsString = getLeadingZeroDigit(time.hour()) + ":" + getLeadingZeroDigit(time.minute());
+            return QVariant(dateAsString + " " + timeAsString);
+        }
     }
 
     return QVariant();
@@ -88,6 +98,10 @@ QHash<int, QByteArray> ReleaseTorrentsList::roleNames() const
         {
             IdentifierRole,
             "identifier"
+        },
+        {
+            TimeCreationRole,
+            "timecreation"
         }
     };
 }
