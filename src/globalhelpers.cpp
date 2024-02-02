@@ -26,6 +26,18 @@ void createIfNotExistsFile(const QString& path, const QString& defaultContent) n
     file.close();
 }
 
+void createIfNotExistsCacheFile(const QString& fileName, const QString& defaultContent) noexcept
+{
+    auto fullPath = getCachePath(fileName);
+    if (QFile::exists(fullPath)) return;
+
+    QFile file(fullPath);
+    file.open(QFile::WriteOnly | QFile::Text);
+    file.write(defaultContent.toUtf8());
+    file.close();
+}
+
+
 QString removeFileProtocol(QString &path) noexcept
 {
     return path.replace("file:///", "").replace("file://", "");

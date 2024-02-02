@@ -30,7 +30,8 @@ MainMenuListModel::MainMenuListModel(QObject *parent) : QAbstractListModel(paren
     m_items->append(new MainMenuItemModel(6, "Менеджер тем", "thememanager", iconMainMenuThemeManagerField));
     m_items->append(new MainMenuItemModel(7, "Youtube", "youtube", iconMainMenuYoutubeField));
     m_items->append(new MainMenuItemModel(8, "Обслуживание", "maintenance", iconMainMenuMaintenanceField));
-    m_items->append(new MainMenuItemModel(9, "Поддержать проект", "", iconMainMenuDonateField));
+    m_items->append(new MainMenuItemModel(9, "Приложения", "applications", iconMainMenuApplicationsField));
+    m_items->append(new MainMenuItemModel(10, "Поддержать проект", "", iconMainMenuDonateField));
 
     m_authorizationOrder = m_items->count();
 }

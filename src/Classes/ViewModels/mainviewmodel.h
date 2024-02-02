@@ -27,6 +27,7 @@ class MainViewModel : public QObject
     Q_PROPERTY(bool isThemeManagerVisible READ isThemeManagerVisible NOTIFY isThemeManagerVisibleChanged)
     Q_PROPERTY(bool isSmallSizeMode READ isSmallSizeMode WRITE setIsSmallSizeMode NOTIFY isSmallSizeModeChanged)
     Q_PROPERTY(bool isTorrentStreamPageVisible READ isTorrentStreamPageVisible NOTIFY isTorrentStreamPageVisibleChanged)
+    Q_PROPERTY(bool isApplicationsPageVisible READ isApplicationsPageVisible NOTIFY isApplicationsPageVisibleChanged)
     Q_PROPERTY(bool hasBackHistory READ hasBackHistory NOTIFY hasBackHistoryChanged)
     Q_PROPERTY(bool hasForwardHistory READ hasForwardHistory NOTIFY hasForwardHistoryChanged)
     Q_PROPERTY(QString startPage READ startPage WRITE setStartPage NOTIFY startPageChanged)
@@ -97,6 +98,7 @@ public:
     bool isAuthorizationPageVisible() const noexcept { return m_currentPageId == "authorization"; }
     bool isThemeManagerVisible() const noexcept { return m_currentPageId == "thememanager"; }
     bool isTorrentStreamPageVisible() const noexcept { return m_currentPageId == "torrentstream"; }
+    bool isApplicationsPageVisible() const noexcept { return m_currentPageId == "applications"; }
     QVariantList leftToolbar() const noexcept { return m_leftToolbar; }
     bool editLeftToolbar() const noexcept { return m_editLeftToolbar; }
     QVariantList otherLeftToolbar() const noexcept { return m_otherLeftToolbar; }
@@ -174,6 +176,7 @@ signals:
     void dragIndexChanged();
     void globalTextFontChanged();
     void fontFamiliesChanged();
+    void isApplicationsPageVisibleChanged();
 
 };
 

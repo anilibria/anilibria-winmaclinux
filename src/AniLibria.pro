@@ -207,6 +207,7 @@ SOURCES += \
     Classes/Models/changesmodel.cpp \
     Classes/Models/downloadedtorrentmodel.cpp \
     Classes/Models/downloaditemmodel.cpp \
+    Classes/Models/externalapplicationmodel.cpp \
     Classes/Models/externalplaylistvideo.cpp \
     Classes/Models/fullreleasemodel.cpp \
     Classes/Models/historymodel.cpp \
@@ -239,6 +240,7 @@ SOURCES += \
     Classes/Services/synchronizationservice.cpp \
     Classes/Services/thememanagerservice.cpp \
     Classes/Services/versionchecker.cpp \
+    Classes/ViewModels/applicationsviewmodel.cpp \
     Classes/ViewModels/applicationthemeviewmodel.cpp \
     Classes/ViewModels/authorizationviewmodel.cpp \
     Classes/ViewModels/externalplayerviewmodel.cpp \
@@ -317,6 +319,7 @@ HEADERS += \
     Classes/Models/changesmodel.h \
     Classes/Models/downloadedtorrentmodel.h \
     Classes/Models/downloaditemmodel.h \
+    Classes/Models/externalapplicationmodel.h \
     Classes/Models/externalplaylistvideo.h \
     Classes/Models/fullreleasemodel.h \
     Classes/Models/historymodel.h \
@@ -350,6 +353,7 @@ HEADERS += \
     Classes/Services/thememanagerservice.h \
     Classes/Services/versionchecker.h \
     Classes/ListModels/alphabetlistmodel.h \
+    Classes/ViewModels/applicationsviewmodel.h \
     Classes/ViewModels/applicationthemeviewmodel.h \
     Classes/ViewModels/authorizationviewmodel.h \
     Classes/ViewModels/externalplayerviewmodel.h \

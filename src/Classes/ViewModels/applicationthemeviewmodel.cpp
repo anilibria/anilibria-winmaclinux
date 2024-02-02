@@ -181,9 +181,9 @@ ApplicationThemeViewModel::ApplicationThemeViewModel(QObject *parent)
     lightTheme->insert(colorDrawerDimColorField, "#99303030");
     lightTheme->insert(colorDrawerDialogColorField, "#ffffff");
     lightTheme->insert(iconCustomGroupField, "qrc:/Assets/Icons/releases/customgroup.svg");
-
     lightTheme->insert(iconReleaseCatalogSearchFoundedField, "qrc:/Assets/Icons/search.svg");
     lightTheme->insert(iconCustomGroupFoundedField, "qrc:/Assets/Icons/releases/customgroup.svg");
+    lightTheme->insert(iconMainMenuApplicationsField, "qrc:/Assets/Icons/applications.svg");
 
     lightTheme->insert(basedOnThemeField, m_lightTheme);
     lightTheme->insert(externalIdField, "");
@@ -342,9 +342,9 @@ ApplicationThemeViewModel::ApplicationThemeViewModel(QObject *parent)
     darkTheme->insert(iconDisabledNotificationsField, "qrc:/Assets/Icons/coloredbell.svg");
     darkTheme->insert(iconDisabledCinemahallField, "qrc:/Assets/Icons/cinemahallmenu.svg");
     darkTheme->insert(iconCustomGroupField, "qrc:/Assets/Icons/releases/customgroup.svg");
-
     darkTheme->insert(iconReleaseCatalogSearchFoundedField, "qrc:/Assets/Icons/search.svg");
     darkTheme->insert(iconCustomGroupFoundedField, "qrc:/Assets/Icons/releases/customgroup.svg");
+    darkTheme->insert(iconMainMenuApplicationsField, "qrc:/Assets/Icons/applications.svg");
 
     darkTheme->insert(basedOnThemeField, m_darkTheme);
     darkTheme->insert(externalIdField, "");
@@ -441,6 +441,7 @@ ApplicationThemeViewModel::ApplicationThemeViewModel(QObject *parent)
     m_fields.append(iconMainMenuYoutubeField);
     m_fields.append(iconMainMenuTorrentStreamField);
     m_fields.append(iconMainMenuAuthorizationField);
+    m_fields.append(iconMainMenuApplicationsField);
     m_fields.append(iconLeftHalfScreenField);
     m_fields.append(iconRightHalfScreenField);
     m_fields.append(iconMinimizeWindowField);

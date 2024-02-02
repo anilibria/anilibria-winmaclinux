@@ -152,6 +152,7 @@ extern QString iconMainMenuThemeManagerField;
 extern QString iconMainMenuYoutubeField;
 extern QString iconMainMenuTorrentStreamField;
 extern QString iconMainMenuAuthorizationField;
+extern QString iconMainMenuApplicationsField;
 extern QString iconLeftHalfScreenField;
 extern QString iconRightHalfScreenField;
 extern QString iconMinimizeWindowField;

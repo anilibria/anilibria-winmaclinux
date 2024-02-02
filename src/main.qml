@@ -1081,6 +1081,11 @@ ApplicationWindow {
             id: torrentStream
             visible: mainViewModel.isTorrentStreamPageVisible
         }
+
+        Applications {
+            id: applications
+            visible: mainViewModel.isApplicationsPageVisible
+        }
     }
 
     ListView {
@@ -1441,6 +1446,10 @@ ApplicationWindow {
         onForwardButtonPressed: {
             mainViewModel.forwardToPage();
         }
+    }
+
+    ApplicationsViewModel {
+        id: applicationsViewModel
     }
 
     Item {
