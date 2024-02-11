@@ -15,6 +15,7 @@ ApplicationsViewModel::ApplicationsViewModel(QObject *parent)
     refresh();
 
     connect(m_networkManager, &QNetworkAccessManager::finished, this, &ApplicationsViewModel::versionDownloaded);
+    connect(m_versionChecker, &ApplicationVersionChecker::newVersionAvailable, this, &ApplicationsViewModel::newVersionAvailable);
 }
 
 void ApplicationsViewModel::refresh()
@@ -48,6 +49,8 @@ void ApplicationsViewModel::installByIndex(const QString& name, const QString &p
 
     auto application = *iterator;
 
+    if (!application->isHaveNewVersion()) return;
+
     m_currentApplication = application;
     m_currentApplication->setInstalledPath(path);
 
@@ -65,13 +68,23 @@ void ApplicationsViewModel::installByIndex(const QString& name, const QString &p
 #endif
 
     osPath = osPath + (isArm ? "arm64" : "64");
-    auto version = ""; // 1.0.1.7
+    auto version = application->newVersion();
     auto downloadUrl = QString("https://github.com/") + application->repositoryPath() + "/releases/download/" + version + "/" + osPath + ".zip";
     auto url = QUrl(downloadUrl);
     QNetworkRequest request(url);
     m_networkManager->get(request);
     m_loading = true;
     emit loadingChanged();
+}
+
+void ApplicationsViewModel::checkNewVersions()
+{
+    foreach (auto application, m_applications) {
+        if (application->isIncludedInsideDistributive()) continue;
+        if (!application->isInstalled()) continue;
+
+        m_versionChecker->checkNewVersionAvailable(application->name(), application->repositoryPath(), application->installedVersion());
+    }
 }
 
 void ApplicationsViewModel::createApplications()
@@ -172,4 +185,18 @@ void ApplicationsViewModel::versionDownloaded(QNetworkReply *reply)
 
     writeCache();
     emit loadingChanged();
+}
+
+void ApplicationsViewModel::newVersionAvailable(QString version, QString url, QString appIdentifier)
+{
+    foreach (auto application, m_applications) {
+        if (application->isIncludedInsideDistributive()) continue;
+        if (!application->isInstalled()) continue;
+        if (application->name() != appIdentifier) continue;
+
+        application->setIsHaveNewVersion(true);
+        application->setNewVersion(version);
+    }
+
+    emit itemsChanged();
 }

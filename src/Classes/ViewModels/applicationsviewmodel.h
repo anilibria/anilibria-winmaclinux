@@ -6,6 +6,7 @@
 #include <QNetworkReply>
 #include <QNetworkAccessManager>
 #include "../Models/externalapplicationmodel.h"
+#include "../Services/applicationversionchecker.h"
 
 class ApplicationsViewModel : public QObject
 {
@@ -18,6 +19,7 @@ private:
     QVariantList m_items { QVariantList() };
     QList<ExternalApplicationModel*> m_applications { QList<ExternalApplicationModel*>() };
     QNetworkAccessManager* m_networkManager { new QNetworkAccessManager(this) };
+    ApplicationVersionChecker* m_versionChecker { new ApplicationVersionChecker(this) };
     ExternalApplicationModel* m_currentApplication { nullptr };
     bool m_loading { false };
 
@@ -30,6 +32,7 @@ public:
 
     Q_INVOKABLE void refresh();
     Q_INVOKABLE void installByIndex(const QString& name, const QString& path);
+    Q_INVOKABLE void checkNewVersions();
 
 private:
     void createApplications();
@@ -38,6 +41,7 @@ private:
 
 private slots:
     void versionDownloaded(QNetworkReply* reply);
+    void newVersionAvailable(QString version, QString url, QString appIdentifier);
 
 signals:
     void itemsChanged();

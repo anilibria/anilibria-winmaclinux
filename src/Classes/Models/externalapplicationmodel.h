@@ -15,6 +15,7 @@ private:
     QString m_description { "" };
     QString m_executableName { "" };
     QString m_repositoryPath { "" };
+    QString m_newVersion { "" };
 
 public:
     ExternalApplicationModel();
@@ -45,6 +46,9 @@ public:
 
     QString repositoryPath() const noexcept { return m_repositoryPath; }
     void setRepositoryPath(const QString& repositoryPath) { m_repositoryPath = repositoryPath; }
+
+    QString newVersion() const noexcept { return m_newVersion; }
+    void setNewVersion(const QString& newVersion) { m_newVersion = newVersion; }
 
 };
 

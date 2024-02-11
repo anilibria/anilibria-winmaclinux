@@ -26,8 +26,6 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 
-#include "globalconstants.h"
-
 class VersionChecker : public QObject
 {
     Q_OBJECT

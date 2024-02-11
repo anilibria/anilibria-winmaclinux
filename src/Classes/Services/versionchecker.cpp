@@ -17,6 +17,7 @@
 */
 
 #include "versionchecker.h"
+#include "../../globalconstants.h"
 
 VersionChecker::VersionChecker(QObject *parent) : QObject(parent)
 {
