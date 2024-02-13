@@ -25,15 +25,10 @@ import "Videoplayer"
 
 Page {
     id: _page
-    property var seenVideo: ({})
-    property var seenMarks: ({})
     property var videoPlayerSource
     property var videoOutputSource
-    property var lastPlayerPosition
 
     signal navigateFrom()
-    signal setReleaseVideo()
-    signal setCinemahallVideo()
     signal navigateTo()
     signal returnToReleasesPage()
     signal windowNotActived()
