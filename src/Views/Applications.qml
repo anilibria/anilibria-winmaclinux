@@ -27,14 +27,6 @@ Page {
         Item {
             anchors.fill: parent
 
-            Rectangle {
-                id: mask
-                width: 472
-                height: 240
-                radius: 10
-                visible: false
-            }
-
             RowLayout {
                 id: panelContainer
                 anchors.fill: parent
@@ -50,6 +42,17 @@ Page {
                         Layout.preferredHeight: 45
                         height: 45
                         color: applicationThemeViewModel.pageUpperPanel
+
+                        RoundedActionButton {
+                            id: checkNewVersionsButton
+                            anchors.right: parent.right
+                            anchors.rightMargin: 10
+                            anchors.verticalCenter: parent.verticalCenter
+                            text: "Проверить новые версии"
+                            onClicked: {
+                                applicationsViewModel.checkNewVersions();
+                            }
+                        }
                     }
 
                     ListView {
@@ -73,14 +76,6 @@ Page {
                                 anchors.rightMargin: 4
                                 radius: 10
                                 color: applicationThemeViewModel.panelBackground
-
-                                /*MouseArea {
-                                    anchors.fill: parent
-                                    onPressed: {
-                                        releaseLinkedSeries.selectByIndex(identifier);
-                                        mainViewModel.selectPage("releaseseries:" + identifier);
-                                    }
-                                }*/
 
                                 RowLayout {
                                     anchors.fill: parent
@@ -174,7 +169,12 @@ Page {
                                                 iconPath: applicationThemeViewModel.currentItems.iconFavorites
                                                 tooltipMessage: !modelData.isInstalled ? "Установить приложение" : "Обновить приложение"
                                                 onButtonPressed: {
-
+                                                    if (!modelData.isInstalled) {
+                                                        applicationsViewModel.installIndex = modelData.applicationName;
+                                                        installPopup.open();
+                                                    } else {
+                                                        //updatePopup.open();
+                                                    }
                                                 }
                                             }
                                             FilterPanelIconButton {
@@ -182,22 +182,86 @@ Page {
                                                 iconPath: applicationThemeViewModel.currentItems.iconDeleteItem
                                                 tooltipMessage: "Удалить приложение"
                                                 onButtonPressed: {
-
+                                                    //deletePopup.open();
                                                 }                                                
                                             }
-                                            /*FilterPanelIconButton {
-                                                iconPath: applicationThemeViewModel.currentItems.iconMainMenuVideoplayer
-                                                tooltipMessage: "Восстановить приложение"
-                                                onButtonPressed: {
-
-                                                }
-                                            }*/
                                         }
                                     }
                                 }
-                            }
+                            }                            
                         }
                     }                    
+                }
+            }
+
+            DefaultPopup {
+                id: installPopup
+                x: window.width / 2 - installPopup.width / 2
+                y: window.height / 2 - installPopup.height / 2
+                width: 550
+                height: 140
+                modal: true
+                focus: true
+                closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
+
+                ColumnLayout {
+                    width: parent.width
+                    spacing: 10
+
+                    AccentText {
+                        width: installPopup.width
+                        text: "Путь к папке установки"
+                        fontPointSize: 12
+                        font.bold: true
+                        elide: Text.ElideRight
+                    }
+
+                    Item {
+                        width: installPopup.width - 30
+                        height: installPathTextField.height
+
+                        CommonTextField {
+                            id: installPathTextField
+                            width: parent.width
+                            placeholderText: "Введите полный путь"
+                        }
+                    }
+
+                    Item {
+                        width: installPopup.width - 20
+                        height: 40
+
+                        RoundedActionButton {
+                            id: torrentStreamSaveButton
+                            anchors.right: torrentStreamCancelButton.left
+                            anchors.rightMargin: 10
+                            anchors.verticalCenter: parent.verticalCenter
+                            buttonEnabled: !!installPathTextField.text
+                            text: "Установить"
+                            width: 110
+                            onClicked: {
+                                if (!installPathTextField.text) return;
+
+                                applicationsViewModel.installPath = installPathTextField.text;
+                                applicationsViewModel.installByIndex();
+                                applicationsViewModel.clearInstallData();
+                                installPopup.close();
+                            }
+                        }
+
+                        RoundedActionButton {
+                            id: torrentStreamCancelButton
+                            anchors.right: parent.right
+                            anchors.verticalCenter: parent.verticalCenter
+                            text: "Отмена"
+                            width: 110
+                            onClicked: {
+                                installPathTextField.text = "";
+                                applicationsViewModel.clearInstallData();
+                                installPopup.close();
+                            }
+                        }
+                    }
                 }
             }
         }

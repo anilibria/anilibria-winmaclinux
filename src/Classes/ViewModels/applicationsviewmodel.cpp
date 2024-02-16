@@ -18,6 +18,22 @@ ApplicationsViewModel::ApplicationsViewModel(QObject *parent)
     connect(m_versionChecker, &ApplicationVersionChecker::newVersionAvailable, this, &ApplicationsViewModel::newVersionAvailable);
 }
 
+void ApplicationsViewModel::setInstallPath(const QString &installPath) noexcept
+{
+    if (m_installPath == installPath) return;
+
+    m_installPath = installPath;
+    emit installPathChanged();
+}
+
+void ApplicationsViewModel::setInstallIndex(const QString &installIndex) noexcept
+{
+    if (m_installIndex == installIndex) return;
+
+    m_installIndex = installIndex;
+    emit installIndexChanged();
+}
+
 void ApplicationsViewModel::refresh()
 {
     m_items.clear();
@@ -36,8 +52,11 @@ void ApplicationsViewModel::refresh()
     emit itemsChanged();
 }
 
-void ApplicationsViewModel::installByIndex(const QString& name, const QString &path)
+void ApplicationsViewModel::installByIndex()
 {
+    if (m_installIndex.isEmpty()) return;
+
+    auto name = m_installIndex;
     auto iterator = std::find_if(
         m_applications.begin(),
         m_applications.end(),
@@ -46,13 +65,14 @@ void ApplicationsViewModel::installByIndex(const QString& name, const QString &p
         }
     );
     if (iterator == m_applications.end()) return;
+    if (m_installPath == nullptr || m_installPath.isEmpty()) return;
 
     auto application = *iterator;
 
     if (!application->isHaveNewVersion()) return;
 
     m_currentApplication = application;
-    m_currentApplication->setInstalledPath(path);
+    m_currentApplication->setInstalledPath(m_installPath);
 
     auto isArm = QSysInfo::currentCpuArchitecture().toLower().startsWith("arm");
 #ifdef Q_OS_WIN
@@ -85,6 +105,15 @@ void ApplicationsViewModel::checkNewVersions()
 
         m_versionChecker->checkNewVersionAvailable(application->name(), application->repositoryPath(), application->installedVersion());
     }
+}
+
+void ApplicationsViewModel::clearInstallData()
+{
+    m_installPath = "";
+    m_installIndex  = -1;
+
+    emit installPathChanged();
+    emit installIndexChanged();
 }
 
 void ApplicationsViewModel::createApplications()
