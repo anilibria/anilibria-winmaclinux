@@ -222,8 +222,24 @@ Page {
 
                         CommonTextField {
                             id: installPathTextField
-                            width: parent.width
+                            anchors.left: parent.left
+                            width: parent.width - 45
                             placeholderText: "Введите полный путь"
+                        }
+
+                        IconButton {
+                            id: selectFolderButton
+                            anchors.right: parent.right
+                            height: 40
+                            width: 40
+                            hoverColor: applicationThemeViewModel.currentItems.filterIconButtonHoverColor
+                            iconPath: applicationThemeViewModel.currentItems.iconReleaseCatalogCompilation
+                            iconWidth: 24
+                            iconHeight: 24
+                            tooltipMessage: "Выбрать папку в проводнике"
+                            onButtonPressed: {
+                                selectFolderForSave.open();
+                            }
                         }
                     }
 
@@ -262,6 +278,14 @@ Page {
                             }
                         }
                     }
+                }
+            }
+
+            SystemOpenFolderDialog {
+                id: selectFolderForSave
+                title: "Выберите папку для сохранения "
+                onNeedOpenFolder: {
+                    installPathTextField.text = folderUrl.replace("file:///", "").replace("file://", "");
                 }
             }
         }
