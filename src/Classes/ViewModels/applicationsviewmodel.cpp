@@ -16,6 +16,7 @@ ApplicationsViewModel::ApplicationsViewModel(QObject *parent)
 
     connect(m_networkManager, &QNetworkAccessManager::finished, this, &ApplicationsViewModel::versionDownloaded);
     connect(m_versionChecker, &ApplicationVersionChecker::newVersionAvailable, this, &ApplicationsViewModel::newVersionAvailable);
+    connect(m_versionChecker, &ApplicationVersionChecker::noVersionAvailable, this, &ApplicationsViewModel::noVersionAvailable);
 }
 
 void ApplicationsViewModel::setInstallPath(const QString &installPath) noexcept
@@ -32,6 +33,14 @@ void ApplicationsViewModel::setInstallIndex(const QString &installIndex) noexcep
 
     m_installIndex = installIndex;
     emit installIndexChanged();
+}
+
+void ApplicationsViewModel::setDeleteIndex(const QString &deleteIndex) noexcept
+{
+    if (m_deleteIndex == deleteIndex) return;
+
+    m_deleteIndex = deleteIndex;
+    emit deleteIndexChanged();
 }
 
 void ApplicationsViewModel::refresh()
@@ -55,6 +64,7 @@ void ApplicationsViewModel::refresh()
 void ApplicationsViewModel::installByIndex()
 {
     if (m_installIndex.isEmpty()) return;
+    if (m_loading) return;
 
     auto name = m_installIndex;
     auto iterator = std::find_if(
@@ -69,7 +79,7 @@ void ApplicationsViewModel::installByIndex()
 
     auto application = *iterator;
 
-    if (!application->isHaveNewVersion()) return;
+    if (application->isInstalled() && !application->isHaveNewVersion()) return;
 
     m_currentApplication = application;
     m_currentApplication->setInstalledPath(m_installPath);
@@ -89,9 +99,11 @@ void ApplicationsViewModel::installByIndex()
 
     osPath = osPath + (isArm ? "arm64" : "64");
     auto version = application->newVersion();
+    qDebug() << "Install version: " << version;
     auto downloadUrl = QString("https://github.com/") + application->repositoryPath() + "/releases/download/" + version + "/" + osPath + ".zip";
     auto url = QUrl(downloadUrl);
     QNetworkRequest request(url);
+    request.setAttribute(QNetworkRequest::FollowRedirectsAttribute, true);
     m_networkManager->get(request);
     m_loading = true;
     emit loadingChanged();
@@ -99,9 +111,10 @@ void ApplicationsViewModel::installByIndex()
 
 void ApplicationsViewModel::checkNewVersions()
 {
+    m_loading = true;
+    emit loadingChanged();
     foreach (auto application, m_applications) {
         if (application->isIncludedInsideDistributive()) continue;
-        if (!application->isInstalled()) continue;
 
         m_versionChecker->checkNewVersionAvailable(application->name(), application->repositoryPath(), application->installedVersion());
     }
@@ -114,6 +127,29 @@ void ApplicationsViewModel::clearInstallData()
 
     emit installPathChanged();
     emit installIndexChanged();
+}
+
+void ApplicationsViewModel::deleteByIndex()
+{
+    if (m_deleteIndex.isEmpty()) return;
+
+    auto name = m_deleteIndex;
+    auto iterator = std::find_if(
+        m_applications.begin(),
+        m_applications.end(),
+        [name](ExternalApplicationModel* model) {
+            return model->name() == name;
+        }
+        );
+    if (iterator == m_applications.end()) return;
+
+    auto item = *iterator;
+    if (!QFile::remove(m_currentApplication->installedPath() + "/" + m_currentApplication->executableName())) return;
+
+    m_applications.removeOne(item);
+
+    writeCache();
+    refresh();
 }
 
 void ApplicationsViewModel::createApplications()
@@ -144,9 +180,9 @@ void ApplicationsViewModel::createApplications()
     installer->setIsInstalled(false);
     installer->setIsHaveNewVersion(false);
 #ifdef Q_OS_WIN
-    torrentStream->setExecutableName("AnilibriaQtInstaller.exe");
+    installer->setExecutableName("AnilibriaQtInstaller.exe");
 #else
-    torrentStream->setExecutableName("AnilibriaQtInstaller");
+    installer->setExecutableName("AnilibriaQtInstaller");
 #endif
     m_applications.append(installer);
 }
@@ -197,35 +233,63 @@ void ApplicationsViewModel::writeCache()
         array.append(applicationItem);
     }
 
-    saveJsonArrayToFile(getCachePath(m_cacheFileName), array);
+    saveJsonArrayToFile(m_cacheFileName, array);
 }
 
 void ApplicationsViewModel::versionDownloaded(QNetworkReply *reply)
 {
     m_loading = false;
+
+    if (reply->error() != QNetworkReply::NoError) {
+        qDebug() << reply->errorString();
+        emit loadingChanged();
+        return;
+    }
+
+    auto content = reply->readAll();
+    if (content.size() == 0) {
+        qDebug() << "Reponse content is empty";
+        emit loadingChanged();
+        return;
+    }
+
     auto fullPath = m_currentApplication->installedPath() + "/" + m_currentApplication->executableName();
     if(QFile::exists(fullPath)) QFile::remove(fullPath);
 
-    QFile file(fullPath, this);
-    file.write(reply->readAll());
+    QFile file(fullPath);
+    if (!file.open(QFile::WriteOnly)) {
+        emit loadingChanged();
+        return;
+    }
+
+    file.write(content);
     file.close();
 
     m_currentApplication->setIsInstalled(true);
+    m_currentApplication->setInstalledVersion(m_currentApplication->newVersion());
 
     writeCache();
     emit loadingChanged();
+    refresh();
 }
 
 void ApplicationsViewModel::newVersionAvailable(QString version, QString url, QString appIdentifier)
 {
     foreach (auto application, m_applications) {
         if (application->isIncludedInsideDistributive()) continue;
-        if (!application->isInstalled()) continue;
         if (application->name() != appIdentifier) continue;
 
-        application->setIsHaveNewVersion(true);
         application->setNewVersion(version);
+        if (application->isInstalled()) application->setIsHaveNewVersion(true);
     }
 
+    m_loading = false;
+    emit loadingChanged();
     emit itemsChanged();
+}
+
+void ApplicationsViewModel::noVersionAvailable()
+{
+    m_loading = false;
+    emit loadingChanged();
 }

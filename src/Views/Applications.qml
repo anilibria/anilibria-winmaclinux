@@ -43,6 +43,14 @@ Page {
                         height: 45
                         color: applicationThemeViewModel.pageUpperPanel
 
+                        PlainText {
+                            anchors.verticalCenter: parent.verticalCenter
+                            anchors.horizontalCenter: parent.horizontalCenter
+                            visible: applicationsViewModel.loading
+                            fontPointSize: mainViewModel.isSmallSizeMode ? 10 : 12
+                            text: "Выполняется загрузка..."
+                        }
+
                         RoundedActionButton {
                             id: checkNewVersionsButton
                             anchors.right: parent.right
@@ -166,14 +174,15 @@ Page {
 
                                             FilterPanelIconButton {
                                                 visible: !modelData.isInstalled || modelData.isHaveNewVersion
-                                                iconPath: applicationThemeViewModel.currentItems.iconFavorites
+                                                iconPath: applicationThemeViewModel.currentItems.iconDownloadTheme
                                                 tooltipMessage: !modelData.isInstalled ? "Установить приложение" : "Обновить приложение"
                                                 onButtonPressed: {
                                                     if (!modelData.isInstalled) {
                                                         applicationsViewModel.installIndex = modelData.applicationName;
                                                         installPopup.open();
                                                     } else {
-                                                        //updatePopup.open();
+                                                        applicationsViewModel.installIndex = modelData.applicationName;
+                                                        applicationsViewModel.installByIndex();
                                                     }
                                                 }
                                             }
@@ -182,8 +191,9 @@ Page {
                                                 iconPath: applicationThemeViewModel.currentItems.iconDeleteItem
                                                 tooltipMessage: "Удалить приложение"
                                                 onButtonPressed: {
-                                                    //deletePopup.open();
-                                                }                                                
+                                                    applicationsViewModel.deleteIndex = modelData.applicationName;
+                                                    applicationsViewModel.deleteByIndex();
+                                                }
                                             }
                                         }
                                     }

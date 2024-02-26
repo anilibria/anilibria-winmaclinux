@@ -15,6 +15,7 @@ class ApplicationsViewModel : public QObject
     Q_PROPERTY(bool loading READ loading NOTIFY loadingChanged FINAL)
     Q_PROPERTY(QString installPath READ installPath WRITE setInstallPath NOTIFY installPathChanged FINAL)
     Q_PROPERTY(QString installIndex READ installIndex WRITE setInstallIndex NOTIFY installIndexChanged FINAL)
+    Q_PROPERTY(QString deleteIndex READ deleteIndex WRITE setDeleteIndex NOTIFY deleteIndexChanged FINAL)
 
 private:
     const QString m_cacheFileName { "applications.cache" };
@@ -26,6 +27,7 @@ private:
     bool m_loading { false };
     QString m_installPath { "" };
     QString m_installIndex { -1 };
+    QString m_deleteIndex { -1 };
 
 public:
     explicit ApplicationsViewModel(QObject *parent = nullptr);
@@ -40,10 +42,14 @@ public:
     QString installIndex() const noexcept { return m_installIndex; }
     void setInstallIndex(const QString& installIndex) noexcept;
 
+    QString deleteIndex() const noexcept { return m_deleteIndex; }
+    void setDeleteIndex(const QString& deleteIndex) noexcept;
+
     Q_INVOKABLE void refresh();
     Q_INVOKABLE void installByIndex();
     Q_INVOKABLE void checkNewVersions();
     Q_INVOKABLE void clearInstallData();
+    Q_INVOKABLE void deleteByIndex();
 
 private:
     void createApplications();
@@ -53,12 +59,14 @@ private:
 private slots:
     void versionDownloaded(QNetworkReply* reply);
     void newVersionAvailable(QString version, QString url, QString appIdentifier);
+    void noVersionAvailable();
 
 signals:
     void itemsChanged();
     void loadingChanged();
     void installPathChanged();
     void installIndexChanged();
+    void deleteIndexChanged();
 
 };
 

@@ -27,6 +27,7 @@ void ApplicationVersionChecker::downloaded(QNetworkReply *reply)
     auto identifier = reply->property("identifier").toString();
     if (reply->error() != QNetworkReply::NoError) {
         m_currentChecks.remove(identifier);
+        emit noVersionAvailable();
         return;
     }
 
@@ -34,23 +35,35 @@ void ApplicationVersionChecker::downloaded(QNetworkReply *reply)
     m_currentChecks.remove(identifier);
 
     QByteArray data = reply->readAll();
-    if (data.length() == 0) return;
+    if (data.length() == 0) {
+        emit noVersionAvailable();
+        return;
+    }
 
     QJsonParseError jsonError;
     QJsonDocument jsonDocument = QJsonDocument::fromJson(data, &jsonError);
-    if (jsonError.error != 0) return;
+    if (jsonError.error != 0) {
+        emit noVersionAvailable();
+        return;
+    }
 
     auto latestRelease = jsonDocument.object();
 
     if (latestRelease.contains("message")) {
         auto message = latestRelease.value("message").toString();
-        if (message == "Not Found") return;
+        if (message == "Not Found") {
+            emit noVersionAvailable();
+            return;
+        }
     }
 
     auto version = latestRelease.value("tag_name").toString();
     auto url = latestRelease.value("html_url").toString();
 
-    if (version == currentVersion) return;
+    if (version == currentVersion) {
+        emit noVersionAvailable();
+        return;
+    }
 
     emit newVersionAvailable(version, url, identifier);
 }

@@ -18,6 +18,7 @@ public:
 
 signals:
     void newVersionAvailable(QString version, QString url, QString appIdentifier);
+    void noVersionAvailable();
 
 public slots:
     void downloaded(QNetworkReply* reply);
