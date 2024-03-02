@@ -35,14 +35,6 @@ void ApplicationsViewModel::setInstallIndex(const QString &installIndex) noexcep
     emit installIndexChanged();
 }
 
-void ApplicationsViewModel::setDeleteIndex(const QString &deleteIndex) noexcept
-{
-    if (m_deleteIndex == deleteIndex) return;
-
-    m_deleteIndex = deleteIndex;
-    emit deleteIndexChanged();
-}
-
 void ApplicationsViewModel::refresh()
 {
     m_items.clear();
@@ -129,11 +121,11 @@ void ApplicationsViewModel::clearInstallData()
     emit installIndexChanged();
 }
 
-void ApplicationsViewModel::deleteByIndex()
+void ApplicationsViewModel::deleteByIndex(const QString& index)
 {
-    if (m_deleteIndex.isEmpty()) return;
+    if (index.isEmpty()) return;
 
-    auto name = m_deleteIndex;
+    auto name = index;
     auto iterator = std::find_if(
         m_applications.begin(),
         m_applications.end(),
@@ -144,9 +136,15 @@ void ApplicationsViewModel::deleteByIndex()
     if (iterator == m_applications.end()) return;
 
     auto item = *iterator;
-    if (!QFile::remove(m_currentApplication->installedPath() + "/" + m_currentApplication->executableName())) return;
 
-    m_applications.removeOne(item);
+    auto path = item->installedPath() + "/" + item->executableName();
+    QFile file (path);
+    if (!file.remove(path)) return;
+
+    item->setInstalledPath("");
+    item->setIsInstalled(false);
+    item->setInstalledVersion("");
+    item->setIsHaveNewVersion(false);
 
     writeCache();
     refresh();

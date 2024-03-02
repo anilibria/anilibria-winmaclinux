@@ -191,8 +191,7 @@ Page {
                                                 iconPath: applicationThemeViewModel.currentItems.iconDeleteItem
                                                 tooltipMessage: "Удалить приложение"
                                                 onButtonPressed: {
-                                                    applicationsViewModel.deleteIndex = modelData.applicationName;
-                                                    applicationsViewModel.deleteByIndex();
+                                                    applicationsViewModel.deleteByIndex(modelData.applicationName);
                                                 }
                                             }
                                         }
