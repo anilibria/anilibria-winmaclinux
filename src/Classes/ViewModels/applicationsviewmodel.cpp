@@ -77,8 +77,10 @@ void ApplicationsViewModel::installByIndex()
     m_currentApplication->setInstalledPath(m_installPath);
 
     auto isArm = QSysInfo::currentCpuArchitecture().toLower().startsWith("arm");
+    QString extension = "";
 #ifdef Q_OS_WIN
     QString osPath = "windows";
+    extension = ".exe";
 #endif
 
 #ifdef Q_OS_MACOS
@@ -92,7 +94,7 @@ void ApplicationsViewModel::installByIndex()
     osPath = osPath + (isArm ? "arm64" : "64");
     auto version = application->newVersion();
     qDebug() << "Install version: " << version;
-    auto downloadUrl = QString("https://github.com/") + application->repositoryPath() + "/releases/download/" + version + "/" + osPath + ".zip";
+    auto downloadUrl = QString("https://github.com/") + application->repositoryPath() + "/releases/download/" + version + "/" + osPath + extension;
     auto url = QUrl(downloadUrl);
     QNetworkRequest request(url);
     request.setAttribute(QNetworkRequest::FollowRedirectsAttribute, true);
@@ -148,13 +150,14 @@ void ApplicationsViewModel::deleteByIndex(const QString& index)
 
     writeCache();
     refresh();
+    checkNewVersions();
 }
 
 void ApplicationsViewModel::createApplications()
 {
     auto torrentStream = new ExternalApplicationModel();
     torrentStream->setName("TorrentStream");
-    torrentStream->setDescription("Программа позволяет стримить торренты и являеться аналогом просмотра онлайн, также позволяет Вам скачивать торренты, следить за прогрессом скачивания а впоследствии смотреть уже скачанные видео через плеер приложения со всеми фичами которые там есть");
+    torrentStream->setDescription("Программа позволяет стримить торренты и является аналогом просмотра онлайн, также позволяет Вам скачивать торренты, следить за прогрессом скачивания а впоследствии смотреть уже скачанные видео через плеер приложения со всеми фичами которые там есть");
     torrentStream->setRepositoryPath("trueromanus/TorrentStream");
 #ifdef Q_OS_WIN
     torrentStream->setExecutableName("TorrentStream.exe");

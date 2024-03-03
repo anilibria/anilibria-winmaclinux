@@ -131,7 +131,7 @@ Page {
                                                 text: modelData.isInstalled ? "Установлено" : "Не установлено"
                                             }
 
-                                            PlainText {
+                                            AccentText {
                                                 Layout.topMargin: 2
                                                 fontPointSize: 9
                                                 visible: modelData.isHaveNewVersion
@@ -177,8 +177,11 @@ Page {
                                                 iconPath: applicationThemeViewModel.currentItems.iconDownloadTheme
                                                 tooltipMessage: !modelData.isInstalled ? "Установить приложение" : "Обновить приложение"
                                                 onButtonPressed: {
+                                                    if (applicationsViewModel.loading) return;
+
                                                     if (!modelData.isInstalled) {
                                                         applicationsViewModel.installIndex = modelData.applicationName;
+                                                        installPathTextField.text = "";
                                                         installPopup.open();
                                                     } else {
                                                         applicationsViewModel.installIndex = modelData.applicationName;
@@ -191,6 +194,8 @@ Page {
                                                 iconPath: applicationThemeViewModel.currentItems.iconDeleteItem
                                                 tooltipMessage: "Удалить приложение"
                                                 onButtonPressed: {
+                                                    if (applicationsViewModel.loading) return;
+
                                                     applicationsViewModel.deleteByIndex(modelData.applicationName);
                                                 }
                                             }
@@ -200,6 +205,10 @@ Page {
                             }                            
                         }
                     }                    
+                }
+
+                Component.onCompleted: {
+                    applicationsViewModel.checkNewVersions(); // refresh versions after user open page
                 }
             }
 
