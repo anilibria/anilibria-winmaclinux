@@ -447,6 +447,12 @@ Page {
                     }
                 }
             }
+
+            Component.onCompleted: {
+                if (!torrentNotifierViewModel.activated) return;
+
+                torrentNotifierViewModel.startGetTorrentData();
+            }
         }
     }
 }

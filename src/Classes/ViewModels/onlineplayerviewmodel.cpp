@@ -1077,6 +1077,11 @@ void OnlinePlayerViewModel::reloadCurrentVideo() noexcept
     setRestorePosition(m_videoPosition);
     auto videoSource = m_videoSource;
     setVideoSource("");
+    if (videoSource.startsWith("http://localhost:")) {
+        auto index = videoSource.indexOf("path=") + 5;
+        videoSource = videoSource.mid(index);
+    }
+
     setVideoSource(videoSource);
 }
 
