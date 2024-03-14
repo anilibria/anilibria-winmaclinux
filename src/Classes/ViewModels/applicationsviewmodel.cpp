@@ -1,7 +1,9 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QJsonArray>
+#include <QProcess>
 #include <QNetworkRequest>
+#include <QCoreApplication>
 #include <QFile>
 #include "applicationsviewmodel.h"
 #include "../../globalhelpers.h"
@@ -33,6 +35,11 @@ void ApplicationsViewModel::setInstallIndex(const QString &installIndex) noexcep
 
     m_installIndex = installIndex;
     emit installIndexChanged();
+}
+
+bool ApplicationsViewModel::isInstalledInstaller() const noexcept
+{
+    return m_applications.value(1)->isInstalled();
 }
 
 void ApplicationsViewModel::refresh()
@@ -67,14 +74,13 @@ void ApplicationsViewModel::installByIndex()
         }
     );
     if (iterator == m_applications.end()) return;
-    if (m_installPath == nullptr || m_installPath.isEmpty()) return;
 
     auto application = *iterator;
-
+    if (!application->isInstalled() && (m_installPath == nullptr || m_installPath.isEmpty())) return;
     if (application->isInstalled() && !application->isHaveNewVersion()) return;
 
     m_currentApplication = application;
-    m_currentApplication->setInstalledPath(m_installPath);
+    if (!application->isInstalled()) m_currentApplication->setInstalledPath(m_installPath);
 
     auto isArm = QSysInfo::currentCpuArchitecture().toLower().startsWith("arm");
     QString extension = "";
@@ -151,6 +157,15 @@ void ApplicationsViewModel::deleteByIndex(const QString& index)
     writeCache();
     refresh();
     checkNewVersions();
+}
+
+void ApplicationsViewModel::runInstaller()
+{
+    auto application = m_applications[1];
+    auto pathToInstaller = application->installedPath() + "/" + application->executableName();
+    QStringList arguments;
+    QProcess::startDetached(pathToInstaller, arguments);
+    QCoreApplication::quit();
 }
 
 void ApplicationsViewModel::createApplications()
@@ -267,6 +282,7 @@ void ApplicationsViewModel::versionDownloaded(QNetworkReply *reply)
     file.close();
 
     m_currentApplication->setIsInstalled(true);
+    m_currentApplication->setIsHaveNewVersion(false);
     m_currentApplication->setInstalledVersion(m_currentApplication->newVersion());
 
     writeCache();
@@ -286,7 +302,7 @@ void ApplicationsViewModel::newVersionAvailable(QString version, QString url, QS
 
     m_loading = false;
     emit loadingChanged();
-    emit itemsChanged();
+    refresh();
 }
 
 void ApplicationsViewModel::noVersionAvailable()

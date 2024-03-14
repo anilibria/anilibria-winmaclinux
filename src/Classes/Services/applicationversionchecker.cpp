@@ -25,6 +25,7 @@ void ApplicationVersionChecker::checkNewVersionAvailable(QString appIdentifier, 
 void ApplicationVersionChecker::downloaded(QNetworkReply *reply)
 {
     auto identifier = reply->property("identifier").toString();
+
     if (reply->error() != QNetworkReply::NoError) {
         m_currentChecks.remove(identifier);
         emit noVersionAvailable();

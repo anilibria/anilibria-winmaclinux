@@ -51,7 +51,7 @@ void VersionChecker::latestDownloaded(QNetworkReply *reply)
 
     if (latestRelease.contains("message")) {
         auto message = latestRelease.value("message").toString();
-        if (message == "Not Found") return;
+        if (!message.isEmpty()) return;
     }
 
     auto version = latestRelease.value("tag_name").toString();
@@ -59,5 +59,7 @@ void VersionChecker::latestDownloaded(QNetworkReply *reply)
 
     if (version == ApplicationVersion) return;
 
+    m_isHaveNewVersion = true;
+    emit isHaveNewVersionChanged();
     emit newVersionAvailable(version, url);
 }

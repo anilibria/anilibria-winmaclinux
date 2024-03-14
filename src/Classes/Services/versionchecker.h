@@ -29,11 +29,19 @@
 class VersionChecker : public QObject
 {
     Q_OBJECT
+    Q_PROPERTY(bool isHaveNewVersion READ isHaveNewVersion NOTIFY isHaveNewVersionChanged FINAL)
+
+private:
+    bool m_isHaveNewVersion { false };
+
 public:
     explicit VersionChecker(QObject *parent = nullptr);
 
+    bool isHaveNewVersion() const noexcept { return m_isHaveNewVersion; }
+
 signals:
     void newVersionAvailable(QString version, QString url);
+    void isHaveNewVersionChanged();
 
 public slots:
     void latestDownloaded(QNetworkReply* reply);

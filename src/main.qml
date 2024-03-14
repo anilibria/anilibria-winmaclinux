@@ -314,6 +314,15 @@ ApplicationWindow {
             }
         }
 
+        RoundedActionButton {
+            visible: applicationsViewModel.isInstalledInstaller && versionChecker.isHaveNewVersion
+            anchors.verticalCenter: parent.verticalCenter
+            anchors.right: openInfoButton.left
+            text: "Обновить"
+            onClicked: {
+                applicationsViewModel.runInstaller();
+            }
+        }
         IconButton {
             id: openInfoButton
             visible: !mainViewModel.isSmallSizeMode
