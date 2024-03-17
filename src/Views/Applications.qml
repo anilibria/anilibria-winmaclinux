@@ -303,7 +303,11 @@ Page {
                 id: selectFolderForSave
                 title: "Выберите папку для сохранения "
                 onNeedOpenFolder: {
-                    installPathTextField.text = folderUrl.replace("file:///", "").replace("file://", "");
+                    if (Qt.platform.os === 'windows') {
+                        installPathTextField.text = folderUrl.replace("file:///", "");
+                    } else {
+                        installPathTextField.text = folderUrl.replace("file://", "");
+                    }
                 }
             }
         }
