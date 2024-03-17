@@ -21,8 +21,8 @@
 
     Выполнить команду
 
-    ```nix
-    nix profile install "github:anilibria/anilibria-winmaclinux#anilibria-winmaclinux.<gpu>"
+    ```sh
+    nix profile install "github:anilibria/anilibria-winmaclinux#<gpu>"
     ```
 
     Где `<gpu>` заменить на:
@@ -31,11 +31,12 @@
     * nvidia-hybrid - если гибридная графика nvidia
     * amd - если видеокарта от amd
     * intel - если видеокарта от intel (встроенные в процессор)
+    * nixos - вариант для NixOS
 
     Автоматический выбор в зависимости от видеокарты (НЕ РЕКОМЕНДУЕТСЯ):
 
-    ```nix
-    nix profile install "github:anilibria/anilibria-winmaclinux#anilibria-winmaclinux.auto" --impure
+    ```sh
+    nix profile install "github:anilibria/anilibria-winmaclinux" --impure
     ```
 
 3. Добавление приложения в меню приложений
@@ -66,7 +67,7 @@
 nix profile upgrade '.*'
 ```
 
-Если при установке выбрали auto:
+Если при установке выбрали автоматическое определение:
 
 ```sh
 nix profile upgrade '.*' --impure

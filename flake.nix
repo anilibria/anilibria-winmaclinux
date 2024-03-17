@@ -44,6 +44,7 @@
             };
           genPkgs = pkgs: pkg:
             rec {
+              default = auto;
               nixos = pkg;
               auto = wrapWithNixGL pkg pkgs.nixgl.auto.nixGLDefault { nixGLCMD = "nixGL"; };
               nvidia = wrapWithNixGL pkg pkgs.nixgl.auto.nixGLNvidia { };
@@ -53,21 +54,16 @@
             };
         in
         rec {
-          packages = rec {
-            anilibria-winmaclinux-latest = throw "FIXME" genPkgs pkgs
-              (
-                pkgs.anilibria-winmaclinux.overrideAttrs (old: rec {
-                  src = ./.;
-                  sourceRoot = "src";
-                })
-              );
-            anilibria-winmaclinux = genPkgs pkgs pkgs.anilibria-winmaclinux;
-            default = anilibria-winmaclinux.auto;
-          };
-          defaultPackage = packages.anilibria-winmaclinux.auto;
-          devShells.default = throw "TODO" pkgs.mkShell {
-            nativeBuildInputs = with pkgs; [ ];
-            buildInputs = with pkgs; [ ];
+          packages = (genPkgs pkgs
+            (
+              pkgs.anilibria-winmaclinux.overrideAttrs (old: rec {
+                src = ./.;
+                setSourceRoot = "sourceRoot=$(echo *source*/src)";
+              })
+            ));
+          devShells.default = pkgs.mkShell {
+            nativeBuildInputs = packages.nixos.nativeBuildInputs;
+            buildInputs = packages.nixos.buildInputs;
           };
         });
 }
