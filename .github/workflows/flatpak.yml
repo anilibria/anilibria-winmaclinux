@@ -15,22 +15,22 @@ jobs:
         arch: [x86_64, aarch64]
       fail-fast: true
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - name: Install deps
       run: |
         dnf -y install docker
     - name: Set up QEMU
       id: qemu
-      uses: docker/setup-qemu-action@v1
+      uses: docker/setup-qemu-action@v3
       with:
         platforms: arm64
-    - uses: flatpak/flatpak-github-actions/flatpak-builder@v5
+    - uses: flatpak/flatpak-github-actions/flatpak-builder@v6.3
       with:
         bundle: anilibria.flatpak
         manifest-path: tv.anilibria.app.yml
         cache-key: flatpak-builder-${{ github.sha }}
         arch: ${{ matrix.arch }}
-    - uses: actions/upload-artifact@v3
+    - uses: actions/upload-artifact@v4
       with:
         name: flatpak-package
         path: anilibria.flatpak
