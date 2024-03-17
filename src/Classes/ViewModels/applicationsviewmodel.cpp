@@ -101,6 +101,7 @@ void ApplicationsViewModel::installByIndex()
     auto version = application->newVersion();
     qDebug() << "Install version: " << version;
     auto downloadUrl = QString("https://github.com/") + application->repositoryPath() + "/releases/download/" + version + "/" + osPath + extension;
+    qDebug() << "Install URL: " << downloadUrl;
     auto url = QUrl(downloadUrl);
     QNetworkRequest request(url);
     request.setAttribute(QNetworkRequest::FollowRedirectsAttribute, true);
@@ -272,6 +273,8 @@ void ApplicationsViewModel::versionDownloaded(QNetworkReply *reply)
     auto fullPath = m_currentApplication->installedPath() + "/" + m_currentApplication->executableName();
     if(QFile::exists(fullPath)) QFile::remove(fullPath);
 
+    qDebug() << "Full path for installed application: " << fullPath;
+
     QFile file(fullPath);
     if (!file.open(QFile::WriteOnly)) {
         emit loadingChanged();
@@ -280,6 +283,8 @@ void ApplicationsViewModel::versionDownloaded(QNetworkReply *reply)
 
     file.write(content);
     file.close();
+
+    qDebug() << "File sucessfully saved";
 
     m_currentApplication->setIsInstalled(true);
     m_currentApplication->setIsHaveNewVersion(false);
