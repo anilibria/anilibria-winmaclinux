@@ -4,7 +4,6 @@ import QtAV 1.7
 Item {
     id: root
     property alias muted: videoPlayer.muted
-    property alias volume: videoPlayer.volume
     property alias position: videoPlayer.position
     property alias duration: videoPlayer.duration
     property alias playbackState: videoPlayer.playbackState
@@ -15,17 +14,26 @@ Item {
     property alias fillMode: videoOutput.fillMode
     property alias videoPlayerSource: videoPlayer
     property alias videoOutputSource: videoOutput
+    property int volume: 0
+    property bool isPlaying: false
+    property bool isPaused: false
+    property bool isStopped: false
 
     signal play();
     signal pause();
     signal stop();
     signal seek(real position);
-    signal playerVolumeChanged();
-    signal playerPlaybackStateChanged();
-    signal playerStatusChanged();
-    signal playerPositionChanged();
+    signal playerVolumeChanged(int volume);
+    signal playerPlaybackStateChanged(string mode);
+    signal playerStatusChanged(string status);
+    signal playerPositionChanged(bool isBuffered, int position, int duration);
     signal playerBufferProgressChanged();
     signal playerDurationChanged();
+
+    onVolumeChanged: {
+        videoPlayer.volume = root.volume / 100;
+        playerVolumeChanged(root.volume);
+    }
 
     onPlay: {
         videoPlayer.play();
@@ -59,16 +67,24 @@ Item {
             playerBufferProgressChanged();
         }
         onPlaybackStateChanged: {
-            playerPlaybackStateChanged();
-        }
-        onVolumeChanged: {
-            playerVolumeChanged();
+            let currentMode = "idle";
+            if (videoPlayer.playbackState === MediaPlayer.PlayingState) currentMode = "play";
+            if (videoPlayer.playbackState === MediaPlayer.PausedState) currentMode = "pause";
+            if (videoPlayer.playbackState === MediaPlayer.StoppedState) currentMode = "stop";
+
+            playerPlaybackStateChanged(currentMode);
         }
         onStatusChanged: {
-            playerStatusChanged();
+            const value = "nostatus";
+            if (videoPlayer.status === MediaPlayer.Loading) value = "loading";
+            if (videoPlayer.status === MediaPlayer.Buffering) value = "buffering";
+            if (videoPlayer.status === MediaPlayer.InvalidMedia) value = "invalid";
+            if (videoPlayer.status === MediaPlayer.Buffered) value = "buffered";
+            if (videoPlayer.status === MediaPlayer.EndOfMedia) value = "endofmedia";
+            playerStatusChanged(value);
         }
         onPositionChanged: {
-            playerPositionChanged();
+            playerPositionChanged(videoPlayer.status === MediaPlayer.Buffered, videoPlayer.position, videoPlayer.duration);
         }
         onDurationChanged: {
             playerDurationChanged();

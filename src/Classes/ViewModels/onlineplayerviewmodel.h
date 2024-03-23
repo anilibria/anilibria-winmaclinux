@@ -55,7 +55,7 @@ class OnlinePlayerViewModel : public QObject
     Q_PROPERTY(RemotePlayer* remotePlayer READ remotePlayer NOTIFY remotePlayerChanged)
     Q_PROPERTY(bool sendPlaybackToRemoteSwitch READ sendPlaybackToRemoteSwitch WRITE setSendPlaybackToRemoteSwitch NOTIFY sendPlaybackToRemoteSwitchChanged)
     Q_PROPERTY(int volumeSlider READ volumeSlider WRITE setVolumeSlider NOTIFY volumeSliderChanged)
-    Q_PROPERTY(int playerPlaybackState READ playerPlaybackState WRITE setPlayerPlaybackState NOTIFY playerPlaybackStateChanged)
+    Q_PROPERTY(QString playerPlaybackState READ playerPlaybackState WRITE setPlayerPlaybackState NOTIFY playerPlaybackStateChanged)
     Q_PROPERTY(int navigateReleaseId READ navigateReleaseId WRITE setNavigateReleaseId NOTIFY navigateReleaseIdChanged)
     Q_PROPERTY(int customPlaylistPosition READ customPlaylistPosition WRITE setCustomPlaylistPosition NOTIFY customPlaylistPositionChanged)
     Q_PROPERTY(QString navigateVideos READ navigateVideos WRITE setNavigateVideos NOTIFY navigateVideosChanged)
@@ -108,7 +108,7 @@ private:
     QString m_videoPlaybackCommand;
     bool m_sendPlaybackToRemoteSwitch;
     int m_volumeSlider;
-    int m_playerPlaybackState;
+    QString m_playerPlaybackState;
     QHash<int, SeenModel*>* m_seenModels;
     int m_navigateReleaseId;
     int m_customPlaylistPosition;
@@ -201,8 +201,8 @@ public:
     int volumeSlider() const { return m_volumeSlider; }
     void setVolumeSlider(int volumeSlider) noexcept;
 
-    int playerPlaybackState() const { return m_playerPlaybackState; }
-    void setPlayerPlaybackState(int playerPlaybackState) noexcept;
+    QString playerPlaybackState() const { return m_playerPlaybackState; }
+    void setPlayerPlaybackState(const QString& playerPlaybackState) noexcept;
 
     int navigateReleaseId() const { return m_navigateReleaseId; }
     void setNavigateReleaseId(int navigateReleaseId) noexcept;

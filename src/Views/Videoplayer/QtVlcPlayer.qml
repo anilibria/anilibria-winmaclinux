@@ -5,7 +5,6 @@ import QtMultimedia 5.12
 Item {
     id: root
     property alias muted: videoPlayer.muted
-    property alias volume: videoPlayer.volume
     property alias position: videoPlayer.position
     property alias duration: videoPlayer.duration
     property alias playbackState: videoPlayer.playbackState
@@ -16,17 +15,27 @@ Item {
     property alias fillMode: videoOutput.fillMode
     property alias videoPlayerSource: videoPlayer
     property alias videoOutputSource: videoOutput
+    property int volume: 0
+    property bool isPlaying: false
+    property bool isPaused: false
+    property bool isStopped: false
+    property bool alreadyEnded: false
 
     signal play();
     signal pause();
     signal stop();
     signal seek(real position);
-    signal playerVolumeChanged();
-    signal playerPlaybackStateChanged();
-    signal playerStatusChanged();
-    signal playerPositionChanged();
+    signal playerVolumeChanged(int volume);
+    signal playerPlaybackStateChanged(string mode);
+    signal playerStatusChanged(string status);
+    signal playerPositionChanged(bool isBuffered, int position, int duration);
     signal playerBufferProgressChanged();
     signal playerDurationChanged();
+
+    onVolumeChanged: {
+        videoPlayer.volume = root.volume / 100;
+        playerVolumeChanged(root.volume);
+    }
 
     onPlay: {
         videoPlayer.play();
@@ -49,37 +58,62 @@ Item {
         autoplay: true
         logLevel: 4
         onPlaybackStateChanged: {
-            playerPlaybackStateChanged();
-        }
-        onVolumeChanged: {
-            playerVolumeChanged();
+            root.isPlaying = false;
+            root.isPaused = false;
+            root.isStopped = false;
+
+            let currentMode = "idle";
+            if (videoPlayer.playbackState === MediaPlayer.PlayingState) {
+                currentMode = "play";
+                root.isPlaying = true;
+            }
+            if (videoPlayer.playbackState === MediaPlayer.PausedState) {
+                currentMode = "pause";
+                root.isPaused = true;
+            }
+            if (videoPlayer.playbackState === MediaPlayer.StoppedState) {
+                currentMode = "stop";
+                root.isStopped = true;
+            }
+
+            playerPlaybackStateChanged(currentMode);
         }
         onPositionChanged: {
-            playerPositionChanged();
+            playerPositionChanged(!videoPlayer.isBuffering, videoPlayer.position, videoPlayer.duration);
         }
         onDurationChanged: {
             playerDurationChanged();
         }
         onSourceLoaded: {
-            root.status = MediaPlayer.Loading;
+            playerStatusChanged("loading");
+            root.alreadyEnded = false;
         }
         onSourceNotLoaded: {
-            root.status = MediaPlayer.InvalidMedia;
+            playerStatusChanged("invalid");
         }
         onIsEndedChanged: {
-            root.status = MediaPlayer.EndOfMedia;
+            if (root.alreadyEnded) return;
+
+            root.alreadyEnded = true;
+
+            root.isPlaying = false;
+            root.isPaused = false;
+            root.isStopped = true;
+
+            playerStatusChanged("endofmedia");
         }
         onIsBufferingChanged: {
             if (isBuffering) {
-                root.status = MediaPlayer.Buffering;
+                playerStatusChanged("buffering");
             } else {
-                root.status = MediaPlayer.Buffered;
+                playerStatusChanged("buffered");
             }
         }
         onEarlyEnded: {
-            onlinePlayerViewModel.restorePosition = time;
-            reloadCurrentSource();
             console.log('early ended!!!!!');
+        }
+        onSourceChanged: {
+            console.log('source changed!!!!!!!');
         }
     }
 
