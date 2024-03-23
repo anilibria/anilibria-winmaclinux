@@ -17,7 +17,7 @@ Item {
         id: saveFileDialog
         selectExisting: false
         onAccepted: {
-            needSaveFile(saveTorrentFileDialog.fileUrl);
+            needSaveFile(saveFileDialog.fileUrl);
         }
     }
 }
