@@ -109,7 +109,7 @@ Item {
             playerPlaybackStateChanged(currentMode);
         }
         onStatusChanged: {
-            const value = "nostatus";
+            let value = "nostatus";
             if (videoPlayer.status === MediaPlayer.Loading) value = "loading";
             if (videoPlayer.status === MediaPlayer.Buffering) value = "buffering";
             if (videoPlayer.status === MediaPlayer.InvalidMedia) value = "invalid";
