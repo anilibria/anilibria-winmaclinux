@@ -5,7 +5,7 @@
 
 **Этап 1. Устанавливаем зависимости необходимые для сборки**
 ```shell
-sudo apk add qt5-qtbase-devel qt5-qtwebview-devel qt5-qtwebengine-devel qt5-qtmultimedia-devel qt5-qtsvg-devel qt5-qtwebsockets-devel qt5-qtdeclarative-devel qt5-qtquickcontrols2-devel qt5-qtquickcontrols 
+sudo apk add qt5-qtbase-dev qt5-qtwebview-dev qt5-qtwebengine-dev qt5-qtmultimedia-dev qt5-qtsvg-dev qt5-qtwebsockets-dev qt5-qtdeclarative-dev qt5-qtquickcontrols2-dev qt5-qtquickcontrols 
 sudo apk add vlc vlc-qt vlc-dev g++ make git pkgconf
 ```
 **Этап 2. Создаем папку для проекта, переходим в нее и извлекаем исходники (предполагается что Вы находитесь в домашней папке)**
