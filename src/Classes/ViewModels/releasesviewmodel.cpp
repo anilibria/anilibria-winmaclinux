@@ -1426,7 +1426,7 @@ void ReleasesViewModel::removeAllHidedReleases() noexcept
 
 bool ReleasesViewModel::importReleasesFromFile(QString path)
 {
-    auto filePath = path.replace("file:///", "").replace("file://", "");
+    auto filePath = removeFileProtocol(path);
     QFile importFile(filePath);
     if (!importFile.open(QFile::ReadOnly | QFile::Text)) {
         qInfo() << "Error while import releases from file";

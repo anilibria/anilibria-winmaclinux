@@ -61,6 +61,7 @@ private:
     bool m_isSelectedVlc { false };
     const QString nameVLCPlayer { "VLC" };
     const QString nameQtAvPlayer { "QtAv" };
+    const QString nameMpvPlayer { "mpv" };
     QString m_startupPlayer { "" };
     bool m_alreadyRestorePlayer { false };
 

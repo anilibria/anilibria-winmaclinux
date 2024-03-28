@@ -127,9 +127,9 @@ ApplicationWindow {
 
     header: Rectangle {
         id: toolBar
-        visible: window.visibility !== Window.FullScreen
+        visible: window.visibility !== Window.FullScreen && !windowSettings.isTopMost
         width: window.width
-        height: 35
+        height: toolBar.visible ? 35 : 0
         color: applicationThemeViewModel.notificationCenterBackground
 
         Rectangle {

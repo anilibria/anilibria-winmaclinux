@@ -149,6 +149,8 @@ void OnlinePlayerViewModel::setVideoSource(const QString &videoSource)
 {
     if (videoSource == "") return;
 
+    qDebug() << "setVideoSource: " << videoSource;
+
     auto isLocalFile = videoSource.startsWith("file://");
     auto needFallback = m_needProxyFallback ? "fallback=true&" : "";
     auto source = !isLocalFile && m_needProxified && m_proxyPort > 0 ? QString("http://localhost:") + QString::number(m_proxyPort) + "/proxyvideolist?" + needFallback + "path=" + videoSource : videoSource;
@@ -181,6 +183,7 @@ void OnlinePlayerViewModel::setIsFullHdAllowed(bool isFullHdAllowed) noexcept
 
 void OnlinePlayerViewModel::setSelectedVideo(int selectedVideo) noexcept
 {
+    qDebug() << "setSelectedVideo: " << selectedVideo;
     if (m_selectedVideo == selectedVideo) return;
 
     m_selectedVideo = selectedVideo;
@@ -242,7 +245,7 @@ void OnlinePlayerViewModel::setVolumeSlider(int volumeSlider) noexcept
     emit volumeSliderChanged();
 }
 
-void OnlinePlayerViewModel::setPlayerPlaybackState(int playerPlaybackState) noexcept
+void OnlinePlayerViewModel::setPlayerPlaybackState(const QString& playerPlaybackState) noexcept
 {
     if (m_playerPlaybackState == playerPlaybackState) return;
 
@@ -666,11 +669,14 @@ void OnlinePlayerViewModel::quickSetupForSingleRelease(int releaseId, int custom
     if (m_seenModels->contains(m_navigateReleaseId)) {
         auto model = m_seenModels->value(m_navigateReleaseId);
         videoIndex = model->videoId();
+        qDebug() << "videoIndex: " << videoIndex;
     }
 
     if (m_customPlaylistPosition > -1) videoIndex = m_customPlaylistPosition;
 
     auto firstVideo = m_videos->getVideoAtIndex(videoIndex);
+
+    qDebug() << "firstVideo: " << firstVideo->order();
 
     setSelectedVideo(firstVideo->order());
     setIsFullHdAllowed(!firstVideo->fullhd().isEmpty());
