@@ -76,6 +76,9 @@
 #include "vlc-qt/core/TrackModel.h"
 #include "vlc-qt/core/Common.h"
 #endif
+#ifdef USE_MPV_PLAYER
+#include "PlayerMpv/mpvobject.h"
+#endif
 
 int main(int argc, char *argv[])
 {
@@ -175,6 +178,9 @@ int main(int argc, char *argv[])
 
     qmlRegisterType<VlcQmlPlayer>("VLCQt", 1, 1, "VlcPlayer");
     qmlRegisterType<VlcQmlVideoOutput>("VLCQt", 1, 1, "VlcVideoOutput");
+#endif
+#ifdef USE_MPV_PLAYER
+    qmlRegisterType<MpvObject>("MpvIntegration", 1, 0 , "MpvObject");
 #endif
 
     QCoreApplication::setOrganizationDomain("anilibria.tv");

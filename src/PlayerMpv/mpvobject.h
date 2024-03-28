@@ -4,8 +4,8 @@
 #include <QObject>
 #include <QtQuick/QQuickFramebufferObject>
 
-#include <mpv/client.h>
-#include <mpv/render_gl.h>
+#include <client.h>
+#include <render_gl.h>
 
 class MpvRenderer;
 
@@ -32,6 +32,9 @@ private:
     int m_duration { 0 };
     int m_position { 0 };
     bool m_updateEnabled { true };
+    const int pausedPlayback = 1;
+    const int playedPlayback = 2;
+    const int stopedPlayback = 3;
 
 public:
     static void on_update(void *ctx);
@@ -82,7 +85,7 @@ private slots:
 
 public slots:
     void command(const QVariant& params);
-    void setProperty(const QString& name, const QVariant& value);    
+    void setProperty(const QString& name, const QVariant& value);
 
 signals:
     void onUpdate();
@@ -93,6 +96,11 @@ signals:
     void positionChanged();
     void durationChanged();
     void updateEnabledChanged();
+    void endFileReached();
+    void fileLoaded();
+    void startBuffering();
+    void endBuffered();
+    void playbackChanged(int newPlayback);
 
 };
 

@@ -567,7 +567,8 @@ void LocalStorageService::clearPostersCache()
 
 void LocalStorageService::backupCache(const QString &path)
 {
-    auto clearedPath = QString(path).replace("file:///", "").replace("file://", "") + "/";
+    auto localPath = QString(path);
+    auto clearedPath = removeFileProtocol(localPath) + "/";
     foreach (auto cacheFile, m_cacheFiles) {
         copyAndRewriteFile(cacheFile, clearedPath);
     }
@@ -577,7 +578,8 @@ void LocalStorageService::backupCache(const QString &path)
 
 void LocalStorageService::restoreBackupCache(const QString &path)
 {
-    auto clearedPath = QString(path).replace("file:///", "").replace("file://", "") + "/";
+    auto localPath = QString(path);
+    auto clearedPath = removeFileProtocol(localPath) + "/";
 
     foreach (auto cacheFile, m_cacheFiles) {
         copyFileToLocalCache(cacheFile, clearedPath);

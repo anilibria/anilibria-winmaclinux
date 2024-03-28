@@ -18,10 +18,13 @@ Item {
     property bool isPlaying: false
     property bool isPaused: false
     property bool isStopped: false
+    property bool isCropped: false
 
     signal play();
     signal pause();
     signal stop();
+    signal cropModeOutput();
+    signal defaultModeOutput();
     signal seek(real position);
     signal playerVolumeChanged(int volume);
     signal playerPlaybackStateChanged(string mode);
@@ -33,6 +36,16 @@ Item {
     onVolumeChanged: {
         videoPlayer.volume = root.volume / 100;
         playerVolumeChanged(root.volume);
+    }
+
+    onCropModeOutput: {
+        videoOutput.fillMode = VideoOutput.PreserveAspectCrop;
+        root.isCropped = true;
+    }
+
+    onDefaultModeOutput: {
+        videoOutput.fillMode = VideoOutput.PreserveAspectFit;
+        root.isCropped = false;
     }
 
     onPlay: {
@@ -67,10 +80,23 @@ Item {
             playerBufferProgressChanged();
         }
         onPlaybackStateChanged: {
+            root.isPlaying = false;
+            root.isPaused = false;
+            root.isStopped = false;
+
             let currentMode = "idle";
-            if (videoPlayer.playbackState === MediaPlayer.PlayingState) currentMode = "play";
-            if (videoPlayer.playbackState === MediaPlayer.PausedState) currentMode = "pause";
-            if (videoPlayer.playbackState === MediaPlayer.StoppedState) currentMode = "stop";
+            if (videoPlayer.playbackState === MediaPlayer.PlayingState) {
+                currentMode = "play";
+                root.isPlaying = true;
+            }
+            if (videoPlayer.playbackState === MediaPlayer.PausedState) {
+                currentMode = "pause";
+                root.isPaused = true;
+            }
+            if (videoPlayer.playbackState === MediaPlayer.StoppedState) {
+                currentMode = "stop";
+                root.isStopped = true;
+            }
 
             playerPlaybackStateChanged(currentMode);
         }

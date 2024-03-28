@@ -297,13 +297,11 @@ Page {
             if (onlinePlayerViewModel.positionIterator >= 20) {
                 onlinePlayerViewModel.positionIterator = 0;
                 onlinePlayerViewModel.setVideoSeens(onlinePlayerViewModel.selectedRelease, onlinePlayerViewModel.selectedVideo, position);
-                console.log("saved position " + onlinePlayerViewModel.selectedRelease + " " + onlinePlayerViewModel.selectedVideo + " " + position);
             }
 
             if (!releasesViewModel.getSeriaSeenMark(onlinePlayerViewModel.selectedRelease, onlinePlayerViewModel.selectedVideo)) {
                 if (duration > 0 && position > 0) {
                     const positionPercent = position / duration * 100;
-                    //console.log("position" + duration + ', ' + position + ", " + positionPercent + ", ");
                     if (positionPercent >= 90 && !onlinePlayerViewModel.seenMarkedAtEnd) {
                         releasesViewModel.setSeenMark(onlinePlayerViewModel.selectedRelease, onlinePlayerViewModel.selectedVideo, true);
                         onlinePlayerViewModel.seenMarkedAtEnd = true;
@@ -518,7 +516,6 @@ Page {
                 onPressedChanged: {
                     if (!pressed && onlinePlayerViewModel.lastMovedPosition > 0) {
                         playerLoader.item.seek(onlinePlayerViewModel.lastMovedPosition);
-                        console.log('playerLoader.item.seek(onlinePlayerViewModel.lastMovedPosition);');
                         onlinePlayerViewModel.lastMovedPosition = 0;
                         onlinePlayerViewModel.broadcastVideoPosition(onlinePlayerViewModel.lastMovedPosition.toString() + `/` + playerLoader.item.duration.toString());                        
                     }
@@ -768,7 +765,6 @@ Page {
                             controlPanel.forceActiveFocus();
                         }
                         onMoved: {
-                            console.log("onMoved " + Math.round(value));
                             playerLoader.item.volume = Math.round(value);
                             if (playerLoader.item.muted) playerLoader.item.muted = false;
                         }
@@ -1326,15 +1322,10 @@ Page {
                         iconHeight: 29
                         tooltipMessage: "Включить режим обрезки видео потока"
                         onButtonPressed: {
-                            switch (playerLoader.item.fillMode) {
-                                case VideoOutput.PreserveAspectFit:
-                                    playerLoader.item.fillMode = VideoOutput.PreserveAspectCrop;
-                                    userConfigurationViewModel.isCroppedPlayer = true;
-                                    break;
-                                case VideoOutput.PreserveAspectCrop:
-                                    playerLoader.item.fillMode = VideoOutput.PreserveAspectFit;
-                                    userConfigurationViewModel.isCroppedPlayer = false;
-                                    break;
+                            if (playerLoader.item.isCropped) {
+                                playerLoader.item.defaultModeOutput();
+                            } else {
+                                playerLoader.item.cropModeOutput();
                             }
                         }
                     }

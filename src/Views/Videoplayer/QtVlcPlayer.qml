@@ -20,11 +20,14 @@ Item {
     property bool isPaused: false
     property bool isStopped: false
     property bool alreadyEnded: false
+    property bool isCropped: false
 
     signal play();
     signal pause();
     signal stop();
     signal seek(real position);
+    signal cropModeOutput();
+    signal defaultModeOutput();
     signal playerVolumeChanged(int volume);
     signal playerPlaybackStateChanged(string mode);
     signal playerStatusChanged(string status);
@@ -35,6 +38,16 @@ Item {
     onVolumeChanged: {
         videoPlayer.volume = root.volume / 100;
         playerVolumeChanged(root.volume);
+    }
+
+    onCropModeOutput: {
+        videoOutput.fillMode = VideoOutput.PreserveAspectCrop;
+        root.isCropped = true;
+    }
+
+    onDefaultModeOutput: {
+        videoOutput.fillMode = VideoOutput.PreserveAspectFit;
+        root.isCropped = false;
     }
 
     onPlay: {
