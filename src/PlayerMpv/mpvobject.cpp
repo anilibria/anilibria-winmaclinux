@@ -198,7 +198,6 @@ public:
                 {MPV_RENDER_PARAM_OPENGL_INIT_PARAMS, &gl_init_params},
                 {MPV_RENDER_PARAM_INVALID, nullptr}
             };
-
             if (mpv_render_context_create(&obj->mpv_gl, obj->mpv, params) < 0) {
                 throw std::runtime_error("failed to initialize mpv GL context");
             }
@@ -253,8 +252,7 @@ MpvObject::MpvObject(QQuickItem * parent)
     mpv_observe_property(mpv, 0, "time-pos", MPV_FORMAT_DOUBLE);
     mpv_observe_property(mpv, 0, "mute", MPV_FORMAT_FLAG);
     mpv_observe_property(mpv, 0, "pause", MPV_FORMAT_FLAG);
-    //need for detect buffering
-    //mpv_observe_property(mpv, 0, "paused-for-cache", MPV_FORMAT_FLAG);
+    mpv_observe_property(mpv, 0, "paused-for-cache", MPV_FORMAT_FLAG);
 
     m_checkTimer = startTimer(100);
 
@@ -274,13 +272,9 @@ void MpvObject::on_update(void *ctx)
     emit self->onUpdate();
 }
 
-// connected to onUpdate(); signal makes sure it runs on the GUI thread
 void MpvObject::doUpdate()
 {
-    if (m_updateEnabled) {
-        qDebug() << "main doUpdate";
-        update();
-    }
+    update();
 }
 
 void MpvObject::command(const QVariant& params)
@@ -362,14 +356,6 @@ void MpvObject::setPlaybackRate(float playbackRate) noexcept
     setMpvProperty("speed", (double)playbackRate);
 
     emit playbackRateChanged();
-}
-
-void MpvObject::setUpdateEnabled(bool updateEnabled) noexcept
-{
-    if (m_updateEnabled == updateEnabled) return;
-
-    m_updateEnabled = updateEnabled;
-    emit updateEnabledChanged();
 }
 
 void MpvObject::play()

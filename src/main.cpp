@@ -79,6 +79,10 @@
 #ifdef USE_MPV_PLAYER
 #include "PlayerMpv/mpvobject.h"
 #endif
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+#include <QQuickWindow>
+#endif
+
 
 int main(int argc, char *argv[])
 {

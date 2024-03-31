@@ -6,14 +6,14 @@ Item {
     property alias muted: videoPlayer.muted
     property alias position: videoPlayer.position
     property alias duration: videoPlayer.duration
-    property alias playbackState: videoPlayer.playbackState
-    property alias status: videoPlayer.status
-    property alias bufferProgress: videoPlayer.bufferProgress
+    property int playbackState: 0
+    property int status: 0//videoPlayer.status
+    property int bufferProgress: 0
     property alias source: videoPlayer.source
     property alias playbackRate: videoPlayer.playbackRate
-    property alias fillMode: videoOutput.fillMode
+    property int fillMode: 0
     property alias videoPlayerSource: videoPlayer
-    property alias videoOutputSource: videoOutput
+    property alias videoOutputSource: fakeOutput
     property int volume: 0
     property bool isPlaying: false
     property bool isPaused: false
@@ -64,8 +64,13 @@ Item {
         videoPlayer.seek(position);
     }
 
+    Item {
+        id: fakeOutput
+    }
+
     MpvObject {
         id: videoPlayer
+        anchors.fill: parent
         onPositionChanged: {
             playerPositionChanged(true, videoPlayer.position, videoPlayer.duration);
         }

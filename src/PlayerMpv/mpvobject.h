@@ -18,7 +18,6 @@ class MpvObject : public QQuickFramebufferObject
     Q_PROPERTY(float playbackRate READ playbackRate WRITE setPlaybackRate NOTIFY playbackRateChanged)
     Q_PROPERTY(int position READ position NOTIFY positionChanged)
     Q_PROPERTY(int duration READ duration NOTIFY durationChanged)
-    Q_PROPERTY(bool updateEnabled READ updateEnabled WRITE setUpdateEnabled NOTIFY updateEnabledChanged)
 
     friend class MpvRenderer;
 
@@ -31,7 +30,6 @@ private:
     bool m_paused { false };
     int m_duration { 0 };
     int m_position { 0 };
-    bool m_updateEnabled { true };
     const int pausedPlayback = 1;
     const int playedPlayback = 2;
     const int stopedPlayback = 3;
@@ -57,9 +55,6 @@ public:
 
     int position() const noexcept { return m_position; }
     int duration() const noexcept { return m_duration; }
-
-    bool updateEnabled() const noexcept { return m_updateEnabled; }
-    void setUpdateEnabled(bool updateEnabled) noexcept;
 
     Q_INVOKABLE void play();
     Q_INVOKABLE void pause();
