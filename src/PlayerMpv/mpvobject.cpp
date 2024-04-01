@@ -216,19 +216,19 @@ public:
         #endif
 
         QOpenGLFramebufferObject *fbo = framebufferObject();
-        mpv_opengl_fbo mpfbo{.fbo = static_cast<int>(fbo->handle()), .w = fbo->width(), .h = fbo->height(), .internal_format = 0};
-        int flip_y{0};
+            mpv_opengl_fbo mpfbo{.fbo = static_cast<int>(fbo->handle()), .w = fbo->width(), .h = fbo->height(), .internal_format = 0};
+            int flip_y{0};
 
-        mpv_render_param params[] = {
-            {MPV_RENDER_PARAM_OPENGL_FBO, &mpfbo},
-            {MPV_RENDER_PARAM_FLIP_Y, &flip_y},
-            {MPV_RENDER_PARAM_INVALID, nullptr}
-        };
-        mpv_render_context_render(obj->mpv_gl, params);
+            mpv_render_param params[] = {
+                {MPV_RENDER_PARAM_OPENGL_FBO, &mpfbo},
+                {MPV_RENDER_PARAM_FLIP_Y, &flip_y},
+                {MPV_RENDER_PARAM_INVALID, nullptr}
+            };
+            mpv_render_context_render(obj->mpv_gl, params);
 
-        #if QT_VERSION > QT_VERSION_CHECK(6, 0, 0)
+#if QT_VERSION > QT_VERSION_CHECK(6, 0, 0)
             QQuickOpenGLUtils::resetOpenGLState();
-        #else
+#else
             obj->window()->resetOpenGLState();
         #endif
     }
@@ -243,6 +243,8 @@ MpvObject::MpvObject(QQuickItem * parent)
     mpv_set_option_string(mpv, "msg-level", "all=v");
     mpv_set_option_string(mpv, "cache", "yes");
     mpv_set_option_string(mpv, "cache-secs", "10");
+    mpv_set_option_string(mpv, "network-timeout", "20");
+    mpv_set_option_string(mpv, "framedrop", "decoder");
 
     if (mpv_initialize(mpv) < 0) throw std::runtime_error("could not initialize mpv context");
 
@@ -253,6 +255,8 @@ MpvObject::MpvObject(QQuickItem * parent)
     mpv_observe_property(mpv, 0, "mute", MPV_FORMAT_FLAG);
     mpv_observe_property(mpv, 0, "pause", MPV_FORMAT_FLAG);
     mpv_observe_property(mpv, 0, "paused-for-cache", MPV_FORMAT_FLAG);
+
+    //crop=1280x720+0+0
 
     m_checkTimer = startTimer(100);
 
@@ -331,6 +335,7 @@ void MpvObject::setMuted(bool muted) noexcept
 
 void MpvObject::setSource(const QString& source) noexcept
 {
+    qDebug() << "setSource: " << source;
     if (source == m_source) return;
 
     m_source = source;
@@ -378,7 +383,11 @@ void MpvObject::stop()
 
 void MpvObject::seek(int position) noexcept
 {
-    setMpvProperty("time-pos", position);
+    QStringList items;
+    items.append("seek");
+    items.append(QString::number(position / 1000));
+    items.append("absolute");
+    makeMpvCommand(QVariant(items));
 }
 
 void MpvObject::timerEvent(QTimerEvent *event)
@@ -396,8 +405,10 @@ void MpvObject::timerEvent(QTimerEvent *event)
         qDebug() << "File Loaded!!!!";
     }
     if(playerEvent->event_id == MPV_EVENT_END_FILE) {
-        emit endFileReached();
-        qDebug() << "End file!!!!";
+        if (m_duration > 0 && m_position - 300 >= m_duration) {
+            emit endFileReached();
+            qDebug() << "End file!!!!";
+        }
     }
     if(playerEvent->event_id == MPV_EVENT_COMMAND_REPLY) {
         qDebug() << "Command reply!!!!";
