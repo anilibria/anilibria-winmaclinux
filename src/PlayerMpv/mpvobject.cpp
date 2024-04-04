@@ -242,9 +242,11 @@ MpvObject::MpvObject(QQuickItem * parent)
     mpv_set_option_string(mpv, "terminal", "yes");
     mpv_set_option_string(mpv, "msg-level", "all=v");
     mpv_set_option_string(mpv, "cache", "yes");
-    mpv_set_option_string(mpv, "cache-secs", "10");
+    mpv_set_option_string(mpv, "cache-secs", "15");
     mpv_set_option_string(mpv, "network-timeout", "20");
     mpv_set_option_string(mpv, "framedrop", "decoder");
+    mpv_set_option_string(mpv, "demuxer-termination-timeout", "5");
+    mpv_set_option_string(mpv, "demuxer-cache-wait", "yes");
 
     if (mpv_initialize(mpv) < 0) throw std::runtime_error("could not initialize mpv context");
 
@@ -335,7 +337,6 @@ void MpvObject::setMuted(bool muted) noexcept
 
 void MpvObject::setSource(const QString& source) noexcept
 {
-    qDebug() << "setSource: " << source;
     if (source == m_source) return;
 
     m_source = source;
@@ -390,6 +391,20 @@ void MpvObject::seek(int position) noexcept
     makeMpvCommand(QVariant(items));
 }
 
+void MpvObject::setCropMode() noexcept
+{
+    auto elementWidth = width();
+    auto elementHeight = height();
+
+    auto value = QString::number(elementWidth) + "x" + QString::number(elementHeight) + "+0+0";
+    mpv_set_option_string(mpv, "video-crop", value.toStdString().c_str());
+}
+
+void MpvObject::revertCropMode() noexcept
+{
+    mpv_set_option_string(mpv, "video-crop", "0x0+0+0");
+}
+
 void MpvObject::timerEvent(QTimerEvent *event)
 {
     Q_UNUSED(event);
@@ -405,7 +420,7 @@ void MpvObject::timerEvent(QTimerEvent *event)
         qDebug() << "File Loaded!!!!";
     }
     if(playerEvent->event_id == MPV_EVENT_END_FILE) {
-        if (m_duration > 0 && m_position - 300 >= m_duration) {
+        if (m_duration > 0 && m_duration - 300 >= m_position) {
             emit endFileReached();
             qDebug() << "End file!!!!";
         }

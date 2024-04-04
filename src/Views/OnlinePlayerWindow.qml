@@ -45,11 +45,11 @@ ApplicationWindow {
     signal loadPlayer()
 
     function playerLoadedHandler() {
-        //if (!onlinePlayerWindowViewModel.supportOutput) videoOutputLoader.item.source = root.videoSource;
+        if (!onlinePlayerWindowViewModel.supportOutput) videoOutputLoader.item.source = root.videoSource;
         if (onlinePlayerWindowViewModel.supportOutput) {
             root.videoSource.addNewVideoOuput(videoOutputLoader.item);
         }
-        //root.videoSource.playbackStateChanged.connect(playbackStateChanged);
+        root.videoSource.playbackStateChanged.connect(playbackStateChanged);
         root.videoSource.volumeChanged.connect(volumeChanged);
         volumeSlider.value = root.videoSource.volume * 100;
     }
@@ -287,7 +287,7 @@ ApplicationWindow {
     }
 
     onCloseWindow: {
-        //root.videoSource.playbackStateChanged.disconnect(playbackStateChanged);
+        root.videoSource.playbackStateChanged.disconnect(playbackStateChanged);
         root.videoSource.volumeChanged.disconnect(volumeChanged);
     }
 }

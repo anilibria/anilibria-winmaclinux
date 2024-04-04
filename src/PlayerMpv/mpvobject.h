@@ -18,6 +18,7 @@ class MpvObject : public QQuickFramebufferObject
     Q_PROPERTY(float playbackRate READ playbackRate WRITE setPlaybackRate NOTIFY playbackRateChanged)
     Q_PROPERTY(int position READ position NOTIFY positionChanged)
     Q_PROPERTY(int duration READ duration NOTIFY durationChanged)
+    Q_PROPERTY(int playbackState READ playbackState WRITE setPlaybackState NOTIFY playbackStateChanged)
 
     friend class MpvRenderer;
 
@@ -53,6 +54,9 @@ public:
     float playbackRate() noexcept;
     void setPlaybackRate(float playbackRate) noexcept;
 
+    int playbackState() const noexcept { return 0; }
+    void setPlaybackState(int playbackState) noexcept { emit playbackStateChanged(); }
+
     int position() const noexcept { return m_position; }
     int duration() const noexcept { return m_duration; }
 
@@ -60,6 +64,8 @@ public:
     Q_INVOKABLE void pause();
     Q_INVOKABLE void stop();
     Q_INVOKABLE void seek(int position) noexcept;
+    Q_INVOKABLE void setCropMode() noexcept;
+    Q_INVOKABLE void revertCropMode() noexcept;
 
     void timerEvent(QTimerEvent *event) override;
 
@@ -96,6 +102,7 @@ signals:
     void startBuffering();
     void endBuffered();
     void playbackChanged(int newPlayback);
+    void playbackStateChanged();
 
 };
 
