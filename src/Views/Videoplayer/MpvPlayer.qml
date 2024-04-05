@@ -34,6 +34,7 @@ Item {
     signal playerDurationChanged();
 
     onVolumeChanged: {
+        console.log("VolumeChanged" + root.volume);
         videoPlayer.volume = root.volume;
         playerVolumeChanged(root.volume);
     }

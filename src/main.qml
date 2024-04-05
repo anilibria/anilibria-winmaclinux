@@ -903,7 +903,8 @@ ApplicationWindow {
         proxyPort: userConfigurationViewModel.playerBuffer
         needProxified: (
                 (userConfigurationViewModel.usingVideoProxy && onlinePlayerWindowViewModel.isSelectedQtAv) ||
-                (userConfigurationViewModel.usingVideoProxyVLC && onlinePlayerWindowViewModel.isSelectedVlc)
+                (userConfigurationViewModel.usingVideoProxyVLC && onlinePlayerWindowViewModel.isSelectedVlc) ||
+                (userConfigurationViewModel.usingVideoProxyMPV && onlinePlayerWindowViewModel.isSelectedMpv)
             ) &&
             torrentNotifierViewModel.activated
         needProxyFallback: userConfigurationViewModel.usingStrongProxy

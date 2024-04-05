@@ -419,14 +419,14 @@ void MpvObject::timerEvent(QTimerEvent *event)
         emit fileLoaded();
         qDebug() << "File Loaded!!!!";
     }
-    if(playerEvent->event_id == MPV_EVENT_END_FILE) {
-        if (m_duration > 0 && m_duration - 300 >= m_position) {
-            emit endFileReached();
-            qDebug() << "End file!!!!";
-        }
-    }
     if(playerEvent->event_id == MPV_EVENT_COMMAND_REPLY) {
         qDebug() << "Command reply!!!!";
+    }
+    if (playerEvent->event_id == MPV_EVENT_IDLE) {
+        if (m_duration > 0 && m_position > 0) {
+            qDebug() << "End reached file!!!!";
+            emit endFileReached();
+        }
     }
     if(playerEvent->event_id == MPV_EVENT_PROPERTY_CHANGE) {
         auto eventData = static_cast<mpv_event_property*>(playerEvent->data);
@@ -458,8 +458,7 @@ void MpvObject::timerEvent(QTimerEvent *event)
             }
         }
 
-        //eof-reached
-        //seeking
+        //seeking ???
 
         if (propertyName == "pause") {
             m_paused = getBoolFromEventData(eventData->data);

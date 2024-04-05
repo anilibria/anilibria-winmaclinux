@@ -140,10 +140,12 @@ void OnlinePlayerWindowViewModel::changePlayer(const QString &player)
 
     m_isSelectedQtAv = nameQtAvPlayer == player;
     m_isSelectedVlc = nameVLCPlayer == player;
+    m_isSelectedMpv = nameMpvPlayer == player;
     m_selectedPlayer = player;
     emit isSelectedQtAvChanged();
     emit isSelectedVlcChanged();
     emit selectedPlayerChanged();
+    emit isSelectedMpvChanged();
 
     m_playerComponent = m_playerComponents.value(player);
     m_playerOutputComponent = m_playerOutputComponents.value(player);
