@@ -27,6 +27,12 @@ windows {
     DEFINES += USE_MPV_PLAYER
 }
 
+unixmpv {
+    CONFIG += link_pkgconfig
+    PKGCONFIG += mpv
+    CONFIG += buildwithmpv
+}
+
 unixvlc {
     CONFIG += link_pkgconfig
     PKGCONFIG += libvlc
