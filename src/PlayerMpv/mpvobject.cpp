@@ -1,5 +1,6 @@
 #include <stdexcept>
 #include <clocale>
+#include <cstring>
 #include <QObject>
 #include <QtGlobal>
 #include <QOpenGLContext>

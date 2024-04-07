@@ -4,8 +4,8 @@
 #include <QObject>
 #include <QtQuick/QQuickFramebufferObject>
 
-#include <client.h>
-#include <render_gl.h>
+#include <mpv/client.h>
+#include <mpv/render_gl.h>
 
 class MpvRenderer;
 
