@@ -218,7 +218,6 @@ Page {
                 const loadedVolumeState = onlinePlayerViewModel.volumeSlider;
                 if (loadedVolumeState >= 0) playerLoader.item.volume = loadedVolumeState;
                 playerLoader.item.muted = onlinePlayerViewModel.muted;
-                if (userConfigurationViewModel.isCroppedPlayer) playerLoader.item.fillMode = VideoOutput.PreserveAspectCrop;
             }
         }
 
