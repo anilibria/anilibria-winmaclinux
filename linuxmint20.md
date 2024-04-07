@@ -5,7 +5,7 @@
 
 **Этап 1. Устанавливаем зависимости необходимые для сборки**
 ```shell
-sudo apt install git build-essential qtdeclarative5-dev qtmultimedia5-dev libqt5multimedia5-plugins libqt5svg5-dev libqt5webview5-dev qtwebengine5-dev qml-module-qtgraphicaleffects  qml-module-qtquick-layouts qml-module-qtquick-dialogs qml-module-qtquick-controls qml-module-qtquick-controls2 qml-module-qt-labs-folderlistmodel qml-module-qt-labs-settings qml-module-qtmultimedia qml-module-qtwebview libqt5websockets5-dev qdbus-qt5 qdbus qtquickcontrols2-5-dev qml-module-qtquick-particles2 libvlccore-dev libvlc-dev vlc pkg-config
+sudo apt install git build-essential qtdeclarative5-dev qtmultimedia5-dev libqt5multimedia5-plugins libqt5svg5-dev libqt5webview5-dev qtwebengine5-dev qml-module-qtgraphicaleffects  qml-module-qtquick-layouts qml-module-qtquick-dialogs qml-module-qtquick-controls qml-module-qtquick-controls2 qml-module-qt-labs-folderlistmodel qml-module-qt-labs-settings qml-module-qtmultimedia qml-module-qtwebview libqt5websockets5-dev qdbus-qt5 qdbus qtquickcontrols2-5-dev qml-module-qtquick-particles2 libvlccore-dev libvlc-dev vlc libmpv-dev pkg-config
 ```
 **Этап 2. Создаем папку для проекта, переходим в нее и извлекаем исходники (предполагается что Вы находитесь в домашней папке)**
 ```shell
