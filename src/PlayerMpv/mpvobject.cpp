@@ -397,15 +397,27 @@ void MpvObject::seek(int position) noexcept
 void MpvObject::setCropMode() noexcept
 {
     auto elementWidth = width();
-    auto elementHeight = height();
 
-    auto value = QString::number(elementWidth) + "x" + QString::number(elementHeight) + "+0+0";
+    auto originalHeight = getMpvProperty("height").toInt();
+    auto originalWidth = getMpvProperty("width").toInt();
+
+    if (elementWidth >= originalWidth) {
+        //don't make sense
+        mpv_set_option_string(mpv, "video-crop", "");
+        return;
+    }
+
+    auto widthDifference = (originalWidth - elementWidth) / 2;
+    auto newWidth = originalWidth - widthDifference;
+    auto newHeight = originalHeight;
+
+    auto value = QString::number(newWidth) + "x" + QString::number(newHeight) + "+" + QString::number(widthDifference) + "+0";
     mpv_set_option_string(mpv, "video-crop", value.toStdString().c_str());
 }
 
 void MpvObject::revertCropMode() noexcept
 {
-    mpv_set_option_string(mpv, "video-crop", "0x0+0+0");
+    mpv_set_option_string(mpv, "video-crop", "");
 }
 
 void MpvObject::timerEvent(QTimerEvent *event)

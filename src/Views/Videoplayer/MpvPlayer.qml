@@ -34,7 +34,6 @@ Item {
     signal playerDurationChanged();
 
     onVolumeChanged: {
-        console.log("VolumeChanged" + root.volume);
         videoPlayer.volume = root.volume;
         playerVolumeChanged(root.volume);
     }
@@ -47,6 +46,14 @@ Item {
     onDefaultModeOutput: {
         videoPlayer.revertCropMode();
         root.isCropped = false;
+    }
+
+    onWidthChanged: {
+        if (root.isCropped) videoPlayer.setCropMode();
+    }
+
+    onHeightChanged: {
+        if (root.isCropped) videoPlayer.setCropMode();
     }
 
     onPlay: {
