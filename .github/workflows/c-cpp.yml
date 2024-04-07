@@ -10,7 +10,7 @@ jobs:
   ubuntuBuild:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - name: apt-update
       run: sudo apt-get update -qq
     - name: apt get qt
@@ -19,20 +19,12 @@ jobs:
       run: qmake -makefile -o src/Makefile src/AniLibria.pro
     - name: run make
       run: make -j2 -C src
-#    - name: copy to deb package
-#      run: mkdir specs/deb/tmp1/usr/bin; cp src/AniLibria specs/deb/tmp1/usr/bin
-#    - name: build deb package
-#      run: dpkg-deb -b specs/deb/tmp1 anilibria_amd64.deb
-#    - uses: actions/upload-artifact@v3
-#      with:
-#        name: deb-package
-#        path: anilibria_amd64.deb      
   macosbuild:
     runs-on: macos-12    
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - name: Install Qt dependencies
-      uses: jurplel/install-qt-action@v3
+      uses: jurplel/install-qt-action@v3.3
       with:
         version: 5.15.2
         target: 'desktop'
