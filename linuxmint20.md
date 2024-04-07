@@ -19,7 +19,15 @@ cd anilibria-winmaclinux/src/
 ```shell
 qmake CONFIG+=unixvlc
 ```
-Без VLC:
+Сборка с mpv:
+```shell
+qmake CONFIG+=unixmpv
+```
+Сборка с VLC и mpv:
+```shell
+qmake CONFIG+=unixvlc CONFIG+=unixmpv
+```
+Только со стандартным плеером:
 
 ```shell
 qmake

@@ -73,8 +73,9 @@ Page {
             onlinePlayerViewModel.toggleFullScreen();
         }
         if (event.key === Qt.Key_Up || event.key === Qt.Key_VolumeUp) {
-            if (playerLoader.item.volume < 1) playerLoader.item.volume += .1;
-            if (playerLoader.item.volume > 1) playerLoader.item.volume = 1;
+            let upPosition = playerLoader.item.volume + 10;
+            if (upPosition > 100) upPosition = 100;
+            playerLoader.item.volume = upPosition;
 
             volumeSlider.value = playerLoader.item.volume;
         }

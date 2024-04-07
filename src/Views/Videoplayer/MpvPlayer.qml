@@ -40,12 +40,12 @@ Item {
     }
 
     onCropModeOutput: {
-        //videoOutput.fillMode = VideoOutput.PreserveAspectCrop;
+        videoPlayer.setCropMode();
         root.isCropped = true;
     }
 
     onDefaultModeOutput: {
-        //videoOutput.fillMode = VideoOutput.PreserveAspectFit;
+        videoPlayer.revertCropMode();
         root.isCropped = false;
     }
 

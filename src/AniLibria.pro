@@ -28,9 +28,12 @@ windows {
 }
 
 unixmpv {
+    #CONFIG -= no_pkgconfig
     CONFIG += link_pkgconfig
     PKGCONFIG += mpv
     CONFIG += buildwithmpv
+    QMAKE_CXXFLAGS += $$system(pkg-config --cflags mpv)
+    DEFINES += USE_MPV_PLAYER
 }
 
 unixvlc {
