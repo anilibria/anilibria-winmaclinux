@@ -93,12 +93,6 @@ int main(int argc, char *argv[])
     QQuickWindow::setSceneGraphBackend("opengl");
 #endif
 
-#ifdef Q_OS_LINUX
-#ifdef USE_MPV_PLAYER
-    setlocale(LC_NUMERIC, "C");
-#endif
-#endif
-
 #ifdef Q_OS_WIN
     if (argc == 2 && QString(argv[1]) == "outputlog") {
         FreeConsole();

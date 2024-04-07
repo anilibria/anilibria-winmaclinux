@@ -24,7 +24,7 @@ class MpvObject : public QQuickFramebufferObject
 
 private:
     mpv_handle *mpv;
-    mpv_render_context *mpv_gl;
+    mpv_render_context *mpv_gl { nullptr };
     QString m_source;
     int m_volume { 100 };
     int m_checkTimer { 0 };
@@ -55,7 +55,10 @@ public:
     void setPlaybackRate(float playbackRate) noexcept;
 
     int playbackState() const noexcept { return 0; }
-    void setPlaybackState(int playbackState) noexcept { emit playbackStateChanged(); }
+    void setPlaybackState(int playbackState) noexcept {
+        Q_UNUSED(playbackState);
+        emit playbackStateChanged();
+    }
 
     int position() const noexcept { return m_position; }
     int duration() const noexcept { return m_duration; }

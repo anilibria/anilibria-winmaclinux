@@ -236,8 +236,10 @@ public:
 };
 
 MpvObject::MpvObject(QQuickItem * parent)
-    : QQuickFramebufferObject(parent), mpv{mpv_create()}, mpv_gl(nullptr)
+    : QQuickFramebufferObject(parent)
 {
+    setlocale(LC_NUMERIC, "C");
+    mpv = mpv_create();
     if (!mpv) throw std::runtime_error("could not create mpv context");
 
     mpv_set_option_string(mpv, "terminal", "yes");
