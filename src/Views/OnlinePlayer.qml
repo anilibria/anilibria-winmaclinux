@@ -80,11 +80,9 @@ Page {
             volumeSlider.value = playerLoader.item.volume;
         }
         if (event.key === Qt.Key_Down || event.key === Qt.Key_VolumeDown) {
-            let newVolume = playerLoader.item.volume;
-            if (newVolume > 0) newVolume -= .1;
-            if (newVolume < 0) newVolume = 0;
-
-            playerLoader.item.volume = newVolume;
+            let downPosition = playerLoader.item.volume - 10;
+            if (downPosition < 0) downPosition = 0;
+            playerLoader.item.volume = downPosition;
 
             volumeSlider.value = playerLoader.item.volume;
         }
@@ -250,7 +248,7 @@ Page {
         }
 
         function loaderVolumeChanged(value) {
-            //volumeSlider.value = value;
+            volumeSlider.value = value;
             onlinePlayerViewModel.volumeSlider = volumeSlider.value;
             if (userConfigurationViewModel.sendVolumeToRemote) onlinePlayerViewModel.broadcastVolume(onlinePlayerViewModel.volumeSlider);
         }
@@ -1520,6 +1518,6 @@ Page {
     }
 
     Component.onCompleted: {
-        //volumeSlider.value = playerLoader.item.volume * 100;
+        volumeSlider.value = playerLoader.item.volume;
     }
 }

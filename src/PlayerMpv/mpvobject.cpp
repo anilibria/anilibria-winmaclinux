@@ -238,7 +238,7 @@ public:
 MpvObject::MpvObject(QQuickItem * parent)
     : QQuickFramebufferObject(parent)
 {
-    setlocale(LC_NUMERIC, "C");
+    setlocale(LC_NUMERIC, "C"); //fix for linux/macos
     mpv = mpv_create();
     if (!mpv) throw std::runtime_error("could not create mpv context");
 
