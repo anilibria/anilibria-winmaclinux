@@ -63,6 +63,7 @@ class UserConfigurationViewModel : public QObject
     Q_PROPERTY(bool sendPlaybackToRemote READ sendPlaybackToRemote WRITE setSendPlaybackToRemote NOTIFY sendPlaybackToRemoteChanged)
     Q_PROPERTY(QString textFont READ textFont WRITE setTextFont NOTIFY textFontChanged)
     Q_PROPERTY(bool usingStrongProxy READ usingStrongProxy WRITE setUsingStrongProxy NOTIFY usingStrongProxyChanged FINAL)
+    Q_PROPERTY(bool usingVideoProxyMPV READ usingVideoProxyMPV WRITE setUsingVideoProxyMPV NOTIFY usingVideoProxyMPVChanged)
 
 private:
     QString m_cacheFileName { "userconfiguration.cache" };
@@ -104,6 +105,7 @@ private:
     const QString m_usingVideoProxyVLCField { "usingVideoProxyVLC" };
     const QString m_textFontField { "textFont" };
     const QString m_usingStrongProxyField { "usingStrongProxy" };
+    const QString m_usingVideoProxyMPVField { "usingVideoProxyMPV" };
     int m_opacityPlayerPanel { 50 };
     bool m_notCloseReleaseCardAfterWatch { false };
     bool m_usingScrollAcceleration { true };
@@ -142,6 +144,7 @@ private:
     bool m_usingVideoProxyVLC { false };
     QString m_textFont { "" };
     bool m_usingStrongProxy { false };
+    bool m_usingVideoProxyMPV { false };
 
 public:
     explicit UserConfigurationViewModel(QObject *parent = nullptr);
@@ -260,6 +263,9 @@ public:
     bool usingStrongProxy() const noexcept { return m_usingStrongProxy; }
     void setUsingStrongProxy(bool usingStrongProxy) noexcept;
 
+    bool usingVideoProxyMPV() const noexcept { return m_usingVideoProxyMPV; }
+    void setUsingVideoProxyMPV(bool usingVideoProxyMPV) noexcept;
+
     Q_INVOKABLE void refreshConfiguration() noexcept;
     Q_INVOKABLE void saveSettingsToFile();
 
@@ -306,6 +312,7 @@ signals:
     void usingVideoProxyVLCChanged();
     void textFontChanged();
     void usingStrongProxyChanged();
+    void usingVideoProxyMPVChanged();
 
 };
 

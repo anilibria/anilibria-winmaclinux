@@ -19,7 +19,6 @@
 import QtQuick 2.12
 import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.3
-import QtMultimedia 5.12
 import "../Controls"
 import "Videoplayer"
 
@@ -45,11 +44,11 @@ Page {
     }
 
     function togglePlayback() {
-        if (playerLoader.item.playbackState === MediaPlayer.PlayingState) {
+        if (playerLoader.item.isPlaying) {
             playerLoader.item.pause();
             return;
         }
-        if (playerLoader.item.playbackState === MediaPlayer.PausedState || playerLoader.item.playbackState === MediaPlayer.StoppedState) {
+        if (playerLoader.item.isPaused || playerLoader.item.isStopped) {
             playerLoader.item.play();
         }
     }
@@ -74,19 +73,18 @@ Page {
             onlinePlayerViewModel.toggleFullScreen();
         }
         if (event.key === Qt.Key_Up || event.key === Qt.Key_VolumeUp) {
-            if (playerLoader.item.volume < 1) playerLoader.item.volume += .1;
-            if (playerLoader.item.volume > 1) playerLoader.item.volume = 1;
+            let upPosition = playerLoader.item.volume + 10;
+            if (upPosition > 100) upPosition = 100;
+            playerLoader.item.volume = upPosition;
 
-            volumeSlider.value = playerLoader.item.volume * 100;
+            volumeSlider.value = playerLoader.item.volume;
         }
         if (event.key === Qt.Key_Down || event.key === Qt.Key_VolumeDown) {
-            let newVolume = playerLoader.item.volume;
-            if (newVolume > 0) newVolume -= .1;
-            if (newVolume < 0) newVolume = 0;
+            let downPosition = playerLoader.item.volume - 10;
+            if (downPosition < 0) downPosition = 0;
+            playerLoader.item.volume = downPosition;
 
-            playerLoader.item.volume = newVolume;
-
-            volumeSlider.value = playerLoader.item.volume * 100;
+            volumeSlider.value = playerLoader.item.volume;
         }
         if (event.key === Qt.Key_M || event.key === 1068 || event.key === Qt.Key_VolumeMute) playerLoader.item.muted = !playerLoader.item.muted;
         if ((event.key === Qt.Key_T || event.key === 1045) && !autoTopMost.checked) windowSettings.toggleStayOnTopMode();
@@ -107,7 +105,7 @@ Page {
         windowSettings.unsetStayOnTop();
         onlinePlayerViewModel.isFullScreen = false;
         const enableVideoPreview = !onlinePlayerWindowViewModel.isStandartPlayer || (onlinePlayerWindowViewModel.isStandartPlayer && onlinePlayerWindowViewModel.isQt515);
-        if (enableVideoPreview && playerLoader.item.playbackState === MediaPlayer.PlayingState && showVideoPreview.checked) {
+        if (enableVideoPreview && playerLoader.item.isPlaying && showVideoPreview.checked) {
             onlinePlayerWindow.showWindow();
         } else {
             playerLoader.item.pause();
@@ -119,7 +117,7 @@ Page {
         if (onlinePlayerWindowViewModel.opened) onlinePlayerWindow.hideWindow(false);
         onlinePlayerViewModel.isFromNavigated = true;
         const userSettings = JSON.parse(localStorage.getUserSettings());
-        playerLoader.item.volume = userSettings.volume;
+        playerLoader.item.volume = userSettings.volume < 1 ? 50 : userSettings.volume;
         autoNextVideo.checked = userSettings.autoNextVideo;
         autoTopMost.checked = userSettings.autoTopMost;
         jumpMinuteComboBox.currentIndex = onlinePlayerViewModel.jumpMinutes.indexOf(userSettings.jumpMinute);
@@ -128,7 +126,7 @@ Page {
         remotePlayerPortComboBox.currentIndex = onlinePlayerViewModel.ports.indexOf(userConfigurationViewModel.remotePort);
         showVideoPreview.checked = userSettings.showVideoPreview;
 
-        if (autoTopMost.checked && playerLoader.item.playbackState === MediaPlayer.PlayingState) windowSettings.setStayOnTop();
+        if (autoTopMost.checked && playerLoader.item.isPlaying) windowSettings.setStayOnTop();
         switch (userSettings.quality) {
             case 0:
                 onlinePlayerViewModel.videoQuality = "sd";
@@ -169,7 +167,7 @@ Page {
         anchors.fill: parent
         hoverEnabled: true
         onClicked: {
-            if (playerLoader.item.playbackState === MediaPlayer.PlayingState) {
+            if (playerLoader.item.isPlaying) {
                 if (controlPanel.opacity !== 1)playerTimer.restart();
                 _page.setControlVisible(!(controlPanel.opacity === 1));
             }
@@ -178,7 +176,7 @@ Page {
             onlinePlayerViewModel.toggleFullScreen();
         }
         onPositionChanged: {
-            if (!(playerLoader.item.playbackState === MediaPlayer.PlayingState)) {
+            if (!(playerLoader.item.isPlaying)) {
                 if (controlPanel.opacity === 0) _page.setControlVisible(true);
                 return;
             }
@@ -212,31 +210,30 @@ Page {
                 playerLoader.item.source = Qt.binding(function() { return onlinePlayerViewModel.videoSource; });
                 playerLoader.item.playbackRate = Qt.binding(function() { return onlinePlayerViewModel.playbackRate; });
 
-                playerLoader.item.playbackStateChanged.connect(loaderPlaybackStateChanged);
-                playerLoader.item.volumeChanged.connect(loaderVolumeChanged);
-                playerLoader.item.statusChanged.connect(loaderStatusChanged);
-                playerLoader.item.positionChanged.connect(loaderPositionChanged);
+                playerLoader.item.playerPlaybackStateChanged.connect(loaderPlaybackStateChanged);
+                playerLoader.item.playerVolumeChanged.connect(loaderVolumeChanged);
+                playerLoader.item.playerStatusChanged.connect(loaderStatusChanged);
+                playerLoader.item.playerPositionChanged.connect(loaderPositionChanged);
 
-                const loadedVolumeState = onlinePlayerViewModel.volumeSlider / 100;
+                const loadedVolumeState = onlinePlayerViewModel.volumeSlider;
                 if (loadedVolumeState >= 0) playerLoader.item.volume = loadedVolumeState;
                 playerLoader.item.muted = onlinePlayerViewModel.muted;
-                if (userConfigurationViewModel.isCroppedPlayer) playerLoader.item.fillMode = VideoOutput.PreserveAspectCrop;
             }
         }
 
-        function loaderPlaybackStateChanged() {
-            onlinePlayerViewModel.playerPlaybackState = playerLoader.item.playbackState;
+        function loaderPlaybackStateChanged(currentMode) {
+            onlinePlayerViewModel.playerPlaybackState = currentMode;
             const playbackState = onlinePlayerViewModel.playerPlaybackState;
-            if (playbackState === MediaPlayer.PlayingState && autoTopMost.checked) {
+            if (playbackState === "play" && autoTopMost.checked) {
                 windowSettings.setStayOnTop();
             } else {
                 if (autoTopMost.checked) windowSettings.unsetStayOnTop();
             }
 
-            releasePosterArea.visible = showReleaseInfo.checked && playbackState !== MediaPlayer.PlayingState;
-            playButton.visible = playbackState === MediaPlayer.PausedState || playbackState === MediaPlayer.StoppedState;
-            pauseButton.visible = playbackState === MediaPlayer.PlayingState;
-            if (playbackState === MediaPlayer.PlayingState) {
+            releasePosterArea.visible = showReleaseInfo.checked && playbackState !== "play";
+            playButton.visible = playbackState === "pause" || playbackState === "stop";
+            pauseButton.visible = playbackState === "play";
+            if (playbackState === "play") {
                 playerTimer.start();
             } else {
                 playerTimer.stop();
@@ -245,59 +242,55 @@ Page {
 
             if (!sendPlaybackToRemoteSwitch.checked) return;
 
-            if (playbackState === MediaPlayer.PlayingState) onlinePlayerViewModel.broadcastPlaybackState("play");
-            if (playbackState === MediaPlayer.PausedState) onlinePlayerViewModel.broadcastPlaybackState("pause");
+            if (playbackState === "play") onlinePlayerViewModel.broadcastPlaybackState("play");
+            if (playbackState === "pause") onlinePlayerViewModel.broadcastPlaybackState("pause");
         }
 
-        function loaderVolumeChanged() {
-            volumeSlider.value = playerLoader.item.volume * 100;
+        function loaderVolumeChanged(value) {
+            volumeSlider.value = value;
             onlinePlayerViewModel.volumeSlider = volumeSlider.value;
             if (userConfigurationViewModel.sendVolumeToRemote) onlinePlayerViewModel.broadcastVolume(onlinePlayerViewModel.volumeSlider);
         }
 
-        function loaderStatusChanged() {
-            const status = playerLoader.item.status;
-            if (status === MediaPlayer.Loading) onlinePlayerViewModel.isBuffering = true;
+        function loaderStatusChanged(value) {
+            const status = value;
 
-            if (status === MediaPlayer.EndOfMedia && autoNextVideo.checked) onlinePlayerViewModel.nextVideo();
+            if (status === "loading") onlinePlayerViewModel.isBuffering = true;
 
-            if (status === MediaPlayer.InvalidMedia) {
+            if (status === "endofmedia" && autoNextVideo.checked) onlinePlayerViewModel.nextVideo();
+
+            if (status === "invalid") {
                 console.log("InvalidMedia")
             }
 
-            if (status === MediaPlayer.Buffering) onlinePlayerViewModel.isBuffering = true;
+            if (status === "buffering") onlinePlayerViewModel.isBuffering = true;
 
-            if (status === MediaPlayer.Buffered) {
+            if (status === "buffered") {
                 onlinePlayerViewModel.isBuffering = false;
                 if (onlinePlayerViewModel.restorePosition > 0){
                     playerLoader.item.seek(onlinePlayerViewModel.restorePosition);
-                    console.log('playerLoader.item.seek(onlinePlayerViewModel.restorePosition);')
                     if (playerLoader.item.position >= onlinePlayerViewModel.restorePosition) onlinePlayerViewModel.restorePosition = 0;
                 } else {
                     if (onlinePlayerViewModel.isFromNavigated) {
                         onlinePlayerViewModel.isFromNavigated = false;
-
                         const videoPosition = onlinePlayerViewModel.getCurrentVideoSeenVideoPosition();
+                        console.log("buffered " + videoPosition);
                         if (videoPosition > 0) {
                             playerLoader.item.seek(videoPosition);
-                            console.log('playerLoader.item.seek(videoPosition);')
                         }
                     }
                 }
             }
         }
 
-        function loaderPositionChanged() {
-            const position = playerLoader.item.position;
-            const duration = playerLoader.item.duration;
-            const playBackState = playerLoader.item.playbackState;
-            const status = playerLoader.item.status;
+        function loaderPositionChanged(isBuffered, position, duration) {
+            const isPlaying = playerLoader.item.isPlaying;
 
             if (!playerLocation.pressed && onlinePlayerViewModel.lastMovedPosition === 0) playerLocation.value = position;
 
             onlinePlayerViewModel.changeVideoPosition(duration, position);
 
-            if (onlinePlayerViewModel.positionIterator < 20 && playBackState === MediaPlayer.PlayingState && status === MediaPlayer.Buffered) onlinePlayerViewModel.positionIterator++;
+            if (onlinePlayerViewModel.positionIterator < 20 && isPlaying && isBuffered) onlinePlayerViewModel.positionIterator++;
 
             if (onlinePlayerViewModel.positionIterator >= 20) {
                 onlinePlayerViewModel.positionIterator = 0;
@@ -521,7 +514,6 @@ Page {
                 onPressedChanged: {
                     if (!pressed && onlinePlayerViewModel.lastMovedPosition > 0) {
                         playerLoader.item.seek(onlinePlayerViewModel.lastMovedPosition);
-                        console.log('playerLoader.item.seek(onlinePlayerViewModel.lastMovedPosition);');
                         onlinePlayerViewModel.lastMovedPosition = 0;
                         onlinePlayerViewModel.broadcastVideoPosition(onlinePlayerViewModel.lastMovedPosition.toString() + `/` + playerLoader.item.duration.toString());                        
                     }
@@ -771,7 +763,7 @@ Page {
                             controlPanel.forceActiveFocus();
                         }
                         onMoved: {
-                            playerLoader.item.volume = value / 100;
+                            playerLoader.item.volume = Math.round(value);
                             if (playerLoader.item.muted) playerLoader.item.muted = false;
                         }
                     }
@@ -1328,15 +1320,10 @@ Page {
                         iconHeight: 29
                         tooltipMessage: "Включить режим обрезки видео потока"
                         onButtonPressed: {
-                            switch (playerLoader.item.fillMode) {
-                                case VideoOutput.PreserveAspectFit:
-                                    playerLoader.item.fillMode = VideoOutput.PreserveAspectCrop;
-                                    userConfigurationViewModel.isCroppedPlayer = true;
-                                    break;
-                                case VideoOutput.PreserveAspectCrop:
-                                    playerLoader.item.fillMode = VideoOutput.PreserveAspectFit;
-                                    userConfigurationViewModel.isCroppedPlayer = false;
-                                    break;
+                            if (playerLoader.item.isCropped) {
+                                playerLoader.item.defaultModeOutput();
+                            } else {
+                                playerLoader.item.cropModeOutput();
                             }
                         }
                     }
@@ -1530,6 +1517,6 @@ Page {
     }
 
     Component.onCompleted: {
-        volumeSlider.value = playerLoader.item.volume * 100;
+        volumeSlider.value = playerLoader.item.volume;
     }
 }

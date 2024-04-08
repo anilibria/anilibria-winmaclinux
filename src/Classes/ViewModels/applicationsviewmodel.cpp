@@ -97,6 +97,10 @@ void ApplicationsViewModel::installByIndex()
     QString osPath = "linux";
 #endif
 
+#ifdef Q_OS_FREEBSD
+    QString osPath = "linux";
+#endif
+
     osPath = osPath + (isArm ? "arm64" : "64");
     auto version = application->newVersion();
     qDebug() << "Install version: " << version;

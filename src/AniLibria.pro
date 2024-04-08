@@ -12,13 +12,28 @@ windows {
     LIBS += -L$$PWD/vlc-qt/vlc/ -llibvlc
     LIBS += -L$$PWD/vlc-qt/vlc/ -llibvlccore
 
+    LIBS += -L$$PWD/windows-mpv -llibmpv.dll
+
     INCLUDEPATH += $$PWD/vlc-qt/vlc/include
     DEPENDPATH += $$PWD/vlc-qt/vlc/include
+    INCLUDEPATH += $$PWD/windows-mpv
+    DEPENDPATH += $$PWD/windows-mpv
 
     CONFIG += buildwithvlc
+    CONFIG += buildwithmpv
     QT += av
     DEFINES += USE_QTAV_PLAYER
     DEFINES += NO_NEED_STANDART_PLAYER
+    DEFINES += USE_MPV_PLAYER
+}
+
+unixmpv {
+    CONFIG += link_pkgconfig
+    PKGCONFIG += mpv
+    CONFIG += buildwithmpv
+    QMAKE_CXXFLAGS += $$system(pkg-config --cflags mpv)
+    INCLUDEPATH += $$system(pkg-config --variable=includedir mpv)
+    DEFINES += USE_MPV_PLAYER
 }
 
 unixvlc {
@@ -32,6 +47,11 @@ unixvlc {
     DEPENDPATH += $$system(pkg-config --variable=includedir vlc-plugin)/plugins
 
     CONFIG += buildwithvlc
+}
+
+buildwithmpv {
+    SOURCES += PlayerMpv/mpvobject.cpp
+    HEADERS += PlayerMpv/mpvobject.h
 }
 
 buildwithvlc {

@@ -40,7 +40,11 @@ void createIfNotExistsCacheFile(const QString& fileName, const QString& defaultC
 
 QString removeFileProtocol(QString &path) noexcept
 {
-    return path.replace("file:///", "").replace("file://", "");
+#ifdef Q_OS_WIN
+    return path.replace("file:///", "");
+#else
+    return path.replace("file://", "");
+#endif
 }
 
 bool isRutubeHasVideos(const QString& videos) noexcept {

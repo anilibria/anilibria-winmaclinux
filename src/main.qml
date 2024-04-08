@@ -127,9 +127,9 @@ ApplicationWindow {
 
     header: Rectangle {
         id: toolBar
-        visible: window.visibility !== Window.FullScreen
+        visible: window.visibility !== Window.FullScreen && !windowSettings.isTopMost
         width: window.width
-        height: 35
+        height: toolBar.visible ? 35 : 0
         color: applicationThemeViewModel.notificationCenterBackground
 
         Rectangle {
@@ -903,7 +903,8 @@ ApplicationWindow {
         proxyPort: userConfigurationViewModel.playerBuffer
         needProxified: (
                 (userConfigurationViewModel.usingVideoProxy && onlinePlayerWindowViewModel.isSelectedQtAv) ||
-                (userConfigurationViewModel.usingVideoProxyVLC && onlinePlayerWindowViewModel.isSelectedVlc)
+                (userConfigurationViewModel.usingVideoProxyVLC && onlinePlayerWindowViewModel.isSelectedVlc) ||
+                (userConfigurationViewModel.usingVideoProxyMPV && onlinePlayerWindowViewModel.isSelectedMpv)
             ) &&
             torrentNotifierViewModel.activated
         needProxyFallback: userConfigurationViewModel.usingStrongProxy

@@ -1,5 +1,6 @@
 #include <stdexcept>
 #include <clocale>
+#include <cstring>
 #include <QObject>
 #include <QtGlobal>
 #include <QOpenGLContext>
@@ -198,7 +199,6 @@ public:
                 {MPV_RENDER_PARAM_OPENGL_INIT_PARAMS, &gl_init_params},
                 {MPV_RENDER_PARAM_INVALID, nullptr}
             };
-
             if (mpv_render_context_create(&obj->mpv_gl, obj->mpv, params) < 0) {
                 throw std::runtime_error("failed to initialize mpv GL context");
             }
@@ -217,33 +217,39 @@ public:
         #endif
 
         QOpenGLFramebufferObject *fbo = framebufferObject();
-        mpv_opengl_fbo mpfbo{.fbo = static_cast<int>(fbo->handle()), .w = fbo->width(), .h = fbo->height(), .internal_format = 0};
-        int flip_y{0};
+            mpv_opengl_fbo mpfbo{.fbo = static_cast<int>(fbo->handle()), .w = fbo->width(), .h = fbo->height(), .internal_format = 0};
+            int flip_y{0};
 
-        mpv_render_param params[] = {
-            {MPV_RENDER_PARAM_OPENGL_FBO, &mpfbo},
-            {MPV_RENDER_PARAM_FLIP_Y, &flip_y},
-            {MPV_RENDER_PARAM_INVALID, nullptr}
-        };
-        mpv_render_context_render(obj->mpv_gl, params);
+            mpv_render_param params[] = {
+                {MPV_RENDER_PARAM_OPENGL_FBO, &mpfbo},
+                {MPV_RENDER_PARAM_FLIP_Y, &flip_y},
+                {MPV_RENDER_PARAM_INVALID, nullptr}
+            };
+            mpv_render_context_render(obj->mpv_gl, params);
 
-        #if QT_VERSION > QT_VERSION_CHECK(6, 0, 0)
+#if QT_VERSION > QT_VERSION_CHECK(6, 0, 0)
             QQuickOpenGLUtils::resetOpenGLState();
-        #else
+#else
             obj->window()->resetOpenGLState();
         #endif
     }
 };
 
 MpvObject::MpvObject(QQuickItem * parent)
-    : QQuickFramebufferObject(parent), mpv{mpv_create()}, mpv_gl(nullptr)
+    : QQuickFramebufferObject(parent)
 {
+    setlocale(LC_NUMERIC, "C"); //fix for linux/macos
+    mpv = mpv_create();
     if (!mpv) throw std::runtime_error("could not create mpv context");
 
     mpv_set_option_string(mpv, "terminal", "yes");
     mpv_set_option_string(mpv, "msg-level", "all=v");
     mpv_set_option_string(mpv, "cache", "yes");
-    mpv_set_option_string(mpv, "cache-secs", "10");
+    mpv_set_option_string(mpv, "cache-secs", "15");
+    mpv_set_option_string(mpv, "network-timeout", "20");
+    mpv_set_option_string(mpv, "framedrop", "decoder");
+    mpv_set_option_string(mpv, "demuxer-termination-timeout", "5");
+    mpv_set_option_string(mpv, "demuxer-cache-wait", "yes");
 
     if (mpv_initialize(mpv) < 0) throw std::runtime_error("could not initialize mpv context");
 
@@ -253,6 +259,9 @@ MpvObject::MpvObject(QQuickItem * parent)
     mpv_observe_property(mpv, 0, "time-pos", MPV_FORMAT_DOUBLE);
     mpv_observe_property(mpv, 0, "mute", MPV_FORMAT_FLAG);
     mpv_observe_property(mpv, 0, "pause", MPV_FORMAT_FLAG);
+    mpv_observe_property(mpv, 0, "paused-for-cache", MPV_FORMAT_FLAG);
+
+    //crop=1280x720+0+0
 
     m_checkTimer = startTimer(100);
 
@@ -272,13 +281,9 @@ void MpvObject::on_update(void *ctx)
     emit self->onUpdate();
 }
 
-// connected to onUpdate(); signal makes sure it runs on the GUI thread
 void MpvObject::doUpdate()
 {
-    if (m_updateEnabled) {
-        qDebug() << "main doUpdate";
-        update();
-    }
+    update();
 }
 
 void MpvObject::command(const QVariant& params)
@@ -362,32 +367,57 @@ void MpvObject::setPlaybackRate(float playbackRate) noexcept
     emit playbackRateChanged();
 }
 
-void MpvObject::setUpdateEnabled(bool updateEnabled) noexcept
-{
-    if (m_updateEnabled == updateEnabled) return;
-
-    m_updateEnabled = updateEnabled;
-    emit updateEnabledChanged();
-}
-
 void MpvObject::play()
 {
     setMpvProperty("pause", false);
+    emit playbackChanged(playedPlayback);
 }
 
 void MpvObject::pause()
 {
     setMpvProperty("pause", true);
+    emit playbackChanged(pausedPlayback);
 }
 
 void MpvObject::stop()
 {
     setMpvProperty("pause", true);
+    emit playbackChanged(stopedPlayback);
 }
 
 void MpvObject::seek(int position) noexcept
 {
-    setMpvProperty("time-pos", position);
+    QStringList items;
+    items.append("seek");
+    items.append(QString::number(position / 1000));
+    items.append("absolute");
+    makeMpvCommand(QVariant(items));
+}
+
+void MpvObject::setCropMode() noexcept
+{
+    auto elementWidth = width();
+
+    auto originalHeight = getMpvProperty("height").toInt();
+    auto originalWidth = getMpvProperty("width").toInt();
+
+    if (elementWidth >= originalWidth) {
+        //don't make sense
+        mpv_set_option_string(mpv, "video-crop", "");
+        return;
+    }
+
+    auto widthDifference = (originalWidth - elementWidth) / 2;
+    auto newWidth = originalWidth - widthDifference;
+    auto newHeight = originalHeight;
+
+    auto value = QString::number(newWidth) + "x" + QString::number(newHeight) + "+" + QString::number(widthDifference) + "+0";
+    mpv_set_option_string(mpv, "video-crop", value.toStdString().c_str());
+}
+
+void MpvObject::revertCropMode() noexcept
+{
+    mpv_set_option_string(mpv, "video-crop", "");
 }
 
 void MpvObject::timerEvent(QTimerEvent *event)
@@ -401,13 +431,17 @@ void MpvObject::timerEvent(QTimerEvent *event)
         qDebug() << "File Started!!!!";
     }
     if(playerEvent->event_id == MPV_EVENT_FILE_LOADED) {
+        emit fileLoaded();
         qDebug() << "File Loaded!!!!";
-    }
-    if(playerEvent->event_id == MPV_EVENT_END_FILE) {
-        qDebug() << "End file!!!!";
     }
     if(playerEvent->event_id == MPV_EVENT_COMMAND_REPLY) {
         qDebug() << "Command reply!!!!";
+    }
+    if (playerEvent->event_id == MPV_EVENT_IDLE) {
+        if (m_duration > 0 && m_position > 0) {
+            qDebug() << "End reached file!!!!";
+            emit endFileReached();
+        }
     }
     if(playerEvent->event_id == MPV_EVENT_PROPERTY_CHANGE) {
         auto eventData = static_cast<mpv_event_property*>(playerEvent->data);
@@ -430,10 +464,21 @@ void MpvObject::timerEvent(QTimerEvent *event)
             }
         }
 
-        //eof-reached
-        //seeking
+        if (propertyName == "paused-for-cache") {
+            auto isBuffering = getBoolFromEventData(eventData->data);
+            if (isBuffering) {
+                emit startBuffering();
+            } else {
+                emit endBuffered();
+            }
+        }
 
-        if (propertyName == "pause") m_paused = getBoolFromEventData(eventData->data);
+        //seeking ???
+
+        if (propertyName == "pause") {
+            m_paused = getBoolFromEventData(eventData->data);
+            emit playbackChanged(m_paused ? pausedPlayback : playedPlayback);
+        }
     }
     //MPV_EVENT_GET_PROPERTY_REPLY, MPV_EVENT_SET_PROPERTY_REPLY
 
@@ -472,7 +517,11 @@ QVariant MpvObject::getMpvProperty(const QString &name)
 {
     mpv_node node;
     int err = mpv_get_property(mpv, name.toUtf8().data(), MPV_FORMAT_NODE, &node);
+#if QT_VERSION > QT_VERSION_CHECK(6, 0, 0)
     if (err < 0) return QVariant::fromValue(ErrorReturn(err));
+#else
+    if (err < 0) return QVariant::fromValue(err);
+#endif
     nodeAutoFree f(&node);
     return nodeToVariant(&node);
 }
@@ -513,7 +562,11 @@ QVariant MpvObject::makeMpvCommand(const QVariant &params)
     nodeBuilder node(params);
     mpv_node res;
     int err = mpv_command_node(mpv, node.node(), &res);
+#if QT_VERSION > QT_VERSION_CHECK(6, 0, 0)
     if (err < 0) return QVariant::fromValue(ErrorReturn(err));
+#else
+    if (err < 0) return QVariant::fromValue(err);
+#endif
     nodeAutoFree f(&res);
     return nodeToVariant(&res);
 }

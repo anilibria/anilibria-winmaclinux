@@ -18,20 +18,22 @@ class MpvObject : public QQuickFramebufferObject
     Q_PROPERTY(float playbackRate READ playbackRate WRITE setPlaybackRate NOTIFY playbackRateChanged)
     Q_PROPERTY(int position READ position NOTIFY positionChanged)
     Q_PROPERTY(int duration READ duration NOTIFY durationChanged)
-    Q_PROPERTY(bool updateEnabled READ updateEnabled WRITE setUpdateEnabled NOTIFY updateEnabledChanged)
+    Q_PROPERTY(int playbackState READ playbackState WRITE setPlaybackState NOTIFY playbackStateChanged)
 
     friend class MpvRenderer;
 
 private:
     mpv_handle *mpv;
-    mpv_render_context *mpv_gl;
+    mpv_render_context *mpv_gl { nullptr };
     QString m_source;
     int m_volume { 100 };
     int m_checkTimer { 0 };
     bool m_paused { false };
     int m_duration { 0 };
     int m_position { 0 };
-    bool m_updateEnabled { true };
+    const int pausedPlayback = 1;
+    const int playedPlayback = 2;
+    const int stopedPlayback = 3;
 
 public:
     static void on_update(void *ctx);
@@ -52,16 +54,21 @@ public:
     float playbackRate() noexcept;
     void setPlaybackRate(float playbackRate) noexcept;
 
+    int playbackState() const noexcept { return 0; }
+    void setPlaybackState(int playbackState) noexcept {
+        Q_UNUSED(playbackState);
+        emit playbackStateChanged();
+    }
+
     int position() const noexcept { return m_position; }
     int duration() const noexcept { return m_duration; }
-
-    bool updateEnabled() const noexcept { return m_updateEnabled; }
-    void setUpdateEnabled(bool updateEnabled) noexcept;
 
     Q_INVOKABLE void play();
     Q_INVOKABLE void pause();
     Q_INVOKABLE void stop();
     Q_INVOKABLE void seek(int position) noexcept;
+    Q_INVOKABLE void setCropMode() noexcept;
+    Q_INVOKABLE void revertCropMode() noexcept;
 
     void timerEvent(QTimerEvent *event) override;
 
@@ -82,7 +89,7 @@ private slots:
 
 public slots:
     void command(const QVariant& params);
-    void setProperty(const QString& name, const QVariant& value);    
+    void setProperty(const QString& name, const QVariant& value);
 
 signals:
     void onUpdate();
@@ -93,6 +100,12 @@ signals:
     void positionChanged();
     void durationChanged();
     void updateEnabledChanged();
+    void endFileReached();
+    void fileLoaded();
+    void startBuffering();
+    void endBuffered();
+    void playbackChanged(int newPlayback);
+    void playbackStateChanged();
 
 };
 
