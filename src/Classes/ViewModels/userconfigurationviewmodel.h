@@ -64,6 +64,8 @@ class UserConfigurationViewModel : public QObject
     Q_PROPERTY(QString textFont READ textFont WRITE setTextFont NOTIFY textFontChanged)
     Q_PROPERTY(bool usingStrongProxy READ usingStrongProxy WRITE setUsingStrongProxy NOTIFY usingStrongProxyChanged FINAL)
     Q_PROPERTY(bool usingVideoProxyMPV READ usingVideoProxyMPV WRITE setUsingVideoProxyMPV NOTIFY usingVideoProxyMPVChanged)
+    Q_PROPERTY(bool showVideoPreview READ showVideoPreview WRITE setShowVideoPreview NOTIFY showVideoPreviewChanged FINAL)
+    Q_PROPERTY(bool showReleaseInfo READ showReleaseInfo WRITE setShowReleaseInfo NOTIFY showReleaseInfoChanged FINAL)
 
 private:
     QString m_cacheFileName { "userconfiguration.cache" };
@@ -106,6 +108,8 @@ private:
     const QString m_textFontField { "textFont" };
     const QString m_usingStrongProxyField { "usingStrongProxy" };
     const QString m_usingVideoProxyMPVField { "usingVideoProxyMPV" };
+    const QString m_showVideoPreviewField { "showVideoPreview" };
+    const QString m_showReleaseInfoField { "showReleaseInfo" };
     int m_opacityPlayerPanel { 50 };
     bool m_notCloseReleaseCardAfterWatch { false };
     bool m_usingScrollAcceleration { true };
@@ -145,6 +149,8 @@ private:
     QString m_textFont { "" };
     bool m_usingStrongProxy { false };
     bool m_usingVideoProxyMPV { false };
+    bool m_showVideoPreview { false };
+    bool m_showReleaseInfo { false };
 
 public:
     explicit UserConfigurationViewModel(QObject *parent = nullptr);
@@ -266,6 +272,12 @@ public:
     bool usingVideoProxyMPV() const noexcept { return m_usingVideoProxyMPV; }
     void setUsingVideoProxyMPV(bool usingVideoProxyMPV) noexcept;
 
+    bool showVideoPreview() const noexcept { return m_showVideoPreview; }
+    void setShowVideoPreview(bool showVideoPreview) noexcept;
+
+    bool showReleaseInfo() const noexcept { return m_showReleaseInfo; }
+    void setShowReleaseInfo(bool showReleaseInfo) noexcept;
+
     Q_INVOKABLE void refreshConfiguration() noexcept;
     Q_INVOKABLE void saveSettingsToFile();
 
@@ -313,6 +325,8 @@ signals:
     void textFontChanged();
     void usingStrongProxyChanged();
     void usingVideoProxyMPVChanged();
+    void showVideoPreviewChanged();
+    void showReleaseInfoChanged();
 
 };
 

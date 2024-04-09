@@ -349,6 +349,22 @@ void UserConfigurationViewModel::setUsingVideoProxyMPV(bool usingVideoProxyMPV) 
     emit usingVideoProxyMPVChanged();
 }
 
+void UserConfigurationViewModel::setShowVideoPreview(bool showVideoPreview) noexcept
+{
+    if (m_showVideoPreview == showVideoPreview) return;
+
+    m_showVideoPreview = showVideoPreview;
+    emit showVideoPreviewChanged();
+}
+
+void UserConfigurationViewModel::setShowReleaseInfo(bool showReleaseInfo) noexcept
+{
+    if (m_showReleaseInfo == showReleaseInfo) return;
+
+    m_showReleaseInfo = showReleaseInfo;
+    emit showReleaseInfoChanged();
+}
+
 void UserConfigurationViewModel::refreshConfiguration() noexcept
 {
     readSettingsFromFile();
@@ -423,6 +439,8 @@ void UserConfigurationViewModel::saveSettingsToFile()
     object[m_textFontField] = m_textFont;
     object[m_usingStrongProxyField] = m_usingStrongProxy;
     object[m_usingVideoProxyMPVField] = m_usingVideoProxyMPV;
+    object[m_showVideoPreviewField] = m_showVideoPreview;
+    object[m_showReleaseInfoField] = m_showReleaseInfo;
 
     QFile file(getCachePath(m_cacheFileName));
     file.open(QFile::WriteOnly | QFile::Text);
@@ -478,6 +496,8 @@ void UserConfigurationViewModel::readSettingsFromFile()
     m_textFont = object.contains(m_textFontField) ? object[m_textFontField].toString() : "Default";
     m_usingStrongProxy = object.contains(m_usingStrongProxyField) ? object[m_usingStrongProxyField].toBool() : false;
     m_usingVideoProxyMPV = object.contains(m_usingVideoProxyMPVField) ? object[m_usingVideoProxyMPVField].toBool() : true;
+    m_showVideoPreview = object.contains(m_showVideoPreviewField) ? object[m_showVideoPreviewField].toBool() : false;
+    m_showReleaseInfo = object.contains(m_showReleaseInfoField) ? object[m_showReleaseInfoField].toBool() : true;
 
     if (m_textFont != "Default") changeFont(m_textFont);
 }

@@ -88,7 +88,7 @@ Page {
         windowSettings.unsetStayOnTop();
         onlinePlayerViewModel.isFullScreen = false;
         const enableVideoPreview = !onlinePlayerWindowViewModel.isStandartPlayer || (onlinePlayerWindowViewModel.isStandartPlayer && onlinePlayerWindowViewModel.isQt515);
-        if (enableVideoPreview && playerLoader.item.isPlaying && showVideoPreview.checked) {
+        if (enableVideoPreview && playerLoader.item.isPlaying && userConfigurationViewModel.showVideoPreview) {
             onlinePlayerWindow.showWindow();
         } else {
             playerLoader.item.pause();
@@ -105,9 +105,7 @@ Page {
         autoTopMost.checked = userSettings.autoTopMost;
         jumpMinuteComboBox.currentIndex = onlinePlayerViewModel.jumpMinutes.indexOf(userSettings.jumpMinute);
         jumpSecondComboBox.currentIndex = onlinePlayerViewModel.jumpSeconds.indexOf(userSettings.jumpSecond);
-        showReleaseInfo.checked = userSettings.showReleaseInfo;
         remotePlayerPortComboBox.currentIndex = onlinePlayerViewModel.ports.indexOf(userConfigurationViewModel.remotePort);
-        showVideoPreview.checked = userSettings.showVideoPreview;
 
         if (autoTopMost.checked && playerLoader.item.isPlaying) windowSettings.setStayOnTop();
         switch (userSettings.quality) {
@@ -1155,8 +1153,9 @@ Page {
 
                                 CommonSwitch {
                                     id: showReleaseInfo
+                                    checked: userConfigurationViewModel.showReleaseInfo
                                     onCheckedChanged: {
-                                        localStorage.setShowReleaseInfo(checked);
+                                        userConfigurationViewModel.showReleaseInfo = checked;
                                         if (!checked) releasePosterArea.visible = false;
                                     }
                                 }
@@ -1169,8 +1168,9 @@ Page {
 
                                 CommonSwitch {
                                     id: showVideoPreview
+                                    checked: userConfigurationViewModel.showVideoPreview
                                     onCheckedChanged: {
-                                        localStorage.setShowVideoPreview(checked);
+                                        userConfigurationViewModel.showVideoPreview = checked;
                                     }
                                 }
 
