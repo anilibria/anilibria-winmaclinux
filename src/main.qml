@@ -1373,6 +1373,7 @@ ApplicationWindow {
         id: onlinePlayerWindow
         videoSource: videoplayer.videoPlayerSource
         videoOutput: videoplayer.videoOutputSource
+        videoOrigin: videoplayer.videoOrigin
     }
 
     MyAnilibriaViewModel {

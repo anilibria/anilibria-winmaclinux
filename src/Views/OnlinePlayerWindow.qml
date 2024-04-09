@@ -1,26 +1,7 @@
-/*
-    AniLibria - desktop client for the website anilibria.tv
-    Copyright (C) 2021 Roman Vladimirov
-
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
 import QtQuick 2.12
 import QtQuick.Window 2.12
 import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.12
-import QtMultimedia 5.12
 import "../Controls"
 import "Videoplayer"
 
@@ -37,6 +18,7 @@ ApplicationWindow {
 
     property var videoSource
     property var videoOutput
+    property var videoOrigin
     property bool needLoadPlayer
 
     signal showWindow()
@@ -49,9 +31,9 @@ ApplicationWindow {
         if (onlinePlayerWindowViewModel.supportOutput) {
             root.videoSource.addNewVideoOuput(videoOutputLoader.item);
         }
-        root.videoSource.playbackStateChanged.connect(playbackStateChanged);
-        root.videoSource.volumeChanged.connect(volumeChanged);
-        volumeSlider.value = root.videoSource.volume * 100;
+        root.videoOrigin.playerPlaybackStateChanged.connect(playbackStateChanged);
+        root.videoOrigin.volumeChanged.connect(volumeChanged);
+        volumeSlider.value = root.videoOrigin.volume;
     }
 
     Loader {
@@ -83,7 +65,7 @@ ApplicationWindow {
             hideWindow(false);
         }
         onPositionChanged: {
-            if (!(root.videoSource.playbackState === MediaPlayer.PlayingState)) {
+            if (!root.videoOrigin.isPlaying) {
                 if (controlPanel.opacity === 0) onlinePlayerWindowViewModel.showPanel();
                 return;
             }
@@ -133,7 +115,7 @@ ApplicationWindow {
                         controlPanel.forceActiveFocus();
                     }
                     onMoved: {
-                        root.videoSource.volume = value / 100;
+                        root.videoOrigin.volume = value;
                     }
                 }
             }
@@ -170,7 +152,7 @@ ApplicationWindow {
                         iconWidth: 24
                         iconHeight: 24
                         onButtonPressed: {
-                            root.videoSource.play();
+                            root.videoOrigin.play();
                         }
                     }
                     IconButton {
@@ -183,7 +165,7 @@ ApplicationWindow {
                         iconWidth: 24
                         iconHeight: 24
                         onButtonPressed: {
-                            root.videoSource.pause();
+                            root.videoOrigin.pause();
                         }
                     }
 
@@ -259,13 +241,12 @@ ApplicationWindow {
         }
     }
 
-    function playbackStateChanged() {
-        onlinePlayerWindowViewModel.playbackStateChanged(root.videoSource.playbackState === MediaPlayer.PlayingState);
+    function playbackStateChanged(currentMode) {
+        onlinePlayerWindowViewModel.playbackStateChanged(currentMode === `play`);
     }
 
     function volumeChanged() {
-        volumeSlider.value = root.videoSource.volume * 100;
-        onlinePlayerViewModel.volumeSlider = volumeSlider.value;
+        volumeSlider.value = root.videoOrigin.volume;
     }
 
     onShowWindow:  {
@@ -279,7 +260,7 @@ ApplicationWindow {
         videoOutputLoader.item.visible = false;
         hide();
         onlinePlayerWindowViewModel.opened = false;
-        if (paused) root.videoSource.pause();
+        if (paused) root.videoOrigin.pause();
     }
 
     onClosing: {
@@ -287,7 +268,7 @@ ApplicationWindow {
     }
 
     onCloseWindow: {
-        root.videoSource.playbackStateChanged.disconnect(playbackStateChanged);
-        root.videoSource.volumeChanged.disconnect(volumeChanged);
+        root.videoOrigin.playerPlaybackStateChanged.disconnect(playbackStateChanged);
+        root.videoOrigin.volumeChanged.disconnect(volumeChanged);
     }
 }
