@@ -948,8 +948,7 @@ ApplicationWindow {
         }
         onPlayerPlaybackStateChanged: {
             //I'm using hardcode constant because multimedia module loading dynamically
-            const playingState = 1;
-            if (playerPlaybackState === playingState) {
+            if (playerPlaybackState === "play") {
                 osExtras.startPreventSleepMode();
             } else {
                 osExtras.stopPreventSleepMode();
@@ -957,6 +956,9 @@ ApplicationWindow {
         }
         onRutubeVideoIdChanged: {
             if (rutubeVideoId) Qt.openUrlExternally("https://rutube.ru/play/embed/" + rutubeVideoId);
+        }
+        onHidePanelIfItVisible: {
+            videoplayer.needHidePlayer();
         }
     }
 

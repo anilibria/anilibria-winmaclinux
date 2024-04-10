@@ -133,6 +133,7 @@ private:
     bool m_muted { false };
     bool m_endSkipOpening { false };
     bool m_needProxyFallback { false };
+    int m_panelTimerCounter { 0 };
 
 public:
     explicit OnlinePlayerViewModel(QObject *parent = nullptr);
@@ -303,6 +304,8 @@ public:
     Q_INVOKABLE void quickSetupForSingleDownloadedTorrent(const QStringList& files, int releaseId) noexcept;
     Q_INVOKABLE bool releaseHasVideos(int releaseId) noexcept;
     Q_INVOKABLE bool releaseIsRutube(int releaseId) noexcept;
+    Q_INVOKABLE void clearPanelTimer() noexcept;
+    Q_INVOKABLE void increasePanelTimer() noexcept;
 
 private:
     void saveVideoSeens();
@@ -380,6 +383,7 @@ signals:
     void mutedChanged();
     void endSkipOpeningChanged();
     void needProxyFallbackChanged();
+    void hidePanelIfItVisible();
 
 };
 

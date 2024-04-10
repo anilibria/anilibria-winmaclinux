@@ -1156,6 +1156,19 @@ bool OnlinePlayerViewModel::releaseIsRutube(int releaseId) noexcept
     return isRutubeHasVideos(release->videos());
 }
 
+void OnlinePlayerViewModel::clearPanelTimer() noexcept
+{
+    m_panelTimerCounter = 0;
+}
+
+void OnlinePlayerViewModel::increasePanelTimer() noexcept
+{
+    m_panelTimerCounter++;
+    if (m_panelTimerCounter > 15) {
+        emit hidePanelIfItVisible();
+    }
+}
+
 void OnlinePlayerViewModel::saveVideoSeens()
 {
     QJsonArray array;

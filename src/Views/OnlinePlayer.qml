@@ -17,6 +17,7 @@ Page {
     signal playInPlayer()
     signal stopInPlayer()
     signal playerCreated()
+    signal needHidePlayer()
 
     onPlayInPlayer: {
         playerLoader.item.play();
@@ -80,8 +81,8 @@ Page {
         if (event.key === Qt.Key_MediaTogglePlayPause) togglePlayback();
     }
 
-    onWindowNotActived: {
-        if (!playerTimer.running) playerTimer.restart();
+    onNeedHidePlayer: {
+        _page.setControlVisible(false);
     }
 
     onNavigateFrom: {
@@ -135,14 +136,6 @@ Page {
         color: "black"
     }
 
-    Timer {
-        id: playerTimer
-        interval: 2000
-        running: false
-        repeat: true
-        onTriggered: _page.setControlVisible(false)
-    }
-
     MouseArea {
         id: mainPlayerMouseArea
         anchors.fill: parent
@@ -162,15 +155,8 @@ Page {
                 return;
             }
 
+            onlinePlayerViewModel.clearPanelTimer();
             _page.setControlVisible(true);
-            const x = mouse.x;
-            const y = mouse.y;
-            onlinePlayerViewModel.lastMouseYPosition = y;
-            if (y > _page.height - controlPanel.height) {
-                playerTimer.stop();
-            } else {
-                playerTimer.restart();
-            }
         }
         onExited: {
             if (_page.height - onlinePlayerViewModel.lastMouseYPosition < 10) if (!playerTimer.running) playerTimer.restart();
@@ -215,10 +201,8 @@ Page {
             releasePosterArea.visible = showReleaseInfo.checked && playbackState !== "play";
             playButton.visible = playbackState === "pause" || playbackState === "stop";
             pauseButton.visible = playbackState === "play";
-            if (playbackState === "play") {
-                playerTimer.start();
-            } else {
-                playerTimer.stop();
+            if (playbackState !== "play") {
+                onlinePlayerViewModel.clearPanelTimer();
                 _page.setControlVisible(true);
             }
 
@@ -273,6 +257,8 @@ Page {
             onlinePlayerViewModel.changeVideoPosition(duration, position);
 
             if (onlinePlayerViewModel.positionIterator < 20 && isPlaying && isBuffered) onlinePlayerViewModel.positionIterator++;
+
+            if (isPlaying && isBuffered) onlinePlayerViewModel.increasePanelTimer();
 
             if (onlinePlayerViewModel.positionIterator >= 20) {
                 onlinePlayerViewModel.positionIterator = 0;
@@ -335,7 +321,7 @@ Page {
                                 anchors.fill: parent
                                 hoverEnabled: true
                                 onEntered: {
-                                    if (playerTimer.running) playerTimer.stop();
+                                    onlinePlayerViewModel.clearPanelTimer();
                                 }
                                 onClicked: {
                                     if (isGroup) return;
