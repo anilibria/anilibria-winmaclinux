@@ -113,7 +113,7 @@ Item {
             root.isPaused = false;
             root.isStopped = true;
 
-            playerStatusChanged("endofmedia");
+            if (videoPlayer.duration > 0 && videoPlayer.position > 0) playerStatusChanged("endofmedia");
         }
         onIsBufferingChanged: {
             if (isBuffering) {

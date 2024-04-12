@@ -465,6 +465,8 @@ QString OnlinePlayerViewModel::checkExistingVideoQuality(int index)
 
 void OnlinePlayerViewModel::nextVideo()
 {
+    if (m_selectedRelease == -1) return;
+
     setShowNextPosterRelease(false);
     setSeenMarkedAtEnd(false);
     setRestorePosition(0);
@@ -528,7 +530,6 @@ void OnlinePlayerViewModel::previousVideo()
     setIsFromNavigated(false);
 
     OnlineVideoModel* video;
-
     if (m_isCinemahall) {
         auto previousVideo = previousNotSeenVideo();
         if (previousVideo) {
@@ -677,7 +678,6 @@ void OnlinePlayerViewModel::quickSetupForSingleRelease(int releaseId, int custom
     auto firstVideo = m_videos->getVideoAtIndex(videoIndex);
 
     qDebug() << "firstVideo: " << firstVideo->order();
-
     setSelectedVideo(firstVideo->order());
     setIsFullHdAllowed(!firstVideo->fullhd().isEmpty());
     setVideoSource(getVideoFromQuality(firstVideo));
