@@ -66,6 +66,8 @@ class UserConfigurationViewModel : public QObject
     Q_PROPERTY(bool usingVideoProxyMPV READ usingVideoProxyMPV WRITE setUsingVideoProxyMPV NOTIFY usingVideoProxyMPVChanged)
     Q_PROPERTY(bool showVideoPreview READ showVideoPreview WRITE setShowVideoPreview NOTIFY showVideoPreviewChanged FINAL)
     Q_PROPERTY(bool showReleaseInfo READ showReleaseInfo WRITE setShowReleaseInfo NOTIFY showReleaseInfoChanged FINAL)
+    Q_PROPERTY(bool autoNextVideo READ autoNextVideo WRITE setAutoNextVideo NOTIFY autoNextVideoChanged FINAL)
+    Q_PROPERTY(bool autoPlayerTopMost READ autoPlayerTopMost WRITE setAutoPlayerTopMost NOTIFY autoPlayerTopMostChanged FINAL)
 
 private:
     QString m_cacheFileName { "userconfiguration.cache" };
@@ -110,6 +112,8 @@ private:
     const QString m_usingVideoProxyMPVField { "usingVideoProxyMPV" };
     const QString m_showVideoPreviewField { "showVideoPreview" };
     const QString m_showReleaseInfoField { "showReleaseInfo" };
+    const QString m_autoNextVideoField { "autoNextVideo" };
+    const QString m_autoPlayerTopMostField { "autoPlayerTopMost" };
     int m_opacityPlayerPanel { 50 };
     bool m_notCloseReleaseCardAfterWatch { false };
     bool m_usingScrollAcceleration { true };
@@ -151,6 +155,8 @@ private:
     bool m_usingVideoProxyMPV { false };
     bool m_showVideoPreview { false };
     bool m_showReleaseInfo { false };
+    bool m_autoNextVideo { false };
+    bool m_autoPlayerTopMost { false };
 
 public:
     explicit UserConfigurationViewModel(QObject *parent = nullptr);
@@ -278,6 +284,12 @@ public:
     bool showReleaseInfo() const noexcept { return m_showReleaseInfo; }
     void setShowReleaseInfo(bool showReleaseInfo) noexcept;
 
+    bool autoNextVideo() const noexcept { return m_autoNextVideo; }
+    void setAutoNextVideo(bool autoNextVideo) noexcept;
+
+    bool autoPlayerTopMost() const noexcept { return m_autoPlayerTopMost; }
+    void setAutoPlayerTopMost(bool autoPlayerTopMost) noexcept;
+
     Q_INVOKABLE void refreshConfiguration() noexcept;
     Q_INVOKABLE void saveSettingsToFile();
 
@@ -327,6 +339,8 @@ signals:
     void usingVideoProxyMPVChanged();
     void showVideoPreviewChanged();
     void showReleaseInfoChanged();
+    void autoNextVideoChanged();
+    void autoPlayerTopMostChanged();
 
 };
 

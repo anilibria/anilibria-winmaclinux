@@ -365,6 +365,22 @@ void UserConfigurationViewModel::setShowReleaseInfo(bool showReleaseInfo) noexce
     emit showReleaseInfoChanged();
 }
 
+void UserConfigurationViewModel::setAutoNextVideo(bool autoNextVideo) noexcept
+{
+    if (m_autoNextVideo == autoNextVideo) return;
+
+    m_autoNextVideo = autoNextVideo;
+    emit autoNextVideoChanged();
+}
+
+void UserConfigurationViewModel::setAutoPlayerTopMost(bool autoPlayerTopMost) noexcept
+{
+    if (m_autoPlayerTopMost == autoPlayerTopMost) return;
+
+    m_autoPlayerTopMost = autoPlayerTopMost;
+    emit autoPlayerTopMostChanged();
+}
+
 void UserConfigurationViewModel::refreshConfiguration() noexcept
 {
     readSettingsFromFile();
@@ -395,6 +411,8 @@ void UserConfigurationViewModel::refreshConfiguration() noexcept
     emit usingVideoProxyChanged();
     emit usingVideoProxyVLCChanged();
     emit textFontChanged();
+    emit autoNextVideoChanged();
+    emit autoPlayerTopMostChanged();
 }
 
 void UserConfigurationViewModel::saveSettingsToFile()
@@ -441,6 +459,8 @@ void UserConfigurationViewModel::saveSettingsToFile()
     object[m_usingVideoProxyMPVField] = m_usingVideoProxyMPV;
     object[m_showVideoPreviewField] = m_showVideoPreview;
     object[m_showReleaseInfoField] = m_showReleaseInfo;
+    object[m_autoNextVideoField] = m_autoNextVideo;
+    object[m_autoPlayerTopMostField] = m_autoPlayerTopMost;
 
     QFile file(getCachePath(m_cacheFileName));
     file.open(QFile::WriteOnly | QFile::Text);
@@ -498,6 +518,8 @@ void UserConfigurationViewModel::readSettingsFromFile()
     m_usingVideoProxyMPV = object.contains(m_usingVideoProxyMPVField) ? object[m_usingVideoProxyMPVField].toBool() : true;
     m_showVideoPreview = object.contains(m_showVideoPreviewField) ? object[m_showVideoPreviewField].toBool() : false;
     m_showReleaseInfo = object.contains(m_showReleaseInfoField) ? object[m_showReleaseInfoField].toBool() : true;
+    m_autoNextVideo = object.contains(m_autoNextVideoField) ? object[m_autoNextVideoField].toBool() : true;
+    m_autoPlayerTopMost = object.contains(m_autoPlayerTopMostField) ? object[m_autoPlayerTopMostField].toBool() : false;
 
     if (m_textFont != "Default") changeFont(m_textFont);
 }

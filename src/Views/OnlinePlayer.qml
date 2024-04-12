@@ -71,11 +71,11 @@ Page {
             volumeSlider.value = playerLoader.item.volume;
         }
         if (event.key === Qt.Key_M || event.key === 1068 || event.key === Qt.Key_VolumeMute) playerLoader.item.muted = !playerLoader.item.muted;
-        if ((event.key === Qt.Key_T || event.key === 1045) && !autoTopMost.checked) windowSettings.toggleStayOnTopMode();
+        if ((event.key === Qt.Key_T || event.key === 1045)) windowSettings.toggleStayOnTopMode();
         if (event.key === Qt.Key_Left) playerLoader.item.seek(onlinePlayerViewModel.jumpInPlayer(jumpMinuteComboBox.currentIndex, jumpSecondComboBox.currentIndex, true));
         if (event.key === Qt.Key_Right) playerLoader.item.seek(onlinePlayerViewModel.jumpInPlayer(jumpMinuteComboBox.currentIndex, jumpSecondComboBox.currentIndex, false));
-        if (event.key === Qt.Key_Home && !autoTopMost.checked) windowSettings.setStayOnTop();
-        if (event.key === Qt.Key_End && !autoTopMost.checked) windowSettings.unsetStayOnTop();
+        if (event.key === Qt.Key_Home) windowSettings.setStayOnTop();
+        if (event.key === Qt.Key_End) windowSettings.unsetStayOnTop();
         if (event.key === Qt.Key_Play) playerLoader.item.play();
         if (event.key === Qt.Key_MediaPause) playerLoader.item.pause();
         if (event.key === Qt.Key_MediaTogglePlayPause) togglePlayback();
@@ -102,13 +102,10 @@ Page {
         onlinePlayerViewModel.isFromNavigated = true;
         const userSettings = JSON.parse(localStorage.getUserSettings());
         playerLoader.item.volume = userSettings.volume < 1 ? 50 : userSettings.volume;
-        autoNextVideo.checked = userSettings.autoNextVideo;
-        autoTopMost.checked = userSettings.autoTopMost;
         jumpMinuteComboBox.currentIndex = onlinePlayerViewModel.jumpMinutes.indexOf(userSettings.jumpMinute);
         jumpSecondComboBox.currentIndex = onlinePlayerViewModel.jumpSeconds.indexOf(userSettings.jumpSecond);
         remotePlayerPortComboBox.currentIndex = onlinePlayerViewModel.ports.indexOf(userConfigurationViewModel.remotePort);
 
-        if (autoTopMost.checked && playerLoader.item.isPlaying) windowSettings.setStayOnTop();
         switch (userSettings.quality) {
             case 0:
                 onlinePlayerViewModel.videoQuality = "sd";
@@ -142,7 +139,6 @@ Page {
         hoverEnabled: true
         onClicked: {
             if (playerLoader.item.isPlaying) {
-                if (controlPanel.opacity !== 1)playerTimer.restart();
                 _page.setControlVisible(!(controlPanel.opacity === 1));
             }
         }
@@ -157,9 +153,6 @@ Page {
 
             onlinePlayerViewModel.clearPanelTimer();
             _page.setControlVisible(true);
-        }
-        onExited: {
-            if (_page.height - onlinePlayerViewModel.lastMouseYPosition < 10) if (!playerTimer.running) playerTimer.restart();
         }
     }
 
@@ -192,12 +185,6 @@ Page {
         function loaderPlaybackStateChanged(currentMode) {
             onlinePlayerViewModel.playerPlaybackState = currentMode;
             const playbackState = onlinePlayerViewModel.playerPlaybackState;
-            if (playbackState === "play" && autoTopMost.checked) {
-                windowSettings.setStayOnTop();
-            } else {
-                if (autoTopMost.checked) windowSettings.unsetStayOnTop();
-            }
-
             releasePosterArea.visible = showReleaseInfo.checked && playbackState !== "play";
             playButton.visible = playbackState === "pause" || playbackState === "stop";
             pauseButton.visible = playbackState === "play";
@@ -875,7 +862,6 @@ Page {
                         id: reloadButton
                         width: 40
                         height: 40
-                        visible: !autoTopMost.checked
                         hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
                         iconPath: applicationThemeViewModel.currentItems.iconPlayerRefresh
                         iconWidth: 29
@@ -890,7 +876,7 @@ Page {
                         id: topmostButton
                         width: 40
                         height: 40
-                        visible: !autoTopMost.checked && !mainViewModel.isSmallSizeMode
+                        visible: !mainViewModel.isSmallSizeMode
                         hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
                         iconPath: applicationThemeViewModel.currentItems.iconPlayerTopMost
                         iconWidth: 29
@@ -1112,22 +1098,9 @@ Page {
 
                                 CommonSwitch {
                                     id: autoNextVideo
+                                    checked: userConfigurationViewModel.autoNextVideo
                                     onCheckedChanged: {
-                                        localStorage.setAutoNextVideo(checked);
-                                    }
-                                }
-
-                                PlainText {
-                                    width: leftColumn.width - 20
-                                    fontPointSize: 10
-                                    text: "Автопереход в режим поверх всех окон"
-                                }
-
-                                CommonSwitch {
-                                    id: autoTopMost
-                                    onCheckedChanged: {
-                                        localStorage.setAutoTopMost(checked);
-                                        if (!checked) windowSettings.unsetStayOnTop()
+                                        userConfigurationViewModel.autoNextVideo = checked;
                                     }
                                 }
 
