@@ -923,6 +923,9 @@ ApplicationWindow {
             }
         }
         onNeedProxifiedChanged: {
+            console.log("userConfigurationViewModel.usingVideoProxyMPV", userConfigurationViewModel.usingVideoProxyMPV);
+            console.log("userConfigurationViewModel.isSelectedMpv", onlinePlayerWindowViewModel.isSelectedMpv);
+            console.log("torrentNotifierViewModel.activated", torrentNotifierViewModel.activated);
             let oldSource = onlinePlayerViewModel.videoSource;
             if (oldSource.indexOf('/proxyvideolist?path=')) {
                 oldSource = oldSource.substring(oldSource.indexOf("https://"));
