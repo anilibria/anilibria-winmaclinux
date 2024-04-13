@@ -44,7 +44,9 @@ OnlinePlayerWindowViewModel::OnlinePlayerWindowViewModel(QObject *parent) : QObj
     m_playerOutputComponent = m_playerOutputComponents.value(m_selectedPlayer);
     m_supportOutput = m_playerComponent == "Videoplayer/QtPlayer515.qml";
     m_isHasVlc = m_players.contains(nameVLCPlayer);
+    auto isHasMpv = m_players.contains(nameMpvPlayer);
     m_isSelectedVlc = m_isHasVlc;
+    if (!m_isHasVlc && isHasMpv) m_isSelectedMpv = true;
 }
 
 void OnlinePlayerWindowViewModel::setPlayerButtonVisible(const bool &playerButtonVisible) noexcept
