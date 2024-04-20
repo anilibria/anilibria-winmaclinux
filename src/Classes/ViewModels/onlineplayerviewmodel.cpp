@@ -153,7 +153,7 @@ void OnlinePlayerViewModel::setVideoSource(const QString &videoSource)
 
     auto isLocalFile = videoSource.startsWith("file://");
     auto needFallback = m_needProxyFallback ? "fallback=true&" : "";
-    auto source = !isLocalFile && m_needProxified && m_proxyPort > 0 ? QString("http://localhost:") + QString::number(m_proxyPort) + "/proxyvideolist?" + needFallback + "path=" + videoSource : videoSource;
+    auto source = !isLocalFile && !m_isStreamingTorrents && m_needProxified && m_proxyPort > 0 ? QString("http://localhost:") + QString::number(m_proxyPort) + "/proxyvideolist?" + needFallback + "path=" + videoSource : videoSource;
     if (m_videoSource == source) return;
 
     m_endSkipOpening = false;
@@ -423,6 +423,14 @@ void OnlinePlayerViewModel::setNeedProxyFallback(bool needProxyFallback) noexcep
     emit needProxyFallbackChanged();
 }
 
+void OnlinePlayerViewModel::setTorrentStream(const TorrentNotifierViewModel *torrentStream) noexcept
+{
+    if (m_torrentStream == torrentStream) return;
+
+    m_torrentStream = const_cast<TorrentNotifierViewModel *>(torrentStream);
+    emit torrentStreamChanged();
+}
+
 void OnlinePlayerViewModel::toggleFullScreen()
 {
     setIsFullScreen(!m_isFullScreen);
@@ -655,6 +663,7 @@ void OnlinePlayerViewModel::quickSetupForSingleRelease(int releaseId, int custom
     m_navigatePoster = release->poster();
     m_navigateVideos = release->videos();
     m_customPlaylistPosition = customPosition;
+    m_isStreamingTorrents = false;
 
     QDateTime timestamp;
     timestamp.setTime_t(release->timestamp());
@@ -700,6 +709,7 @@ void OnlinePlayerViewModel::quickSetupForSingleTorrentRelease(int releaseId, int
     m_navigatePoster = release->poster();
     m_navigateVideos = "";
     m_customPlaylistPosition = -1;
+    m_isStreamingTorrents = true;
 
     auto torents = release->torrents();
 
@@ -713,7 +723,7 @@ void OnlinePlayerViewModel::quickSetupForSingleTorrentRelease(int releaseId, int
     ReleaseTorrentModel torrent;
     torrent.readFromApiModel(torrentItem.toObject());
 
-    m_videos->setVideosFromSingleTorrent(torrent, releaseId, release->poster(), port);
+    m_videos->setVideosFromSingleTorrent(torrent, releaseId, release->poster(), port, m_torrentStream);
 
     setReleasePoster(m_navigatePoster);
     setSelectedRelease(m_navigateReleaseId);
@@ -744,6 +754,7 @@ void OnlinePlayerViewModel::quickSetupForSingleTorrentRelease(int releaseId, int
 
 void OnlinePlayerViewModel::quickSetupForMultipleRelease(const QList<int> releaseIds)
 {
+    m_isStreamingTorrents = false;
     QList<FullReleaseModel*> releases;
     foreach (auto releaseId, releaseIds) {
         releases.append(m_releasesViewModel->getReleaseById(releaseId));
@@ -783,6 +794,7 @@ void OnlinePlayerViewModel::quickSetupForFavoritesCinemahall()
     setShowNextPosterRelease(false);
     setIsCinemahall(true);
     setIsMultipleRelease(false);
+    m_isStreamingTorrents = false;
 
     QList<FullReleaseModel*> fullReleases;
     m_releasesViewModel->getFavoritesReleases(&fullReleases);
@@ -817,92 +829,13 @@ void OnlinePlayerViewModel::quickSetupForFavoritesCinemahall()
     emit saveToWatchHistory(video->releaseId());
 }
 
-void OnlinePlayerViewModel::setupForSingleRelease()
-{
-    setShowNextPosterRelease(false);
-    setSeenMarkedAtEnd(false);
-    setIsCinemahall(false);
-    setIsMultipleRelease(false);
-
-    m_videos->setVideosFromSingleList(m_navigateVideos, m_navigateReleaseId, m_navigatePoster);
-
-    setReleasePoster(m_navigatePoster);
-    setSelectedRelease(m_navigateReleaseId);
-
-    int videoIndex = 0;
-    if (m_seenModels->contains(m_navigateReleaseId)) {
-        auto model = m_seenModels->value(m_navigateReleaseId);
-        videoIndex = model->videoId();
-    }
-
-    if (m_customPlaylistPosition > -1) videoIndex = m_customPlaylistPosition;
-
-    auto firstVideo = m_videos->getVideoAtIndex(videoIndex);
-
-    setSelectedVideo(firstVideo->order());
-    setIsFullHdAllowed(!firstVideo->fullhd().isEmpty());
-    setVideoSource(getVideoFromQuality(firstVideo));
-    setRutubeIdentifier(firstVideo);
-
-    m_videos->selectVideo(m_selectedRelease, m_selectedVideo);
-
-    emit refreshSeenMarks();
-    emit playInPlayer();
-    emit saveToWatchHistory(m_navigateReleaseId);
-    emit needScrollSeriaPosition();
-
-    m_releasesViewModel->resetReleaseChanges(m_selectedRelease);
-}
-
-void OnlinePlayerViewModel::setupForMultipleRelease()
-{
-    auto selectedReleases = m_releasesViewModel->items()->getSelectedReleases();
-
-    QList<FullReleaseModel*> releases;
-
-    foreach (auto selectedRelease, *selectedReleases) {
-        releases.append(m_releasesViewModel->getReleaseById(selectedRelease));
-    }
-    foreach (auto fullRelease, releases) m_releasesViewModel->resetReleaseChanges(fullRelease->id());
-    setSeenMarkedAtEnd(false);
-    setShowNextPosterRelease(false);
-    setIsCinemahall(false);
-    setIsMultipleRelease(true);
-
-    m_videos->setVideosFromCinemahall(std::move(releases));
-
-    auto video = m_videos->getFirstReleaseWithPredicate(
-        [](OnlineVideoModel* video) {
-            return !video->isGroup();
-        }
-    );
-
-    if (video == nullptr) {
-        setVideoSource("");
-        clearRutubeIdentifier();
-        return;
-    }
-
-    setSelectedRelease(video->releaseId());
-    setReleasePoster(video->releasePoster());
-    setSelectedVideo(video->order());
-    setIsFullHdAllowed(!video->fullhd().isEmpty());
-    setVideoSource(getVideoFromQuality(video));
-    setRutubeIdentifier(video);
-    m_videos->selectVideo(m_selectedRelease, m_selectedVideo);
-
-    emit refreshSeenMarks();
-    emit playInPlayer();
-    emit needScrollSeriaPosition();
-    emit saveToWatchHistory(video->releaseId());
-}
-
 void OnlinePlayerViewModel::setupForCinemahall()
 {
     setSeenMarkedAtEnd(false);
     setShowNextPosterRelease(false);
     setIsCinemahall(true);
     setIsMultipleRelease(false);
+    m_isStreamingTorrents = false;
 
     auto fullReleases = m_releasesViewModel->cinemahall()->getCinemahallReleases();
     foreach (auto fullRelease, fullReleases) m_releasesViewModel->resetReleaseChanges(fullRelease->id());

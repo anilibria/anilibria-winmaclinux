@@ -27,6 +27,7 @@
 #include "../RemotePlayer/remoteplayer.h"
 #include "../Models/seenmodel.h"
 #include "../ViewModels/releasesviewmodel.h"
+#include "torrentnotifierviewmodel.h"
 
 class OnlinePlayerViewModel : public QObject
 {
@@ -78,6 +79,7 @@ class OnlinePlayerViewModel : public QObject
     Q_PROPERTY(int proxyPort READ proxyPort WRITE setProxyPort NOTIFY proxyPortChanged)
     Q_PROPERTY(bool muted READ muted WRITE setMuted NOTIFY mutedChanged)
     Q_PROPERTY(bool needProxyFallback READ needProxyFallback WRITE setNeedProxyFallback NOTIFY needProxyFallbackChanged FINAL)
+    Q_PROPERTY(TorrentNotifierViewModel* torrentStream READ torrentStream WRITE setTorrentStream NOTIFY torrentStreamChanged FINAL)
 
 private:
     bool m_isFullScreen;
@@ -134,6 +136,8 @@ private:
     bool m_endSkipOpening { false };
     bool m_needProxyFallback { false };
     int m_panelTimerCounter { 0 };
+    bool m_isStreamingTorrents { false };
+    TorrentNotifierViewModel* m_torrentStream { nullptr };
 
 public:
     explicit OnlinePlayerViewModel(QObject *parent = nullptr);
@@ -269,6 +273,9 @@ public:
     bool needProxyFallback() const noexcept { return m_needProxyFallback; }
     void setNeedProxyFallback(bool needProxyFallback) noexcept;
 
+    TorrentNotifierViewModel* torrentStream() const noexcept { return m_torrentStream; }
+    void setTorrentStream(const TorrentNotifierViewModel* torrentStream) noexcept;
+
     bool endSkipOpening() const noexcept { return m_endSkipOpening; }
 
     Q_INVOKABLE void toggleFullScreen();
@@ -284,8 +291,6 @@ public:
     Q_INVOKABLE void quickSetupForSingleTorrentRelease(int releaseId, int index, int port);
     Q_INVOKABLE void quickSetupForMultipleRelease(QList<int> releaseIds);
     Q_INVOKABLE void quickSetupForFavoritesCinemahall();
-    Q_INVOKABLE void setupForSingleRelease();
-    Q_INVOKABLE void setupForMultipleRelease();
     Q_INVOKABLE void setupForCinemahall();
     Q_INVOKABLE QString getReleasesSeenMarks(QList<int> ids);
     Q_INVOKABLE void selectVideo(int releaseId, int videoId);
@@ -384,6 +389,7 @@ signals:
     void endSkipOpeningChanged();
     void needProxyFallbackChanged();
     void hidePanelIfItVisible();
+    void torrentStreamChanged();
 
 };
 

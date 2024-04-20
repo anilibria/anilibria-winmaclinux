@@ -21,8 +21,6 @@ windows {
 
     CONFIG += buildwithvlc
     CONFIG += buildwithmpv
-    QT += av
-    DEFINES += USE_QTAV_PLAYER
     DEFINES += NO_NEED_STANDART_PLAYER
     DEFINES += USE_MPV_PLAYER
 }

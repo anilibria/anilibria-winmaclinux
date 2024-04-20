@@ -816,6 +816,16 @@ void ReleasesListModel::refreshSelectedItems()
     }
 }
 
+QVariantList ReleasesListModel::selectedIds()
+{
+    QVariantList result;
+    foreach (auto selectedRelease, *m_selectedReleases) {
+        result.append(selectedRelease);
+    }
+
+    return result;
+}
+
 void ReleasesListModel::removeTrimsInStringCollection(QStringList &list)
 {
     for (auto i = 0; i < list.count();i++) {

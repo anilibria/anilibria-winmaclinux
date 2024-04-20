@@ -18,6 +18,7 @@
 
 #include "onlineplayervideolist.h"
 #include "../../globalconstants.h"
+
 #include <QtGlobal>
 
 OnlinePlayerVideoList::OnlinePlayerVideoList(QObject *parent) : QAbstractListModel(parent),
@@ -263,7 +264,7 @@ void OnlinePlayerVideoList::setVideosFromDownloadedTorrent(const QStringList &fi
     endResetModel();
 }
 
-void OnlinePlayerVideoList::setVideosFromSingleTorrent(const ReleaseTorrentModel& torrent, int releaseId, const QString &poster, int port) noexcept
+void OnlinePlayerVideoList::setVideosFromSingleTorrent(const ReleaseTorrentModel& torrent, int releaseId, const QString &poster, int port, const TorrentNotifierViewModel* torrentStream) noexcept
 {
     beginResetModel();
 
@@ -294,7 +295,14 @@ void OnlinePlayerVideoList::setVideosFromSingleTorrent(const ReleaseTorrentModel
 
     for (auto i = 0; i < countSeries; i++) {
         auto videoModel = new OnlineVideoModel();
-        auto url = "http://localhost:" + QString::number(port) + "/online?id=" + QString::number(releaseId) + "&index=" + QString::number(i) + "&path=" + AnilibriaImagesPath + torrent.url();
+        auto downloadedPath = torrentStream->getDownloadedPath(AnilibriaImagesPath + torrent.url(), i);
+        qDebug() << "downloadedPath: " << downloadedPath;
+        QString url = "";
+        if (downloadedPath.isEmpty()) {
+            url = "http://localhost:" + QString::number(port) + "/online?id=" + QString::number(releaseId) + "&index=" + QString::number(i) + "&path=" + AnilibriaImagesPath + torrent.url();
+        } else {
+            url = downloadedPath;
+        }
         videoModel->setFullHd(url);
         videoModel->setHd(url);
         videoModel->setSd(url);

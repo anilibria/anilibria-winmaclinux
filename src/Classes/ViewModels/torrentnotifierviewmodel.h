@@ -74,6 +74,8 @@ public:
 
     DowloadedTorrentsListModel* torrents() const noexcept { return m_torrents; }
 
+    QString getDownloadedPath(const QString& url, int fileIndex) const noexcept;
+
     Q_INVOKABLE void startGetNotifiers();
     Q_INVOKABLE void closeConnectionsAndApplication();
     Q_INVOKABLE void tryStartTorrentStreamApplication();

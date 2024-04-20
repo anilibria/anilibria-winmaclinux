@@ -911,6 +911,7 @@ ApplicationWindow {
         sendVolumeToRemote: userConfigurationViewModel.sendVolumeToRemote
         sendPlaybackToRemoteSwitch: userConfigurationViewModel.sendPlaybackToRemote
         remotePlayer.port: userConfigurationViewModel.remotePort
+        torrentStream: torrentNotifierViewModel
         onIsFullScreenChanged: {
             if (isFullScreen) {
                 window.showFullScreen();
@@ -1031,17 +1032,6 @@ ApplicationWindow {
 
                 mainViewModel.selectPage("videoplayer");
                 onlinePlayerViewModel.quickSetupForSingleRelease(releaseId, startSeria);
-            }
-            onWatchCinemahall: {
-                mainViewModel.selectPage("videoplayer");
-                onlinePlayerViewModel.setupForCinemahall();
-            }
-            onWatchMultipleReleases: {
-                mainViewModel.selectPage("videoplayer");
-
-                onlinePlayerViewModel.setupForMultipleRelease();
-
-                releasesViewModel.clearSelectedReleases();
             }
         }
 
@@ -1432,21 +1422,12 @@ ApplicationWindow {
             torrentNotifierViewModel.startGetTorrentData();
         }
         onTorrentStreamNotConfigured: {
-            console.log("userConfigurationViewModel.usingVideoProxyMPV", userConfigurationViewModel.usingVideoProxyMPV);
-            console.log("userConfigurationViewModel.isSelectedMpv", onlinePlayerWindowViewModel.isSelectedMpv);
-            console.log("torrentNotifierViewModel.activated", torrentNotifierViewModel.activated);
             torrentNotifierViewModel.startGetNotifiers();
         }
         onTorrentStreamStarted: {
-            console.log("userConfigurationViewModel.usingVideoProxyMPV", userConfigurationViewModel.usingVideoProxyMPV);
-            console.log("userConfigurationViewModel.isSelectedMpv", onlinePlayerWindowViewModel.isSelectedMpv);
-            console.log("torrentNotifierViewModel.activated", torrentNotifierViewModel.activated);
             torrentNotifierViewModel.startGetNotifiers();
         }
         onActivatedChanged: {
-            console.log("userConfigurationViewModel.usingVideoProxyMPV", userConfigurationViewModel.usingVideoProxyMPV);
-            console.log("userConfigurationViewModel.isSelectedMpv", onlinePlayerWindowViewModel.isSelectedMpv);
-            console.log("torrentNotifierViewModel.activated", torrentNotifierViewModel.activated);
             if (activated) torrentNotifierViewModel.startGetTorrentData();
         }
         onPrepareWatchTorrentFiles: {

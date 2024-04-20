@@ -69,6 +69,21 @@ void TorrentNotifierViewModel::setReleasesViewModel(const ReleasesViewModel *vie
     emit releasesViewModelChanged();
 }
 
+QString TorrentNotifierViewModel::getDownloadedPath(const QString &url, int fileIndex) const noexcept
+{
+    auto iterator = std::find_if(
+        m_downloadedTorrents->cbegin(),
+        m_downloadedTorrents->cend(),
+        [url](const DownloadedTorrentModel* downloadedTorrent) {
+            return downloadedTorrent->downloadPath() == url;
+        }
+    );
+    if (iterator == m_downloadedTorrents->cend()) return "";
+
+    auto item = *iterator;
+    return item->getDownloadedFile(fileIndex);
+}
+
 void TorrentNotifierViewModel::startGetNotifiers()
 {
     m_webSocket->open(QUrl("ws://localhost:" + QString::number(m_port) + "/ws"));

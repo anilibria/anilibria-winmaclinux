@@ -684,15 +684,14 @@ ColumnLayout {
                                             onPressed: {
                                                 watchTorrent.close();
 
-                                                // TODO: if already downloaded torrent start watch local file
-
-                                                if (!onlinePlayerWindowViewModel.isHasVlc) {
+                                                if (!onlinePlayerWindowViewModel.isHasVlc && !onlinePlayerWindowViewModel.isHasMpv) {
                                                     vlcInfo.open();
                                                     return;
                                                 }
 
-                                                if (!onlinePlayerWindowViewModel.isSelectedVlc) {
-                                                    onlinePlayerWindowViewModel.changePlayer("VLC");
+                                                if (!onlinePlayerWindowViewModel.isSelectedVlc && !onlinePlayerWindowViewModel.isSelectedMpv) {
+                                                    if (onlinePlayerWindowViewModel.isHasVlc) onlinePlayerWindowViewModel.changePlayer("VLC");
+                                                    if (onlinePlayerWindowViewModel.isHasMpv) onlinePlayerWindowViewModel.changePlayer("mpv");
                                                 }
 
                                                 onlinePlayerViewModel.quickSetupForSingleTorrentRelease(releasesViewModel.openedReleaseId, identifier, userConfigurationViewModel.playerBuffer);
@@ -839,8 +838,8 @@ ColumnLayout {
 
     MessageModal {
         id: vlcInfo
-        header: "Плеер VLC не доступен"
-        message: "Ваша версия собрана без плеера VLC. К сожалению только плеер VLC умеет стримить торренты. Для возможности смотреть торрент необходимо собрать приложение с плеером VLC."
+        header: "Плееры VLC и mpv не доступны"
+        message: "Ваша версия собрана без плееров поддерживающих стриминг торрента - VLC или mpv. Для возможности смотреть торрент необходимо собрать приложение с плеером VLC и/или mpv."
         content: Row {
             spacing: 6
             anchors.right: parent.right

@@ -45,8 +45,6 @@ Page {
     signal refreshFavorites()
     signal refreshReleaseSchedules()
     signal navigateTo()
-    signal watchCinemahall()
-    signal watchMultipleReleases()
 
     Keys.onPressed: {
         if (event.key === Qt.Key_Escape) {
@@ -253,7 +251,8 @@ Page {
                             text: "Смотреть кинозал"
                             onPressed: {
                                 if (releasesViewModel.cinemahall.hasItems) {
-                                    watchCinemahall();
+                                    mainViewModel.selectPage("videoplayer");
+                                    onlinePlayerViewModel.setupForCinemahall();
                                 } else {
                                     notHaveCinemahallReleasesMessagePopup.open();
                                 }
@@ -1798,7 +1797,10 @@ Page {
             anchors.left: parent.left
             opacity: 0.8
             onClicked: {
-                watchMultipleReleases();
+                const releaseIds = releasesViewModel.items.selectedIds();
+                releasesViewModel.clearSelectedReleases();
+                onlinePlayerViewModel.quickSetupForMultipleRelease(releaseIds);
+                mainViewModel.selectPage("videoplayer");
             }
         }
 

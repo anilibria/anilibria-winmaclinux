@@ -33,6 +33,7 @@
 #include "../Models/onlinevideomodel.h"
 #include "../Models/releasetorrentmodel.h"
 #include "../ViewModels/releasesviewmodel.h"
+#include "../ViewModels/torrentnotifierviewmodel.h"
 
 class OnlinePlayerVideoList : public QAbstractListModel
 {
@@ -81,7 +82,7 @@ public:
     OnlineVideoModel* getFirstReleaseWithPredicate(std::function<bool(OnlineVideoModel*)> callback, bool isEndDirection = false) const noexcept;
 
     void setVideosFromDownloadedTorrent(const QStringList& files, int releaseId, const QString& poster) noexcept;
-    void setVideosFromSingleTorrent(const ReleaseTorrentModel& torrent, int releaseId, const QString& poster, int port) noexcept;
+    void setVideosFromSingleTorrent(const ReleaseTorrentModel& torrent, int releaseId, const QString& poster, int port, const TorrentNotifierViewModel* torrentStream) noexcept;
     void setVideosFromSingleList(const QString& json, int releaseId, const QString& poster) noexcept;
     void setVideosFromCinemahall(QList<FullReleaseModel*>&& releases) noexcept;
     void selectVideo(int releaseId, int videoId) noexcept;

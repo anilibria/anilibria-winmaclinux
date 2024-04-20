@@ -440,6 +440,16 @@ Page {
         Behavior on opacity {
             NumberAnimation { duration: 200 }
         }
+
+        MouseArea {
+            acceptedButtons: Qt.NoButton
+            hoverEnabled: true
+
+            onPositionChanged: {
+                onlinePlayerViewModel.clearPanelTimer();
+                _page.setControlVisible(true);
+            }
+        }
     }
 
     Item {
@@ -1386,12 +1396,7 @@ Page {
             onPressed: {
                 const nextReleaseId = releaseLinkedSeries.getNextLinkedRelease(onlinePlayerViewModel.selectedRelease);
                 if (nextReleaseId > 0) {
-                    onlinePlayerViewModel.customPlaylistPosition = -1;
-                    onlinePlayerViewModel.navigateReleaseId = nextReleaseId;
-                    onlinePlayerViewModel.navigateVideos = releasesViewModel.getReleaseVideos(nextReleaseId);
-                    onlinePlayerViewModel.navigatePoster = releasesViewModel.getReleasePoster(nextReleaseId);
-
-                    onlinePlayerViewModel.setupForSingleRelease();
+                    onlinePlayerViewModel.quickSetupForSingleRelease(nextReleaseId, -1);
                 }
             }
         }
