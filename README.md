@@ -119,7 +119,7 @@ $ flatpak install --user anilibria.flatpak
 ### Linux
 
 OpenSSL 1.1.1 и старше  
-GStreamer 1.10
+GStreamer 1.10  
 libmpv-2
 
 ```bash
