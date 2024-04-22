@@ -136,10 +136,15 @@ Page {
     MouseArea {
         id: mainPlayerMouseArea
         anchors.fill: parent
+        acceptedButtons: Qt.LeftButton | Qt.RightButton
         hoverEnabled: true
         onClicked: {
-            if (playerLoader.item.isPlaying) {
+            if (mouse.button === Qt.LeftButton && playerLoader.item.isPlaying) {
                 _page.setControlVisible(!(controlPanel.opacity === 1));
+            }
+            if (mouse.button === Qt.RightButton && playerLoader.item.isPlaying) {
+                onlinePlayerViewModel.clearPanelTimer();
+                _page.setControlVisible(true);
             }
         }
         onDoubleClicked: {
@@ -462,6 +467,15 @@ Page {
             id: controlPanelBackground
             anchors.fill: parent
             color: applicationThemeViewModel.currentItems.playerControlBackground
+        }
+
+        MouseArea {
+            anchors.fill: parent
+            acceptedButtons: Qt.NoButton
+            hoverEnabled: true
+            onEntered: {
+                onlinePlayerViewModel.clearPanelTimer();
+            }
         }
 
         Column {

@@ -689,16 +689,8 @@ ColumnLayout {
                                                     return;
                                                 }
 
-                                                if (!onlinePlayerWindowViewModel.isSelectedVlc && !onlinePlayerWindowViewModel.isSelectedMpv) {
-                                                    if (onlinePlayerWindowViewModel.isHasVlc) onlinePlayerWindowViewModel.changePlayer("VLC");
-                                                    if (onlinePlayerWindowViewModel.isHasMpv) onlinePlayerWindowViewModel.changePlayer("mpv");
-                                                }
-
-                                                onlinePlayerViewModel.quickSetupForSingleTorrentRelease(releasesViewModel.openedReleaseId, identifier, userConfigurationViewModel.playerBuffer);
-
-                                                releasePosterPreview.isVisible = false;
-
-                                                mainViewModel.selectPage("videoplayer");
+                                                torrentNotifierViewModel.lastRefreshIdentifier = identifier;
+                                                torrentNotifierViewModel.startGetTorrentData(true);
                                             }
                                         }
                                     }
@@ -814,6 +806,17 @@ ColumnLayout {
                 }
 
             }
+        }
+    }
+
+    Rectangle {
+        color: applicationThemeViewModel.pageBackground
+        opacity: .5
+        visible: torrentNotifierViewModel.needActivateRefreshEvent
+        Layout.fillWidth: true
+        Layout.fillHeight: true
+        MouseArea {
+            anchors.fill: parent
         }
     }
 

@@ -1419,7 +1419,7 @@ ApplicationWindow {
         releasesViewModel: releasesViewModel
         onTorrentFullyDownloaded: {
             notificationViewModel.sendInfoNotification("Торрент скачан " + releaseName);
-            torrentNotifierViewModel.startGetTorrentData();
+            torrentNotifierViewModel.startGetTorrentData(false);
         }
         onTorrentStreamNotConfigured: {
             torrentNotifierViewModel.startGetNotifiers();
@@ -1428,10 +1428,26 @@ ApplicationWindow {
             torrentNotifierViewModel.startGetNotifiers();
         }
         onActivatedChanged: {
-            if (activated) torrentNotifierViewModel.startGetTorrentData();
+            if (activated) torrentNotifierViewModel.startGetTorrentData(false);
         }
         onPrepareWatchTorrentFiles: {
             onlinePlayerViewModel.quickSetupForSingleDownloadedTorrent(files, releaseId);
+            mainViewModel.selectPage("videoplayer");
+        }
+        onTorrentsRefreshed: {
+            if (!onlinePlayerWindowViewModel.isSelectedVlc && !onlinePlayerWindowViewModel.isSelectedMpv) {
+                if (onlinePlayerWindowViewModel.isHasVlc) onlinePlayerWindowViewModel.changePlayer("VLC");
+                if (onlinePlayerWindowViewModel.isHasMpv) onlinePlayerWindowViewModel.changePlayer("mpv");
+            }
+
+            const torrentId = torrentNotifierViewModel.lastRefreshIdentifier;
+            torrentNotifierViewModel.lastRefreshIdentifier = -1;
+            onlinePlayerViewModel.quickSetupForSingleTorrentRelease(
+                releasesViewModel.openedReleaseId,
+                torrentId,
+                userConfigurationViewModel.playerBuffer
+            );
+
             mainViewModel.selectPage("videoplayer");
         }
         Component.onCompleted: {

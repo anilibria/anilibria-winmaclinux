@@ -39,7 +39,7 @@ Page {
                             iconHeight: 34
                             tooltipMessage: "Обновить список"
                             onButtonPressed: {
-                                torrentNotifierViewModel.startGetTorrentData();
+                                torrentNotifierViewModel.startGetTorrentData(false);
                             }
                         }
 
@@ -466,12 +466,6 @@ Page {
                         }
                     }
                 }
-            }
-
-            Component.onCompleted: {
-                if (!torrentNotifierViewModel.activated) return;
-
-                torrentNotifierViewModel.startGetTorrentData();
             }
         }
     }
