@@ -296,7 +296,6 @@ void OnlinePlayerVideoList::setVideosFromSingleTorrent(const ReleaseTorrentModel
     for (auto i = 0; i < countSeries; i++) {
         auto videoModel = new OnlineVideoModel();
         auto downloadedPath = torrentStream->getDownloadedPath(AnilibriaImagesPath + torrent.url(), i);
-        qDebug() << "downloadedPath: " << downloadedPath;
         QString url = "";
         if (downloadedPath.isEmpty()) {
             url = "http://localhost:" + QString::number(port) + "/online?id=" + QString::number(releaseId) + "&index=" + QString::number(i) + "&path=" + AnilibriaImagesPath + torrent.url();

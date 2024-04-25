@@ -516,8 +516,17 @@ Page {
                 width: controlPanel.width
 
                 PlainText {
+                    id: videoPositionText
                     text: onlinePlayerViewModel.displayVideoPosition
                     fontPointSize: 10
+                }
+
+                AccentText {
+                    visible: onlinePlayerViewModel.needProxified
+                    anchors.left: videoPositionText.right
+                    anchors.leftMargin: 10
+                    fontPointSize: 10
+                    text: "Проксируется"
                 }
 
                 Row {
