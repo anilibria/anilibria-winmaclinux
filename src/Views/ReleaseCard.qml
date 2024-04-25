@@ -684,22 +684,13 @@ ColumnLayout {
                                             onPressed: {
                                                 watchTorrent.close();
 
-                                                // TODO: if already downloaded torrent start watch local file
-
-                                                if (!onlinePlayerWindowViewModel.isHasVlc) {
+                                                if (!onlinePlayerWindowViewModel.isHasVlc && !onlinePlayerWindowViewModel.isHasMpv) {
                                                     vlcInfo.open();
                                                     return;
                                                 }
 
-                                                if (!onlinePlayerWindowViewModel.isSelectedVlc) {
-                                                    onlinePlayerWindowViewModel.changePlayer("VLC");
-                                                }
-
-                                                onlinePlayerViewModel.quickSetupForSingleTorrentRelease(releasesViewModel.openedReleaseId, identifier, userConfigurationViewModel.playerBuffer);
-
-                                                releasePosterPreview.isVisible = false;
-
-                                                mainViewModel.selectPage("videoplayer");
+                                                torrentNotifierViewModel.lastRefreshIdentifier = identifier;
+                                                torrentNotifierViewModel.startGetTorrentData(true);
                                             }
                                         }
                                     }
@@ -818,6 +809,17 @@ ColumnLayout {
         }
     }
 
+    Rectangle {
+        color: applicationThemeViewModel.pageBackground
+        opacity: .5
+        visible: torrentNotifierViewModel.needActivateRefreshEvent
+        Layout.fillWidth: true
+        Layout.fillHeight: true
+        MouseArea {
+            anchors.fill: parent
+        }
+    }
+
     MessageModal {
         id: torrentStreamInfo
         header: "Приложение TorrentStream не установлено"
@@ -839,8 +841,8 @@ ColumnLayout {
 
     MessageModal {
         id: vlcInfo
-        header: "Плеер VLC не доступен"
-        message: "Ваша версия собрана без плеера VLC. К сожалению только плеер VLC умеет стримить торренты. Для возможности смотреть торрент необходимо собрать приложение с плеером VLC."
+        header: "Плееры VLC и mpv не доступны"
+        message: "Ваша версия собрана без плееров поддерживающих стриминг торрента - VLC или mpv. Для возможности смотреть торрент необходимо собрать приложение с плеером VLC и/или mpv."
         content: Row {
             spacing: 6
             anchors.right: parent.right

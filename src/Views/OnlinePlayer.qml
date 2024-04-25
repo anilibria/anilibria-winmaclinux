@@ -136,10 +136,15 @@ Page {
     MouseArea {
         id: mainPlayerMouseArea
         anchors.fill: parent
+        acceptedButtons: Qt.LeftButton | Qt.RightButton
         hoverEnabled: true
         onClicked: {
-            if (playerLoader.item.isPlaying) {
+            if (mouse.button === Qt.LeftButton && playerLoader.item.isPlaying) {
                 _page.setControlVisible(!(controlPanel.opacity === 1));
+            }
+            if (mouse.button === Qt.RightButton && playerLoader.item.isPlaying) {
+                onlinePlayerViewModel.clearPanelTimer();
+                _page.setControlVisible(true);
             }
         }
         onDoubleClicked: {
@@ -440,6 +445,16 @@ Page {
         Behavior on opacity {
             NumberAnimation { duration: 200 }
         }
+
+        MouseArea {
+            acceptedButtons: Qt.NoButton
+            hoverEnabled: true
+
+            onPositionChanged: {
+                onlinePlayerViewModel.clearPanelTimer();
+                _page.setControlVisible(true);
+            }
+        }
     }
 
     Item {
@@ -452,6 +467,15 @@ Page {
             id: controlPanelBackground
             anchors.fill: parent
             color: applicationThemeViewModel.currentItems.playerControlBackground
+        }
+
+        MouseArea {
+            anchors.fill: parent
+            acceptedButtons: Qt.NoButton
+            hoverEnabled: true
+            onEntered: {
+                onlinePlayerViewModel.clearPanelTimer();
+            }
         }
 
         Column {
@@ -1386,12 +1410,7 @@ Page {
             onPressed: {
                 const nextReleaseId = releaseLinkedSeries.getNextLinkedRelease(onlinePlayerViewModel.selectedRelease);
                 if (nextReleaseId > 0) {
-                    onlinePlayerViewModel.customPlaylistPosition = -1;
-                    onlinePlayerViewModel.navigateReleaseId = nextReleaseId;
-                    onlinePlayerViewModel.navigateVideos = releasesViewModel.getReleaseVideos(nextReleaseId);
-                    onlinePlayerViewModel.navigatePoster = releasesViewModel.getReleasePoster(nextReleaseId);
-
-                    onlinePlayerViewModel.setupForSingleRelease();
+                    onlinePlayerViewModel.quickSetupForSingleRelease(nextReleaseId, -1);
                 }
             }
         }

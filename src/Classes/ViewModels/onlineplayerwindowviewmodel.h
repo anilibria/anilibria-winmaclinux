@@ -42,6 +42,7 @@ class OnlinePlayerWindowViewModel : public QObject
     Q_PROPERTY(bool isSelectedVlc READ isSelectedVlc NOTIFY isSelectedVlcChanged)
     Q_PROPERTY(QString startupPlayer READ startupPlayer WRITE setStartupPlayer NOTIFY startupPlayerChanged)
     Q_PROPERTY(bool isSelectedMpv READ isSelectedMpv NOTIFY isSelectedMpvChanged)
+    Q_PROPERTY(bool isHasMpv READ isHasMpv NOTIFY isHasMpvChanged)
 
 private:
     bool m_playerButtonVisible;
@@ -58,11 +59,11 @@ private:
     QMap<QString, QString> m_playerComponents { QMap<QString, QString>() };
     QMap<QString, QString> m_playerOutputComponents { QMap<QString, QString>() };
     bool m_isHasVlc { false };
+    bool m_isHasMpv { false };
     bool m_isSelectedQtAv { false };
     bool m_isSelectedVlc { false };
     bool m_isSelectedMpv { false };
     const QString nameVLCPlayer { "VLC" };
-    const QString nameQtAvPlayer { "QtAv" };
     const QString nameMpvPlayer { "mpv" };
     QString m_startupPlayer { "" };
     bool m_alreadyRestorePlayer { false };
@@ -95,6 +96,7 @@ public:
     bool isSelectedQtAv() const noexcept { return m_isSelectedQtAv; }
     bool isSelectedVlc() const noexcept { return m_isSelectedVlc; }
     bool isSelectedMpv() const noexcept { return m_isSelectedMpv; }
+    bool isHasMpv() const noexcept { return m_isHasMpv; }
 
     QString startupPlayer() const noexcept { return m_startupPlayer; }
     void setStartupPlayer(const QString& startupPlayer) noexcept;
@@ -107,6 +109,7 @@ public:
 
 private:
     void fillSupportedPlayers();
+    void fillSelectedPlayer();
 
 signals:
     void playerButtonVisibleChanged();
@@ -126,6 +129,7 @@ signals:
     void isSelectedVlcChanged();
     void startupPlayerChanged();
     void isSelectedMpvChanged();
+    void isHasMpvChanged();
 
 };
 

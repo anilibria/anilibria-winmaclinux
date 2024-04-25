@@ -911,6 +911,7 @@ ApplicationWindow {
         sendVolumeToRemote: userConfigurationViewModel.sendVolumeToRemote
         sendPlaybackToRemoteSwitch: userConfigurationViewModel.sendPlaybackToRemote
         remotePlayer.port: userConfigurationViewModel.remotePort
+        torrentStream: torrentNotifierViewModel
         onIsFullScreenChanged: {
             if (isFullScreen) {
                 window.showFullScreen();
@@ -1031,17 +1032,6 @@ ApplicationWindow {
 
                 mainViewModel.selectPage("videoplayer");
                 onlinePlayerViewModel.quickSetupForSingleRelease(releaseId, startSeria);
-            }
-            onWatchCinemahall: {
-                mainViewModel.selectPage("videoplayer");
-                onlinePlayerViewModel.setupForCinemahall();
-            }
-            onWatchMultipleReleases: {
-                mainViewModel.selectPage("videoplayer");
-
-                onlinePlayerViewModel.setupForMultipleRelease();
-
-                releasesViewModel.clearSelectedReleases();
             }
         }
 
@@ -1429,28 +1419,35 @@ ApplicationWindow {
         releasesViewModel: releasesViewModel
         onTorrentFullyDownloaded: {
             notificationViewModel.sendInfoNotification("Торрент скачан " + releaseName);
-            torrentNotifierViewModel.startGetTorrentData();
+            torrentNotifierViewModel.startGetTorrentData(false);
         }
         onTorrentStreamNotConfigured: {
-            console.log("userConfigurationViewModel.usingVideoProxyMPV", userConfigurationViewModel.usingVideoProxyMPV);
-            console.log("userConfigurationViewModel.isSelectedMpv", onlinePlayerWindowViewModel.isSelectedMpv);
-            console.log("torrentNotifierViewModel.activated", torrentNotifierViewModel.activated);
             torrentNotifierViewModel.startGetNotifiers();
         }
         onTorrentStreamStarted: {
-            console.log("userConfigurationViewModel.usingVideoProxyMPV", userConfigurationViewModel.usingVideoProxyMPV);
-            console.log("userConfigurationViewModel.isSelectedMpv", onlinePlayerWindowViewModel.isSelectedMpv);
-            console.log("torrentNotifierViewModel.activated", torrentNotifierViewModel.activated);
             torrentNotifierViewModel.startGetNotifiers();
         }
         onActivatedChanged: {
-            console.log("userConfigurationViewModel.usingVideoProxyMPV", userConfigurationViewModel.usingVideoProxyMPV);
-            console.log("userConfigurationViewModel.isSelectedMpv", onlinePlayerWindowViewModel.isSelectedMpv);
-            console.log("torrentNotifierViewModel.activated", torrentNotifierViewModel.activated);
-            if (activated) torrentNotifierViewModel.startGetTorrentData();
+            if (activated) torrentNotifierViewModel.startGetTorrentData(false);
         }
         onPrepareWatchTorrentFiles: {
             onlinePlayerViewModel.quickSetupForSingleDownloadedTorrent(files, releaseId);
+            mainViewModel.selectPage("videoplayer");
+        }
+        onTorrentsRefreshed: {
+            if (!onlinePlayerWindowViewModel.isSelectedVlc && !onlinePlayerWindowViewModel.isSelectedMpv) {
+                if (onlinePlayerWindowViewModel.isHasVlc) onlinePlayerWindowViewModel.changePlayer("VLC");
+                if (onlinePlayerWindowViewModel.isHasMpv) onlinePlayerWindowViewModel.changePlayer("mpv");
+            }
+
+            const torrentId = torrentNotifierViewModel.lastRefreshIdentifier;
+            torrentNotifierViewModel.lastRefreshIdentifier = -1;
+            onlinePlayerViewModel.quickSetupForSingleTorrentRelease(
+                releasesViewModel.openedReleaseId,
+                torrentId,
+                userConfigurationViewModel.playerBuffer
+            );
+
             mainViewModel.selectPage("videoplayer");
         }
         Component.onCompleted: {

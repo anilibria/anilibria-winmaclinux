@@ -41,6 +41,8 @@ class TorrentNotifierViewModel : public QObject
     Q_PROPERTY(int port READ port WRITE setPort NOTIFY portChanged)
     Q_PROPERTY(ReleasesViewModel* releasesViewModel READ releasesViewModel WRITE setReleasesViewModel NOTIFY releasesViewModelChanged)
     Q_PROPERTY(DowloadedTorrentsListModel* torrents READ torrents NOTIFY torrentsChanged)
+    Q_PROPERTY(bool needActivateRefreshEvent READ needActivateRefreshEvent NOTIFY needActivateRefreshEventChanged FINAL)
+    Q_PROPERTY(int lastRefreshIdentifier READ lastRefreshIdentifier WRITE setLastRefreshIdentifier NOTIFY lastRefreshIdentifierChanged FINAL)
 
 private:
     QWebSocket* m_webSocket;
@@ -54,6 +56,8 @@ private:
     int m_port { 0 };
     ReleasesViewModel* m_releasesViewModel { nullptr };
     DowloadedTorrentsListModel* m_torrents { new DowloadedTorrentsListModel(this) };
+    bool m_needActivateRefreshEvent { false };
+    int m_lastRefreshIdentifier { -1 };
 
 public:
     explicit TorrentNotifierViewModel(QObject *parent = nullptr);
@@ -74,10 +78,17 @@ public:
 
     DowloadedTorrentsListModel* torrents() const noexcept { return m_torrents; }
 
+    bool needActivateRefreshEvent() const noexcept { return m_needActivateRefreshEvent; }
+
+    QString getDownloadedPath(const QString& url, int fileIndex) const noexcept;
+
+    int lastRefreshIdentifier() const noexcept { return m_lastRefreshIdentifier; }
+    void setLastRefreshIdentifier(int lastRefreshIdentifier) noexcept;
+
     Q_INVOKABLE void startGetNotifiers();
     Q_INVOKABLE void closeConnectionsAndApplication();
     Q_INVOKABLE void tryStartTorrentStreamApplication();
-    Q_INVOKABLE void startGetTorrentData();
+    Q_INVOKABLE void startGetTorrentData(bool needNotify);
     Q_INVOKABLE void clearAllData();
     Q_INVOKABLE void watchDownloadedTorrents(int index) noexcept;
     Q_INVOKABLE void clearOnlyTorrent(const QString& path) noexcept;
@@ -104,6 +115,9 @@ signals:
     void releasesViewModelChanged();
     void torrentsChanged();
     void prepareWatchTorrentFiles(QStringList files, int releaseId);
+    void torrentsRefreshed();
+    void needActivateRefreshEventChanged();
+    void lastRefreshIdentifierChanged();
 
 };
 

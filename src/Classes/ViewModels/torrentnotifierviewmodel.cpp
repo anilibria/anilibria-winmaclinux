@@ -69,6 +69,29 @@ void TorrentNotifierViewModel::setReleasesViewModel(const ReleasesViewModel *vie
     emit releasesViewModelChanged();
 }
 
+QString TorrentNotifierViewModel::getDownloadedPath(const QString &url, int fileIndex) const noexcept
+{
+    auto iterator = std::find_if(
+        m_downloadedTorrents->cbegin(),
+        m_downloadedTorrents->cend(),
+        [url](const DownloadedTorrentModel* downloadedTorrent) {
+            return downloadedTorrent->downloadPath() == url;
+        }
+    );
+    if (iterator == m_downloadedTorrents->cend()) return "";
+
+    auto item = *iterator;
+    return item->getDownloadedFile(fileIndex);
+}
+
+void TorrentNotifierViewModel::setLastRefreshIdentifier(int lastRefreshIdentifier) noexcept
+{
+    if (m_lastRefreshIdentifier == lastRefreshIdentifier) return;
+
+    m_lastRefreshIdentifier = lastRefreshIdentifier;
+    emit lastRefreshIdentifierChanged();
+}
+
 void TorrentNotifierViewModel::startGetNotifiers()
 {
     m_webSocket->open(QUrl("ws://localhost:" + QString::number(m_port) + "/ws"));
@@ -115,8 +138,9 @@ void TorrentNotifierViewModel::tryStartTorrentStreamApplication()
     }
 }
 
-void TorrentNotifierViewModel::startGetTorrentData()
+void TorrentNotifierViewModel::startGetTorrentData(bool needNotify)
 {
+    m_needActivateRefreshEvent = needNotify;
     getTorrentData();
 }
 
@@ -222,6 +246,8 @@ void TorrentNotifierViewModel::socketDisconnected()
 
 void TorrentNotifierViewModel::requestResponse(QNetworkReply *reply)
 {
+    auto isNeedNotify = m_needActivateRefreshEvent;
+    m_needActivateRefreshEvent = false;
     if (m_releasesViewModel == nullptr) return;
     if (m_downloadedTorrents == nullptr) return;
 
@@ -266,6 +292,7 @@ void TorrentNotifierViewModel::requestResponse(QNetworkReply *reply)
         }
 
         m_torrents->refresh();
+        if (isNeedNotify) emit torrentsRefreshed();
     }
 }
 

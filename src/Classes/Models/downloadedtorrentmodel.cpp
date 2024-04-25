@@ -53,6 +53,17 @@ QStringList DownloadedTorrentModel::getFiles() const noexcept
     return result;
 }
 
+QString DownloadedTorrentModel::getDownloadedFile(int index) const noexcept
+{
+    if (index >= m_files.size()) return "";
+
+    auto file = m_files[index];
+    auto isDownloaded = std::get<0>(file);
+    if (!isDownloaded) return "";
+
+    return std::get<2>(file);
+}
+
 void DownloadedTorrentModel::resetData()
 {
     m_files.clear();

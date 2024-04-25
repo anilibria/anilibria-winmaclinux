@@ -245,7 +245,7 @@ MpvObject::MpvObject(QQuickItem * parent)
     mpv_set_option_string(mpv, "terminal", "yes");
     mpv_set_option_string(mpv, "msg-level", "all=v");
     mpv_set_option_string(mpv, "cache", "yes");
-    mpv_set_option_string(mpv, "cache-secs", "15");
+    mpv_set_option_string(mpv, "cache-secs", "20");
     mpv_set_option_string(mpv, "network-timeout", "20");
     mpv_set_option_string(mpv, "framedrop", "decoder");
     mpv_set_option_string(mpv, "demuxer-termination-timeout", "5");
@@ -253,7 +253,7 @@ MpvObject::MpvObject(QQuickItem * parent)
 
     if (mpv_initialize(mpv) < 0) throw std::runtime_error("could not initialize mpv context");
 
-    mpv_set_option_string(mpv, "hwdec", "auto");
+    mpv_set_option_string(mpv, "hwdec", "auto-safe");
 
     mpv_observe_property(mpv, 0, "duration", MPV_FORMAT_DOUBLE);
     mpv_observe_property(mpv, 0, "time-pos", MPV_FORMAT_DOUBLE);

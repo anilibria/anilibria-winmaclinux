@@ -57,6 +57,8 @@ public:
 
     QStringList getFiles() const noexcept;
 
+    QString getDownloadedFile(int index) const noexcept;
+
     void resetData();
 };
 

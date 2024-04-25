@@ -50,6 +50,7 @@ Item {
         id: mouseArea
         hoverEnabled: true
         anchors.fill: parent
+        preventStealing: true
         acceptedButtons: Qt.LeftButton | Qt.RightButton
         onEntered: {
             imageRectangle.color = _button.hoverColor;
