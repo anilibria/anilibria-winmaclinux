@@ -254,6 +254,7 @@ MpvObject::MpvObject(QQuickItem * parent)
     if (mpv_initialize(mpv) < 0) throw std::runtime_error("could not initialize mpv context");
 
     mpv_set_option_string(mpv, "hwdec", "auto-safe");
+    mpv_set_option_string(mpv, "vo", "opengl-cb");
 
     mpv_observe_property(mpv, 0, "duration", MPV_FORMAT_DOUBLE);
     mpv_observe_property(mpv, 0, "time-pos", MPV_FORMAT_DOUBLE);
