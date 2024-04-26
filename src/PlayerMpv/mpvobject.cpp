@@ -9,6 +9,7 @@
 #include <QtQuick/QQuickWindow>
 #include <QtQuick/QQuickView>
 #include <QThread>
+#include <QStandardPaths>
 #if QT_VERSION > QT_VERSION_CHECK(6, 0, 0)
 #include <QQuickOpenGLUtils>
 #endif
@@ -251,6 +252,11 @@ MpvObject::MpvObject(QQuickItem * parent)
     mpv_set_option_string(mpv, "demuxer-termination-timeout", "5");
     mpv_set_option_string(mpv, "demuxer-cache-wait", "yes");
     mpv_set_option_string(mpv, "config", "yes");
+    auto mpvLocation = QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation) + "/mpv";
+    qDebug() << "MPV config location: " << mpvLocation;
+    QByteArray byteArray = mpvLocation.toLocal8Bit();
+    auto pathToCache = byteArray.data();
+    mpv_set_option_string(mpv, "config-dir", pathToCache);
 
     if (mpv_initialize(mpv) < 0) throw std::runtime_error("could not initialize mpv context");
 
