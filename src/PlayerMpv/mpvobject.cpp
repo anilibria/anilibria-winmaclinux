@@ -250,6 +250,7 @@ MpvObject::MpvObject(QQuickItem * parent)
     mpv_set_option_string(mpv, "framedrop", "decoder");
     mpv_set_option_string(mpv, "demuxer-termination-timeout", "5");
     mpv_set_option_string(mpv, "demuxer-cache-wait", "yes");
+    mpv_set_option_string(mpv, "config", "yes");
 
     if (mpv_initialize(mpv) < 0) throw std::runtime_error("could not initialize mpv context");
 
