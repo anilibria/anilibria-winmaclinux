@@ -251,6 +251,7 @@ MpvObject::MpvObject(QQuickItem * parent)
     mpv_set_option_string(mpv, "framedrop", "decoder");
     mpv_set_option_string(mpv, "demuxer-termination-timeout", "5");
     mpv_set_option_string(mpv, "demuxer-cache-wait", "yes");
+    mpv_set_option_string(mpv, "hwdec", "auto-safe");
     mpv_set_option_string(mpv, "config", "yes");
     auto mpvLocation = QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation) + "/mpv";
     qDebug() << "MPV config location: " << mpvLocation;
@@ -260,7 +261,6 @@ MpvObject::MpvObject(QQuickItem * parent)
 
     if (mpv_initialize(mpv) < 0) throw std::runtime_error("could not initialize mpv context");
 
-    mpv_set_option_string(mpv, "hwdec", "auto-safe");
     mpv_set_option_string(mpv, "vo", "opengl-cb");
 
     mpv_observe_property(mpv, 0, "duration", MPV_FORMAT_DOUBLE);
