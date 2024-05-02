@@ -528,5 +528,5 @@ void UserConfigurationViewModel::changeFont(const QString &family)
 {
     auto instance = QGuiApplication::instance();
     auto guiInstance = static_cast<QGuiApplication*>(instance);
-    guiInstance->setFont(QFont(m_textFont));
+    guiInstance->setFont(QFont(family));
 }

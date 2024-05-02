@@ -141,6 +141,7 @@ void TorrentNotifierViewModel::tryStartTorrentStreamApplication()
 void TorrentNotifierViewModel::startGetTorrentData(bool needNotify)
 {
     m_needActivateRefreshEvent = needNotify;
+    emit needActivateRefreshEventChanged();
     getTorrentData();
 }
 
@@ -248,6 +249,7 @@ void TorrentNotifierViewModel::requestResponse(QNetworkReply *reply)
 {
     auto isNeedNotify = m_needActivateRefreshEvent;
     m_needActivateRefreshEvent = false;
+    emit needActivateRefreshEventChanged();
     if (m_releasesViewModel == nullptr) return;
     if (m_downloadedTorrents == nullptr) return;
 
