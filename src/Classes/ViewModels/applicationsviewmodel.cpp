@@ -5,6 +5,8 @@
 #include <QNetworkRequest>
 #include <QCoreApplication>
 #include <QFile>
+#include <QGuiApplication>
+#include <QClipboard>
 #include "applicationsviewmodel.h"
 #include "../../globalhelpers.h"
 
@@ -19,6 +21,14 @@ ApplicationsViewModel::ApplicationsViewModel(QObject *parent)
     connect(m_networkManager, &QNetworkAccessManager::finished, this, &ApplicationsViewModel::versionDownloaded);
     connect(m_versionChecker, &ApplicationVersionChecker::newVersionAvailable, this, &ApplicationsViewModel::newVersionAvailable);
     connect(m_versionChecker, &ApplicationVersionChecker::noVersionAvailable, this, &ApplicationsViewModel::noVersionAvailable);
+
+#ifdef Q_OS_MACOS
+    m_lastInstallPathPrefix = "xattr -d com.apple.quarantine ";
+#endif
+
+#ifdef Q_OS_LINUX
+    m_lastInstallPathPrefix = "sudo chmod +x ";
+#endif
 }
 
 void ApplicationsViewModel::setInstallPath(const QString &installPath) noexcept
@@ -173,6 +183,15 @@ void ApplicationsViewModel::runInstaller()
     QCoreApplication::quit();
 }
 
+void ApplicationsViewModel::copyLastInstalledPath()
+{
+    QClipboard *clipboard = QGuiApplication::clipboard();
+    clipboard->setText(m_lastInstallPathPrefix + m_lastInstallPath);
+
+    m_lastInstallPath = "";
+    emit lastInstallPathChanged();
+}
+
 void ApplicationsViewModel::createApplications()
 {
     auto torrentStream = new ExternalApplicationModel();
@@ -293,6 +312,11 @@ void ApplicationsViewModel::versionDownloaded(QNetworkReply *reply)
     m_currentApplication->setIsInstalled(true);
     m_currentApplication->setIsHaveNewVersion(false);
     m_currentApplication->setInstalledVersion(m_currentApplication->newVersion());
+
+#ifdef Q_OS_LINUX
+    m_lastInstallPath = fullPath;
+    emit lastInstallPathChanged();
+#endif
 
     writeCache();
     emit loadingChanged();

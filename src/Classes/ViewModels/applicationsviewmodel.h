@@ -16,6 +16,8 @@ class ApplicationsViewModel : public QObject
     Q_PROPERTY(QString installPath READ installPath WRITE setInstallPath NOTIFY installPathChanged FINAL)
     Q_PROPERTY(QString installIndex READ installIndex WRITE setInstallIndex NOTIFY installIndexChanged FINAL)
     Q_PROPERTY(bool isInstalledInstaller READ isInstalledInstaller NOTIFY isInstalledInstallerChanged FINAL)
+    Q_PROPERTY(QString lastInstallPath READ lastInstallPath NOTIFY lastInstallPathChanged FINAL)
+    Q_PROPERTY(QString lastInstallPathPrefix READ lastInstallPathPrefix NOTIFY lastInstallPathPrefixChanged FINAL)
 
 private:
     const QString m_cacheFileName { "applications.cache" };
@@ -27,6 +29,8 @@ private:
     bool m_loading { false };
     QString m_installPath { "" };
     QString m_installIndex { -1 };
+    QString m_lastInstallPath { "" };
+    QString m_lastInstallPathPrefix { "" };
 
 public:
     explicit ApplicationsViewModel(QObject *parent = nullptr);
@@ -41,6 +45,10 @@ public:
     QString installIndex() const noexcept { return m_installIndex; }
     void setInstallIndex(const QString& installIndex) noexcept;
 
+    QString lastInstallPath() const noexcept { return m_lastInstallPath; }
+
+    QString lastInstallPathPrefix() const noexcept { return m_lastInstallPathPrefix; }
+
     bool isInstalledInstaller() const noexcept;
 
     Q_INVOKABLE void refresh();
@@ -49,6 +57,7 @@ public:
     Q_INVOKABLE void clearInstallData();
     Q_INVOKABLE void deleteByIndex(const QString& index);
     Q_INVOKABLE void runInstaller();
+    Q_INVOKABLE void copyLastInstalledPath();
 
 private:
     void createApplications();
@@ -67,6 +76,8 @@ signals:
     void installIndexChanged();
     void deleteIndexChanged();
     void isInstalledInstallerChanged();
+    void lastInstallPathChanged();
+    void lastInstallPathPrefixChanged();
 
 };
 

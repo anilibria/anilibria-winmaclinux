@@ -212,6 +212,35 @@ Page {
                 }
             }
 
+            Item {
+                id: linuxReminder
+                visible: applicationsViewModel.lastInstallPath.length
+                anchors.fill: parent
+
+                Rectangle {
+                    width: parent.width - 80
+                    height: 180
+                    anchors.centerIn: parent
+                    color: applicationThemeViewModel.pageUpperPanel
+                    radius: 8
+                }
+
+                PlainText {
+                    anchors.centerIn: parent
+                    text: "Как финальный шаг, откройте консоль и введите команду ниже (кликните для копирования):\n" +
+                        (applicationsViewModel.lastInstallPathPrefix + applicationsViewModel.lastInstallPath)
+                    fontPointSize: 14
+                }
+
+                MouseArea {
+                    anchors.fill: parent
+                    onPressed: {
+                        applicationsViewModel.copyLastInstalledPath();
+                        notificationViewModel.sendInfoNotification("Путь скопирован");
+                    }
+                }
+            }
+
             DefaultPopup {
                 id: installPopup
                 x: window.width / 2 - installPopup.width / 2
