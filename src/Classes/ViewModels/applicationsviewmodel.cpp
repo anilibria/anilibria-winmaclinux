@@ -288,7 +288,7 @@ void ApplicationsViewModel::versionDownloaded(QNetworkReply *reply)
 
     auto content = reply->readAll();
     if (content.size() == 0) {
-        qDebug() << "Reponse content is empty";
+        qDebug() << "Response content is empty";
         emit loadingChanged();
         return;
     }
@@ -312,6 +312,10 @@ void ApplicationsViewModel::versionDownloaded(QNetworkReply *reply)
     m_currentApplication->setIsInstalled(true);
     m_currentApplication->setIsHaveNewVersion(false);
     m_currentApplication->setInstalledVersion(m_currentApplication->newVersion());
+
+    if (m_currentApplication->name() == "TorrentStream") {
+        emit changeTorrentStreamPath(fullPath);
+    }
 
 #ifdef Q_OS_LINUX
     m_lastInstallPath = fullPath;

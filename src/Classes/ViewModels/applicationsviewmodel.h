@@ -78,6 +78,7 @@ signals:
     void isInstalledInstallerChanged();
     void lastInstallPathChanged();
     void lastInstallPathPrefixChanged();
+    void changeTorrentStreamPath(const QString& fullPath);
 
 };
 

@@ -1469,6 +1469,9 @@ ApplicationWindow {
 
     ApplicationsViewModel {
         id: applicationsViewModel
+        onChangeTorrentStreamPath: {
+            userConfigurationViewModel.torrentStreamPath = fullPath;
+        }
     }
 
     Item {
