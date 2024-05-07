@@ -26,7 +26,7 @@ jobs:
     - name: Set up Homebrew
       id: set-up-homebrew
       uses: Homebrew/actions/setup-homebrew@master
-    - name: run qmake
+    - name: install mpv
       run: brew install mpv
     - name: Install Qt dependencies
       uses: jurplel/install-qt-action@v3.3.0
@@ -37,5 +37,5 @@ jobs:
     - name: run qmake
       run: qmake -makefile -o src/Makefile src/AniLibria.pro
     - name: run make
-      run: make -j2 -C src
+      run: make -j4 -C src
 
