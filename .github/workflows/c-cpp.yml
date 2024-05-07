@@ -23,6 +23,11 @@ jobs:
     runs-on: macos-12    
     steps:
     - uses: actions/checkout@v4
+    - name: Set up Homebrew
+      id: set-up-homebrew
+      uses: Homebrew/actions/setup-homebrew@master
+    - name: run qmake
+      run: brew install pkg-config
     - name: Install Qt dependencies
       uses: jurplel/install-qt-action@v3.3.0
       with:
