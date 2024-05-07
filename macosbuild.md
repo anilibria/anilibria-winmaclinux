@@ -43,6 +43,10 @@
 ```shell
 brew install mpv
 ```
+Необходимо узнать зависимости файла:
+```shell
+dyld_info -dependents libmpv.2.dylib
+```
 Далее необходимо скопировать файлы:
 ```shell
 cp /usr/local/lib/libmpv.dylib
