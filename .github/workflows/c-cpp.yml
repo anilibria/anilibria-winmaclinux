@@ -38,8 +38,3 @@ jobs:
       run: qmake -makefile -o src/Makefile src/AniLibria.pro
     - name: run make
       run: make -j4 -C src
-    - name: Run MacDeployQt
-      run: cd src && macdeployqt AniLibria.app -appstore-compliant -dmg -qmldir=.
-    - uses: actions/upload-artifact@v4
-      with:
-        path: src/AniLibria.dmg
