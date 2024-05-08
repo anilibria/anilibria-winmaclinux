@@ -38,3 +38,12 @@ jobs:
       run: qmake -makefile -o src/Makefile src/AniLibria.pro
     - name: run make
       run: make -j4 -C src
+    - name: Run MacDeployQt
+      run: cd src && macdeployqt AniLibria.app -appstore-compliant -dmg -qmldir=.
+    - name: patch libraries paths
+      run: |
+        install_name_tool -change @loader_path/libswresample.5.dylib @executable_path/../Frameworks/libswresample.5.dylib src/AniLibria.app/Contents/Frameworks/libavcodec.61.dylib
+        install_name_tool -change @loader_path/libswscale.8.dylib @executable_path/../Frameworks/libswresample.5.dylib src/AniLibria.app/Contents/Frameworks/libavfilter.10.dylib
+    - uses: actions/upload-artifact@v4
+      with:
+        path: src/AniLibria.dmg
