@@ -4,6 +4,12 @@ CONFIG += c++14
 macx {
     QT -= virualkeyboard
     QMAKE_LFLAGS_SONAME = -Wl,-install_name,@rpath/
+    CONFIG += link_pkgconfig
+    PKG_CONFIG = /usr/local/bin/pkg-config
+    PKGCONFIG += mpv
+
+    CONFIG += buildwithmpv
+    DEFINES += USE_MPV_PLAYER
 }
 
 windows {

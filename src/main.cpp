@@ -182,6 +182,7 @@ int main(int argc, char *argv[])
     qmlRegisterType<VlcQmlPlayer>("VLCQt", 1, 1, "VlcPlayer");
     qmlRegisterType<VlcQmlVideoOutput>("VLCQt", 1, 1, "VlcVideoOutput");
 #endif
+
 #ifdef USE_MPV_PLAYER
     qmlRegisterType<MpvObject>("MpvIntegration", 1, 0 , "MpvObject");
 #endif
