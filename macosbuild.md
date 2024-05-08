@@ -37,6 +37,40 @@
 * Выберите вкладку `Доступ` и жмакните на `Разрешить всем программам получать доступ к этому объекту`
 * Далее преезагрузите компьютер
 
+## libmpv
+Если надо добавить плеер mpv необходимо вначале установить brew.
+Далее выполнить команду:
+```shell
+brew install mpv
+```
+Необходимо узнать зависимости файла:
+```shell
+dyld_info -dependents libmpv.2.dylib
+```
+Далее необходимо скопировать файлы:
+```shell
+cp /usr/local/opt/mpv/lib/libmpv.2.dylib
+cp /usr/local/opt/jpeg-turbo/lib/libjpeg.8.dylib
+cp /usr/local/opt/libass/lib/libass.9.dylib
+cp /usr/local/opt/ffmpeg/lib/libavcodec.61.dylib
+cp /usr/local/opt/ffmpeg/lib/libavfilter.10.dylib
+cp /usr/local/opt/ffmpeg/lib/libavformat.61.dylib
+cp /usr/local/opt/ffmpeg/lib/libavutil.59.dylib
+cp /usr/local/opt/ffmpeg/lib/libswresample.5.dylib
+cp /usr/local/opt/ffmpeg/lib/libswscale.8.dylib
+cp /usr/local/opt/libplacebo/lib/libplacebo.338.dylib
+cp /usr/local/opt/mujs/lib/libmujs.dylib
+cp /usr/local/opt/little-cms2/lib/libcms2.2.dylib
+cp /usr/local/opt/libarchive/lib/libarchive.13.dylib
+cp /usr/local/opt/ffmpeg/lib/libavdevice.61.dylib
+cp /usr/local/opt/libbluray/lib/libbluray.2.dylib
+cp /usr/local/opt/luajit/lib/libluajit-5.1.2.dylib
+cp /usr/local/opt/rubberband/lib/librubberband.2.dylib
+cp /usr/local/opt/uchardet/lib/libuchardet.0.dylib
+cp /usr/local/opt/vapoursynth/lib/libvapoursynth-script.0.dylib
+cp /usr/local/opt/zimg/lib/libzimg.2.dylib
+```
+
 ## Деплой проекта
 * Вам необходимо собрать проект в release моде из раздела `Сборка проекта`
 * Далее перейдите в папку сборки она будет в нашем примере она будет находиться в папке ~/anilibria/anilibria-winmaclinux/ и называться примерно build_X-Release (вместо X обычно название kit и разрядность приложения)
