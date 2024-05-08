@@ -38,4 +38,10 @@ jobs:
       run: qmake -makefile -o src/Makefile src/AniLibria.pro
     - name: run make
       run: make -j4 -C src
+    - name: copy libraries
+      run: |
+        cp -RP /usr/local/opt/mpv/lib/libmpv.2.dylib src/AniLibria.app/Contents/Frameworks/
+    - name: copy libraries
+      run: |
+        install_name_tool -change @loader_path/libmpv.2.dylib @executable_path/../Frameworks/libmpv.2.dylib src/AniLibria.app/Contents/MacOS/AniLibria
 
