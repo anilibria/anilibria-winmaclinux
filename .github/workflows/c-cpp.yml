@@ -38,10 +38,14 @@ jobs:
       run: qmake -makefile -o src/Makefile src/AniLibria.pro
     - name: run make
       run: make -j4 -C src
+    - name: Run MacDeployQt
+      run: cd src && macdeployqt AniLibria.app -appstore-compliant -dmg -qmldir=.
     - name: copy libraries
       run: |
         cp -RP /usr/local/opt/mpv/lib/libmpv.2.dylib src/AniLibria.app/Contents/Frameworks/
-    - name: copy libraries
+    - name: patch libraries paths
       run: |
         install_name_tool -change @loader_path/libmpv.2.dylib @executable_path/../Frameworks/libmpv.2.dylib src/AniLibria.app/Contents/MacOS/AniLibria
-
+    - uses: actions/upload-artifact@v4
+      with:
+        path: src/AniLibria.dmg
