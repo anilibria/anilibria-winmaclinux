@@ -50,6 +50,8 @@ jobs:
         install_name_tool -change /usr/local/Cellar/ffmpeg/7.0_1/lib/libavformat.61.dylib @executable_path/../Frameworks/libavformat.61.dylib src/AniLibria.app/Contents/Frameworks/libavfilter.10.dylib
         install_name_tool -change /usr/local/Cellar/ffmpeg/7.0_1/lib/libpostproc.58.dylib @executable_path/../Frameworks/libpostproc.58.dylib src/AniLibria.app/Contents/Frameworks/libavfilter.10.dylib
         install_name_tool -change /usr/local/Cellar/ffmpeg/7.0_1/lib/libswresample.5.dylib @executable_path/../Frameworks/libswresample.5.dylib src/AniLibria.app/Contents/Frameworks/libavfilter.10.dylib
+        install_name_tool -change /usr/local/Cellar/ffmpeg/7.0_1/lib/libavutil.59.dylib @executable_path/../Frameworks/libavutil.59.dylib src/AniLibria.app/Contents/Frameworks/libswresample.5.dylib
+        cp /usr/local/lib/libsharpyuv.0.dylib src/AniLibria.app/Contents/Frameworks/
         hdiutil create -fs HFS+ -srcfolder src/AniLibria.app/ -volname AniLibria AniLibria.dmg
     - uses: actions/upload-artifact@v4
       with:
