@@ -27,7 +27,7 @@ jobs:
       id: set-up-homebrew
       uses: Homebrew/actions/setup-homebrew@master
     - name: install mpv
-      run: brew install mpv@0.38.0
+      run: brew install mpv
     - name: Install Qt dependencies
       uses: jurplel/install-qt-action@v3.3.0
       with:
