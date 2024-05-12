@@ -22,6 +22,7 @@
 #include <QStandardPaths>
 #include <QJsonDocument>
 #include <QJsonArray>
+#include <QJsonObject>
 #include <QUuid>
 #include <QDesktopServices>
 #include "../../globalhelpers.h"
@@ -666,7 +667,7 @@ void OnlinePlayerViewModel::quickSetupForSingleRelease(int releaseId, int custom
     m_isStreamingTorrents = false;
 
     QDateTime timestamp;
-    timestamp.setTime_t(release->timestamp());
+    timestamp.setSecsSinceEpoch(release->timestamp());
     auto year = timestamp.date().year();
     m_isReleaseLess2022 = year > 0 && year < 2022;
 
@@ -1281,7 +1282,8 @@ void OnlinePlayerViewModel::loadSeens()
 
     foreach (auto item, jsonSeens) {
         SeenModel* seenModel = new SeenModel();
-        seenModel->readFromJson(item);
+        auto object = item.toObject();
+        seenModel->readFromJson(object);
         if (!m_seenModels->contains(seenModel->id())) {
             m_seenModels->insert(seenModel->id(), seenModel);
         }

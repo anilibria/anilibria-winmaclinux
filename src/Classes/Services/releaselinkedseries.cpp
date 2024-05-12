@@ -485,7 +485,7 @@ void ReleaseLinkedSeries::processReleasesFromDescription(const QString& descript
     int watchOrderIndex = description.indexOf(startToken);
     if (watchOrderIndex == -1) return;
 
-    auto cuttedDescription = description.midRef(watchOrderIndex + startToken.length());
+    auto cuttedDescription = description.mid(watchOrderIndex + startToken.length());
     auto parts = cuttedDescription.split("#").mid(1);
 
     static QRegularExpression linkRegexp(R"(\/release\/(.*)\.html)");
@@ -505,7 +505,7 @@ void ReleaseLinkedSeries::processReleasesFromDescription(const QString& descript
     auto series = new ReleaseSeriesModel();
 
     foreach (auto part, parts) {
-        auto partString = part.toString();
+        auto partString = part;
 
         auto match = linkRegexp.match(partString);
 

@@ -24,7 +24,7 @@ public:
     void setTimestamp(const int timestamp) noexcept;
 
     void writeToJson(QJsonObject &json) const noexcept;
-    void readFromJson(QJsonValue &json);
+    void readFromJson(QJsonObject &json);
 };
 
 #endif // SEENMODEL_H
