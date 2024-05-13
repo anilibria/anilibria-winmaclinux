@@ -58,6 +58,23 @@ Page {
         if (event.key === Qt.Key_Home) {
             if (compactModeSwitch.checked && !releasesViewModel.synchronizationEnabled) showPanelInCompactModeButton.clicked();
         }
+        if (event.key === Qt.Key_PageUp && !releasesViewModel.isOpenedCard) {
+            let originalContentY = scrollview.contentY;
+            if (originalContentY > 0) {
+                let newContentY = originalContentY - 100;
+                if (newContentY < 0) newContentY = 0;
+
+                scrollview.contentY = newContentY;
+            }
+        }
+        if (event.key === Qt.Key_PageDown && !releasesViewModel.isOpenedCard) {
+            let originalContentY = scrollview.contentY;
+            if (originalContentY < scrollview.contentHeight) {
+                let newContentY = originalContentY + 100;
+                if (newContentY > scrollview.contentHeight) newContentY = scrollview.contentHeight;
+                scrollview.contentY = newContentY;
+            }
+        }
     }
 
     onWidthChanged: {
