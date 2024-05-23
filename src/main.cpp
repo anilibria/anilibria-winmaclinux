@@ -83,7 +83,6 @@
 #include <QQuickWindow>
 #endif
 
-
 int main(int argc, char *argv[])
 {
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
@@ -96,17 +95,7 @@ int main(int argc, char *argv[])
 
 #ifdef Q_OS_WIN
     if (argc == 2 && QString(argv[1]) == "outputlog") {
-        AllocConsole();
-        AttachConsole(GetCurrentProcessId());
-
-        // reopen the std I/O streams to redirect I/O to the new console
-        FILE *newstdin = nullptr;
-        FILE *newstdout = nullptr;
-        FILE *newstderr = nullptr;
-
-        freopen_s(&newstdin, "CONIN$", "r", stdin);
-        freopen_s(&newstdout, "CONOUT$", "w", stdout);
-        freopen_s(&newstderr, "CONOUT$", "w", stderr);
+        freopen("output.log", "w", stdout); //redirect output to file
     }
 #endif
 
