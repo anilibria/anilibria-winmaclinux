@@ -835,6 +835,16 @@ void ReleasesViewModel::selectRelease(int id) noexcept
     }
 }
 
+void ReleasesViewModel::toggleRelease(int id) noexcept
+{
+    if (m_selectMode) {
+        if (isOpenedCard()) hideReleaseCard();
+        m_items->toggleItem(id);
+    } else {
+        showReleaseCard(id);
+    }
+}
+
 void ReleasesViewModel::clearSelectedReleases() noexcept
 {
     m_items->clearSelected();

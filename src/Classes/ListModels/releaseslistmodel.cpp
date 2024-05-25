@@ -782,6 +782,18 @@ void ReleasesListModel::selectItem(int id)
     emit isHasSelectReleaseChanged();
 }
 
+void ReleasesListModel::toggleItem(int id)
+{
+    if (m_selectedReleases->contains(id)) {
+        m_selectedReleases->remove(id);
+    } else {
+        m_selectedReleases->insert(id);
+    }
+
+    refreshFilteredReleaseById(id);
+    emit isHasSelectReleaseChanged();
+}
+
 void ReleasesListModel::deselectItem(int id)
 {
     m_selectedReleases->remove(id);

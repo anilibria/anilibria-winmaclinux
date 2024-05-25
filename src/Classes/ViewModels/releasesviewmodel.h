@@ -260,6 +260,7 @@ public:
     Q_INVOKABLE QString getVkontakteCommentPage(const QString& code) const noexcept;
     Q_INVOKABLE void resetAllChanges() noexcept;
     Q_INVOKABLE void selectRelease(int id) noexcept;
+    Q_INVOKABLE void toggleRelease(int id) noexcept;
     Q_INVOKABLE void clearSelectedReleases() noexcept;
     Q_INVOKABLE void addReleaseToFavorites(int id) noexcept;
     Q_INVOKABLE void removeReleaseFromFavorites(int id) noexcept;

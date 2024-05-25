@@ -1770,7 +1770,7 @@ Page {
                                 onLeftClicked: {
                                     if (releasesViewModel.isOpenedCard) return;
 
-                                    releasesViewModel.selectRelease(id);
+                                    releasesViewModel.toggleRelease(id);
                                 }
                                 onRightClicked: {
                                     multupleMode.checked = !multupleMode.checked;
