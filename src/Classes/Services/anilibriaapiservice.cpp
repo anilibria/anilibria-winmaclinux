@@ -258,6 +258,10 @@ void AnilibriaApiService::getAllReleasesResponse(QNetworkReply *reply)
     if (reply->error() == QNetworkReply::ProtocolFailure) return;
     if (reply->error() == QNetworkReply::HostNotFoundError) return;
 
+    if (reply->error() != QNetworkReply::NoError) {
+        qDebug() << "Response error: " << reply->errorString();
+    }
+
     auto page = reply->property("page").toInt();
 
     QString data = reply->readAll();

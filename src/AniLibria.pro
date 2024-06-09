@@ -268,6 +268,7 @@ SOURCES += \
     Classes/ViewModels/applicationsviewmodel.cpp \
     Classes/ViewModels/applicationthemeviewmodel.cpp \
     Classes/ViewModels/authorizationviewmodel.cpp \
+    Classes/ViewModels/extensionsviewmodel.cpp \
     Classes/ViewModels/externalplayerviewmodel.cpp \
     Classes/ViewModels/filterdictionariesviewmodel.cpp \
     Classes/ViewModels/globaleventtrackerviewmodel.cpp \
@@ -382,6 +383,7 @@ HEADERS += \
     Classes/ViewModels/applicationsviewmodel.h \
     Classes/ViewModels/applicationthemeviewmodel.h \
     Classes/ViewModels/authorizationviewmodel.h \
+    Classes/ViewModels/extensionsviewmodel.h \
     Classes/ViewModels/externalplayerviewmodel.h \
     Classes/ViewModels/filterdictionariesviewmodel.h \
     Classes/ViewModels/globaleventtrackerviewmodel.h \
