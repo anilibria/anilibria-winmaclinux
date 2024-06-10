@@ -83,3 +83,13 @@ QString getLeadingZeroDigit(int number) noexcept
 
     return result;
 }
+
+void saveJsonObjectToFile(const QString &path, const QJsonObject &object) noexcept
+{
+    QJsonDocument document(object);
+
+    QFile scheduleCacheFile(getCachePath(path));
+    scheduleCacheFile.open(QFile::WriteOnly | QFile::Text);
+    scheduleCacheFile.write(document.toJson());
+    scheduleCacheFile.close();
+}

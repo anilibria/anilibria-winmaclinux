@@ -1,5 +1,6 @@
 #include <QString>
 #include <QJsonArray>
+#include <QJsonObject>
 
 QString getCachePath(const QString& filename) noexcept;
 
@@ -14,5 +15,7 @@ bool isRutubeHasVideos(const QString& videos) noexcept;
 QString getJsonContentFromFile(const QString& path) noexcept;
 
 void saveJsonArrayToFile(const QString& path, const QJsonArray& array) noexcept;
+
+void saveJsonObjectToFile(const QString& path, const QJsonObject& object) noexcept;
 
 QString getLeadingZeroDigit(int number) noexcept;
