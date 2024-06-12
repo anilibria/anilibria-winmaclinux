@@ -381,6 +381,14 @@ void UserConfigurationViewModel::setAutoPlayerTopMost(bool autoPlayerTopMost) no
     emit autoPlayerTopMostChanged();
 }
 
+void UserConfigurationViewModel::setApiv2host(QString apiv2host) noexcept
+{
+    if (m_apiv2host == apiv2host) return;
+
+    m_apiv2host = apiv2host;
+    emit apiv2hostChanged();
+}
+
 void UserConfigurationViewModel::refreshConfiguration() noexcept
 {
     readSettingsFromFile();
@@ -461,6 +469,7 @@ void UserConfigurationViewModel::saveSettingsToFile()
     object[m_showReleaseInfoField] = m_showReleaseInfo;
     object[m_autoNextVideoField] = m_autoNextVideo;
     object[m_autoPlayerTopMostField] = m_autoPlayerTopMost;
+    object[m_apiv2hostField] = m_apiv2host;
 
     QFile file(getCachePath(m_cacheFileName));
     file.open(QFile::WriteOnly | QFile::Text);
@@ -520,6 +529,7 @@ void UserConfigurationViewModel::readSettingsFromFile()
     m_showReleaseInfo = object.contains(m_showReleaseInfoField) ? object[m_showReleaseInfoField].toBool() : true;
     m_autoNextVideo = object.contains(m_autoNextVideoField) ? object[m_autoNextVideoField].toBool() : true;
     m_autoPlayerTopMost = object.contains(m_autoPlayerTopMostField) ? object[m_autoPlayerTopMostField].toBool() : false;
+    m_apiv2host = object.contains(m_apiv2hostField) ? object[m_apiv2hostField].toString() : "https://anilibria.top";
 
     if (m_textFont != "Default") changeFont(m_textFont);
 }

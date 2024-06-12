@@ -68,6 +68,7 @@ class UserConfigurationViewModel : public QObject
     Q_PROPERTY(bool showReleaseInfo READ showReleaseInfo WRITE setShowReleaseInfo NOTIFY showReleaseInfoChanged FINAL)
     Q_PROPERTY(bool autoNextVideo READ autoNextVideo WRITE setAutoNextVideo NOTIFY autoNextVideoChanged FINAL)
     Q_PROPERTY(bool autoPlayerTopMost READ autoPlayerTopMost WRITE setAutoPlayerTopMost NOTIFY autoPlayerTopMostChanged FINAL)
+    Q_PROPERTY(QString apiv2host READ apiv2host WRITE setApiv2host NOTIFY apiv2hostChanged FINAL)
 
 private:
     QString m_cacheFileName { "userconfiguration.cache" };
@@ -114,6 +115,7 @@ private:
     const QString m_showReleaseInfoField { "showReleaseInfo" };
     const QString m_autoNextVideoField { "autoNextVideo" };
     const QString m_autoPlayerTopMostField { "autoPlayerTopMost" };
+    const QString m_apiv2hostField { "apiv2hostField" };
     int m_opacityPlayerPanel { 50 };
     bool m_notCloseReleaseCardAfterWatch { false };
     bool m_usingScrollAcceleration { true };
@@ -157,6 +159,7 @@ private:
     bool m_showReleaseInfo { false };
     bool m_autoNextVideo { false };
     bool m_autoPlayerTopMost { false };
+    QString m_apiv2host { "" };
 
 public:
     explicit UserConfigurationViewModel(QObject *parent = nullptr);
@@ -290,6 +293,9 @@ public:
     bool autoPlayerTopMost() const noexcept { return m_autoPlayerTopMost; }
     void setAutoPlayerTopMost(bool autoPlayerTopMost) noexcept;
 
+    QString apiv2host() const noexcept { return m_apiv2host; }
+    void setApiv2host(QString apiv2host) noexcept;
+
     Q_INVOKABLE void refreshConfiguration() noexcept;
     Q_INVOKABLE void saveSettingsToFile();
 
@@ -341,6 +347,7 @@ signals:
     void showReleaseInfoChanged();
     void autoNextVideoChanged();
     void autoPlayerTopMostChanged();
+    void apiv2hostChanged();
 
 };
 

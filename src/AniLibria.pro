@@ -263,6 +263,7 @@ SOURCES += \
     Classes/Services/proxyconfigurator.cpp \
     Classes/Services/releaselinkedseries.cpp \
     Classes/Services/synchronizationservice.cpp \
+    Classes/Services/synchronizev2service.cpp \
     Classes/Services/thememanagerservice.cpp \
     Classes/Services/versionchecker.cpp \
     Classes/ViewModels/applicationsviewmodel.cpp \
@@ -377,6 +378,7 @@ HEADERS += \
     Classes/Services/proxyconfigurator.h \
     Classes/Services/releaselinkedseries.h \
     Classes/Services/synchronizationservice.h \
+    Classes/Services/synchronizev2service.h \
     Classes/Services/thememanagerservice.h \
     Classes/Services/versionchecker.h \
     Classes/ListModels/alphabetlistmodel.h \
