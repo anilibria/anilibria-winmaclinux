@@ -83,15 +83,6 @@ Page {
                             authorizationViewModel.password = text;
                         }
                     }
-                    CommonTextField {
-                        id: fa2codeTextBox
-                        Layout.fillWidth: true
-                        placeholderText: "2fa код (оставить пустым если не настроено)"
-                        text: authorizationViewModel.twoFactorCode
-                        onTextChanged: {
-                            authorizationViewModel.twoFactorCode = text;
-                        }
-                    }
                     Item {
                         Layout.fillWidth: true
                         height: 40
@@ -110,7 +101,7 @@ Page {
                             anchors.rightMargin: 10
                             text: "Войти"
                             onClicked: {
-                                authorizationViewModel.signin();
+                                synchronizationServicev2.authorize(authorizationViewModel.login, authorizationViewModel.password);
                             }
                         }
 
@@ -128,5 +119,4 @@ Page {
             }
         }
     }
-
 }

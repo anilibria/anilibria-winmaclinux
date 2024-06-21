@@ -638,7 +638,7 @@ ColumnLayout {
                                                 if (localStorage.isUseTorrentStreamMode()) {
                                                     releasesViewModel.downloadTorrent(releasesViewModel.openedReleaseId, torrentUri, userConfigurationViewModel.playerBuffer);
                                                 } else {
-                                                    synchronizationService.downloadTorrent(torrentUri);
+                                                    synchronizationServicev2.downloadTorrent(url);
                                                     userActivityViewModel.addDownloadedTorrentToCounter();
 
                                                     if (userConfigurationViewModel.markAsReadAfterDownload) setSeenStateForOpenedRelease(true);

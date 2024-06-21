@@ -302,6 +302,17 @@ void ReleasesViewModel::setNotCloseReleaseCardAfterWatch(const bool notCloseRele
     emit notCloseReleaseCardAfterWatchChanged();
 }
 
+void ReleasesViewModel::setSynchronizationServicev2(const Synchronizev2Service *synchronizationServicev2) noexcept
+{
+    if (m_synchronizationServicev2 == synchronizationServicev2) return;
+    if (m_synchronizationServicev2 != nullptr) return;
+
+    m_synchronizationServicev2 = const_cast<Synchronizev2Service *>(synchronizationServicev2);
+    emit synchronizationServicev2Changed();
+
+    connect(m_synchronizationServicev2, &Synchronizev2Service::userFavoritesReceivedV2, this,&ReleasesViewModel::userFavoritesReceivedV2);
+}
+
 QString ReleasesViewModel::openedReleaseStatusDisplay() const noexcept
 {
     if (m_openedRelease == nullptr) return "";
@@ -854,9 +865,9 @@ void ReleasesViewModel::addReleaseToFavorites(int id) noexcept
 {
     if (!m_userFavorites->contains(id)) {
         m_userFavorites->append(id);
-        if (!m_applicationSettings->userToken().isEmpty()) {
-            m_synchronizationService->addUserFavorites(m_applicationSettings->userToken(), QString::number(id));
-        }
+        QList<int> favoritesIds;
+        favoritesIds.append(id);
+        m_synchronizationServicev2->addUserFavorites(favoritesIds);
         m_items->refreshItem(id);
         saveFavorites();
         setCountFavorites(m_userFavorites->count());
@@ -868,9 +879,9 @@ void ReleasesViewModel::removeReleaseFromFavorites(int id) noexcept
 {
     if (m_userFavorites->contains(id)) {
         m_userFavorites->removeOne(id);
-        if (!m_applicationSettings->userToken().isEmpty()) {
-            m_synchronizationService->removeUserFavorites(m_applicationSettings->userToken(), QString::number(id));
-        }
+        QList<int> favoritesIds;
+        favoritesIds.append(id);
+        m_synchronizationServicev2->removeUserFavorites(favoritesIds);
         m_items->refreshItem(id);
         saveFavorites();
         setCountFavorites(m_userFavorites->count());
@@ -883,17 +894,19 @@ void ReleasesViewModel::addSelectedReleaseToFavorites() noexcept
 {
     auto selectedReleases = m_items->getSelectedReleases();
     bool needSave = false;
-    bool needSynchronize = !m_applicationSettings->userToken().isEmpty();
+    QList<int> ids;
     foreach (auto selectedRelease, *selectedReleases) {
         if (!m_userFavorites->contains(selectedRelease)) {
             m_userFavorites->append(selectedRelease);
-            if (needSynchronize) m_synchronizationService->addUserFavorites(m_applicationSettings->userToken(), QString::number(selectedRelease));
             m_items->refreshItem(selectedRelease);
+            ids.append(selectedRelease);
             needSave = true;
         }
     }
 
     if (needSave) {
+        m_synchronizationServicev2->addUserFavorites(ids);
+
         saveFavorites();
         setCountFavorites(m_userFavorites->count());
     }
@@ -904,17 +917,19 @@ void ReleasesViewModel::removeSelectedReleaseFromFavorites() noexcept
 {
     auto selectedReleases = m_items->getSelectedReleases();
     bool needSave = false;
-    bool needSynchronize = !m_applicationSettings->userToken().isEmpty();
+    QList<int> ids;
     foreach (auto selectedRelease, *selectedReleases) {
         if (m_userFavorites->contains(selectedRelease)) {
             m_userFavorites->removeOne(selectedRelease);
-            if (needSynchronize) m_synchronizationService->removeUserFavorites(m_applicationSettings->userToken(), QString::number(selectedRelease));
+            ids.append(selectedRelease);
             m_items->refreshItem(selectedRelease);
             needSave = true;
         }
     }
 
     if (needSave) {
+        m_synchronizationServicev2->removeUserFavorites(ids);
+
         saveFavorites();
         setCountFavorites(m_userFavorites->count());
     }
@@ -1574,11 +1589,16 @@ void ReleasesViewModel::saveFavoritesFromJson(QString data)
     if (!responseData["items"].isArray()) return;
     auto items = responseData["items"].toArray();
 
-    QVector<int> ids;
+    QList<int> ids;
     foreach (auto item, items) {
         ids.append(item["id"].toInt());
     }
 
+    saveFavoritesFromArray(ids);
+}
+
+void ReleasesViewModel::saveFavoritesFromArray(const QList<int> ids)
+{
     QJsonArray array;
     foreach (auto item, ids) {
         QJsonValue value(item);
@@ -2037,7 +2057,6 @@ void ReleasesViewModel::releasesUpdated()
     m_items->refresh();
 
     m_synchronizationService->synchronizeSchedule();
-    if (!m_applicationSettings->userToken().isEmpty()) m_synchronizationService->synchronizeUserFavorites(m_applicationSettings->userToken());
 
     setSynchronizationEnabled(false);
     emit afterSynchronizedReleases();
@@ -2056,6 +2075,13 @@ void ReleasesViewModel::synchronizedSchedule(const QString &data)
 void ReleasesViewModel::userFavoritesReceived(const QString &data)
 {
     saveFavoritesFromJson(data);
+    loadFavorites();
+    m_items->refresh();
+}
+
+void ReleasesViewModel::userFavoritesReceivedV2(const QList<int>& data)
+{
+    saveFavoritesFromArray(data);
     loadFavorites();
     m_items->refresh();
 }

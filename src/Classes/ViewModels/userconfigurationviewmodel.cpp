@@ -389,6 +389,14 @@ void UserConfigurationViewModel::setApiv2host(QString apiv2host) noexcept
     emit apiv2hostChanged();
 }
 
+void UserConfigurationViewModel::setV2token(const QString &v2token) noexcept
+{
+    if (m_v2token == v2token) return;
+
+    m_v2token = v2token;
+    emit v2tokenChanged();
+}
+
 void UserConfigurationViewModel::refreshConfiguration() noexcept
 {
     readSettingsFromFile();
@@ -470,6 +478,7 @@ void UserConfigurationViewModel::saveSettingsToFile()
     object[m_autoNextVideoField] = m_autoNextVideo;
     object[m_autoPlayerTopMostField] = m_autoPlayerTopMost;
     object[m_apiv2hostField] = m_apiv2host;
+    object[m_v2tokenField] = m_v2token;
 
     QFile file(getCachePath(m_cacheFileName));
     file.open(QFile::WriteOnly | QFile::Text);
@@ -530,6 +539,7 @@ void UserConfigurationViewModel::readSettingsFromFile()
     m_autoNextVideo = object.contains(m_autoNextVideoField) ? object[m_autoNextVideoField].toBool() : true;
     m_autoPlayerTopMost = object.contains(m_autoPlayerTopMostField) ? object[m_autoPlayerTopMostField].toBool() : false;
     m_apiv2host = object.contains(m_apiv2hostField) ? object[m_apiv2hostField].toString() : "https://anilibria.top";
+    m_v2token = object.contains(m_v2tokenField) ? object[m_v2tokenField].toString() : "";
 
     if (m_textFont != "Default") changeFont(m_textFont);
 }

@@ -35,6 +35,7 @@
 #include "../Services/synchronizationservice.h"
 #include "../Services/applicationsettings.h"
 #include "../Services/localstorageservice.h"
+#include "../Services/synchronizev2service.h"
 #include "releasecustomgroupsviewmodel.h"
 #include "useractivityviewmodel.h"
 
@@ -98,6 +99,7 @@ class ReleasesViewModel : public QObject
     Q_PROPERTY(bool notCloseReleaseCardAfterWatch READ notCloseReleaseCardAfterWatch WRITE setNotCloseReleaseCardAfterWatch NOTIFY notCloseReleaseCardAfterWatchChanged)
     Q_PROPERTY(QList<int> countSections READ countSections NOTIFY countSectionsChanged)
     Q_PROPERTY(ReleaseCustomGroupsViewModel* customGroups READ customGroups NOTIFY customGroupsChanged)
+    Q_PROPERTY(Synchronizev2Service* synchronizationServicev2 READ synchronizationServicev2 WRITE setSynchronizationServicev2 NOTIFY synchronizationServicev2Changed)
 
 private:
     const QString releasesCacheFileName { "releases.cache" };
@@ -141,6 +143,7 @@ private:
     QString m_openedReleaseAnnounce { "" };
     QList<int> m_sectionCounters { QList<int>() };
     QNetworkAccessManager* m_manager { new QNetworkAccessManager(this) };
+    Synchronizev2Service* m_synchronizationServicev2 { nullptr };
 
 public:
     explicit ReleasesViewModel(QObject *parent = nullptr);
@@ -206,6 +209,9 @@ public:
     void setNotCloseReleaseCardAfterWatch(const bool notCloseReleaseCardAfterWatch) noexcept;
 
     ReleaseCustomGroupsViewModel* customGroups() const noexcept { return m_customGroups; }
+
+    Synchronizev2Service* synchronizationServicev2() const noexcept { return m_synchronizationServicev2; }
+    void setSynchronizationServicev2(const Synchronizev2Service* synchronizationServicev2) noexcept;
 
     bool isOpenedCard() const noexcept { return m_openedRelease != nullptr; }
     int openedReleaseId() const noexcept { return m_openedRelease != nullptr ? m_openedRelease->id() : 0; }
@@ -315,6 +321,7 @@ private:
     void saveSchedule(QString json);
 
     void saveFavoritesFromJson(QString data);
+    void saveFavoritesFromArray(const QList<int> ids);
     void saveFavorites();
     void loadFavorites();
     void clearFavorites();
@@ -351,6 +358,7 @@ private slots:
     void synchronizedReleases();
     void synchronizedSchedule(const QString& data);
     void userFavoritesReceived(const QString& data);
+    void userFavoritesReceivedV2(const QList<int>& data);
     void cinemahallItemsChanged();
     void needDeleteFavorites(const QList<int>& ids);
 
@@ -415,6 +423,7 @@ signals:
     void openedReleaseSeenCountVideosChanged();
     void openedReleaseIsRutubeChanged();
     void customGroupsChanged();
+    void synchronizationServicev2Changed();
 
 };
 

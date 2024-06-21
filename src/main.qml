@@ -495,7 +495,7 @@ ApplicationWindow {
             PlainText {
                 id: authentificationUser
                 fontPointSize: 10
-                text: window.userModel.login ? "Вы авторизованы как " + window.userModel.login : "Вы не авторизованы"
+                text: synchronizationServicev2.isAuhorized ? "Вы авторизованы как " + synchronizationServicev2.nickName : "Вы не авторизованы"
             }
         }
 
@@ -652,29 +652,6 @@ ApplicationWindow {
             synchronizeReleases(1);
         }
 
-        onUserDataReceived: {
-            try {
-                const userData = JSON.parse(data);
-                window.userModel = userData;
-            } catch(e) {
-                window.userModel = {};
-            }
-
-            if (window.userModel.avatar) {
-                synchronizationService.synchronizeUserFavorites(applicationSettings.userToken);
-                mainViewModel.notVisibleSignin = true;
-                userAvatarCanvas.loadImage(window.userModel.avatar);
-            }
-        }
-
-        onUserSignouted: {
-            applicationSettings.userToken = "";
-            window.userModel = {};
-            mainViewModel.notVisibleSignin = false;
-
-            notificationViewModel.sendInfoNotification(`Вы успешно вышли из аккаунта. Чтобы войти обратно перейдите на страницу Войти.`)
-        }
-
         onTorrentDownloaded: {
             const userSettings = JSON.parse(localStorage.getUserSettings());
             if (userSettings.torrentDownloadMode === 0) {
@@ -688,10 +665,58 @@ ApplicationWindow {
                 saveTorrentFileDialog.open();
             }
         }
+    }
 
-        onSynchronizationCompleted: {
-            filterDictionariesViewModel.refreshDictionaries();
+    Synchronizev2Service {
+        id: synchronizationServicev2
+        apiv2host: userConfigurationViewModel.apiv2host
+        token: userConfigurationViewModel.v2token
+
+        onUserCompleteAuthentificated: {
+            notificationViewModel.sendInfoNotification(`Вы успешно вошли в аккаунт.`);
+
+            mainViewModel.selectPage("release");
+            synchronizationServicev2.getUserData();
         }
+
+        onUserFailedAuthentificated: {
+            notificationViewModel.sendInfoNotification(errorMessage);
+        }
+
+        onSynchronizeFavoritesFailed: {
+            notificationViewModel.sendInfoNotification(`Не удалось получить избранное:` + errorMessage);
+        }
+
+        onUserSignouted: {
+            mainViewModel.notVisibleSignin = false;
+
+            notificationViewModel.sendInfoNotification(`Вы успешно вышли из аккаунта. Чтобы войти обратно перейдите на страницу Войти.`)
+        }
+
+        onGetUserFailed: {
+            notificationViewModel.sendInfoNotification("Не удалось получить данные пользователя: " + errorMessage);
+        }
+
+        onTokenChanged: {
+            userConfigurationViewModel.v2token = synchronizationServicev2.token;
+        }
+
+        onIsAuhorizedChanged: {
+            if (synchronizationServicev2.isAuhorized) {
+                userAvatarCanvas.loadImage(synchronizationServicev2.userAvatar);
+                mainViewModel.notVisibleSignin = true;
+            } else {
+                mainViewModel.notVisibleSignin = false;
+            }
+        }
+
+        Component.onCompleted: {
+            if (synchronizationServicev2.token) synchronizationServicev2.getUserData();
+        }
+
+        /*onSynchronizationCompleted: {
+            filterDictionariesViewModel.refreshDictionaries();
+        }*/
     }
 
     Drawer {
@@ -743,7 +768,7 @@ ApplicationWindow {
                     ctx.closePath();
                     ctx.clip();
 
-                    ctx.drawImage(window.userModel.avatar, 0, 0, 60, 60);
+                    ctx.drawImage(synchronizationServicev2.userAvatar, 0, 0, 60, 60);
 
                     ctx.beginPath();
                     ctx.arc(0, 0, 30, 0, Math.PI * 2, true);
@@ -760,10 +785,9 @@ ApplicationWindow {
                 anchors.left: userAvatarCanvas.right
                 anchors.leftMargin: 10
                 anchors.verticalCenter: parent.verticalCenter
-                text: "Вы авторизованы как:\n" + (userModel.login ? userModel.login : "")
+                text: "Вы авторизованы как:\n" + synchronizationServicev2.nickName
                 color: applicationThemeViewModel.currentItems.colorDrawerItemText
                 elide: Text.ElideRight
-                antialiasing: true
                 wrapMode: Text.WordWrap
                 width: drawer.width - userAvatarCanvas.width - logoutButton.width - 40
                 maximumLineCount: 2
@@ -783,7 +807,7 @@ ApplicationWindow {
                 iconHeight: 28
                 tooltipMessage: "Выйти из аккаунта"
                 onButtonPressed: {
-                    synchronizationService.signout(applicationSettings.userToken);
+                    synchronizationServicev2.logout();
                     drawer.close();
                 }
             }
@@ -966,6 +990,7 @@ ApplicationWindow {
     ReleasesViewModel {
         id: releasesViewModel
         synchronizationService: synchronizationService
+        synchronizationServicev2: synchronizationServicev2
         applicationSettings: applicationSettings
         localStorage: localStorage
         notCloseReleaseCardAfterWatch: userConfigurationViewModel.notCloseReleaseCardAfterWatch
@@ -1102,12 +1127,6 @@ ApplicationWindow {
         enabled: notificationViewModel.popupNotifications.showNotifications
         layoutDirection: Qt.RightToLeft
         remove: Transition {
-            ParallelAnimation {
-                NumberAnimation { property: "opacity"; to: 0; duration: 1000 }
-                NumberAnimation { properties: "x,y"; to: 100; duration: 1000 }
-            }
-        }
-        removeDisplaced: Transition {
             ParallelAnimation {
                 NumberAnimation { property: "opacity"; to: 0; duration: 1000 }
                 NumberAnimation { properties: "x,y"; to: 100; duration: 1000 }
@@ -1275,14 +1294,6 @@ ApplicationWindow {
 
     AuthorizationViewModel {
         id: authorizationViewModel
-        onSuccessAuthentificated: {
-            applicationSettings.userToken = token;
-
-            if (mainViewModel.currentPageId === "authorization") mainViewModel.selectPage("release");
-
-            synchronizationService.getUserData(applicationSettings.userToken);
-            notificationViewModel.sendInfoNotification(`Вы успешно вошли в аккаунт. Ваше избранное будет синхронизовано автоматически.`);
-        }
     }
 
     MainViewModel {
@@ -1472,6 +1483,10 @@ ApplicationWindow {
         onChangeTorrentStreamPath: {
             userConfigurationViewModel.torrentStreamPath = fullPath;
         }
+    }
+
+    ExtensionsViewModel {
+        id: extensionsViewModel
     }
 
     Item {
