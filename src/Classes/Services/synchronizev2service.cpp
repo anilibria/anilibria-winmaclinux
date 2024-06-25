@@ -2,6 +2,7 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QJsonArray>
+#include <QDesktopServices>
 #include <QFile>
 #include "synchronizev2service.h"
 #include "../../globalhelpers.h"
@@ -42,6 +43,14 @@ void Synchronizev2Service::setToken(QString token) noexcept
 
     m_token = token;
     emit tokenChanged();
+}
+
+void Synchronizev2Service::setTorrentDownloadMode(int torrentDownloadMode) noexcept
+{
+    if (m_torrentDownloadMode == torrentDownloadMode) return;
+
+    m_torrentDownloadMode = torrentDownloadMode;
+    emit torrentDownloadModeChanged();
 }
 
 void Synchronizev2Service::authorize(QString login, QString password)
@@ -124,18 +133,66 @@ void Synchronizev2Service::removeUserFavorites(const QList<int> ids)
     adjustIdentifier(reply, m_removeFavoritesRequest);
 }
 
-void Synchronizev2Service::downloadTorrent(QString torrentPath)
+void Synchronizev2Service::downloadTorrent(QString torrentPath, int releaseId)
 {
     QNetworkRequest request(QUrl(m_apiv2host + torrentPath));
     auto reply = m_networkManager->get(request);
-    adjustIdentifier(reply, m_downloadTorrentRequest);
+    auto identifier = adjustIdentifier(reply, m_downloadTorrentRequest);
+    m_pendingTorrentReleases.insert(identifier, releaseId);
 }
 
 void Synchronizev2Service::synchronizeFullCache()
 {
-    QNetworkRequest request(QUrl(m_apiv2host + m_cachehost));
+    if (m_synchronizeCacheActived) return;
+
+    m_synchronizeCacheActived = true;
+    emit synchronizeCacheActivedChanged();
+
+    QNetworkRequest request(QUrl(m_cachehost + "/metadata"));
     auto reply = m_networkManager->get(request);
     adjustIdentifier(reply, m_cacheMetadataRequest);
+}
+
+void Synchronizev2Service::downloadReleaseFile() noexcept
+{
+    QNetworkRequest request(QUrl(m_cachehost + "/releases" + QString::number(m_currentSynchronizationItem) +".json"));
+    auto reply = m_networkManager->get(request);
+    adjustIdentifier(reply, m_cacheReleaseRequest);
+}
+
+void Synchronizev2Service::downloadEpisodesFile() noexcept
+{
+    QNetworkRequest request(QUrl(m_cachehost + "/episodes" + QString::number(m_currentSynchronizationItem) +".json"));
+    auto reply = m_networkManager->get(request);
+    adjustIdentifier(reply, m_cacheEpisodesRequest);
+}
+
+void Synchronizev2Service::downloadTorrentsFile() noexcept
+{
+    QNetworkRequest request(QUrl(m_cachehost + "/torrents.json"));
+    auto reply = m_networkManager->get(request);
+    adjustIdentifier(reply, m_cacheTorrentRequest);
+}
+
+void Synchronizev2Service::downloadTypesFile() noexcept
+{
+    QNetworkRequest request(QUrl(m_cachehost + "/types.json"));
+    auto reply = m_networkManager->get(request);
+    adjustIdentifier(reply, m_cacheTypesRequest);
+}
+
+void Synchronizev2Service::downloadSchedulesFile() noexcept
+{
+    QNetworkRequest request(QUrl(m_cachehost + "/schedule.json"));
+    auto reply = m_networkManager->get(request);
+    adjustIdentifier(reply, m_cacheScheduleRequest);
+}
+
+void Synchronizev2Service::downloadReleaseSeriesFile() noexcept
+{
+    QNetworkRequest request(QUrl(m_cachehost + "/releaseseries.json"));
+    auto reply = m_networkManager->get(request);
+    adjustIdentifier(reply, m_cacheReleaseSerieRequest);
 }
 
 void Synchronizev2Service::logoutHandler(QNetworkReply *reply) noexcept
@@ -199,12 +256,14 @@ void Synchronizev2Service::adjustRequestToken(QNetworkRequest &request) noexcept
     request.setRawHeader("Authorization", tokenAndBearer.toUtf8());
 }
 
-void Synchronizev2Service::adjustIdentifier(QNetworkReply *reply, const QString& type) noexcept
+QString Synchronizev2Service::adjustIdentifier(QNetworkReply *reply, const QString& type) noexcept
 {
     auto identifier = QUuid::createUuid().toString();
     m_pendingRequests.insert(identifier, type);
 
     reply->setProperty("identifier", identifier);
+
+    return identifier;
 }
 
 void Synchronizev2Service::favoritesSynchronizedHandler(QNetworkReply *reply) noexcept
@@ -229,11 +288,10 @@ void Synchronizev2Service::favoritesSynchronizedHandler(QNetworkReply *reply) no
     foreach(auto id, response) {
         ids.append(id.toInt(0));
     }
-    qDebug() << ids;
     emit userFavoritesReceivedV2(ids);
 }
 
-void Synchronizev2Service::downloadTorrentHandler(QNetworkReply *reply) noexcept
+void Synchronizev2Service::downloadTorrentHandler(QNetworkReply *reply, const QString& identifier) noexcept
 {
     auto byteArray = reply->readAll();
 
@@ -245,6 +303,219 @@ void Synchronizev2Service::downloadTorrentHandler(QNetworkReply *reply) noexcept
     torrentFile.open(QFile::WriteOnly);
     torrentFile.write(byteArray);
     torrentFile.close();
+
+    if (m_torrentDownloadMode == 0) { //Открыть в торрент клиенте
+#ifdef Q_OS_WIN
+        auto protocol = "file:///";
+#else
+        auto protocol = "file://";
+#endif
+
+        QDesktopServices::openUrl(QUrl(protocol + randomTorrentPath));
+    }
+
+    if (m_torrentDownloadMode == 1) { // Сохранить файл
+        emit saveDownloadedTorrent(randomTorrentPath);
+    }
+
+    if (m_torrentDownloadMode == 2 && m_pendingTorrentReleases.contains(identifier)) { // Использовать TorrentStream
+        emit downloadInTorrentStream(m_pendingTorrentReleases[identifier], randomTorrentPath);
+    }
+
+    emit torrentDownloaded(randomTorrentPath);
+}
+
+void Synchronizev2Service::metadataCacheHandler(QNetworkReply *reply) noexcept
+{
+    auto content = reply->readAll();
+    if (content.isEmpty()) {
+        emit synchronizeCacheFailed("Metadata: Контент ответа пустой");
+        return;
+    }
+
+    auto updatedMetadataJson = QJsonDocument::fromJson(content);
+    auto updatedMetadata = updatedMetadataJson.object();
+    m_lastReleaseTimeStamp = 0;
+    m_countEpisodes = 0;
+    m_countReleases = 0;
+    if (updatedMetadata.contains("lastReleaseTimeStamp")) m_lastReleaseTimeStamp = updatedMetadata.value("lastReleaseTimeStamp").toInt(0);
+    if (updatedMetadata.contains("countEpisodes")) m_countEpisodes = updatedMetadata.value("countEpisodes").toInt(0);
+    if (updatedMetadata.contains("countReleases")) m_countReleases = updatedMetadata.value("countReleases").toInt(0);
+
+    auto metadataPath = getCachePath("metadata");
+    auto lastTimeStamp = 0;
+    if (QFile::exists(metadataPath)) {
+        QFile file(metadataPath);
+        if (file.open(QFile::ReadOnly | QFile::Text)) {
+            auto loadedContent = file.readAll();
+            file.close();
+
+            auto metadataJson = QJsonDocument::fromJson(loadedContent);
+            auto metadata = metadataJson.object();
+            if (metadata.contains("lastReleaseTimeStamp")) {
+                lastTimeStamp = metadata.value("lastReleaseTimeStamp").toInt(0);
+            }
+        }
+    }
+
+    if (lastTimeStamp > 0 && m_lastReleaseTimeStamp <= lastTimeStamp) {
+        m_synchronizeCacheActived = false;
+        emit synchronizeCacheActivedChanged();
+        return;
+    }
+
+    m_currentSynchronizationItem = 0;
+    downloadReleaseFile();
+}
+
+void Synchronizev2Service::releaseCacheHandler(QNetworkReply *reply) noexcept
+{
+    auto content = reply->readAll();
+    if (content.isEmpty()) {
+        emit synchronizeCacheFailed("Release" + QString::number(m_currentSynchronizationItem) + ": Контент ответа пустой");
+        m_synchronizeCacheActived = false;
+        emit synchronizeCacheActivedChanged();
+        return;
+    }
+
+    auto cacheFilePath = getCachePath("releases" + QString::number(m_currentSynchronizationItem) + ".json");
+
+    if (QFile::exists(cacheFilePath)) QFile::remove(cacheFilePath);
+
+    QFile file(cacheFilePath);
+    if (file.open(QFile::WriteOnly | QFile::Text)) {
+        file.write(content);
+        file.close();
+    }
+
+    if (m_currentSynchronizationItem == m_countReleases) {
+        m_currentSynchronizationItem = 0;
+        qDebug() << "start Episodes!!!!";
+        //downloadEpisodesFile();
+        return;
+    }
+
+    m_currentSynchronizationItem++;
+    downloadReleaseFile();
+}
+
+void Synchronizev2Service::episodeCacheHandler(QNetworkReply *reply) noexcept
+{
+    auto content = reply->readAll();
+    if (content.isEmpty()) {
+        emit synchronizeCacheFailed("Episode" + QString::number(m_currentSynchronizationItem) + ": Контент ответа пустой");
+        m_synchronizeCacheActived = false;
+        emit synchronizeCacheActivedChanged();
+        return;
+    }
+
+    auto cacheFilePath = getCachePath("episodes" + QString::number(m_currentSynchronizationItem) + ".json");
+
+    if (QFile::exists(cacheFilePath)) QFile::remove(cacheFilePath);
+
+    QFile file(cacheFilePath);
+    if (file.open(QFile::WriteOnly | QFile::Text)) {
+        file.write(content);
+        file.close();
+    }
+
+    if (m_currentSynchronizationItem == m_countReleases) {
+        downloadTorrentsFile();
+        return;
+    }
+
+    m_currentSynchronizationItem++;
+    downloadEpisodesFile();
+}
+
+void Synchronizev2Service::torrentCacheHandler(QNetworkReply *reply) noexcept
+{
+    auto content = reply->readAll();
+    if (content.isEmpty()) {
+        emit synchronizeCacheFailed("Torrent: Контент ответа пустой");
+        m_synchronizeCacheActived = false;
+        emit synchronizeCacheActivedChanged();
+        return;
+    }
+
+    auto cacheFilePath = getCachePath("torrents.json");
+
+    if (QFile::exists(cacheFilePath)) QFile::remove(cacheFilePath);
+
+    QFile file(cacheFilePath);
+    if (file.open(QFile::WriteOnly | QFile::Text)) {
+        file.write(content);
+        file.close();
+    }
+
+    downloadSchedulesFile();
+}
+
+void Synchronizev2Service::scheduleCacheHandler(QNetworkReply *reply) noexcept
+{
+    auto content = reply->readAll();
+    if (content.isEmpty()) {
+        emit synchronizeCacheFailed("Schedule: Контент ответа пустой");
+        m_synchronizeCacheActived = false;
+        emit synchronizeCacheActivedChanged();
+        return;
+    }
+
+    auto cacheFilePath = getCachePath("schedule.cache");
+
+    if (QFile::exists(cacheFilePath)) QFile::remove(cacheFilePath);
+
+    QFile file(cacheFilePath);
+    if (file.open(QFile::WriteOnly | QFile::Text)) {
+        file.write(content);
+        file.close();
+    }
+
+    downloadReleaseSeriesFile();
+}
+
+void Synchronizev2Service::releaseSeriesCacheHandler(QNetworkReply *reply) noexcept
+{
+    auto content = reply->readAll();
+    if (content.isEmpty()) {
+        emit synchronizeCacheFailed("ReleaseSeries: Контент ответа пустой");
+        m_synchronizeCacheActived = false;
+        emit synchronizeCacheActivedChanged();
+        return;
+    }
+
+    auto cacheFilePath = getCachePath("releaseseries.cache");
+
+    if (QFile::exists(cacheFilePath)) QFile::remove(cacheFilePath);
+
+    QFile file(cacheFilePath);
+    if (file.open(QFile::WriteOnly | QFile::Text)) {
+        file.write(content);
+        file.close();
+    }
+
+    downloadTypesFile();
+}
+
+void Synchronizev2Service::typesCacheHandler(QNetworkReply *reply) noexcept
+{
+    auto content = reply->readAll();
+    if (content.isEmpty()) {
+        emit synchronizeCacheFailed("Types: Контент ответа пустой");
+        m_synchronizeCacheActived = false;
+        emit synchronizeCacheActivedChanged();
+        return;
+    }
+
+    auto cacheFilePath = getCachePath("types.cache");
+
+    if (QFile::exists(cacheFilePath)) QFile::remove(cacheFilePath);
+
+    QFile file(cacheFilePath);
+    if (file.open(QFile::WriteOnly | QFile::Text)) {
+        file.write(content);
+        file.close();
+    }
 }
 
 void Synchronizev2Service::loginHandler(QNetworkReply *reply) noexcept
@@ -302,7 +573,35 @@ void Synchronizev2Service::requestFinished(QNetworkReply *reply)
         return;
     }
     if (requestType == m_downloadTorrentRequest) {
-        downloadTorrentHandler(reply);
+        downloadTorrentHandler(reply, identifier);
+        return;
+    }
+    if (requestType == m_cacheMetadataRequest) {
+        metadataCacheHandler(reply);
+        return;
+    }
+    if (requestType == m_cacheReleaseRequest) {
+        releaseCacheHandler(reply);
+        return;
+    }
+    if (requestType == m_cacheTorrentRequest) {
+        torrentCacheHandler(reply);
+        return;
+    }
+    if (requestType == m_cacheEpisodesRequest) {
+        episodeCacheHandler(reply);
+        return;
+    }
+    if (requestType == m_cacheTypesRequest) {
+        typesCacheHandler(reply);
+        return;
+    }
+    if (requestType == m_cacheScheduleRequest) {
+        scheduleCacheHandler(reply);
+        return;
+    }
+    if (requestType == m_cacheReleaseSerieRequest) {
+        releaseSeriesCacheHandler(reply);
         return;
     }
 }

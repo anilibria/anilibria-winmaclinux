@@ -311,6 +311,15 @@ void ReleasesViewModel::setSynchronizationServicev2(const Synchronizev2Service *
     emit synchronizationServicev2Changed();
 
     connect(m_synchronizationServicev2, &Synchronizev2Service::userFavoritesReceivedV2, this,&ReleasesViewModel::userFavoritesReceivedV2);
+    connect(m_synchronizationServicev2, &Synchronizev2Service::downloadInTorrentStream, this,&ReleasesViewModel::downloadTorrentInTorrentStream);
+}
+
+void ReleasesViewModel::setProxyPort(int proxyPort) noexcept
+{
+    if (m_proxyPort == proxyPort) return;
+
+    m_proxyPort = proxyPort;
+    emit proxyPortChanged();
 }
 
 QString ReleasesViewModel::openedReleaseStatusDisplay() const noexcept
@@ -1298,7 +1307,8 @@ void ReleasesViewModel::downloadTorrent(int releaseId, const QString& torrentPat
 {
     if (port == 0) return;
 
-    auto url = "http://localhost:" + QString::number(port) + "/fulldownload?id=" + QString::number(releaseId) + "&path=" + torrentPath;
+    auto host = m_synchronizationServicev2->apiv2host();
+    auto url = "http://localhost:" + QString::number(port) + "/fulldownload?id=" + QString::number(releaseId) + "&path=" + (host + torrentPath);
     QNetworkRequest request(url);
     m_manager->get(request);
 }
@@ -2096,4 +2106,9 @@ void ReleasesViewModel::needDeleteFavorites(const QList<int> &ids)
     foreach (auto id, ids) {
         removeReleaseFromFavorites(id);
     }
+}
+
+void ReleasesViewModel::downloadTorrentInTorrentStream(int releaseId, const QString &torrentPath)
+{
+    downloadTorrent(releaseId, torrentPath, m_proxyPort);
 }

@@ -634,15 +634,9 @@ ColumnLayout {
                                         CommonMenuItem {
                                             text: "Скачать " + quality + " [" + series + "] " + size + " " + timecreation
                                             onPressed: {
-                                                const torrentUri = synchronizationService.combineWithWebSiteUrl(url);
-                                                if (localStorage.isUseTorrentStreamMode()) {
-                                                    releasesViewModel.downloadTorrent(releasesViewModel.openedReleaseId, torrentUri, userConfigurationViewModel.playerBuffer);
-                                                } else {
-                                                    synchronizationServicev2.downloadTorrent(url);
-                                                    userActivityViewModel.addDownloadedTorrentToCounter();
+                                                synchronizationServicev2.downloadTorrent(url, releasesViewModel.openedReleaseId);
 
-                                                    if (userConfigurationViewModel.markAsReadAfterDownload) setSeenStateForOpenedRelease(true);
-                                                }
+                                                if (userConfigurationViewModel.markAsReadAfterDownload) setSeenStateForOpenedRelease(true);
                                             }
                                         }
                                     }
@@ -664,7 +658,7 @@ ColumnLayout {
                                 text: mainViewModel.isSmallSizeMode ? "См. торрент" : "Смотреть торрент"
                                 textSize: mainViewModel.isSmallSizeMode ? 10 : 11
                                 onClicked: {
-                                    if (!userConfigurationViewModel.playerBuffer) {
+                                    if (!torrentNotifierViewModel.activated) {
                                         torrentStreamInfo.open();
                                         return;
                                     }

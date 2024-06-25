@@ -100,6 +100,7 @@ class ReleasesViewModel : public QObject
     Q_PROPERTY(QList<int> countSections READ countSections NOTIFY countSectionsChanged)
     Q_PROPERTY(ReleaseCustomGroupsViewModel* customGroups READ customGroups NOTIFY customGroupsChanged)
     Q_PROPERTY(Synchronizev2Service* synchronizationServicev2 READ synchronizationServicev2 WRITE setSynchronizationServicev2 NOTIFY synchronizationServicev2Changed)
+    Q_PROPERTY(int proxyPort READ proxyPort WRITE setProxyPort NOTIFY proxyPortChanged FINAL)
 
 private:
     const QString releasesCacheFileName { "releases.cache" };
@@ -144,6 +145,7 @@ private:
     QList<int> m_sectionCounters { QList<int>() };
     QNetworkAccessManager* m_manager { new QNetworkAccessManager(this) };
     Synchronizev2Service* m_synchronizationServicev2 { nullptr };
+    int m_proxyPort { 0 };
 
 public:
     explicit ReleasesViewModel(QObject *parent = nullptr);
@@ -212,6 +214,9 @@ public:
 
     Synchronizev2Service* synchronizationServicev2() const noexcept { return m_synchronizationServicev2; }
     void setSynchronizationServicev2(const Synchronizev2Service* synchronizationServicev2) noexcept;
+
+    int proxyPort() const noexcept { return m_proxyPort; }
+    void setProxyPort(int proxyPort) noexcept;
 
     bool isOpenedCard() const noexcept { return m_openedRelease != nullptr; }
     int openedReleaseId() const noexcept { return m_openedRelease != nullptr ? m_openedRelease->id() : 0; }
@@ -361,6 +366,7 @@ private slots:
     void userFavoritesReceivedV2(const QList<int>& data);
     void cinemahallItemsChanged();
     void needDeleteFavorites(const QList<int>& ids);
+    void downloadTorrentInTorrentStream(int releaseId, const QString& torrentPath);
 
 signals:
     void openedCardTorrentsChanged();
@@ -424,6 +430,7 @@ signals:
     void openedReleaseIsRutubeChanged();
     void customGroupsChanged();
     void synchronizationServicev2Changed();
+    void proxyPortChanged();
 
 };
 
