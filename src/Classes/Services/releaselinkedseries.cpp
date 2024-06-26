@@ -82,7 +82,11 @@ QVariant ReleaseLinkedSeries::data(const QModelIndex &index, int role) const
             return QVariant(element->posters()->first().toString());
         }
         case SecondPosterRole: {
-            return QVariant(element->posters()->at(1).toString());
+            if (element->posters()->size() > 1) {
+                return QVariant(element->posters()->at(1).toString());
+            } else {
+                return QVariant("");
+            }
         }
         case ThirdPosterRole: {
             if (element->posters()->length() > 2) {

@@ -364,6 +364,14 @@ void Synchronizev2Service::metadataCacheHandler(QNetworkReply *reply) noexcept
         return;
     }
 
+    if (QFile::exists(metadataPath)) QFile::remove(metadataPath);
+
+    QFile file(metadataPath);
+    if (file.open(QFile::WriteOnly | QFile::Text)) {
+        file.write(content);
+        file.close();
+    }
+
     m_currentSynchronizationItem = 0;
     downloadReleaseFile();
 }
@@ -378,7 +386,7 @@ void Synchronizev2Service::releaseCacheHandler(QNetworkReply *reply) noexcept
         return;
     }
 
-    auto cacheFilePath = getCachePath("releases" + QString::number(m_currentSynchronizationItem) + ".json");
+    auto cacheFilePath = getCachePath("releases" + QString::number(m_currentSynchronizationItem) + ".cache");
 
     if (QFile::exists(cacheFilePath)) QFile::remove(cacheFilePath);
 
@@ -388,10 +396,9 @@ void Synchronizev2Service::releaseCacheHandler(QNetworkReply *reply) noexcept
         file.close();
     }
 
-    if (m_currentSynchronizationItem == m_countReleases) {
+    if (m_currentSynchronizationItem == m_countReleases - 1) {
         m_currentSynchronizationItem = 0;
-        qDebug() << "start Episodes!!!!";
-        //downloadEpisodesFile();
+        downloadEpisodesFile();
         return;
     }
 
@@ -409,7 +416,7 @@ void Synchronizev2Service::episodeCacheHandler(QNetworkReply *reply) noexcept
         return;
     }
 
-    auto cacheFilePath = getCachePath("episodes" + QString::number(m_currentSynchronizationItem) + ".json");
+    auto cacheFilePath = getCachePath("episodes" + QString::number(m_currentSynchronizationItem) + ".cache");
 
     if (QFile::exists(cacheFilePath)) QFile::remove(cacheFilePath);
 
@@ -419,7 +426,7 @@ void Synchronizev2Service::episodeCacheHandler(QNetworkReply *reply) noexcept
         file.close();
     }
 
-    if (m_currentSynchronizationItem == m_countReleases) {
+    if (m_currentSynchronizationItem == m_countEpisodes - 1) {
         downloadTorrentsFile();
         return;
     }
@@ -438,7 +445,7 @@ void Synchronizev2Service::torrentCacheHandler(QNetworkReply *reply) noexcept
         return;
     }
 
-    auto cacheFilePath = getCachePath("torrents.json");
+    auto cacheFilePath = getCachePath("torrents.cache");
 
     if (QFile::exists(cacheFilePath)) QFile::remove(cacheFilePath);
 
