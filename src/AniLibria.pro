@@ -228,6 +228,7 @@ SOURCES += \
     Classes/ListModels/releasetorrentcommonlist.cpp \
     Classes/ListModels/releasetorrentslist.cpp \
     Classes/ListModels/themefieldlistmodel.cpp \
+    Classes/Models/apitorrentmodel.cpp \
     Classes/Models/changesmodel.cpp \
     Classes/Models/downloadedtorrentmodel.cpp \
     Classes/Models/downloaditemmodel.cpp \
@@ -239,6 +240,7 @@ SOURCES += \
     Classes/Models/notificationmodel.cpp \
     Classes/Models/onlinevideomodel.cpp \
     Classes/Models/releasemodel.cpp \
+    Classes/Models/releaseonlinevideomodel.cpp \
     Classes/Models/releaseseriesmodel.cpp \
     Classes/Models/releasetorrentmodel.cpp \
     Classes/Models/seenmarkmodel.cpp \
@@ -343,6 +345,7 @@ HEADERS += \
     Classes/ListModels/releasetorrentcommonlist.h \
     Classes/ListModels/releasetorrentslist.h \
     Classes/ListModels/themefieldlistmodel.h \
+    Classes/Models/apitorrentmodel.h \
     Classes/Models/changesmodel.h \
     Classes/Models/downloadedtorrentmodel.h \
     Classes/Models/downloaditemmodel.h \
@@ -354,6 +357,7 @@ HEADERS += \
     Classes/Models/notificationmodel.h \
     Classes/Models/onlinevideomodel.h \
     Classes/Models/releasemodel.h \
+    Classes/Models/releaseonlinevideomodel.h \
     Classes/Models/releaseseriesmodel.h \
     Classes/Models/releasetorrentmodel.h \
     Classes/Models/seenmarkmodel.h \

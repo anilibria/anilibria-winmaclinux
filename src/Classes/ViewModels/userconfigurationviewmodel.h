@@ -70,6 +70,8 @@ class UserConfigurationViewModel : public QObject
     Q_PROPERTY(bool autoPlayerTopMost READ autoPlayerTopMost WRITE setAutoPlayerTopMost NOTIFY autoPlayerTopMostChanged FINAL)
     Q_PROPERTY(QString apiv2host READ apiv2host WRITE setApiv2host NOTIFY apiv2hostChanged FINAL)
     Q_PROPERTY(QString v2token READ v2token WRITE setV2token NOTIFY v2tokenChanged FINAL)
+    Q_PROPERTY(int torrentDownloadMode READ torrentDownloadMode WRITE setTorrentDownloadMode NOTIFY torrentDownloadModeChanged FINAL)
+    Q_PROPERTY(QString cachehost READ cachehost WRITE setCachehost NOTIFY cachehostChanged FINAL)
 
 private:
     QString m_cacheFileName { "userconfiguration.cache" };
@@ -118,6 +120,8 @@ private:
     const QString m_autoPlayerTopMostField { "autoPlayerTopMost" };
     const QString m_apiv2hostField { "apiv2host" };
     const QString m_v2tokenField { "v2token" };
+    const QString m_torrentDownloadModeField { "torrentDownloadMode" };
+    const QString m_cachehostField { "cachehost" };
     int m_opacityPlayerPanel { 50 };
     bool m_notCloseReleaseCardAfterWatch { false };
     bool m_usingScrollAcceleration { true };
@@ -163,6 +167,8 @@ private:
     bool m_autoPlayerTopMost { false };
     QString m_apiv2host { "" };
     QString m_v2token { "" };
+    int m_torrentDownloadMode { 0 };
+    QString m_cachehost { "" };
 
 public:
     explicit UserConfigurationViewModel(QObject *parent = nullptr);
@@ -302,6 +308,12 @@ public:
     QString v2token() const noexcept { return m_v2token; }
     void setV2token(const QString& v2token) noexcept;
 
+    int torrentDownloadMode() const noexcept { return m_torrentDownloadMode; }
+    void setTorrentDownloadMode(int torrentDownloadMode) noexcept;
+
+    QString cachehost() const noexcept { return m_cachehost; }
+    void setCachehost(QString cachehost) noexcept;
+
     Q_INVOKABLE void refreshConfiguration() noexcept;
     Q_INVOKABLE void saveSettingsToFile();
 
@@ -355,6 +367,8 @@ signals:
     void autoPlayerTopMostChanged();
     void apiv2hostChanged();
     void v2tokenChanged();
+    void torrentDownloadModeChanged();
+    void cachehostChanged();
 
 };
 

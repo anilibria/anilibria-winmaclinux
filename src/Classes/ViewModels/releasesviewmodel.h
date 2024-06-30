@@ -32,6 +32,9 @@
 #include "../ListModels/releasetorrentcommonlist.h"
 #include "../Models/historymodel.h"
 #include "../Models/changesmodel.h"
+#include "../Models/onlinevideomodel.h"
+#include "../Models/releaseonlinevideomodel.h"
+#include "../Models/apitorrentmodel.h"
 #include "../Services/synchronizationservice.h"
 #include "../Services/applicationsettings.h"
 #include "../Services/localstorageservice.h"
@@ -100,9 +103,11 @@ class ReleasesViewModel : public QObject
     Q_PROPERTY(QList<int> countSections READ countSections NOTIFY countSectionsChanged)
     Q_PROPERTY(ReleaseCustomGroupsViewModel* customGroups READ customGroups NOTIFY customGroupsChanged)
     Q_PROPERTY(Synchronizev2Service* synchronizationServicev2 READ synchronizationServicev2 WRITE setSynchronizationServicev2 NOTIFY synchronizationServicev2Changed)
+    Q_PROPERTY(int proxyPort READ proxyPort WRITE setProxyPort NOTIFY proxyPortChanged FINAL)
 
 private:
     const QString releasesCacheFileName { "releases.cache" };
+    const QString metadataCacheFileName { "metadata" };
     const QString scheduleCacheFileName { "schedule.cache" };
     const QString favoriteCacheFileName { "favorites.cache" };
     const QString hidedReleasesCacheFileName { "hidedreleases.cache" };
@@ -117,6 +122,8 @@ private:
     ImageBackgroundViewModel* m_imageBackgroundViewModel { new ImageBackgroundViewModel(this) };
     QSharedPointer<QList<FullReleaseModel*>> m_releases { new QList<FullReleaseModel*>() };
     QScopedPointer<QMap<int, FullReleaseModel*>> m_releasesMap { new QMap<int, FullReleaseModel*>() };
+    QList<ReleaseOnlineVideoModel*> m_onlineVideos { QList<ReleaseOnlineVideoModel*>() };
+    QList<ApiTorrentModel*> m_torrentItems { QList<ApiTorrentModel*>() };
     ReleaseCustomGroupsViewModel* m_customGroups { new ReleaseCustomGroupsViewModel(this) };
     int m_countReleases { 0 };
     int m_countSeens { 0 };
@@ -144,6 +151,7 @@ private:
     QList<int> m_sectionCounters { QList<int>() };
     QNetworkAccessManager* m_manager { new QNetworkAccessManager(this) };
     Synchronizev2Service* m_synchronizationServicev2 { nullptr };
+    int m_proxyPort { 0 };
 
 public:
     explicit ReleasesViewModel(QObject *parent = nullptr);
@@ -212,6 +220,9 @@ public:
 
     Synchronizev2Service* synchronizationServicev2() const noexcept { return m_synchronizationServicev2; }
     void setSynchronizationServicev2(const Synchronizev2Service* synchronizationServicev2) noexcept;
+
+    int proxyPort() const noexcept { return m_proxyPort; }
+    void setProxyPort(int proxyPort) noexcept;
 
     bool isOpenedCard() const noexcept { return m_openedRelease != nullptr; }
     int openedReleaseId() const noexcept { return m_openedRelease != nullptr ? m_openedRelease->id() : 0; }
@@ -307,7 +318,6 @@ public:
     uint32_t getCountFromChanges(const QList<int> *releases, bool filterByFavorites);
     Q_INVOKABLE void openInExternalPlayer(const QString& url);
     Q_INVOKABLE void prepareTorrentsForListItem(const int id);
-    Q_INVOKABLE void clearDeletedInCacheMarks();
     Q_INVOKABLE void downloadTorrent(int releaseId, const QString& torrentPath, int port);
     FullReleaseModel* getReleaseById(int id) const noexcept;
     void resetReleaseChanges(int releaseId) noexcept;
@@ -315,7 +325,7 @@ public:
 
 private:
     void loadReleases();
-    void loadReleasesWithoutReactive();
+    void loadNextReleasesWithoutReactive();
 
     void loadSchedules();
     void saveSchedule(QString json);
@@ -348,7 +358,6 @@ private:
     int randomBetween(int low, int high) const noexcept;
     void saveReleasesFromMemoryToFile();
     void mapToFullReleaseModel(QJsonObject &&jsonObject, const bool isFirstStart, QSharedPointer<QSet<int>> hittedIds);
-    void markDeletedReleases(QSharedPointer<QSet<int>> hittedIds);
     QString videosToJson(QList<OnlineVideoModel> &videos);
     QString torrentsToJson(QList<ReleaseTorrentModel> &torrents);
     QHash<int, int> getAllSeenMarkCount() noexcept;
@@ -361,6 +370,7 @@ private slots:
     void userFavoritesReceivedV2(const QList<int>& data);
     void cinemahallItemsChanged();
     void needDeleteFavorites(const QList<int>& ids);
+    void downloadTorrentInTorrentStream(int releaseId, const QString& torrentPath);
 
 signals:
     void openedCardTorrentsChanged();
@@ -424,6 +434,7 @@ signals:
     void openedReleaseIsRutubeChanged();
     void customGroupsChanged();
     void synchronizationServicev2Changed();
+    void proxyPortChanged();
 
 };
 

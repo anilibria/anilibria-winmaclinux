@@ -1,21 +1,3 @@
-/*
-    AniLibria - desktop client for the website anilibria.tv
-    Copyright (C) 2020 Roman Vladimirov
-
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
 import QtQuick 2.12
 import QtQuick.Window 2.12
 import QtQuick.Controls 2.5
@@ -58,6 +40,8 @@ ApplicationWindow {
 
     property color iconReleaseCatalogSearchFounded: applicationThemeViewModel.currentItems.iconReleaseCatalogSearchFounded
     property color iconCustomGroupFounded: applicationThemeViewModel.currentItems.iconCustomGroupFounded
+
+    property real dp: Screen.pixelDensity * 25.4 / 160
 
     Material.accent: applicationThemeViewModel.materialAccent
     Material.theme: applicationThemeViewModel.basedOnDark ? Material.Dark : Material.Light
@@ -614,13 +598,6 @@ ApplicationWindow {
 
     ApplicationSettings {
         id: applicationSettings
-        Component.onCompleted: {
-            if (!applicationSettings.userToken) return;
-
-            synchronizationService.getUserData(applicationSettings.userToken);
-
-            analyticsService.sendVersion();
-        }
     }
 
     LocalStorage {
@@ -629,6 +606,9 @@ ApplicationWindow {
 
     AnalyticsService {
         id: analyticsService
+        Component.onCompleted: {
+            analyticsService.sendVersion();
+        }
     }
 
     ReleaseLinkedSeries {
@@ -648,22 +628,8 @@ ApplicationWindow {
     SynchronizationService {
         id: synchronizationService
         Component.onCompleted: {
-            releasesViewModel.synchronizationEnabled = true;
-            synchronizeReleases(1);
-        }
-
-        onTorrentDownloaded: {
-            const userSettings = JSON.parse(localStorage.getUserSettings());
-            if (userSettings.torrentDownloadMode === 0) {
-                if (Qt.platform.os === "linux" || Qt.platform.os === "unix") Qt.openUrlExternally("file://" + torrentPath);
-                if (Qt.platform.os === "osx") Qt.openUrlExternally("file://" + torrentPath);
-                if (Qt.platform.os === "windows") Qt.openUrlExternally("file:///" + torrentPath);
-            }
-
-            if (userSettings.torrentDownloadMode === 1) {
-                window.tempTorrentPath = torrentPath;
-                saveTorrentFileDialog.open();
-            }
+            //releasesViewModel.synchronizationEnabled = true;
+            //synchronizeReleases(1);
         }
     }
 
@@ -671,6 +637,8 @@ ApplicationWindow {
         id: synchronizationServicev2
         apiv2host: userConfigurationViewModel.apiv2host
         token: userConfigurationViewModel.v2token
+        cachehost: userConfigurationViewModel.cachehost
+        torrentDownloadMode: userConfigurationViewModel.torrentDownloadMode
 
         onUserCompleteAuthentificated: {
             notificationViewModel.sendInfoNotification(`Вы успешно вошли в аккаунт.`);
@@ -712,6 +680,17 @@ ApplicationWindow {
 
         Component.onCompleted: {
             if (synchronizationServicev2.token) synchronizationServicev2.getUserData();
+
+            synchronizationServicev2.synchronizeFullCache();
+        }
+
+        onSaveDownloadedTorrent: {
+            window.tempTorrentPath = torrentPath;
+            saveTorrentFileDialog.open();
+        }
+
+        onTorrentDownloaded: {
+            userActivityViewModel.addDownloadedTorrentToCounter();
         }
 
         /*onSynchronizationCompleted: {
@@ -991,7 +970,9 @@ ApplicationWindow {
         id: releasesViewModel
         synchronizationService: synchronizationService
         synchronizationServicev2: synchronizationServicev2
+        synchronizationEnabled: synchronizationServicev2.synchronizeCacheActived
         applicationSettings: applicationSettings
+        proxyPort: userConfigurationViewModel.playerBuffer
         localStorage: localStorage
         notCloseReleaseCardAfterWatch: userConfigurationViewModel.notCloseReleaseCardAfterWatch
         imageBackgroundViewModel.containerWidth: releases.backgroundImageWidth

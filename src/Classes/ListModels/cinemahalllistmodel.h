@@ -22,6 +22,7 @@
 #include <QObject>
 #include <QList>
 #include <QSet>
+#include <QSharedPointer>
 #include "../Models/fullreleasemodel.h"
 #include "commonmenulistmodel.h"
 

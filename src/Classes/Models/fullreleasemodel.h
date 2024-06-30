@@ -20,7 +20,8 @@
 #define FULLRELEASEMODEL_H
 
 #include <QObject>
-#include "releasemodel.h"
+#include <QString>
+//#include "releasemodel.h"
 
 class FullReleaseModel
 {
@@ -46,7 +47,10 @@ private:
     QString m_Season;
     QString m_Announce;
     int m_Rating;
-    bool m_isDeleted { false };
+    bool m_isOngoing { false };
+    QString m_ageRating { "" };
+    const QString m_isOngoingField { "isOngoing" };
+    const QString m_ageRatingField { "ageRating" };
 
 public:
     QString title() const { return m_Title; }
@@ -112,12 +116,15 @@ public:
     QString type() const { return m_Type; }
     void setType(const QString& type) noexcept;
 
-    bool isDeleted() const noexcept { return m_isDeleted; }
-    void setIsDeleted(const bool isDeleted) noexcept;
+    bool isOngoing() const { return m_isOngoing; }
+    void setIsOngoing(bool isOngoing) noexcept { m_isOngoing = isOngoing; }
+
+    QString ageRating() const { return m_ageRating; }
+    void setAgeRating(const QString& ageRating) noexcept { m_ageRating = ageRating; }
 
     void writeToJson(QJsonObject &json) const noexcept;
 
-    void readFromJson(QJsonValue &json);
+    void readFromJson(const QJsonObject &json);
 
     bool operator== (const FullReleaseModel &comparedModel) noexcept;
 

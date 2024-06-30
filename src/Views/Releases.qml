@@ -1129,7 +1129,7 @@ Page {
                                 width: 350
                                 model: ["Открыть в торрент клиенте", "Сохранить файл", "Использовать TorrentStream"]
                                 onCurrentIndexChanged: {
-                                    localStorage.setTorrentDownloadMode(downloadTorrentMode.currentIndex);
+                                    userConfigurationViewModel.torrentDownloadMode = downloadTorrentMode.currentIndex;
                                 }
                             }
 
@@ -2025,7 +2025,6 @@ Page {
 
     Component.onCompleted: {
         const userSettings = JSON.parse(localStorage.getUserSettings());
-        downloadTorrentMode.currentIndex = userSettings.torrentDownloadMode;
         notificationForFavorites.checked = userSettings.notificationForFavorites;
         releasesViewModel.items.filterByFavorites = notificationForFavorites.checked;
         clearFilterAfterChangeSectionSwitch.checked = userSettings.clearFiltersAfterChangeSection;

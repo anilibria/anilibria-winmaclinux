@@ -32,7 +32,7 @@ public:
 
     void loadFromJson(const QString& json);
 
-    Q_INVOKABLE void downloadTorrent(const int id);
+    Q_INVOKABLE QString getDownloadPath(int index);
 
 private:
     QString getReadableSize(long long size) const noexcept;

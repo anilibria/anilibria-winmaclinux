@@ -131,11 +131,6 @@ void FullReleaseModel::setType(const QString &type) noexcept
     m_Type = type;
 }
 
-void FullReleaseModel::setIsDeleted(const bool isDeleted) noexcept
-{
-    m_isDeleted = isDeleted;
-}
-
 void FullReleaseModel::writeToJson(QJsonObject &json) const noexcept
 {
     json["id"] = m_Id;
@@ -158,10 +153,11 @@ void FullReleaseModel::writeToJson(QJsonObject &json) const noexcept
     json["voices"] = m_Voices;
     json["torrents"] = m_Torrents;
     json["videos"] = m_Videos;
-    json["isDeleted"] = m_isDeleted;
+    json[m_isOngoingField] = m_isOngoing;
+    json[m_ageRatingField] = m_ageRating;
 }
 
-void FullReleaseModel::readFromJson(QJsonValue &json)
+void FullReleaseModel::readFromJson(const QJsonObject &json)
 {
     setId(json["id"].toInt());
     setTitle(json["title"].toString());
@@ -183,7 +179,8 @@ void FullReleaseModel::readFromJson(QJsonValue &json)
     setVoicers(json["voices"].toString());
     setTorrents(json["torrents"].toString());
     setVideos(json["videos"].toString());
-    setIsDeleted(json["isDeleted"].toBool());
+    setIsOngoing(json[m_isOngoingField].toBool());
+    setAgeRating(json[m_ageRatingField].toString());
 }
 bool FullReleaseModel::operator== (const FullReleaseModel &comparedModel) noexcept
 {
