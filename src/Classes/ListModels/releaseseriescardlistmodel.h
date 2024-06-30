@@ -3,6 +3,7 @@
 
 #include <QAbstractListModel>
 #include <QList>
+#include <QSet>
 #include "../Models/fullreleasemodel.h"
 
 class ReleaseSeriesCardListModel : public QAbstractListModel

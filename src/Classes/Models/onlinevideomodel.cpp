@@ -20,7 +20,6 @@
 #include <QJsonObject>
 #include <QJsonArray>
 #include "onlinevideomodel.h"
-#include "../../globalconstants.h"
 
 OnlineVideoModel::OnlineVideoModel()
 {

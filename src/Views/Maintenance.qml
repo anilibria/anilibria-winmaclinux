@@ -211,7 +211,6 @@ Page {
                                     width: parent.width - 10
                                     text: "Сбросить удаленные"
                                     onClicked: {
-                                        releasesViewModel.clearDeletedInCacheMarks();
                                     }
                                 }
                             }

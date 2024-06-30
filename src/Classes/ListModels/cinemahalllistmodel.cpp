@@ -16,6 +16,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <QJsonDocument>
+#include <QFile>
 #include "cinemahalllistmodel.h"
 #include "../../globalhelpers.h"
 

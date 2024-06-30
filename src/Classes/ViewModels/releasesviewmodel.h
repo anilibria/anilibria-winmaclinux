@@ -32,6 +32,9 @@
 #include "../ListModels/releasetorrentcommonlist.h"
 #include "../Models/historymodel.h"
 #include "../Models/changesmodel.h"
+#include "../Models/onlinevideomodel.h"
+#include "../Models/releaseonlinevideomodel.h"
+#include "../Models/apitorrentmodel.h"
 #include "../Services/synchronizationservice.h"
 #include "../Services/applicationsettings.h"
 #include "../Services/localstorageservice.h"
@@ -104,6 +107,7 @@ class ReleasesViewModel : public QObject
 
 private:
     const QString releasesCacheFileName { "releases.cache" };
+    const QString metadataCacheFileName { "metadata" };
     const QString scheduleCacheFileName { "schedule.cache" };
     const QString favoriteCacheFileName { "favorites.cache" };
     const QString hidedReleasesCacheFileName { "hidedreleases.cache" };
@@ -118,6 +122,8 @@ private:
     ImageBackgroundViewModel* m_imageBackgroundViewModel { new ImageBackgroundViewModel(this) };
     QSharedPointer<QList<FullReleaseModel*>> m_releases { new QList<FullReleaseModel*>() };
     QScopedPointer<QMap<int, FullReleaseModel*>> m_releasesMap { new QMap<int, FullReleaseModel*>() };
+    QList<ReleaseOnlineVideoModel*> m_onlineVideos { QList<ReleaseOnlineVideoModel*>() };
+    QList<ApiTorrentModel*> m_torrentItems { QList<ApiTorrentModel*>() };
     ReleaseCustomGroupsViewModel* m_customGroups { new ReleaseCustomGroupsViewModel(this) };
     int m_countReleases { 0 };
     int m_countSeens { 0 };
@@ -312,7 +318,6 @@ public:
     uint32_t getCountFromChanges(const QList<int> *releases, bool filterByFavorites);
     Q_INVOKABLE void openInExternalPlayer(const QString& url);
     Q_INVOKABLE void prepareTorrentsForListItem(const int id);
-    Q_INVOKABLE void clearDeletedInCacheMarks();
     Q_INVOKABLE void downloadTorrent(int releaseId, const QString& torrentPath, int port);
     FullReleaseModel* getReleaseById(int id) const noexcept;
     void resetReleaseChanges(int releaseId) noexcept;
@@ -320,7 +325,7 @@ public:
 
 private:
     void loadReleases();
-    void loadReleasesWithoutReactive();
+    void loadNextReleasesWithoutReactive();
 
     void loadSchedules();
     void saveSchedule(QString json);
@@ -353,7 +358,6 @@ private:
     int randomBetween(int low, int high) const noexcept;
     void saveReleasesFromMemoryToFile();
     void mapToFullReleaseModel(QJsonObject &&jsonObject, const bool isFirstStart, QSharedPointer<QSet<int>> hittedIds);
-    void markDeletedReleases(QSharedPointer<QSet<int>> hittedIds);
     QString videosToJson(QList<OnlineVideoModel> &videos);
     QString torrentsToJson(QList<ReleaseTorrentModel> &torrents);
     QHash<int, int> getAllSeenMarkCount() noexcept;
