@@ -523,6 +523,10 @@ void Synchronizev2Service::typesCacheHandler(QNetworkReply *reply) noexcept
         file.write(content);
         file.close();
     }
+
+    m_synchronizeCacheActived = false;
+    emit synchronizeCacheActivedChanged();
+    emit synchronizationCompleted();
 }
 
 void Synchronizev2Service::loginHandler(QNetworkReply *reply) noexcept

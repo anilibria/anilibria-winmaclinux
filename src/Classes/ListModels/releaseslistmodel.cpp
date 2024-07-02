@@ -116,9 +116,6 @@ QVariant ReleasesListModel::data(const QModelIndex &index, int role) const
         case CountTorrentRole: {
             return QVariant(release->countTorrents());
         }
-        case VideosRole: {
-            return QVariant(release->videos());
-        }
         case InFavoritesRole: {
             return QVariant(m_userFavorites->contains(release->id()));
         }
@@ -196,10 +193,6 @@ QHash<int, QByteArray> ReleasesListModel::roleNames() const
         {
             CountTorrentRole,
             "countTorrents"
-        },
-        {
-            VideosRole,
-            "videos"
         },
         {
             RatingRole,

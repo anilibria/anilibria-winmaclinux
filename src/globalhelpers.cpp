@@ -47,13 +47,6 @@ QString removeFileProtocol(QString &path) noexcept
 #endif
 }
 
-bool isRutubeHasVideos(const QString& videos) noexcept {
-    static QRegularExpression re(R"arg("rutube_id\": \")arg");
-    QRegularExpressionMatch match = re.match(videos);
-
-    return match.hasMatch();
-}
-
 QString getJsonContentFromFile(const QString& path) noexcept {
     QFile releasesCacheFile(getCachePath(path));
 

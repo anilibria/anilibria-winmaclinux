@@ -10,8 +10,6 @@ void createIfNotExistsCacheFile(const QString& fileName, const QString& defaultC
 
 QString removeFileProtocol(QString& path) noexcept;
 
-bool isRutubeHasVideos(const QString& videos) noexcept;
-
 QString getJsonContentFromFile(const QString& path) noexcept;
 
 void saveJsonArrayToFile(const QString& path, const QJsonArray& array) noexcept;

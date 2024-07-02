@@ -139,22 +139,12 @@ void ExternalPlayerViewModel::setWebSocketPlayer(int releaseId) noexcept
     m_releaseName = release->title();
     emit releaseNameChanged();
 
-    auto document = QJsonDocument::fromJson(release->videos().toUtf8());
-    auto videosArray = document.array();
+    auto videos = m_releases->getReleaseVideos(releaseId);
 
-    foreach (auto item, videosArray) {
-        if (!item.isObject()) continue;
-        auto object = item.toObject();
-        if (!object.contains("rutube_id")) continue;
+    foreach (auto item, videos) {
+        if (item->rutubeId().isEmpty()) continue;
 
-        auto id = object["rutube_id"];
-        if (!id.isString()) continue;
-
-        if (!object.contains("ordinal")) continue;
-        auto ordinal = object["ordinal"];
-        auto order = ordinal.toInt();
-
-        m_seriesMap.insert(order, id.toString());
+        m_seriesMap.insert(item->order(), item->rutubeId());
     }
 
     auto keys = m_seriesMap.keys();

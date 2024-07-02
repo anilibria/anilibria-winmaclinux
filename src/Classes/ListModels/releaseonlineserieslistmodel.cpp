@@ -178,12 +178,28 @@ void ReleaseOnlineSeriesListModel::refresh()
     }
 
     auto videos = m_releases->getReleaseVideos(m_releaseId);
-    auto document = QJsonDocument::fromJson(videos.toUtf8());
-    auto videosArray = document.array();
+    auto release = m_releases->getReleaseById(m_releaseId);
 
-    foreach (auto video, videosArray) {
+    foreach (auto video, videos) {
         auto videoModel = new OnlineVideoModel();
-        videoModel->readFromApiModel(video.toObject());
+        videoModel->setDescription(video->description());
+        videoModel->setFullHd(video->fullhd());
+        videoModel->setHd(video->hd());
+        videoModel->setSd(video->sd());
+        videoModel->setOrder(video->order());
+        videoModel->setReleaseId(m_releaseId);
+        videoModel->setReleasePoster(release != nullptr ? release->poster() : "");
+        videoModel->setTitle("Серия " + video->title());
+
+        videoModel->setOpeningStartSeconds(video->openingStartSeconds());
+        videoModel->setOpeningEndSeconds(video->openingEndSeconds());
+
+        videoModel->setEndingStartSeconds(video->endingStartSeconds());
+        videoModel->setEndingEndSeconds(video->endingEndSeconds());
+
+        videoModel->setVideoPoster(video->videoPoster());
+        videoModel->setIsGroup(false);
+
         m_items.append(videoModel);
     }
 

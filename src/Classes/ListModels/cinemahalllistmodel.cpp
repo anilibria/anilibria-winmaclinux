@@ -187,6 +187,8 @@ QString CinemahallListModel::movedPositionPlaceholder() const noexcept
 int CinemahallListModel::rowCount(const QModelIndex &parent) const
 {
     if (parent.isValid()) return 0;
+    if (m_releases->isEmpty()) return 0;
+
     return m_items->size();
 }
 

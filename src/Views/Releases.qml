@@ -40,7 +40,7 @@ Page {
     property alias backgroundImageHeight: itemsContainer.height
 
     signal navigateFrom()
-    signal watchSingleRelease(int releaseId, string videos, int startSeria, string poster)
+    signal watchSingleRelease(int releaseId, int startSeria)
     signal refreshReleases()
     signal refreshFavorites()
     signal refreshReleaseSchedules()
@@ -137,7 +137,7 @@ Page {
                         if (releasesViewModel.synchronizationEnabled) return;
 
                         releasesViewModel.synchronizationEnabled = true;
-                        synchronizationService.synchronizeReleases(1);
+                        synchronizationServicev2.synchronizeFullCache();
                     }
                 }
 
@@ -1752,7 +1752,7 @@ Page {
                         onPositionChanged: {
                             if (position < -0.0008 && !releasesViewModel.synchronizationEnabled) {
                                 releasesViewModel.synchronizationEnabled = true;
-                                synchronizationService.synchronizeReleases(1);
+                                synchronizationServicev2.synchronizeFullCache();
                             }
                         }
                     }
@@ -1784,7 +1784,7 @@ Page {
                                     releasesViewModel.clearSelectedReleases();
                                 }
                                 onWatchRelease: {
-                                    page.watchSingleRelease(id, videos, -1, poster);
+                                    page.watchSingleRelease(id, -1);
                                 }
                             }
                         }

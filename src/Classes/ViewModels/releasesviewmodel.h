@@ -39,6 +39,7 @@
 #include "../Services/applicationsettings.h"
 #include "../Services/localstorageservice.h"
 #include "../Services/synchronizev2service.h"
+#include "../Models/releaseonlinevideomodel.h"
 #include "releasecustomgroupsviewmodel.h"
 #include "useractivityviewmodel.h"
 
@@ -94,7 +95,6 @@ class ReleasesViewModel : public QObject
     Q_PROPERTY(int openedReleaseSeenCountVideos READ openedReleaseSeenCountVideos NOTIFY openedReleaseSeenCountVideosChanged)
     Q_PROPERTY(bool openedReleaseInHided READ openedReleaseInHided NOTIFY openedReleaseInHidedChanged)
     Q_PROPERTY(bool openedReleaseInFavorites READ openedReleaseInFavorites NOTIFY openedReleaseInFavoritesChanged)
-    Q_PROPERTY(QString openedReleaseVideos READ openedReleaseVideos NOTIFY openedReleaseVideosChanged)
     Q_PROPERTY(QString openedReleaseAnnounce READ openedReleaseAnnounce NOTIFY openedReleaseAnnounceChanged)
     Q_PROPERTY(bool openedReleaseIsRutube READ openedReleaseIsRutube NOTIFY openedReleaseIsRutubeChanged)
     Q_PROPERTY(bool synchronizationEnabled READ synchronizationEnabled WRITE setSynchronizationEnabled NOTIFY synchronizationEnabledChanged)
@@ -251,7 +251,6 @@ public:
     int openedReleaseSeenCountVideos() const noexcept { return m_openedRelease != nullptr ? m_items->getReleaseSeenMarkCount(m_openedRelease->id()) : 0; }
     bool openedReleaseInHided() const noexcept { return m_openedRelease != nullptr ? m_hiddenReleases->contains(m_openedRelease->id()) : false; }
     bool openedReleaseInFavorites() const noexcept { return m_openedRelease != nullptr ? m_userFavorites->contains(m_openedRelease->id()) : false; }
-    QString openedReleaseVideos() const noexcept { return m_openedRelease != nullptr ? m_openedRelease->videos() : ""; }
     QString openedReleaseAnnounce() const noexcept { return m_openedRelease != nullptr ? m_openedRelease->announce() : ""; }
     bool openedReleaseIsRutube() const noexcept;
     QStringList getMostPopularGenres() const noexcept;
@@ -271,6 +270,7 @@ public:
     void fillFullSearch(QList<FullReleaseModel*>& list, const QString& filter) noexcept;
     bool fullSearchCheck(const QString& word, const FullReleaseModel* release) noexcept;
     void iterateOnReleases(std::function<void (FullReleaseModel *)> func) noexcept;
+    QList<ReleaseOnlineVideoModel*> getReleaseVideos(int releaseId) noexcept;
 
     Q_INVOKABLE void copyToClipboard(const QString& text) const noexcept;
     Q_INVOKABLE void copyImageToClipboard(const QString& imagePath) const;
@@ -299,7 +299,6 @@ public:
     Q_INVOKABLE void removeAllSeenMark();
     Q_INVOKABLE void reloadReleases();
     Q_INVOKABLE void setToReleaseHistory(int id, int type) noexcept;
-    Q_INVOKABLE QString getReleaseVideos(int id) const noexcept;
     Q_INVOKABLE QString getReleasePoster(int id) const noexcept;
     Q_INVOKABLE QString getReleaseTitle(int id) const noexcept;
     Q_INVOKABLE void addToHidedReleases(const QList<int>& ids) noexcept;
@@ -319,6 +318,8 @@ public:
     Q_INVOKABLE void openInExternalPlayer(const QString& url);
     Q_INVOKABLE void prepareTorrentsForListItem(const int id);
     Q_INVOKABLE void downloadTorrent(int releaseId, const QString& torrentPath, int port);
+    Q_INVOKABLE QString packAsM3UAndOpen(int id, QString quality);
+    Q_INVOKABLE QString packAsMPCPLAndOpen(int id, QString quality);
     FullReleaseModel* getReleaseById(int id) const noexcept;
     void resetReleaseChanges(int releaseId) noexcept;
     quint32 m_seedValue { 0 };
@@ -356,7 +357,6 @@ private:
     QString getMultipleLinks(QString text) const noexcept;
     FullReleaseModel* getReleaseByCode(QString code) const noexcept;
     int randomBetween(int low, int high) const noexcept;
-    void saveReleasesFromMemoryToFile();
     void mapToFullReleaseModel(QJsonObject &&jsonObject, const bool isFirstStart, QSharedPointer<QSet<int>> hittedIds);
     QString videosToJson(QList<OnlineVideoModel> &videos);
     QString torrentsToJson(QList<ReleaseTorrentModel> &torrents);
@@ -422,7 +422,6 @@ signals:
     void openedReleaseInHidedChanged();
     void localStorageChanged();
     void openedReleaseInFavoritesChanged();
-    void openedReleaseVideosChanged();
     void notCloseReleaseCardAfterWatchChanged();
     void cinemahallChanged();
     void itemTorrentsChanged();

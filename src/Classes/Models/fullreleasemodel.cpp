@@ -20,7 +20,7 @@
 #include <QJsonObject>
 #include <QJsonDocument>
 #include "fullreleasemodel.h"
-#include "globalconstants.h"
+
 
 void FullReleaseModel::setTitle(const QString &title) noexcept
 {
@@ -39,11 +39,7 @@ void FullReleaseModel::setYear(const QString &year) noexcept
 
 void FullReleaseModel::setPoster(const QString &poster) noexcept
 {
-    if (poster.contains("https://")) {
-        m_Poster = poster;
-    } else {
-        m_Poster = AnilibriaImagesPath + poster;
-    }
+    m_Poster = poster;
 }
 
 void FullReleaseModel::setDescription(const QString &description) noexcept
@@ -116,11 +112,6 @@ void FullReleaseModel::setTorrents(const QString &torrents) noexcept
     m_Torrents = torrents;
 }
 
-void FullReleaseModel::setVideos(const QString &videos) noexcept
-{
-    m_Videos = videos;
-}
-
 void FullReleaseModel::setTimestamp(const int timestamp) noexcept
 {
     m_Timestamp = timestamp;
@@ -129,32 +120,6 @@ void FullReleaseModel::setTimestamp(const int timestamp) noexcept
 void FullReleaseModel::setType(const QString &type) noexcept
 {
     m_Type = type;
-}
-
-void FullReleaseModel::writeToJson(QJsonObject &json) const noexcept
-{
-    json["id"] = m_Id;
-    json["title"] = m_Title;
-    json["code"] = m_Code;
-    json["originalName"] = m_OriginalName;
-    json["rating"] = m_Rating;
-    json["series"] = m_Series;
-    json["status"] = m_Status;
-    json["type"] = m_Type;
-    json["timestamp"] = m_Timestamp;
-    json["year"] = m_Year;
-    json["season"] = m_Season;
-    json["countTorrents"] = m_CountTorrents;
-    json["countVideos"] = m_CountVideos;
-    json["description"] = m_Description;
-    json["announce"] = m_Announce;
-    json["genres"] = m_Genres;
-    json["poster"] = m_Poster;
-    json["voices"] = m_Voices;
-    json["torrents"] = m_Torrents;
-    json["videos"] = m_Videos;
-    json[m_isOngoingField] = m_isOngoing;
-    json[m_ageRatingField] = m_ageRating;
 }
 
 void FullReleaseModel::readFromJson(const QJsonObject &json)
@@ -178,7 +143,6 @@ void FullReleaseModel::readFromJson(const QJsonObject &json)
     setPoster(json["poster"].toString());
     setVoicers(json["voices"].toString());
     setTorrents(json["torrents"].toString());
-    setVideos(json["videos"].toString());
     setIsOngoing(json[m_isOngoingField].toBool());
     setAgeRating(json[m_ageRatingField].toString());
 }

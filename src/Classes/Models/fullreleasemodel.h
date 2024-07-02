@@ -21,7 +21,7 @@
 
 #include <QObject>
 #include <QString>
-//#include "releasemodel.h"
+#include "globalconstants.h"
 
 class FullReleaseModel
 {
@@ -39,7 +39,6 @@ private:
     QString m_Genres;
     QString m_Voices;
     QString m_OriginalName;
-    QString m_Videos;
     int m_CountVideos;
     QString m_Torrents;
     int m_CountTorrents;
@@ -51,6 +50,7 @@ private:
     QString m_ageRating { "" };
     const QString m_isOngoingField { "isOngoing" };
     const QString m_ageRatingField { "ageRating" };
+    QString m_posterHost { "" };
 
 public:
     QString title() const { return m_Title; }
@@ -62,7 +62,7 @@ public:
     QString year() const { return m_Year; }
     void setYear(const QString &year) noexcept;
 
-    QString poster() const { return m_Poster; }
+    QString poster() const { return m_posterHost + m_Poster; }
     void setPoster(const QString &poster) noexcept;
 
     QString description() const { return m_Description; }
@@ -107,9 +107,6 @@ public:
     QString torrents() const { return m_Torrents; }
     void setTorrents(const QString& torrents) noexcept;
 
-    QString videos() const { return m_Videos; }
-    void setVideos(const QString& videos) noexcept;
-
     int timestamp() const noexcept { return m_Timestamp; }
     void setTimestamp(const int timestamp) noexcept;
 
@@ -122,7 +119,8 @@ public:
     QString ageRating() const { return m_ageRating; }
     void setAgeRating(const QString& ageRating) noexcept { m_ageRating = ageRating; }
 
-    void writeToJson(QJsonObject &json) const noexcept;
+    QString posterHost() const { return m_posterHost; }
+    void setPosterHost(const QString& posterHost) noexcept { m_posterHost = posterHost; }
 
     void readFromJson(const QJsonObject &json);
 

@@ -21,6 +21,7 @@ private:
     int m_openingEndSeconds { -1 };
     QString m_rutubeId { "" };
     QString m_description { "" };
+    QString m_posterHost { "" };
 
 public:
     ReleaseOnlineVideoModel();
@@ -32,13 +33,14 @@ public:
     QString fullhd() const noexcept { return m_fullhd; }
     int releaseId() const noexcept { return m_releaseId; }
     int order() const noexcept { return m_order; }
-    QString videoPoster() const noexcept { return m_videoPoster; }
+    QString videoPoster() const noexcept { return m_posterHost + m_videoPoster; }
     int endingStartSeconds() const noexcept { return m_endingStartSeconds; }
     int endingEndSeconds() const noexcept { return m_endingEndSeconds; }
     int openingStartSeconds() const noexcept { return m_openingStartSeconds; }
     int openingEndSeconds() const noexcept { return m_openingEndSeconds; }
     QString rutubeId() const noexcept { return m_rutubeId; }
     QString description() const noexcept { return m_description; }
+    QString posterHost() const { return m_posterHost; }
 
     void setUniqueId(const QString& uniqueId) noexcept { m_uniqueId = uniqueId; }
     void setTitle(const QString& title) noexcept { m_title = title; }
@@ -53,7 +55,9 @@ public:
     void setOpeningStartSeconds(int openingStartSeconds) noexcept { m_openingStartSeconds = openingStartSeconds; }
     void setOpeningEndSeconds(int openingEndSeconds) noexcept { m_openingEndSeconds = openingEndSeconds; }
     void setRutubeId(const QString& rutubeId) noexcept { m_rutubeId = rutubeId; }
-    void setDescription(const QString& description) noexcept { m_description = description; }
+    void setDescription(const QString& description) noexcept { m_description = description; }   
+    void setPosterHost(const QString& posterHost) noexcept { m_posterHost = posterHost; }
+
 
     void readFromApiModel(const QJsonObject &jsonObject, int releaseId);
 

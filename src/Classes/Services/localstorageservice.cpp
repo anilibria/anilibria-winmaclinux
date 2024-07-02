@@ -381,32 +381,27 @@ static bool compareExternalPlaylistVideo(const ExternalPlaylistVideo& first, con
     return first.order() < second.order();
 }
 
-QString LocalStorageService::packAsM3UAndOpen(int id, QString quality)
+QString LocalStorageService::packAsM3UAndOpen(int id, QString quality, const QList<ReleaseOnlineVideoModel*>& videos)
 {
     auto release = getReleaseFromCache(id);
     if (release->id() == -1) return "";
 
-    auto jsonDocument = QJsonDocument::fromJson(release->videos().toUtf8());
-    auto videosArray = jsonDocument.array();
-    QList<ExternalPlaylistVideo> videos;
-    foreach (auto jsonVideo, videosArray) {
+    QList<ExternalPlaylistVideo> result;
+    foreach (auto videoItem, videos) {
         ExternalPlaylistVideo video;
-        auto item = jsonVideo.toObject();
-        video.setAddress(item.value(quality).toString());
-        video.setOrder(item.value("id").toInt());
-        auto videoObject = jsonVideo.toObject();
-        if(videoObject.contains("name") && !videoObject["name"].toString().isEmpty()) {
-            video.setName(videoObject["name"].toString());
-        } else {
-            video.setName("Серия " + QString::number(video.order()));
-        }
-        videos.append(video);
+
+        if (quality == "fullhd") video.setAddress(videoItem->fullhd());
+        if (quality == "hd") video.setAddress(videoItem->hd());
+        if (quality == "sd") video.setAddress(videoItem->sd());
+        video.setOrder(videoItem->order());
+        video.setName(videoItem->title());
+        result.append(video);
     }
 
-    std::sort(videos.begin(), videos.end(), compareExternalPlaylistVideo);
+    std::sort(result.begin(), result.end(), compareExternalPlaylistVideo);
 
     QString content = "#EXTM3U\n\n";
-    foreach (auto video, videos) {
+    foreach (auto video, result) {
         content += video.exportToM3U();
     }
 
@@ -420,27 +415,27 @@ QString LocalStorageService::packAsM3UAndOpen(int id, QString quality)
     return fileName;
 }
 
-QString LocalStorageService::packAsMPCPLAndOpen(int id, QString quality)
+QString LocalStorageService::packAsMPCPLAndOpen(int id, QString quality, const QList<ReleaseOnlineVideoModel*>& videos)
 {
     auto release = getReleaseFromCache(id);
     if (release->id() == -1) return "";
 
-    auto jsonDocument = QJsonDocument::fromJson(release->videos().toUtf8());
-    auto videosArray = jsonDocument.array();
-    QList<ExternalPlaylistVideo> videos;
-    foreach (auto jsonVideo, videosArray) {
+    QList<ExternalPlaylistVideo> result;
+    foreach (auto videoItem, videos) {
         ExternalPlaylistVideo video;
-        auto item = jsonVideo.toObject();
-        video.setAddress(item.value(quality).toString());
-        video.setOrder(item.value("id").toInt());
-        video.setName("Серия " + QString::number(video.order()));
-        videos.append(video);
+
+        if (quality == "fullhd") video.setAddress(videoItem->fullhd());
+        if (quality == "hd") video.setAddress(videoItem->hd());
+        if (quality == "sd") video.setAddress(videoItem->sd());
+        video.setOrder(videoItem->order());
+        video.setName(videoItem->title());
+        result.append(video);
     }
 
-    std::sort(videos.begin(), videos.end(), compareExternalPlaylistVideo);
+    std::sort(result.begin(), result.end(), compareExternalPlaylistVideo);
 
     QString content = "MPCPLAYLIST\n";
-    foreach (auto video, videos) {
+    foreach (auto video, result) {
         content += video.exportToMPCPL();
     }
 
@@ -452,29 +447,6 @@ QString LocalStorageService::packAsMPCPLAndOpen(int id, QString quality)
     mpcplFile.close();
 
     return fileName;
-}
-
-QString LocalStorageService::getReleases(const QList<int> &ids)
-{
-    QVector<FullReleaseModel*> resultReleases;
-
-    foreach (auto releaseItem, *m_releases) {
-        if (!ids.contains(releaseItem->id())) continue;
-
-        resultReleases.append(releaseItem);
-    }
-
-    QJsonArray releases;
-    foreach (auto release, resultReleases) {
-        if (release == nullptr) continue;
-
-        QJsonObject jsonValue;
-        release->writeToJson(jsonValue);
-        releases.append(jsonValue);
-    }
-
-    QJsonDocument saveDoc(releases);
-    return saveDoc.toJson();
 }
 
 void LocalStorageService::addDownloadItem(int releaseId, int videoId, int quality)
@@ -514,36 +486,6 @@ void LocalStorageService::finishDownloadItem(int releaseId, int videoId, int qua
     downloadItem->setDownloadedUrl(downloadedPath);
 
     saveDownloads();
-}
-
-QList<QString> LocalStorageService::getDownloadsReleases()
-{
-    QSet<int> releaseIds;
-    QList<QString> releases;
-    QJsonDocument jsonDocument;
-
-    foreach (auto downloadItem, *m_Downloads) {
-        if (releaseIds.contains(downloadItem->releaseId())) continue;
-
-        releaseIds.insert(downloadItem->releaseId());
-
-        auto iterator = std::find_if(
-            m_releases->begin(),
-            m_releases->end(),
-            [downloadItem](FullReleaseModel* release) -> bool {
-                return release->id() == downloadItem->releaseId();
-            }
-        );
-        if (iterator == m_releases->end()) continue;
-
-        QJsonObject jsonValue;
-        (*iterator)->writeToJson(jsonValue);
-
-        jsonDocument.setObject(jsonValue);
-        releases.append(jsonDocument.toJson());
-    }
-
-    return releases;
 }
 
 QString LocalStorageService::getDownloads()

@@ -82,7 +82,10 @@ public:
     void setIsGroup(bool isGroup) noexcept;
     void setVideoPoster(const QString& poster) noexcept;
     void setOpeningStartSeconds(int value) noexcept { m_openingStartSeconds = value; }
-    void setOpeningEndSeconds(int value) noexcept { m_openingEndSeconds = value; };
+    void setOpeningEndSeconds(int value) noexcept { m_openingEndSeconds = value; }
+    void setEndingStartSeconds(int value) noexcept { m_endingStartSeconds = value; }
+    void setEndingEndSeconds(int value) noexcept { m_endingEndSeconds = value; }
+    void setDescription(const QString& value) noexcept { m_description = value; }
 
 private:
     QString getProxyUrl(const QString& url);

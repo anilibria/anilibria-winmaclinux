@@ -625,14 +625,6 @@ ApplicationWindow {
         }
     }
 
-    SynchronizationService {
-        id: synchronizationService
-        Component.onCompleted: {
-            //releasesViewModel.synchronizationEnabled = true;
-            //synchronizeReleases(1);
-        }
-    }
-
     Synchronizev2Service {
         id: synchronizationServicev2
         apiv2host: userConfigurationViewModel.apiv2host
@@ -679,6 +671,7 @@ ApplicationWindow {
         }
 
         Component.onCompleted: {
+            console.log("Synchronizev2Service completed");
             if (synchronizationServicev2.token) synchronizationServicev2.getUserData();
 
             synchronizationServicev2.synchronizeFullCache();
@@ -693,9 +686,9 @@ ApplicationWindow {
             userActivityViewModel.addDownloadedTorrentToCounter();
         }
 
-        /*onSynchronizationCompleted: {
+        onSynchronizationCompleted: {
             filterDictionariesViewModel.refreshDictionaries();
-        }*/
+        }
     }
 
     Drawer {
@@ -1342,6 +1335,10 @@ ApplicationWindow {
 
     UserConfigurationViewModel {
         id: userConfigurationViewModel
+        Component.onCompleted: {
+            console.log("UserConfigurationViewModel completed!!!");
+            releasesViewModel.reloadReleases();
+        }
         Component.onDestruction: {
             if (!userConfigurationViewModel.showedVideoForNewcomers) userConfigurationViewModel.showedVideoForNewcomers = true;
             userConfigurationViewModel.saveSettingsToFile();

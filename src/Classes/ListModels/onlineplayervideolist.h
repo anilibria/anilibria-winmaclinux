@@ -83,7 +83,7 @@ public:
 
     void setVideosFromDownloadedTorrent(const QStringList& files, int releaseId, const QString& poster) noexcept;
     void setVideosFromSingleTorrent(const ReleaseTorrentModel& torrent, int releaseId, const QString& poster, int port, const TorrentNotifierViewModel* torrentStream) noexcept;
-    void setVideosFromSingleList(const QString& json, int releaseId, const QString& poster) noexcept;
+    void setVideosFromSingleList(int releaseId, const QString& poster) noexcept;
     void setVideosFromCinemahall(QList<FullReleaseModel*>&& releases) noexcept;
     void selectVideo(int releaseId, int videoId) noexcept;
     int getVideoIndex(OnlineVideoModel* video) noexcept;
@@ -93,7 +93,7 @@ public:
     bool isPositionInOpening(int position) const noexcept;
 
 private:
-    QVector<OnlineVideoModel*> fillVideosFrom(const QJsonArray& array, int releaseId, const QString& poster);
+    QVector<OnlineVideoModel*> fillVideosFrom(const QList<ReleaseOnlineVideoModel *>& videos, int releaseId, const QString& poster);
 
 signals:    
 
