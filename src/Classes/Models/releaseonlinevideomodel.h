@@ -22,6 +22,7 @@ private:
     QString m_rutubeId { "" };
     QString m_description { "" };
     QString m_posterHost { "" };
+    double m_number { 0.0 };
 
 public:
     ReleaseOnlineVideoModel();
@@ -41,6 +42,7 @@ public:
     QString rutubeId() const noexcept { return m_rutubeId; }
     QString description() const noexcept { return m_description; }
     QString posterHost() const { return m_posterHost; }
+    double number() const { return m_number; }
 
     void setUniqueId(const QString& uniqueId) noexcept { m_uniqueId = uniqueId; }
     void setTitle(const QString& title) noexcept { m_title = title; }
@@ -57,7 +59,7 @@ public:
     void setRutubeId(const QString& rutubeId) noexcept { m_rutubeId = rutubeId; }
     void setDescription(const QString& description) noexcept { m_description = description; }   
     void setPosterHost(const QString& posterHost) noexcept { m_posterHost = posterHost; }
-
+    void setNumber(double number) noexcept { m_number = number; }
 
     void readFromApiModel(const QJsonObject &jsonObject, int releaseId);
 

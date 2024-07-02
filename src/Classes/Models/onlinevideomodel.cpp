@@ -90,7 +90,7 @@ void OnlineVideoModel::writeToJson(QJsonObject &json) const noexcept
     json["skips"] = skipsObject;
 }
 
-void OnlineVideoModel::setId(const int id) noexcept
+void OnlineVideoModel::setId(const double id) noexcept
 {
     m_Id = id;
 }

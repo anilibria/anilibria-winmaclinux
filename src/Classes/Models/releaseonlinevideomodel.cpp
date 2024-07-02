@@ -9,6 +9,7 @@ void ReleaseOnlineVideoModel::readFromApiModel(const QJsonObject &jsonObject, in
 {
     m_uniqueId = jsonObject.value("id").toString();
     auto ordinal = jsonObject.value("ordinal").toDouble(0);
+    m_number = ordinal;
     m_title = "Серия " + QString::number(ordinal);
     m_releaseId = releaseId;
     m_sd = jsonObject.value("hls_480").toString();

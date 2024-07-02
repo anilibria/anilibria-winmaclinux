@@ -58,7 +58,7 @@ QVariant ReleaseOnlineSeriesListModel::data(const QModelIndex &index, int role) 
             if (isEmptyPoster) {
                 return QVariant("qrc:///Assets/Icons/broken.svg");
             } else {
-                return QVariant(AnilibriaImagesPath + onlineVideo->videoPoster());
+                return QVariant(onlineVideo->videoPoster());
             }
         }
         case IsEmptyPosterRole: {
@@ -75,6 +75,9 @@ QVariant ReleaseOnlineSeriesListModel::data(const QModelIndex &index, int role) 
         }
         case DescriptionRole: {
             return onlineVideo->description();
+        }
+        case UniqueIdRole: {
+            return QVariant(onlineVideo->uniqueId());
         }
     }
 
@@ -115,6 +118,10 @@ QHash<int, QByteArray> ReleaseOnlineSeriesListModel::roleNames() const
         {
             DescriptionRole,
             "description"
+        },
+        {
+            UniqueIdRole,
+            "uniqueId"
         }
     };
 }
@@ -189,7 +196,8 @@ void ReleaseOnlineSeriesListModel::refresh()
         videoModel->setOrder(video->order());
         videoModel->setReleaseId(m_releaseId);
         videoModel->setReleasePoster(release != nullptr ? release->poster() : "");
-        videoModel->setTitle("Серия " + video->title());
+        videoModel->setTitle(video->title());
+        videoModel->setId(video->number());
 
         videoModel->setOpeningStartSeconds(video->openingStartSeconds());
         videoModel->setOpeningEndSeconds(video->openingEndSeconds());

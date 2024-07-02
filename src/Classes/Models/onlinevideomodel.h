@@ -24,7 +24,7 @@
 class OnlineVideoModel
 {
 private:
-    int m_Id;
+    double m_Id;
     QString m_Title;
     QString m_SD;
     QString m_HD;
@@ -42,6 +42,7 @@ private:
     int m_openingEndSeconds { -1 };
     QString m_rutubeId { "" };
     QString m_description { "" };
+    QString m_uniqueId { "" };
 
 public:
     OnlineVideoModel();
@@ -68,8 +69,10 @@ public:
     int openingEndSeconds() const noexcept { return m_openingEndSeconds; };
     QString rutubeId() const noexcept { return m_rutubeId; }
     QString description() const noexcept { return m_description; }
+    QString uniqueId() const noexcept { return m_uniqueId; }
 
-    void setId(const int id) noexcept;
+    void setId(const double id) noexcept;
+    void setUniqueId(const QString& uniqueId) noexcept { m_uniqueId = uniqueId; }
     void setTitle(const QString &title) noexcept;
     void setSd(const QString &sd) noexcept;
     void setHd(const QString &hd) noexcept;
