@@ -271,6 +271,7 @@ public:
     bool fullSearchCheck(const QString& word, const FullReleaseModel* release) noexcept;
     void iterateOnReleases(std::function<void (FullReleaseModel *)> func) noexcept;
     QList<ReleaseOnlineVideoModel*> getReleaseVideos(int releaseId) noexcept;
+    QList<ApiTorrentModel*> getReleaseTorrents(int releaseId) noexcept;
 
     Q_INVOKABLE void copyToClipboard(const QString& text) const noexcept;
     Q_INVOKABLE void copyImageToClipboard(const QString& imagePath) const;
@@ -359,7 +360,6 @@ private:
     int randomBetween(int low, int high) const noexcept;
     void mapToFullReleaseModel(QJsonObject &&jsonObject, const bool isFirstStart, QSharedPointer<QSet<int>> hittedIds);
     QString videosToJson(QList<OnlineVideoModel> &videos);
-    QString torrentsToJson(QList<ReleaseTorrentModel> &torrents);
     QHash<int, int> getAllSeenMarkCount() noexcept;
 
 private slots:

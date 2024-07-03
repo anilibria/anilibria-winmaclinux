@@ -16,7 +16,10 @@ private:
     QString m_description { "" };
     QString m_quality { "" };
     QString m_codec { "" };
-    int m_size { 0 };
+    int64_t m_size { 0 };
+    QString m_torrentPath { "" };
+    int m_seeders { 0 };
+    int64_t m_created { 0 };
 
 public:
     ApiTorrentModel();
@@ -29,7 +32,10 @@ public:
     QString description() const noexcept { return m_description; }
     QString quality() const noexcept { return m_quality; }
     QString codec() const noexcept { return m_codec; }
-    int size() const noexcept { return m_size; }
+    int64_t size() const noexcept { return m_size; }
+    int seeders() const noexcept { return m_seeders; }
+    QString torrentPath() const noexcept { return m_torrentPath; }
+    int64_t created() const noexcept { return m_created; }
 
     void setReleaseId(int releaseId) noexcept { m_releaseId = releaseId; }
     void setHash(const QString& hash) noexcept { m_hash = hash; }
@@ -39,7 +45,10 @@ public:
     void setDescription(const QString& description) noexcept { m_description = description; }
     void setQuality(const QString& quality) noexcept { m_quality = quality; }
     void setCodec(const QString& codec) noexcept { m_codec = codec; }
-    void setSize(int size) noexcept { m_size = size; }
+    void setSize(int64_t size) noexcept { m_size = size; }
+    void setTorrentPath(const QString& torrentPath) noexcept { m_torrentPath = torrentPath; }
+    void setSeeders(int seeders) noexcept { m_seeders = seeders; }
+    void setCreated(int64_t created) noexcept { m_created = created; }
 
     void readFromJson(const QJsonObject& object);
 

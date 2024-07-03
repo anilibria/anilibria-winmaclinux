@@ -671,7 +671,6 @@ ApplicationWindow {
         }
 
         Component.onCompleted: {
-            console.log("Synchronizev2Service completed");
             if (synchronizationServicev2.token) synchronizationServicev2.getUserData();
 
             synchronizationServicev2.synchronizeFullCache();
@@ -686,8 +685,23 @@ ApplicationWindow {
             userActivityViewModel.addDownloadedTorrentToCounter();
         }
 
+        onSynchronizeCacheFailed: {
+            notificationViewModel.sendInfoNotification("Ошибка во время синхронизации: " + errorMessage);
+        }
+
+        onSynchronizationCompletedNoChanges: {
+            notificationViewModel.sendInfoNotification("Синхронизация релизов не требуется потому что нет изменений на " + new Date().toLocaleTimeString());
+        }
+
         onSynchronizationCompleted: {
             filterDictionariesViewModel.refreshDictionaries();
+
+            notificationViewModel.sendInfoNotification("Синхронизация релизов успешно завершена в " + new Date().toLocaleTimeString());
+
+            if (releasesViewModel.newEntities) notificationViewModel.sendInfoNotification(releasesViewModel.newEntities);
+
+            releaseLinkedSeries.refreshSeries();
+            releasesViewModel.reloadReleases();
         }
     }
 
@@ -984,13 +998,6 @@ ApplicationWindow {
 
             analyticsService.sendView("releasecard", "open", "%2Frelease");
             userActivityViewModel.addOpenedCardToCounter();
-        }
-        onAfterSynchronizedReleases: {
-            notificationViewModel.sendInfoNotification("Синхронизация релизов успешно завершена в " + new Date().toLocaleTimeString());
-
-            if (releasesViewModel.newEntities) notificationViewModel.sendInfoNotification(releasesViewModel.newEntities);
-
-            releaseLinkedSeries.refreshSeries();
         }
         onErrorWhileReleaseSynchronization: {
             notificationViewModel.sendErrorNotification(`Не удалось синхронизовать релизы. Попробуйте повторить синхронизацию через некоторое время.`);

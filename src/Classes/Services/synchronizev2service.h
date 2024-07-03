@@ -132,6 +132,7 @@ signals:
     void downloadInTorrentStream(int releaseId, const QString& torrentPath);
     void synchronizeCacheActivedChanged();
     void synchronizeCacheFailed(QString errorMessage);
+    void synchronizationCompletedNoChanges();
     void synchronizationCompleted();
 
 };

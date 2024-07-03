@@ -15,4 +15,7 @@ void ApiTorrentModel::readFromJson(const QJsonObject &object)
     if (object.contains("quality")) m_quality = object.value("quality").toString();
     if (object.contains("codec")) m_codec = object.value("codec").toString();
     if (object.contains("size")) m_size = object.value("size").toInt(0);
+    if (object.contains("seeders")) m_seeders = object.value("seeders").toInt(0);
+    if (object.contains("time")) m_created = object.value("time").toInt(0);
+    if (m_id != 0) m_torrentPath = QString("/anime/torrents/") + QString::number(m_id) + QString("/file");
 }

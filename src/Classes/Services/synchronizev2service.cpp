@@ -361,6 +361,7 @@ void Synchronizev2Service::metadataCacheHandler(QNetworkReply *reply) noexcept
     if (lastTimeStamp > 0 && m_lastReleaseTimeStamp <= lastTimeStamp) {
         m_synchronizeCacheActived = false;
         emit synchronizeCacheActivedChanged();
+        emit synchronizationCompletedNoChanges();
         return;
     }
 

@@ -21,7 +21,6 @@
 
 #include <QObject>
 #include <QString>
-#include "globalconstants.h"
 
 class FullReleaseModel
 {
@@ -40,7 +39,6 @@ private:
     QString m_Voices;
     QString m_OriginalName;
     int m_CountVideos;
-    QString m_Torrents;
     int m_CountTorrents;
     QString m_Title;
     QString m_Season;
@@ -103,9 +101,6 @@ public:
 
     int rating() const { return m_Rating; }
     void setRating(const int rating) noexcept;
-
-    QString torrents() const { return m_Torrents; }
-    void setTorrents(const QString& torrents) noexcept;
 
     int timestamp() const noexcept { return m_Timestamp; }
     void setTimestamp(const int timestamp) noexcept;

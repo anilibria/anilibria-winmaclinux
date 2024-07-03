@@ -145,7 +145,7 @@ void ReleaseOnlineSeriesListModel::setReleaseId(int releaseId) noexcept
     auto videoId = std::get<0>(seens);
 
     foreach (auto item, m_items) {
-        auto index = item->id() - 1;
+        auto index = item->order();
         if (videoId == index) {
             m_selectedVideoIndex = index;
             break;

@@ -34,7 +34,7 @@ Item {
     signal rightClicked()
     signal addToFavorite(int id)
     signal removeFromFavorite(int id)
-    signal watchRelease(int id, string videos, string poster)
+    signal watchRelease(int id)
 
     Rectangle {
         visible: !releaseItem.isCompactReleaseMode
@@ -235,7 +235,7 @@ Item {
                                     anchors.fill: parent
                                     hoverEnabled: true
                                     onPressed: {
-                                        releaseItem.watchRelease(id, videos, poster);
+                                        releaseItem.watchRelease(id);
                                     }
                                     onEntered: {
                                         onlineRectangle.color = applicationThemeViewModel.panelBackgroundShadow;

@@ -34,15 +34,16 @@ void ReleaseTorrentModel::readFromApiModel(const QJsonObject &jsonObject)
     m_ctime = jsonObject.value("ctime").toVariant().toInt();
 }
 
-void ReleaseTorrentModel::writeToJson(QJsonObject &json) const noexcept
+void ReleaseTorrentModel::readFromApiTorrent(const ApiTorrentModel *apiTorrent)
 {
-    json["id"] = m_Id;
-    json["hash"] = m_Hash;
-    json["quality"] = m_Quality;
-    json["series"] = m_Series;
-    json["url"] = m_Url;
-    json["size"] = m_Size;
-    json["ctime"] = m_ctime;
+    setId(apiTorrent->id());
+    setHash(apiTorrent->hash());
+    setQuality(apiTorrent->quality());
+    setSize(apiTorrent->size());
+    setSeeders(apiTorrent->seeders());
+    setCtime(apiTorrent->created());
+    setSeries(apiTorrent->description());
+    setUrl(apiTorrent->torrentPath());
 }
 
 void ReleaseTorrentModel::setId(const int id) noexcept

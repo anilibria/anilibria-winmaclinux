@@ -6,6 +6,7 @@
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
 #include "../Models/releasetorrentmodel.h"
+#include "../Models/apitorrentmodel.h"
 
 class ReleaseTorrentCommonList : public QAbstractListModel
 {
@@ -30,7 +31,7 @@ public:
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
     QHash<int,QByteArray> roleNames() const override;
 
-    void loadFromJson(const QString& json);
+    void loadFromJson(const QList<ApiTorrentModel *>& json);
 
     Q_INVOKABLE QString getDownloadPath(int index);
 

@@ -90,19 +90,17 @@ QHash<int, QByteArray> ReleaseTorrentCommonList::roleNames() const
     };
 }
 
-void ReleaseTorrentCommonList::loadFromJson(const QString &json)
+void ReleaseTorrentCommonList::loadFromJson(const QList<ApiTorrentModel *> &torrents)
 {
     beginResetModel();
 
     m_torrents->clear();
 
-    if (json.isEmpty()) return;
+    if (torrents.isEmpty()) return;
 
-    auto jsonDocument = QJsonDocument::fromJson(json.toUtf8());
-    auto jsonArray = jsonDocument.array();
-    foreach (auto item, jsonArray) {
+    foreach (auto item, torrents) {
         auto torrent = new ReleaseTorrentModel();
-        torrent->readFromApiModel(item.toObject());
+        torrent->readFromApiTorrent(item);
         m_torrents->append(torrent);
     }
 

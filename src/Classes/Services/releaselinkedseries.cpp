@@ -304,31 +304,13 @@ int ReleaseLinkedSeries::getNextLinkedRelease(const int currentRelease)
 
 void ReleaseLinkedSeries::refreshSeries()
 {
-    QFuture<bool> future = QtConcurrent::run(
-        [=] {
-            QMap<QString, FullReleaseModel*> releases;
-            foreach (auto release, *m_releases) {
-                releases.insert(release->code(), release);
-            }
+    beginResetModel();
 
-            while (m_series.count()) delete m_series.takeLast();
+    loadSeries();
 
-            m_series.clear();
-            m_series.squeeze();
+    endResetModel();
 
-            foreach (auto release, releases) {
-                auto description = release->description();
-                processReleasesFromDescription(description, releases, release->id(), release->title(), release->poster(), release->genres());
-            }
-
-            releases.clear();
-
-            saveSeries();
-
-            return true;
-        }
-    );
-    m_cacheUpdateWatcher->setFuture(future);
+    filterSeries();
 }
 
 bool ReleaseLinkedSeries::isReleaseInSeries(int id)
@@ -667,7 +649,8 @@ void ReleaseLinkedSeries::refreshDataFromReleases()
 int ReleaseLinkedSeries::getSeeders(FullReleaseModel *release)
 {
     auto result = 0;
-    auto document = QJsonDocument::fromJson(release->torrents().toUtf8());
+    //TODO: remake on torrent model!!!
+    /*auto document = QJsonDocument::fromJson(release->torrents().toUtf8());
     auto array = document.array();
     foreach (auto item, array) {
         if (!item.isObject()) continue;
@@ -675,7 +658,7 @@ int ReleaseLinkedSeries::getSeeders(FullReleaseModel *release)
         if (!object.contains("seeders")) continue;
 
         result += object["seeders"].toInt();
-    }
+    }*/
 
     return result;
 }

@@ -701,17 +701,14 @@ void OnlinePlayerViewModel::quickSetupForSingleTorrentRelease(int releaseId, int
     m_customPlaylistPosition = -1;
     m_isStreamingTorrents = true;
 
-    auto torents = release->torrents();
+    auto torrents = m_releasesViewModel->getReleaseTorrents(releaseId);
 
-    auto document = QJsonDocument::fromJson(torents.toUtf8());
-    auto torrentsArray = document.array();
+    if (index >= torrents.count()) return;
 
-    if (index >= torrentsArray.count()) return;
-
-    auto torrentItem = torrentsArray[index];
+    auto torrentItem = torrents[index];
 
     ReleaseTorrentModel torrent;
-    torrent.readFromApiModel(torrentItem.toObject());
+    torrent.readFromApiTorrent(torrentItem);
 
     m_videos->setVideosFromSingleTorrent(torrent, releaseId, release->poster(), port, m_torrentStream);
 

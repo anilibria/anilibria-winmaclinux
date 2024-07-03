@@ -51,7 +51,7 @@ public:
 
     void writeToJson(QJsonObject &json) const noexcept;
 
-    int id() const { return m_Id; }
+    double id() const { return m_Id; }
     QString title() const { return m_Title; }
     QString sd() noexcept { return m_SD; }
     QString hd() noexcept { return m_HD; }

@@ -21,7 +21,6 @@
 #include <QJsonDocument>
 #include "fullreleasemodel.h"
 
-
 void FullReleaseModel::setTitle(const QString &title) noexcept
 {
     m_Title = title;
@@ -107,11 +106,6 @@ void FullReleaseModel::setRating(const int rating) noexcept
     m_Rating = rating;
 }
 
-void FullReleaseModel::setTorrents(const QString &torrents) noexcept
-{
-    m_Torrents = torrents;
-}
-
 void FullReleaseModel::setTimestamp(const int timestamp) noexcept
 {
     m_Timestamp = timestamp;
@@ -142,7 +136,6 @@ void FullReleaseModel::readFromJson(const QJsonObject &json)
     setGenres(json["genres"].toString());
     setPoster(json["poster"].toString());
     setVoicers(json["voices"].toString());
-    setTorrents(json["torrents"].toString());
     setIsOngoing(json[m_isOngoingField].toBool());
     setAgeRating(json[m_ageRatingField].toString());
 }

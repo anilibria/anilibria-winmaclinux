@@ -818,6 +818,18 @@ QList<ReleaseOnlineVideoModel *> ReleasesViewModel::getReleaseVideos(int release
     return result;
 }
 
+QList<ApiTorrentModel *> ReleasesViewModel::getReleaseTorrents(int releaseId) noexcept
+{
+    QList<ApiTorrentModel *> result;
+    foreach (auto torrent, m_torrentItems) {
+        if (torrent->releaseId() == releaseId) {
+            result.append(torrent);
+        }
+    }
+
+    return result;
+}
+
 void ReleasesViewModel::copyToClipboard(const QString &text) const noexcept
 {
     if (text.isEmpty()) return;
@@ -983,7 +995,8 @@ void ReleasesViewModel::showReleaseCard(int id, bool needHandle) noexcept
     auto release = getReleaseById(id);
     m_openedRelease = release;
 
-    m_releaseTorrentsList->loadTorrentsFromJson(release->torrents());
+    auto torrents = getReleaseTorrents(id);
+    m_releaseTorrentsList->loadTorrentsFromJson(torrents);
 
     setToReleaseHistory(release->id(), 0);
 
@@ -1297,8 +1310,8 @@ void ReleasesViewModel::openInExternalPlayer(const QString &url)
 
 void ReleasesViewModel::prepareTorrentsForListItem(const int id)
 {
-    auto release = m_releasesMap->value(id);
-    m_itemTorrents->loadFromJson(release->torrents());
+    auto torrents = getReleaseTorrents(id);
+    m_itemTorrents->loadFromJson(torrents);
 }
 
 void ReleasesViewModel::downloadTorrent(int releaseId, const QString& torrentPath, int port)
@@ -1976,8 +1989,7 @@ void ReleasesViewModel::mapToFullReleaseModel(QJsonObject &&jsonObject, const bo
 
     auto names = jsonObject.value("names").toArray();
 
-    auto torrents = jsonObject.value("torrents").toArray();
-    auto torrentJson = QJsonDocument(torrents).toJson();
+    /*auto torrents = jsonObject.value("torrents").toArray();
 
     if (!isNew && torrents.count() != model->countTorrents() && !m_releaseChanges->newTorrents()->contains(id)) {
         m_releaseChanges->newTorrents()->append(id);
@@ -1992,10 +2004,9 @@ void ReleasesViewModel::mapToFullReleaseModel(QJsonObject &&jsonObject, const bo
                 break;
             }
         }
-    }
+    }*/
 
     auto videos = jsonObject.value("playlist").toArray();    
-    auto videosJson = QJsonDocument(videos).toJson();
 
     if (!isNew && videos.count() != model->countOnlineVideos() && !m_releaseChanges->newOnlineSeries()->contains(id)) {
         m_releaseChanges->newOnlineSeries()->append(id);
@@ -2030,13 +2041,12 @@ void ReleasesViewModel::mapToFullReleaseModel(QJsonObject &&jsonObject, const bo
         model->setYear(QString::number(yearInt));
     }
     model->setSeason(jsonObject.value("season").toString());
-    model->setCountTorrents(torrents.count());
+    //model->setCountTorrents(torrents.count());
     model->setCountOnlineVideos(videos.count());
     model->setDescription(jsonObject.value("description").toString());
     model->setAnnounce(jsonObject.value("announce").toString());
     model->setVoicers(voices);
     model->setGenres(genres);
-    model->setTorrents(torrentJson);
 
     auto poster = jsonObject.value("poster").toString();
     if (!isNew && poster != model->poster() && !model->poster().endsWith(poster, Qt::CaseInsensitive)) {
@@ -2061,19 +2071,6 @@ QString ReleasesViewModel::videosToJson(QList<OnlineVideoModel> &videos)
     QJsonDocument videoDocument(videosArray);
     QString videosJson(videoDocument.toJson());
     return videosJson;
-}
-
-QString ReleasesViewModel::torrentsToJson(QList<ReleaseTorrentModel> &torrents)
-{
-    QJsonArray torrentsArray;
-    foreach (auto torrent, torrents) {
-        QJsonObject jsonObject;
-        torrent.writeToJson(jsonObject);
-        torrentsArray.append(jsonObject);
-    }
-    QJsonDocument torrentDocument(torrentsArray);
-    QString torrentJson(torrentDocument.toJson());
-    return torrentJson;
 }
 
 QHash<int, int> ReleasesViewModel::getAllSeenMarkCount() noexcept
