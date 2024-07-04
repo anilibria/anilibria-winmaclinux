@@ -1343,7 +1343,6 @@ ApplicationWindow {
     UserConfigurationViewModel {
         id: userConfigurationViewModel
         Component.onCompleted: {
-            console.log("UserConfigurationViewModel completed!!!");
             releasesViewModel.reloadReleases();
         }
         Component.onDestruction: {

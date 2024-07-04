@@ -36,7 +36,7 @@ private:
     QString m_login { "" };
     QString m_password { "" };
     QString m_twoFactorCode { "" };
-    QString m_registerLink { "<a href='https://www.anilibria.tv/pages/login.php'>Регистрация через сайт</a>" };
+    QString m_registerLink { "<a href='https://anilibria.top/app/auth/login'>Регистрация через сайт</a>" };
     QString m_errorMessage { "" };
     AnilibriaApiService* m_apiService;
 

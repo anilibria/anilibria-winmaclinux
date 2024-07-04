@@ -58,7 +58,7 @@ Page {
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.horizontalCenter: parent.horizontalCenter
                 width: 400
-                height: 280
+                height: 200
 
                 ColumnLayout {
                     id: authForm
@@ -67,6 +67,7 @@ Page {
                     CommonTextField {
                         id: emailTextBox
                         Layout.fillWidth: true
+                        Layout.topMargin: 8
                         placeholderText: "Логин"
                         text: authorizationViewModel.login
                         onTextChanged: {
@@ -76,12 +77,17 @@ Page {
                     CommonTextField {
                         id: passwordTextBox
                         Layout.fillWidth: true
+                        Layout.topMargin: 8
                         echoMode: "PasswordEchoOnEdit"
                         placeholderText: "Пароль"
                         text: authorizationViewModel.password
                         onTextChanged: {
                             authorizationViewModel.password = text;
                         }
+                    }
+                    Item {
+                        Layout.fillWidth: true
+                        Layout.fillHeight: true
                     }
                     Item {
                         Layout.fillWidth: true
