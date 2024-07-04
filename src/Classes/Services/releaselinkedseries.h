@@ -27,6 +27,7 @@
 #include <QFutureWatcher>
 #include "../Models/fullreleasemodel.h"
 #include "../Models/releaseseriesmodel.h"
+#include "../Models/apitorrentmodel.h"
 #include "../ListModels/releaseseriescardlistmodel.h"
 
 class ReleaseLinkedSeries : public QAbstractListModel
@@ -46,6 +47,7 @@ private:
     QVector<ReleaseSeriesModel*> m_series { QVector<ReleaseSeriesModel*>() };
     QVector<ReleaseSeriesModel*> m_filteredSeries { QVector<ReleaseSeriesModel*>() };
     QVector<int>* m_userFavorites { nullptr };
+    QList<ApiTorrentModel*>* m_torrents { nullptr };
     bool m_filtering { false };
     QSharedPointer<QList<FullReleaseModel *>> m_releases;
     QScopedPointer<QFutureWatcher<bool>> m_cacheUpdateWatcher { new QFutureWatcher<bool>(this) };
@@ -77,7 +79,7 @@ public:
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
     QHash<int,QByteArray> roleNames() const override;
 
-    void setup(QSharedPointer<QList<FullReleaseModel *>> releases, QVector<int>* userFavorites);
+    void setup(QSharedPointer<QList<FullReleaseModel *>> releases, QVector<int>* userFavorites, QList<ApiTorrentModel*>* onlineVideos);
 
     QString nameFilter() const { return m_nameFilter; }
     void setNameFilter(const QString& nameFilter) noexcept;

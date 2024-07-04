@@ -984,7 +984,7 @@ ApplicationWindow {
         notCloseReleaseCardAfterWatch: userConfigurationViewModel.notCloseReleaseCardAfterWatch
         imageBackgroundViewModel.containerWidth: releases.backgroundImageWidth
         imageBackgroundViewModel.containerHeight: releases.backgroundImageHeight
-        items.releaseLinkedSeries: releaseLinkedSeries
+        releaseLinkedSeries: releaseLinkedSeries
         items.scriptFilePath: userConfigurationViewModel.customScriptFile
         Component.onDestruction: {
             releasesViewModel.customGroups.saveState();
@@ -1001,6 +1001,10 @@ ApplicationWindow {
         }
         onErrorWhileReleaseSynchronization: {
             notificationViewModel.sendErrorNotification(`Не удалось синхронизовать релизы. Попробуйте повторить синхронизацию через некоторое время.`);
+        }
+        onReleasesFullyLoaded: {
+            releaseLinkedSeries.refreshSeries();
+            filterDictionariesViewModel.refreshDictionaries();
         }
     }
 

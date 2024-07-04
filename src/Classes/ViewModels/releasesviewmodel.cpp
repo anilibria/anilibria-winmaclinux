@@ -322,6 +322,19 @@ void ReleasesViewModel::setProxyPort(int proxyPort) noexcept
     emit proxyPortChanged();
 }
 
+void ReleasesViewModel::setReleaseLinkedSeries(ReleaseLinkedSeries *releaseLinkedSeries) noexcept
+{
+    if (m_releaseLinkedSeries == releaseLinkedSeries) return;
+
+    m_releaseLinkedSeries = releaseLinkedSeries;
+    emit releaseLinkedSeriesChanged();
+
+    if (m_releaseLinkedSeries == nullptr) return;
+
+    m_items->setupLinkedSeries(m_releaseLinkedSeries);
+    m_releaseLinkedSeries->setup(m_releases, m_userFavorites, &m_torrentItems);
+}
+
 QString ReleasesViewModel::openedReleaseStatusDisplay() const noexcept
 {
     if (m_openedRelease == nullptr) return "";
@@ -1374,6 +1387,7 @@ void ReleasesViewModel::reloadReleases()
 {
     loadReleases();
     m_items->refresh();
+    emit releasesFullyLoaded();
 }
 
 void ReleasesViewModel::setToReleaseHistory(int id, int type) noexcept

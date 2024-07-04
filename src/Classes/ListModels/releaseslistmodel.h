@@ -54,7 +54,6 @@ class ReleasesListModel : public QAbstractListModel
     Q_PROPERTY(bool isHasReleases READ isHasReleases NOTIFY isHasReleasesChanged)
     Q_PROPERTY(bool isHasSelectRelease READ isHasSelectRelease NOTIFY isHasSelectReleaseChanged)
     Q_PROPERTY(int countFilteredReleases READ countFilteredReleases NOTIFY countFilteredReleasesChanged)
-    Q_PROPERTY(ReleaseLinkedSeries* releaseLinkedSeries READ releaseLinkedSeries WRITE setReleaseLinkedSeries NOTIFY releaseLinkedSeriesChanged)
     Q_PROPERTY(QString scheduleDayFilter READ scheduleDayFilter WRITE setScheduleDayFilter NOTIFY scheduleDayFilterChanged)
     Q_PROPERTY(bool filterByFavorites READ filterByFavorites WRITE setFilterByFavorites NOTIFY filterByFavoritesChanged)
     Q_PROPERTY(QString scriptFilePath READ scriptFilePath WRITE setScriptFilePath NOTIFY scriptFilePathChanged)
@@ -141,6 +140,7 @@ public:
     explicit ReleasesListModel(QObject *parent = nullptr);
 
     void setup(QSharedPointer<QList<FullReleaseModel*>> releases, QMap<int, int>* schedules, QVector<int>* userFavorites, QVector<int>* hidedReleases, QHash<QString, bool>* seenMarks, QSharedPointer<QHash<int, HistoryModel*>> historyItems, QSharedPointer<ChangesModel> changes, QSharedPointer<CinemahallListModel> cinemahall, ReleaseCustomGroupsViewModel* customGroups);
+    void setupLinkedSeries(ReleaseLinkedSeries* releaseLinkedSeries) noexcept;
 
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
 
@@ -210,9 +210,6 @@ public:
 
     bool hasReleaseSeriesFilter() const noexcept { return m_hasReleaseSeriesFilter; }
     void setHasReleaseSeriesFilter(bool hasReleaseSeriesFilter) noexcept;
-
-    ReleaseLinkedSeries* releaseLinkedSeries() const noexcept { return m_releaseLinkedSeries; }
-    void setReleaseLinkedSeries(ReleaseLinkedSeries* releaseLinkedSeries) noexcept;
 
     QString scheduleDayFilter() const noexcept { return m_scheduleDayFilter; }
     void setScheduleDayFilter(const QString& scheduleDayFilter) noexcept;

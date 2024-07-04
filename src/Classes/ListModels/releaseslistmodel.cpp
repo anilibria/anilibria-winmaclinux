@@ -65,6 +65,11 @@ void ReleasesListModel::setup(QSharedPointer<QList<FullReleaseModel *>> releases
     m_customGroups = customGroups;
 }
 
+void ReleasesListModel::setupLinkedSeries(ReleaseLinkedSeries *releaseLinkedSeries) noexcept
+{
+    m_releaseLinkedSeries = releaseLinkedSeries;
+}
+
 int ReleasesListModel::rowCount(const QModelIndex &parent) const
 {
     if (parent.isValid()) return 0;
@@ -391,16 +396,6 @@ void ReleasesListModel::setHasReleaseSeriesFilter(bool hasReleaseSeriesFilter) n
     m_hasReleaseSeriesFilter = hasReleaseSeriesFilter;
     emit hasReleaseSeriesFilterChanged();
     emit hasFiltersChanged();
-}
-
-void ReleasesListModel::setReleaseLinkedSeries(ReleaseLinkedSeries *releaseLinkedSeries) noexcept
-{
-    if (m_releaseLinkedSeries == releaseLinkedSeries) return;
-
-    m_releaseLinkedSeries = releaseLinkedSeries;
-    emit releaseLinkedSeriesChanged();
-
-    m_releaseLinkedSeries->setup(m_releases, m_userFavorites);
 }
 
 void ReleasesListModel::setScheduleDayFilter(const QString &scheduleDayFilter) noexcept

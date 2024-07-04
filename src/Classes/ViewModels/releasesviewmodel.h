@@ -42,6 +42,7 @@
 #include "../Models/releaseonlinevideomodel.h"
 #include "releasecustomgroupsviewmodel.h"
 #include "useractivityviewmodel.h"
+#include "../Services/releaselinkedseries.h"
 
 class ReleasesViewModel : public QObject
 {
@@ -104,6 +105,7 @@ class ReleasesViewModel : public QObject
     Q_PROPERTY(ReleaseCustomGroupsViewModel* customGroups READ customGroups NOTIFY customGroupsChanged)
     Q_PROPERTY(Synchronizev2Service* synchronizationServicev2 READ synchronizationServicev2 WRITE setSynchronizationServicev2 NOTIFY synchronizationServicev2Changed)
     Q_PROPERTY(int proxyPort READ proxyPort WRITE setProxyPort NOTIFY proxyPortChanged FINAL)
+    Q_PROPERTY(ReleaseLinkedSeries* releaseLinkedSeries READ releaseLinkedSeries WRITE setReleaseLinkedSeries NOTIFY releaseLinkedSeriesChanged)
 
 private:
     const QString releasesCacheFileName { "releases.cache" };
@@ -124,6 +126,7 @@ private:
     QScopedPointer<QMap<int, FullReleaseModel*>> m_releasesMap { new QMap<int, FullReleaseModel*>() };
     QList<ReleaseOnlineVideoModel*> m_onlineVideos { QList<ReleaseOnlineVideoModel*>() };
     QList<ApiTorrentModel*> m_torrentItems { QList<ApiTorrentModel*>() };
+    ReleaseLinkedSeries* m_releaseLinkedSeries { nullptr };
     ReleaseCustomGroupsViewModel* m_customGroups { new ReleaseCustomGroupsViewModel(this) };
     int m_countReleases { 0 };
     int m_countSeens { 0 };
@@ -223,6 +226,9 @@ public:
 
     int proxyPort() const noexcept { return m_proxyPort; }
     void setProxyPort(int proxyPort) noexcept;
+
+    ReleaseLinkedSeries* releaseLinkedSeries() const noexcept { return m_releaseLinkedSeries; }
+    void setReleaseLinkedSeries(ReleaseLinkedSeries* releaseLinkedSeries) noexcept;
 
     bool isOpenedCard() const noexcept { return m_openedRelease != nullptr; }
     int openedReleaseId() const noexcept { return m_openedRelease != nullptr ? m_openedRelease->id() : 0; }
@@ -434,6 +440,8 @@ signals:
     void customGroupsChanged();
     void synchronizationServicev2Changed();
     void proxyPortChanged();
+    void releaseLinkedSeriesChanged();
+    void releasesFullyLoaded();
 
 };
 

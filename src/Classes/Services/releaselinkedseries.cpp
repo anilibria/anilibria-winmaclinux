@@ -163,12 +163,11 @@ QHash<int, QByteArray> ReleaseLinkedSeries::roleNames() const
     };
 }
 
-void ReleaseLinkedSeries::setup(QSharedPointer<QList<FullReleaseModel *> > releases, QVector<int>* userFavorites)
+void ReleaseLinkedSeries::setup(QSharedPointer<QList<FullReleaseModel *> > releases, QVector<int>* userFavorites, QList<ApiTorrentModel*>* torrents)
 {
     m_releases = releases;
     m_userFavorites = userFavorites;
-
-    if (m_releases != nullptr) refreshDataFromReleases();
+    m_torrents = torrents;
 }
 
 void ReleaseLinkedSeries::setNameFilter(const QString& nameFilter) noexcept
@@ -301,6 +300,8 @@ void ReleaseLinkedSeries::refreshSeries()
     beginResetModel();
 
     loadSeries();
+
+    refreshDataFromReleases();
 
     endResetModel();
 
@@ -595,6 +596,10 @@ void ReleaseLinkedSeries::refreshDataFromReleases()
             if (!years.contains(release->year())) years.append(release->year());
             if (!seasons.contains(release->season())) seasons.append(release->season());
             seeds += getSeeders(release);
+
+            foreach (auto genre, release->genres().split(",")) {
+                series->appendGenre(genre.trimmed());
+            }
         }
 
         series->setSumOfRatings(rating);
@@ -623,16 +628,11 @@ void ReleaseLinkedSeries::refreshDataFromReleases()
 int ReleaseLinkedSeries::getSeeders(FullReleaseModel *release)
 {
     auto result = 0;
-    //TODO: remake on torrent model!!!
-    /*auto document = QJsonDocument::fromJson(release->torrents().toUtf8());
-    auto array = document.array();
-    foreach (auto item, array) {
-        if (!item.isObject()) continue;
-        auto object = item.toObject();
-        if (!object.contains("seeders")) continue;
+    foreach (auto item, *m_torrents) {
+        if (item->releaseId() != release->id()) continue;
 
-        result += object["seeders"].toInt();
-    }*/
+        result += item->seeders();
+    }
 
     return result;
 }
