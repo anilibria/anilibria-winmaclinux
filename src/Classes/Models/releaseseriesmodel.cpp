@@ -92,24 +92,3 @@ void ReleaseSeriesModel::readFromJson(const QJsonObject &jsonObject) noexcept
         m_genresAsString = m_genres->join(", ");
     }
 }
-
-void ReleaseSeriesModel::writeToJson(QJsonObject &json) const noexcept
-{
-    json["countReleases"] = m_releaseIds->count();
-
-    QJsonArray releases;
-    foreach (auto release, *m_releaseIds) releases.append(release.toInt());
-    json["releasesIds"] = releases;
-
-    QJsonArray posters;
-    foreach (auto poster, *m_posters) posters.append(poster.toString());
-    json["posters"] = posters;
-
-    QJsonArray titles;
-    foreach (auto title, *m_titles) titles.append(title);
-    json["titles"] = titles;
-
-    QJsonArray genres;
-    foreach (auto genre, *m_genres) genres.append(genre);
-    json["genres"] = genres;
-}

@@ -1559,8 +1559,8 @@ void ReleasesViewModel::loadNextReleasesWithoutReactive()
 
         foreach (auto release, releasesArray) {
             FullReleaseModel* jsonRelease = new FullReleaseModel();
-            jsonRelease->setPosterHost(m_synchronizationServicev2->apiv2host());
             jsonRelease->readFromJson(release.toObject());
+            jsonRelease->setPosterHost(m_synchronizationServicev2->apiv2host());
 
             m_releases->append(jsonRelease);
             m_releasesMap->insert(jsonRelease->id(), jsonRelease);

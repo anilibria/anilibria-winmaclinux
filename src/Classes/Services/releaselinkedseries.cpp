@@ -33,7 +33,6 @@
 ReleaseLinkedSeries::ReleaseLinkedSeries(QObject *parent) : QAbstractListModel(parent)
 {
     createCacheFileIfNotExists();
-    loadSeries();
 
     auto watcher = m_cacheUpdateWatcher.get();
     connect(watcher, &QFutureWatcher<bool>::finished, this, &ReleaseLinkedSeries::cacheUpdated);
@@ -75,25 +74,14 @@ QVariant ReleaseLinkedSeries::data(const QModelIndex &index, int role) const
         case ReleaseIds: {
             return QVariant(*series.at(index.row())->releaseIds());
         }
-        case Posters: {
-            return QVariant(*series.at(index.row())->posters());
-        }
         case FirstPosterRole: {
-            return QVariant(element->posters()->first().toString());
+            return QVariant(element->firstPoster());
         }
         case SecondPosterRole: {
-            if (element->posters()->size() > 1) {
-                return QVariant(element->posters()->at(1).toString());
-            } else {
-                return QVariant("");
-            }
+            return QVariant(element->secondPoster());
         }
         case ThirdPosterRole: {
-            if (element->posters()->length() > 2) {
-                return QVariant(QVariant(element->posters()->at(2).toString()));
-            } else {
-                return QVariant("");
-            }
+            return QVariant(element->thirdPoster());
         }
         case OtherReleasesRole: {
             auto count = element->countReleases();
@@ -143,10 +131,6 @@ QHash<int, QByteArray> ReleaseLinkedSeries::roleNames() const
         {
             ReleaseIds,
             "releaseIds"
-        },
-        {
-            Posters,
-            "posters"
         },
         {
             FirstPosterRole,
@@ -215,6 +199,16 @@ void ReleaseLinkedSeries::setSortingDirection(bool sortingDirection) noexcept
 
     sortNonFiltered();
     filterSeries();
+}
+
+void ReleaseLinkedSeries::setApiv2host(const QString &apiv2host) noexcept
+{
+    if (m_apiv2host == apiv2host) return;
+
+    m_apiv2host = apiv2host;
+    emit apiv2hostChanged();
+
+    refreshSeries();
 }
 
 QSharedPointer<QList<int>> ReleaseLinkedSeries::getAllLinkedReleases() const noexcept
@@ -447,6 +441,7 @@ void ReleaseLinkedSeries::loadSeries()
     foreach (auto item, jsonArray) {
         auto seriaModel = new ReleaseSeriesModel();
         seriaModel->readFromJson(item.toObject());
+        seriaModel->setPosterHost(m_apiv2host);
 
         m_series.append(seriaModel);
     }
@@ -535,27 +530,6 @@ void ReleaseLinkedSeries::processReleasesFromDescription(const QString& descript
     series->recalculateCountReleases();
 
     if (series->countReleases() >= 2) m_series.append(series);
-}
-
-void ReleaseLinkedSeries::saveSeries()
-{
-    QJsonArray seriesArray;
-
-    foreach (auto series, m_series) {
-        QJsonObject jsonObject;
-        series->writeToJson(jsonObject);
-        seriesArray.append(jsonObject);
-    }
-
-    QJsonDocument document(seriesArray);
-
-    QFile file(getSeriesCachePath());
-    if (!file.open(QFile::WriteOnly | QFile::Text)) {
-        qInfo() << "Can't write series file!";
-        return;
-    }
-    file.write(document.toJson());
-    file.close();
 }
 
 void ReleaseLinkedSeries::sortNonFiltered()

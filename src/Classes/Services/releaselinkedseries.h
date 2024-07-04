@@ -39,6 +39,7 @@ class ReleaseLinkedSeries : public QAbstractListModel
     Q_PROPERTY(int sortingField READ sortingField WRITE setSortingField NOTIFY sortingFieldChanged)
     Q_PROPERTY(bool sortingDirection READ sortingDirection WRITE setSortingDirection NOTIFY sortingDirectionChanged)
     Q_PROPERTY(int countGroups READ countGroups NOTIFY countGroupsChanged)
+    Q_PROPERTY(QString apiv2host READ apiv2host WRITE setApiv2host NOTIFY apiv2hostChanged FINAL)
 
 private:
     QString m_nameFilter { "" };
@@ -53,6 +54,7 @@ private:
     int m_sortingField { 0 };
     bool m_sortingDirection { false };
     ReleaseSeriesCardListModel* m_releaseSeriesCardList { new ReleaseSeriesCardListModel(this) };
+    QString m_apiv2host { "" };
 
     enum ItemRoles {
         CountReleasesRole = Qt::UserRole + 1,
@@ -90,6 +92,9 @@ public:
 
     int countGroups() const noexcept { return m_filteredSeries.size(); }
 
+    QString apiv2host() const { return m_apiv2host; }
+    void setApiv2host(const QString& apiv2host) noexcept;
+
     ReleaseSeriesCardListModel* cardList() const noexcept { return m_releaseSeriesCardList; }
 
     QSharedPointer<QList<int>> getAllLinkedReleases() const noexcept;
@@ -113,7 +118,6 @@ private:
     void loadSeries();
     void createCacheFileIfNotExists() const noexcept;
     void processReleasesFromDescription(const QString& description, const QMap<QString, FullReleaseModel*>& releases, int currentRelease, const QString currentReleaseTitle, const QString& poster, const QString& genres) noexcept;
-    void saveSeries();
     void sortNonFiltered();
     void refreshDataFromReleases();
     int getSeeders(FullReleaseModel *release);
@@ -128,6 +132,7 @@ signals:
     void sortingFieldChanged();
     void sortingDirectionChanged();
     void countGroupsChanged();
+    void apiv2hostChanged();
 
 };
 

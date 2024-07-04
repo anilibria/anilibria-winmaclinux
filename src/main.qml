@@ -1,6 +1,6 @@
 import QtQuick 2.12
 import QtQuick.Window 2.12
-import QtQuick.Controls 2.5
+import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.3
 import QtQuick.Controls.Material 2.0
 import Anilibria.Services 1.0
@@ -613,7 +613,7 @@ ApplicationWindow {
 
     ReleaseLinkedSeries {
         id: releaseLinkedSeries
-
+        apiv2host: userConfigurationViewModel.apiv2host
     }
 
     SystemSaveFileDialog {
