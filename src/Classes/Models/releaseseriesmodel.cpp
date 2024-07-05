@@ -77,6 +77,8 @@ void ReleaseSeriesModel::readFromJson(const QJsonObject &jsonObject) noexcept
     foreach (auto title, titles) m_titles->append(title.toString());
     m_titlesAsString = m_titles->join(", ");
 
+    if (jsonObject.contains("title")) m_title = jsonObject.value("title").toString();
+
     if (jsonObject.contains("genres")) {
         auto genres = jsonObject.value("genres").toArray();
         m_genres->clear();

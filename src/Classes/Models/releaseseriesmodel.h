@@ -21,6 +21,7 @@ private:
     QString m_seasons { "" };
     int m_sumOfSeeds { 0 };
     QString m_posterHost { "" };
+    QString m_title { "" };
 
 public:
     explicit ReleaseSeriesModel();
@@ -41,6 +42,7 @@ public:
     QString seasons() const { return m_seasons; }
     int sumOfSeeds() const { return m_sumOfSeeds; }
     QString posterHost() const { return m_posterHost; }
+    QString title() const { return m_title; }
 
     void recalculateCountReleases();
     bool appendReleaseId(const int id);
@@ -52,6 +54,7 @@ public:
     void setSeasons(QString seasons) noexcept { m_seasons = seasons; }
     void setSumOfSeeds(int sumOfSeeds) noexcept { m_sumOfSeeds = sumOfSeeds; }
     void setPosterHost(const QString& posterHost) noexcept { m_posterHost = posterHost; }
+    void setTitle(const QString& title) noexcept { m_title = title; }
 
     void readFromJson(const QJsonObject &jsonObject) noexcept;
 };

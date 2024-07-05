@@ -59,17 +59,7 @@ QVariant ReleaseLinkedSeries::data(const QModelIndex &index, int role) const
             return QVariant(element->countReleases());
         }
         case FirstThreeNamesRole: {
-            if (element->titles()->count() > 2) {
-                QStringList titleList;
-                int iterator = 0;
-                foreach (auto title, *element->titles()) {
-                    if (iterator == 3) break;
-
-                    titleList.append(title);
-                }
-                return QVariant(titleList.join(", "));
-            }
-            return element->titles()->join(", ");
+            return QVariant(element->title());
         }
         case ReleaseIds: {
             return QVariant(*series.at(index.row())->releaseIds());
