@@ -17,6 +17,7 @@ class Synchronizev2Service : public QObject
     Q_PROPERTY(QString nickName READ nickName NOTIFY nickNameChanged FINAL)
     Q_PROPERTY(int torrentDownloadMode READ torrentDownloadMode WRITE setTorrentDownloadMode NOTIFY torrentDownloadModeChanged FINAL)
     Q_PROPERTY(bool synchronizeCacheActived READ synchronizeCacheActived NOTIFY synchronizeCacheActivedChanged FINAL)
+    Q_PROPERTY(int torrentStreamPort READ torrentStreamPort WRITE setTorrentStreamPort NOTIFY torrentStreamPortChanged FINAL)
 
 private:
     QString m_apiv2host { "" };
@@ -52,6 +53,8 @@ private:
     int m_countReleases { 0 };
     int m_currentSynchronizationItem { 0 };
     int m_lastReleaseTimeStamp { 0 };
+    int m_previousLastTimeStamp { 0 };
+    int m_torrentStreamPort { 0 };
 
 public:
     explicit Synchronizev2Service(QObject *parent = nullptr);
@@ -75,6 +78,9 @@ public:
 
     int torrentDownloadMode() const noexcept { return m_torrentDownloadMode; }
     void setTorrentDownloadMode(int torrentDownloadMode) noexcept;
+
+    int torrentStreamPort() const noexcept { return m_torrentStreamPort; }
+    void setTorrentStreamPort(int torrentStreamPort) noexcept;
 
     bool synchronizeCacheActived() const noexcept { return m_synchronizeCacheActived; }
 
@@ -129,11 +135,12 @@ signals:
     void torrentDownloaded(const QString& torrentPath);
     void saveDownloadedTorrent(const QString& torrentPath);
     void torrentDownloadModeChanged();
-    void downloadInTorrentStream(int releaseId, const QString& torrentPath);
+    void downloadInTorrentStream(int releaseId);
     void synchronizeCacheActivedChanged();
     void synchronizeCacheFailed(QString errorMessage);
     void synchronizationCompletedNoChanges();
-    void synchronizationCompleted();
+    void synchronizationCompleted(int previousLastTimeStamp);
+    void torrentStreamPortChanged();
 
 };
 

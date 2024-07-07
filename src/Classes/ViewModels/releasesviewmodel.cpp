@@ -107,7 +107,6 @@ ReleasesViewModel::ReleasesViewModel(QObject *parent) : QObject(parent)
     createIfNotExistsFile(getCachePath(historyCacheFileName), "[]");
     createIfNotExistsFile(getCachePath(notificationCacheFileName), "{ \"newReleases\": [], \"newOnlineSeries\": [], \"newTorrents\": [], \"newTorrentSeries\": [] }");
 
-    //loadReleases();
     loadSchedules();
     loadFavorites();
     loadHidedReleases();
@@ -311,7 +310,6 @@ void ReleasesViewModel::setSynchronizationServicev2(const Synchronizev2Service *
     emit synchronizationServicev2Changed();
 
     connect(m_synchronizationServicev2, &Synchronizev2Service::userFavoritesReceivedV2, this,&ReleasesViewModel::userFavoritesReceivedV2);
-    connect(m_synchronizationServicev2, &Synchronizev2Service::downloadInTorrentStream, this,&ReleasesViewModel::downloadTorrentInTorrentStream);
 }
 
 void ReleasesViewModel::setProxyPort(int proxyPort) noexcept
@@ -1327,16 +1325,6 @@ void ReleasesViewModel::prepareTorrentsForListItem(const int id)
     m_itemTorrents->loadFromJson(torrents);
 }
 
-void ReleasesViewModel::downloadTorrent(int releaseId, const QString& torrentPath, int port)
-{
-    if (port == 0) return;
-
-    auto host = m_synchronizationServicev2->apiv2host();
-    auto url = "http://localhost:" + QString::number(port) + "/fulldownload?id=" + QString::number(releaseId) + "&path=" + (host + torrentPath);
-    QNetworkRequest request(url);
-    m_manager->get(request);
-}
-
 QString ReleasesViewModel::packAsM3UAndOpen(int id, QString quality)
 {
     auto videos = getReleaseVideos(id);
@@ -1347,6 +1335,24 @@ QString ReleasesViewModel::packAsMPCPLAndOpen(int id, QString quality)
 {
     auto videos = getReleaseVideos(id);
     return m_localStorage->packAsMPCPLAndOpen(id, quality, videos);
+}
+
+void ReleasesViewModel::savePreviousReleases(int previousLastTimeStamp)
+{
+    if (previousLastTimeStamp == 0) return;
+
+    m_oldReleasesCountVideos.clear();
+    m_oldReleasesCountTorrents.clear();
+    m_oldReleasesIds.clear();
+    foreach (auto release, *m_releases) {
+        m_oldReleasesIds.insert(release->id());
+        if (release->timestamp() >= previousLastTimeStamp) {
+            m_oldReleasesCountVideos.insert(release->id(), release->countOnlineVideos());
+            m_oldReleasesCountTorrents.insert(release->id(), release->countTorrents());
+            qDebug() << "m_oldReleasesCountVideos " << release->id() << " " << release->countOnlineVideos() << " " << release->countTorrents();
+        }
+    }
+    qDebug() << "m_oldReleasesIds " << m_oldReleasesIds.size();
 }
 
 FullReleaseModel *ReleasesViewModel::getReleaseById(int id) const noexcept
@@ -1388,6 +1394,40 @@ void ReleasesViewModel::reloadReleases()
     loadReleases();
     m_items->refresh();
     emit releasesFullyLoaded();
+
+    if (m_oldReleasesIds.isEmpty()) return;
+
+    if (m_releases->size() != m_oldReleasesIds.size()) {
+        foreach (auto release, *m_releases) {
+            if (m_oldReleasesIds.contains(release->id())) continue;
+
+            if (!m_releaseChanges->newReleases()->contains(release->id())) m_releaseChanges->newReleases()->append(release->id());
+        }
+    }
+
+    auto videos = m_oldReleasesCountVideos.keys();
+    foreach (auto oldReleasesId, videos) {
+        if (!m_releasesMap->contains(oldReleasesId)) return;
+
+        auto release = m_releasesMap->value(oldReleasesId);
+        if (release->countOnlineVideos() > m_oldReleasesCountVideos.value(oldReleasesId)) {
+            if (!m_releaseChanges->newOnlineSeries()->contains(oldReleasesId)) m_releaseChanges->newOnlineSeries()->append(oldReleasesId);
+        }
+    }
+
+    auto torrentKeys = m_oldReleasesCountTorrents.keys();
+    foreach (auto oldReleasesId, torrentKeys) {
+        if (!m_releasesMap->contains(oldReleasesId)) return;
+
+        auto release = m_releasesMap->value(oldReleasesId);
+        if (release->countTorrents() > m_oldReleasesCountTorrents.value(oldReleasesId)) {
+            if (!m_releaseChanges->newTorrents()->contains(oldReleasesId)) m_releaseChanges->newTorrents()->append(oldReleasesId);
+        }
+    }
+
+    m_oldReleasesIds.clear();
+    m_oldReleasesCountTorrents.clear();
+    m_oldReleasesCountVideos.clear();
 }
 
 void ReleasesViewModel::setToReleaseHistory(int id, int type) noexcept
@@ -2153,9 +2193,4 @@ void ReleasesViewModel::needDeleteFavorites(const QList<int> &ids)
     foreach (auto id, ids) {
         removeReleaseFromFavorites(id);
     }
-}
-
-void ReleasesViewModel::downloadTorrentInTorrentStream(int releaseId, const QString &torrentPath)
-{
-    downloadTorrent(releaseId, torrentPath, m_proxyPort);
 }

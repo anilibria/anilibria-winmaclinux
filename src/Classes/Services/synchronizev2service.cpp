@@ -53,6 +53,14 @@ void Synchronizev2Service::setTorrentDownloadMode(int torrentDownloadMode) noexc
     emit torrentDownloadModeChanged();
 }
 
+void Synchronizev2Service::setTorrentStreamPort(int torrentStreamPort) noexcept
+{
+    if (m_torrentStreamPort == torrentStreamPort) return;
+
+    m_torrentStreamPort = torrentStreamPort;
+    emit torrentStreamPortChanged();
+}
+
 void Synchronizev2Service::authorize(QString login, QString password)
 {
     QNetworkRequest request(QUrl(m_apiv2host + "/api/v1/accounts/users/auth/login"));
@@ -135,7 +143,15 @@ void Synchronizev2Service::removeUserFavorites(const QList<int> ids)
 
 void Synchronizev2Service::downloadTorrent(QString torrentPath, int releaseId)
 {
-    QNetworkRequest request(QUrl(m_apiv2host + torrentPath));
+    QUrl url;
+    //if use torrent stream
+    if (m_torrentDownloadMode == 2) {
+        url = QUrl("http://localhost:" + QString::number(m_torrentStreamPort) + "/fulldownload?id=" + QString::number(releaseId) + "&path=" + (m_apiv2host + torrentPath));
+    } else {
+        url = QUrl(m_apiv2host + torrentPath);
+    }
+
+    QNetworkRequest request(url);
     auto reply = m_networkManager->get(request);
     auto identifier = adjustIdentifier(reply, m_downloadTorrentRequest);
     m_pendingTorrentReleases.insert(identifier, releaseId);
@@ -319,7 +335,7 @@ void Synchronizev2Service::downloadTorrentHandler(QNetworkReply *reply, const QS
     }
 
     if (m_torrentDownloadMode == 2 && m_pendingTorrentReleases.contains(identifier)) { // Использовать TorrentStream
-        emit downloadInTorrentStream(m_pendingTorrentReleases[identifier], randomTorrentPath);
+        emit downloadInTorrentStream(m_pendingTorrentReleases[identifier]);
     }
 
     emit torrentDownloaded(randomTorrentPath);
@@ -364,6 +380,8 @@ void Synchronizev2Service::metadataCacheHandler(QNetworkReply *reply) noexcept
         emit synchronizationCompletedNoChanges();
         return;
     }
+
+    m_previousLastTimeStamp = lastTimeStamp;
 
     if (QFile::exists(metadataPath)) QFile::remove(metadataPath);
 
@@ -527,7 +545,7 @@ void Synchronizev2Service::typesCacheHandler(QNetworkReply *reply) noexcept
 
     m_synchronizeCacheActived = false;
     emit synchronizeCacheActivedChanged();
-    emit synchronizationCompleted();
+    emit synchronizationCompleted(m_previousLastTimeStamp);
 }
 
 void Synchronizev2Service::loginHandler(QNetworkReply *reply) noexcept

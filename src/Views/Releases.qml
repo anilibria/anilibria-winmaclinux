@@ -1131,6 +1131,9 @@ Page {
                                 onCurrentIndexChanged: {
                                     userConfigurationViewModel.torrentDownloadMode = downloadTorrentMode.currentIndex;
                                 }
+                                Component.onCompleted: {
+                                    downloadTorrentMode.currentIndex = userConfigurationViewModel.torrentDownloadMode;
+                                }
                             }
 
                             PlainText {

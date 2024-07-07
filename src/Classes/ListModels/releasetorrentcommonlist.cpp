@@ -1,7 +1,6 @@
 #include <QUrl>
 #include <QDesktopServices>
 #include "releasetorrentcommonlist.h"
-#include "../../globalconstants.h"
 #include "../../globalhelpers.h"
 
 ReleaseTorrentCommonList::ReleaseTorrentCommonList(QObject *parent)
@@ -113,7 +112,7 @@ QString ReleaseTorrentCommonList::getDownloadPath(int index)
     return torrent->url();
 }
 
-QString ReleaseTorrentCommonList::getReadableSize(long long size) const noexcept
+QString ReleaseTorrentCommonList::getReadableSize(int64_t size) const noexcept
 {
     QList<QString> sizes;
     sizes.append("B");

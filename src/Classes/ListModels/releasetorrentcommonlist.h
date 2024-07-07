@@ -36,7 +36,7 @@ public:
     Q_INVOKABLE QString getDownloadPath(int index);
 
 private:
-    QString getReadableSize(long long size) const noexcept;
+    QString getReadableSize(int64_t size) const noexcept;
 
 private slots:
     void downloadTorrentResponse(QNetworkReply *reply);

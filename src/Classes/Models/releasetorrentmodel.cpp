@@ -38,7 +38,7 @@ void ReleaseTorrentModel::readFromApiTorrent(const ApiTorrentModel *apiTorrent)
 {
     setId(apiTorrent->id());
     setHash(apiTorrent->hash());
-    setQuality(apiTorrent->quality());
+    setQuality(apiTorrent->quality() + " " + apiTorrent->codec());
     setSize(apiTorrent->size());
     setSeeders(apiTorrent->seeders());
     setCtime(apiTorrent->created());

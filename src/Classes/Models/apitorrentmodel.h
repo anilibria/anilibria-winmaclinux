@@ -16,6 +16,7 @@ private:
     QString m_description { "" };
     QString m_quality { "" };
     QString m_codec { "" };
+    QString m_type { "" };
     int64_t m_size { 0 };
     QString m_torrentPath { "" };
     int m_seeders { 0 };
@@ -32,6 +33,7 @@ public:
     QString description() const noexcept { return m_description; }
     QString quality() const noexcept { return m_quality; }
     QString codec() const noexcept { return m_codec; }
+    QString type() const noexcept { return m_type; }
     int64_t size() const noexcept { return m_size; }
     int seeders() const noexcept { return m_seeders; }
     QString torrentPath() const noexcept { return m_torrentPath; }
@@ -45,6 +47,7 @@ public:
     void setDescription(const QString& description) noexcept { m_description = description; }
     void setQuality(const QString& quality) noexcept { m_quality = quality; }
     void setCodec(const QString& codec) noexcept { m_codec = codec; }
+    void setType(const QString& type) noexcept { m_type = type; }
     void setSize(int64_t size) noexcept { m_size = size; }
     void setTorrentPath(const QString& torrentPath) noexcept { m_torrentPath = torrentPath; }
     void setSeeders(int seeders) noexcept { m_seeders = seeders; }

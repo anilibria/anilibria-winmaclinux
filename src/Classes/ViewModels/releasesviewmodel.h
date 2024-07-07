@@ -155,6 +155,9 @@ private:
     QNetworkAccessManager* m_manager { new QNetworkAccessManager(this) };
     Synchronizev2Service* m_synchronizationServicev2 { nullptr };
     int m_proxyPort { 0 };
+    QMap<int, int> m_oldReleasesCountVideos { QMap<int, int>() };
+    QMap<int, int> m_oldReleasesCountTorrents { QMap<int, int>() };
+    QSet<int> m_oldReleasesIds { QSet<int>() };
 
 public:
     explicit ReleasesViewModel(QObject *parent = nullptr);
@@ -324,9 +327,9 @@ public:
     uint32_t getCountFromChanges(const QList<int> *releases, bool filterByFavorites);
     Q_INVOKABLE void openInExternalPlayer(const QString& url);
     Q_INVOKABLE void prepareTorrentsForListItem(const int id);
-    Q_INVOKABLE void downloadTorrent(int releaseId, const QString& torrentPath, int port);
     Q_INVOKABLE QString packAsM3UAndOpen(int id, QString quality);
     Q_INVOKABLE QString packAsMPCPLAndOpen(int id, QString quality);
+    Q_INVOKABLE void savePreviousReleases(int previousLastTimeStamp);
     FullReleaseModel* getReleaseById(int id) const noexcept;
     void resetReleaseChanges(int releaseId) noexcept;
     quint32 m_seedValue { 0 };
@@ -376,7 +379,6 @@ private slots:
     void userFavoritesReceivedV2(const QList<int>& data);
     void cinemahallItemsChanged();
     void needDeleteFavorites(const QList<int>& ids);
-    void downloadTorrentInTorrentStream(int releaseId, const QString& torrentPath);
 
 signals:
     void openedCardTorrentsChanged();

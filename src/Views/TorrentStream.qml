@@ -215,7 +215,6 @@ Page {
                                                     width: 300
 
                                                     CommonMenuItem {
-                                                        enabled: !!window.userModel.login
                                                         text: "Удалить только торрент"
                                                         onPressed: {
                                                             torrentActionsMenu.close();
@@ -224,7 +223,6 @@ Page {
                                                         }
                                                     }
                                                     CommonMenuItem {
-                                                        enabled: !!window.userModel.login
                                                         text: "Удалить торрент и файлы"
                                                         onPressed: {
                                                             torrentActionsMenu.close();

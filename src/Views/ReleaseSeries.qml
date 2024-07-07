@@ -277,7 +277,6 @@ Page {
                                             width: 300
 
                                             CommonMenuItem {
-                                                enabled: !!window.userModel.login
                                                 text: "Добавить в избранное"
                                                 onPressed: {
                                                     for (const releaseId of releaseIds) {
@@ -288,7 +287,6 @@ Page {
                                                 }
                                             }
                                             CommonMenuItem {
-                                                enabled: !!window.userModel.login
                                                 text: "Удалить из избранного"
                                                 onPressed: {
                                                     for (const releaseId of releaseIds) {

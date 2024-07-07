@@ -631,6 +631,7 @@ ApplicationWindow {
         token: userConfigurationViewModel.v2token
         cachehost: userConfigurationViewModel.cachehost
         torrentDownloadMode: userConfigurationViewModel.torrentDownloadMode
+        torrentStreamPort: userConfigurationViewModel.playerBuffer
 
         onUserCompleteAuthentificated: {
             notificationViewModel.sendInfoNotification(`Вы успешно вошли в аккаунт.`);
@@ -665,6 +666,7 @@ ApplicationWindow {
             if (synchronizationServicev2.isAuhorized) {
                 userAvatarCanvas.loadImage(synchronizationServicev2.userAvatar);
                 mainViewModel.notVisibleSignin = true;
+                synchronizationServicev2.getUserFavorites();
             } else {
                 mainViewModel.notVisibleSignin = false;
             }
@@ -694,6 +696,8 @@ ApplicationWindow {
         }
 
         onSynchronizationCompleted: {
+            releasesViewModel.savePreviousReleases(previousLastTimeStamp);
+
             filterDictionariesViewModel.refreshDictionaries();
 
             notificationViewModel.sendInfoNotification("Синхронизация релизов успешно завершена в " + new Date().toLocaleTimeString());
@@ -702,6 +706,10 @@ ApplicationWindow {
 
             releaseLinkedSeries.refreshSeries();
             releasesViewModel.reloadReleases();
+        }
+
+        onDownloadInTorrentStream: {
+            notificationViewModel.sendInfoNotification("Релиз добавлен в TorrentStream");
         }
     }
 
