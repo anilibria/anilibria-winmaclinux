@@ -1344,15 +1344,25 @@ void ReleasesViewModel::savePreviousReleases(int previousLastTimeStamp)
     m_oldReleasesCountVideos.clear();
     m_oldReleasesCountTorrents.clear();
     m_oldReleasesIds.clear();
-    foreach (auto release, *m_releases) {
-        m_oldReleasesIds.insert(release->id());
-        if (release->timestamp() >= previousLastTimeStamp) {
-            m_oldReleasesCountVideos.insert(release->id(), release->countOnlineVideos());
-            m_oldReleasesCountTorrents.insert(release->id(), release->countTorrents());
-            qDebug() << "m_oldReleasesCountVideos " << release->id() << " " << release->countOnlineVideos() << " " << release->countTorrents();
-        }
+    m_oldReleasesTorrentsSeries.clear();
+
+    auto keys = m_releasesMap->keys();
+    foreach (auto releaseId, keys) {
+        auto release = m_releasesMap->value(releaseId);
+        m_oldReleasesIds.insert(releaseId);
+        m_oldReleasesCountVideos.insert(releaseId, release->countOnlineVideos());
+        m_oldReleasesCountTorrents.insert(releaseId, release->countTorrents());
     }
-    qDebug() << "m_oldReleasesIds " << m_oldReleasesIds.size();
+
+    foreach (auto torrentItem, m_torrentItems) {
+        auto releaseId = torrentItem->releaseId();
+        if (m_oldReleasesTorrentsSeries.contains(releaseId)) {
+            auto newValue = torrentItem->description() + m_oldReleasesTorrentsSeries.value(releaseId);
+            m_oldReleasesTorrentsSeries.remove(releaseId);
+            m_oldReleasesTorrentsSeries.insert(releaseId, newValue);
+        }
+        m_oldReleasesTorrentsSeries.insert(releaseId, torrentItem->description());
+    }
 }
 
 FullReleaseModel *ReleasesViewModel::getReleaseById(int id) const noexcept
@@ -1407,17 +1417,17 @@ void ReleasesViewModel::reloadReleases()
 
     auto videos = m_oldReleasesCountVideos.keys();
     foreach (auto oldReleasesId, videos) {
-        if (!m_releasesMap->contains(oldReleasesId)) return;
+        if (!m_releasesMap->contains(oldReleasesId)) continue;
 
         auto release = m_releasesMap->value(oldReleasesId);
-        if (release->countOnlineVideos() > m_oldReleasesCountVideos.value(oldReleasesId)) {
+        if (release->countOnlineVideos() != m_oldReleasesCountVideos.value(oldReleasesId)) {
             if (!m_releaseChanges->newOnlineSeries()->contains(oldReleasesId)) m_releaseChanges->newOnlineSeries()->append(oldReleasesId);
         }
     }
 
     auto torrentKeys = m_oldReleasesCountTorrents.keys();
     foreach (auto oldReleasesId, torrentKeys) {
-        if (!m_releasesMap->contains(oldReleasesId)) return;
+        if (!m_releasesMap->contains(oldReleasesId)) continue;
 
         auto release = m_releasesMap->value(oldReleasesId);
         if (release->countTorrents() > m_oldReleasesCountTorrents.value(oldReleasesId)) {
@@ -1425,9 +1435,37 @@ void ReleasesViewModel::reloadReleases()
         }
     }
 
+    QMap<int, QString> newTorrentSeries;
+    foreach (auto torrentItem, m_torrentItems) {
+        auto releaseId = torrentItem->releaseId();
+        if (newTorrentSeries.contains(releaseId)) {
+            auto newValue = torrentItem->description() + newTorrentSeries.value(releaseId);
+            newTorrentSeries.remove(releaseId);
+            newTorrentSeries.insert(releaseId, newValue);
+        }
+        newTorrentSeries.insert(releaseId, torrentItem->description());
+    }
+
+    auto torrentSeriesKeys = m_oldReleasesTorrentsSeries.keys();
+    foreach (auto oldReleasesId, torrentSeriesKeys) {
+        if (!newTorrentSeries.contains(oldReleasesId)) {
+            auto pizda = newTorrentSeries.value(oldReleasesId);
+            continue;
+        }
+
+        auto newValue = newTorrentSeries.value(oldReleasesId);
+        auto oldValue = m_oldReleasesTorrentsSeries.value(oldReleasesId);
+        if (newValue != oldValue) {
+            if (!m_releaseChanges->newTorrentSeries()->contains(oldReleasesId)) m_releaseChanges->newTorrentSeries()->append(oldReleasesId);
+        }
+    }
+
     m_oldReleasesIds.clear();
     m_oldReleasesCountTorrents.clear();
     m_oldReleasesCountVideos.clear();
+    m_oldReleasesTorrentsSeries.clear();
+
+    saveChanges();
 }
 
 void ReleasesViewModel::setToReleaseHistory(int id, int type) noexcept

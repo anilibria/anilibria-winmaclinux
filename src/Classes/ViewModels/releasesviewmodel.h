@@ -157,6 +157,7 @@ private:
     int m_proxyPort { 0 };
     QMap<int, int> m_oldReleasesCountVideos { QMap<int, int>() };
     QMap<int, int> m_oldReleasesCountTorrents { QMap<int, int>() };
+    QMap<int, QString> m_oldReleasesTorrentsSeries { QMap<int, QString>() };
     QSet<int> m_oldReleasesIds { QSet<int>() };
 
 public:
