@@ -4,6 +4,7 @@
 #include <QJsonArray>
 #include <QDesktopServices>
 #include <QFile>
+#include <QDir>
 #include "synchronizev2service.h"
 #include "../../globalhelpers.h"
 
@@ -167,6 +168,21 @@ void Synchronizev2Service::synchronizeFullCache()
     QNetworkRequest request(QUrl(m_cachehost + "/metadata"));
     auto reply = m_networkManager->get(request);
     adjustIdentifier(reply, m_cacheMetadataRequest);
+}
+
+QString Synchronizev2Service::checkFolderAvailability(const QString &folder)
+{
+    QDir dir(folder);
+    if (!dir.exists(folder)) return "Папка кеша не существует!";
+
+    if (!QFile::exists(folder + "/metadata")) return "Файл метаданных кеша не найден!";
+
+    return "";
+}
+
+void Synchronizev2Service::checkNetworkAvailability(const QString &address)
+{
+
 }
 
 void Synchronizev2Service::downloadReleaseFile() noexcept

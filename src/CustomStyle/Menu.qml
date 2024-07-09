@@ -1,6 +1,6 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.15
-import QtQuick.Templates 2.12 as T
+import QtQuick.Templates 2.15 as T
 import QtQuick.Window 2.15
 import CustomStyle 1.0
 

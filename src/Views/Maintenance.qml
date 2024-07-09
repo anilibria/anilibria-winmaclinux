@@ -312,7 +312,7 @@ Page {
                                 }
 
                                 Component.onCompleted: {
-                                    if (userConfigurationViewModel.apiv2host === "https://anilibria.top") {
+                                    if (userConfigurationViewModel.apiv2host === synchronizationServicev2.mainNextAPIServer) {
                                         serversComboBox.currentIndex = 0;
                                     }
                                 }
@@ -378,7 +378,7 @@ Page {
                                 }
 
                                 Component.onCompleted: {
-                                    if (userConfigurationViewModel.cachehost === "https://raw.githubusercontent.com/trueromanus/LocalCacheChecker/main/cache") {
+                                    if (userConfigurationViewModel.cachehost === synchronizationServicev2.mainGithubCacheServer) {
                                         cacheServersComboBox.currentIndex = 0;
                                     }
                                 }
@@ -418,6 +418,14 @@ Page {
                                 text: "Проверить"
                                 width: 100
                                 onClicked: {
+                                    let message = "";
+                                    if (localFolder.checked) {
+                                        message = synchronizationServicev2.checkFolderAvailability(cacheFolderTextField.text);
+                                    } else {
+                                        synchronizationServicev2.checkNetworkAvailability("");
+                                    }
+
+                                    if (message) notificationViewModel.sendInfoNotification(message);
 
                                     apiAddressPopup.close();
                                 }
@@ -433,13 +441,13 @@ Page {
                                 onClicked: {
                                     switch (cacheServersComboBox.currentIndex) {
                                         case 0:
-                                            userConfigurationViewModel.apiv2host = "https://raw.githubusercontent.com/trueromanus/LocalCacheChecker/main/cache";
+                                            userConfigurationViewModel.cachehost = synchronizationServicev2.mainGithubCacheServer;
                                             break;
                                     }
 
                                     switch (serversComboBox.currentIndex) {
                                         case 0:
-                                            userConfigurationViewModel.apiv2host = "https://anilibria.top";
+                                            userConfigurationViewModel.apiv2host = synchronizationServicev2.mainNextAPIServer;
                                             break;
                                     }
 
@@ -490,7 +498,7 @@ Page {
                             width: proxyPopup.width - 30
                             height: proxyType.height
 
-                            ComboBox {
+                            CommonComboBox {
                                 id: proxyType
                                 width: parent.width
                                 model: [ "", "SOCKS5", "Http" ]

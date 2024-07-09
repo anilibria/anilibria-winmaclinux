@@ -18,6 +18,8 @@ class Synchronizev2Service : public QObject
     Q_PROPERTY(int torrentDownloadMode READ torrentDownloadMode WRITE setTorrentDownloadMode NOTIFY torrentDownloadModeChanged FINAL)
     Q_PROPERTY(bool synchronizeCacheActived READ synchronizeCacheActived NOTIFY synchronizeCacheActivedChanged FINAL)
     Q_PROPERTY(int torrentStreamPort READ torrentStreamPort WRITE setTorrentStreamPort NOTIFY torrentStreamPortChanged FINAL)
+    Q_PROPERTY(QString mainGithubCacheServer READ mainGithubCacheServer NOTIFY mainGithubCacheServerChanged FINAL)
+    Q_PROPERTY(QString mainNextAPIServer READ mainNextAPIServer NOTIFY mainNextAPIServerChanged FINAL)
 
 private:
     QString m_apiv2host { "" };
@@ -84,6 +86,10 @@ public:
 
     bool synchronizeCacheActived() const noexcept { return m_synchronizeCacheActived; }
 
+    QString mainGithubCacheServer() const noexcept { return "https://raw.githubusercontent.com/trueromanus/LocalCacheChecker/main/cache"; }
+
+    QString mainNextAPIServer() const noexcept { return "https://anilibria.top"; }
+
     Q_INVOKABLE void authorize(QString login, QString password);
     Q_INVOKABLE void logout();
     Q_INVOKABLE void getUserData();
@@ -92,6 +98,8 @@ public:
     Q_INVOKABLE void removeUserFavorites(const QList<int> ids);
     Q_INVOKABLE void downloadTorrent(QString torrentPath, int releaseId);
     Q_INVOKABLE void synchronizeFullCache();
+    Q_INVOKABLE QString checkFolderAvailability(const QString& folder);
+    Q_INVOKABLE void checkNetworkAvailability(const QString& address);
 
 private:
     void downloadReleaseFile() noexcept;
@@ -141,6 +149,8 @@ signals:
     void synchronizationCompletedNoChanges();
     void synchronizationCompleted(int previousLastTimeStamp);
     void torrentStreamPortChanged();
+    void mainGithubCacheServerChanged();
+    void mainNextAPIServerChanged();
 
 };
 
