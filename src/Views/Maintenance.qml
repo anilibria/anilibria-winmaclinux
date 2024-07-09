@@ -1,24 +1,6 @@
-/*
-    AniLibria - desktop client for the website anilibria.tv
-    Copyright (C) 2020 Roman Vladimirov
-
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
-import QtQuick 2.12
-import QtQuick.Controls 2.12
-import QtQuick.Layouts 1.3
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
 import Anilibria.Services 1.0
 import "../Controls"
 
@@ -130,11 +112,8 @@ Page {
                                     anchors.left: parent.left
                                     anchors.leftMargin: 10
                                     width: parent.width - 10
-                                    text: "Изменить адрес api"
+                                    text: "nextAPI"
                                     onClicked: {
-                                        apiAddress.text = apiServiceConfigurator.apiAddress;
-                                        staticAddress.text = apiServiceConfigurator.staticAddress;
-
                                         apiAddressPopup.open();
                                     }
                                 }
@@ -151,7 +130,7 @@ Page {
                                     anchors.left: parent.left
                                     width: parent.width
                                     wrapMode: Text.WordWrap
-                                    text: "Позволяет изменить адрес api а также адрес для статики. Внимание! Стоит пользоваться этим функционалом только если Вы понимаете зачем Вам это нужно, иначе Вы просто сломаете приложение. <b>Изменения вступят в силу после перезапуска приложения</b>."
+                                    text: "Настройка nextAPI и кеш серверов, позволяет менять адреса и проверять их работоспособность."
                                 }
                             }
 
@@ -209,8 +188,9 @@ Page {
                                     anchors.left: parent.left
                                     anchors.leftMargin: 10
                                     width: parent.width - 10
-                                    text: "Сбросить удаленные"
+                                    text: "Удалить лишнее"
                                     onClicked: {
+                                        localStorage.clearRedundantFilesFromCache();
                                     }
                                 }
                             }
@@ -226,7 +206,7 @@ Page {
                                     anchors.left: parent.left
                                     width: parent.width
                                     wrapMode: Text.WordWrap
-                                    text: "Если Вы столкнулись с проблемой что каких-то релизов нет в приложении но есть на сайте то Вы можете сбросить удаленные релизы."
+                                    text: "Удалить из кеша лишние файлы которые могли появиться во время работы приложения, например torrent файлы, m3u файлы и т.п."
                                 }
                             }
 
@@ -311,105 +291,133 @@ Page {
 
                         AccentText {
                             width: apiAddressPopup.width
-                            text: "Адрес api"
+                            text: "Адрес nextAPI"
                             fontPointSize: 12
                             font.bold: true
                             elide: Text.ElideRight
                         }
 
                         Rectangle {
+                            color: "transparent"
                             width: apiAddressPopup.width - 30
-                            height: apiAddress.height
-
-                            CommonTextField {
-                                id: apiAddress
-                                width: parent.width
-                                readOnly: serversComboBox.currentIndex > 0
-                                placeholderText: "Введите url"
-                            }
-                        }
-
-
-                        AccentText {
-                            width: apiAddressPopup.width
-                            text: "Адрес статики"
-                            fontPointSize: 12
-                            font.bold: true
-                            elide: Text.ElideRight
-                        }
-
-                        Rectangle {
-                            width: apiAddressPopup.width - 30
-                            height: apiAddress.height
-
-                            CommonTextField {
-                                id: staticAddress
-                                width: parent.width
-                                readOnly: serversComboBox.currentIndex > 0
-                                placeholderText: "Введите url"
-                            }
-                        }
-
-                        AccentText {
-                            width: apiAddressPopup.width
-                            text: "Выбрать сервер"
-                            fontPointSize: 12
-                            font.bold: true
-                            elide: Text.ElideRight
-                        }
-
-                        Rectangle {
-                            width: apiAddressPopup.width - 30
-                            height: apiAddress.height
+                            height: serversComboBox.height
 
                             CommonComboBox {
                                 id: serversComboBox
                                 width: parent.width
                                 model: ListModel {
                                     ListElement {
-                                        text: "Вводом вручную"
-                                    }
-                                    ListElement {
-                                        text: "wwnd"
-                                    }
-                                    ListElement {
-                                        text: "anilib.moe"
+                                        text: "Основной домен"
                                     }
                                 }
 
-                                onActivated: {
-                                    switch (index) {
-                                        case 0:
-                                            apiAddress.text = "";
-                                            staticAddress.text = "";
-                                            break;
-                                        case 1:
-                                            apiAddress.text = "https://wwnd.space/";
-                                            staticAddress.text = "https://static.wwnd.space";
-                                            break;
-                                        case 2:
-                                            apiAddress.text = "https://anilibriaqt.anilib.moe/";
-                                            staticAddress.text = "https://anilibriaqt.anilib.moe";
-                                            break;
+                                Component.onCompleted: {
+                                    if (userConfigurationViewModel.apiv2host === "https://anilibria.top") {
+                                        serversComboBox.currentIndex = 0;
                                     }
                                 }
+                            }
+                        }
+
+                        AccentText {
+                            width: apiAddressPopup.width
+                            text: localFolder.checked ? "Папка с кешем" : "Адрес кеш сервера"
+                            fontPointSize: 12
+                            font.bold: true
+                            elide: Text.ElideRight
+                        }
+
+                        Rectangle {
+                            color: "transparent"
+                            width: apiAddressPopup.width - 30
+                            height: cacheServersComboBox.height
+
+                            CommonTextField {
+                                id: cacheFolderTextField
+                                visible: localFolder.checked
+                                width: parent.width - 30
+                                placeholderText: "Нажмите на иконку справа для выбора"
+                                readOnly: true
+                                text: userConfigurationViewModel.cacheFolder
+                            }
+
+                            IconButton {
+                                visible: localFolder.checked
+                                anchors.left: cacheFolderTextField.right
+                                anchors.leftMargin: 4
+                                hoverColor: applicationThemeViewModel.currentItems.filterIconButtonHoverColor
+                                iconPath: applicationThemeViewModel.currentItems.iconReleaseCatalogCompilation
+                                iconWidth: 20
+                                iconHeight: 20
+                                width: 30
+                                height: 30
+                                onButtonPressed: {
+                                    selectCacheFolderDialog.open();
+                                }
+
+                                SystemOpenFolderDialog {
+                                    id: selectCacheFolderDialog
+                                    onNeedOpenFolder: {
+                                        if (Qt.platform.os === 'windows') {
+                                            cacheFolderTextField.text = folderUrl.replace("file:///", "");
+                                        } else {
+                                            cacheFolderTextField.text = folderUrl.replace("file://", "");
+                                        }
+                                    }
+                                }
+                            }
+
+                            CommonComboBox {
+                                id: cacheServersComboBox
+                                visible: !localFolder.checked
+                                width: parent.width
+                                model: ListModel {
+                                    ListElement {
+                                        text: "Основной github"
+                                    }
+                                }
+
+                                Component.onCompleted: {
+                                    if (userConfigurationViewModel.cachehost === "https://raw.githubusercontent.com/trueromanus/LocalCacheChecker/main/cache") {
+                                        cacheServersComboBox.currentIndex = 0;
+                                    }
+                                }
+                            }
+                        }
+
+                        AccentText {
+                            width: apiAddressPopup.width
+                            text: "Локальная папка вместо кеш сервера"
+                            fontPointSize: 12
+                            font.bold: true
+                            elide: Text.ElideRight
+                        }
+
+                        Rectangle {
+                            color: "transparent"
+                            width: apiAddressPopup.width - 30
+                            height: localFolder.height - 10
+
+                            CommonSwitch {
+                                id: localFolder
+                                tooltipMessage: "Использовать локальную папку для чтения кеша вместо вебсайта"
+                                checked: userConfigurationViewModel.useCacheFolder
                             }
                         }
 
                         Rectangle {
                             color: "transparent"
                             width: apiAddressPopup.width - 20
-                            height: 70
+                            height: 50
 
                             RoundedActionButton {
                                 anchors.right: saveButton.left
                                 anchors.rightMargin: 10
                                 anchors.verticalCenter: parent.verticalCenter
                                 visible: !apiServiceConfigurator.isDefault
-                                text: "Умолчание"
+                                text: "Проверить"
                                 width: 100
                                 onClicked: {
-                                    apiServiceConfigurator.restoreDefault();
 
                                     apiAddressPopup.close();
                                 }
@@ -420,11 +428,23 @@ Page {
                                 anchors.right: cancelButton.left
                                 anchors.rightMargin: 10
                                 anchors.verticalCenter: parent.verticalCenter
-                                enabled: apiAddress.text !== `` && staticAddress.text !== ``
                                 text: "Сохранить"
                                 width: 100
                                 onClicked: {
-                                    apiServiceConfigurator.saveApiConfiguration(apiAddress.text, staticAddress.text);
+                                    switch (cacheServersComboBox.currentIndex) {
+                                        case 0:
+                                            userConfigurationViewModel.apiv2host = "https://raw.githubusercontent.com/trueromanus/LocalCacheChecker/main/cache";
+                                            break;
+                                    }
+
+                                    switch (serversComboBox.currentIndex) {
+                                        case 0:
+                                            userConfigurationViewModel.apiv2host = "https://anilibria.top";
+                                            break;
+                                    }
+
+                                    userConfigurationViewModel.useCacheFolder = localFolder.checked;
+                                    userConfigurationViewModel.cacheFolder = cacheFolderTextField.text;
 
                                     apiAddressPopup.close();
                                 }

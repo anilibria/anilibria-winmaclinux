@@ -1,13 +1,13 @@
-import QtQuick 2.12
-import QtQuick.Window 2.12
-import QtQuick.Controls 2.12
-import QtQuick.Layouts 1.3
-import QtQuick.Controls.Material 2.0
+import QtQuick 2.15
+import QtQuick.Window 2.15
+import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
+import QtQuick.Controls.Material 2.15
 import Anilibria.Services 1.0
 import Anilibria.ListModels 1.0
 import Anilibria.ViewModels 1.0
 import CustomStyle 1.0
-import QtQuick.Particles 2.13
+import QtQuick.Particles 2.15
 import "Views"
 import "Controls"
 

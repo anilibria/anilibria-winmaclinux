@@ -72,6 +72,8 @@ class UserConfigurationViewModel : public QObject
     Q_PROPERTY(QString v2token READ v2token WRITE setV2token NOTIFY v2tokenChanged FINAL)
     Q_PROPERTY(int torrentDownloadMode READ torrentDownloadMode WRITE setTorrentDownloadMode NOTIFY torrentDownloadModeChanged FINAL)
     Q_PROPERTY(QString cachehost READ cachehost WRITE setCachehost NOTIFY cachehostChanged FINAL)
+    Q_PROPERTY(bool useCacheFolder READ useCacheFolder WRITE setUseCacheFolder NOTIFY useCacheFolderChanged FINAL)
+    Q_PROPERTY(QString cacheFolder READ cacheFolder WRITE setCacheFolder NOTIFY cacheFolderChanged FINAL)
 
 private:
     QString m_cacheFileName { "userconfiguration.cache" };
@@ -122,6 +124,8 @@ private:
     const QString m_v2tokenField { "v2token" };
     const QString m_torrentDownloadModeField { "torrentDownloadMode" };
     const QString m_cachehostField { "cachehost" };
+    const QString m_useCacheFolderField { "useCacheFolder" };
+    const QString m_cacheFolderField { "cacheFolder" };
     int m_opacityPlayerPanel { 50 };
     bool m_notCloseReleaseCardAfterWatch { false };
     bool m_usingScrollAcceleration { true };
@@ -169,6 +173,8 @@ private:
     QString m_v2token { "" };
     int m_torrentDownloadMode { 0 };
     QString m_cachehost { "" };
+    bool m_useCacheFolder { false };
+    QString m_cacheFolder { "" };
 
 public:
     explicit UserConfigurationViewModel(QObject *parent = nullptr);
@@ -312,7 +318,13 @@ public:
     void setTorrentDownloadMode(int torrentDownloadMode) noexcept;
 
     QString cachehost() const noexcept { return m_cachehost; }
-    void setCachehost(QString cachehost) noexcept;
+    void setCachehost(const QString& cachehost) noexcept;
+
+    bool useCacheFolder() const noexcept { return m_useCacheFolder; }
+    void setUseCacheFolder(bool useCacheFolder) noexcept;
+
+    QString cacheFolder() const noexcept { return m_cacheFolder; }
+    void setCacheFolder(const QString& cacheFolder) noexcept;
 
     Q_INVOKABLE void refreshConfiguration() noexcept;
     Q_INVOKABLE void saveSettingsToFile();
@@ -369,6 +381,8 @@ signals:
     void v2tokenChanged();
     void torrentDownloadModeChanged();
     void cachehostChanged();
+    void useCacheFolderChanged();
+    void cacheFolderChanged();
 
 };
 

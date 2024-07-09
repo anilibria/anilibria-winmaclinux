@@ -88,8 +88,6 @@
         <file>Views/FilterPanelIconButton.qml</file>
         <file>Views/OnlinePlayerWindow.qml</file>
         <file>Views/Videoplayer/QtPlayer515.qml</file>
-        <file>Views/Videoplayer/QtAvPlayer.qml</file>
-        <file>Views/Videoplayer/QtAvVideoOutput.qml</file>
         <file>Views/Videoplayer/QtVideo515Output.qml</file>
         <file>Controls/BackgroundImagePopup.qml</file>
         <file>Controls/DictionaryComboBox.qml</file>

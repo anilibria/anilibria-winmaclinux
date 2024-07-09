@@ -507,6 +507,22 @@ void LocalStorageService::clearPostersCache()
     m_OfflineImageCacheService->clearPosterCache();
 }
 
+void LocalStorageService::clearRedundantFilesFromCache()
+{
+    auto path = QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation);
+    QDir dir(path);
+    auto files = dir.entryList(QDir::Filter::Files);
+    QList<QString> needToDelete;
+    foreach (auto file, files) {
+        auto isIncluded = file.endsWith(".torrent") || file.endsWith(".m3u") || file.endsWith(".mpcpl");
+        if (isIncluded) needToDelete.append(file);
+    }
+
+    foreach (auto deleteFile, needToDelete) {
+        QFile::remove(path + "/" + deleteFile);
+    }
+}
+
 void LocalStorageService::backupCache(const QString &path)
 {
     auto localPath = QString(path);

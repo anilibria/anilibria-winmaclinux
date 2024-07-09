@@ -86,6 +86,7 @@ public:
     Q_INVOKABLE void finishDownloadItem(int releaseId, int videoId, int quality, const QString& downloadedPath);
     Q_INVOKABLE QString getDownloads();
     Q_INVOKABLE void clearPostersCache();
+    Q_INVOKABLE void clearRedundantFilesFromCache();
     Q_INVOKABLE void backupCache(const QString& path);
     Q_INVOKABLE void restoreBackupCache(const QString& path);
 

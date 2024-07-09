@@ -405,12 +405,28 @@ void UserConfigurationViewModel::setTorrentDownloadMode(int torrentDownloadMode)
     emit torrentDownloadModeChanged();
 }
 
-void UserConfigurationViewModel::setCachehost(QString cachehost) noexcept
+void UserConfigurationViewModel::setCachehost(const QString& cachehost) noexcept
 {
     if (m_cachehost == cachehost) return;
 
     m_cachehost = cachehost;
     emit cachehostChanged();
+}
+
+void UserConfigurationViewModel::setUseCacheFolder(bool useCacheFolder) noexcept
+{
+    if (m_useCacheFolder == useCacheFolder) return;
+
+    m_useCacheFolder = useCacheFolder;
+    emit useCacheFolderChanged();
+}
+
+void UserConfigurationViewModel::setCacheFolder(const QString &cacheFolder) noexcept
+{
+    if (m_cacheFolder == cacheFolder) return;
+
+    m_cacheFolder = cacheFolder;
+    emit cacheFolderChanged();
 }
 
 void UserConfigurationViewModel::refreshConfiguration() noexcept
@@ -449,6 +465,8 @@ void UserConfigurationViewModel::refreshConfiguration() noexcept
     emit v2tokenChanged();
     emit torrentDownloadModeChanged();
     emit cachehostChanged();
+    emit useCacheFolderChanged();
+    emit cacheFolderChanged();
 }
 
 void UserConfigurationViewModel::saveSettingsToFile()
@@ -501,6 +519,8 @@ void UserConfigurationViewModel::saveSettingsToFile()
     object[m_v2tokenField] = m_v2token;
     object[m_torrentDownloadModeField] = m_torrentDownloadMode;
     object[m_cachehostField] = m_cachehost;
+    object[m_useCacheFolderField] = m_useCacheFolder;
+    object[m_cacheFolderField] = m_cacheFolder;
 
     QFile file(getCachePath(m_cacheFileName));
     file.open(QFile::WriteOnly | QFile::Text);
@@ -564,6 +584,8 @@ void UserConfigurationViewModel::readSettingsFromFile()
     m_v2token = object.contains(m_v2tokenField) ? object[m_v2tokenField].toString() : "";
     m_torrentDownloadMode = object.contains(m_torrentDownloadModeField) ? object[m_torrentDownloadModeField].toInt() : 0;
     m_cachehost = object.contains(m_cachehostField) ? object[m_cachehostField].toString() : "https://raw.githubusercontent.com/trueromanus/LocalCacheChecker/main/cache";
+    m_useCacheFolder = object.contains(m_useCacheFolderField) ? object[m_useCacheFolderField].toBool() : false;
+    m_cacheFolder = object.contains(m_cacheFolderField) ? object[m_cacheFolderField].toString() : "";
 
     if (m_textFont != "Default") changeFont(m_textFont);
 }
