@@ -1240,7 +1240,7 @@ Page {
                 PlainText {
                     anchors.verticalCenter: parent.verticalCenter
                     anchors.horizontalCenter: parent.horizontalCenter
-                    visible: releasesViewModel.synchronizationEnabled
+                    visible: synchronizationServicev2.synchronizeCacheActived
                     fontPointSize: mainViewModel.isSmallSizeMode ? 10 : 12
                     text: "Выполняется синхронизация..."
                 }

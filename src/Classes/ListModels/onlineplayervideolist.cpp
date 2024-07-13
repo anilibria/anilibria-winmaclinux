@@ -492,7 +492,7 @@ QVector<OnlineVideoModel*> OnlinePlayerVideoList::fillVideosFrom(const QList<Rel
         result.begin(),
         result.end(),
         [](const OnlineVideoModel* first, const OnlineVideoModel* second) {
-            return first->id() < second->id();
+            return first->order() < second->order();
         }
     );
 
