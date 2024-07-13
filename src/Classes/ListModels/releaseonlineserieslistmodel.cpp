@@ -215,7 +215,7 @@ void ReleaseOnlineSeriesListModel::refresh()
         m_items.begin(),
         m_items.end(),
         [](const OnlineVideoModel* first, const OnlineVideoModel* second) {
-            return first->id() < second->id();
+            return first->order() < second->order();
         }
     );
 
