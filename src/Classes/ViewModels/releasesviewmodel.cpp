@@ -107,7 +107,6 @@ ReleasesViewModel::ReleasesViewModel(QObject *parent) : QObject(parent)
     createIfNotExistsFile(getCachePath(historyCacheFileName), "[]");
     createIfNotExistsFile(getCachePath(notificationCacheFileName), "{ \"newReleases\": [], \"newOnlineSeries\": [], \"newTorrents\": [], \"newTorrentSeries\": [] }");
 
-    loadReleases();    
     loadSchedules();
     loadFavorites();
     loadHidedReleases();
@@ -313,6 +312,27 @@ void ReleasesViewModel::setSynchronizationServicev2(const Synchronizev2Service *
     connect(m_synchronizationServicev2, &Synchronizev2Service::userFavoritesReceivedV2, this,&ReleasesViewModel::userFavoritesReceivedV2);
 }
 
+void ReleasesViewModel::setProxyPort(int proxyPort) noexcept
+{
+    if (m_proxyPort == proxyPort) return;
+
+    m_proxyPort = proxyPort;
+    emit proxyPortChanged();
+}
+
+void ReleasesViewModel::setReleaseLinkedSeries(ReleaseLinkedSeries *releaseLinkedSeries) noexcept
+{
+    if (m_releaseLinkedSeries == releaseLinkedSeries) return;
+
+    m_releaseLinkedSeries = releaseLinkedSeries;
+    emit releaseLinkedSeriesChanged();
+
+    if (m_releaseLinkedSeries == nullptr) return;
+
+    m_items->setupLinkedSeries(m_releaseLinkedSeries);
+    m_releaseLinkedSeries->setup(m_releases, m_userFavorites, &m_torrentItems);
+}
+
 QString ReleasesViewModel::openedReleaseStatusDisplay() const noexcept
 {
     if (m_openedRelease == nullptr) return "";
@@ -375,7 +395,8 @@ bool ReleasesViewModel::openedReleaseIsRutube() const noexcept
 {
     if (m_openedRelease == nullptr) return false;
 
-    return isRutubeHasVideos(m_openedRelease->videos());
+    //TODO: remake on new model
+    return false;
 }
 
 QStringList ReleasesViewModel::getMostPopularGenres() const noexcept
@@ -389,7 +410,7 @@ QStringList ReleasesViewModel::getMostPopularGenres() const noexcept
         iterator.next();
 
         QString key = iterator.key();
-        auto parts = key.splitRef(".");
+        auto parts = key.split(".");
 
         auto id = parts[0].toInt();
         if (alreadyProcessed.contains(id)) continue;
@@ -446,7 +467,7 @@ QStringList ReleasesViewModel::getMostPopularVoices() const noexcept
         iterator.next();
 
         QString key = iterator.key();
-        auto parts = key.splitRef(".");
+        auto parts = key.split(".");
 
         auto id = parts[0].toInt();
         if (alreadyProcessed.contains(id)) continue;
@@ -796,6 +817,30 @@ void ReleasesViewModel::iterateOnReleases(std::function<void (FullReleaseModel *
     }
 }
 
+QList<ReleaseOnlineVideoModel *> ReleasesViewModel::getReleaseVideos(int releaseId) noexcept
+{
+    QList<ReleaseOnlineVideoModel *> result;
+    foreach (auto video, m_onlineVideos) {
+        if (video->releaseId() == releaseId) {
+            result.append(video);
+        }
+    }
+
+    return result;
+}
+
+QList<ApiTorrentModel *> ReleasesViewModel::getReleaseTorrents(int releaseId) noexcept
+{
+    QList<ApiTorrentModel *> result;
+    foreach (auto torrent, m_torrentItems) {
+        if (torrent->releaseId() == releaseId) {
+            result.append(torrent);
+        }
+    }
+
+    return result;
+}
+
 void ReleasesViewModel::copyToClipboard(const QString &text) const noexcept
 {
     if (text.isEmpty()) return;
@@ -961,7 +1006,8 @@ void ReleasesViewModel::showReleaseCard(int id, bool needHandle) noexcept
     auto release = getReleaseById(id);
     m_openedRelease = release;
 
-    m_releaseTorrentsList->loadTorrentsFromJson(release->torrents());
+    auto torrents = getReleaseTorrents(id);
+    m_releaseTorrentsList->loadTorrentsFromJson(torrents);
 
     setToReleaseHistory(release->id(), 0);
 
@@ -1109,7 +1155,6 @@ void ReleasesViewModel::refreshOpenedReleaseCard()
     emit openedReleaseCountVideosChanged();
     emit openedReleaseInFavoritesChanged();
     emit openedReleaseInHidedChanged();
-    emit openedReleaseVideosChanged();
     emit openedReleaseSeenCountVideosChanged();
     emit openedReleaseAnnounceChanged();
     emit openedReleaseIsRutubeChanged();
@@ -1189,11 +1234,9 @@ void ReleasesViewModel::updateAllReleases(const QList<QString> &releases, bool i
                 pageIndex++;
             }
 
-            qDebug() << "count parsed pages " << jsons.size();
             if (jsons.isEmpty() || !isHasFirstPage) {
                 setSynchronizationEnabled(false);
                 emit errorWhileReleaseSynchronization();
-                //qDebug() << "updateAllReleases 3 " << jsonPage;
                 return false;
             }
 
@@ -1237,10 +1280,6 @@ void ReleasesViewModel::updateAllReleases(const QList<QString> &releases, bool i
                 mapToFullReleaseModel(jsonRelease.toObject(), isFirstStart, hittedMaps);
             }
 
-            //temporatily disable deleting releases because synchronization diveded on few parts
-            //markDeletedReleases(hittedMaps);
-
-            saveReleasesFromMemoryToFile();
             saveChanges();
 
             auto newReleasesCount = m_releaseChanges->newReleases()->count();
@@ -1282,25 +1321,48 @@ void ReleasesViewModel::openInExternalPlayer(const QString &url)
 
 void ReleasesViewModel::prepareTorrentsForListItem(const int id)
 {
-    auto release = m_releasesMap->value(id);
-    m_itemTorrents->loadFromJson(release->torrents());
+    auto torrents = getReleaseTorrents(id);
+    m_itemTorrents->loadFromJson(torrents);
 }
 
-void ReleasesViewModel::clearDeletedInCacheMarks()
+QString ReleasesViewModel::packAsM3UAndOpen(int id, QString quality)
 {
-    foreach (auto release, *m_releases) {
-        release->setIsDeleted(false);
+    auto videos = getReleaseVideos(id);
+    return m_localStorage->packAsM3UAndOpen(id, quality, videos);
+}
+
+QString ReleasesViewModel::packAsMPCPLAndOpen(int id, QString quality)
+{
+    auto videos = getReleaseVideos(id);
+    return m_localStorage->packAsMPCPLAndOpen(id, quality, videos);
+}
+
+void ReleasesViewModel::savePreviousReleases(int previousLastTimeStamp)
+{
+    if (previousLastTimeStamp == 0) return;
+
+    m_oldReleasesCountVideos.clear();
+    m_oldReleasesCountTorrents.clear();
+    m_oldReleasesIds.clear();
+    m_oldReleasesTorrentsSeries.clear();
+
+    auto keys = m_releasesMap->keys();
+    foreach (auto releaseId, keys) {
+        auto release = m_releasesMap->value(releaseId);
+        m_oldReleasesIds.insert(releaseId);
+        m_oldReleasesCountVideos.insert(releaseId, release->countOnlineVideos());
+        m_oldReleasesCountTorrents.insert(releaseId, release->countTorrents());
     }
-    saveReleasesFromMemoryToFile();
-}
 
-void ReleasesViewModel::downloadTorrent(int releaseId, const QString& torrentPath, int port)
-{
-    if (port == 0) return;
-
-    auto url = "http://localhost:" + QString::number(port) + "/fulldownload?id=" + QString::number(releaseId) + "&path=" + torrentPath;
-    QNetworkRequest request(url);
-    m_manager->get(request);
+    foreach (auto torrentItem, m_torrentItems) {
+        auto releaseId = torrentItem->releaseId();
+        if (m_oldReleasesTorrentsSeries.contains(releaseId)) {
+            auto newValue = torrentItem->description() + m_oldReleasesTorrentsSeries.value(releaseId);
+            m_oldReleasesTorrentsSeries.remove(releaseId);
+            m_oldReleasesTorrentsSeries.insert(releaseId, newValue);
+        }
+        m_oldReleasesTorrentsSeries.insert(releaseId, torrentItem->description());
+    }
 }
 
 FullReleaseModel *ReleasesViewModel::getReleaseById(int id) const noexcept
@@ -1341,6 +1403,66 @@ void ReleasesViewModel::reloadReleases()
 {
     loadReleases();
     m_items->refresh();
+    emit releasesFullyLoaded();
+
+    if (m_oldReleasesIds.isEmpty()) return;
+
+    if (m_releases->size() != m_oldReleasesIds.size()) {
+        foreach (auto release, *m_releases) {
+            if (m_oldReleasesIds.contains(release->id())) continue;
+
+            if (!m_releaseChanges->newReleases()->contains(release->id())) m_releaseChanges->newReleases()->append(release->id());
+        }
+    }
+
+    auto videos = m_oldReleasesCountVideos.keys();
+    foreach (auto oldReleasesId, videos) {
+        if (!m_releasesMap->contains(oldReleasesId)) continue;
+
+        auto release = m_releasesMap->value(oldReleasesId);
+        if (release->countOnlineVideos() != m_oldReleasesCountVideos.value(oldReleasesId)) {
+            if (!m_releaseChanges->newOnlineSeries()->contains(oldReleasesId)) m_releaseChanges->newOnlineSeries()->append(oldReleasesId);
+        }
+    }
+
+    auto torrentKeys = m_oldReleasesCountTorrents.keys();
+    foreach (auto oldReleasesId, torrentKeys) {
+        if (!m_releasesMap->contains(oldReleasesId)) continue;
+
+        auto release = m_releasesMap->value(oldReleasesId);
+        if (release->countTorrents() > m_oldReleasesCountTorrents.value(oldReleasesId)) {
+            if (!m_releaseChanges->newTorrents()->contains(oldReleasesId)) m_releaseChanges->newTorrents()->append(oldReleasesId);
+        }
+    }
+
+    QMap<int, QString> newTorrentSeries;
+    foreach (auto torrentItem, m_torrentItems) {
+        auto releaseId = torrentItem->releaseId();
+        if (newTorrentSeries.contains(releaseId)) {
+            auto newValue = torrentItem->description() + newTorrentSeries.value(releaseId);
+            newTorrentSeries.remove(releaseId);
+            newTorrentSeries.insert(releaseId, newValue);
+        }
+        newTorrentSeries.insert(releaseId, torrentItem->description());
+    }
+
+    auto torrentSeriesKeys = m_oldReleasesTorrentsSeries.keys();
+    foreach (auto oldReleasesId, torrentSeriesKeys) {
+        if (!newTorrentSeries.contains(oldReleasesId)) continue;
+
+        auto newValue = newTorrentSeries.value(oldReleasesId);
+        auto oldValue = m_oldReleasesTorrentsSeries.value(oldReleasesId);
+        if (newValue != oldValue) {
+            if (!m_releaseChanges->newTorrentSeries()->contains(oldReleasesId)) m_releaseChanges->newTorrentSeries()->append(oldReleasesId);
+        }
+    }
+
+    m_oldReleasesIds.clear();
+    m_oldReleasesCountTorrents.clear();
+    m_oldReleasesCountVideos.clear();
+    m_oldReleasesTorrentsSeries.clear();
+
+    saveChanges();
 }
 
 void ReleasesViewModel::setToReleaseHistory(int id, int type) noexcept
@@ -1367,14 +1489,6 @@ void ReleasesViewModel::setToReleaseHistory(int id, int type) noexcept
     }
 
     saveHistory();
-}
-
-QString ReleasesViewModel::getReleaseVideos(int id) const noexcept
-{
-    auto release = getReleaseById(id);
-    if (release == nullptr) return "";
-
-    return release->videos();
 }
 
 QString ReleasesViewModel::getReleasePoster(int id) const noexcept
@@ -1499,31 +1613,93 @@ void ReleasesViewModel::setupSortingForSection() const noexcept
 
 void ReleasesViewModel::loadReleases()
 {
-    loadReleasesWithoutReactive();
+    loadNextReleasesWithoutReactive();
 
     setCountReleases(m_releases->count());
 }
 
-void ReleasesViewModel::loadReleasesWithoutReactive()
+void ReleasesViewModel::loadNextReleasesWithoutReactive()
 {
     while (m_releases->count()) delete m_releases->takeLast();
     m_releases->clear();
     m_releasesMap->clear();
+    m_onlineVideos.clear();
+    m_torrentItems.clear();
 
-    QFile releasesCacheFile(getCachePath(releasesCacheFileName));
+    QFile metadataCacheFile(getCachePath(metadataCacheFileName));
+    if (!metadataCacheFile.open(QFile::ReadOnly | QFile::Text)) return;
 
-    if (!releasesCacheFile.open(QFile::ReadOnly | QFile::Text)) return;
+    QString metadataContent = metadataCacheFile.readAll();
+    auto metadata = QJsonDocument::fromJson(metadataContent.toUtf8()).object();
+    auto countReleases = metadata.contains("countReleases") ? metadata.value("countReleases").toInt(0) : 0;
+    auto countEpisodes = metadata.contains("countEpisodes") ? metadata.value("countEpisodes").toInt(0) : 0;
 
-    QString releasesJson = releasesCacheFile.readAll();
-    releasesCacheFile.close();
-    auto releasesArray = QJsonDocument::fromJson(releasesJson.toUtf8()).array();
+    for (int i = 0; i < countReleases; i++) {
+        auto partPath = getCachePath("releases" + QString::number(i) + ".cache");
+        if (!QFile::exists(partPath)) continue;
 
-    foreach (auto release, releasesArray) {
-        FullReleaseModel* jsonRelease = new FullReleaseModel();
-        jsonRelease->readFromJson(release);
+        QFile releaseCacheFile(partPath);
+        if (!releaseCacheFile.open(QFile::ReadOnly | QFile::Text)) continue;
 
-        m_releases->append(jsonRelease);
-        m_releasesMap->insert(jsonRelease->id(), jsonRelease);
+        QString releasesJson = releaseCacheFile.readAll();
+        releaseCacheFile.close();
+
+        auto releasesArray = QJsonDocument::fromJson(releasesJson.toUtf8()).array();
+
+        foreach (auto release, releasesArray) {
+            FullReleaseModel* jsonRelease = new FullReleaseModel();
+            jsonRelease->readFromJson(release.toObject());
+            jsonRelease->setPosterHost(m_synchronizationServicev2->apiv2host());
+
+            m_releases->append(jsonRelease);
+            m_releasesMap->insert(jsonRelease->id(), jsonRelease);
+        }
+    }
+
+    for (int i = 0; i < countEpisodes; i++) {
+        auto partPath = getCachePath("episodes" + QString::number(i) + ".cache");
+        if (!QFile::exists(partPath)) continue;
+
+        QFile episodesCacheFile(partPath);
+        if (!episodesCacheFile.open(QFile::ReadOnly | QFile::Text)) continue;
+
+        QString episodesJson = episodesCacheFile.readAll();
+        episodesCacheFile.close();
+
+        auto episodesArray = QJsonDocument::fromJson(episodesJson.toUtf8()).array();
+
+        foreach (auto releaseEpisodes, episodesArray) {
+            auto releaseEpisode = releaseEpisodes.toObject();
+            if (!releaseEpisode.contains("releaseId") || !releaseEpisode.contains("items")) continue;
+
+            auto releaseId = releaseEpisode.value("releaseId").toInt(0);
+            auto videos = releaseEpisode.value("items").toArray();
+
+            foreach (auto video, videos) {
+                ReleaseOnlineVideoModel* jsonVideo = new ReleaseOnlineVideoModel();
+                auto object = video.toObject();
+                jsonVideo->setPosterHost(m_synchronizationServicev2->apiv2host());
+                jsonVideo->readFromApiModel(object, releaseId);
+
+                m_onlineVideos.append(jsonVideo);
+            }
+        }
+    }
+
+    auto torrentPath = getCachePath("torrents.cache");
+    if (!QFile::exists(torrentPath)) return;
+
+    QFile torrentsCacheFile(torrentPath);
+    if (!torrentsCacheFile.open(QFile::ReadOnly | QFile::Text)) return;
+
+    QString torrentsJson = torrentsCacheFile.readAll();
+    torrentsCacheFile.close();
+
+    auto torrentsArray = QJsonDocument::fromJson(torrentsJson.toUtf8()).array();
+    foreach (auto torrentItem, torrentsArray) {
+        auto torrentModel = new ApiTorrentModel();
+        torrentModel->readFromJson(torrentItem.toObject());
+        m_torrentItems.append(torrentModel);
     }
 }
 
@@ -1872,22 +2048,6 @@ int ReleasesViewModel::randomBetween(int low, int high) const noexcept
     return QRandomGenerator::global()->bounded(low, high);
 }
 
-void ReleasesViewModel::saveReleasesFromMemoryToFile()
-{
-    QJsonArray releasesArray;
-    foreach (auto release, *m_releases) {
-        QJsonObject jsonObject;
-        release->writeToJson(jsonObject);
-        releasesArray.append(jsonObject);
-    }
-    QJsonDocument document(releasesArray);
-
-    QFile file(getCachePath(releasesCacheFileName));
-    file.open(QFile::WriteOnly | QFile::Text | QFile::Truncate);
-    file.write(document.toJson());
-    file.close();
-}
-
 void ReleasesViewModel::mapToFullReleaseModel(QJsonObject &&jsonObject, const bool isFirstStart, QSharedPointer<QSet<int>> hittedIds)
 {
     auto id = jsonObject.value("id").toInt();
@@ -1918,8 +2078,7 @@ void ReleasesViewModel::mapToFullReleaseModel(QJsonObject &&jsonObject, const bo
 
     auto names = jsonObject.value("names").toArray();
 
-    auto torrents = jsonObject.value("torrents").toArray();
-    auto torrentJson = QJsonDocument(torrents).toJson();
+    /*auto torrents = jsonObject.value("torrents").toArray();
 
     if (!isNew && torrents.count() != model->countTorrents() && !m_releaseChanges->newTorrents()->contains(id)) {
         m_releaseChanges->newTorrents()->append(id);
@@ -1934,10 +2093,9 @@ void ReleasesViewModel::mapToFullReleaseModel(QJsonObject &&jsonObject, const bo
                 break;
             }
         }
-    }
+    }*/
 
     auto videos = jsonObject.value("playlist").toArray();    
-    auto videosJson = QJsonDocument(videos).toJson();
 
     if (!isNew && videos.count() != model->countOnlineVideos() && !m_releaseChanges->newOnlineSeries()->contains(id)) {
         m_releaseChanges->newOnlineSeries()->append(id);
@@ -1972,14 +2130,12 @@ void ReleasesViewModel::mapToFullReleaseModel(QJsonObject &&jsonObject, const bo
         model->setYear(QString::number(yearInt));
     }
     model->setSeason(jsonObject.value("season").toString());
-    model->setCountTorrents(torrents.count());
+    //model->setCountTorrents(torrents.count());
     model->setCountOnlineVideos(videos.count());
     model->setDescription(jsonObject.value("description").toString());
     model->setAnnounce(jsonObject.value("announce").toString());
     model->setVoicers(voices);
     model->setGenres(genres);
-    model->setVideos(videosJson);
-    model->setTorrents(torrentJson);
 
     auto poster = jsonObject.value("poster").toString();
     if (!isNew && poster != model->poster() && !model->poster().endsWith(poster, Qt::CaseInsensitive)) {
@@ -1990,17 +2146,6 @@ void ReleasesViewModel::mapToFullReleaseModel(QJsonObject &&jsonObject, const bo
     if (isNew) {
         m_releases->append(model);
         m_releasesMap->insert(model->id(), model);
-    }
-}
-
-void ReleasesViewModel::markDeletedReleases(QSharedPointer<QSet<int> > hittedIds)
-{
-    auto keys = m_releasesMap->keys();
-    foreach(auto key, keys) {
-        if (!hittedIds->contains(key)) {
-            auto release = m_releasesMap->value(key);
-            release->setIsDeleted(true);
-        }
     }
 }
 
@@ -2015,19 +2160,6 @@ QString ReleasesViewModel::videosToJson(QList<OnlineVideoModel> &videos)
     QJsonDocument videoDocument(videosArray);
     QString videosJson(videoDocument.toJson());
     return videosJson;
-}
-
-QString ReleasesViewModel::torrentsToJson(QList<ReleaseTorrentModel> &torrents)
-{
-    QJsonArray torrentsArray;
-    foreach (auto torrent, torrents) {
-        QJsonObject jsonObject;
-        torrent.writeToJson(jsonObject);
-        torrentsArray.append(jsonObject);
-    }
-    QJsonDocument torrentDocument(torrentsArray);
-    QString torrentJson(torrentDocument.toJson());
-    return torrentJson;
 }
 
 QHash<int, int> ReleasesViewModel::getAllSeenMarkCount() noexcept

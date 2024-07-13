@@ -397,6 +397,38 @@ void UserConfigurationViewModel::setV2token(const QString &v2token) noexcept
     emit v2tokenChanged();
 }
 
+void UserConfigurationViewModel::setTorrentDownloadMode(int torrentDownloadMode) noexcept
+{
+    if (m_torrentDownloadMode == torrentDownloadMode) return;
+
+    m_torrentDownloadMode = torrentDownloadMode;
+    emit torrentDownloadModeChanged();
+}
+
+void UserConfigurationViewModel::setCachehost(const QString& cachehost) noexcept
+{
+    if (m_cachehost == cachehost) return;
+
+    m_cachehost = cachehost;
+    emit cachehostChanged();
+}
+
+void UserConfigurationViewModel::setUseCacheFolder(bool useCacheFolder) noexcept
+{
+    if (m_useCacheFolder == useCacheFolder) return;
+
+    m_useCacheFolder = useCacheFolder;
+    emit useCacheFolderChanged();
+}
+
+void UserConfigurationViewModel::setCacheFolder(const QString &cacheFolder) noexcept
+{
+    if (m_cacheFolder == cacheFolder) return;
+
+    m_cacheFolder = cacheFolder;
+    emit cacheFolderChanged();
+}
+
 void UserConfigurationViewModel::refreshConfiguration() noexcept
 {
     readSettingsFromFile();
@@ -429,6 +461,12 @@ void UserConfigurationViewModel::refreshConfiguration() noexcept
     emit textFontChanged();
     emit autoNextVideoChanged();
     emit autoPlayerTopMostChanged();
+    emit apiv2hostChanged();
+    emit v2tokenChanged();
+    emit torrentDownloadModeChanged();
+    emit cachehostChanged();
+    emit useCacheFolderChanged();
+    emit cacheFolderChanged();
 }
 
 void UserConfigurationViewModel::saveSettingsToFile()
@@ -479,6 +517,10 @@ void UserConfigurationViewModel::saveSettingsToFile()
     object[m_autoPlayerTopMostField] = m_autoPlayerTopMost;
     object[m_apiv2hostField] = m_apiv2host;
     object[m_v2tokenField] = m_v2token;
+    object[m_torrentDownloadModeField] = m_torrentDownloadMode;
+    object[m_cachehostField] = m_cachehost;
+    object[m_useCacheFolderField] = m_useCacheFolder;
+    object[m_cacheFolderField] = m_cacheFolder;
 
     QFile file(getCachePath(m_cacheFileName));
     file.open(QFile::WriteOnly | QFile::Text);
@@ -540,6 +582,10 @@ void UserConfigurationViewModel::readSettingsFromFile()
     m_autoPlayerTopMost = object.contains(m_autoPlayerTopMostField) ? object[m_autoPlayerTopMostField].toBool() : false;
     m_apiv2host = object.contains(m_apiv2hostField) ? object[m_apiv2hostField].toString() : "https://anilibria.top";
     m_v2token = object.contains(m_v2tokenField) ? object[m_v2tokenField].toString() : "";
+    m_torrentDownloadMode = object.contains(m_torrentDownloadModeField) ? object[m_torrentDownloadModeField].toInt() : 0;
+    m_cachehost = object.contains(m_cachehostField) ? object[m_cachehostField].toString() : "https://raw.githubusercontent.com/trueromanus/LocalCacheChecker/main/cache";
+    m_useCacheFolder = object.contains(m_useCacheFolderField) ? object[m_useCacheFolderField].toBool() : false;
+    m_cacheFolder = object.contains(m_cacheFolderField) ? object[m_cacheFolderField].toString() : "";
 
     if (m_textFont != "Default") changeFont(m_textFont);
 }

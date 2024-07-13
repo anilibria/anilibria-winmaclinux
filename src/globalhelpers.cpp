@@ -47,13 +47,6 @@ QString removeFileProtocol(QString &path) noexcept
 #endif
 }
 
-bool isRutubeHasVideos(const QString& videos) noexcept {
-    static QRegularExpression re(R"arg("rutube_id\": \")arg");
-    QRegularExpressionMatch match = re.match(videos);
-
-    return match.hasMatch();
-}
-
 QString getJsonContentFromFile(const QString& path) noexcept {
     QFile releasesCacheFile(getCachePath(path));
 
@@ -92,4 +85,18 @@ void saveJsonObjectToFile(const QString &path, const QJsonObject &object) noexce
     scheduleCacheFile.open(QFile::WriteOnly | QFile::Text);
     scheduleCacheFile.write(document.toJson());
     scheduleCacheFile.close();
+}
+
+bool readJsonObjectFromFile(const QString &path, QJsonObject &object) noexcept
+{
+    QFile file(path);
+    if (file.open(QFile::ReadOnly | QFile::Text)) {
+        auto content = file.readAll();
+        file.close();
+
+        object = QJsonDocument::fromJson(content).object();
+        return true;
+    }
+
+    return false;
 }

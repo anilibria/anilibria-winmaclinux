@@ -20,6 +20,7 @@
 #define RELEASETORRENTMODEL_H
 
 #include <QtCore>
+#include "../Models/apitorrentmodel.h"
 
 class ReleaseTorrentModel
 {
@@ -32,12 +33,14 @@ private:
     long long m_Size;
     QString m_Url;
     int m_ctime;
+    int m_seeders;
+    QString m_torrentHost;
 public:
     ReleaseTorrentModel();
 
     void readFromApiModel(const QJsonObject &jsonObject);
 
-    void writeToJson(QJsonObject &json) const noexcept;
+    void readFromApiTorrent(const ApiTorrentModel* apiTorrent);
 
     int id() const { return m_Id; }
     void setId(const int id) noexcept;
@@ -57,8 +60,15 @@ public:
     QString url() const { return m_Url; }
     void setUrl(const QString &url) noexcept;
 
+    int seeders() const { return m_seeders; }
+    void setSeeders(int seeders) noexcept { m_seeders = seeders; }
+
     int ctime() const { return m_ctime; }
     void setCtime(int ctime) noexcept { m_ctime = ctime; }
+
+    QString torrentHost() const noexcept { return m_torrentHost; }
+    void setTorrentHost(const QString& torrentHost) noexcept { m_torrentHost = torrentHost; }
+
 };
 
 #endif // RELEASETORRENTMODEL_H

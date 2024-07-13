@@ -33,7 +33,6 @@
 ReleaseLinkedSeries::ReleaseLinkedSeries(QObject *parent) : QAbstractListModel(parent)
 {
     createCacheFileIfNotExists();
-    loadSeries();
 
     auto watcher = m_cacheUpdateWatcher.get();
     connect(watcher, &QFutureWatcher<bool>::finished, this, &ReleaseLinkedSeries::cacheUpdated);
@@ -60,36 +59,19 @@ QVariant ReleaseLinkedSeries::data(const QModelIndex &index, int role) const
             return QVariant(element->countReleases());
         }
         case FirstThreeNamesRole: {
-            if (element->titles()->count() > 2) {
-                QStringList titleList;
-                int iterator = 0;
-                foreach (auto title, *element->titles()) {
-                    if (iterator == 3) break;
-
-                    titleList.append(title);
-                }
-                return QVariant(titleList.join(", "));
-            }
-            return element->titles()->join(", ");
+            return QVariant(element->title());
         }
         case ReleaseIds: {
             return QVariant(*series.at(index.row())->releaseIds());
         }
-        case Posters: {
-            return QVariant(*series.at(index.row())->posters());
-        }
         case FirstPosterRole: {
-            return QVariant(element->posters()->first().toString());
+            return QVariant(element->firstPoster());
         }
         case SecondPosterRole: {
-            return QVariant(element->posters()->at(1).toString());
+            return QVariant(element->secondPoster());
         }
         case ThirdPosterRole: {
-            if (element->posters()->length() > 2) {
-                return QVariant(QVariant(element->posters()->at(2).toString()));
-            } else {
-                return QVariant("");
-            }
+            return QVariant(element->thirdPoster());
         }
         case OtherReleasesRole: {
             auto count = element->countReleases();
@@ -141,10 +123,6 @@ QHash<int, QByteArray> ReleaseLinkedSeries::roleNames() const
             "releaseIds"
         },
         {
-            Posters,
-            "posters"
-        },
-        {
             FirstPosterRole,
             "firstPoster"
         },
@@ -175,12 +153,11 @@ QHash<int, QByteArray> ReleaseLinkedSeries::roleNames() const
     };
 }
 
-void ReleaseLinkedSeries::setup(QSharedPointer<QList<FullReleaseModel *> > releases, QVector<int>* userFavorites)
+void ReleaseLinkedSeries::setup(QSharedPointer<QList<FullReleaseModel *> > releases, QVector<int>* userFavorites, QList<ApiTorrentModel*>* torrents)
 {
     m_releases = releases;
     m_userFavorites = userFavorites;
-
-    if (m_releases != nullptr) refreshDataFromReleases();
+    m_torrents = torrents;
 }
 
 void ReleaseLinkedSeries::setNameFilter(const QString& nameFilter) noexcept
@@ -211,6 +188,16 @@ void ReleaseLinkedSeries::setSortingDirection(bool sortingDirection) noexcept
 
     sortNonFiltered();
     filterSeries();
+}
+
+void ReleaseLinkedSeries::setApiv2host(const QString &apiv2host) noexcept
+{
+    if (m_apiv2host == apiv2host) return;
+
+    m_apiv2host = apiv2host;
+    emit apiv2hostChanged();
+
+    refreshSeries();
 }
 
 QSharedPointer<QList<int>> ReleaseLinkedSeries::getAllLinkedReleases() const noexcept
@@ -300,31 +287,15 @@ int ReleaseLinkedSeries::getNextLinkedRelease(const int currentRelease)
 
 void ReleaseLinkedSeries::refreshSeries()
 {
-    QFuture<bool> future = QtConcurrent::run(
-        [=] {
-            QMap<QString, FullReleaseModel*> releases;
-            foreach (auto release, *m_releases) {
-                releases.insert(release->code(), release);
-            }
+    beginResetModel();
 
-            while (m_series.count()) delete m_series.takeLast();
+    loadSeries();
 
-            m_series.clear();
-            m_series.squeeze();
+    refreshDataFromReleases();
 
-            foreach (auto release, releases) {
-                auto description = release->description();
-                processReleasesFromDescription(description, releases, release->id(), release->title(), release->poster(), release->genres());
-            }
+    endResetModel();
 
-            releases.clear();
-
-            saveSeries();
-
-            return true;
-        }
-    );
-    m_cacheUpdateWatcher->setFuture(future);
+    filterSeries();
 }
 
 bool ReleaseLinkedSeries::isReleaseInSeries(int id)
@@ -461,6 +432,7 @@ void ReleaseLinkedSeries::loadSeries()
     foreach (auto item, jsonArray) {
         auto seriaModel = new ReleaseSeriesModel();
         seriaModel->readFromJson(item.toObject());
+        seriaModel->setPosterHost(m_apiv2host);
 
         m_series.append(seriaModel);
     }
@@ -551,27 +523,6 @@ void ReleaseLinkedSeries::processReleasesFromDescription(const QString& descript
     if (series->countReleases() >= 2) m_series.append(series);
 }
 
-void ReleaseLinkedSeries::saveSeries()
-{
-    QJsonArray seriesArray;
-
-    foreach (auto series, m_series) {
-        QJsonObject jsonObject;
-        series->writeToJson(jsonObject);
-        seriesArray.append(jsonObject);
-    }
-
-    QJsonDocument document(seriesArray);
-
-    QFile file(getSeriesCachePath());
-    if (!file.open(QFile::WriteOnly | QFile::Text)) {
-        qInfo() << "Can't write series file!";
-        return;
-    }
-    file.write(document.toJson());
-    file.close();
-}
-
 void ReleaseLinkedSeries::sortNonFiltered()
 {
     auto sortingField = m_sortingField;
@@ -635,6 +586,10 @@ void ReleaseLinkedSeries::refreshDataFromReleases()
             if (!years.contains(release->year())) years.append(release->year());
             if (!seasons.contains(release->season())) seasons.append(release->season());
             seeds += getSeeders(release);
+
+            foreach (auto genre, release->genres().split(",")) {
+                series->appendGenre(genre.trimmed());
+            }
         }
 
         series->setSumOfRatings(rating);
@@ -663,14 +618,10 @@ void ReleaseLinkedSeries::refreshDataFromReleases()
 int ReleaseLinkedSeries::getSeeders(FullReleaseModel *release)
 {
     auto result = 0;
-    auto document = QJsonDocument::fromJson(release->torrents().toUtf8());
-    auto array = document.array();
-    foreach (auto item, array) {
-        if (!item.isObject()) continue;
-        auto object = item.toObject();
-        if (!object.contains("seeders")) continue;
+    foreach (auto item, *m_torrents) {
+        if (item->releaseId() != release->id()) continue;
 
-        result += object["seeders"].toInt();
+        result += item->seeders();
     }
 
     return result;

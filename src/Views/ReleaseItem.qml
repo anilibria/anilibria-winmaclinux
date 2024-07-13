@@ -1,24 +1,6 @@
-/*
-    AniLibria - desktop client for the website anilibria.tv
-    Copyright (C) 2020 Roman Vladimirov
-
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
-import QtQuick 2.12
-import QtQuick.Layouts 1.3
-import QtQuick.Controls 2.12
+import QtQuick 2.15
+import QtQuick.Layouts 1.15
+import QtQuick.Controls 2.15
 import "../Controls"
 
 Item {
@@ -34,7 +16,7 @@ Item {
     signal rightClicked()
     signal addToFavorite(int id)
     signal removeFromFavorite(int id)
-    signal watchRelease(int id, string videos, string poster)
+    signal watchRelease(int id)
 
     Rectangle {
         visible: !releaseItem.isCompactReleaseMode
@@ -235,7 +217,7 @@ Item {
                                     anchors.fill: parent
                                     hoverEnabled: true
                                     onPressed: {
-                                        releaseItem.watchRelease(id, videos, poster);
+                                        releaseItem.watchRelease(id);
                                     }
                                     onEntered: {
                                         onlineRectangle.color = applicationThemeViewModel.panelBackgroundShadow;
@@ -320,10 +302,10 @@ Item {
                                             delegate: CommonMenuItem {
                                                 text: "Скачать " + quality + " [" + series + "] " + size + " " + timecreation
                                                 onPressed: {
-                                                    releasesViewModel.itemTorrents.downloadTorrent(currentIndex);
+                                                    const torrentPath = releasesViewModel.itemTorrents.getDownloadPath(currentIndex);
+                                                    synchronizationServicev2.downloadTorrent(torrentPath, torrentMenuContainer.torrentReleaseId);
                                                     torrentsMenu.close();
 
-                                                    userActivityViewModel.addDownloadedTorrentToCounter();
                                                     if (userConfigurationViewModel.markAsReadAfterDownload) {
                                                         releasesViewModel.setSeenMarkForSingleRelease(torrentMenuContainer.torrentReleaseId, true);
                                                     }

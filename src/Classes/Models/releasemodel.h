@@ -51,10 +51,6 @@ public:
 
     void readFromApiModel(const QJsonObject &jsonObject);
     
-    void writeToApiModel(QJsonObject& jsonObject) const noexcept;
-
-    void writeToJson(QJsonObject &json) const noexcept;
-
     void readFromJson(const QJsonObject &json);
 
     int id() const { return m_Id; }

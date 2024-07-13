@@ -1,7 +1,7 @@
-import QtQuick 2.12
-import QtQuick.Controls 2.12
-import QtQuick.Layouts 1.3
-import QtQuick.Controls.Material 2.0
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
+import QtQuick.Controls.Material 2.15
 import "../Controls"
 
 Page {
@@ -215,7 +215,6 @@ Page {
                                                     width: 300
 
                                                     CommonMenuItem {
-                                                        enabled: !!window.userModel.login
                                                         text: "Удалить только торрент"
                                                         onPressed: {
                                                             torrentActionsMenu.close();
@@ -224,7 +223,6 @@ Page {
                                                         }
                                                     }
                                                     CommonMenuItem {
-                                                        enabled: !!window.userModel.login
                                                         text: "Удалить торрент и файлы"
                                                         onPressed: {
                                                             torrentActionsMenu.close();

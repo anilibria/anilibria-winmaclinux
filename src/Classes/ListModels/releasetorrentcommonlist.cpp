@@ -1,7 +1,6 @@
 #include <QUrl>
 #include <QDesktopServices>
 #include "releasetorrentcommonlist.h"
-#include "../../globalconstants.h"
 #include "../../globalhelpers.h"
 
 ReleaseTorrentCommonList::ReleaseTorrentCommonList(QObject *parent)
@@ -90,34 +89,30 @@ QHash<int, QByteArray> ReleaseTorrentCommonList::roleNames() const
     };
 }
 
-void ReleaseTorrentCommonList::loadFromJson(const QString &json)
+void ReleaseTorrentCommonList::loadFromJson(const QList<ApiTorrentModel *> &torrents)
 {
     beginResetModel();
 
     m_torrents->clear();
 
-    if (json.isEmpty()) return;
+    if (torrents.isEmpty()) return;
 
-    auto jsonDocument = QJsonDocument::fromJson(json.toUtf8());
-    auto jsonArray = jsonDocument.array();
-    foreach (auto item, jsonArray) {
+    foreach (auto item, torrents) {
         auto torrent = new ReleaseTorrentModel();
-        torrent->readFromApiModel(item.toObject());
+        torrent->readFromApiTorrent(item);
         m_torrents->append(torrent);
     }
 
     endResetModel();
 }
 
-void ReleaseTorrentCommonList::downloadTorrent(const int index)
+QString ReleaseTorrentCommonList::getDownloadPath(int index)
 {
     auto torrent = m_torrents->at(index);
-    QNetworkRequest request(QUrl(AnilibriaImagesPath + torrent->url()));
-
-    m_networkManager->get(request);
+    return torrent->url();
 }
 
-QString ReleaseTorrentCommonList::getReadableSize(long long size) const noexcept
+QString ReleaseTorrentCommonList::getReadableSize(int64_t size) const noexcept
 {
     QList<QString> sizes;
     sizes.append("B");

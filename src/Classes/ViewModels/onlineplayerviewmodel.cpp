@@ -57,7 +57,6 @@ OnlinePlayerViewModel::OnlinePlayerViewModel(QObject *parent) : QObject(parent),
     m_seenModels(new QHash<int, SeenModel*>()),
     m_navigateReleaseId(0),
     m_customPlaylistPosition(-1),
-    m_navigateVideos(""),
     m_navigatePoster(""),
     m_videoPosition(0),
     m_videoDuration(0),
@@ -268,14 +267,6 @@ void OnlinePlayerViewModel::setCustomPlaylistPosition(int customPlaylistPosition
 
     m_customPlaylistPosition = customPlaylistPosition;
     emit customPlaylistPositionChanged();
-}
-
-void OnlinePlayerViewModel::setNavigateVideos(const QString &navigateVideos)
-{
-    if (m_navigateVideos == navigateVideos) return;
-
-    m_navigateVideos = navigateVideos;
-    emit navigateVideosChanged();
 }
 
 void OnlinePlayerViewModel::setNavigatePoster(const QString &navigatePoster) noexcept
@@ -662,7 +653,6 @@ void OnlinePlayerViewModel::quickSetupForSingleRelease(int releaseId, int custom
     auto release = m_releasesViewModel->getReleaseById(releaseId);
     m_navigateReleaseId = releaseId;
     m_navigatePoster = release->poster();
-    m_navigateVideos = release->videos();
     m_customPlaylistPosition = customPosition;
     m_isStreamingTorrents = false;
 
@@ -671,7 +661,7 @@ void OnlinePlayerViewModel::quickSetupForSingleRelease(int releaseId, int custom
     auto year = timestamp.date().year();
     m_isReleaseLess2022 = year > 0 && year < 2022;
 
-    m_videos->setVideosFromSingleList(m_navigateVideos, m_navigateReleaseId, m_navigatePoster);
+    m_videos->setVideosFromSingleList(m_navigateReleaseId, m_navigatePoster);
 
     setReleasePoster(m_navigatePoster);
     setSelectedRelease(m_navigateReleaseId);
@@ -708,21 +698,17 @@ void OnlinePlayerViewModel::quickSetupForSingleTorrentRelease(int releaseId, int
     auto release = m_releasesViewModel->getReleaseById(releaseId);
     m_navigateReleaseId = releaseId;
     m_navigatePoster = release->poster();
-    m_navigateVideos = "";
     m_customPlaylistPosition = -1;
     m_isStreamingTorrents = true;
 
-    auto torents = release->torrents();
+    auto torrents = m_releasesViewModel->getReleaseTorrents(releaseId);
 
-    auto document = QJsonDocument::fromJson(torents.toUtf8());
-    auto torrentsArray = document.array();
+    if (index >= torrents.count()) return;
 
-    if (index >= torrentsArray.count()) return;
-
-    auto torrentItem = torrentsArray[index];
+    auto torrentItem = torrents[index];
 
     ReleaseTorrentModel torrent;
-    torrent.readFromApiModel(torrentItem.toObject());
+    torrent.readFromApiTorrent(torrentItem);
 
     m_videos->setVideosFromSingleTorrent(torrent, releaseId, release->poster(), port, m_torrentStream);
 
@@ -1042,7 +1028,6 @@ void OnlinePlayerViewModel::quickSetupForSingleDownloadedTorrent(const QStringLi
     auto release = m_releasesViewModel->getReleaseById(releaseId);
     m_navigateReleaseId = releaseId;
     m_navigatePoster = release->poster();
-    m_navigateVideos = "";
     m_customPlaylistPosition = -1;
 
     m_videos->setVideosFromDownloadedTorrent(files, releaseId, release->poster());
@@ -1087,7 +1072,8 @@ bool OnlinePlayerViewModel::releaseIsRutube(int releaseId) noexcept
     auto release = m_releasesViewModel->getReleaseById(releaseId);
     if (release == nullptr) return false;
 
-    return isRutubeHasVideos(release->videos());
+    //TODO: remake on new model
+    return false;
 }
 
 void OnlinePlayerViewModel::clearPanelTimer() noexcept

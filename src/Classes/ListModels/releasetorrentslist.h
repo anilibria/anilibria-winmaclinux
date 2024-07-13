@@ -21,6 +21,7 @@
 
 #include <QObject>
 #include "../Models/releasetorrentmodel.h"
+#include "../Models/apitorrentmodel.h"
 
 class ReleaseTorrentsList : public QAbstractListModel
 {
@@ -45,7 +46,7 @@ public:
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
     QHash<int,QByteArray> roleNames() const override;
 
-    Q_INVOKABLE void loadTorrentsFromJson(const QString& json);
+    Q_INVOKABLE void loadTorrentsFromJson(const QList<ApiTorrentModel*>& torrents);
 
 private:
     QString getReadableSize(long long size) const noexcept;

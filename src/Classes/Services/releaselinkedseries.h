@@ -27,6 +27,7 @@
 #include <QFutureWatcher>
 #include "../Models/fullreleasemodel.h"
 #include "../Models/releaseseriesmodel.h"
+#include "../Models/apitorrentmodel.h"
 #include "../ListModels/releaseseriescardlistmodel.h"
 
 class ReleaseLinkedSeries : public QAbstractListModel
@@ -39,12 +40,14 @@ class ReleaseLinkedSeries : public QAbstractListModel
     Q_PROPERTY(int sortingField READ sortingField WRITE setSortingField NOTIFY sortingFieldChanged)
     Q_PROPERTY(bool sortingDirection READ sortingDirection WRITE setSortingDirection NOTIFY sortingDirectionChanged)
     Q_PROPERTY(int countGroups READ countGroups NOTIFY countGroupsChanged)
+    Q_PROPERTY(QString apiv2host READ apiv2host WRITE setApiv2host NOTIFY apiv2hostChanged FINAL)
 
 private:
     QString m_nameFilter { "" };
     QVector<ReleaseSeriesModel*> m_series { QVector<ReleaseSeriesModel*>() };
     QVector<ReleaseSeriesModel*> m_filteredSeries { QVector<ReleaseSeriesModel*>() };
     QVector<int>* m_userFavorites { nullptr };
+    QList<ApiTorrentModel*>* m_torrents { nullptr };
     bool m_filtering { false };
     QSharedPointer<QList<FullReleaseModel *>> m_releases;
     QScopedPointer<QFutureWatcher<bool>> m_cacheUpdateWatcher { new QFutureWatcher<bool>(this) };
@@ -53,6 +56,7 @@ private:
     int m_sortingField { 0 };
     bool m_sortingDirection { false };
     ReleaseSeriesCardListModel* m_releaseSeriesCardList { new ReleaseSeriesCardListModel(this) };
+    QString m_apiv2host { "" };
 
     enum ItemRoles {
         CountReleasesRole = Qt::UserRole + 1,
@@ -75,7 +79,7 @@ public:
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
     QHash<int,QByteArray> roleNames() const override;
 
-    void setup(QSharedPointer<QList<FullReleaseModel *>> releases, QVector<int>* userFavorites);
+    void setup(QSharedPointer<QList<FullReleaseModel *>> releases, QVector<int>* userFavorites, QList<ApiTorrentModel*>* onlineVideos);
 
     QString nameFilter() const { return m_nameFilter; }
     void setNameFilter(const QString& nameFilter) noexcept;
@@ -89,6 +93,9 @@ public:
     int isCardShowed() const noexcept { return m_isCardShowed; }
 
     int countGroups() const noexcept { return m_filteredSeries.size(); }
+
+    QString apiv2host() const { return m_apiv2host; }
+    void setApiv2host(const QString& apiv2host) noexcept;
 
     ReleaseSeriesCardListModel* cardList() const noexcept { return m_releaseSeriesCardList; }
 
@@ -113,7 +120,6 @@ private:
     void loadSeries();
     void createCacheFileIfNotExists() const noexcept;
     void processReleasesFromDescription(const QString& description, const QMap<QString, FullReleaseModel*>& releases, int currentRelease, const QString currentReleaseTitle, const QString& poster, const QString& genres) noexcept;
-    void saveSeries();
     void sortNonFiltered();
     void refreshDataFromReleases();
     int getSeeders(FullReleaseModel *release);
@@ -128,6 +134,7 @@ signals:
     void sortingFieldChanged();
     void sortingDirectionChanged();
     void countGroupsChanged();
+    void apiv2hostChanged();
 
 };
 

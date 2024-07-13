@@ -16,6 +16,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <QFile>
 #include "releaseslistmodel.h"
 
 const int FavoriteSection = 1;
@@ -62,6 +63,11 @@ void ReleasesListModel::setup(QSharedPointer<QList<FullReleaseModel *>> releases
     m_changesModel = changes;
     m_cinemahall = cinemahall;
     m_customGroups = customGroups;
+}
+
+void ReleasesListModel::setupLinkedSeries(ReleaseLinkedSeries *releaseLinkedSeries) noexcept
+{
+    m_releaseLinkedSeries = releaseLinkedSeries;
 }
 
 int ReleasesListModel::rowCount(const QModelIndex &parent) const
@@ -114,9 +120,6 @@ QVariant ReleasesListModel::data(const QModelIndex &index, int role) const
         }
         case CountTorrentRole: {
             return QVariant(release->countTorrents());
-        }
-        case VideosRole: {
-            return QVariant(release->videos());
         }
         case InFavoritesRole: {
             return QVariant(m_userFavorites->contains(release->id()));
@@ -195,10 +198,6 @@ QHash<int, QByteArray> ReleasesListModel::roleNames() const
         {
             CountTorrentRole,
             "countTorrents"
-        },
-        {
-            VideosRole,
-            "videos"
         },
         {
             RatingRole,
@@ -397,16 +396,6 @@ void ReleasesListModel::setHasReleaseSeriesFilter(bool hasReleaseSeriesFilter) n
     m_hasReleaseSeriesFilter = hasReleaseSeriesFilter;
     emit hasReleaseSeriesFilterChanged();
     emit hasFiltersChanged();
-}
-
-void ReleasesListModel::setReleaseLinkedSeries(ReleaseLinkedSeries *releaseLinkedSeries) noexcept
-{
-    if (m_releaseLinkedSeries == releaseLinkedSeries) return;
-
-    m_releaseLinkedSeries = releaseLinkedSeries;
-    emit releaseLinkedSeriesChanged();
-
-    m_releaseLinkedSeries->setup(m_releases, m_userFavorites);
 }
 
 void ReleasesListModel::setScheduleDayFilter(const QString &scheduleDayFilter) noexcept

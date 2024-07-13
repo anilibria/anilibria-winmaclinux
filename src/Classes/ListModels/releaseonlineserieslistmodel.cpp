@@ -58,7 +58,7 @@ QVariant ReleaseOnlineSeriesListModel::data(const QModelIndex &index, int role) 
             if (isEmptyPoster) {
                 return QVariant("qrc:///Assets/Icons/broken.svg");
             } else {
-                return QVariant(AnilibriaImagesPath + onlineVideo->videoPoster());
+                return QVariant(onlineVideo->videoPoster());
             }
         }
         case IsEmptyPosterRole: {
@@ -75,6 +75,9 @@ QVariant ReleaseOnlineSeriesListModel::data(const QModelIndex &index, int role) 
         }
         case DescriptionRole: {
             return onlineVideo->description();
+        }
+        case UniqueIdRole: {
+            return QVariant(onlineVideo->uniqueId());
         }
     }
 
@@ -115,6 +118,10 @@ QHash<int, QByteArray> ReleaseOnlineSeriesListModel::roleNames() const
         {
             DescriptionRole,
             "description"
+        },
+        {
+            UniqueIdRole,
+            "uniqueId"
         }
     };
 }
@@ -138,7 +145,7 @@ void ReleaseOnlineSeriesListModel::setReleaseId(int releaseId) noexcept
     auto videoId = std::get<0>(seens);
 
     foreach (auto item, m_items) {
-        auto index = item->id() - 1;
+        auto index = item->order();
         if (videoId == index) {
             m_selectedVideoIndex = index;
             break;
@@ -178,12 +185,29 @@ void ReleaseOnlineSeriesListModel::refresh()
     }
 
     auto videos = m_releases->getReleaseVideos(m_releaseId);
-    auto document = QJsonDocument::fromJson(videos.toUtf8());
-    auto videosArray = document.array();
+    auto release = m_releases->getReleaseById(m_releaseId);
 
-    foreach (auto video, videosArray) {
+    foreach (auto video, videos) {
         auto videoModel = new OnlineVideoModel();
-        videoModel->readFromApiModel(video.toObject());
+        videoModel->setDescription(video->description());
+        videoModel->setFullHd(video->fullhd());
+        videoModel->setHd(video->hd());
+        videoModel->setSd(video->sd());
+        videoModel->setOrder(video->order());
+        videoModel->setReleaseId(m_releaseId);
+        videoModel->setReleasePoster(release != nullptr ? release->poster() : "");
+        videoModel->setTitle(video->title());
+        videoModel->setId(video->number());
+
+        videoModel->setOpeningStartSeconds(video->openingStartSeconds());
+        videoModel->setOpeningEndSeconds(video->openingEndSeconds());
+
+        videoModel->setEndingStartSeconds(video->endingStartSeconds());
+        videoModel->setEndingEndSeconds(video->endingEndSeconds());
+
+        videoModel->setVideoPoster(video->videoPoster());
+        videoModel->setIsGroup(false);
+
         m_items.append(videoModel);
     }
 

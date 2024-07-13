@@ -1,24 +1,6 @@
-/*
-    AniLibria - desktop client for the website anilibria.tv
-    Copyright (C) 2020 Roman Vladimirov
-
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
-import QtQuick 2.12
-import QtQuick.Controls 2.12
-import QtQuick.Layouts 1.3
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
 import Anilibria.ListModels 1.0
 import "../Controls"
 
@@ -40,7 +22,7 @@ Page {
     property alias backgroundImageHeight: itemsContainer.height
 
     signal navigateFrom()
-    signal watchSingleRelease(int releaseId, string videos, int startSeria, string poster)
+    signal watchSingleRelease(int releaseId, int startSeria)
     signal refreshReleases()
     signal refreshFavorites()
     signal refreshReleaseSchedules()
@@ -137,7 +119,7 @@ Page {
                         if (releasesViewModel.synchronizationEnabled) return;
 
                         releasesViewModel.synchronizationEnabled = true;
-                        synchronizationService.synchronizeReleases(1);
+                        synchronizationServicev2.synchronizeFullCache();
                     }
                 }
 
@@ -1129,7 +1111,10 @@ Page {
                                 width: 350
                                 model: ["Открыть в торрент клиенте", "Сохранить файл", "Использовать TorrentStream"]
                                 onCurrentIndexChanged: {
-                                    localStorage.setTorrentDownloadMode(downloadTorrentMode.currentIndex);
+                                    userConfigurationViewModel.torrentDownloadMode = downloadTorrentMode.currentIndex;
+                                }
+                                Component.onCompleted: {
+                                    downloadTorrentMode.currentIndex = userConfigurationViewModel.torrentDownloadMode;
                                 }
                             }
 
@@ -1752,7 +1737,7 @@ Page {
                         onPositionChanged: {
                             if (position < -0.0008 && !releasesViewModel.synchronizationEnabled) {
                                 releasesViewModel.synchronizationEnabled = true;
-                                synchronizationService.synchronizeReleases(1);
+                                synchronizationServicev2.synchronizeFullCache();
                             }
                         }
                     }
@@ -1784,7 +1769,7 @@ Page {
                                     releasesViewModel.clearSelectedReleases();
                                 }
                                 onWatchRelease: {
-                                    page.watchSingleRelease(id, videos, -1, poster);
+                                    page.watchSingleRelease(id, -1);
                                 }
                             }
                         }
@@ -2025,7 +2010,6 @@ Page {
 
     Component.onCompleted: {
         const userSettings = JSON.parse(localStorage.getUserSettings());
-        downloadTorrentMode.currentIndex = userSettings.torrentDownloadMode;
         notificationForFavorites.checked = userSettings.notificationForFavorites;
         releasesViewModel.items.filterByFavorites = notificationForFavorites.checked;
         clearFilterAfterChangeSectionSwitch.checked = userSettings.clearFiltersAfterChangeSection;

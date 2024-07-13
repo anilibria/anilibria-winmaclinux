@@ -47,7 +47,8 @@ private:
         IsCurrentVideoRole,
         CurrentTimeVideoRole,
         IsEmptyPosterRole,
-        DescriptionRole
+        DescriptionRole,
+        UniqueIdRole
     };
 
 public:

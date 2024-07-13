@@ -16,6 +16,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <QJsonDocument>
+#include <QFile>
 #include "cinemahalllistmodel.h"
 #include "../../globalhelpers.h"
 
@@ -185,6 +187,8 @@ QString CinemahallListModel::movedPositionPlaceholder() const noexcept
 int CinemahallListModel::rowCount(const QModelIndex &parent) const
 {
     if (parent.isValid()) return 0;
+    if (m_releases->isEmpty()) return 0;
+
     return m_items->size();
 }
 

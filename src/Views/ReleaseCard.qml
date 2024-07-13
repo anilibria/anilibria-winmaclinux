@@ -1,6 +1,6 @@
-import QtQuick 2.12
-import QtQuick.Controls 2.12
-import QtQuick.Layouts 1.3
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
 import Anilibria.ListModels 1.0
 import "../Controls"
 
@@ -185,21 +185,21 @@ ColumnLayout {
                     CommonMenuItem {
                         text: "Открыть во внешнем плеере в HD качестве"
                         onPressed: {
-                            releasesViewModel.openInExternalPlayer(localStorage.packAsM3UAndOpen(releasesViewModel.openedReleaseId, "hd"));
+                            releasesViewModel.openInExternalPlayer(releasesViewModel.packAsM3UAndOpen(releasesViewModel.openedReleaseId, "hd"));
                             externalPlayerMenu.close();
                         }
                     }
                     CommonMenuItem {
                         text: "Открыть во внешнем плеере в SD качестве"
                         onPressed: {
-                            releasesViewModel.openInExternalPlayer(localStorage.packAsM3UAndOpen(releasesViewModel.openedReleaseId, "sd"));
+                            releasesViewModel.openInExternalPlayer(releasesViewModel.packAsM3UAndOpen(releasesViewModel.openedReleaseId, "sd"));
                             externalPlayerMenu.close();
                         }
                     }
                     CommonMenuItem {
                         text: "Открыть во внешнем плеере в FullHD качестве"
                         onPressed: {
-                            releasesViewModel.openInExternalPlayer(localStorage.packAsM3UAndOpen(releasesViewModel.openedReleaseId, "fullhd"));
+                            releasesViewModel.openInExternalPlayer(releasesViewModel.packAsM3UAndOpen(releasesViewModel.openedReleaseId, "fullhd"));
                             externalPlayerMenu.close();
                         }
                     }
@@ -208,7 +208,7 @@ ColumnLayout {
                         notVisible: Qt.platform.os !== "windows"
                         text: "Открыть в плеере MPC в HD качестве"
                         onPressed: {
-                            releasesViewModel.openInExternalPlayer(localStorage.packAsMPCPLAndOpen(releasesViewModel.openedReleaseId, "hd"));
+                            releasesViewModel.openInExternalPlayer(releasesViewModel.packAsMPCPLAndOpen(releasesViewModel.openedReleaseId, "hd"));
                             externalPlayerMenu.close();
                         }
                     }
@@ -216,7 +216,7 @@ ColumnLayout {
                         notVisible: Qt.platform.os !== "windows"
                         text: "Открыть в плеере MPC в SD качестве"
                         onPressed: {
-                            releasesViewModel.openInExternalPlayer(localStorage.packAsMPCPLAndOpen(releasesViewModel.openedReleaseId, "sd"));
+                            releasesViewModel.openInExternalPlayer(releasesViewModel.packAsMPCPLAndOpen(releasesViewModel.openedReleaseId, "sd"));
                             externalPlayerMenu.close();
                         }
                     }
@@ -224,7 +224,7 @@ ColumnLayout {
                         notVisible: Qt.platform.os !== "windows"
                         text: "Открыть в плеере MPC в FullHD качестве"
                         onPressed: {
-                            releasesViewModel.openInExternalPlayer(localStorage.packAsMPCPLAndOpen(releasesViewModel.openedReleaseId, "fullhd"));
+                            releasesViewModel.openInExternalPlayer(releasesViewModel.packAsMPCPLAndOpen(releasesViewModel.openedReleaseId, "fullhd"));
                             externalPlayerMenu.close();
                         }
                     }
@@ -572,7 +572,7 @@ ColumnLayout {
                                 anchors.left: parent.left
                                 anchors.leftMargin: 4
                                 onClicked: {
-                                    watchSingleRelease(releasesViewModel.openedReleaseId, releasesViewModel.openedReleaseVideos, -1, releasesViewModel.openedReleasePoster)
+                                    watchSingleRelease(releasesViewModel.openedReleaseId, -1)
 
                                     releasePosterPreview.isVisible = false;
                                 }
@@ -634,15 +634,9 @@ ColumnLayout {
                                         CommonMenuItem {
                                             text: "Скачать " + quality + " [" + series + "] " + size + " " + timecreation
                                             onPressed: {
-                                                const torrentUri = synchronizationService.combineWithWebSiteUrl(url);
-                                                if (localStorage.isUseTorrentStreamMode()) {
-                                                    releasesViewModel.downloadTorrent(releasesViewModel.openedReleaseId, torrentUri, userConfigurationViewModel.playerBuffer);
-                                                } else {
-                                                    synchronizationServicev2.downloadTorrent(url);
-                                                    userActivityViewModel.addDownloadedTorrentToCounter();
+                                                synchronizationServicev2.downloadTorrent(url, releasesViewModel.openedReleaseId);
 
-                                                    if (userConfigurationViewModel.markAsReadAfterDownload) setSeenStateForOpenedRelease(true);
-                                                }
+                                                if (userConfigurationViewModel.markAsReadAfterDownload) setSeenStateForOpenedRelease(true);
                                             }
                                         }
                                     }
@@ -664,7 +658,7 @@ ColumnLayout {
                                 text: mainViewModel.isSmallSizeMode ? "См. торрент" : "Смотреть торрент"
                                 textSize: mainViewModel.isSmallSizeMode ? 10 : 11
                                 onClicked: {
-                                    if (!userConfigurationViewModel.playerBuffer) {
+                                    if (!torrentNotifierViewModel.activated) {
                                         torrentStreamInfo.open();
                                         return;
                                     }
@@ -775,7 +769,7 @@ ColumnLayout {
                         width: parent.width
                         releaseId: releasesViewModel.openedReleaseId
                         onOpenVideo: {
-                            watchSingleRelease(releasesViewModel.openedReleaseId, releasesViewModel.openedReleaseVideos, videoId, releasesViewModel.openedReleasePoster);
+                            watchSingleRelease(releasesViewModel.openedReleaseId, videoId);
                         }
                     }
                 }

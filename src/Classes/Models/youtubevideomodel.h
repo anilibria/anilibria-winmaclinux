@@ -49,7 +49,7 @@ public:
     void setTimestamp(const int timestamp) noexcept;
 
     void writeToJson(QJsonObject &json) const noexcept;
-    void readFromJson(QJsonObject &json);
+    void readFromJson(const QJsonObject &json);
 
 };
 

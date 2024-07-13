@@ -59,7 +59,6 @@ class OnlinePlayerViewModel : public QObject
     Q_PROPERTY(QString playerPlaybackState READ playerPlaybackState WRITE setPlayerPlaybackState NOTIFY playerPlaybackStateChanged)
     Q_PROPERTY(int navigateReleaseId READ navigateReleaseId WRITE setNavigateReleaseId NOTIFY navigateReleaseIdChanged)
     Q_PROPERTY(int customPlaylistPosition READ customPlaylistPosition WRITE setCustomPlaylistPosition NOTIFY customPlaylistPositionChanged)
-    Q_PROPERTY(QString navigateVideos READ navigateVideos WRITE setNavigateVideos NOTIFY navigateVideosChanged)
     Q_PROPERTY(QString navigatePoster READ navigatePoster WRITE setNavigatePoster NOTIFY navigatePosterChanged)
     Q_PROPERTY(int videoPosition READ videoPosition WRITE setVideoPosition NOTIFY videoPositionChanged)
     Q_PROPERTY(int videoDuration READ videoDuration WRITE setVideoDuration NOTIFY videoDurationChanged)
@@ -114,7 +113,6 @@ private:
     QHash<int, SeenModel*>* m_seenModels;
     int m_navigateReleaseId;
     int m_customPlaylistPosition;
-    QString m_navigateVideos;
     QString m_navigatePoster;
     int m_videoPosition;
     int m_videoDuration;
@@ -214,9 +212,6 @@ public:
 
     int customPlaylistPosition() const { return m_customPlaylistPosition; }
     void setCustomPlaylistPosition(int customPlaylistPosition) noexcept;
-
-    QString navigateVideos() const { return m_navigateVideos; }
-    void setNavigateVideos(const QString& navigateVideos);
 
     QString navigatePoster() const { return m_navigatePoster; }
     void setNavigatePoster(const QString& navigatePoster) noexcept;

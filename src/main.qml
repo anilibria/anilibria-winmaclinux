@@ -1,31 +1,13 @@
-/*
-    AniLibria - desktop client for the website anilibria.tv
-    Copyright (C) 2020 Roman Vladimirov
-
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
-import QtQuick 2.12
-import QtQuick.Window 2.12
-import QtQuick.Controls 2.5
-import QtQuick.Layouts 1.3
-import QtQuick.Controls.Material 2.0
+import QtQuick 2.15
+import QtQuick.Window 2.15
+import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
+import QtQuick.Controls.Material 2.15
 import Anilibria.Services 1.0
 import Anilibria.ListModels 1.0
 import Anilibria.ViewModels 1.0
 import CustomStyle 1.0
-import QtQuick.Particles 2.13
+import QtQuick.Particles 2.15
 import "Views"
 import "Controls"
 
@@ -58,6 +40,8 @@ ApplicationWindow {
 
     property color iconReleaseCatalogSearchFounded: applicationThemeViewModel.currentItems.iconReleaseCatalogSearchFounded
     property color iconCustomGroupFounded: applicationThemeViewModel.currentItems.iconCustomGroupFounded
+
+    property real dp: Screen.pixelDensity * 25.4 / 160
 
     Material.accent: applicationThemeViewModel.materialAccent
     Material.theme: applicationThemeViewModel.basedOnDark ? Material.Dark : Material.Light
@@ -614,13 +598,6 @@ ApplicationWindow {
 
     ApplicationSettings {
         id: applicationSettings
-        Component.onCompleted: {
-            if (!applicationSettings.userToken) return;
-
-            synchronizationService.getUserData(applicationSettings.userToken);
-
-            analyticsService.sendVersion();
-        }
     }
 
     LocalStorage {
@@ -629,11 +606,14 @@ ApplicationWindow {
 
     AnalyticsService {
         id: analyticsService
+        Component.onCompleted: {
+            analyticsService.sendVersion();
+        }
     }
 
     ReleaseLinkedSeries {
         id: releaseLinkedSeries
-
+        apiv2host: userConfigurationViewModel.apiv2host
     }
 
     SystemSaveFileDialog {
@@ -645,32 +625,15 @@ ApplicationWindow {
         }
     }
 
-    SynchronizationService {
-        id: synchronizationService
-        Component.onCompleted: {
-            releasesViewModel.synchronizationEnabled = true;
-            synchronizeReleases(1);
-        }
-
-        onTorrentDownloaded: {
-            const userSettings = JSON.parse(localStorage.getUserSettings());
-            if (userSettings.torrentDownloadMode === 0) {
-                if (Qt.platform.os === "linux" || Qt.platform.os === "unix") Qt.openUrlExternally("file://" + torrentPath);
-                if (Qt.platform.os === "osx") Qt.openUrlExternally("file://" + torrentPath);
-                if (Qt.platform.os === "windows") Qt.openUrlExternally("file:///" + torrentPath);
-            }
-
-            if (userSettings.torrentDownloadMode === 1) {
-                window.tempTorrentPath = torrentPath;
-                saveTorrentFileDialog.open();
-            }
-        }
-    }
-
     Synchronizev2Service {
         id: synchronizationServicev2
         apiv2host: userConfigurationViewModel.apiv2host
         token: userConfigurationViewModel.v2token
+        cachehost: userConfigurationViewModel.cachehost
+        cacheHostIsFolder: userConfigurationViewModel.useCacheFolder
+        cacheFolder: userConfigurationViewModel.cacheFolder
+        torrentDownloadMode: userConfigurationViewModel.torrentDownloadMode
+        torrentStreamPort: userConfigurationViewModel.playerBuffer
 
         onUserCompleteAuthentificated: {
             notificationViewModel.sendInfoNotification(`Вы успешно вошли в аккаунт.`);
@@ -705,6 +668,7 @@ ApplicationWindow {
             if (synchronizationServicev2.isAuhorized) {
                 userAvatarCanvas.loadImage(synchronizationServicev2.userAvatar);
                 mainViewModel.notVisibleSignin = true;
+                synchronizationServicev2.getUserFavorites();
             } else {
                 mainViewModel.notVisibleSignin = false;
             }
@@ -712,11 +676,43 @@ ApplicationWindow {
 
         Component.onCompleted: {
             if (synchronizationServicev2.token) synchronizationServicev2.getUserData();
+
+            synchronizationServicev2.synchronizeFullCache();
         }
 
-        /*onSynchronizationCompleted: {
+        onSaveDownloadedTorrent: {
+            window.tempTorrentPath = torrentPath;
+            saveTorrentFileDialog.open();
+        }
+
+        onTorrentDownloaded: {
+            userActivityViewModel.addDownloadedTorrentToCounter();
+        }
+
+        onSynchronizeCacheFailed: {
+            notificationViewModel.sendInfoNotification("Ошибка во время синхронизации: " + errorMessage);
+        }
+
+        onSynchronizationCompletedNoChanges: {
+            notificationViewModel.sendInfoNotification("Синхронизация релизов не требуется потому что нет изменений на " + new Date().toLocaleTimeString());
+        }
+
+        onSynchronizationCompleted: {
+            releasesViewModel.savePreviousReleases(previousLastTimeStamp);
+
             filterDictionariesViewModel.refreshDictionaries();
-        }*/
+
+            notificationViewModel.sendInfoNotification("Синхронизация релизов успешно завершена в " + new Date().toLocaleTimeString());
+
+            if (releasesViewModel.newEntities) notificationViewModel.sendInfoNotification(releasesViewModel.newEntities);
+
+            releaseLinkedSeries.refreshSeries();
+            releasesViewModel.reloadReleases();
+        }
+
+        onDownloadInTorrentStream: {
+            notificationViewModel.sendInfoNotification("Релиз добавлен в TorrentStream");
+        }
     }
 
     Drawer {
@@ -991,12 +987,14 @@ ApplicationWindow {
         id: releasesViewModel
         synchronizationService: synchronizationService
         synchronizationServicev2: synchronizationServicev2
+        synchronizationEnabled: synchronizationServicev2.synchronizeCacheActived
         applicationSettings: applicationSettings
+        proxyPort: userConfigurationViewModel.playerBuffer
         localStorage: localStorage
         notCloseReleaseCardAfterWatch: userConfigurationViewModel.notCloseReleaseCardAfterWatch
         imageBackgroundViewModel.containerWidth: releases.backgroundImageWidth
         imageBackgroundViewModel.containerHeight: releases.backgroundImageHeight
-        items.releaseLinkedSeries: releaseLinkedSeries
+        releaseLinkedSeries: releaseLinkedSeries
         items.scriptFilePath: userConfigurationViewModel.customScriptFile
         Component.onDestruction: {
             releasesViewModel.customGroups.saveState();
@@ -1011,15 +1009,12 @@ ApplicationWindow {
             analyticsService.sendView("releasecard", "open", "%2Frelease");
             userActivityViewModel.addOpenedCardToCounter();
         }
-        onAfterSynchronizedReleases: {
-            notificationViewModel.sendInfoNotification("Синхронизация релизов успешно завершена в " + new Date().toLocaleTimeString());
-
-            if (releasesViewModel.newEntities) notificationViewModel.sendInfoNotification(releasesViewModel.newEntities);
-
-            releaseLinkedSeries.refreshSeries();
-        }
         onErrorWhileReleaseSynchronization: {
             notificationViewModel.sendErrorNotification(`Не удалось синхронизовать релизы. Попробуйте повторить синхронизацию через некоторое время.`);
+        }
+        onReleasesFullyLoaded: {
+            releaseLinkedSeries.refreshSeries();
+            filterDictionariesViewModel.refreshDictionaries();
         }
     }
 
@@ -1361,6 +1356,9 @@ ApplicationWindow {
 
     UserConfigurationViewModel {
         id: userConfigurationViewModel
+        Component.onCompleted: {
+            releasesViewModel.reloadReleases();
+        }
         Component.onDestruction: {
             if (!userConfigurationViewModel.showedVideoForNewcomers) userConfigurationViewModel.showedVideoForNewcomers = true;
             userConfigurationViewModel.saveSettingsToFile();
