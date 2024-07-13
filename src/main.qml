@@ -630,6 +630,8 @@ ApplicationWindow {
         apiv2host: userConfigurationViewModel.apiv2host
         token: userConfigurationViewModel.v2token
         cachehost: userConfigurationViewModel.cachehost
+        cacheHostIsFolder: userConfigurationViewModel.useCacheFolder
+        cacheFolder: userConfigurationViewModel.cacheFolder
         torrentDownloadMode: userConfigurationViewModel.torrentDownloadMode
         torrentStreamPort: userConfigurationViewModel.playerBuffer
 

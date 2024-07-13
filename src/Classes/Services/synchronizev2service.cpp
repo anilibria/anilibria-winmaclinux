@@ -62,6 +62,14 @@ void Synchronizev2Service::setTorrentStreamPort(int torrentStreamPort) noexcept
     emit torrentStreamPortChanged();
 }
 
+void Synchronizev2Service::setCacheFolder(const QString &cacheFolder) noexcept
+{
+    if (m_cacheFolder == cacheFolder) return;
+
+    m_cacheFolder = cacheFolder;
+    emit cacheFolderChanged();
+}
+
 void Synchronizev2Service::authorize(QString login, QString password)
 {
     QNetworkRequest request(QUrl(m_apiv2host + "/api/v1/accounts/users/auth/login"));
@@ -165,9 +173,18 @@ void Synchronizev2Service::synchronizeFullCache()
     m_synchronizeCacheActived = true;
     emit synchronizeCacheActivedChanged();
 
-    QNetworkRequest request(QUrl(m_cachehost + "/metadata"));
-    auto reply = m_networkManager->get(request);
-    adjustIdentifier(reply, m_cacheMetadataRequest);
+    if (m_cacheHostIsFolder) {
+        QDir cacheDir(m_cacheFolder);
+        if (!cacheDir.exists()) {
+            emit synchronizeCacheFailed("Папка с кешем не найдена или не доступна " + cacheDir.absolutePath());
+            return;
+        }
+        cacheFolderHandler(cacheDir.absolutePath());
+    } else {
+        QNetworkRequest request(QUrl(m_cachehost + "/metadata"));
+        auto reply = m_networkManager->get(request);
+        adjustIdentifier(reply, m_cacheMetadataRequest);
+    }
 }
 
 QString Synchronizev2Service::checkFolderAvailability(const QString &folder)
@@ -562,6 +579,139 @@ void Synchronizev2Service::typesCacheHandler(QNetworkReply *reply) noexcept
     m_synchronizeCacheActived = false;
     emit synchronizeCacheActivedChanged();
     emit synchronizationCompleted(m_previousLastTimeStamp);
+}
+
+void Synchronizev2Service::cacheFolderHandler(const QString &fullPath) noexcept
+{
+    auto metadataPath = fullPath + "/metadata";
+    if (!QFile::exists(metadataPath)){
+        emit synchronizeCacheFailed("Файл метаданных не найден в папке с кешем " + metadataPath);
+        return;
+    }
+
+    QJsonObject metadataObject;
+    if (!readJsonObjectFromFile(metadataPath, metadataObject)) {
+        emit synchronizeCacheFailed("Не удалось прочитать файл метаданных в папке с кешем " + metadataPath);
+        return;
+    }
+
+    m_countEpisodes = 0;
+    m_countReleases = 0;
+    m_lastReleaseTimeStamp = 0;
+    if (metadataObject.contains("countEpisodes")) m_countEpisodes = metadataObject.value("countEpisodes").toInt(0);
+    if (metadataObject.contains("countReleases")) m_countReleases = metadataObject.value("countReleases").toInt(0);
+    if (metadataObject.contains("lastReleaseTimeStamp")) m_lastReleaseTimeStamp = metadataObject.value("lastReleaseTimeStamp").toInt(0);
+
+    auto localMetadataPath = getCachePath("metadata");
+    auto lastTimeStamp = 0;
+    if (QFile::exists(localMetadataPath)) {
+        QFile file(localMetadataPath);
+        if (file.open(QFile::ReadOnly | QFile::Text)) {
+            auto loadedContent = file.readAll();
+            file.close();
+
+            auto metadataJson = QJsonDocument::fromJson(loadedContent);
+            auto metadata = metadataJson.object();
+            if (metadata.contains("lastReleaseTimeStamp")) {
+                lastTimeStamp = metadata.value("lastReleaseTimeStamp").toInt(0);
+            }
+        }
+    }
+
+    if (lastTimeStamp > 0 && m_lastReleaseTimeStamp > 0 && m_lastReleaseTimeStamp <= lastTimeStamp) {
+        m_synchronizeCacheActived = false;
+        emit synchronizeCacheActivedChanged();
+        emit synchronizationCompletedNoChanges();
+        return;
+    }
+
+    auto typesPath = fullPath + "/types.json";
+    auto schedulePath = fullPath + "/schedule.json";
+    auto releaseseriesPath = fullPath + "/releaseseries.json";
+    auto torrentsPath = fullPath + "/torrents.json";
+    if (!QFile::exists(typesPath)) {
+        emit synchronizeCacheFailed("Файл types.json не найден в папке с кешем " + typesPath);
+        return;
+    }
+    if (!QFile::exists(schedulePath)) {
+        emit synchronizeCacheFailed("Файл schedule.json не найден в папке с кешем " + schedulePath);
+        return;
+    }
+    if (!QFile::exists(releaseseriesPath)) {
+        emit synchronizeCacheFailed("Файл releaseseries.json не найден в папке с кешем " + releaseseriesPath);
+        return;
+    }
+    if (!QFile::exists(torrentsPath)) {
+        emit synchronizeCacheFailed("Файл torrents.json не найден в папке с кешем " + torrentsPath);
+        return;
+    }
+
+    QStringList releases;
+    for (auto i = 0; i < m_countReleases; i++) {
+        auto releasesPathName = "releases" + QString::number(i);
+        releases.append(releasesPathName);
+        auto releasePartName = fullPath + "/" + releasesPathName + ".json";
+        if (!QFile::exists(releasePartName)) {
+            emit synchronizeCacheFailed("Файл releases не найден в папке с кешем " + releasePartName);
+            return;
+        }
+    }
+
+    QStringList episodes;
+    for (auto i = 0; i < m_countEpisodes; i++) {
+        auto episodePathName = "episodes" + QString::number(i);
+        episodes.append(episodePathName);
+        auto episodePartName = fullPath + "/" + episodePathName + ".json";
+        if (!QFile::exists(fullPath + "/" + episodePathName + ".json")) {
+            emit synchronizeCacheFailed("Файл episodes не найден в папке с кешем " + episodePartName);
+            return;
+        }
+    }
+
+    copyFile(typesPath, "types.cache");
+    copyFile(schedulePath, "schedule.cache");
+    copyFile(releaseseriesPath, "releaseseries.cache");
+    copyFile(torrentsPath, "torrents.cache");
+
+    foreach (auto release, releases) {
+        auto releasesPath = fullPath + "/" + release + ".json";
+        copyFile(releasesPath, release + ".cache");
+    }
+
+    foreach (auto episode, episodes) {
+        auto episodePath = fullPath + "/" + episode + ".json";
+        copyFile(episodePath, episode + ".cache");
+    }
+
+    copyFile(metadataPath, "metadata");
+
+    m_synchronizeCacheActived = false;
+    emit synchronizeCacheActivedChanged();
+    emit synchronizationCompleted(0);
+}
+
+bool Synchronizev2Service::copyFile(const QString &fullPath, const QString &cacheFileName) noexcept
+{
+    QFile file(fullPath);
+    if (!file.open(QFile::ReadOnly)) {
+        emit synchronizeCacheFailed("Не удалось открыть файл(оригинал): " + fullPath);
+        return false;
+    }
+
+    auto cacheFilePath = getCachePath(cacheFileName);
+    QFile cachefile(cacheFilePath);
+    if (!cachefile.open(QFile::WriteOnly | QFile::Truncate)) {
+        emit synchronizeCacheFailed("Не удалось открыть файл(кеш): " + cacheFilePath);
+        return false;
+    }
+
+    auto fullData = file.readAll();
+    file.close();
+
+    cachefile.write(fullData);
+    cachefile.close();
+
+    return true;
 }
 
 void Synchronizev2Service::loginHandler(QNetworkReply *reply) noexcept

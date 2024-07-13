@@ -1448,10 +1448,7 @@ void ReleasesViewModel::reloadReleases()
 
     auto torrentSeriesKeys = m_oldReleasesTorrentsSeries.keys();
     foreach (auto oldReleasesId, torrentSeriesKeys) {
-        if (!newTorrentSeries.contains(oldReleasesId)) {
-            auto pizda = newTorrentSeries.value(oldReleasesId);
-            continue;
-        }
+        if (!newTorrentSeries.contains(oldReleasesId)) continue;
 
         auto newValue = newTorrentSeries.value(oldReleasesId);
         auto oldValue = m_oldReleasesTorrentsSeries.value(oldReleasesId);

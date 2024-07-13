@@ -20,6 +20,7 @@ class Synchronizev2Service : public QObject
     Q_PROPERTY(int torrentStreamPort READ torrentStreamPort WRITE setTorrentStreamPort NOTIFY torrentStreamPortChanged FINAL)
     Q_PROPERTY(QString mainGithubCacheServer READ mainGithubCacheServer NOTIFY mainGithubCacheServerChanged FINAL)
     Q_PROPERTY(QString mainNextAPIServer READ mainNextAPIServer NOTIFY mainNextAPIServerChanged FINAL)
+    Q_PROPERTY(QString cacheFolder READ cacheFolder WRITE setCacheFolder NOTIFY cacheFolderChanged FINAL)
 
 private:
     QString m_apiv2host { "" };
@@ -57,6 +58,7 @@ private:
     int m_lastReleaseTimeStamp { 0 };
     int m_previousLastTimeStamp { 0 };
     int m_torrentStreamPort { 0 };
+    QString m_cacheFolder { "" };
 
 public:
     explicit Synchronizev2Service(QObject *parent = nullptr);
@@ -83,6 +85,9 @@ public:
 
     int torrentStreamPort() const noexcept { return m_torrentStreamPort; }
     void setTorrentStreamPort(int torrentStreamPort) noexcept;
+
+    QString cacheFolder() const noexcept { return m_cacheFolder; }
+    void setCacheFolder(const QString& cacheFolder) noexcept;
 
     bool synchronizeCacheActived() const noexcept { return m_synchronizeCacheActived; }
 
@@ -122,6 +127,8 @@ private:
     void scheduleCacheHandler(QNetworkReply* reply) noexcept;
     void releaseSeriesCacheHandler(QNetworkReply* reply) noexcept;
     void typesCacheHandler(QNetworkReply* reply) noexcept;
+    void cacheFolderHandler(const QString& fullPath) noexcept;
+    bool copyFile(const QString& fullPath, const QString& cacheFileName) noexcept;
 
 private slots:
     void requestFinished(QNetworkReply* reply);
@@ -151,6 +158,7 @@ signals:
     void torrentStreamPortChanged();
     void mainGithubCacheServerChanged();
     void mainNextAPIServerChanged();
+    void cacheFolderChanged();
 
 };
 

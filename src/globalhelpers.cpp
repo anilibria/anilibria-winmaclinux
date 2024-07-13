@@ -86,3 +86,17 @@ void saveJsonObjectToFile(const QString &path, const QJsonObject &object) noexce
     scheduleCacheFile.write(document.toJson());
     scheduleCacheFile.close();
 }
+
+bool readJsonObjectFromFile(const QString &path, QJsonObject &object) noexcept
+{
+    QFile file(path);
+    if (file.open(QFile::ReadOnly | QFile::Text)) {
+        auto content = file.readAll();
+        file.close();
+
+        object = QJsonDocument::fromJson(content).object();
+        return true;
+    }
+
+    return false;
+}

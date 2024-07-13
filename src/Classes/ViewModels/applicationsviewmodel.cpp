@@ -225,6 +225,20 @@ void ApplicationsViewModel::createApplications()
     installer->setExecutableName("AnilibriaQtInstaller");
 #endif
     m_applications.append(installer);
+
+    auto cacheChecker = new ExternalApplicationModel();
+    cacheChecker->setName("LocalCacheChecker");
+    cacheChecker->setDescription("Программа позволяет выполнять синхронизацию релизов, франшиз и расписания и формировать файлы кеша которые впоследствии может потребить приложение AniLibria.Qt.");
+    cacheChecker->setRepositoryPath("trueromanus/LocalCacheChecker");
+    cacheChecker->setIsIncludedInsideDistributive(false);
+    cacheChecker->setIsInstalled(false);
+    cacheChecker->setIsHaveNewVersion(false);
+#ifdef Q_OS_WIN
+    cacheChecker->setExecutableName("LocalCacheChecker.exe");
+#else
+    cacheChecker->setExecutableName("LocalCacheChecker");
+#endif
+    m_applications.append(cacheChecker);
 }
 
 void ApplicationsViewModel::readCache()

@@ -17,3 +17,5 @@ void saveJsonArrayToFile(const QString& path, const QJsonArray& array) noexcept;
 void saveJsonObjectToFile(const QString& path, const QJsonObject& object) noexcept;
 
 QString getLeadingZeroDigit(int number) noexcept;
+
+bool readJsonObjectFromFile(const QString &path, QJsonObject &object) noexcept;
