@@ -40,7 +40,7 @@ xattr -d com.apple.quarantine AniLibria.dmg
 
 ## Связанные проекты
 [TorrentStream](https://github.com/trueromanus/TorrentStream) - приложение веб сервер позволяющий скачивать торренты, стримить их а также проксировать видео для плеера  
-[AnilibriaQtInstaller](https://github.com/trueromanus/AnilibriaQtInstaller) - веб инсталлер/апдейтер для приложения
+[AnilibriaQtInstaller](https://github.com/trueromanus/AnilibriaQtInstaller) - веб инсталлер/апдейтер для приложения  
 [LocalCacheChecker](https://github.com/trueromanus/LocalCacheChecker) - приложение для синхронизации релизов/франшиз/расписания
 
 ### Linux (пакеты и сборка из исходников)
