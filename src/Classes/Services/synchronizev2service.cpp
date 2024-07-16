@@ -84,6 +84,14 @@ void Synchronizev2Service::authorize(QString login, QString password)
     adjustIdentifier(reply, m_pairLogin);
 }
 
+void Synchronizev2Service::authorizeSocial(const QString &provider)
+{
+    QNetworkRequest request(QUrl(m_apiv2host + "/api/v1/accounts/users/auth/social/" + provider + "/login?host=https:%2F%2Fanilibria.top"));
+
+    auto reply = m_networkManager->get(request);
+    adjustIdentifier(reply, m_socialRequest);
+}
+
 void Synchronizev2Service::logout()
 {
     if (!m_isAuhorized) return;
@@ -200,6 +208,25 @@ QString Synchronizev2Service::checkFolderAvailability(const QString &folder)
 void Synchronizev2Service::checkNetworkAvailability(const QString &address)
 {
 
+}
+
+void Synchronizev2Service::timerEvent(QTimerEvent *event)
+{
+    Q_UNUSED(event);
+
+    m_socialCheckTimerIterator++;
+
+    if (m_socialState.isEmpty() || m_socialCheckTimerIterator == 20) {
+        killTimer(m_socialCheckTimer);
+        m_socialCheckTimer = 0;
+        emit isSocialAuthentificationChanged();
+        return;
+    }
+
+    QNetworkRequest request(QUrl(m_apiv2host + "/api/v1/accounts/users/auth/social/authenticate?state=" + m_socialState));
+
+    auto reply = m_networkManager->get(request);
+    adjustIdentifier(reply, m_socialRequestResponse);
 }
 
 void Synchronizev2Service::downloadReleaseFile() noexcept
@@ -714,6 +741,62 @@ bool Synchronizev2Service::copyFile(const QString &fullPath, const QString &cach
     return true;
 }
 
+void Synchronizev2Service::socialRequestHandler(QNetworkReply *reply) noexcept
+{
+    auto content = reply->readAll();
+    if (content.isEmpty()) {
+        emit userFailedAuthentificated("Контент ответа пустой");
+        return;
+    }
+
+    QJsonParseError* error = nullptr;
+    auto json = QJsonDocument::fromJson(content, error);
+    if (error != nullptr) {
+        emit userFailedAuthentificated("Ответ не содержит корректный JSON");
+        return;
+    }
+
+    auto response = json.object();
+    QString socialUrl = "";
+    if (response.contains("state")) m_socialState = response.value("state").toString();
+    if (response.contains("url")) socialUrl = response.value("url").toString();
+
+    if (socialUrl.isEmpty() && m_socialState.isEmpty()) {
+        emit userFailedAuthentificated("Ответ не содержит state и url");
+        return;
+    }
+
+    m_socialCheckTimerIterator = 0;
+    m_socialCheckTimer = startTimer(1000 * 5);
+
+    emit isSocialAuthentificationChanged();
+
+    QDesktopServices::openUrl(QUrl(socialUrl));
+}
+
+void Synchronizev2Service::socialRequestTokenHandler(QNetworkReply *reply) noexcept
+{
+    auto content = reply->readAll();
+    if (content.isEmpty()) return;
+
+    QJsonParseError* error = nullptr;
+    auto json = QJsonDocument::fromJson(content, error);
+    if (error != nullptr) return;
+
+    auto response = json.object();
+    if (response.contains("token")) {
+        m_token = response.value("token").toString();
+        if (m_token.isEmpty()) return;
+
+        m_socialState = "";
+        killTimer(m_socialCheckTimer);
+        m_socialCheckTimer = 0;
+        emit isSocialAuthentificationChanged();
+        emit userCompleteAuthentificated();
+        emit tokenChanged();
+    }
+}
+
 void Synchronizev2Service::loginHandler(QNetworkReply *reply) noexcept
 {
     auto content = reply->readAll();
@@ -798,6 +881,14 @@ void Synchronizev2Service::requestFinished(QNetworkReply *reply)
     }
     if (requestType == m_cacheReleaseSerieRequest) {
         releaseSeriesCacheHandler(reply);
+        return;
+    }
+    if (requestType == m_socialRequest) {
+        socialRequestHandler(reply);
+        return;
+    }
+    if (requestType == m_socialRequestResponse) {
+        socialRequestTokenHandler(reply);
         return;
     }
 }

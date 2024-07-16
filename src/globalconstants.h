@@ -256,8 +256,12 @@ extern QString colorComboBoxHintField;
 extern QString colorComboBoxBackgroundField;
 extern QString iconCustomGroupField;
 extern QString iconEditField;
-
 extern QString iconReleaseCatalogSearchFoundedField;
 extern QString iconCustomGroupFoundedField;
+
+extern QString iconAuthorizationVkField;
+extern QString iconAuthorizationGoogleField;
+extern QString iconAuthorizationPatreonField;
+extern QString iconAuthorizationDiscordField;
 
 #endif // GLOBALCONSTANTS_H

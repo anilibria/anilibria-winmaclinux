@@ -237,5 +237,9 @@
         <file>Views/Videoplayer/MpvPlayer.qml</file>
         <file>Views/Videoplayer/MpvPlayerOutput.qml</file>
         <file>Views/Extensions.qml</file>
+        <file>Assets/Icons/authorization/discord.svg</file>
+        <file>Assets/Icons/authorization/google.svg</file>
+        <file>Assets/Icons/authorization/patreon.svg</file>
+        <file>Assets/Icons/authorization/vk.svg</file>
     </qresource>
 </RCC>

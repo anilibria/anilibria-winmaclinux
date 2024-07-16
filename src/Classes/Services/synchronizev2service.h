@@ -21,6 +21,7 @@ class Synchronizev2Service : public QObject
     Q_PROPERTY(QString mainGithubCacheServer READ mainGithubCacheServer NOTIFY mainGithubCacheServerChanged FINAL)
     Q_PROPERTY(QString mainNextAPIServer READ mainNextAPIServer NOTIFY mainNextAPIServerChanged FINAL)
     Q_PROPERTY(QString cacheFolder READ cacheFolder WRITE setCacheFolder NOTIFY cacheFolderChanged FINAL)
+    Q_PROPERTY(bool isSocialAuthentification READ isSocialAuthentification NOTIFY isSocialAuthentificationChanged FINAL)
 
 private:
     QString m_apiv2host { "" };
@@ -43,6 +44,8 @@ private:
     const QString m_cacheTypesRequest { "cachetypes" };
     const QString m_cacheScheduleRequest { "cacheschedule" };
     const QString m_cacheReleaseSerieRequest { "releaseseries" };
+    const QString m_socialRequest { "socialrequest" };
+    const QString m_socialRequestResponse { "socialrequestresponse" };
     bool m_isAuhorized { false };
     QString m_nickName { "" };
     QString m_avatar { "" };
@@ -59,6 +62,9 @@ private:
     int m_previousLastTimeStamp { 0 };
     int m_torrentStreamPort { 0 };
     QString m_cacheFolder { "" };
+    QString m_socialState { "" };
+    int m_socialCheckTimer { 0 };
+    int m_socialCheckTimerIterator { 0 };
 
 public:
     explicit Synchronizev2Service(QObject *parent = nullptr);
@@ -95,7 +101,10 @@ public:
 
     QString mainNextAPIServer() const noexcept { return "https://anilibria.top"; }
 
+    bool isSocialAuthentification() const noexcept { return m_socialCheckTimer > 0; }
+
     Q_INVOKABLE void authorize(QString login, QString password);
+    Q_INVOKABLE void authorizeSocial(const QString& provider);
     Q_INVOKABLE void logout();
     Q_INVOKABLE void getUserData();
     Q_INVOKABLE void getUserFavorites();
@@ -105,6 +114,8 @@ public:
     Q_INVOKABLE void synchronizeFullCache();
     Q_INVOKABLE QString checkFolderAvailability(const QString& folder);
     Q_INVOKABLE void checkNetworkAvailability(const QString& address);
+
+    void timerEvent(QTimerEvent *event) override;
 
 private:
     void downloadReleaseFile() noexcept;
@@ -129,6 +140,8 @@ private:
     void typesCacheHandler(QNetworkReply* reply) noexcept;
     void cacheFolderHandler(const QString& fullPath) noexcept;
     bool copyFile(const QString& fullPath, const QString& cacheFileName) noexcept;
+    void socialRequestHandler(QNetworkReply* reply) noexcept;
+    void socialRequestTokenHandler(QNetworkReply* reply) noexcept;
 
 private slots:
     void requestFinished(QNetworkReply* reply);
@@ -159,6 +172,7 @@ signals:
     void mainGithubCacheServerChanged();
     void mainNextAPIServerChanged();
     void cacheFolderChanged();
+    void isSocialAuthentificationChanged();
 
 };
 

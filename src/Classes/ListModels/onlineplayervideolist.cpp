@@ -475,6 +475,7 @@ QVector<OnlineVideoModel*> OnlinePlayerVideoList::fillVideosFrom(const QList<Rel
         videoModel->setSd(video->sd());
         videoModel->setOrder(video->order());
         videoModel->setTitle(video->title());
+        videoModel->setId(video->number());
 
         videoModel->setOpeningStartSeconds(video->openingStartSeconds());
         videoModel->setOpeningEndSeconds(video->openingEndSeconds());

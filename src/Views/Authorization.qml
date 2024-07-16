@@ -39,7 +39,7 @@ Page {
                 color: applicationThemeViewModel.panelBackground
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.horizontalCenter: parent.horizontalCenter
-                width: 400
+                width: 450
                 height: 200
 
                 ColumnLayout {
@@ -74,13 +74,66 @@ Page {
                     Item {
                         Layout.fillWidth: true
                         height: 40
-                        AccentText {
-                            text: authorizationViewModel.errorMessage
-                            fontPointSize: 10
+
+                        IconButton {
+                            id: vkButton
                             anchors.left: parent.left
-                            anchors.leftMargin: 10
-                            anchors.verticalCenter: parent.verticalCenter
-                            wrapMode: Text.WordWrap
+                            anchors.leftMargin: 1
+                            hoverColor: applicationThemeViewModel.currentItems.filterIconButtonHoverColor
+                            iconPath: applicationThemeViewModel.currentItems.iconAuthorizationVk
+                            height: 34
+                            width: 40
+                            iconWidth: 20
+                            iconHeight: 20
+                            tooltipMessage: "Авторизация через ВКонтакте"
+                            onButtonPressed: {
+                                synchronizationServicev2.authorizeSocial("vk");
+                            }
+                        }
+                        IconButton {
+                            id: googleButton
+                            anchors.left: vkButton.right
+                            anchors.leftMargin: 2
+                            hoverColor: applicationThemeViewModel.currentItems.filterIconButtonHoverColor
+                            iconPath: applicationThemeViewModel.currentItems.iconAuthorizationGoogle
+                            height: 34
+                            width: 40
+                            iconWidth: 20
+                            iconHeight: 20
+                            tooltipMessage: "Авторизация через Google"
+                            onButtonPressed: {
+                                synchronizationServicev2.authorizeSocial("google");
+                            }
+                        }
+                        IconButton {
+                            id: patreonButton
+                            anchors.left: googleButton.right
+                            anchors.leftMargin: 1
+                            hoverColor: applicationThemeViewModel.currentItems.filterIconButtonHoverColor
+                            iconPath: applicationThemeViewModel.currentItems.iconAuthorizationPatreon
+                            height: 34
+                            width: 40
+                            iconWidth: 20
+                            iconHeight: 20
+                            tooltipMessage: "Авторизация через Patreon"
+                            onButtonPressed: {
+                                synchronizationServicev2.authorizeSocial("patreon");
+                            }
+                        }
+                        IconButton {
+                            id: discordButton
+                            anchors.left: patreonButton.right
+                            anchors.leftMargin: 1
+                            hoverColor: applicationThemeViewModel.currentItems.filterIconButtonHoverColor
+                            iconPath: applicationThemeViewModel.currentItems.iconAuthorizationDiscord
+                            height: 34
+                            width: 40
+                            iconWidth: 20
+                            iconHeight: 20
+                            tooltipMessage: "Авторизация через Discord"
+                            onButtonPressed: {
+                                synchronizationServicev2.authorizeSocial("discord");
+                            }
                         }
 
                         RoundedActionButton {
@@ -105,6 +158,41 @@ Page {
                     }
                 }
             }
+        }
+    }
+
+    Item {
+        visible: synchronizationServicev2.isSocialAuthentification
+        anchors.fill: parent
+
+        MouseArea {
+            anchors.fill: parent
+            onPressed: {
+                mouse.accepted = true;
+            }
+        }
+
+        Rectangle {
+            anchors.fill: parent
+            color: "black"
+            opacity: .5
+        }
+
+        Rectangle {
+            width: 80
+            height: 80
+            color: "white"
+            radius: 20
+            opacity: 0.8
+            anchors.centerIn: parent
+        }
+
+        AnimatedImage {
+            id: spinner
+            anchors.centerIn: parent
+            paused: !synchronizationServicev2.isSocialAuthentification
+            playing: synchronizationServicev2.isSocialAuthentification
+            source: synchronizationServicev2.isSocialAuthentification ? "../Assets/Icons/spinner.gif" : ""
         }
     }
 }

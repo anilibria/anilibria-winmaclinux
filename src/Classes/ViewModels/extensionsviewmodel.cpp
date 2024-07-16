@@ -18,10 +18,6 @@ ExtensionsViewModel::ExtensionsViewModel(QObject *parent)
     readExtensions();
     readValues();
 
-#ifdef QT_DEBUG
-    m_extensions.append("C:/work/Repositories/Anilibria.Qt/testScript");
-#endif
-
     adjustEngine();
     importExtensions();
 }
