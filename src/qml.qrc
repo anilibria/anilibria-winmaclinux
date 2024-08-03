@@ -241,5 +241,6 @@
         <file>Assets/Icons/authorization/google.svg</file>
         <file>Assets/Icons/authorization/patreon.svg</file>
         <file>Assets/Icons/authorization/vk.svg</file>
+        <file>Assets/Icons/extensions.svg</file>
     </qresource>
 </RCC>

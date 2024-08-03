@@ -4,6 +4,7 @@
 #include <QObject>
 #include <QJSValue>
 #include <QMap>
+#include <QMultiMap>
 #include <QJSEngine>
 #include <QList>
 #include <QNetworkAccessManager>
@@ -17,12 +18,15 @@ private:
     QList<QString> m_extensions { QList<QString>() };
     QMap<QString, QJSValue> m_importedModules { QMap<QString, QJSValue>() };
     QMap<QString, std::tuple<QString, QString>> m_importedModulesMetadata { QMap<QString, std::tuple<QString, QString>>() };
+    QMap<QString, std::tuple<int, int>> m_importedModulesMenuIndexes { QMap<QString, std::tuple<int, int>>() };
+    QList<QJSValue> m_importedModulesMenuCallbacks { QList<QJSValue>() };
+    QList<QString> m_importedModulesMenuTitles { QList<QString>() };
     QJSEngine* m_engine { new QJSEngine(this) };
     QMap<QString, QJSValue> m_pendingCallbacks { QMap<QString, QJSValue>() };
     QNetworkAccessManager* m_networkManager { new QNetworkAccessManager(this) };
     QMap<QString, QString> m_values { QMap<QString, QString>() };
-    QString m_valuesPath { "" };
-    QString m_extensionsPath { "" };
+    QString m_valuesFileName { "extensionvalues.cache" };
+    QString m_extensionsFileName { "extensions.cache" };
     QVariantList m_displayedExtensions { QVariantList() };
 
 public:
@@ -37,13 +41,15 @@ public:
     Q_INVOKABLE QString readValue(const QString& key);
     Q_INVOKABLE void deleteValue(const QString& key);
     Q_INVOKABLE void addExtension(const QString& path);
+    Q_INVOKABLE void runMenuCommand(const QString& identifier, int index);
+    Q_INVOKABLE void saveValues();
+    Q_INVOKABLE void deleteExtension(const QString& path);
 
 private:
     void importExtensions();
     void importExtension(const QString& path);
     void adjustEngine();
     void readValues();
-    void saveValues();
     void readExtensions();
     void saveExtensions();
     void remapDisplayExtensions();

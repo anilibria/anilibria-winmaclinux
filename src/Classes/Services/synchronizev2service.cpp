@@ -207,7 +207,10 @@ QString Synchronizev2Service::checkFolderAvailability(const QString &folder)
 
 void Synchronizev2Service::checkNetworkAvailability(const QString &address)
 {
-
+    auto url = QUrl(address);
+    QNetworkRequest request(url);
+    auto reply = m_networkManager->get(request);
+    adjustIdentifier(reply, m_checkNetworkAvailability);
 }
 
 void Synchronizev2Service::timerEvent(QTimerEvent *event)
@@ -797,6 +800,16 @@ void Synchronizev2Service::socialRequestTokenHandler(QNetworkReply *reply) noexc
     }
 }
 
+void Synchronizev2Service::checkNetworkAvailabilityHandler(QNetworkReply *reply) noexcept
+{
+    if (reply->error() != QNetworkReply::NoError) {
+        emit checkNetworkAvailibilityFailedChanged("Проверка не удалась: " + reply->errorString());
+        return;
+    }
+
+    emit checkNetworkAvailibilityCompletedChanged();
+}
+
 void Synchronizev2Service::loginHandler(QNetworkReply *reply) noexcept
 {
     auto content = reply->readAll();
@@ -889,6 +902,10 @@ void Synchronizev2Service::requestFinished(QNetworkReply *reply)
     }
     if (requestType == m_socialRequestResponse) {
         socialRequestTokenHandler(reply);
+        return;
+    }
+    if (requestType == m_checkNetworkAvailability) {
+        checkNetworkAvailabilityHandler(reply);
         return;
     }
 }

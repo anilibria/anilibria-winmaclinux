@@ -13,8 +13,6 @@ ExtensionsViewModel::ExtensionsViewModel(QObject *parent)
 {
     connect(m_networkManager, &QNetworkAccessManager::finished, this, &ExtensionsViewModel::requestFinished);
 
-    m_valuesPath = getCachePath("extensionvalues.cache");
-    m_extensionsPath = getCachePath("extensions.cache");
     readExtensions();
     readValues();
 
@@ -70,9 +68,6 @@ void ExtensionsViewModel::log(const QString &message)
 void ExtensionsViewModel::saveValue(const QString &key, const QString &value)
 {
     m_values.insert(key, value);
-
-    //immediatly save values to file
-    saveValues();
 }
 
 QString ExtensionsViewModel::readValue(const QString &key)
@@ -96,6 +91,38 @@ void ExtensionsViewModel::addExtension(const QString &path)
     importExtension(path);
 
     remapDisplayExtensions();
+}
+
+void ExtensionsViewModel::runMenuCommand(const QString &identifier, int index)
+{
+    if (!m_importedModulesMenuIndexes.contains(identifier)) return;
+
+    auto indexes = m_importedModulesMenuIndexes.value(identifier);
+    auto startIndex = std::get<0>(indexes);
+    auto itemIndex = startIndex + index;
+    if (itemIndex >= m_importedModulesMenuCallbacks.size()) return;
+
+    auto callback = m_importedModulesMenuCallbacks.value(itemIndex);
+    callback.call();
+}
+
+void ExtensionsViewModel::saveValues()
+{
+    QJsonObject object;
+    auto keys = m_values.keys();
+    foreach (auto key, keys) {
+        object.insert(key, m_values.value(key));
+    }
+
+    saveJsonObjectToFile(m_valuesFileName, object);
+}
+
+void ExtensionsViewModel::deleteExtension(const QString &path)
+{
+    if (!m_extensions.contains(path)) return;
+
+    m_extensions.removeOne(path);
+    saveExtensions();
 }
 
 void ExtensionsViewModel::importExtensions()
@@ -129,6 +156,32 @@ void ExtensionsViewModel::importExtension(const QString &path)
     m_importedModules.insert(path, module);
     auto metadata = std::make_tuple(moduleName, moduleAuthor);
     m_importedModulesMetadata.insert(path, metadata);
+
+    if (module.hasProperty("menuItems")) {
+        QJSValue menuItemsFunction = module.property("menuItems");
+        auto items = menuItemsFunction.call();
+        if (items.isArray()) {
+            int countItems = 0;
+            int startIndex = m_importedModulesMenuCallbacks.size();
+
+            auto length = items.property("length").toInt();
+            for (int i = 0; i < length; i++) {
+                auto item = items.property(i);
+                if (!item.hasProperty("title") || !item.hasProperty("handler")) continue;
+
+                auto title = item.property("title").toString();
+                auto handler = item.property("handler");
+                countItems++;
+                m_importedModulesMenuCallbacks.append(handler);
+                m_importedModulesMenuTitles.append(title);
+            }
+
+            if (countItems > 0) {
+                auto indexes = std::make_tuple(startIndex, countItems);
+                m_importedModulesMenuIndexes.insert(path, indexes);
+            }
+        }
+    }
 }
 
 void ExtensionsViewModel::adjustEngine()
@@ -142,9 +195,9 @@ void ExtensionsViewModel::adjustEngine()
 
 void ExtensionsViewModel::readValues()
 {
-    createIfNotExistsFile(m_valuesPath, "{}");
+    createIfNotExistsCacheFile(m_valuesFileName, "{}");
 
-    auto json = getJsonContentFromFile(m_valuesPath);
+    auto json = getJsonContentFromFile(m_valuesFileName);
     auto content = QJsonDocument::fromJson(json.toUtf8());
     auto values = content.object();
 
@@ -154,22 +207,11 @@ void ExtensionsViewModel::readValues()
     }
 }
 
-void ExtensionsViewModel::saveValues()
-{
-    QJsonObject object;
-    auto keys = m_values.keys();
-    foreach (auto key, keys) {
-        object.insert(key, m_values.value(key));
-    }
-
-    saveJsonObjectToFile(m_valuesPath, object);
-}
-
 void ExtensionsViewModel::readExtensions()
 {
-    createIfNotExistsFile(m_extensionsPath, "[]");
+    createIfNotExistsCacheFile(m_extensionsFileName, "[]");
 
-    auto json = getJsonContentFromFile(m_valuesPath);
+    auto json = getJsonContentFromFile(m_extensionsFileName);
     auto content = QJsonDocument::fromJson(json.toUtf8());
     auto values = content.array();
 
@@ -185,7 +227,7 @@ void ExtensionsViewModel::saveExtensions()
         array.append(extension);
     }
 
-    saveJsonArrayToFile(m_extensionsPath, array);
+    saveJsonArrayToFile(m_extensionsFileName, array);
 }
 
 void ExtensionsViewModel::remapDisplayExtensions()
@@ -197,8 +239,15 @@ void ExtensionsViewModel::remapDisplayExtensions()
         auto item = m_importedModulesMetadata[key];
         QVariantMap map;
         map["indentifier"] = key;
-        map["title"] = std::get<0>(item);
+        map["extensionTitle"] = std::get<0>(item);
         map["author"] = std::get<1>(item);
+
+        if (m_importedModulesMenuIndexes.contains(key)) {
+            auto indexes = m_importedModulesMenuIndexes.value(key);
+            auto startIndex = std::get<0>(indexes);
+            auto countItems = std::get<1>(indexes);
+            map["menuItems"] = QVariant(m_importedModulesMenuTitles.mid(startIndex, countItems));
+        }
 
         m_displayedExtensions.append(map);
     }

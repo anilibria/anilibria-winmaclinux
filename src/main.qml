@@ -713,6 +713,14 @@ ApplicationWindow {
         onDownloadInTorrentStream: {
             notificationViewModel.sendInfoNotification("Релиз добавлен в TorrentStream");
         }
+
+        onCheckNetworkAvailibilityCompletedChanged: {
+            notificationViewModel.sendInfoNotification("Проверка доступности произошла успешно");
+        }
+
+        onCheckNetworkAvailibilityFailedChanged: {
+            notificationViewModel.sendInfoNotification(message);
+        }
     }
 
     Drawer {
@@ -1108,6 +1116,11 @@ ApplicationWindow {
             id: applications
             visible: mainViewModel.isApplicationsPageVisible
         }
+
+        Extensions {
+            id: extensions
+            visible: mainViewModel.isExtensionsPageVisible
+        }
     }
 
     ListView {
@@ -1485,6 +1498,9 @@ ApplicationWindow {
 
     ExtensionsViewModel {
         id: extensionsViewModel
+        Component.onDestruction: {
+            extensionsViewModel.saveValues();
+        }
     }
 
     Item {

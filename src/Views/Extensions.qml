@@ -13,14 +13,22 @@ Page {
 
     Loader {
         anchors.fill: parent
-        sourceComponent: youtubePage.visible ? youtubePageContent : null
+        sourceComponent: root.visible ? extensionsPageContent : null
     }
 
     Component {
-        id: extensionsContent
+        id: extensionsPageContent
 
         Item {
             anchors.fill: parent
+
+            Rectangle {
+                id: mask
+                width: 472
+                height: 240
+                radius: 10
+                visible: false
+            }
 
             RowLayout {
                 id: panelContainer
@@ -36,125 +44,114 @@ Page {
                         Layout.fillWidth: true
                         Layout.preferredHeight: 45
                         height: 45
-                        color: applicationThemeViewModel.currentItems.pageUpperPanel
+                        color: applicationThemeViewModel.pageUpperPanel
                     }
 
-                    ListView {
+                    Item {
+                        id: scrollView
                         Layout.fillHeight: true
                         Layout.fillWidth: true
-                        model: releaseLinkedSeries
-                        clip: true
-                        spacing: 4
-                        ScrollBar.vertical: ScrollBar {
-                            active: true
-                        }
-                        delegate: Rectangle {
-                            width: itemContainer.width
-                            height: 220
-                            color: "transparent"
 
-                            Rectangle {
-                                anchors.fill: parent
-                                anchors.leftMargin: 4
-                                anchors.rightMargin: 4
-                                radius: 10
-                                color: applicationThemeViewModel.panelBackground
+                        ListView {
+                            id: extensionsListView
+                            anchors.fill: parent
+                            boundsBehavior: Flickable.StopAtBounds
+                            model: extensionsViewModel.displayedExtensions
+                            clip: true
+                            delegate: Item {
+                                id: itemRoot
+                                width: extensionsListView.width
+                                height: 150
 
-                                MouseArea {
-                                    anchors.fill: parent
-                                    onPressed: {
-                                        /*releaseLinkedSeries.selectByIndex(identifier);
-                                        mainViewModel.selectPage("releaseseries:" + identifier);*/
+                                property string modelIndentifier: modelData.indentifier
+
+                                Rectangle {
+                                    id: itemContainer
+                                    anchors.verticalCenter: parent.verticalCenter
+                                    anchors.horizontalCenter: parent.horizontalCenter
+                                    width: extensionsListView.width - 10
+                                    height: parent.height - 10
+                                    radius: 10
+                                    color: applicationThemeViewModel.currentItems.panelBackground
+
+                                    PlainText {
+                                        width: itemContainer.width - 80
+                                        height: itemContainer.height - 10
+                                        fontPointSize: 11
+                                        anchors.left: parent.left
+                                        anchors.leftMargin: 10
+                                        anchors.verticalCenter: parent.verticalCenter
+                                        verticalAlignment: Text.AlignVCenter
+                                        maximumLineCount: 4
+                                        text: modelData.extensionTitle + (modelData.author ? "\n" + modelData.author : "")
                                     }
-                                }
 
-                                RowLayout {
-                                    anchors.fill: parent
+                                    Column {
+                                        id: elements
+                                        anchors.verticalCenter: parent.verticalCenter
+                                        width: 100
+                                        anchors.right: parent.right
+                                        anchors.rightMargin: 10
+                                        spacing: 3
 
-                                    Rectangle {
-                                        height: parent.height
-                                        Layout.fillWidth: true
-                                        Layout.fillHeight: true
-                                        color: "transparent"
-
-                                        ColumnLayout {
-                                            spacing: 4
-                                            anchors.fill: parent
-                                            anchors.leftMargin: 10
-
-                                            Item {
-                                                Layout.fillHeight: true
+                                        IconButton {
+                                            anchors.right: parent.right
+                                            anchors.rightMargin: 26
+                                            width: 30
+                                            height: 30
+                                            iconWidth: 20
+                                            iconHeight: 20
+                                            hoverColor: applicationThemeViewModel.currentItems.filterIconButtonHoverColor
+                                            iconPath: applicationThemeViewModel.currentItems.iconContextMenu
+                                            onButtonPressed: {
+                                                extensionsContextMenu.open();
                                             }
 
-                                            AccentText {
-                                                fontPointSize: 10
-                                                text: firstThreeNamesRole
-                                                Layout.fillWidth: true
-                                                maximumLineCount: 2
-                                                elide: Text.ElideRight
-                                                wrapMode: Text.Wrap
-                                            }
+                                            CommonMenu {
+                                                id: extensionsContextMenu
+                                                autoWidth: true
 
-                                            PlainText {
-                                                Layout.preferredHeight: 20
-                                                fontPointSize: 10
-                                                visible: !!otherReleases
-                                                text: otherReleases
-                                            }
-
-                                            PlainText {
-                                                Layout.preferredHeight: 20
-                                                Layout.fillWidth: true
-                                                maximumLineCount: 2
-                                                elide: Text.ElideRight
-                                                wrapMode: Text.Wrap
-                                                fontPointSize: 10
-                                                text: genres
-                                            }
-
-                                            PlainText {
-                                                Layout.preferredHeight: 20
-                                                Layout.fillWidth: true
-                                                maximumLineCount: 2
-                                                elide: Text.ElideRight
-                                                wrapMode: Text.Wrap
-                                                fontPointSize: 9
-                                                text: countInFavorites
-                                            }
-
-                                            Item {
-                                                Layout.fillHeight: true
+                                                Repeater {
+                                                    model: modelData.menuItems
+                                                    delegate: CommonMenuItem {
+                                                        text: modelData
+                                                        onPressed: {
+                                                            extensionsViewModel.runMenuCommand(itemRoot.modelIndentifier, index);
+                                                            extensionsContextMenu.close();
+                                                        }
+                                                    }
+                                                }
                                             }
                                         }
-                                    }
-                                    Rectangle {
-                                        id: rightBlock
-                                        Layout.preferredWidth: 200
-                                        Layout.fillHeight: true
-                                        Layout.rightMargin: 6
-                                        height: parent.height
-                                        color: "transparent"
+                                        IconButton {
+                                            anchors.right: parent.right
+                                            anchors.rightMargin: 26
+                                            width: 30
+                                            height: 30
+                                            iconWidth: 20
+                                            iconHeight: 20
+                                            hoverColor: applicationThemeViewModel.currentItems.filterIconButtonHoverColor
+                                            iconPath: applicationThemeViewModel.currentItems.iconDeleteItem
+                                            tooltipMessage: "Удалить расширение из приложения"
+                                            onButtonPressed: {
+                                                extensionsViewModel.deleteExtension(itemRoot.modelIndentifier);
 
-                                        Column {
-                                            anchors.centerIn: parent
+                                                extensionDeleteMessage.open();
+                                            }
 
-                                            FilterPanelIconButton {
-                                                iconPath: applicationThemeViewModel.currentItems.iconMainMenuCinemahall
-                                                tooltipMessage: "Открыть меню операций"
-                                                onButtonPressed: {
-                                                    commandsMenu.open();
-                                                }
+                                            MessageModal {
+                                                id: extensionDeleteMessage
+                                                header: "Расширение удалено"
+                                                message: "Запущенное расширение будет продолжать работать до перезапуска приложения"
+                                                content: Row {
+                                                    spacing: 6
+                                                    anchors.right: parent.right
 
-                                                CommonMenu {
-                                                    id: commandsMenu
-                                                    y: parent.y
-                                                    width: 300
-
-                                                    CommonMenuItem {
-                                                        text: "Выполнить команду"
-                                                        onPressed: {
-
-                                                            commandsMenu.close();
+                                                    RoundedActionButton {
+                                                        text: "Закрыть"
+                                                        width: 100
+                                                        onClicked: {
+                                                            extensionDeleteMessage.close();
                                                         }
                                                     }
                                                 }
@@ -165,31 +162,6 @@ Page {
                             }
                         }
                     }
-                }
-            }
-
-            Rectangle {
-                color: "transparent"
-                width: 190
-                height: 50
-                anchors.right: parent.right
-                anchors.rightMargin: 20
-                anchors.bottom: parent.bottom
-
-                LeftPanelIconButton {
-                    anchors.right: parent.right
-                    anchors.top: parent.top
-                    anchors.topMargin: 8
-                    hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
-                    tooltipMessage: "Вернуться в начало списка релизов"
-                    visible: scrollView.contentY > 100
-                    iconPath: applicationThemeViewModel.currentItems.iconBackToTop
-                    iconWidth: 24
-                    iconHeight: 24
-                    onButtonPressed: {
-                        scrollView.contentY = 0;
-                    }
-
                 }
             }
         }

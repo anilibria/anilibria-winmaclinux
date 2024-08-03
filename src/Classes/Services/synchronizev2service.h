@@ -46,6 +46,7 @@ private:
     const QString m_cacheReleaseSerieRequest { "releaseseries" };
     const QString m_socialRequest { "socialrequest" };
     const QString m_socialRequestResponse { "socialrequestresponse" };
+    const QString m_checkNetworkAvailability { "checknetworkavailability" };
     bool m_isAuhorized { false };
     QString m_nickName { "" };
     QString m_avatar { "" };
@@ -142,6 +143,7 @@ private:
     bool copyFile(const QString& fullPath, const QString& cacheFileName) noexcept;
     void socialRequestHandler(QNetworkReply* reply) noexcept;
     void socialRequestTokenHandler(QNetworkReply* reply) noexcept;
+    void checkNetworkAvailabilityHandler(QNetworkReply* reply) noexcept;
 
 private slots:
     void requestFinished(QNetworkReply* reply);
@@ -173,6 +175,8 @@ signals:
     void mainNextAPIServerChanged();
     void cacheFolderChanged();
     void isSocialAuthentificationChanged();
+    void checkNetworkAvailibilityFailedChanged(const QString& message);
+    void checkNetworkAvailibilityCompletedChanged();
 
 };
 

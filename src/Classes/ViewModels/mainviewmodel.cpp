@@ -21,6 +21,7 @@ MainViewModel::MainViewModel(QObject *parent) : QObject(parent)
     m_displayNames->insert("authorization", "Авторизация");
     m_displayNames->insert("torrentstream", "TorrentStream");
     m_displayNames->insert("applications", "Приложения");
+    m_displayNames->insert("extensions", "Расширения");
 
     createIfNotExistsFile(getCachePath(toolbarItemCacheFileName), "[\"release\",\"videoplayer\",\"cinemahall\",\"releaseseries\",\"myanilibria\"]");
 
@@ -275,6 +276,7 @@ void MainViewModel::refreshPageVisible() noexcept
     emit isThemeManagerVisibleChanged();
     emit isTorrentStreamPageVisibleChanged();
     emit isApplicationsPageVisibleChanged();
+    emit isExtensionsPageVisibleChanged();
 }
 
 void MainViewModel::selectToPage(const QString &pageId)

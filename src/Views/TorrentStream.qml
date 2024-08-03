@@ -203,7 +203,7 @@ Page {
                                             anchors.centerIn: parent
 
                                             FilterPanelIconButton {
-                                                iconPath: assetsLocation.iconsPath + "contextmenu.svg"
+                                                iconPath: applicationThemeViewModel.currentItems.iconContextMenu
                                                 tooltipMessage: "Открыть меню операций доступных для торрента"
                                                 onButtonPressed: {
                                                     torrentActionsMenu.open();

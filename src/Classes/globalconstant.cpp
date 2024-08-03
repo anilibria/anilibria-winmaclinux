@@ -210,4 +210,5 @@ QString iconAuthorizationVkField = "iconAuthorizationVk";
 QString iconAuthorizationGoogleField = "iconAuthorizationGoogle";
 QString iconAuthorizationPatreonField = "iconAuthorizationPatreon";
 QString iconAuthorizationDiscordField = "iconAuthorizationDiscord";
+QString iconContextMenuField = "iconContextMenu";
 
