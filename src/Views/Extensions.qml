@@ -44,7 +44,19 @@ Page {
                         Layout.fillWidth: true
                         Layout.preferredHeight: 45
                         height: 45
-                        color: applicationThemeViewModel.pageUpperPanel
+                        color: applicationThemeViewModel.currentItems.pageUpperPanel
+
+                        RoundedActionButton {
+                            id: deleteSelectedButton
+                            anchors.right: parent.right
+                            anchors.verticalCenter: parent.verticalCenter
+                            width: 210
+                            textSize: 10
+                            text: "Добавить расширение"
+                            onClicked: {
+                                selectFolderExtensionDialog.open();
+                            }
+                        }
                     }
 
                     Item {
@@ -134,27 +146,9 @@ Page {
                                             iconPath: applicationThemeViewModel.currentItems.iconDeleteItem
                                             tooltipMessage: "Удалить расширение из приложения"
                                             onButtonPressed: {
-                                                extensionsViewModel.deleteExtension(itemRoot.modelIndentifier);
-
                                                 extensionDeleteMessage.open();
-                                            }
 
-                                            MessageModal {
-                                                id: extensionDeleteMessage
-                                                header: "Расширение удалено"
-                                                message: "Запущенное расширение будет продолжать работать до перезапуска приложения"
-                                                content: Row {
-                                                    spacing: 6
-                                                    anchors.right: parent.right
-
-                                                    RoundedActionButton {
-                                                        text: "Закрыть"
-                                                        width: 100
-                                                        onClicked: {
-                                                            extensionDeleteMessage.close();
-                                                        }
-                                                    }
-                                                }
+                                                extensionsViewModel.deleteExtension(itemRoot.modelIndentifier);                                                
                                             }
                                         }
                                     }
@@ -162,6 +156,32 @@ Page {
                             }
                         }
                     }
+                }
+            }
+
+            MessageModal {
+                id: extensionDeleteMessage
+                header: "Расширение удалено"
+                message: "Запущенное расширение будет продолжать работать до перезапуска приложения"
+                content: Row {
+                    spacing: 6
+                    anchors.right: parent.right
+
+                    RoundedActionButton {
+                        text: "Закрыть"
+                        width: 100
+                        onClicked: {
+                            extensionDeleteMessage.close();
+                        }
+                    }
+                }
+            }
+
+            SystemOpenFolderDialog {
+                id: selectFolderExtensionDialog
+                title: "Выберите папку для создания бэкапа"
+                onNeedOpenFolder: {
+                    extensionsViewModel.addExtension(folderUrl);
                 }
             }
         }

@@ -86,11 +86,14 @@ void ExtensionsViewModel::deleteValue(const QString &key)
 
 void ExtensionsViewModel::addExtension(const QString &path)
 {
-    m_extensions.append(path);
+    QString innerPath = path;
+    m_extensions.append(removeFileProtocol(innerPath));
 
-    importExtension(path);
+    importExtension(innerPath);
 
     remapDisplayExtensions();
+
+    saveExtensions();
 }
 
 void ExtensionsViewModel::runMenuCommand(const QString &identifier, int index)
@@ -123,6 +126,8 @@ void ExtensionsViewModel::deleteExtension(const QString &path)
 
     m_extensions.removeOne(path);
     saveExtensions();
+
+    remapDisplayExtensions();
 }
 
 void ExtensionsViewModel::importExtensions()
@@ -234,7 +239,7 @@ void ExtensionsViewModel::remapDisplayExtensions()
 {
     m_displayedExtensions.clear();
 
-    auto keys = m_importedModulesMetadata.keys();
+    auto keys = m_extensions;
     foreach (auto key, keys) {
         auto item = m_importedModulesMetadata[key];
         QVariantMap map;
