@@ -265,4 +265,6 @@ extern QString iconAuthorizationPatreonField;
 extern QString iconAuthorizationDiscordField;
 extern QString iconContextMenuField;
 
+extern QString iconMainMenuExtensionsField;
+
 #endif // GLOBALCONSTANTS_H

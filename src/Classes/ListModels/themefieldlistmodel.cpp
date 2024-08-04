@@ -196,6 +196,7 @@ ThemeFieldListModel::ThemeFieldListModel(QObject *parent)
     m_descriptions.insert(iconAuthorizationPatreonField, "Иконка страницы Авторизация:Иконка находящаяся в панели авторизации");
     m_descriptions.insert(iconAuthorizationDiscordField, "Иконка страницы Авторизация:Иконка находящаяся в панели авторизации");
     m_descriptions.insert(iconContextMenuField, "Иконка контекстного меню:Иконка находящаяся в наборе кнопок где требуется открытие контекстного меню");
+    m_descriptions.insert(iconMainMenuExtensionsField, "Иконка страницы Расширения:Иконка находящаяся в главном меню");
 
     m_saveMenuItems.append("Сохранить и добавить тему в список");
     m_saveMenuItems.append("Сохранить в файл");

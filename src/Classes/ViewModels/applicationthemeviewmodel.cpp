@@ -188,9 +188,9 @@ ApplicationThemeViewModel::ApplicationThemeViewModel(QObject *parent)
     lightTheme->insert(iconAuthorizationGoogleField, "qrc:/Assets/Icons/authorization/google.svg");
     lightTheme->insert(iconAuthorizationPatreonField, "qrc:/Assets/Icons/authorization/patreon.svg");
     lightTheme->insert(iconAuthorizationDiscordField, "qrc:/Assets/Icons/authorization/discord.svg");
-
     lightTheme->insert(iconContextMenuField, "qrc:/Assets/Icons/contextmenu.svg");
 
+    lightTheme->insert(iconMainMenuExtensionsField, "qrc:/Assets/Icons/extensions.svg");
 
     lightTheme->insert(basedOnThemeField, m_lightTheme);
     lightTheme->insert(externalIdField, "");
@@ -356,8 +356,9 @@ ApplicationThemeViewModel::ApplicationThemeViewModel(QObject *parent)
     darkTheme->insert(iconAuthorizationGoogleField, "qrc:/Assets/Icons/authorization/google.svg");
     darkTheme->insert(iconAuthorizationPatreonField, "qrc:/Assets/Icons/authorization/patreon.svg");
     darkTheme->insert(iconAuthorizationDiscordField, "qrc:/Assets/Icons/authorization/discord.svg");
-
     darkTheme->insert(iconContextMenuField, "qrc:/Assets/Icons/contextmenu.svg");
+
+    darkTheme->insert(iconMainMenuExtensionsField, "qrc:/Assets/Icons/extensions.svg");
 
     darkTheme->insert(basedOnThemeField, m_darkTheme);
     darkTheme->insert(externalIdField, "");
@@ -523,12 +524,13 @@ ApplicationThemeViewModel::ApplicationThemeViewModel(QObject *parent)
     m_fields.append(iconCustomGroupField);
     m_fields.append(iconReleaseCatalogSearchFoundedField);
     m_fields.append(iconCustomGroupFoundedField);
-
     m_fields.append(iconAuthorizationVkField);
     m_fields.append(iconAuthorizationGoogleField);
     m_fields.append(iconAuthorizationPatreonField);
     m_fields.append(iconAuthorizationDiscordField);
     m_fields.append(iconContextMenuField);
+
+    m_fields.append(iconMainMenuExtensionsField);
 
     m_fields.append(iconLogoutField);
     m_fields.append(externalIdField);

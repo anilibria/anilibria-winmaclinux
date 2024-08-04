@@ -212,3 +212,5 @@ QString iconAuthorizationPatreonField = "iconAuthorizationPatreon";
 QString iconAuthorizationDiscordField = "iconAuthorizationDiscord";
 QString iconContextMenuField = "iconContextMenu";
 
+QString iconMainMenuExtensionsField = "iconMainMenuExtensions";
+
