@@ -36,6 +36,7 @@ public:
 
     Q_INVOKABLE void releaseOpenedInVideoPlayer(int releaseId, const QString& title, int seria);
     Q_INVOKABLE void makeHttpGet(const QString& url, const QList<QString> headers, const QJSValue& callback);
+    Q_INVOKABLE void makeHttpPost(const QString& url, const QList<QString> headers, const QString& body, const QJSValue& callback);
     Q_INVOKABLE void log(const QString& message);
     Q_INVOKABLE void saveValue(const QString& key, const QString& value);
     Q_INVOKABLE QString readValue(const QString& key);

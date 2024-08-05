@@ -291,10 +291,10 @@ void OnlinePlayerVideoList::setVideosFromSingleTorrent(const ReleaseTorrentModel
 
     for (auto i = 0; i < countSeries; i++) {
         auto videoModel = new OnlineVideoModel();
-        auto downloadedPath = torrentStream->getDownloadedPath(AnilibriaImagesPath + torrent.url(), i);
+        auto downloadedPath = torrentStream->getDownloadedPath(torrent.torrentHost() + torrent.url(), i);
         QString url = "";
         if (downloadedPath.isEmpty()) {
-            url = "http://localhost:" + QString::number(port) + "/online?id=" + QString::number(releaseId) + "&index=" + QString::number(i) + "&path=" + AnilibriaImagesPath + torrent.url();
+            url = "http://localhost:" + QString::number(port) + "/online?id=" + QString::number(releaseId) + "&index=" + QString::number(i) + "&path=" + torrent.torrentHost() + torrent.url();
         } else {
             url = downloadedPath;
         }

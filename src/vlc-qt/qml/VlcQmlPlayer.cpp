@@ -49,7 +49,7 @@ VlcQmlPlayer::VlcQmlPlayer(QObject *parent)
     connect(_player, &VlcMediaPlayer::stateChanged, this, &VlcQmlPlayer::playerStateChanged);
     connect(_player, &VlcMediaPlayer::timeChanged, this, &VlcQmlPlayer::playerPositionChanged);
     connect(_player, &VlcMediaPlayer::bufferingInteger, this, &VlcQmlPlayer::buffering);
-    //connect(_player, &VlcMediaPlayer::vout, this, &VlcQmlPlayer::mediaPlayerVout);
+    connect(_player, &VlcMediaPlayer::vout, this, &VlcQmlPlayer::mediaPlayerVout);
 
     setPlayer(_player);
 }

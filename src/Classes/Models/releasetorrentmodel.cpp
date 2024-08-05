@@ -44,6 +44,7 @@ void ReleaseTorrentModel::readFromApiTorrent(const ApiTorrentModel *apiTorrent)
     setCtime(apiTorrent->created());
     setSeries(apiTorrent->description());
     setUrl(apiTorrent->torrentPath());
+    setTorrentHost(apiTorrent->torrentHost());
 }
 
 void ReleaseTorrentModel::setId(const int id) noexcept

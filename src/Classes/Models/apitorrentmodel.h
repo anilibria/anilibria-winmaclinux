@@ -21,6 +21,7 @@ private:
     QString m_torrentPath { "" };
     int m_seeders { 0 };
     int64_t m_created { 0 };
+    QString m_torrentHost { "" };
 
 public:
     ApiTorrentModel();
@@ -38,6 +39,7 @@ public:
     int seeders() const noexcept { return m_seeders; }
     QString torrentPath() const noexcept { return m_torrentPath; }
     int64_t created() const noexcept { return m_created; }
+    QString torrentHost() const noexcept { return m_torrentHost; }
 
     void setReleaseId(int releaseId) noexcept { m_releaseId = releaseId; }
     void setHash(const QString& hash) noexcept { m_hash = hash; }
@@ -52,6 +54,7 @@ public:
     void setTorrentPath(const QString& torrentPath) noexcept { m_torrentPath = torrentPath; }
     void setSeeders(int seeders) noexcept { m_seeders = seeders; }
     void setCreated(int64_t created) noexcept { m_created = created; }
+    void setTorrentHost(QString torrentHost) noexcept { m_torrentHost = torrentHost; }
 
     void readFromJson(const QJsonObject& object);
 

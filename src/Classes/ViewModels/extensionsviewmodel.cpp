@@ -46,7 +46,7 @@ void ExtensionsViewModel::releaseOpenedInVideoPlayer(int releaseId, const QStrin
 void ExtensionsViewModel::makeHttpGet(const QString &url, const QList<QString> headers, const QJSValue &callback)
 {
     if (!callback.isCallable()) {
-        qDebug() << "[extension]: Callback for execute URL " << url << " not a function!";
+        qDebug() << "[extension]:makeHttpGet: Callback for execute URL " << url << " not a function!";
         return;
     }
 
@@ -57,6 +57,23 @@ void ExtensionsViewModel::makeHttpGet(const QString &url, const QList<QString> h
     QNetworkRequest request(url);
     request.setAttribute(QNetworkRequest::FollowRedirectsAttribute, true);
     auto reply = m_networkManager->get(request);
+    reply->setProperty("pendingIndentifier", identifier);
+}
+
+void ExtensionsViewModel::makeHttpPost(const QString &url, const QList<QString> headers, const QString &body, const QJSValue &callback)
+{
+    if (!callback.isCallable()) {
+        qDebug() << "[extension]:makeHttpGet: Callback for execute URL " << url << " not a function!";
+        return;
+    }
+
+    auto uuid = QUuid::createUuid();
+    auto identifier = uuid.toString();
+    m_pendingCallbacks.insert(identifier, callback);
+
+    QNetworkRequest request(url);
+    request.setAttribute(QNetworkRequest::FollowRedirectsAttribute, true);
+    auto reply = m_networkManager->post(request, body.toUtf8());
     reply->setProperty("pendingIndentifier", identifier);
 }
 

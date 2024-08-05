@@ -1699,6 +1699,7 @@ void ReleasesViewModel::loadNextReleasesWithoutReactive()
     foreach (auto torrentItem, torrentsArray) {
         auto torrentModel = new ApiTorrentModel();
         torrentModel->readFromJson(torrentItem.toObject());
+        torrentModel->setTorrentHost(m_synchronizationServicev2->apiv2host());
         m_torrentItems.append(torrentModel);
     }
 }
