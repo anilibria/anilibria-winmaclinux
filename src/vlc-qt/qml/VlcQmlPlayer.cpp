@@ -209,8 +209,7 @@ int VlcQmlPlayer::subtitleTrack() const
 
 void VlcQmlPlayer::setSubtitleTrack(int subtitleTrack)
 {
-    if (subtitleTrack == VlcQmlPlayer::subtitleTrack())
-        return;
+    if (subtitleTrack == VlcQmlPlayer::subtitleTrack()) return;
 
     _player->video()->setSubtitle(subtitleTrack);
     emit subtitleTrackChanged();

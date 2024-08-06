@@ -989,6 +989,12 @@ ApplicationWindow {
         onHidePanelIfItVisible: {
             videoplayer.needHidePlayer();
         }
+        onVideoSourceChanged: {
+            if (onlinePlayerViewModel.selectedRelease <= 0) return;
+
+            const releaseTitle = releasesViewModel.getReleaseTitle(onlinePlayerViewModel.selectedRelease);
+            extensionsViewModel.releaseOpenedInVideoPlayer(onlinePlayerViewModel.selectedRelease, releaseTitle, onlinePlayerViewModel.selectedVideo);
+        }
     }
 
     ReleasesViewModel {

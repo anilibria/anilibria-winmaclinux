@@ -46,6 +46,20 @@ Page {
                         height: 45
                         color: applicationThemeViewModel.currentItems.pageUpperPanel
 
+                        AccentText {
+                            height: parent.height
+                            anchors.left: parent.left
+                            anchors.leftMargin: 4
+                            anchors.right: deleteSelectedButton.left
+                            anchors.rightMargin: 4
+                            fontPointSize: 8
+                            maximumLineCount: 2
+                            verticalAlignment: Text.AlignVCenter
+                            wrapMode: Text.WordWrap
+                            elide: Text.ElideRight
+                            text: "Автор приложения не несет ответственности за любые последствия запуска расширений. Если Вы не уверены или видите подозрительные действия то лучше удалить расширение(я)."
+                        }
+
                         RoundedActionButton {
                             id: deleteSelectedButton
                             anchors.right: parent.right

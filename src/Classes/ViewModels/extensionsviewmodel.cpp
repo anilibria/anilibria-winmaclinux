@@ -22,6 +22,8 @@ ExtensionsViewModel::ExtensionsViewModel(QObject *parent)
 
 void ExtensionsViewModel::releaseOpenedInVideoPlayer(int releaseId, const QString &title, int seria)
 {
+    if (m_importedModules.isEmpty()) return;
+
     foreach (auto module, m_importedModules) {
         if (!module.hasProperty("releaseOpenedInVideoPlayer")) continue;
 
