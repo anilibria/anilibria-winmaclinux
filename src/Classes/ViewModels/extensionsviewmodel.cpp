@@ -13,11 +13,24 @@ ExtensionsViewModel::ExtensionsViewModel(QObject *parent)
 {
     connect(m_networkManager, &QNetworkAccessManager::finished, this, &ExtensionsViewModel::requestFinished);
 
+    m_innerObject->setup(m_values);
+
     readExtensions();
     readValues();
 
     adjustEngine();
     importExtensions();
+
+    connect(m_innerObject, &ExtensionInnerObject::makeHttpGetHandler, this, &ExtensionsViewModel::makeHttpGet);
+    connect(m_innerObject, &ExtensionInnerObject::makeHttpPostHandler, this, &ExtensionsViewModel::makeHttpPost);
+}
+
+void ExtensionsViewModel::setReleases(const ReleasesViewModel* releases) noexcept
+{
+    if (m_releases == releases) return;
+
+    m_releases = const_cast<ReleasesViewModel *>(releases);
+    emit releasesChanged();
 }
 
 void ExtensionsViewModel::releaseOpenedInVideoPlayer(int releaseId, const QString &title, int seria)
@@ -45,62 +58,23 @@ void ExtensionsViewModel::releaseOpenedInVideoPlayer(int releaseId, const QStrin
     }
 }
 
-void ExtensionsViewModel::makeHttpGet(const QString &url, const QList<QString> headers, const QJSValue &callback)
-{
-    if (!callback.isCallable()) {
-        qDebug() << "[extension]:makeHttpGet: Callback for execute URL " << url << " not a function!";
-        return;
-    }
-
-    auto uuid = QUuid::createUuid();
-    auto identifier = uuid.toString();
-    m_pendingCallbacks.insert(identifier, callback);
-
-    QNetworkRequest request(url);
-    request.setAttribute(QNetworkRequest::FollowRedirectsAttribute, true);
-    auto reply = m_networkManager->get(request);
-    reply->setProperty("pendingIndentifier", identifier);
-}
-
-void ExtensionsViewModel::makeHttpPost(const QString &url, const QList<QString> headers, const QString &body, const QJSValue &callback)
-{
-    if (!callback.isCallable()) {
-        qDebug() << "[extension]:makeHttpGet: Callback for execute URL " << url << " not a function!";
-        return;
-    }
-
-    auto uuid = QUuid::createUuid();
-    auto identifier = uuid.toString();
-    m_pendingCallbacks.insert(identifier, callback);
-
-    QNetworkRequest request(url);
-    request.setAttribute(QNetworkRequest::FollowRedirectsAttribute, true);
-    auto reply = m_networkManager->post(request, body.toUtf8());
-    reply->setProperty("pendingIndentifier", identifier);
-}
-
-void ExtensionsViewModel::log(const QString &message)
-{
-    qDebug() << "[extension]: " << message;
-}
-
 void ExtensionsViewModel::saveValue(const QString &key, const QString &value)
 {
-    m_values.insert(key, value);
+    m_values->insert(key, value);
 }
 
 QString ExtensionsViewModel::readValue(const QString &key)
 {
-    if (!m_values.contains(key)) return "";
+    if (!m_values->contains(key)) return "";
 
-    return m_values.value(key);
+    return m_values->value(key);
 }
 
 void ExtensionsViewModel::deleteValue(const QString &key)
 {
-    if (!m_values.contains(key)) return;
+    if (!m_values->contains(key)) return;
 
-    m_values.remove(key);
+    m_values->remove(key);
 }
 
 void ExtensionsViewModel::addExtension(const QString &path)
@@ -131,9 +105,9 @@ void ExtensionsViewModel::runMenuCommand(const QString &identifier, int index)
 void ExtensionsViewModel::saveValues()
 {
     QJsonObject object;
-    auto keys = m_values.keys();
+    auto keys = m_values->keys();
     foreach (auto key, keys) {
-        object.insert(key, m_values.value(key));
+        object.insert(key, m_values->value(key));
     }
 
     saveJsonObjectToFile(m_valuesFileName, object);
@@ -213,7 +187,7 @@ void ExtensionsViewModel::adjustEngine()
     m_engine->installExtensions(QJSEngine::ConsoleExtension);
 
     m_engine->globalObject().setProperty("appVersion", ApplicationVersion);
-    QJSValue extensionsObject = m_engine->newQObject(this);
+    QJSValue extensionsObject = m_engine->newQObject(m_innerObject);
     m_engine->globalObject().setProperty("appExtension", extensionsObject);
 }
 
@@ -227,7 +201,7 @@ void ExtensionsViewModel::readValues()
 
     foreach (auto key, values.keys()) {
         auto keyValue = values.value(key);
-        if (keyValue.isString()) m_values.insert(key, keyValue.toString());
+        if (keyValue.isString()) m_values->insert(key, keyValue.toString());
     }
 }
 
@@ -297,4 +271,39 @@ void ExtensionsViewModel::requestFinished(QNetworkReply *reply)
     QJSValue resultValue(bodyString);
     args.append(resultValue);
     callback.call(args);
+}
+
+void ExtensionsViewModel::makeHttpGet(const QString &url, const QList<QString> headers, const QJSValue &callback)
+{
+    if (!callback.isCallable()) {
+        qDebug() << "[extension]:makeHttpGet: Callback for execute URL " << url << " not a function!";
+        return;
+    }
+
+    auto uuid = QUuid::createUuid();
+    auto identifier = uuid.toString();
+    m_pendingCallbacks.insert(identifier, callback);
+
+    QNetworkRequest request(url);
+    request.setAttribute(QNetworkRequest::FollowRedirectsAttribute, true);
+    auto reply = m_networkManager->get(request);
+    reply->setProperty("pendingIndentifier", identifier);
+
+}
+
+void ExtensionsViewModel::makeHttpPost(const QString &url, const QList<QString> headers, const QString &body, const QJSValue &callback)
+{
+    if (!callback.isCallable()) {
+        qDebug() << "[extension]:makeHttpGet: Callback for execute URL " << url << " not a function!";
+        return;
+    }
+
+    auto uuid = QUuid::createUuid();
+    auto identifier = uuid.toString();
+    m_pendingCallbacks.insert(identifier, callback);
+
+    QNetworkRequest request(url);
+    request.setAttribute(QNetworkRequest::FollowRedirectsAttribute, true);
+    auto reply = m_networkManager->post(request, body.toUtf8());
+    reply->setProperty("pendingIndentifier", identifier);
 }

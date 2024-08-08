@@ -271,6 +271,7 @@ SOURCES += \
     Classes/ViewModels/applicationsviewmodel.cpp \
     Classes/ViewModels/applicationthemeviewmodel.cpp \
     Classes/ViewModels/authorizationviewmodel.cpp \
+    Classes/ViewModels/extensioninnerobject.cpp \
     Classes/ViewModels/extensionsviewmodel.cpp \
     Classes/ViewModels/externalplayerviewmodel.cpp \
     Classes/ViewModels/filterdictionariesviewmodel.cpp \
@@ -389,6 +390,7 @@ HEADERS += \
     Classes/ViewModels/applicationsviewmodel.h \
     Classes/ViewModels/applicationthemeviewmodel.h \
     Classes/ViewModels/authorizationviewmodel.h \
+    Classes/ViewModels/extensioninnerobject.h \
     Classes/ViewModels/extensionsviewmodel.h \
     Classes/ViewModels/externalplayerviewmodel.h \
     Classes/ViewModels/filterdictionariesviewmodel.h \
