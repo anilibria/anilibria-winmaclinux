@@ -30,6 +30,16 @@ export const globalValues = {
     }
 }
 
+export const releases = {
+    getRelease(id) {
+        if (!id) {
+            logger.message(`Parameter 'id' not specified!`);
+            return 
+        }
+        return appExtension.getRelease(id);
+    }
+}
+
 function emptyFunc() {
 }
 

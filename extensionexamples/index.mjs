@@ -1,4 +1,4 @@
-import { application, logger, httpClient, globalValues } from './utilites.mjs'
+import { application, logger, httpClient, globalValues, releases } from './utilites.mjs'
 
 // if need to make some logic dependence from application version
 if (application.checkIfAppVersionIs('2.2.17')) logger.message('Application version is ' + application.getAppVersion());
@@ -37,6 +37,16 @@ export function menuItems() {
           logger.message(`Values saved failed!!!!`);
         }
       }
+    },
+    {
+      title: 'Получить релиз',
+      handler: function () {
+        const release = releases.getRelease(9777)
+        logger.message(release.code);
+        logger.message(release.season);
+        logger.message(release.status);
+        logger.message(release.year);
+      }
     }
   ]
 }
@@ -47,5 +57,5 @@ export function releaseOpenedInVideoPlayer(releaseId, title, seria) {
 }
 
 // way to define module name and author
-export const moduleName = 'Test Module Name';
-export const moduleAuthor = 'Megaman';
+export const moduleName = 'Module Example';
+export const moduleAuthor = 'Ikari';
