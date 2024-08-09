@@ -30,6 +30,7 @@ void ExtensionsViewModel::setReleases(const ReleasesViewModel* releases) noexcep
     if (m_releases == releases) return;
 
     m_releases = const_cast<ReleasesViewModel *>(releases);
+    m_innerObject->setupReleases(m_releases);
     emit releasesChanged();
 }
 

@@ -1504,6 +1504,7 @@ ApplicationWindow {
 
     ExtensionsViewModel {
         id: extensionsViewModel
+        releases: releasesViewModel
         Component.onDestruction: {
             extensionsViewModel.saveValues();
         }
