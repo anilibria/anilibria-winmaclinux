@@ -752,6 +752,11 @@ void ReleasesViewModel::getFavoritesReleases(QList<FullReleaseModel *> *list) co
     }
 }
 
+void ReleasesViewModel::getFavoritesIds(QList<int> *list) const noexcept
+{
+    list->append(*m_userFavorites);
+}
+
 QString ReleasesViewModel::getReleaseCodeFromUrl(const QString &url) const noexcept
 {
     if (url.indexOf("anilibria.cf") > -1 || url.indexOf("anilib.top") > -1 || url.indexOf("anilibria.tv") > -1) {
@@ -839,6 +844,33 @@ QList<ApiTorrentModel *> ReleasesViewModel::getReleaseTorrents(int releaseId) no
     }
 
     return result;
+}
+
+void ReleasesViewModel::getSeenIds(QList<int>* list)
+{
+    QMap<int, int> seenMap;
+    auto keys = m_seenMarks->keys();
+    foreach(auto item, keys) {
+        auto parts = item.splitRef(".", Qt::SkipEmptyParts);
+        auto key = parts[0].toInt();
+        if (seenMap.contains(key)) {
+            seenMap[key] += 1;
+        } else {
+            seenMap.insert(key, 1);
+        }
+    }
+
+    QMapIterator<int, int> seenIterator(seenMap);
+    while (seenIterator.hasNext()) {
+        seenIterator.next();
+
+        if (!m_releasesMap->contains(seenIterator.key())) continue;
+
+        auto release = m_releasesMap->value(seenIterator.key());
+        if (release->countOnlineVideos() == seenIterator.value()) {
+            list->append(release->id());
+        }
+    }
 }
 
 void ReleasesViewModel::copyToClipboard(const QString &text) const noexcept

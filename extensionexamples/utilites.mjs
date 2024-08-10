@@ -37,6 +37,15 @@ export const releases = {
             return 
         }
         return appExtension.getRelease(id);
+    },
+    getFavorites() {
+        return appExtension.getFavorites();
+    },
+    getSeens() {
+        return appExtension.getSeens();
+    },
+    getReleasesCount() {
+        return appExtension.getReleasesCount();
     }
 }
 

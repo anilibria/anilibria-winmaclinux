@@ -153,7 +153,7 @@ QHash<int, QByteArray> ReleaseLinkedSeries::roleNames() const
     };
 }
 
-void ReleaseLinkedSeries::setup(QSharedPointer<QList<FullReleaseModel *> > releases, QVector<int>* userFavorites, QList<ApiTorrentModel*>* torrents)
+void ReleaseLinkedSeries::setup(QSharedPointer<QList<FullReleaseModel *> > releases, QList<int>* userFavorites, QList<ApiTorrentModel*>* torrents)
 {
     m_releases = releases;
     m_userFavorites = userFavorites;

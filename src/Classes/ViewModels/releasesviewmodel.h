@@ -133,7 +133,7 @@ private:
     int m_countFavorites { 0 };
     ReleasesListModel* m_items;
     QMap<int, int>* m_scheduleReleases { new QMap<int, int>() };
-    QVector<int>* m_userFavorites { new QVector<int>() };
+    QList<int>* m_userFavorites { new QList<int>() };
     QVector<int>* m_hiddenReleases { new QVector<int>() };
     QHash<QString, bool>* m_seenMarks { new QHash<QString, bool>() };
     QSharedPointer<QHash<int, HistoryModel*>> m_historyItems { new QHash<int, HistoryModel*>() };
@@ -276,12 +276,14 @@ public:
     void fillCurrentSeason(QList<FullReleaseModel*>* list) noexcept;
     void fillRecommendedByVoices(QList<FullReleaseModel*>* list) noexcept;
     void getFavoritesReleases(QList<FullReleaseModel*>* list) const noexcept;
+    void getFavoritesIds(QList<int>* list) const noexcept;
     QString getReleaseCodeFromUrl(const QString& url) const noexcept;
     void fillFullSearch(QList<FullReleaseModel*>& list, const QString& filter) noexcept;
     bool fullSearchCheck(const QString& word, const FullReleaseModel* release) noexcept;
     void iterateOnReleases(std::function<void (FullReleaseModel *)> func) noexcept;
     QList<ReleaseOnlineVideoModel*> getReleaseVideos(int releaseId) noexcept;
     QList<ApiTorrentModel*> getReleaseTorrents(int releaseId) noexcept;
+    void getSeenIds(QList<int>* list);
 
     Q_INVOKABLE void copyToClipboard(const QString& text) const noexcept;
     Q_INVOKABLE void copyImageToClipboard(const QString& imagePath) const;

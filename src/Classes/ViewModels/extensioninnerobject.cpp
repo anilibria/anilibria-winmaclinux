@@ -77,3 +77,25 @@ QVariant ExtensionInnerObject::getRelease(int id)
 
     return releaseObject;
 }
+
+QList<int> ExtensionInnerObject::getFavorites()
+{
+    QList<int> result;
+    m_releases->getFavoritesIds(&result);
+
+    return result;
+}
+
+QList<int> ExtensionInnerObject::getSeens()
+{
+    QList<int> result;
+
+    m_releases->getSeenIds(&result);
+
+    return result;
+}
+
+int ExtensionInnerObject::getReleasesCount()
+{
+    return m_releases->countReleases();
+}

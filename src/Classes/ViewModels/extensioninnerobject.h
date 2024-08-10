@@ -25,6 +25,9 @@ public:
     Q_INVOKABLE void saveValue(const QString& key, const QString& value);
     Q_INVOKABLE QString readValue(const QString& key);
     Q_INVOKABLE QVariant getRelease(int id);
+    Q_INVOKABLE QList<int> getFavorites();
+    Q_INVOKABLE QList<int> getSeens();
+    Q_INVOKABLE int getReleasesCount();
 
 signals:
     void makeHttpGetHandler(const QString& url, const QList<QString> headers, const QJSValue& callback);

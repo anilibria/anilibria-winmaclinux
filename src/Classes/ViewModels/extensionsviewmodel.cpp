@@ -55,7 +55,11 @@ void ExtensionsViewModel::releaseOpenedInVideoPlayer(int releaseId, const QStrin
         QJSValue seriaValue(seria);
         args.append(seriaValue);
 
-        handleFunction.call(args);
+        auto result = handleFunction.call(args);
+        if (result.isError()) {
+            qDebug() << "[extension]: Error caught at line " << result.property("lineNumber").toInt() << ": " << result.toString();
+            return;
+        }
     }
 }
 
