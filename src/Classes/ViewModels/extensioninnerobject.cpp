@@ -25,6 +25,16 @@ void ExtensionInnerObject::makeHttpPost(const QString &url, const QList<QString>
     emit makeHttpPostHandler(url, headers, body, callback);
 }
 
+void ExtensionInnerObject::makeHttpPut(const QString &url, const QList<QString> headers, const QString &body, const QJSValue &callback)
+{
+    emit makeHttpPutHandler(url, headers, body, callback);
+}
+
+void ExtensionInnerObject::makeHttpDelete(const QString &url, const QList<QString> headers, const QJSValue &callback)
+{
+    emit makeHttpDeleteHandler(url, headers, callback);
+}
+
 void ExtensionInnerObject::log(const QString &message)
 {
     qDebug() << "[extension]: " << message;

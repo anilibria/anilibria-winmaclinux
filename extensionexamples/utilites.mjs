@@ -62,6 +62,15 @@ export const httpClient = {
         const callback = options && options.callback ? options.callback : emptyFunc;
         appExtension.makeHttpGet(url, headers, callback);
     },
+    delete: function (url, options) {
+        if (!url) {
+            logger.message(`Parameter 'url' not specified!`);
+            return;
+        }
+        const headers = options && options.headers ? options.headers : [];
+        const callback = options && options.callback ? options.callback : emptyFunc;
+        appExtension.makeHttpDelete(url, headers, callback);
+    },
     post: function (url, body, options) {
         if (!body) {
             logger.message(`Parameter 'body' not specified!`);
@@ -75,5 +84,19 @@ export const httpClient = {
         const callback = options && options.callback ? options.callback : emptyFunc;
 
         appExtension.makeHttpPost(url, headers, body, callback);
+    },
+    put: function (url, body, options) {
+        if (!body) {
+            logger.message(`Parameter 'body' not specified!`);
+            return;
+        }
+        if (!url) {
+            logger.message(`Parameter 'url' not specified!`);
+            return;
+        }
+        const headers = options && options.headers ? options.headers : [];
+        const callback = options && options.callback ? options.callback : emptyFunc;
+
+        appExtension.makeHttpPut(url, headers, body, callback);
     }
 };

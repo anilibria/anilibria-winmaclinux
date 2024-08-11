@@ -63,7 +63,9 @@ private:
 private slots:
     void requestFinished(QNetworkReply *reply);
     void makeHttpGet(const QString& url, const QList<QString> headers, const QJSValue& callback);
+    void makeHttpDelete(const QString& url, const QList<QString> headers, const QJSValue& callback);
     void makeHttpPost(const QString& url, const QList<QString> headers, const QString& body, const QJSValue& callback);
+    void makeHttpPut(const QString& url, const QList<QString> headers, const QString& body, const QJSValue& callback);
 
 signals:
     void displayedExtensionsChanged();

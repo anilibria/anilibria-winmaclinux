@@ -23,6 +23,8 @@ ExtensionsViewModel::ExtensionsViewModel(QObject *parent)
 
     connect(m_innerObject, &ExtensionInnerObject::makeHttpGetHandler, this, &ExtensionsViewModel::makeHttpGet);
     connect(m_innerObject, &ExtensionInnerObject::makeHttpPostHandler, this, &ExtensionsViewModel::makeHttpPost);
+    connect(m_innerObject, &ExtensionInnerObject::makeHttpPutHandler, this, &ExtensionsViewModel::makeHttpPut);
+    connect(m_innerObject, &ExtensionInnerObject::makeHttpDeleteHandler, this, &ExtensionsViewModel::makeHttpDelete);
 }
 
 void ExtensionsViewModel::setReleases(const ReleasesViewModel* releases) noexcept
@@ -296,6 +298,23 @@ void ExtensionsViewModel::makeHttpGet(const QString &url, const QList<QString> h
 
 }
 
+void ExtensionsViewModel::makeHttpDelete(const QString &url, const QList<QString> headers, const QJSValue &callback)
+{
+    if (!callback.isCallable()) {
+        qDebug() << "[extension]:makeHttpDelete: Callback for execute URL " << url << " not a function!";
+        return;
+    }
+
+    auto uuid = QUuid::createUuid();
+    auto identifier = uuid.toString();
+    m_pendingCallbacks.insert(identifier, callback);
+
+    QNetworkRequest request(url);
+    request.setAttribute(QNetworkRequest::FollowRedirectsAttribute, true);
+    auto reply = m_networkManager->deleteResource(request);
+    reply->setProperty("pendingIndentifier", identifier);
+}
+
 void ExtensionsViewModel::makeHttpPost(const QString &url, const QList<QString> headers, const QString &body, const QJSValue &callback)
 {
     if (!callback.isCallable()) {
@@ -310,5 +329,22 @@ void ExtensionsViewModel::makeHttpPost(const QString &url, const QList<QString> 
     QNetworkRequest request(url);
     request.setAttribute(QNetworkRequest::FollowRedirectsAttribute, true);
     auto reply = m_networkManager->post(request, body.toUtf8());
+    reply->setProperty("pendingIndentifier", identifier);
+}
+
+void ExtensionsViewModel::makeHttpPut(const QString &url, const QList<QString> headers, const QString &body, const QJSValue &callback)
+{
+    if (!callback.isCallable()) {
+        qDebug() << "[extension]:makeHttpPut: Callback for execute URL " << url << " not a function!";
+        return;
+    }
+
+    auto uuid = QUuid::createUuid();
+    auto identifier = uuid.toString();
+    m_pendingCallbacks.insert(identifier, callback);
+
+    QNetworkRequest request(url);
+    request.setAttribute(QNetworkRequest::FollowRedirectsAttribute, true);
+    auto reply = m_networkManager->put(request, body.toUtf8());
     reply->setProperty("pendingIndentifier", identifier);
 }

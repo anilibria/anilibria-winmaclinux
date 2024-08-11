@@ -9,7 +9,6 @@ export function menuItems() {
     {
       title: 'Проверить GET запрос',
       handler: function () {
-        logger.message(`Get started`);
         httpClient.get('https://jsonplaceholder.typicode.com/users/1',
           {
             callback: (res) => {
@@ -22,7 +21,14 @@ export function menuItems() {
     {
       title: 'Проверить POST запрос',
       handler: function () {
-
+        httpClient.post('https://jsonplaceholder.typicode.com/posts',
+          '{"test": "value"}',
+          {
+            callback: (res) => {
+              logger.message(`Post Request result: ${res}`);
+            }
+          }
+        )
       }
     },
     {
