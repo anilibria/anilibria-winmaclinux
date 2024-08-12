@@ -38,7 +38,7 @@ Page {
                         Layout.fillWidth: true
                         Layout.preferredHeight: 45
                         height: 45
-                        color: applicationThemeViewModel.pageUpperPanel
+                        color: applicationThemeViewModel.currentItems.pageUpperPanel
 
                         CommonSwitch {
                             id: selectMode

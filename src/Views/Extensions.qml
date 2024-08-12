@@ -35,6 +35,41 @@ Page {
                 anchors.fill: parent
                 spacing: 0
 
+                Rectangle {
+                    color: applicationThemeViewModel.currentItems.pageVerticalPanel
+                    width: 40
+                    Layout.fillHeight: true
+                    Column {
+                        LeftPanelIconButton {
+                            iconPath: applicationThemeViewModel.currentItems.iconInfo
+                            iconWidth: 29
+                            iconHeight: 29
+                            tooltipMessage: "Открыть ссылки на обучающие материалы"
+                            onButtonPressed: {
+                                informationPopup.open();
+                            }
+
+                            DefaultPopup {
+                                id: informationPopup
+                                x: 40
+                                y: parent.height - 10
+                                width: 410
+                                height: 80
+                                modal: true
+                                focus: true
+                                closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
+
+                                Column {
+                                    LinkedText {
+                                        fontPointSize: 11
+                                        text: "<a href='https://github.com/anilibria/anilibria-winmaclinux/blob/master/extensions.md'>Как создавать расширения для приложения AniLibria.Qt</a>"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
                 ColumnLayout {
                     Layout.fillHeight: true
                     Layout.fillWidth: true

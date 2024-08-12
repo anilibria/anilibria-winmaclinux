@@ -21,7 +21,7 @@
 QString AnilibriaImagesPath = "https://anilibriaqt.anilib.top";
 QString AnilibriaApiPath = "https://anilibriaqt.anilib.top/";
 bool IsPortable = false;
-QString ApplicationVersion = "2.2.17";
+QString ApplicationVersion = "2.2.18";
 
 QString StatisticsSectionId = "statistics";
 QString NewInFavoritesSectionId = "newinfavorites";
