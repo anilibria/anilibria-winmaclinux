@@ -228,7 +228,7 @@ Page {
 
             SystemOpenFolderDialog {
                 id: selectFolderExtensionDialog
-                title: "Выберите папку для создания бэкапа"
+                title: "Выберите папку с расширением"
                 onNeedOpenFolder: {
                     extensionsViewModel.addExtension(folderUrl);
                 }
