@@ -116,7 +116,6 @@ ReleasesViewModel::ReleasesViewModel(QObject *parent) : QObject(parent)
 
     m_items->refresh();
 
-    connect(m_releasesUpdateWatcher, &QFutureWatcher<bool>::finished, this, &ReleasesViewModel::releasesUpdated);
     connect(m_cinemahall.get(), &CinemahallListModel::needDeleteFavorites, this, &ReleasesViewModel::needDeleteFavorites);
 }
 
@@ -266,23 +265,6 @@ void ReleasesViewModel::setNewEntities(QString newEntities) noexcept
     emit newOnlineSeriesCountChanged();
     emit newTorrentsCountChanged();
     emit newTorrentSeriesCountChanged();
-}
-
-void ReleasesViewModel::setSynchronizationService(SynchronizationService *synchronizationService) noexcept
-{
-    if (m_synchronizationService == synchronizationService) return;
-
-    bool isFirstTime = m_synchronizationService == nullptr;
-
-    m_synchronizationService = synchronizationService;
-    emit synchronizationServiceChanged();
-
-    if (!isFirstTime) return;
-
-    connect(m_synchronizationService, &SynchronizationService::synchronizedReleases, this, &ReleasesViewModel::synchronizedReleases);
-    connect(m_synchronizationService, &SynchronizationService::synchronizedSchedule, this, &ReleasesViewModel::synchronizedSchedule);
-    connect(m_synchronizationService, &SynchronizationService::userFavoritesReceived, this,&ReleasesViewModel::userFavoritesReceived);
-
 }
 
 void ReleasesViewModel::setApplicationSettings(ApplicationSettings *applicationSettings) noexcept
@@ -1595,25 +1577,6 @@ void ReleasesViewModel::removeAllHidedReleases() noexcept
     m_items->refresh();
 }
 
-bool ReleasesViewModel::importReleasesFromFile(QString path)
-{
-    auto filePath = removeFileProtocol(path);
-    QFile importFile(filePath);
-    if (!importFile.open(QFile::ReadOnly | QFile::Text)) {
-        qInfo() << "Error while import releases from file";
-        return false;
-    }
-
-    auto json = importFile.readAll();
-    importFile.close();
-
-    QList<QString> list;
-    list.append(json);
-    updateAllReleases(list, false);
-
-    return true;
-}
-
 void ReleasesViewModel::addToCinemahallSelectedReleases()
 {
     auto selectedReleases = m_items->getSelectedReleases();
@@ -2212,24 +2175,6 @@ QHash<int, int> ReleasesViewModel::getAllSeenMarkCount() noexcept
         }
     }
     return result;
-}
-
-void ReleasesViewModel::releasesUpdated()
-{
-    if (!m_releasesUpdateWatcher->result()) return;
-
-    setCountReleases(m_releases->count());
-    m_items->refresh();
-
-    m_synchronizationService->synchronizeSchedule();
-
-    setSynchronizationEnabled(false);
-    emit afterSynchronizedReleases();
-}
-
-void ReleasesViewModel::synchronizedReleases()
-{
-    updateAllReleases(m_synchronizationService->getSynchronizedReleasePages(), true);
 }
 
 void ReleasesViewModel::synchronizedSchedule(const QString &data)

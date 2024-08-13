@@ -999,7 +999,6 @@ ApplicationWindow {
 
     ReleasesViewModel {
         id: releasesViewModel
-        synchronizationService: synchronizationService
         synchronizationServicev2: synchronizationServicev2
         synchronizationEnabled: synchronizationServicev2.synchronizeCacheActived
         applicationSettings: applicationSettings
@@ -1022,9 +1021,6 @@ ApplicationWindow {
 
             analyticsService.sendView("releasecard", "open", "%2Frelease");
             userActivityViewModel.addOpenedCardToCounter();
-        }
-        onErrorWhileReleaseSynchronization: {
-            notificationViewModel.sendErrorNotification(`Не удалось синхронизовать релизы. Попробуйте повторить синхронизацию через некоторое время.`);
         }
         onReleasesFullyLoaded: {
             releaseLinkedSeries.refreshSeries();

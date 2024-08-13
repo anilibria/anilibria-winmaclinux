@@ -35,7 +35,6 @@
 #include "../Models/onlinevideomodel.h"
 #include "../Models/releaseonlinevideomodel.h"
 #include "../Models/apitorrentmodel.h"
-#include "../Services/synchronizationservice.h"
 #include "../Services/applicationsettings.h"
 #include "../Services/localstorageservice.h"
 #include "../Services/synchronizev2service.h"
@@ -65,7 +64,6 @@ class ReleasesViewModel : public QObject
     Q_PROPERTY(bool notificationForFavorites READ notificationForFavorites WRITE setNotificationForFavorites NOTIFY notificationForFavoritesChanged)
     Q_PROPERTY(bool showSidePanel READ showSidePanel WRITE setShowSidePanel NOTIFY showSidePanelChanged)
     Q_PROPERTY(bool selectMode READ selectMode WRITE setSelectMode NOTIFY selectModeChanged)
-    Q_PROPERTY(SynchronizationService* synchronizationService READ synchronizationService WRITE setSynchronizationService NOTIFY synchronizationServiceChanged)
     Q_PROPERTY(ApplicationSettings* applicationSettings READ applicationSettings WRITE setApplicationSettings NOTIFY applicationSettingsChanged)
     Q_PROPERTY(LocalStorageService* localStorage READ localStorage WRITE setLocalStorage NOTIFY localStorageChanged)
     Q_PROPERTY(bool hasCinemahallNotSeenVideos READ hasCinemahallNotSeenVideos NOTIFY hasCinemahallNotSeenVideosChanged)
@@ -138,7 +136,6 @@ private:
     QHash<QString, bool>* m_seenMarks { new QHash<QString, bool>() };
     QSharedPointer<QHash<int, HistoryModel*>> m_historyItems { new QHash<int, HistoryModel*>() };
     QSharedPointer<ChangesModel> m_releaseChanges { new ChangesModel() };
-    SynchronizationService* m_synchronizationService { nullptr };
     ApplicationSettings* m_applicationSettings { nullptr };
     LocalStorageService* m_localStorage { nullptr };
     bool m_notificationForFavorites { false };
@@ -213,9 +210,6 @@ public:
 
     QString newEntities() const noexcept { return m_newEntities; }
     void setNewEntities(QString newEntities) noexcept;
-
-    SynchronizationService* synchronizationService() const noexcept { return m_synchronizationService; }
-    void setSynchronizationService(SynchronizationService* synchronizationService) noexcept;
 
     ApplicationSettings* applicationSettings() const noexcept { return m_applicationSettings; }
     void setApplicationSettings(ApplicationSettings* applicationSettings) noexcept;
@@ -319,7 +313,6 @@ public:
     Q_INVOKABLE void removeFromHidedReleases(const QList<int>& ids) noexcept;
     Q_INVOKABLE void removeFromHidedSelectedReleases() noexcept;
     Q_INVOKABLE void removeAllHidedReleases() noexcept;
-    Q_INVOKABLE bool importReleasesFromFile(QString path);
     Q_INVOKABLE void addToCinemahallSelectedReleases();
     Q_INVOKABLE void setupSortingForSection() const noexcept;
     Q_INVOKABLE bool getSeriaSeenMark(int id, int seriaId) const noexcept;
@@ -375,8 +368,6 @@ private:
     QHash<int, int> getAllSeenMarkCount() noexcept;
 
 private slots:
-    void releasesUpdated();
-    void synchronizedReleases();
     void synchronizedSchedule(const QString& data);
     void userFavoritesReceived(const QString& data);
     void userFavoritesReceivedV2(const QList<int>& data);
@@ -399,7 +390,6 @@ signals:
     void notificationForFavoritesChanged();
     void showSidePanelChanged();
     void selectModeChanged();
-    void synchronizationServiceChanged();
     void applicationSettingsChanged();
     void isOpenedCardChanged();
     void openedReleaseIdChanged();
