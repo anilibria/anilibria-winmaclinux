@@ -113,6 +113,7 @@ ReleasesViewModel::ReleasesViewModel(QObject *parent) : QObject(parent)
     loadSeenMarks();
     loadHistory();
     loadChanges();
+    loadReleases();
 
     m_items->refresh();
 
@@ -292,6 +293,8 @@ void ReleasesViewModel::setSynchronizationServicev2(const Synchronizev2Service *
     emit synchronizationServicev2Changed();
 
     connect(m_synchronizationServicev2, &Synchronizev2Service::userFavoritesReceivedV2, this,&ReleasesViewModel::userFavoritesReceivedV2);
+
+    reloadApiHostInItems();
 }
 
 void ReleasesViewModel::setProxyPort(int proxyPort) noexcept
@@ -1644,7 +1647,7 @@ void ReleasesViewModel::loadNextReleasesWithoutReactive()
         foreach (auto release, releasesArray) {
             FullReleaseModel* jsonRelease = new FullReleaseModel();
             jsonRelease->readFromJson(release.toObject());
-            jsonRelease->setPosterHost(m_synchronizationServicev2->apiv2host());
+            if (m_synchronizationServicev2 != nullptr) jsonRelease->setPosterHost(m_synchronizationServicev2->apiv2host());
 
             m_releases->append(jsonRelease);
             m_releasesMap->insert(jsonRelease->id(), jsonRelease);
@@ -1673,7 +1676,7 @@ void ReleasesViewModel::loadNextReleasesWithoutReactive()
             foreach (auto video, videos) {
                 ReleaseOnlineVideoModel* jsonVideo = new ReleaseOnlineVideoModel();
                 auto object = video.toObject();
-                jsonVideo->setPosterHost(m_synchronizationServicev2->apiv2host());
+                if (m_synchronizationServicev2 != nullptr) jsonVideo->setPosterHost(m_synchronizationServicev2->apiv2host());
                 jsonVideo->readFromApiModel(object, releaseId);
 
                 m_onlineVideos.append(jsonVideo);
@@ -1694,8 +1697,21 @@ void ReleasesViewModel::loadNextReleasesWithoutReactive()
     foreach (auto torrentItem, torrentsArray) {
         auto torrentModel = new ApiTorrentModel();
         torrentModel->readFromJson(torrentItem.toObject());
-        torrentModel->setTorrentHost(m_synchronizationServicev2->apiv2host());
+        if (m_synchronizationServicev2 != nullptr) torrentModel->setTorrentHost(m_synchronizationServicev2->apiv2host());
         m_torrentItems.append(torrentModel);
+    }
+}
+
+void ReleasesViewModel::reloadApiHostInItems()
+{
+    foreach (auto release, *m_releases) {
+        release->setPosterHost(m_synchronizationServicev2->apiv2host());
+    }
+    foreach (auto video, m_onlineVideos) {
+        video->setPosterHost(m_synchronizationServicev2->apiv2host());
+    }
+    foreach (auto torrentItem, m_torrentItems) {
+        torrentItem->setTorrentHost(m_synchronizationServicev2->apiv2host());
     }
 }
 

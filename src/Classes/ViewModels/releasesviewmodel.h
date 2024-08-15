@@ -333,6 +333,7 @@ public:
 private:
     void loadReleases();
     void loadNextReleasesWithoutReactive();
+    void reloadApiHostInItems();
 
     void loadSchedules();
     void saveSchedule(QString json);

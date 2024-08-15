@@ -85,8 +85,38 @@
 #include <QQuickWindow>
 #endif
 
+void myMessageOutput(QtMsgType type, const QMessageLogContext &context, const QString &msg)
+{
+    Q_UNUSED(context);
+
+    QString txt;
+    switch (type) {
+        case QtDebugMsg:
+        case QtInfoMsg:
+            txt = QString("Common: %1").arg(msg);
+            break;
+        case QtWarningMsg:
+            txt = QString("Warning: %1").arg(msg);
+            break;
+        case QtCriticalMsg:
+            txt = QString("Critical: %1").arg(msg);
+            break;
+        case QtFatalMsg:
+            txt = QString("Fatal: %1").arg(msg);
+            abort();
+    }
+
+    QFile outFile("qt.log");
+    outFile.open(QIODevice::WriteOnly | QIODevice::Append);
+    QTextStream ts(&outFile);
+    ts << txt << endl;
+}
+
 int main(int argc, char *argv[])
 {
+    auto isNeedLogging = argc == 2 && QString(argv[1]) == "outputlog";
+    if (isNeedLogging) qInstallMessageHandler(myMessageOutput);
+
     qputenv("QML_DISABLE_DISK_CACHE", "1");
 
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
@@ -98,9 +128,7 @@ int main(int argc, char *argv[])
 #endif
 
 #ifdef Q_OS_WIN
-    if (argc == 2 && QString(argv[1]) == "outputlog") {
-        freopen("output.log", "w", stdout); //redirect output to file
-    }
+    if (isNeedLogging) freopen("output.log", "w", stdout); //redirect output to file
 #endif
 
     if (argc >= 2) {
@@ -177,6 +205,7 @@ int main(int argc, char *argv[])
 
     qmlRegisterType<VlcQmlPlayer>("VLCQt", 1, 1, "VlcPlayer");
     qmlRegisterType<VlcQmlVideoOutput>("VLCQt", 1, 1, "VlcVideoOutput");
+
 #endif
 
 #ifdef USE_MPV_PLAYER
