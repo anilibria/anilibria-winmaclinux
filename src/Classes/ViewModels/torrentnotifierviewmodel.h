@@ -28,6 +28,7 @@
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
 #include <QSharedPointer>
+#include <QAbstractSocket>
 #include "../Models/downloadedtorrentmodel.h"
 #include "../ViewModels/releasesviewmodel.h"
 #include "../ListModels/dowloadedtorrentslistmodel.h"
@@ -58,6 +59,7 @@ private:
     DowloadedTorrentsListModel* m_torrents { new DowloadedTorrentsListModel(this) };
     bool m_needActivateRefreshEvent { false };
     int m_lastRefreshIdentifier { -1 };
+    int m_howMuchTimesTryConnect { 0 };
 
 public:
     explicit TorrentNotifierViewModel(QObject *parent = nullptr);
@@ -102,7 +104,9 @@ private slots:
     void messageReceived(const QString &message);
     void socketConnected();
     void socketDisconnected();
+    void errorSocket(QAbstractSocket::SocketError error);
     void requestResponse(QNetworkReply* reply);
+    void makeConnectToNotifiers();
 
 signals:
     void torrentFullyDownloaded(const QString& releaseName);

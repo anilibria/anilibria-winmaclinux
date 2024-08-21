@@ -391,5 +391,5 @@ void MainViewModel::selectedItemInMainMenu(QString pageName)
         return;
     }
 
-    QDesktopServices::openUrl(QUrl("https://www.anilibria.tv/pages/donate.php"));
+    QDesktopServices::openUrl(QUrl("https://anilibria.top/support"));
 }

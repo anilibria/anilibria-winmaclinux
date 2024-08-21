@@ -34,6 +34,7 @@ TorrentNotifierViewModel::TorrentNotifierViewModel(QObject *parent)
     connect(m_webSocket,&QWebSocket::textMessageReceived, this, &TorrentNotifierViewModel::messageReceived);
     connect(m_webSocket,&QWebSocket::connected, this, &TorrentNotifierViewModel::socketConnected);
     connect(m_webSocket,&QWebSocket::disconnected, this, &TorrentNotifierViewModel::socketDisconnected);
+    connect(m_webSocket,QOverload<QAbstractSocket::SocketError>::of(&QWebSocket::error), this, &TorrentNotifierViewModel::errorSocket);
     connect(m_manager,&QNetworkAccessManager::finished, this, &TorrentNotifierViewModel::requestResponse);
 }
 
@@ -245,6 +246,14 @@ void TorrentNotifierViewModel::socketDisconnected()
     qInfo() << "TorrentStream socket disconnected";
 }
 
+void TorrentNotifierViewModel::errorSocket(QAbstractSocket::SocketError error)
+{
+    if (m_howMuchTimesTryConnect < 5) {
+        m_howMuchTimesTryConnect += 1;
+        QTimer::singleShot(1000 * m_howMuchTimesTryConnect, this, &TorrentNotifierViewModel::makeConnectToNotifiers);
+    }
+}
+
 void TorrentNotifierViewModel::requestResponse(QNetworkReply *reply)
 {
     auto isNeedNotify = m_needActivateRefreshEvent;
@@ -298,3 +307,7 @@ void TorrentNotifierViewModel::requestResponse(QNetworkReply *reply)
     }
 }
 
+void TorrentNotifierViewModel::makeConnectToNotifiers()
+{
+    startGetNotifiers();
+}
