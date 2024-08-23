@@ -246,7 +246,7 @@ MpvObject::MpvObject(QQuickItem * parent)
     mpv_set_option_string(mpv, "terminal", "yes");
     mpv_set_option_string(mpv, "msg-level", "all=v");
     mpv_set_option_string(mpv, "cache", "yes");
-    mpv_set_option_string(mpv, "cache-secs", "20");
+    mpv_set_option_string(mpv, "cache-secs", "25");
     mpv_set_option_string(mpv, "network-timeout", "20");
     mpv_set_option_string(mpv, "framedrop", "decoder");
     mpv_set_option_string(mpv, "demuxer-termination-timeout", "5");
