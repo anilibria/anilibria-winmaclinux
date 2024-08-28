@@ -1371,6 +1371,9 @@ ApplicationWindow {
 
     UserConfigurationViewModel {
         id: userConfigurationViewModel
+        Component.onCompleted: {
+            releasesViewModel.refreshApiHost();
+        }
         Component.onDestruction: {
             if (!userConfigurationViewModel.showedVideoForNewcomers) userConfigurationViewModel.showedVideoForNewcomers = true;
             userConfigurationViewModel.saveSettingsToFile();

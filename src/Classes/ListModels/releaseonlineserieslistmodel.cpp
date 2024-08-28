@@ -19,7 +19,6 @@
 #include <QJsonDocument>
 #include <QTime>
 #include "releaseonlineserieslistmodel.h"
-#include "../../globalconstants.h"
 
 ReleaseOnlineSeriesListModel::ReleaseOnlineSeriesListModel(QObject *parent)
     : QAbstractListModel{parent}
@@ -49,7 +48,7 @@ QVariant ReleaseOnlineSeriesListModel::data(const QModelIndex &index, int role) 
 
     switch (role) {
         case IdRole: {
-            return QVariant(onlineVideo->id());
+            return QVariant(onlineVideo->number());
         }
         case IndexRole: {
             return QVariant(onlineVideo->order());
@@ -185,36 +184,13 @@ void ReleaseOnlineSeriesListModel::refresh()
     }
 
     auto videos = m_releases->getReleaseVideos(m_releaseId);
-    auto release = m_releases->getReleaseById(m_releaseId);
 
-    foreach (auto video, videos) {
-        auto videoModel = new OnlineVideoModel();
-        videoModel->setDescription(video->description());
-        videoModel->setFullHd(video->fullhd());
-        videoModel->setHd(video->hd());
-        videoModel->setSd(video->sd());
-        videoModel->setOrder(video->order());
-        videoModel->setReleaseId(m_releaseId);
-        videoModel->setReleasePoster(release != nullptr ? release->poster() : "");
-        videoModel->setTitle(video->title());
-        videoModel->setId(video->number());
-
-        videoModel->setOpeningStartSeconds(video->openingStartSeconds());
-        videoModel->setOpeningEndSeconds(video->openingEndSeconds());
-
-        videoModel->setEndingStartSeconds(video->endingStartSeconds());
-        videoModel->setEndingEndSeconds(video->endingEndSeconds());
-
-        videoModel->setVideoPoster(video->videoPoster());
-        videoModel->setIsGroup(false);
-
-        m_items.append(videoModel);
-    }
+    m_items.append(videos);
 
     std::sort(
         m_items.begin(),
         m_items.end(),
-        [](const OnlineVideoModel* first, const OnlineVideoModel* second) {
+        [](const ReleaseOnlineVideoModel* first, const ReleaseOnlineVideoModel* second) {
             return first->order() < second->order();
         }
     );

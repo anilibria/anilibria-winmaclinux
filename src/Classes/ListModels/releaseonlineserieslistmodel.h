@@ -20,7 +20,7 @@
 #define RELEASEONLINESERIESLISTMODEL_H
 
 #include <QAbstractListModel>
-#include "../Models/onlinevideomodel.h"
+#include "../Models/releaseonlinevideomodel.h"
 #include "../ViewModels/releasesviewmodel.h"
 #include "../ViewModels/onlineplayerviewmodel.h"
 
@@ -34,7 +34,7 @@ class ReleaseOnlineSeriesListModel : public QAbstractListModel
     Q_PROPERTY(int selectedVideoIndex READ selectedVideoIndex NOTIFY selectedVideoIndexChanged)
 
 private:
-    QList<OnlineVideoModel*> m_items { QList<OnlineVideoModel*>() };
+    QList<ReleaseOnlineVideoModel*> m_items { QList<ReleaseOnlineVideoModel*>() };
     int m_releaseId { 0 };
     ReleasesViewModel* m_releases { nullptr };
     OnlinePlayerViewModel* m_onlinePlayer { nullptr };

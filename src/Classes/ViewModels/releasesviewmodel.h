@@ -32,7 +32,6 @@
 #include "../ListModels/releasetorrentcommonlist.h"
 #include "../Models/historymodel.h"
 #include "../Models/changesmodel.h"
-#include "../Models/onlinevideomodel.h"
 #include "../Models/releaseonlinevideomodel.h"
 #include "../Models/apitorrentmodel.h"
 #include "../Services/applicationsettings.h"
@@ -326,6 +325,7 @@ public:
     Q_INVOKABLE QString packAsM3UAndOpen(int id, QString quality);
     Q_INVOKABLE QString packAsMPCPLAndOpen(int id, QString quality);
     Q_INVOKABLE void savePreviousReleases(int previousLastTimeStamp);
+    Q_INVOKABLE void refreshApiHost();
     FullReleaseModel* getReleaseById(int id) const noexcept;
     void resetReleaseChanges(int releaseId) noexcept;
     quint32 m_seedValue { 0 };
@@ -365,7 +365,6 @@ private:
     FullReleaseModel* getReleaseByCode(QString code) const noexcept;
     int randomBetween(int low, int high) const noexcept;
     void mapToFullReleaseModel(QJsonObject &&jsonObject, const bool isFirstStart, QSharedPointer<QSet<int>> hittedIds);
-    QString videosToJson(QList<OnlineVideoModel> &videos);
     QHash<int, int> getAllSeenMarkCount() noexcept;
 
 private slots:

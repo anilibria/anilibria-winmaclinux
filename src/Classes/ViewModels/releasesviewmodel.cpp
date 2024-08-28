@@ -1382,6 +1382,11 @@ void ReleasesViewModel::savePreviousReleases(int previousLastTimeStamp)
     }
 }
 
+void ReleasesViewModel::refreshApiHost()
+{
+    reloadApiHostInItems();
+}
+
 FullReleaseModel *ReleasesViewModel::getReleaseById(int id) const noexcept
 {
     auto iterator = std::find_if(
@@ -1704,14 +1709,15 @@ void ReleasesViewModel::loadNextReleasesWithoutReactive()
 
 void ReleasesViewModel::reloadApiHostInItems()
 {
+    auto newHost = m_synchronizationServicev2->apiv2host();
     foreach (auto release, *m_releases) {
-        release->setPosterHost(m_synchronizationServicev2->apiv2host());
+        release->setPosterHost(newHost);
     }
     foreach (auto video, m_onlineVideos) {
-        video->setPosterHost(m_synchronizationServicev2->apiv2host());
+        video->setPosterHost(newHost);
     }
     foreach (auto torrentItem, m_torrentItems) {
-        torrentItem->setTorrentHost(m_synchronizationServicev2->apiv2host());
+        torrentItem->setTorrentHost(newHost);
     }
 }
 
@@ -2159,19 +2165,6 @@ void ReleasesViewModel::mapToFullReleaseModel(QJsonObject &&jsonObject, const bo
         m_releases->append(model);
         m_releasesMap->insert(model->id(), model);
     }
-}
-
-QString ReleasesViewModel::videosToJson(QList<OnlineVideoModel> &videos)
-{
-    QJsonArray videosArray;
-    foreach (auto video, videos) {
-        QJsonObject jsonObject;
-        video.writeToJson(jsonObject);
-        videosArray.append(jsonObject);
-    }
-    QJsonDocument videoDocument(videosArray);
-    QString videosJson(videoDocument.toJson());
-    return videosJson;
 }
 
 QHash<int, int> ReleasesViewModel::getAllSeenMarkCount() noexcept

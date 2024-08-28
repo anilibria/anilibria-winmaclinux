@@ -101,7 +101,7 @@ QVariant ReleasesListModel::data(const QModelIndex &index, int role) const
             return QVariant(release->year());
         }
         case TypeRole: {
-            return QVariant(release->type());
+            return QVariant(release->type() + " " + release->series());
         }
         case GenresRole: {
             return QVariant(release->genres());
