@@ -326,6 +326,8 @@ public:
     Q_INVOKABLE QString packAsMPCPLAndOpen(int id, QString quality);
     Q_INVOKABLE void savePreviousReleases(int previousLastTimeStamp);
     Q_INVOKABLE void refreshApiHost();
+    Q_INVOKABLE void copyOpenedReleaseMagnetTorrent(int identifier) noexcept;
+    Q_INVOKABLE void openOpenedReleaseMagnetTorrent(int identifier) noexcept;
     FullReleaseModel* getReleaseById(int id) const noexcept;
     void resetReleaseChanges(int releaseId) noexcept;
     quint32 m_seedValue { 0 };

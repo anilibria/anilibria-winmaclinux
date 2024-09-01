@@ -157,46 +157,39 @@ ThemeFieldListModel::ThemeFieldListModel(QObject *parent)
     m_descriptions.insert(colorSwitchCheckedHandleField, "Цвет переключателя 6:Цвет бара в состоянии выбрано");
     m_descriptions.insert(colorSwitchUncheckedHandleField, "Цвет переключателя 7:Цвет бара в состоянии не выбрано");
     m_descriptions.insert(colorSwitchDisabledHandleField, "Цвет переключателя 8:Цвет бара в состоянии не активно");
-
     m_descriptions.insert(colorTextFieldAccentField, "Цвет текстового поля 1: Цвет акцента в текстовых полях в фокусе");
     m_descriptions.insert(colorTextFieldForegroundField, "Цвет текстового поля 2: Цвет текста в текстовом поле в состоянии Активно");
     m_descriptions.insert(colorTextFieldHintField, "Цвет текстового поля 2: Цвет текста подсказки");
     m_descriptions.insert(colorTextFieldHighlightField, "Цвет текстового поля 2: Цвет выделенного текста в текстовом поле");
     m_descriptions.insert(colorTextFieldTextField, "Цвет текстового поля 2: Цвет текста в текстовом поле");
-
     m_descriptions.insert(colorMenuDialogBackgroundField, "Цвет меню 1: Цвет фона попапа меню");
     m_descriptions.insert(colorMenuOverlayBackgroundField, "Цвет меню 2: Цвет фона оверлея меню");
     m_descriptions.insert(colorMenuForegroundField, "Цвет меню 3: Цвет текста в пунктах меню");
     m_descriptions.insert(colorMenuItemHintField, "Цвет меню 4: Цвет подсказки");
     m_descriptions.insert(colorMenuRippleField, "Цвет меню 5: Цвет рассеивания");
     m_descriptions.insert(colorMenuHighlightField, "Цвет меню 6: Цвет выбранного пункта");
-
     m_descriptions.insert(colorDrawerDividerColorField, "Цвет главного меню 1:Цвет разделителя");
     m_descriptions.insert(colorDrawerDimColorField, "Цвет главного меню 2:Цвет затенения");
     m_descriptions.insert(colorDrawerDialogColorField, "Цвет главного меню 3:Цвет диалога");
-
     m_descriptions.insert(iconDisabledNotificationsField, "Иконка Нет уведомлений: Иконка для состояния Нет уведомлений");
     m_descriptions.insert(iconDisabledCinemahallField, "Иконка Кинозал Нет Уведомлений: Иконка для состояния Нет уведомлений");
-
     m_descriptions.insert(iconLogoutField, "Иконка выхода:Иконка для кнопки выхода");
-
     m_descriptions.insert(colorComboBoxAccentField, "Цвет выпадающий список 1:Цвет акцента на области элемента");
     m_descriptions.insert(colorComboBoxHintField, "Цвет выпадающий список 2:Цвет подсказки");
     m_descriptions.insert(colorComboBoxBackgroundField, "Цвет выпадающий список 3:Цвет фона области элемента");
     m_descriptions.insert(iconCustomGroupField, "Иконка пользовательских групп:Иконка для кнопки управления пользовательскими группами");
     m_descriptions.insert(iconEditField, "Иконка редактирования:Иконка для кнопки редактирования");
-
     m_descriptions.insert(iconReleaseCatalogSearchFoundedField, "Иконка Поиск:Иконка для кнопки открытия поисковых полей в Каталоге релизов для состояния Фильтр выбран");
     m_descriptions.insert(iconCustomGroupFoundedField, "Иконка пользовательских групп:Иконка для кнопки управления пользовательскими группами для состояния Фильтр выбран");
-
     m_descriptions.insert(iconMainMenuApplicationsField, "Иконка страницы Приложения:Иконка находящаяся в главном меню");
-
     m_descriptions.insert(iconAuthorizationVkField, "Иконка страницы Авторизация:Иконка находящаяся в панели авторизации");
     m_descriptions.insert(iconAuthorizationGoogleField, "Иконка страницы Авторизация:Иконка находящаяся в панели авторизации");
     m_descriptions.insert(iconAuthorizationPatreonField, "Иконка страницы Авторизация:Иконка находящаяся в панели авторизации");
     m_descriptions.insert(iconAuthorizationDiscordField, "Иконка страницы Авторизация:Иконка находящаяся в панели авторизации");
     m_descriptions.insert(iconContextMenuField, "Иконка контекстного меню:Иконка находящаяся в наборе кнопок где требуется открытие контекстного меню");
     m_descriptions.insert(iconMainMenuExtensionsField, "Иконка страницы Расширения:Иконка находящаяся в главном меню");
+
+    m_descriptions.insert(iconMagnetField, "Иконка Magnet:В карточке релиза позволяет копировать/открыть magnet ссылки");
 
     m_saveMenuItems.append("Сохранить и добавить тему в список");
     m_saveMenuItems.append("Сохранить в файл");

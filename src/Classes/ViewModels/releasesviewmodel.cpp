@@ -1387,6 +1387,23 @@ void ReleasesViewModel::refreshApiHost()
     reloadApiHostInItems();
 }
 
+void ReleasesViewModel::copyOpenedReleaseMagnetTorrent(int identifier) noexcept
+{
+    auto link = m_releaseTorrentsList->getMagnetLink(identifier);
+    if (link == nullptr) return;
+
+    QClipboard *clipboard = QGuiApplication::clipboard();
+    clipboard->setText(link);
+}
+
+void ReleasesViewModel::openOpenedReleaseMagnetTorrent(int identifier) noexcept
+{
+    auto link = m_releaseTorrentsList->getMagnetLink(identifier);
+    if (link == nullptr) return;
+
+    QDesktopServices::openUrl(QUrl(link));
+}
+
 FullReleaseModel *ReleasesViewModel::getReleaseById(int id) const noexcept
 {
     auto iterator = std::find_if(
@@ -1429,12 +1446,19 @@ void ReleasesViewModel::reloadReleases()
 
     if (m_oldReleasesIds.isEmpty()) return;
 
+    int newReleasesCount = 0;
+    int newSeriesCount = 0;
+    int newTorrentsCount = 0;
+    int updatedTorrentsCount = 0;
+
     if (m_releases->size() != m_oldReleasesIds.size()) {
         foreach (auto release, *m_releases) {
             if (m_oldReleasesIds.contains(release->id())) continue;
 
             if (!m_releaseChanges->newReleases()->contains(release->id())) m_releaseChanges->newReleases()->append(release->id());
         }
+
+        if (m_releases->size() > m_oldReleasesIds.size()) newReleasesCount = m_releases->size() - m_oldReleasesIds.size();
     }
 
     auto videos = m_oldReleasesCountVideos.keys();
@@ -1444,6 +1468,10 @@ void ReleasesViewModel::reloadReleases()
         auto release = m_releasesMap->value(oldReleasesId);
         if (release->countOnlineVideos() != m_oldReleasesCountVideos.value(oldReleasesId)) {
             if (!m_releaseChanges->newOnlineSeries()->contains(oldReleasesId)) m_releaseChanges->newOnlineSeries()->append(oldReleasesId);
+
+            if (release->countOnlineVideos() > m_oldReleasesCountVideos.value(oldReleasesId)) {
+                newSeriesCount += release->countOnlineVideos() - m_oldReleasesCountVideos.value(oldReleasesId);
+            }
         }
     }
 
@@ -1454,6 +1482,8 @@ void ReleasesViewModel::reloadReleases()
         auto release = m_releasesMap->value(oldReleasesId);
         if (release->countTorrents() > m_oldReleasesCountTorrents.value(oldReleasesId)) {
             if (!m_releaseChanges->newTorrents()->contains(oldReleasesId)) m_releaseChanges->newTorrents()->append(oldReleasesId);
+
+            newTorrentsCount += release->countTorrents() - m_oldReleasesCountTorrents.value(oldReleasesId);
         }
     }
 
@@ -1476,6 +1506,8 @@ void ReleasesViewModel::reloadReleases()
         auto oldValue = m_oldReleasesTorrentsSeries.value(oldReleasesId);
         if (newValue != oldValue) {
             if (!m_releaseChanges->newTorrentSeries()->contains(oldReleasesId)) m_releaseChanges->newTorrentSeries()->append(oldReleasesId);
+
+            updatedTorrentsCount += 1;
         }
     }
 
@@ -1485,6 +1517,13 @@ void ReleasesViewModel::reloadReleases()
     m_oldReleasesTorrentsSeries.clear();
 
     saveChanges();
+
+    QString newEntities = "";
+    if (newReleasesCount > 0) newEntities += "Новых релизов " + QString::number(newReleasesCount) + " ";
+    if (newSeriesCount > 0) newEntities += "Новых серий " + QString::number(newSeriesCount) + " ";
+    if (newTorrentsCount > 0) newEntities += "Новых торрентов " + QString::number(newTorrentsCount) + " ";
+    if (updatedTorrentsCount > 0) newEntities += "Новых серий в торрентах " + QString::number(updatedTorrentsCount);
+    setNewEntities(newEntities);
 }
 
 void ReleasesViewModel::setToReleaseHistory(int id, int type) noexcept

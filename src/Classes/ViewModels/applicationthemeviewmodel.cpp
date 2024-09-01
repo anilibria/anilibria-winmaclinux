@@ -189,8 +189,9 @@ ApplicationThemeViewModel::ApplicationThemeViewModel(QObject *parent)
     lightTheme->insert(iconAuthorizationPatreonField, "qrc:/Assets/Icons/authorization/patreon.svg");
     lightTheme->insert(iconAuthorizationDiscordField, "qrc:/Assets/Icons/authorization/discord.svg");
     lightTheme->insert(iconContextMenuField, "qrc:/Assets/Icons/contextmenu.svg");
-
     lightTheme->insert(iconMainMenuExtensionsField, "qrc:/Assets/Icons/extensions.svg");
+
+    lightTheme->insert(iconMagnetField, "qrc:/Assets/Icons/releases/magnet.svg");
 
     lightTheme->insert(basedOnThemeField, m_lightTheme);
     lightTheme->insert(externalIdField, "");
@@ -357,6 +358,7 @@ ApplicationThemeViewModel::ApplicationThemeViewModel(QObject *parent)
     darkTheme->insert(iconAuthorizationPatreonField, "qrc:/Assets/Icons/authorization/patreon.svg");
     darkTheme->insert(iconAuthorizationDiscordField, "qrc:/Assets/Icons/authorization/discord.svg");
     darkTheme->insert(iconContextMenuField, "qrc:/Assets/Icons/contextmenu.svg");
+    darkTheme->insert(iconMagnetField, "qrc:/Assets/Icons/releases/magnet.svg");
 
     darkTheme->insert(iconMainMenuExtensionsField, "qrc:/Assets/Icons/extensions.svg");
 
@@ -529,8 +531,9 @@ ApplicationThemeViewModel::ApplicationThemeViewModel(QObject *parent)
     m_fields.append(iconAuthorizationPatreonField);
     m_fields.append(iconAuthorizationDiscordField);
     m_fields.append(iconContextMenuField);
-
     m_fields.append(iconMainMenuExtensionsField);
+
+    m_fields.append(iconMagnetField);
 
     m_fields.append(iconLogoutField);
     m_fields.append(externalIdField);

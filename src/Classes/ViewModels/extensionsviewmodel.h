@@ -16,6 +16,7 @@ class ExtensionsViewModel : public QObject
     Q_OBJECT
     Q_PROPERTY(QVariantList displayedExtensions READ displayedExtensions NOTIFY displayedExtensionsChanged FINAL)
     Q_PROPERTY(ReleasesViewModel* releases READ releases WRITE setReleases NOTIFY releasesChanged FINAL)
+    Q_PROPERTY(QVariantList globalVariables READ globalVariables NOTIFY globalVariablesChanged FINAL)
 
 private:
     QList<QString> m_extensions { QList<QString>() };
@@ -33,6 +34,7 @@ private:
     QString m_extensionsFileName { "extensions.cache" };
     QVariantList m_displayedExtensions { QVariantList() };
     ReleasesViewModel* m_releases { nullptr };
+    QVariantList m_globalVariables { QVariantList() };
 
 public:
     explicit ExtensionsViewModel(QObject *parent = nullptr);
@@ -41,6 +43,8 @@ public:
 
     ReleasesViewModel* releases() const noexcept { return m_releases; }
     void setReleases(const ReleasesViewModel* releases) noexcept;
+
+    QVariantList globalVariables() const noexcept { return m_globalVariables; }
 
     Q_INVOKABLE void releaseOpenedInVideoPlayer(int releaseId, const QString& title, int seria);
     Q_INVOKABLE void saveValue(const QString& key, const QString& value);
@@ -70,6 +74,7 @@ private slots:
 signals:
     void displayedExtensionsChanged();
     void releasesChanged();
+    void globalVariablesChanged();
 
 };
 

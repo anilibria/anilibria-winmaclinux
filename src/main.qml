@@ -704,8 +704,6 @@ ApplicationWindow {
 
             notificationViewModel.sendInfoNotification("Синхронизация релизов успешно завершена в " + new Date().toLocaleTimeString());
 
-            if (releasesViewModel.newEntities) notificationViewModel.sendInfoNotification(releasesViewModel.newEntities);
-
             releaseLinkedSeries.refreshSeries();
             releasesViewModel.reloadReleases();
         }
@@ -1025,6 +1023,9 @@ ApplicationWindow {
         onReleasesFullyLoaded: {
             releaseLinkedSeries.refreshSeries();
             filterDictionariesViewModel.refreshDictionaries();
+        }
+        onNewEntitiesChanged: {
+            if (releasesViewModel.newEntities) notificationViewModel.sendInfoNotification(releasesViewModel.newEntities);
         }
     }
 

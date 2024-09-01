@@ -336,6 +336,47 @@ ColumnLayout {
                     }
                 }
             }
+            IconButton {
+                height: 40
+                width: 40
+                hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
+                iconPath: applicationThemeViewModel.currentItems.iconMagnet
+                iconWidth: 26
+                iconHeight: 26
+                tooltipMessage: "Открыть или скопировать magnet ссылки из торрентов"
+                onButtonPressed: {
+                    magnetLinkMenu.open();
+                }
+
+                CommonMenu {
+                    id: magnetLinkMenu
+                    autoWidth: true
+
+                    Repeater {
+                        model: releasesViewModel.openedCardTorrents
+                        CommonMenuItem {
+                            text: "Копировать magnet ссылку " + quality + " [" + series + "] " + size + " " + timecreation
+                            onPressed: {
+                                releasesViewModel.copyOpenedReleaseMagnetTorrent(identifier);
+                            }
+                        }
+                    }
+
+                    Repeater {
+                        model: releasesViewModel.openedCardTorrents
+                        CommonMenuItem {
+                            text: "Открыть magnet ссылку " + quality + " [" + series + "] " + size + " " + timecreation
+                            onPressed: {
+                                releasesViewModel.openOpenedReleaseMagnetTorrent(identifier);
+                            }
+                        }
+                    }
+
+                    onWidthChanged: {
+                        magnetLinkMenu.x = -magnetLinkMenu.width;
+                    }
+                }
+            }
         }
 
         Flickable {
@@ -344,7 +385,6 @@ ColumnLayout {
             width: parent.width - cardButtons.width
             clip: true
             boundsBehavior: Flickable.StopAtBounds
-            boundsMovement: Flickable.StopAtBounds
             contentWidth: parent.width - 10
             contentHeight: cardColumn.height
             ScrollBar.vertical: ScrollBar {
@@ -725,6 +765,23 @@ ColumnLayout {
 
                                 onIsNeedSmallModeChanged: {
                                     openCommentsButton.state = mainViewModel.isSmallSizeMode ? "smallsizemode" : "";
+                                }
+                            }
+                            RoundedActionButton {
+                                id: openOnSiteButton
+                                textSize: mainViewModel.isSmallSizeMode ? 10 : 11
+                                text: mainViewModel.isSmallSizeMode ? "На сайте" : "Открыть на сайте"
+                                anchors.verticalCenter: parent.verticalCenter
+                                anchors.left: openCommentsButton.right
+                                anchors.leftMargin: 4
+                                onClicked: {
+                                    Qt.openUrlExternally("https://anilibria.top/anime/releases/release/" + releasesViewModel.openedReleaseCode + "/episodes");
+                                }
+
+                                property bool isNeedSmallMode: mainViewModel.isSmallSizeMode
+
+                                onIsNeedSmallModeChanged: {
+                                    mainViewModel.state = mainViewModel.isSmallSizeMode ? "smallsizemode" : "";
                                 }
                             }
                         }

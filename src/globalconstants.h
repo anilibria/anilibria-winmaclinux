@@ -267,4 +267,6 @@ extern QString iconContextMenuField;
 
 extern QString iconMainMenuExtensionsField;
 
+extern QString iconMagnetField;
+
 #endif // GLOBALCONSTANTS_H

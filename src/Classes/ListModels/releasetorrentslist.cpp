@@ -50,17 +50,17 @@ QVariant ReleaseTorrentsList::data(const QModelIndex &index, int role) const
             return QVariant(torrent->quality());
         }
         case SeriesRole: {
-            return QVariant(torrent->series());
+            return QVariant(torrent->description());
         }
         case UrlRole: {
-            return QVariant(torrent->url());
+            return QVariant(torrent->torrentHost() + torrent->torrentPath());
         }
         case IdentifierRole: {
             return QVariant(index.row());
         }
         case TimeCreationRole: {
             QDateTime timestamp;
-            timestamp.setSecsSinceEpoch(torrent->ctime());
+            timestamp.setSecsSinceEpoch(torrent->created());
             auto date = timestamp.date();
             auto dateAsString = getLeadingZeroDigit(date.day()) + "." + getLeadingZeroDigit(date.month()) + "." + getLeadingZeroDigit(date.year());
             auto time = timestamp.time();
@@ -106,20 +106,20 @@ QHash<int, QByteArray> ReleaseTorrentsList::roleNames() const
     };
 }
 
+QString ReleaseTorrentsList::getMagnetLink(int identifier) const noexcept
+{
+    if (identifier >= m_torrents->size()) return "";
+
+    return m_torrents->value(identifier)->magnet();
+}
+
 void ReleaseTorrentsList::loadTorrentsFromJson(const QList<ApiTorrentModel*>& torrents)
 {
     beginResetModel();
 
     m_torrents->clear();
 
-    if (torrents.isEmpty()) return;
-
-    foreach (auto item, torrents) {
-        auto torrent = new ReleaseTorrentModel();
-        torrent->readFromApiTorrent(item);
-
-        m_torrents->append(torrent);
-    }
+    m_torrents->append(torrents);
 
     endResetModel();
 }

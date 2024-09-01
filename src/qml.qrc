@@ -242,5 +242,6 @@
         <file>Assets/Icons/authorization/patreon.svg</file>
         <file>Assets/Icons/authorization/vk.svg</file>
         <file>Assets/Icons/extensions.svg</file>
+        <file>Assets/Icons/releases/magnet.svg</file>
     </qresource>
 </RCC>

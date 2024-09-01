@@ -214,3 +214,5 @@ QString iconContextMenuField = "iconContextMenu";
 
 QString iconMainMenuExtensionsField = "iconMainMenuExtensions";
 
+QString iconMagnetField = "iconMagnet";
+
