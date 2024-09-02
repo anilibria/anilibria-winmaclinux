@@ -1354,6 +1354,15 @@ ApplicationWindow {
 
             releaseLinkedSeries.selectByIndex(parseInt(parameters));
         }
+        onChangeExtensionsParameters: {
+            if (!parameters.length) {
+                extensionsViewModel.closeCard();
+                return;
+            }
+
+            extensionsViewModel.openCard();
+        }
+
         Component.onDestruction: {
             mainViewModel.saveState();
         }

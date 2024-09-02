@@ -85,7 +85,7 @@ Page {
                             height: parent.height
                             anchors.left: parent.left
                             anchors.leftMargin: 4
-                            anchors.right: deleteSelectedButton.left
+                            anchors.right: openGlobalVariablesButton.left
                             anchors.rightMargin: 4
                             fontPointSize: 8
                             maximumLineCount: 2
@@ -93,6 +93,18 @@ Page {
                             wrapMode: Text.WordWrap
                             elide: Text.ElideRight
                             text: "Автор приложения не несет ответственности за любые последствия запуска расширений. Если Вы не уверены или видите подозрительные действия то лучше удалить расширение(я)."
+                        }
+
+                        RoundedActionButton {
+                            id: openGlobalVariablesButton
+                            anchors.right: deleteSelectedButton.left
+                            anchors.verticalCenter: parent.verticalCenter
+                            width: 210
+                            textSize: 10
+                            text: "Переменные"
+                            onClicked: {
+                                mainViewModel.selectPage("extensions:globalvariables");
+                            }
                         }
 
                         RoundedActionButton {
@@ -206,6 +218,10 @@ Page {
                         }
                     }
                 }
+            }
+
+            ExtensionsCard {
+                id: extensionsCard
             }
 
             MessageModal {

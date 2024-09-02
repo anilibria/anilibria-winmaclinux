@@ -171,6 +171,7 @@ signals:
     void changeReleasesParameters(QString parameters);
     void releasesSeriesPageToNavigated();
     void changeReleaseSeriesParameters(QString parameters);
+    void changeExtensionsParameters(QString parameters);
     void leftToolbarChanged();
     void editLeftToolbarChanged();
     void otherLeftToolbarChanged();

@@ -130,6 +130,27 @@ void ExtensionsViewModel::deleteExtension(const QString &path)
     remapDisplayExtensions();
 }
 
+void ExtensionsViewModel::openCard()
+{
+    refreshGlobalVariables();
+
+    m_isOpenedCard = true;
+    emit isOpenedCardChanged();
+}
+
+void ExtensionsViewModel::closeCard()
+{
+    m_isOpenedCard = false;
+    emit isOpenedCardChanged();
+}
+
+void ExtensionsViewModel::deleteGlobalVariable(QString id)
+{
+    deleteValue(id);
+
+    refreshGlobalVariables();
+}
+
 void ExtensionsViewModel::importExtensions()
 {
     foreach (auto extension, m_extensions) {
@@ -210,6 +231,8 @@ void ExtensionsViewModel::readValues()
         auto keyValue = values.value(key);
         if (keyValue.isString()) m_values->insert(key, keyValue.toString());
     }
+
+    refreshGlobalVariables();
 }
 
 void ExtensionsViewModel::readExtensions()
@@ -258,6 +281,24 @@ void ExtensionsViewModel::remapDisplayExtensions()
     }
 
     emit displayedExtensionsChanged();
+}
+
+void ExtensionsViewModel::refreshGlobalVariables()
+{
+    m_globalVariables.clear();
+
+    auto keys = m_values->keys();
+    foreach (auto key, keys) {
+        auto value = m_values->value(key);
+
+        QVariantMap map;
+        map["indentifier"] = key;
+        map["value"] = value;
+
+        m_globalVariables.append(map);
+    }
+
+    emit globalVariablesChanged();
 }
 
 void ExtensionsViewModel::requestFinished(QNetworkReply *reply)

@@ -17,6 +17,7 @@ class ExtensionsViewModel : public QObject
     Q_PROPERTY(QVariantList displayedExtensions READ displayedExtensions NOTIFY displayedExtensionsChanged FINAL)
     Q_PROPERTY(ReleasesViewModel* releases READ releases WRITE setReleases NOTIFY releasesChanged FINAL)
     Q_PROPERTY(QVariantList globalVariables READ globalVariables NOTIFY globalVariablesChanged FINAL)
+    Q_PROPERTY(bool isOpenedCard READ isOpenedCard NOTIFY isOpenedCardChanged FINAL)
 
 private:
     QList<QString> m_extensions { QList<QString>() };
@@ -35,6 +36,7 @@ private:
     QVariantList m_displayedExtensions { QVariantList() };
     ReleasesViewModel* m_releases { nullptr };
     QVariantList m_globalVariables { QVariantList() };
+    bool m_isOpenedCard { false };
 
 public:
     explicit ExtensionsViewModel(QObject *parent = nullptr);
@@ -46,6 +48,8 @@ public:
 
     QVariantList globalVariables() const noexcept { return m_globalVariables; }
 
+    bool isOpenedCard() const noexcept { return m_isOpenedCard; }
+
     Q_INVOKABLE void releaseOpenedInVideoPlayer(int releaseId, const QString& title, int seria);
     Q_INVOKABLE void saveValue(const QString& key, const QString& value);
     Q_INVOKABLE QString readValue(const QString& key);
@@ -54,6 +58,9 @@ public:
     Q_INVOKABLE void runMenuCommand(const QString& identifier, int index);
     Q_INVOKABLE void saveValues();
     Q_INVOKABLE void deleteExtension(const QString& path);
+    Q_INVOKABLE void openCard();
+    Q_INVOKABLE void closeCard();
+    Q_INVOKABLE void deleteGlobalVariable(QString id);
 
 private:
     void importExtensions();
@@ -63,6 +70,7 @@ private:
     void readExtensions();
     void saveExtensions();
     void remapDisplayExtensions();
+    void refreshGlobalVariables();
 
 private slots:
     void requestFinished(QNetworkReply *reply);
@@ -75,6 +83,7 @@ signals:
     void displayedExtensionsChanged();
     void releasesChanged();
     void globalVariablesChanged();
+    void isOpenedCardChanged();
 
 };
 
