@@ -24,6 +24,19 @@ ColumnLayout {
             id: cardButtons
             width: 42
             anchors.right: parent.right
+
+            IconButton {
+                height: 40
+                width: 40
+                hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
+                iconPath: applicationThemeViewModel.currentItems.iconMyAnilibriaButtonPlus
+                iconWidth: 26
+                iconHeight: 26
+                tooltipMessage: "Добавить глобальную переменную"
+                onButtonPressed: {
+                    editVariablePopup.open();
+                }
+            }
         }
 
         ListView {
@@ -91,6 +104,8 @@ ColumnLayout {
                                 text: 'Изменить'
                                 onPressed: {
                                     extensionsContextMenu.close();
+
+                                    editVariablePopup.open();
                                 }
                             }
                         }
@@ -117,4 +132,54 @@ ColumnLayout {
             }
         }
     }
+
+    DefaultPopup {
+        id: editVariablePopup
+        x: (window.width / 2) - (editVariablePopup.width / 2)
+        y: (window.height / 2) - (editVariablePopup.height / 2)
+        width: mainViewModel.isSmallSizeMode ? 250 : 390
+        height: 150
+        modal: true
+        focus: true
+        closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
+
+        CommonTextField {
+            id: variableNameTextField
+            anchors.top: parent.top
+            anchors.left: parent.left
+            anchors.leftMargin: 4
+            width: parent.width - 15
+            placeholderText: "Имя переменной"
+        }
+
+        CommonTextField {
+            id: variableValueTextField
+            anchors.top: variableNameTextField.bottom
+            anchors.left: parent.left
+            anchors.leftMargin: 4
+            width: parent.width - 15
+            placeholderText: "Значение"
+        }
+
+        RoundedActionButton {
+            anchors.right: cancelButton.left
+            anchors.bottom: parent.bottom
+            text: "Сохранить"
+            onClicked: {
+
+                editVariablePopup.close();
+            }
+        }
+
+        RoundedActionButton {
+            id: cancelButton
+            anchors.right: parent.right
+            anchors.bottom: parent.bottom
+            text: "Отмена"
+            onClicked: {
+                editVariablePopup.close();
+            }
+        }
+    }
+
 }

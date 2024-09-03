@@ -781,7 +781,7 @@ ColumnLayout {
                                 property bool isNeedSmallMode: mainViewModel.isSmallSizeMode
 
                                 onIsNeedSmallModeChanged: {
-                                    mainViewModel.state = mainViewModel.isSmallSizeMode ? "smallsizemode" : "";
+                                    //mainViewModel.state = mainViewModel.isSmallSizeMode ? "smallsizemode" : "";
                                 }
                             }
                         }
