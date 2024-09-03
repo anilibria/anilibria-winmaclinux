@@ -60,7 +60,7 @@ public:
     Q_INVOKABLE void deleteExtension(const QString& path);
     Q_INVOKABLE void openCard();
     Q_INVOKABLE void closeCard();
-    Q_INVOKABLE void deleteGlobalVariable(QString id);
+    Q_INVOKABLE void refreshVariables();
 
 private:
     void importExtensions();

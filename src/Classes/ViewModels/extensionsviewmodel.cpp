@@ -144,10 +144,8 @@ void ExtensionsViewModel::closeCard()
     emit isOpenedCardChanged();
 }
 
-void ExtensionsViewModel::deleteGlobalVariable(QString id)
+void ExtensionsViewModel::refreshVariables()
 {
-    deleteValue(id);
-
     refreshGlobalVariables();
 }
 

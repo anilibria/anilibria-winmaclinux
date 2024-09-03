@@ -34,6 +34,9 @@ ColumnLayout {
                 iconHeight: 26
                 tooltipMessage: "Добавить глобальную переменную"
                 onButtonPressed: {
+                    variableNameTextField.text = ""
+                    variableValueTextField.text = ""
+
                     editVariablePopup.open();
                 }
             }
@@ -103,6 +106,9 @@ ColumnLayout {
                             CommonMenuItem {
                                 text: 'Изменить'
                                 onPressed: {
+                                    variableNameTextField.text = modelData.indentifier
+                                    variableValueTextField.text = modelData.value
+
                                     extensionsContextMenu.close();
 
                                     editVariablePopup.open();
@@ -121,7 +127,8 @@ ColumnLayout {
                         iconPath: applicationThemeViewModel.currentItems.iconDeleteItem
                         tooltipMessage: "Удалить переменную"
                         onButtonPressed: {
-                            extensionsViewModel.deleteGlobalVariable(modelData.indentifier);
+                            extensionsViewModel.deleteValue(modelData.indentifier);
+                            extensionsViewModel.refreshVariables();
                         }
                     }
                 }
@@ -166,6 +173,13 @@ ColumnLayout {
             anchors.bottom: parent.bottom
             text: "Сохранить"
             onClicked: {
+                if (variableNameTextField.text) {
+                    extensionsViewModel.saveValue(variableNameTextField.text, variableValueTextField.text);
+                } else {
+                    notificationViewModel.sendErrorNotification("Заполните поле Имя переменной!");
+                }
+
+                extensionsViewModel.refreshVariables();
 
                 editVariablePopup.close();
             }
