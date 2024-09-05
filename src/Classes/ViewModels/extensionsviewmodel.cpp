@@ -149,6 +149,11 @@ void ExtensionsViewModel::refreshVariables()
     refreshGlobalVariables();
 }
 
+bool ExtensionsViewModel::hasValue(const QString &key) noexcept
+{
+    return m_values->contains(key);
+}
+
 void ExtensionsViewModel::importExtensions()
 {
     foreach (auto extension, m_extensions) {

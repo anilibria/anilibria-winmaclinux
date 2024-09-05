@@ -34,8 +34,9 @@ ColumnLayout {
                 iconHeight: 26
                 tooltipMessage: "Добавить глобальную переменную"
                 onButtonPressed: {
-                    variableNameTextField.text = ""
-                    variableValueTextField.text = ""
+                    variableNameTextField.text = "";
+                    variableNameTextField.enabled = true;
+                    variableValueTextField.text = "";
 
                     editVariablePopup.open();
                 }
@@ -106,8 +107,9 @@ ColumnLayout {
                             CommonMenuItem {
                                 text: 'Изменить'
                                 onPressed: {
-                                    variableNameTextField.text = modelData.indentifier
-                                    variableValueTextField.text = modelData.value
+                                    variableNameTextField.text = modelData.indentifier;
+                                    variableNameTextField.enabled = false;
+                                    variableValueTextField.text = modelData.value;
 
                                     extensionsContextMenu.close();
 
@@ -173,10 +175,16 @@ ColumnLayout {
             anchors.bottom: parent.bottom
             text: "Сохранить"
             onClicked: {
-                if (variableNameTextField.text) {
+                if (variableNameTextField.enabled) {
+                    if (!variableNameTextField.text) {
+                        notificationViewModel.sendErrorNotification("Заполните поле Имя переменной!");
+                        return;
+                    }
+                    if (extensionsViewModel.hasValue(variableNameTextField.text)) {
+                        notificationViewModel.sendErrorNotification("Переменная с таким именем уже существует!");
+                        return;
+                    }
                     extensionsViewModel.saveValue(variableNameTextField.text, variableValueTextField.text);
-                } else {
-                    notificationViewModel.sendErrorNotification("Заполните поле Имя переменной!");
                 }
 
                 extensionsViewModel.refreshVariables();
@@ -195,5 +203,4 @@ ColumnLayout {
             }
         }
     }
-
 }

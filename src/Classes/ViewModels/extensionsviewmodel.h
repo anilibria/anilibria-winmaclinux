@@ -61,6 +61,7 @@ public:
     Q_INVOKABLE void openCard();
     Q_INVOKABLE void closeCard();
     Q_INVOKABLE void refreshVariables();
+    Q_INVOKABLE bool hasValue(const QString& key) noexcept;
 
 private:
     void importExtensions();
