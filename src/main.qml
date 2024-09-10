@@ -1050,7 +1050,6 @@ ApplicationWindow {
             focus: true
             onWatchSingleRelease: {
                 if (!onlinePlayerViewModel.releaseHasVideos(releaseId)) return;
-
                 if (onlinePlayerViewModel.releaseIsRutube(releaseId)) {
                     if (!externalPlayerViewModel.torrentStreamActive) {
                         //TODO: show error message
@@ -1061,8 +1060,8 @@ ApplicationWindow {
                     return;
                 }
 
-                mainViewModel.selectPage("videoplayer");
                 onlinePlayerViewModel.quickSetupForSingleRelease(releaseId, startSeria);
+                mainViewModel.selectPage("videoplayer");
             }
         }
 
