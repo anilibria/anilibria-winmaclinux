@@ -121,7 +121,6 @@ void Synchronizev2Service::getUserFavorites()
 
     auto reply = m_networkManager->get(request);
     adjustIdentifier(reply, m_getFavoritesRequest);
-
 }
 
 void Synchronizev2Service::addUserFavorites(const QList<int> ids)
@@ -211,6 +210,54 @@ void Synchronizev2Service::checkNetworkAvailability(const QString &address)
     QNetworkRequest request(url);
     auto reply = m_networkManager->get(request);
     adjustIdentifier(reply, m_checkNetworkAvailability);
+}
+
+void Synchronizev2Service::getUserSeens()
+{
+    QNetworkRequest request(QUrl(m_apiv2host + "/api/v1/accounts/users/me/views/timecodes"));
+    adjustRequestToken(request);
+
+    auto reply = m_networkManager->get(request);
+    adjustIdentifier(reply, m_userSeenRequest);
+}
+
+QVariantMap Synchronizev2Service::getUserSynchronizedSeens()
+{
+    QVariantMap result;
+    auto keys = m_synchronizedSeens.keys();
+    foreach (auto key, keys) {
+        result[key] = m_synchronizedSeens[key];
+    }
+
+    return result;
+}
+
+void Synchronizev2Service::clearUserSynchronizedSeens()
+{
+    m_synchronizedSeens.clear();
+}
+
+void Synchronizev2Service::addSeenMarks(QList<QString> videoIds, bool seenMark)
+{
+    QNetworkRequest request(QUrl(m_apiv2host + "/api/v1/accounts/users/me/views/timecodes"));
+    adjustRequestToken(request);
+
+    request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
+    QJsonArray array;
+
+    foreach (auto videoId, videoIds) {
+        QJsonObject item;
+        item["time"] = 0;
+        item["is_watched"] = seenMark;
+        item["release_episode_id"] = videoId;
+
+        array.append(item);
+    }
+
+    auto body = QJsonDocument(array).toJson();
+
+    auto reply = m_networkManager->post(request, body);
+    adjustIdentifier(reply, m_addUserSeenRequest);
 }
 
 void Synchronizev2Service::timerEvent(QTimerEvent *event)
@@ -327,6 +374,7 @@ void Synchronizev2Service::userProfileHandler(QNetworkReply *reply) noexcept
     emit isAuhorizedChanged();
 
     getUserFavorites();
+    getUserSeens();
 }
 
 void Synchronizev2Service::adjustRequestToken(QNetworkRequest &request) noexcept
@@ -810,6 +858,40 @@ void Synchronizev2Service::checkNetworkAvailabilityHandler(QNetworkReply *reply)
     emit checkNetworkAvailibilityCompletedChanged();
 }
 
+void Synchronizev2Service::userSeenSynchronizationHandler(QNetworkReply *reply) noexcept
+{
+    auto content = reply->readAll();
+    if (content.isEmpty()) {
+        emit synchronizeSeensFailed("Контент ответа пустой");
+        return;
+    }
+
+    qDebug() << content;
+
+    QJsonParseError* error = nullptr;
+    auto json = QJsonDocument::fromJson(content, error);
+    if (error != nullptr) {
+        emit synchronizeSeensFailed("Ответ не содержит корректный JSON");
+        return;
+    }
+
+    auto items = json.array();
+
+    m_synchronizedSeens.clear();
+
+    foreach (auto item, items) {
+        auto itemArray = item.toArray();
+        if (itemArray.size() != 3) continue;
+
+        auto episodeId = itemArray.first().toString();
+        auto isWatched = itemArray.last().toBool();
+
+        m_synchronizedSeens.insert(episodeId, isWatched);
+    }
+
+    if (!m_synchronizedSeens.isEmpty()) emit synchronizeSeensCompleted();
+}
+
 void Synchronizev2Service::loginHandler(QNetworkReply *reply) noexcept
 {
     auto content = reply->readAll();
@@ -906,6 +988,13 @@ void Synchronizev2Service::requestFinished(QNetworkReply *reply)
     }
     if (requestType == m_checkNetworkAvailability) {
         checkNetworkAvailabilityHandler(reply);
+        return;
+    }
+    if (requestType == m_userSeenRequest) {
+        userSeenSynchronizationHandler(reply);
+        return;
+    }
+    if (requestType == m_addUserSeenRequest) {
         return;
     }
 }

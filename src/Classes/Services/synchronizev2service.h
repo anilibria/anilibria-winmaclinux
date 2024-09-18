@@ -47,6 +47,8 @@ private:
     const QString m_socialRequest { "socialrequest" };
     const QString m_socialRequestResponse { "socialrequestresponse" };
     const QString m_checkNetworkAvailability { "checknetworkavailability" };
+    const QString m_userSeenRequest { "userseen" };
+    const QString m_addUserSeenRequest { "adduserseen" };
     bool m_isAuhorized { false };
     QString m_nickName { "" };
     QString m_avatar { "" };
@@ -66,6 +68,7 @@ private:
     QString m_socialState { "" };
     int m_socialCheckTimer { 0 };
     int m_socialCheckTimerIterator { 0 };
+    QMap<QString, bool> m_synchronizedSeens { QMap<QString, bool>() };
 
 public:
     explicit Synchronizev2Service(QObject *parent = nullptr);
@@ -115,6 +118,10 @@ public:
     Q_INVOKABLE void synchronizeFullCache();
     Q_INVOKABLE QString checkFolderAvailability(const QString& folder);
     Q_INVOKABLE void checkNetworkAvailability(const QString& address);
+    Q_INVOKABLE void getUserSeens();
+    Q_INVOKABLE QVariantMap getUserSynchronizedSeens();
+    Q_INVOKABLE void clearUserSynchronizedSeens();
+    Q_INVOKABLE void addSeenMarks(QList<QString> videoIds, bool seenMark);
 
     void timerEvent(QTimerEvent *event) override;
 
@@ -144,6 +151,7 @@ private:
     void socialRequestHandler(QNetworkReply* reply) noexcept;
     void socialRequestTokenHandler(QNetworkReply* reply) noexcept;
     void checkNetworkAvailabilityHandler(QNetworkReply* reply) noexcept;
+    void userSeenSynchronizationHandler(QNetworkReply* reply) noexcept;
 
 private slots:
     void requestFinished(QNetworkReply* reply);
@@ -156,6 +164,8 @@ signals:
     void userCompleteAuthentificated();
     void userFailedAuthentificated(QString errorMessage);
     void synchronizeFavoritesFailed(QString errorMessage);
+    void synchronizeSeensFailed(QString errorMessage);
+    void synchronizeSeensCompleted();
     void getUserFailed(QString errorMessage);
     void isAuhorizedChanged();
     void tokenChanged();

@@ -301,6 +301,9 @@ public:
     Q_INVOKABLE void setSeenMarkAllSeriesSelectedReleases(bool marked);
     Q_INVOKABLE void setSeenMarkForSingleRelease(int id, bool marked);
     Q_INVOKABLE void setSeenMarkForRelease(int id, int countSeries, bool marked);
+    Q_INVOKABLE void synchronizeSeenMarkForRelease(const QList<int>& ids, bool marked);
+    Q_INVOKABLE void synchronizeSeenMarkForRelease(int id, int countSeries, bool marked);
+    Q_INVOKABLE void synchronizeSeenMarkForSingleSeria(int id, int seria, bool marked);
     Q_INVOKABLE void refreshOpenedReleaseCard();
     Q_INVOKABLE void removeAllSeenMark();
     Q_INVOKABLE void reloadReleases();
@@ -328,11 +331,14 @@ public:
     Q_INVOKABLE void refreshApiHost();
     Q_INVOKABLE void copyOpenedReleaseMagnetTorrent(int identifier) noexcept;
     Q_INVOKABLE void openOpenedReleaseMagnetTorrent(int identifier) noexcept;
+    Q_INVOKABLE void synchronizeSeens(const QVariantMap items) noexcept;
+    Q_INVOKABLE void synchronizeLocalSeensToExternal() noexcept;
     FullReleaseModel* getReleaseById(int id) const noexcept;
     void resetReleaseChanges(int releaseId) noexcept;
     quint32 m_seedValue { 0 };
 
 private:
+    void setSeenMarkInternal(int id, int seriaId, bool marked);
     void loadReleases();
     void loadNextReleasesWithoutReactive();
     void reloadApiHostInItems();
@@ -439,6 +445,8 @@ signals:
     void proxyPortChanged();
     void releaseLinkedSeriesChanged();
     void releasesFullyLoaded();
+    void addedSeenMarks(QList<QString> uniqueIds);
+    void removeSeenMarks(QList<QString> uniqueIds);
 
 };
 

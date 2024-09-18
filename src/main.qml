@@ -646,6 +646,10 @@ ApplicationWindow {
             notificationViewModel.sendInfoNotification(errorMessage);
         }
 
+        onSynchronizeSeensFailed: {
+            notificationViewModel.sendInfoNotification("Синхронизация просмотренного: " + errorMessage);
+        }
+
         onSynchronizeFavoritesFailed: {
             notificationViewModel.sendInfoNotification(`Не удалось получить избранное:` + errorMessage);
         }
@@ -660,6 +664,10 @@ ApplicationWindow {
             notificationViewModel.sendInfoNotification("Не удалось получить данные пользователя: " + errorMessage);
         }
 
+        onSynchronizeSeensCompleted: {
+            releasesViewModel.synchronizeSeens(synchronizationServicev2.getUserSynchronizedSeens());
+        }
+
         onTokenChanged: {
             userConfigurationViewModel.v2token = synchronizationServicev2.token;
         }
@@ -668,7 +676,6 @@ ApplicationWindow {
             if (synchronizationServicev2.isAuhorized) {
                 userAvatarCanvas.loadImage(synchronizationServicev2.userAvatar);
                 mainViewModel.notVisibleSignin = true;
-                synchronizationServicev2.getUserFavorites();
             } else {
                 mainViewModel.notVisibleSignin = false;
             }
@@ -1026,6 +1033,12 @@ ApplicationWindow {
         }
         onNewEntitiesChanged: {
             if (releasesViewModel.newEntities) notificationViewModel.sendInfoNotification(releasesViewModel.newEntities);
+        }
+        onAddedSeenMarks: {
+            synchronizationServicev2.addSeenMarks(uniqueIds, true);
+        }
+        onRemoveSeenMarks: {
+            synchronizationServicev2.addSeenMarks(uniqueIds, false);
         }
     }
 
