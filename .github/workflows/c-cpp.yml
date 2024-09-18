@@ -25,9 +25,12 @@ jobs:
     - uses: actions/checkout@v4
     - name: Set up Homebrew
       id: set-up-homebrew
-      uses: Homebrew/actions/setup-homebrew@master
+      uses: Homebrew/actions/setup-homebrew@master      
     - name: install mpv
-      run: brew install mpv
+      run: |
+        rm '/usr/local/bin/2to3'
+        brew unlink python@3.12 && brew link --overwrite python@3.12
+        brew install mpv        
     - name: Install Qt dependencies
       uses: jurplel/install-qt-action@v3.3.0
       with:
