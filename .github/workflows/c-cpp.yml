@@ -41,7 +41,7 @@ jobs:
     - name: Run MacDeployQt
       run: cd src && macdeployqt AniLibria.app -appstore-compliant -qmldir=.
     - name: Test For Otool
-      run: otool src/AniLibria.app/Contents/Frameworks/libc++.1.dylib
+      run: otool -L src/AniLibria.app/Contents/Frameworks/libc++.1.dylib
     - name: patch libraries paths
       run: |
         cp /usr/local/lib/libsharpyuv.0.dylib src/AniLibria.app/Contents/Frameworks/
