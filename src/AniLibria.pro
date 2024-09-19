@@ -7,7 +7,6 @@ macx {
     CONFIG += link_pkgconfig
     PKG_CONFIG = /usr/local/bin/pkg-config
     PKGCONFIG += mpv
-    QMAKE_CXXFLAGS = -stdlib=libc++ -lc++abi -lunwind
 
     CONFIG += buildwithmpv
     DEFINES += USE_MPV_PLAYER
