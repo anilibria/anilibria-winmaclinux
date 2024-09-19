@@ -1030,6 +1030,7 @@ ApplicationWindow {
         onReleasesFullyLoaded: {
             releaseLinkedSeries.refreshSeries();
             filterDictionariesViewModel.refreshDictionaries();
+            myAnilibriaViewModel.refreshAllSectionsModels();
         }
         onNewEntitiesChanged: {
             if (releasesViewModel.newEntities) notificationViewModel.sendInfoNotification(releasesViewModel.newEntities);
