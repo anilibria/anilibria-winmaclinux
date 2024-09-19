@@ -27,10 +27,7 @@ jobs:
       id: set-up-homebrew
       uses: Homebrew/actions/setup-homebrew@master      
     - name: install mpv
-      run: |
-        rm '/usr/local/bin/2to3'
-        brew unlink python@3.12 && brew link --overwrite python@3.12
-        brew install mpv        
+      run: brew install mpv
     - name: Install Qt dependencies
       uses: jurplel/install-qt-action@v3.3.0
       with:
@@ -78,9 +75,7 @@ jobs:
 
         install_name_tool -change /usr/local/Cellar/brotli/1.1.0/lib/libbrotlicommon.1.dylib @executable_path/../Frameworks/ src/AniLibria.app/Contents/Frameworks/librubberband.2.dylib
         
-        install_name_tool -change /usr/local/opt/little-cms2/lib/liblcms2.2.dylib @executable_path/../Frameworks/liblcms2.2.dylib src/AniLibria.app/Contents/Frameworks/libjxl_cms.0.10.dylib
-        install_name_tool -change /usr/local/opt/highway/lib/libhwy.1.dylib @executable_path/../Frameworks/libhwy.1.dylib src/AniLibria.app/Contents/Frameworks/libjxl_cms.0.10.dylib
-
+        
         install_name_tool -change @loader_path/../../../../opt/libsamplerate/lib/libsamplerate.0.dylib @executable_path/../Frameworks/libhwy.1.dylib src/AniLibria.app/Contents/Frameworks/librubberband.2.dylib
         install_name_tool -change /usr/local/opt/python@3.12/Frameworks/Python.framework/Versions/3.12/Python @executable_path/../Frameworks/Python src/AniLibria.app/Contents/Frameworks/libvapoursynth-script.0.dylib
         install_name_tool -change /usr/local/Cellar/nettle/3.9.1/lib/libnettle.8.dylib @executable_path/../Frameworks/libnettle.8.dylib src/AniLibria.app/Contents/Frameworks/libhogweed.6.dylib
