@@ -20,7 +20,7 @@ jobs:
     - name: run make
       run: make -j2 -C src
   macosbuild:
-    runs-on: macos-12    
+    runs-on: macos-latest   
     steps:
     - uses: actions/checkout@v4
     - name: Set up Homebrew
