@@ -33,7 +33,7 @@ int ReleaseSimpleListModel::rowCount(const QModelIndex &parent) const
 
 QVariant ReleaseSimpleListModel::data(const QModelIndex &index, int role) const
 {
-    if (!index.isValid()) return QVariant();
+    if (!index.isValid()) return QVariant("");
 
     auto release = m_releases->at(index.row());
 
@@ -55,7 +55,7 @@ QVariant ReleaseSimpleListModel::data(const QModelIndex &index, int role) const
         }
     }
 
-    return QVariant();
+    return QVariant("");
 }
 
 QHash<int, QByteArray> ReleaseSimpleListModel::roleNames() const

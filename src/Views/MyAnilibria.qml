@@ -152,9 +152,10 @@ Page {
                                         width: allSectionList.width
                                         height: 40
 
-                                        CheckBox {
+                                        CommonSwitch {
+                                            id: sectionSwitch
+                                            anchors.verticalCenter: parent.verticalCenter
                                             checked: sectionSelected
-                                            text: sectionTitle
                                             onCheckedChanged: {
                                                 if (checked) {
                                                     myAnilibriaViewModel.selectSection(sectionId)
@@ -162,6 +163,14 @@ Page {
                                                     myAnilibriaViewModel.deselectSection(sectionId)
                                                 }
                                             }
+                                        }
+                                        PlainText {
+                                            id: labelOrAndGenresSearchField
+                                            anchors.verticalCenter: parent.verticalCenter
+                                            anchors.left: sectionSwitch.right
+                                            anchors.leftMargin: 2
+                                            fontPointSize: 10
+                                            text: sectionTitle
                                         }
                                     }
                                     ScrollBar.vertical: ScrollBar {
