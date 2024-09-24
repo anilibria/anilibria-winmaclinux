@@ -1717,13 +1717,11 @@ void ReleasesViewModel::setToReleaseHistory(int id, int type) noexcept
     QDateTime now = QDateTime::currentDateTime();
     int timestamp = static_cast<int>(now.toSecsSinceEpoch());
 
-    switch (type) {
-        case HistoryReleaseCardMode:
-            item->setTimestamp(timestamp);
-            break;
-        case HistoryWatchReleaseCardMode:
-            item->setWatchTimestamp(timestamp);
-            break;
+    if (type == HistoryReleaseCardMode) {
+        item->setTimestamp(timestamp);
+    }
+    if (type == HistoryWatchReleaseCardMode) {
+        item->setWatchTimestamp(timestamp);
     }
 
     saveHistory();
