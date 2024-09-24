@@ -866,8 +866,6 @@ void Synchronizev2Service::userSeenSynchronizationHandler(QNetworkReply *reply) 
         return;
     }
 
-    qDebug() << content;
-
     QJsonParseError* error = nullptr;
     auto json = QJsonDocument::fromJson(content, error);
     if (error != nullptr) {
