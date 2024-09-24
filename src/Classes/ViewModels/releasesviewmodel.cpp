@@ -1567,8 +1567,16 @@ void ReleasesViewModel::synchronizeLocalSeensToExternal() noexcept
             result.append(std::get<1>(videoItem));
         }
     }
-
-    emit addedSeenMarks(result);
+    int count = (result.size() / 50) + 1;
+    for(auto i = 0; i <= count; i++) {
+        if (result.size() > 50) {
+            auto partIds = result.mid(0, 50);
+            emit addedSeenMarks(partIds);
+            result = result.mid(50);
+        } else {
+            emit addedSeenMarks(result);
+        }
+    }
 }
 
 FullReleaseModel *ReleasesViewModel::getReleaseById(int id) const noexcept
