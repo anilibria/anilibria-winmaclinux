@@ -29,9 +29,8 @@ extern bool IsPortable;
 
 extern QString ApplicationVersion;
 
-const int HistoryReleaseCardMode = 0;
-
-const int HistoryWatchReleaseCardMode = 1;
+extern int HistoryReleaseCardMode;
+extern int HistoryWatchReleaseCardMode;
 
 extern QString StatisticsSectionId;
 extern QString NewInFavoritesSectionId;
