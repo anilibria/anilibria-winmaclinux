@@ -20,16 +20,14 @@ jobs:
     - name: run make
       run: make -j2 -C src
   macosbuild:
-    runs-on: macos-12
+    runs-on: macos-14
     steps:
     - uses: actions/checkout@v4
     - name: Set up Homebrew
       id: set-up-homebrew
-      uses: Homebrew/actions/setup-homebrew@master      
-    - name: install pkg-config      
-      run: which pkg-config
+      uses: Homebrew/actions/setup-homebrew@master
     - name: install mpv
-      run: brew install mpv
+      run: arch -x86_64 brew install mpv
     - name: Install Qt dependencies
       uses: jurplel/install-qt-action@v4
       with:
