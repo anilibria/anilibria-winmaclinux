@@ -29,7 +29,7 @@ jobs:
     - name: Set up Homebrew
       run: arch -x86_64 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
     - name: install mpv
-      run: arch -x86_64 brew install mpv
+      run: arch -x86_64 /usr/local/bin/brew install mpv
     - name: Install Qt dependencies
       uses: jurplel/install-qt-action@v4
       with:
