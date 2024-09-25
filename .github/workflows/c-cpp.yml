@@ -34,6 +34,12 @@ jobs:
         rm /usr/local/bin/2to3-3.12
         rm /usr/local/bin/idle3
         rm /usr/local/bin/idle3.12
+        rm /usr/local/bin/pydoc3
+        rm /usr/local/bin/pydoc3.12
+        rm /usr/local/bin/python3
+        rm /usr/local/bin/python3-config
+        rm /usr/local/bin/python3.12
+        rm /usr/local/bin/python3.12-config
     - name: install mpv
       run: arch -x86_64 /usr/local/bin/brew install mpv
     - name: Install Qt dependencies
