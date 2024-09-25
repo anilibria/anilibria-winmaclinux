@@ -5,7 +5,8 @@ macx {
     QT -= virualkeyboard
     QMAKE_LFLAGS_SONAME = -Wl,-install_name,@rpath/
     CONFIG += link_pkgconfig
-    PKG_CONFIG = /usr/local/bin/pkg-config
+    #PKG_CONFIG = /usr/local/bin/pkg-config
+    PKG_CONFIG = /opt/homebrew/bin/pkg-config
     PKGCONFIG += mpv
 
     CONFIG += buildwithmpv
