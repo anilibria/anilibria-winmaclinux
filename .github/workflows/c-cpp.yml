@@ -33,7 +33,7 @@ jobs:
     - name: Install Qt dependencies
       uses: jurplel/install-qt-action@v4
       with:
-        version: 5.15.2
+        version: 5.15.16
         target: 'desktop'
         arch: 'clang_64'        
     - name: run qmake
