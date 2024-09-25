@@ -28,6 +28,8 @@ jobs:
     #  uses: Homebrew/actions/setup-homebrew@master
     - name: Set up Homebrew
       run: arch -x86_64 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+    - name: Fix brew issue
+      run: rm /usr/local/bin/2to3
     - name: install mpv
       run: arch -x86_64 /usr/local/bin/brew install mpv
     - name: Install Qt dependencies
