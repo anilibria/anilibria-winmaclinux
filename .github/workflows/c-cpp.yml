@@ -27,7 +27,7 @@ jobs:
       id: set-up-homebrew
       uses: Homebrew/actions/setup-homebrew@master      
     - name: install mpv
-      run: brew install mpv --formula
+      run: brew install mpv
     - name: Install Qt dependencies
       uses: jurplel/install-qt-action@v4
       with:
@@ -40,8 +40,6 @@ jobs:
       run: make -j4 -C src
     - name: Run MacDeployQt
       run: cd src && macdeployqt AniLibria.app -appstore-compliant -qmldir=.
-    - name: Test For Otool
-      run: otool -L src/AniLibria.app/Contents/Frameworks/libc++.1.dylib
     - name: patch libraries paths
       run: |
         cp /usr/local/lib/libsharpyuv.0.dylib src/AniLibria.app/Contents/Frameworks/
