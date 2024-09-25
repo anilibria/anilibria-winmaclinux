@@ -27,7 +27,7 @@ jobs:
       id: set-up-homebrew
       uses: Homebrew/actions/setup-homebrew@master      
     - name: install pkg-config      
-      run: brew install pkg-config
+      run: which pkg-config
     - name: install mpv
       run: brew install mpv
     - name: Install Qt dependencies
