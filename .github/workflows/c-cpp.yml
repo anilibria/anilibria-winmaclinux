@@ -23,9 +23,11 @@ jobs:
     runs-on: macos-14
     steps:
     - uses: actions/checkout@v4
+    #- name: Set up Homebrew
+    #  id: set-up-homebrew
+    #  uses: Homebrew/actions/setup-homebrew@master
     - name: Set up Homebrew
-      id: set-up-homebrew
-      uses: Homebrew/actions/setup-homebrew@master
+      run: arch -x86_64 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
     - name: install mpv
       run: arch -x86_64 brew install mpv
     - name: Install Qt dependencies
