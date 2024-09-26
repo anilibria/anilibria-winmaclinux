@@ -49,7 +49,7 @@ jobs:
         target: 'desktop'
         arch: 'clang_64'        
     - name: run qmake
-      run: qmake -makefile -o src/Makefile src/AniLibria.pro
+      run: arch -x86_64 qmake -makefile -o src/Makefile src/AniLibria.pro
     - name: run make
       run: make -j4 -C src
     - name: Run MacDeployQt
