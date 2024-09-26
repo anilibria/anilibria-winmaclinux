@@ -26,22 +26,35 @@ jobs:
         name: deb-package
         path: anilibria_amd64.deb      
   macosbuild:
-    runs-on: macos-12    
+    runs-on: macos-14
     steps:
     - uses: actions/checkout@v4
     - name: Set up Homebrew
-      id: set-up-homebrew
-      uses: Homebrew/actions/setup-homebrew@master
+      run: arch -x86_64 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+    - name: Fix brew issue
+      run: |
+        rm /usr/local/bin/2to3
+        rm /usr/local/bin/2to3-3.12
+        rm /usr/local/bin/idle3
+        rm /usr/local/bin/idle3.12
+        rm /usr/local/bin/pydoc3
+        rm /usr/local/bin/pydoc3.12
+        rm /usr/local/bin/python3
+        rm /usr/local/bin/python3-config
+        rm /usr/local/bin/python3.12
+        rm /usr/local/bin/python3.12-config
+    - name: install pkg-config
+      run: arch -x86_64 /usr/local/bin/brew install pkg-config
     - name: install mpv
-      run: brew install mpv
+      run: arch -x86_64 /usr/local/bin/brew install mpv
     - name: Install Qt dependencies
-      uses: jurplel/install-qt-action@v3.3.0
+      uses: jurplel/install-qt-action@v4
       with:
         version: 5.15.2
         target: 'desktop'
         arch: 'clang_64'        
     - name: run qmake
-      run: qmake -makefile -o src/Makefile src/AniLibria.pro
+      run: arch -x86_64 qmake -makefile -o src/Makefile src/AniLibria.pro
     - name: run make
       run: make -j4 -C src
     - name: Run MacDeployQt
@@ -49,7 +62,7 @@ jobs:
     - name: patch libraries paths
       run: |
         cp /usr/local/lib/libsharpyuv.0.dylib src/AniLibria.app/Contents/Frameworks/
-        cp /usr/local/lib/libjxl_cms.0.10.dylib src/AniLibria.app/Contents/Frameworks/
+        cp /usr/local/lib/libjxl_cms.0.11.dylib src/AniLibria.app/Contents/Frameworks/
         cp /usr/local/opt/python@3.12/Frameworks/Python.framework/Versions/3.12/Python src/AniLibria.app/Contents/Frameworks/
       
         install_name_tool -change /usr/local/Cellar/ffmpeg/7.0_1/lib/libswresample.5.dylib @executable_path/../Frameworks/libswresample.5.dylib src/AniLibria.app/Contents/Frameworks/libavcodec.61.dylib
@@ -82,9 +95,7 @@ jobs:
 
         install_name_tool -change /usr/local/Cellar/brotli/1.1.0/lib/libbrotlicommon.1.dylib @executable_path/../Frameworks/ src/AniLibria.app/Contents/Frameworks/librubberband.2.dylib
         
-        install_name_tool -change /usr/local/opt/little-cms2/lib/liblcms2.2.dylib @executable_path/../Frameworks/liblcms2.2.dylib src/AniLibria.app/Contents/Frameworks/libjxl_cms.0.10.dylib
-        install_name_tool -change /usr/local/opt/highway/lib/libhwy.1.dylib @executable_path/../Frameworks/libhwy.1.dylib src/AniLibria.app/Contents/Frameworks/libjxl_cms.0.10.dylib
-
+        
         install_name_tool -change @loader_path/../../../../opt/libsamplerate/lib/libsamplerate.0.dylib @executable_path/../Frameworks/libhwy.1.dylib src/AniLibria.app/Contents/Frameworks/librubberband.2.dylib
         install_name_tool -change /usr/local/opt/python@3.12/Frameworks/Python.framework/Versions/3.12/Python @executable_path/../Frameworks/Python src/AniLibria.app/Contents/Frameworks/libvapoursynth-script.0.dylib
         install_name_tool -change /usr/local/Cellar/nettle/3.9.1/lib/libnettle.8.dylib @executable_path/../Frameworks/libnettle.8.dylib src/AniLibria.app/Contents/Frameworks/libhogweed.6.dylib
