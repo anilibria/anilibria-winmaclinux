@@ -1511,6 +1511,7 @@ void ReleasesViewModel::synchronizeSeens(const QVariantMap items) noexcept
 
         auto video = videosMap.value(key);
         auto state = items.value(key).toBool();
+
         auto releaseVideos = releases.values(video->releaseId());
 
         std::sort(
@@ -1524,6 +1525,7 @@ void ReleasesViewModel::synchronizeSeens(const QVariantMap items) noexcept
         setSeenMarkInternal(video->releaseId(), videoIndex, state);
     }
     saveSeenMarks();
+    m_items->refresh(); // update releases after save seen marks
 }
 
 void ReleasesViewModel::synchronizeLocalSeensToExternal() noexcept
