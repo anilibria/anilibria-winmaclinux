@@ -59,8 +59,6 @@ jobs:
     - name: patch libraries paths
       run: |
         cp /usr/local/lib/libsharpyuv.0.dylib src/AniLibria.app/Contents/Frameworks/
-        cp /usr/local/Cellar/llvm/19.1.0/lib/c++/libc++abi.1.dylib src/AniLibria.app/Contents/Frameworks/
-        cp /usr/local/Cellar/llvm/19.1.0/lib/libunwind.1.dylib src/AniLibria.app/Contents/Frameworks/
         cp /usr/local/opt/python@3.12/Frameworks/Python.framework/Versions/3.12/Python src/AniLibria.app/Contents/Frameworks/
       
         install_name_tool -change /usr/local/Cellar/ffmpeg/7.0_1/lib/libswresample.5.dylib @executable_path/../Frameworks/libswresample.5.dylib src/AniLibria.app/Contents/Frameworks/libavcodec.61.dylib

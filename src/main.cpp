@@ -109,7 +109,7 @@ void myMessageOutput(QtMsgType type, const QMessageLogContext &context, const QS
     QFile outFile("qt.log");
     outFile.open(QIODevice::WriteOnly | QIODevice::Append);
     QTextStream ts(&outFile);
-    ts << txt << endl;
+    ts << txt << Qt::endl;
 }
 
 int main(int argc, char *argv[])

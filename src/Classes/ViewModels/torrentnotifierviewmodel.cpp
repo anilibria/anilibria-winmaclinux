@@ -248,6 +248,7 @@ void TorrentNotifierViewModel::socketDisconnected()
 
 void TorrentNotifierViewModel::errorSocket(QAbstractSocket::SocketError error)
 {
+    Q_UNUSED(error);
     if (m_howMuchTimesTryConnect < 5) {
         m_howMuchTimesTryConnect += 1;
         QTimer::singleShot(1000 * m_howMuchTimesTryConnect, this, &TorrentNotifierViewModel::makeConnectToNotifiers);

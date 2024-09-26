@@ -318,6 +318,8 @@ void OnlinePlayerVideoList::setVideosFromSingleTorrent(const ReleaseTorrentModel
 
 void OnlinePlayerVideoList::setVideosFromSingleList(int releaseId, const QString& poster) noexcept
 {
+    Q_UNUSED(poster); //TODO: remake signature!!!
+
     beginResetModel();
 
     auto apiVideos = m_releaseViewModel->getReleaseVideos(releaseId);

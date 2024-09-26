@@ -336,6 +336,18 @@ void ExtensionsViewModel::makeHttpGet(const QString &url, const QList<QString> h
     m_pendingCallbacks.insert(identifier, callback);
 
     QNetworkRequest request(url);
+
+    foreach (auto header, headers) {
+        auto parts = header.split(" ");
+        if (parts.size() == 2) {
+            auto name = parts.value(0);
+            auto value = parts.value(1);
+            request.setRawHeader(name.toUtf8(), value.toUtf8());
+        } else {
+            request.setRawHeader(header.toUtf8(), "");
+        }
+    }
+
     request.setAttribute(QNetworkRequest::FollowRedirectsAttribute, true);
     auto reply = m_networkManager->get(request);
     reply->setProperty("pendingIndentifier", identifier);
@@ -354,6 +366,18 @@ void ExtensionsViewModel::makeHttpDelete(const QString &url, const QList<QString
     m_pendingCallbacks.insert(identifier, callback);
 
     QNetworkRequest request(url);
+
+    foreach (auto header, headers) {
+        auto parts = header.split(" ");
+        if (parts.size() == 2) {
+            auto name = parts.value(0);
+            auto value = parts.value(1);
+            request.setRawHeader(name.toUtf8(), value.toUtf8());
+        } else {
+            request.setRawHeader(header.toUtf8(), "");
+        }
+    }
+
     request.setAttribute(QNetworkRequest::FollowRedirectsAttribute, true);
     auto reply = m_networkManager->deleteResource(request);
     reply->setProperty("pendingIndentifier", identifier);
@@ -371,6 +395,18 @@ void ExtensionsViewModel::makeHttpPost(const QString &url, const QList<QString> 
     m_pendingCallbacks.insert(identifier, callback);
 
     QNetworkRequest request(url);
+
+    foreach (auto header, headers) {
+        auto parts = header.split(" ");
+        if (parts.size() == 2) {
+            auto name = parts.value(0);
+            auto value = parts.value(1);
+            request.setRawHeader(name.toUtf8(), value.toUtf8());
+        } else {
+            request.setRawHeader(header.toUtf8(), "");
+        }
+    }
+
     request.setAttribute(QNetworkRequest::FollowRedirectsAttribute, true);
     auto reply = m_networkManager->post(request, body.toUtf8());
     reply->setProperty("pendingIndentifier", identifier);
