@@ -343,6 +343,7 @@ void ApplicationsViewModel::versionDownloaded(QNetworkReply *reply)
 
 void ApplicationsViewModel::newVersionAvailable(QString version, QString url, QString appIdentifier)
 {
+    Q_UNUSED(url);
     foreach (auto application, m_applications) {
         if (application->isIncludedInsideDistributive()) continue;
         if (application->name() != appIdentifier) continue;
