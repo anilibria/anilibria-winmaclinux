@@ -355,6 +355,12 @@ void Synchronizev2Service::userProfileHandler(QNetworkReply *reply) noexcept
         m_nickName = response.value("nickname").toString();
         emit nickNameChanged();
     }
+    if (m_nickName.isEmpty()) {
+        if (response.contains("login")) {
+            m_nickName = response.value("login").toString();
+            emit nickNameChanged();
+        }
+    }
     //if (response.contains("created_at")) m_nickName = response.value("created_at").toString();
     if (response.contains("avatar")) {
         auto avatarObject = response.value("avatar").toObject();
