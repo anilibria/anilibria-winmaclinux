@@ -245,8 +245,9 @@ int ReleaseLinkedSeries::getSortedOrder(int id) const noexcept
     return 0;
 }
 
-void ReleaseLinkedSeries::fillReleaseSeries(QList<FullReleaseModel *> *list, const int id) noexcept
+QList<QVariantMap> ReleaseLinkedSeries::fillReleaseSeries(const int id) noexcept
 {
+    QList<QVariantMap> result;
     auto iterator = std::find_if(
         m_series.cbegin(),
         m_series.cend(),
@@ -255,22 +256,28 @@ void ReleaseLinkedSeries::fillReleaseSeries(QList<FullReleaseModel *> *list, con
         }
     );
 
-    if (iterator == m_series.cend()) return;
+    if (iterator == m_series.cend()) return result;
 
     auto item = *iterator;
     auto idsCollection = item->releaseIds();
-
-    for (auto i = 0; i < idsCollection->count(); i++) {
-        list->append(nullptr);
+    QMap<int, FullReleaseModel*> releaseMap;
+    foreach(auto release, *m_releases) {
+        releaseMap.insert(release->id(), release);
     }
 
-    foreach (auto release, *m_releases) {
-        auto releaseId = release->id();
-        if (idsCollection->contains(releaseId)) {
-            auto releaseIndex = idsCollection->indexOf(releaseId);
-            (*list)[releaseIndex] = release;
-        }
+    foreach (auto releaseSeries, *idsCollection) {
+        auto releaseId = releaseSeries.toInt();
+        if (!releaseMap.contains(releaseId)) continue;
+
+        auto release = releaseMap.value(releaseId);
+        QVariantMap map;
+        map["id"] = release->id();
+        map["title"] = release->title();
+        map["poster"] = release->poster();
+        result.append(map);
     }
+
+    return result;
 }
 
 int ReleaseLinkedSeries::getNextLinkedRelease(const int currentRelease)

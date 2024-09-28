@@ -1030,6 +1030,7 @@ void ReleasesViewModel::showReleaseCard(int id, bool needHandle) noexcept
 
     resetReleaseChanges(release->id());
 
+
     refreshOpenedReleaseCard();
 
     m_customGroups->setupReleaseId(id);

@@ -30,12 +30,11 @@ void ReleaseSeriesListModel::refresh() noexcept
 
     beginResetModel();
 
-    m_releases->clear();
+    m_variantReleases.clear();
 
     if (m_releaseId > 0) {
-        auto releases = m_releases.get();
-
-        m_linkedSeries->fillReleaseSeries(releases, m_releaseId);
+        auto newSeries = m_linkedSeries->fillReleaseSeries(m_releaseId);
+        m_variantReleases.append(newSeries);
     }
 
     endResetModel();
@@ -47,27 +46,27 @@ int ReleaseSeriesListModel::rowCount(const QModelIndex &parent) const
 {
     if (parent.isValid()) return 0;
 
-    return m_releases->size();
+    return m_variantReleases.size();
 }
 
 QVariant ReleaseSeriesListModel::data(const QModelIndex &index, int role) const
 {
     if (!index.isValid()) return QVariant();
 
-    auto release = m_releases->at(index.row());
+    auto map = m_variantReleases.at(index.row());
 
     switch (role) {
         case IndexRole: {
-            return QVariant(release->id());
+            return map.value("id");
         }
         case TitleRole: {
-            return QVariant(release->title());
+            return map.value("title");
         }
         case PosterRole: {
-            return QVariant(release->poster());
+            return map.value("poster");
         }
         case IsSelected: {
-            return QVariant(release->id() == m_releaseId);
+            return QVariant(map.value("id").toInt() == m_releaseId);
         }
         case ReleaseNumber: {
             return QVariant(index.row() + 1);
