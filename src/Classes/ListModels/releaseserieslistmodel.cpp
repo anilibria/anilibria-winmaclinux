@@ -55,7 +55,8 @@ QVariant ReleaseSeriesListModel::data(const QModelIndex &index, int role) const
     if (!index.isValid()) return QVariant();
 
     auto release = m_releases->at(index.row());
-
+    if(!release)
+        return QVariant();
     switch (role) {
         case IndexRole: {
             return QVariant(release->id());
