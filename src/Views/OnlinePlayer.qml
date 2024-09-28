@@ -282,158 +282,147 @@ Page {
         id: seriesPopup
         width: 230
         y: userConfigurationViewModel.fixedControlPanel ? fullHeight / 2 - (height / 2) : 0
-        height: itemsContent.height > panelHeight ? panelHeight : itemsContent.height
+        height: serieScrollContainer.contentHeight > panelHeight ? panelHeight : serieScrollContainer.contentHeight
         color: "transparent"
 
         property int fullHeight: _page.height - controlPanel.height
         property int panelHeight: userConfigurationViewModel.fixedControlPanel ? fullHeight / 2 : fullHeight - 20
 
-        Flickable {
+        ListView {
             id: serieScrollContainer
             width: seriesPopup.width
             height: seriesPopup.height
-            contentWidth: seriesPopup.width
-            contentHeight: itemsContent.height
             clip: true
-
             ScrollBar.vertical: ScrollBar {
                 active: true
             }
+            model: onlinePlayerViewModel.videos
+            delegate: Rectangle {
+                height: isGroup ? 70 : 40
+                width: seriesPopup.width
+                color: selectedVideo ? applicationThemeViewModel.playlistSelectedBackground : applicationThemeViewModel.playlistBackground
+                MouseArea {
+                    anchors.fill: parent
+                    hoverEnabled: true
+                    onEntered: {
+                        onlinePlayerViewModel.clearPanelTimer();
+                    }
+                    onClicked: {
+                        if (isGroup) return;
 
-            Column {
-                id: itemsContent
-                Repeater {
-                    model: onlinePlayerViewModel.videos
-                    delegate: Row {
-                        Rectangle {
-                            height: isGroup ? 70 : 40
-                            width: seriesPopup.width
-                            color: selectedVideo ? applicationThemeViewModel.playlistSelectedBackground : applicationThemeViewModel.playlistBackground
-                            MouseArea {
-                                anchors.fill: parent
-                                hoverEnabled: true
-                                onEntered: {
-                                    onlinePlayerViewModel.clearPanelTimer();
-                                }
-                                onClicked: {
-                                    if (isGroup) return;
+                        onlinePlayerViewModel.selectVideo(releaseId, order);
+                    }
+                }
+                PlainText {
+                    visible: !isGroup
+                    color: selectedVideo ? applicationThemeViewModel.playlistSelectedText : applicationThemeViewModel.playlistText
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.left: parent.left
+                    anchors.leftMargin: 10
+                    fontPointSize: 9
+                    text: title
+                }
 
-                                    onlinePlayerViewModel.selectVideo(releaseId, order);
+                Rectangle {
+                    color: "transparent"
+                    anchors.fill: parent
+                    anchors.leftMargin: 10
+                    anchors.rightMargin: 10
+
+                    PlainText {
+                        visible: isGroup
+                        color: selectedVideo ? applicationThemeViewModel.playlistSelectedText : applicationThemeViewModel.playlistText
+                        text: title
+                        width: parent.width
+                        anchors.verticalCenter: parent.verticalCenter
+                        maximumLineCount: 3
+                        font.bold: true
+                        elide: Text.ElideRight
+                        wrapMode: Text.WordWrap
+                        fontPointSize: 9
+                    }
+                }
+
+                Row {
+                    width: 62
+                    spacing: 0
+                    anchors.right: parent.right
+                    anchors.rightMargin: 24
+
+                    IconButton {
+                        height: 36
+                        width: 36
+                        visible: !isGroup
+                        hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
+                        iconPath: isSeen ? applicationThemeViewModel.currentItems.iconPlayerSeen : applicationThemeViewModel.currentItems.iconPlayerUnseen
+                        iconWidth: 22
+                        iconHeight: 22
+                        onButtonPressed: {
+                            releasesViewModel.toggleSeenMark(releaseId, order);
+                            onlinePlayerViewModel.refreshSingleVideo(releaseId, order);
+                            releasesViewModel.items.refreshSingleItem(releaseId);
+                        }
+                    }
+
+                    IconButton {
+                        height: 36
+                        width: 36
+                        visible: !isGroup
+                        hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
+                        iconPath: applicationThemeViewModel.currentItems.iconPlayerExternal
+                        iconWidth: 22
+                        iconHeight: 22
+                        onButtonPressed: {
+                            externalMenu.open();
+                        }
+
+                        CommonMenu {
+                            id: externalMenu
+                            y: parent.y
+                            width: 300
+
+                            CommonMenuItem {
+                                text: "Открыть в браузере"
+                                onPressed: {
+                                    let video;
+                                    switch (onlinePlayerViewModel.videoQuality) {
+                                        case "fullhd":
+                                            video = fullhd;
+                                            break;
+                                        case "hd":
+                                            video = hd;
+                                            break;
+                                        case "sd":
+                                            video = sd;
+                                            break;
+                                    }
+                                    if (!video) return;
+
+                                    Qt.openUrlExternally("https://anilibria.github.io/anilibria-win/videotester.html?video=" + video.replace("https://", ""));
+
+                                    externalMenu.close();
                                 }
                             }
-                            PlainText {
-                                visible: !isGroup
-                                color: selectedVideo ? applicationThemeViewModel.playlistSelectedText : applicationThemeViewModel.playlistText
-                                anchors.verticalCenter: parent.verticalCenter
-                                anchors.left: parent.left
-                                anchors.leftMargin: 10
-                                fontPointSize: 9
-                                text: title
-                            }
-
-                            Rectangle {
-                                color: "transparent"
-                                anchors.fill: parent
-                                anchors.leftMargin: 10
-                                anchors.rightMargin: 10
-
-                                PlainText {
-                                    visible: isGroup
-                                    color: selectedVideo ? applicationThemeViewModel.playlistSelectedText : applicationThemeViewModel.playlistText
-                                    text: title
-                                    width: parent.width
-                                    anchors.verticalCenter: parent.verticalCenter
-                                    maximumLineCount: 3
-                                    font.bold: true
-                                    elide: Text.ElideRight
-                                    wrapMode: Text.WordWrap
-                                    fontPointSize: 9
-                                }
-                            }
-
-                            Row {
-                                width: 62
-                                spacing: 0
-                                anchors.right: parent.right
-                                anchors.rightMargin: 24
-
-                                IconButton {
-                                    height: 36
-                                    width: 36
-                                    visible: !isGroup
-                                    hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
-                                    iconPath: isSeen ? applicationThemeViewModel.currentItems.iconPlayerSeen : applicationThemeViewModel.currentItems.iconPlayerUnseen
-                                    iconWidth: 22
-                                    iconHeight: 22
-                                    onButtonPressed: {
-                                        releasesViewModel.toggleSeenMark(releaseId, order);
-                                        onlinePlayerViewModel.refreshSingleVideo(releaseId, order);
-                                        releasesViewModel.items.refreshSingleItem(releaseId);
+                            CommonMenuItem {
+                                text: "Открыть во внешнем плеере"
+                                onPressed: {
+                                    let video;
+                                    switch (onlinePlayerViewModel.videoQuality) {
+                                        case "fullhd":
+                                            video = fullhd;
+                                            break;
+                                        case "hd":
+                                            video = hd;
+                                            break;
+                                        case "sd":
+                                            video = sd;
+                                            break;
                                     }
-                                }
+                                    if (!video) return;
 
-                                IconButton {
-                                    height: 36
-                                    width: 36
-                                    visible: !isGroup
-                                    hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
-                                    iconPath: applicationThemeViewModel.currentItems.iconPlayerExternal
-                                    iconWidth: 22
-                                    iconHeight: 22
-                                    onButtonPressed: {
-                                        externalMenu.open();
-                                    }
+                                    onlinePlayerViewModel.openVideoInExternalPlayer(video);
 
-                                    CommonMenu {
-                                        id: externalMenu
-                                        y: parent.y
-                                        width: 300
-
-                                        CommonMenuItem {
-                                            text: "Открыть в браузере"
-                                            onPressed: {
-                                                let video;
-                                                switch (onlinePlayerViewModel.videoQuality) {
-                                                    case "fullhd":
-                                                        video = fullhd;
-                                                        break;
-                                                    case "hd":
-                                                        video = hd;
-                                                        break;
-                                                    case "sd":
-                                                        video = sd;
-                                                        break;
-                                                }
-                                                if (!video) return;
-
-                                                Qt.openUrlExternally("https://anilibria.github.io/anilibria-win/videotester.html?video=" + video.replace("https://", ""));
-
-                                                externalMenu.close();
-                                            }
-                                        }
-                                        CommonMenuItem {
-                                            text: "Открыть во внешнем плеере"
-                                            onPressed: {
-                                                let video;
-                                                switch (onlinePlayerViewModel.videoQuality) {
-                                                    case "fullhd":
-                                                        video = fullhd;
-                                                        break;
-                                                    case "hd":
-                                                        video = hd;
-                                                        break;
-                                                    case "sd":
-                                                        video = sd;
-                                                        break;
-                                                }
-                                                if (!video) return;
-
-                                                onlinePlayerViewModel.openVideoInExternalPlayer(video);
-
-                                                externalMenu.close();
-                                            }
-                                        }
-                                    }
+                                    externalMenu.close();
                                 }
                             }
                         }
@@ -1469,10 +1458,7 @@ Page {
     }
 
     function setSerieScrollPosition() {
-        let newPosition = onlinePlayerViewModel.selectedVideo * 40 - serieScrollContainer.height;
-        newPosition += 40;
-        if (newPosition < 0) newPosition = 0;
-        serieScrollContainer.contentY = newPosition;
+        serieScrollContainer.positionViewAtIndex(onlinePlayerViewModel.selectedVideo, ListView.Contain);
     }
 
     function setControlVisible(visible) {
