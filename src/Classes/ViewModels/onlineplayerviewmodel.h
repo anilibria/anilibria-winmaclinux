@@ -78,6 +78,7 @@ class OnlinePlayerViewModel : public QObject
     Q_PROPERTY(int proxyPort READ proxyPort WRITE setProxyPort NOTIFY proxyPortChanged)
     Q_PROPERTY(bool muted READ muted WRITE setMuted NOTIFY mutedChanged)
     Q_PROPERTY(bool needProxyFallback READ needProxyFallback WRITE setNeedProxyFallback NOTIFY needProxyFallbackChanged FINAL)
+    Q_PROPERTY(int videoServerOverride READ videoServerOverride WRITE setVideoServerOverride NOTIFY videoServerOverrideChanged FINAL)
     Q_PROPERTY(TorrentNotifierViewModel* torrentStream READ torrentStream WRITE setTorrentStream NOTIFY torrentStreamChanged FINAL)
 
 private:
@@ -136,6 +137,7 @@ private:
     int m_panelTimerCounter { 0 };
     bool m_isStreamingTorrents { false };
     TorrentNotifierViewModel* m_torrentStream { nullptr };
+    int m_videoServerOverride { 0 };
 
 public:
     explicit OnlinePlayerViewModel(QObject *parent = nullptr);
@@ -268,6 +270,9 @@ public:
     bool needProxyFallback() const noexcept { return m_needProxyFallback; }
     void setNeedProxyFallback(bool needProxyFallback) noexcept;
 
+    int videoServerOverride() const noexcept { return m_videoServerOverride; }
+    void setVideoServerOverride(int videoServerOverride) noexcept;
+
     TorrentNotifierViewModel* torrentStream() const noexcept { return m_torrentStream; }
     void setTorrentStream(const TorrentNotifierViewModel* torrentStream) noexcept;
 
@@ -385,6 +390,7 @@ signals:
     void needProxyFallbackChanged();
     void hidePanelIfItVisible();
     void torrentStreamChanged();
+    void videoServerOverrideChanged();
 
 };
 

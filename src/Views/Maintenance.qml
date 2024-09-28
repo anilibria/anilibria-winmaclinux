@@ -280,7 +280,7 @@ Page {
                     x: window.width / 2 - apiAddressPopup.width / 2
                     y: window.height / 2 - apiAddressPopup.height / 2
                     width: 450
-                    height: 320
+                    height: 400
                     modal: true
                     focus: true
                     closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
@@ -405,6 +405,40 @@ Page {
                             }
                         }
 
+                        AccentText {
+                            width: apiAddressPopup.width
+                            text: "Использовать сервер видео"
+                            fontPointSize: 12
+                            font.bold: true
+                            elide: Text.ElideRight
+                        }
+
+                        Rectangle {
+                            color: "transparent"
+                            width: apiAddressPopup.width - 30
+                            height: videoServersComboBox.height
+
+                            CommonComboBox {
+                                id: videoServersComboBox
+                                width: parent.width
+                                model: ListModel {
+                                    ListElement {
+                                        text: "Использовать из кеша"
+                                    }
+                                    ListElement {
+                                        text: "Всегда использовать РФ"
+                                    }
+                                    ListElement {
+                                        text: "Всегда использовать вне РФ"
+                                    }
+                                }
+
+                                Component.onCompleted: {
+                                    videoServersComboBox.currentIndex = userConfigurationViewModel.videoServer;
+                                }
+                            }
+                        }
+
                         Rectangle {
                             color: "transparent"
                             width: apiAddressPopup.width - 20
@@ -453,6 +487,8 @@ Page {
 
                                     userConfigurationViewModel.useCacheFolder = localFolder.checked;
                                     userConfigurationViewModel.cacheFolder = cacheFolderTextField.text;
+                                    userConfigurationViewModel.videoServer = videoServersComboBox.currentIndex;
+
 
                                     apiAddressPopup.close();
                                 }

@@ -149,11 +149,24 @@ void OnlinePlayerViewModel::setVideoSource(const QString &videoSource)
 {
     if (videoSource == "") return;
 
-    qDebug() << "setVideoSource: " << videoSource;
+    QString innerVideoSource = videoSource;
+    //need to override server
+    if (m_videoServerOverride > 0) {
+        switch (m_videoServerOverride) {
+            case 1: // in RF
+                innerVideoSource = innerVideoSource.replace("cache.libria.fun", "cache-rfn.libria.fun");
+                break;
+            case 2: // not in RF
+                innerVideoSource = innerVideoSource.replace("cache-rfn.libria.fun", "cache.libria.fun");
+                break;
+        }
+    }
 
-    auto isLocalFile = videoSource.startsWith("file://");
+    qDebug() << "setVideoSource: " << innerVideoSource;
+
+    auto isLocalFile = innerVideoSource.startsWith("file://");
     auto needFallback = m_needProxyFallback ? "fallback=true&" : "";
-    auto source = !isLocalFile && !m_isStreamingTorrents && m_needProxified && m_proxyPort > 0 ? QString("http://localhost:") + QString::number(m_proxyPort) + "/proxyvideolist?" + needFallback + "path=" + videoSource : videoSource;
+    auto source = !isLocalFile && !m_isStreamingTorrents && m_needProxified && m_proxyPort > 0 ? QString("http://localhost:") + QString::number(m_proxyPort) + "/proxyvideolist?" + needFallback + "path=" + innerVideoSource : innerVideoSource;
     if (m_videoSource == source) return;
 
     m_endSkipOpening = false;
@@ -162,7 +175,7 @@ void OnlinePlayerViewModel::setVideoSource(const QString &videoSource)
     m_videoSource = source;
     emit videoSourceChanged();
 
-    m_remotePlayer->broadcastCommand(m_videoSourceChangedCommand, videoSource);
+    m_remotePlayer->broadcastCommand(m_videoSourceChangedCommand, innerVideoSource);
 }
 
 void OnlinePlayerViewModel::setReleasePoster(const QString &releasePoster) noexcept
@@ -413,6 +426,14 @@ void OnlinePlayerViewModel::setNeedProxyFallback(bool needProxyFallback) noexcep
 
     m_needProxyFallback = needProxyFallback;
     emit needProxyFallbackChanged();
+}
+
+void OnlinePlayerViewModel::setVideoServerOverride(int videoServerOverride) noexcept
+{
+    if (m_videoServerOverride == videoServerOverride) return;
+
+    m_videoServerOverride = videoServerOverride;
+    emit videoServerOverrideChanged();
 }
 
 void OnlinePlayerViewModel::setTorrentStream(const TorrentNotifierViewModel *torrentStream) noexcept

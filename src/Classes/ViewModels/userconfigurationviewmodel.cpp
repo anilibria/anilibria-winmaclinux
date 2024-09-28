@@ -429,6 +429,14 @@ void UserConfigurationViewModel::setCacheFolder(const QString &cacheFolder) noex
     emit cacheFolderChanged();
 }
 
+void UserConfigurationViewModel::setVideoServer(int videoServer) noexcept
+{
+    if (m_videoServer == videoServer) return;
+
+    m_videoServer = videoServer;
+    emit videoServerChanged();
+}
+
 void UserConfigurationViewModel::refreshConfiguration() noexcept
 {
     readSettingsFromFile();
@@ -467,6 +475,7 @@ void UserConfigurationViewModel::refreshConfiguration() noexcept
     emit cachehostChanged();
     emit useCacheFolderChanged();
     emit cacheFolderChanged();
+    emit videoServerChanged();
 }
 
 void UserConfigurationViewModel::saveSettingsToFile()
@@ -521,6 +530,7 @@ void UserConfigurationViewModel::saveSettingsToFile()
     object[m_cachehostField] = m_cachehost;
     object[m_useCacheFolderField] = m_useCacheFolder;
     object[m_cacheFolderField] = m_cacheFolder;
+    object[m_videoServerField] = m_videoServer;
 
     QFile file(getCachePath(m_cacheFileName));
     file.open(QFile::WriteOnly | QFile::Text);
@@ -586,6 +596,7 @@ void UserConfigurationViewModel::readSettingsFromFile()
     m_cachehost = object.contains(m_cachehostField) ? object[m_cachehostField].toString() : "https://raw.githubusercontent.com/trueromanus/LocalCacheChecker/main/cache";
     m_useCacheFolder = object.contains(m_useCacheFolderField) ? object[m_useCacheFolderField].toBool() : false;
     m_cacheFolder = object.contains(m_cacheFolderField) ? object[m_cacheFolderField].toString() : "";
+    m_videoServer = object.contains(m_videoServerField) ? object[m_videoServerField].toInt() : 0;
 
     if (m_textFont != "Default") changeFont(m_textFont);
 }

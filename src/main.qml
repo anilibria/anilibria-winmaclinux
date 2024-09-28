@@ -945,6 +945,7 @@ ApplicationWindow {
         sendPlaybackToRemoteSwitch: userConfigurationViewModel.sendPlaybackToRemote
         remotePlayer.port: userConfigurationViewModel.remotePort
         torrentStream: torrentNotifierViewModel
+        videoServerOverride: userConfigurationViewModel.videoServer
         onIsFullScreenChanged: {
             if (isFullScreen) {
                 window.showFullScreen();
