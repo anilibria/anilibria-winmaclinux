@@ -1267,7 +1267,7 @@ Page {
                 RoundedActionButton {
                     id: setToStartedSectionButton
                     visible: page.startedSection !== releasesViewModel.items.section
-                    text: "Сделать стартовым"
+                    text: mainViewModel.isSmallSizeMode ? "Сделать ст. рз." : "Сделать стартовый раздел"
                     textSize: !mainViewModel.isSmallSizeMode ? 11 : 10
                     anchors.verticalCenter: parent.verticalCenter
                     anchors.right: displaySection.left
