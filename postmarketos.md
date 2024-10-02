@@ -31,6 +31,7 @@ rm -rf anilibria/
 
 ### TorrentStream
 Воизбежание проскоков видео, рекомендуюется скачать и настроить [TorrentStream](https://github.com/trueromanus/TorrentStream)
+
 Для этого, скачайте последнюю версию из [releases](https://github.com/trueromanus/TorrentStream/releases), разместите файл в удобной для Вас дерриктории, зайдите в приложение AniLibria и во вкладке TorrentStream укажите путь до файла.
 
 ### Как найти приложение?
