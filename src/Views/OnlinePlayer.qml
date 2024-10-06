@@ -106,18 +106,6 @@ Page {
         jumpSecondComboBox.currentIndex = onlinePlayerViewModel.jumpSeconds.indexOf(userSettings.jumpSecond);
         remotePlayerPortComboBox.currentIndex = onlinePlayerViewModel.ports.indexOf(userConfigurationViewModel.remotePort);
 
-        switch (userSettings.quality) {
-            case 0:
-                onlinePlayerViewModel.videoQuality = "sd";
-                break;
-            case 1:
-                onlinePlayerViewModel.videoQuality = "hd";
-                break;
-            case 2:
-                onlinePlayerViewModel.videoQuality = "fullhd";
-                break;
-        }
-
         if (!onlinePlayerViewModel.navigateReleaseId && !onlinePlayerViewModel.isCinemahall) {
             const lastSeenReleaseId = onlinePlayerViewModel.getLastVideoSeen();
             if (lastSeenReleaseId === 0) return;
@@ -1475,5 +1463,18 @@ Page {
 
     Component.onCompleted: {
         volumeSlider.value = playerLoader.item.volume;
+
+        const userSettings = JSON.parse(localStorage.getUserSettings());
+        switch (userSettings.quality) {
+            case 0:
+                onlinePlayerViewModel.videoQuality = "sd";
+                break;
+            case 1:
+                onlinePlayerViewModel.videoQuality = "hd";
+                break;
+            case 2:
+                onlinePlayerViewModel.videoQuality = "fullhd";
+                break;
+        }
     }
 }
