@@ -52,7 +52,7 @@ ReleasesListModel::ReleasesListModel(QObject *parent) : QAbstractListModel(paren
 {
 }
 
-void ReleasesListModel::setup(QSharedPointer<QList<FullReleaseModel *>> releases, QMap<int, int> *schedules, QList<int> *userFavorites, QVector<int> *hidedReleases, QHash<QString, bool> *seenMarks, QSharedPointer<QHash<int, HistoryModel *>> historyItems, QSharedPointer<ChangesModel> changes, QSharedPointer<CinemahallListModel> cinemahall, ReleaseCustomGroupsViewModel* customGroups)
+void ReleasesListModel::setup(QSharedPointer<QList<FullReleaseModel *>> releases, QMap<int, int> *schedules, QList<int> *userFavorites, QList<int> *hidedReleases, QHash<QString, bool> *seenMarks, QSharedPointer<QHash<int, HistoryModel *>> historyItems, QSharedPointer<ChangesModel> changes, QSharedPointer<CinemahallListModel> cinemahall, ReleaseCustomGroupsViewModel* customGroups)
 {
     m_releases = releases;
     m_scheduleReleases = schedules;

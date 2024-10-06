@@ -103,7 +103,7 @@ ReleasesViewModel::ReleasesViewModel(QObject *parent) : QObject(parent)
     createIfNotExistsFile(getCachePath(scheduleCacheFileName), "{}");
     createIfNotExistsFile(getCachePath(favoriteCacheFileName), "[]");
     createIfNotExistsFile(getCachePath(hidedReleasesCacheFileName), "[]");
-    createIfNotExistsFile(getCachePath(seenMarkCacheFileName), "[]");
+    createIfNotExistsFile(getCachePath(extendedSeenMarkCacheFileName), "[]");
     createIfNotExistsFile(getCachePath(historyCacheFileName), "[]");
     createIfNotExistsFile(getCachePath(notificationCacheFileName), "{ \"newReleases\": [], \"newOnlineSeries\": [], \"newTorrents\": [], \"newTorrentSeries\": [] }");
 
@@ -2104,7 +2104,7 @@ void ReleasesViewModel::saveHidedReleases()
 
 void ReleasesViewModel::loadSeenMarks()
 {
-    QFile seenMarkFile(getCachePath(seenMarkCacheFileName));
+    QFile seenMarkFile(getCachePath(extendedSeenMarkCacheFileName));
     if (!seenMarkFile.open(QFile::ReadOnly | QFile::Text)) return;
     auto seenMarkJson = seenMarkFile.readAll();
     seenMarkFile.close();
@@ -2112,10 +2112,15 @@ void ReleasesViewModel::loadSeenMarks()
     auto document = QJsonDocument::fromJson(seenMarkJson);
     auto jsonSeenMarks = document.array();
 
-    m_seenMarks->clear();
+    m_extendedSeenMarks.clear();
 
     foreach (auto item, jsonSeenMarks) {
-        m_seenMarks->insert(item.toString(), true);
+        auto object = item.toObject();
+        auto id = object.value("id").toString();
+        auto mark = object.value("mark").toBool();
+        auto time = object.value("time").toInt();
+        auto tuple = std::make_tuple(mark, time);
+        m_extendedSeenMarks.insert(id, tuple);
     }
 
     recalculateSeenCounts();
@@ -2123,23 +2128,12 @@ void ReleasesViewModel::loadSeenMarks()
 
 void ReleasesViewModel::recalculateSeenCounts()
 {
-    QMap<int, int> seenMap;
-    auto keys = m_seenMarks->keys();
-    foreach(auto item, keys) {
-#if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
-        auto parts = item.splitRef(".");
-#else
-        auto parts = item.splitRef(".", Qt::SkipEmptyParts);
-#endif
-        auto key = parts[0].toInt();
-        if (seenMap.contains(key)) {
-            seenMap[key] += 1;
-        } else {
-            seenMap.insert(key, 1);
-        }
+    QMap<int, int> seenMaps;
+    auto keys = m_extendedSeenMarks.keys();
+    foreach (auto release, m_extendedSeenMarks) {
+        m_onlineVideos
     }
 
-    QMapIterator<int, int> seenIterator(seenMap);
     int countSeens = 0;
     while (seenIterator.hasNext()) {
         seenIterator.next();
@@ -2158,18 +2152,25 @@ void ReleasesViewModel::saveSeenMarks()
 {
     QJsonArray array;
 
-    QHashIterator<QString, bool> iterator(*m_seenMarks);
-    while (iterator.hasNext()) {
-        iterator.next();
+    auto keys = m_extendedSeenMarks.keys();
 
-        QJsonValue value(iterator.key());
-        array.append(value);
+    foreach(auto key, keys) {
+        auto item = m_extendedSeenMarks.value(key);
+
+        bool mark = std::get<0>(item);
+        int time = std::get<1>(item);
+        QJsonObject object;
+        object["id"] = key;
+        object["mark"] = mark;
+        object["time"] = time;
+
+        array.append(object);
     }
 
     QJsonDocument seenDocument(array);
     QString seenMarkJson(seenDocument.toJson());
 
-    QFile seenMarkFile(getCachePath(seenMarkCacheFileName));
+    QFile seenMarkFile(getCachePath(extendedSeenMarkCacheFileName));
     if (!seenMarkFile.open(QFile::WriteOnly | QFile::Text)) return;
 
     seenMarkFile.write(seenMarkJson.toUtf8());

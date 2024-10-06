@@ -111,6 +111,7 @@ private:
     const QString favoriteCacheFileName { "favorites.cache" };
     const QString hidedReleasesCacheFileName { "hidedreleases.cache" };
     const QString seenMarkCacheFileName { "seenmark.cache" };
+    const QString extendedSeenMarkCacheFileName { "extendedseenmark.cache" };
     const QString historyCacheFileName { "history.cache" };
     const QString notificationCacheFileName { "notification.cache" };
     QStringList m_sectionNames;
@@ -131,8 +132,9 @@ private:
     ReleasesListModel* m_items;
     QMap<int, int>* m_scheduleReleases { new QMap<int, int>() };
     QList<int>* m_userFavorites { new QList<int>() };
-    QVector<int>* m_hiddenReleases { new QVector<int>() };
+    QList<int>* m_hiddenReleases { new QList<int>() };
     QHash<QString, bool>* m_seenMarks { new QHash<QString, bool>() };
+    QHash<QString, std::tuple<bool, int>> m_extendedSeenMarks { QHash<QString, std::tuple<bool, int>>() };
     QSharedPointer<QHash<int, HistoryModel*>> m_historyItems { new QHash<int, HistoryModel*>() };
     QSharedPointer<ChangesModel> m_releaseChanges { new ChangesModel() };
     ApplicationSettings* m_applicationSettings { nullptr };
