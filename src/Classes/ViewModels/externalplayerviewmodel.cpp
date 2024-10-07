@@ -1,3 +1,4 @@
+#include <math.h>
 #include "externalplayerviewmodel.h"
 #include "../RemotePlayer/websocketexternalplayer.h"
 
