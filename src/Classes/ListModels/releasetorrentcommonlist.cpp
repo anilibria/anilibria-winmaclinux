@@ -1,4 +1,5 @@
 #include <QUrl>
+#include <QFile>
 #include <QDesktopServices>
 #include "releasetorrentcommonlist.h"
 #include "../../globalhelpers.h"
@@ -33,17 +34,17 @@ QVariant ReleaseTorrentCommonList::data(const QModelIndex &index, int role) cons
             return QVariant(torrent->quality());
         }
         case SeriesRole: {
-            return QVariant(torrent->series());
+            return QVariant(torrent->description());
         }
         case UrlRole: {
-            return QVariant(torrent->url());
+            return QVariant(torrent->torrentHost() + torrent->torrentPath());
         }
         case IndexRole: {
             return QVariant(index.row());
         }
         case TimeCreationRole: {
             QDateTime timestamp;
-            timestamp.setSecsSinceEpoch(torrent->ctime());
+            timestamp.setSecsSinceEpoch(torrent->created());
             auto date = timestamp.date();
             auto dateAsString = getLeadingZeroDigit(date.day()) + "." + getLeadingZeroDigit(date.month()) + "." + getLeadingZeroDigit(date.year());
             auto time = timestamp.time();
@@ -98,9 +99,7 @@ void ReleaseTorrentCommonList::loadFromJson(const QList<ApiTorrentModel *> &torr
     if (torrents.isEmpty()) return;
 
     foreach (auto item, torrents) {
-        auto torrent = new ReleaseTorrentModel();
-        torrent->readFromApiTorrent(item);
-        m_torrents->append(torrent);
+        m_torrents->append(item);
     }
 
     endResetModel();
@@ -109,7 +108,7 @@ void ReleaseTorrentCommonList::loadFromJson(const QList<ApiTorrentModel *> &torr
 QString ReleaseTorrentCommonList::getDownloadPath(int index)
 {
     auto torrent = m_torrents->at(index);
-    return torrent->url();
+    return torrent->torrentPath();
 }
 
 QString ReleaseTorrentCommonList::getReadableSize(int64_t size) const noexcept

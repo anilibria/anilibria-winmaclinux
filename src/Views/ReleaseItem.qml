@@ -302,8 +302,7 @@ Item {
                                             delegate: CommonMenuItem {
                                                 text: "Скачать " + quality + " [" + series + "] " + size + " " + timecreation
                                                 onPressed: {
-                                                    const torrentPath = releasesViewModel.itemTorrents.getDownloadPath(currentIndex);
-                                                    synchronizationServicev2.downloadTorrent(torrentPath, torrentMenuContainer.torrentReleaseId);
+                                                    synchronizationServicev2.downloadTorrent(url, torrentMenuContainer.torrentReleaseId);
                                                     torrentsMenu.close();
 
                                                     if (userConfigurationViewModel.markAsReadAfterDownload) {

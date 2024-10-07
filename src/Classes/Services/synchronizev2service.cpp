@@ -162,10 +162,12 @@ void Synchronizev2Service::downloadTorrent(QString torrentPath, int releaseId)
     QUrl url;
     //if use torrent stream
     if (m_torrentDownloadMode == 2) {
-        url = QUrl("http://localhost:" + QString::number(m_torrentStreamPort) + "/fulldownload?id=" + QString::number(releaseId) + "&path=" + (m_apiv2host + torrentPath));
+        url = QUrl("http://localhost:" + QString::number(m_torrentStreamPort) + "/fulldownload?id=" + QString::number(releaseId) + "&path=" + torrentPath);
     } else {
-        url = QUrl(m_apiv2host + torrentPath);
+        url = QUrl(torrentPath);
     }
+
+    qDebug() << "Download torrent url: " << url;
 
     QNetworkRequest request(url);
     auto reply = m_networkManager->get(request);
