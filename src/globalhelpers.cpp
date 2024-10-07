@@ -47,6 +47,15 @@ QString removeFileProtocol(QString &path) noexcept
 #endif
 }
 
+QString addFileProtocol(QString& path) noexcept
+{
+#ifdef Q_OS_WIN
+    return "file:///" + path;
+#else
+    return "file://" + path;
+#endif
+}
+
 QString getJsonContentFromFile(const QString& path) noexcept {
     QFile releasesCacheFile(getCachePath(path));
 

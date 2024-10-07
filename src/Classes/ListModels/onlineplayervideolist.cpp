@@ -296,7 +296,7 @@ void OnlinePlayerVideoList::setVideosFromSingleTorrent(const ReleaseTorrentModel
         if (downloadedPath.isEmpty()) {
             url = "http://localhost:" + QString::number(port) + "/online?id=" + QString::number(releaseId) + "&index=" + QString::number(i) + "&path=" + torrent.torrentHost() + torrent.url();
         } else {
-            url = downloadedPath;
+            url = addFileProtocol(downloadedPath);
         }
         videoModel->setFullHd(url);
         videoModel->setHd(url);
