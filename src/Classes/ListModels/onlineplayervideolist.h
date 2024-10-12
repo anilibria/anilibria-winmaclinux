@@ -31,7 +31,7 @@
 #include <QJsonObject>
 #include <QJsonValue>
 #include "../Models/onlinevideomodel.h"
-#include "../Models/releasetorrentmodel.h"
+#include "../Models/apitorrentmodel.h"
 #include "../ViewModels/releasesviewmodel.h"
 #include "../ViewModels/torrentnotifierviewmodel.h"
 
@@ -82,7 +82,7 @@ public:
     OnlineVideoModel* getFirstReleaseWithPredicate(std::function<bool(OnlineVideoModel*)> callback, bool isEndDirection = false) const noexcept;
 
     void setVideosFromDownloadedTorrent(const QStringList& files, int releaseId, const QString& poster) noexcept;
-    void setVideosFromSingleTorrent(const ReleaseTorrentModel& torrent, int releaseId, const QString& poster, int port, const TorrentNotifierViewModel* torrentStream) noexcept;
+    void setVideosFromSingleTorrent(const ApiTorrentModel& torrent, int releaseId, const QString& poster, int port, const TorrentNotifierViewModel* torrentStream) noexcept;
     void setVideosFromSingleList(int releaseId, const QString& poster) noexcept;
     void setVideosFromCinemahall(QList<FullReleaseModel*>&& releases) noexcept;
     void selectVideo(int releaseId, int videoId) noexcept;
