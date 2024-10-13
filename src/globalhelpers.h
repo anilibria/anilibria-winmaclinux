@@ -10,6 +10,8 @@ void createIfNotExistsCacheFile(const QString& fileName, const QString& defaultC
 
 QString removeFileProtocol(QString& path) noexcept;
 
+QString addFileProtocol(QString& path) noexcept;
+
 QString getJsonContentFromFile(const QString& path) noexcept;
 
 void saveJsonArrayToFile(const QString& path, const QJsonArray& array) noexcept;

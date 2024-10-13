@@ -709,12 +709,12 @@ ColumnLayout {
                                 CommonMenu {
                                     id: watchTorrent
                                     y: parent.height - parent.height
-                                    width: 380
+                                    autoWidth: true
 
                                     Repeater {
                                         model: releasesViewModel.openedCardTorrents
                                         CommonMenuItem {
-                                            text: "Смотреть " + quality + " [" + series + "]"
+                                            text: "Смотреть " + quality + " [" + series + "]" + " " + size
                                             onPressed: {
                                                 watchTorrent.close();
 

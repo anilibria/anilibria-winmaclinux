@@ -5,7 +5,7 @@
 #include <QAbstractListModel>
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
-#include "../Models/releasetorrentmodel.h"
+#include "../Models/apitorrentmodel.h"
 #include "../Models/apitorrentmodel.h"
 
 class ReleaseTorrentCommonList : public QAbstractListModel
@@ -21,7 +21,7 @@ private:
         IndexRole,
         TimeCreationRole,
     };
-    QScopedPointer<QList<ReleaseTorrentModel*>> m_torrents { new QList<ReleaseTorrentModel*>() };
+    QScopedPointer<QList<ApiTorrentModel*>> m_torrents { new QList<ApiTorrentModel*>() };
     QScopedPointer<QNetworkAccessManager> m_networkManager { new QNetworkAccessManager() };
 
 public:

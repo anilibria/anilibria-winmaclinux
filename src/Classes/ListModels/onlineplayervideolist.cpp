@@ -262,7 +262,7 @@ void OnlinePlayerVideoList::setVideosFromDownloadedTorrent(const QStringList &fi
     endResetModel();
 }
 
-void OnlinePlayerVideoList::setVideosFromSingleTorrent(const ReleaseTorrentModel& torrent, int releaseId, const QString &poster, int port, const TorrentNotifierViewModel* torrentStream) noexcept
+void OnlinePlayerVideoList::setVideosFromSingleTorrent(const ApiTorrentModel& torrent, int releaseId, const QString &poster, int port, const TorrentNotifierViewModel* torrentStream) noexcept
 {
     beginResetModel();
 
@@ -275,7 +275,7 @@ void OnlinePlayerVideoList::setVideosFromSingleTorrent(const ReleaseTorrentModel
     }
 
     auto countSeries = 0;
-    auto series = torrent.series();
+    auto series = torrent.description();
     if (series.indexOf("-") > -1) {
         auto parts = series.splitRef("-");
         auto start = parts[0].toInt();
@@ -291,12 +291,12 @@ void OnlinePlayerVideoList::setVideosFromSingleTorrent(const ReleaseTorrentModel
 
     for (auto i = 0; i < countSeries; i++) {
         auto videoModel = new OnlineVideoModel();
-        auto downloadedPath = torrentStream->getDownloadedPath(torrent.torrentHost() + torrent.url(), i);
+        auto downloadedPath = torrentStream->getDownloadedPath(torrent.torrentHost() + torrent.torrentPath(), i);
         QString url = "";
         if (downloadedPath.isEmpty()) {
-            url = "http://localhost:" + QString::number(port) + "/online?id=" + QString::number(releaseId) + "&index=" + QString::number(i) + "&path=" + torrent.torrentHost() + torrent.url();
+            url = "http://localhost:" + QString::number(port) + "/online?id=" + QString::number(releaseId) + "&index=" + QString::number(i) + "&path=" + torrent.torrentHost() + torrent.torrentPath();
         } else {
-            url = downloadedPath;
+            url = addFileProtocol(downloadedPath);
         }
         videoModel->setFullHd(url);
         videoModel->setHd(url);

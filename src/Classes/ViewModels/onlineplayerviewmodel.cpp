@@ -728,10 +728,7 @@ void OnlinePlayerViewModel::quickSetupForSingleTorrentRelease(int releaseId, int
 
     auto torrentItem = torrents[index];
 
-    ReleaseTorrentModel torrent;
-    torrent.readFromApiTorrent(torrentItem);
-
-    m_videos->setVideosFromSingleTorrent(torrent, releaseId, release->poster(), port, m_torrentStream);
+    m_videos->setVideosFromSingleTorrent(*torrentItem, releaseId, release->poster(), port, m_torrentStream);
 
     setReleasePoster(m_navigatePoster);
     setSelectedRelease(m_navigateReleaseId);

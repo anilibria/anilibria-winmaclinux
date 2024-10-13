@@ -21,6 +21,7 @@
 
 #include <QObject>
 #include <QMap>
+#include <QQmlPropertyMap>
 #include "../../globalconstants.h"
 #include "../Services/thememanagerservice.h"
 #include "../ListModels/externalthemeslistmodel.h"
@@ -100,7 +101,7 @@ class ApplicationThemeViewModel : public QObject
     Q_PROPERTY(QString iconMaximizeWindow READ iconMaximizeWindow NOTIFY iconMaximizeWindowChanged)
     Q_PROPERTY(QString iconNormalWindow READ iconNormalWindow NOTIFY iconNormalWindowChanged)
     Q_PROPERTY(QString iconCloseWindow READ iconCloseWindow NOTIFY iconCloseWindowChanged)
-    Q_PROPERTY(QVariantMap currentItems READ currentItems NOTIFY currentItemsChanged)
+    Q_PROPERTY(QQmlPropertyMap* currentItems READ currentItems NOTIFY currentItemsChanged)
     Q_PROPERTY(bool notAddCopyToName READ notAddCopyToName WRITE setNotAddCopyToName NOTIFY notAddCopyToNameChanged)
 
 private:
@@ -119,7 +120,7 @@ private:
     QList<QString>* m_externalIds { new QList<QString>() };
     QList<QString>* m_localIds { new QList<QString>() };
     LocalThemesListModel* m_localThemes { new LocalThemesListModel(this) };
-    QVariantMap m_currentItems { QVariantMap() };
+    QQmlPropertyMap* m_currentItems { new QQmlPropertyMap(this) };
     bool m_notAddCopyToName { false };
 
 public:
@@ -203,7 +204,7 @@ public:
 
     QVariantMap previewItems() const noexcept;
 
-    QVariantMap currentItems() const noexcept { return m_currentItems; }
+    QQmlPropertyMap* currentItems() const noexcept { return m_currentItems; }
     void setCurrentItems() noexcept;
 
     bool notAddCopyToName() const noexcept { return m_notAddCopyToName; }

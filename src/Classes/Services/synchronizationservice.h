@@ -22,7 +22,6 @@
 #include <QQmlListProperty>
 #include <QObject>
 #include "anilibriaapiservice.h"
-//#include "../Models/releasemodel.h"
 
 class SynchronizationService : public QObject
 {

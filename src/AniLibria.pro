@@ -239,10 +239,8 @@ SOURCES += \
     Classes/Models/mainmenuitemmodel.cpp \
     Classes/Models/notificationmodel.cpp \
     Classes/Models/onlinevideomodel.cpp \
-    Classes/Models/releasemodel.cpp \
     Classes/Models/releaseonlinevideomodel.cpp \
     Classes/Models/releaseseriesmodel.cpp \
-    Classes/Models/releasetorrentmodel.cpp \
     Classes/Models/seenmarkmodel.cpp \
     Classes/Models/seenmodel.cpp \
     Classes/Models/themeitemmodel.cpp \
@@ -357,10 +355,8 @@ HEADERS += \
     Classes/Models/mainmenuitemmodel.h \
     Classes/Models/notificationmodel.h \
     Classes/Models/onlinevideomodel.h \
-    Classes/Models/releasemodel.h \
     Classes/Models/releaseonlinevideomodel.h \
     Classes/Models/releaseseriesmodel.h \
-    Classes/Models/releasetorrentmodel.h \
     Classes/Models/seenmarkmodel.h \
     Classes/Models/seenmodel.h \
     Classes/Models/themeitemmodel.h \

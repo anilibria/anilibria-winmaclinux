@@ -465,6 +465,10 @@ Page {
                     }
                 }
             }
+
+            Component.onCompleted: {
+                torrentNotifierViewModel.startGetTorrentData(false);
+            }
         }
     }
 }

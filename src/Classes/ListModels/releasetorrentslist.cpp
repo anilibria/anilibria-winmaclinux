@@ -47,7 +47,7 @@ QVariant ReleaseTorrentsList::data(const QModelIndex &index, int role) const
             return QVariant(getReadableSize(torrent->size()));
         }
         case QualityRole: {
-            return QVariant(torrent->quality());
+            return QVariant(torrent->quality() + " " + torrent->codec());
         }
         case SeriesRole: {
             return QVariant(torrent->description());
