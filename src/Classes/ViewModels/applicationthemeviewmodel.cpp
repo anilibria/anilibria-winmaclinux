@@ -607,12 +607,14 @@ QVariantMap ApplicationThemeViewModel::previewItems() const noexcept
 
 void ApplicationThemeViewModel::setCurrentItems() noexcept
 {
-    m_currentItems.clear();
-
     auto theme = m_themes.value(m_selectedTheme);
 
     foreach (auto field, m_fields) {
-        m_currentItems.insert(field, theme->value(field));
+        if (m_currentItems->contains(field)) {
+            m_currentItems->insert(field, theme->value(field));
+        } else {
+            (*m_currentItems)[field] = theme->value(field);
+        }
     }
 
     emit currentItemsChanged();
@@ -876,7 +878,7 @@ void ApplicationThemeViewModel::readCacheFile()
     }
 
     setSelectedTheme(selectedTheme);
-    if (m_currentItems.isEmpty()) setCurrentItems();
+    if (m_currentItems->isEmpty()) setCurrentItems();
 
     m_externalIds->clear();
     QMapIterator<QString, QMap<QString, QString>*> iterator(m_themes);
