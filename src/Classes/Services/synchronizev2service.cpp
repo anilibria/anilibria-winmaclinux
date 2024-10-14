@@ -228,7 +228,11 @@ QVariantMap Synchronizev2Service::getUserSynchronizedSeens()
     QVariantMap result;
     auto keys = m_synchronizedSeens.keys();
     foreach (auto key, keys) {
-        result[key] = m_synchronizedSeens[key];
+        auto item = m_synchronizedSeens[key];
+        QVariantMap map;
+        map["mark"] = std::get<0>(item);
+        map["time"] = std::get<1>(item);
+        result[key] = map;
     }
 
     return result;
@@ -890,9 +894,11 @@ void Synchronizev2Service::userSeenSynchronizationHandler(QNetworkReply *reply) 
         if (itemArray.size() != 3) continue;
 
         auto episodeId = itemArray.first().toString();
+        auto time = itemArray[1].toInt(0);
         auto isWatched = itemArray.last().toBool();
 
-        m_synchronizedSeens.insert(episodeId, isWatched);
+        auto valueItem = std::make_tuple(isWatched, time);
+        m_synchronizedSeens.insert(episodeId, valueItem);
     }
 
     if (!m_synchronizedSeens.isEmpty()) emit synchronizeSeensCompleted();

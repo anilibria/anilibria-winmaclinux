@@ -70,7 +70,7 @@ QVariant OnlinePlayerVideoList::data(const QModelIndex &index, int role) const
             return QVariant(video->releasePoster());
         }
         case IsSeenRole: {
-            return QVariant(m_releaseViewModel->getSeriaSeenMark(video->releaseId(), video->order()));
+            return QVariant(m_releaseViewModel->getSeriaSeenMark(video->releaseId(), video->uniqueId()));
         }
         case IsGroupRole: {
             return QVariant(video->isGroup());
@@ -95,6 +95,9 @@ QVariant OnlinePlayerVideoList::data(const QModelIndex &index, int role) const
         }
         case OpeningEndRole: {
             return QVariant(video->openingEndSeconds());
+        }
+        case UniqueIdentifierRole: {
+            return QVariant(video->uniqueId());
         }
     }
 
@@ -175,6 +178,10 @@ QHash<int, QByteArray> OnlinePlayerVideoList::roleNames() const
         {
             OpeningEndRole,
             "openingEnd"
+        },
+        {
+            UniqueIdentifierRole,
+            "uniqueIdentifier"
         }
     };
 }
@@ -487,6 +494,7 @@ QVector<OnlineVideoModel*> OnlinePlayerVideoList::fillVideosFrom(const QList<Rel
 
         videoModel->setVideoPoster(video->videoPoster());
         videoModel->setReleasePoster(poster);
+        videoModel->setUniqueId(video->uniqueId());
         videoModel->setIsGroup(false);
         result.append(videoModel);
     }

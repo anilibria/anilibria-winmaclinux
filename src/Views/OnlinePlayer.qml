@@ -245,11 +245,11 @@ Page {
                 onlinePlayerViewModel.setVideoSeens(onlinePlayerViewModel.selectedRelease, onlinePlayerViewModel.selectedVideo, position);
             }
 
-            if (!releasesViewModel.getSeriaSeenMark(onlinePlayerViewModel.selectedRelease, onlinePlayerViewModel.selectedVideo)) {
+            if (!releasesViewModel.getSeriaSeenMark(onlinePlayerViewModel.selectedRelease, onlinePlayerViewModel.selectedVideoId)) {
                 if (duration > 0 && position > 0) {
                     const positionPercent = position / duration * 100;
                     if (positionPercent >= 90 && !onlinePlayerViewModel.seenMarkedAtEnd) {
-                        releasesViewModel.setSeenMark(onlinePlayerViewModel.selectedRelease, onlinePlayerViewModel.selectedVideo, true);
+                        releasesViewModel.setSeenMark(onlinePlayerViewModel.selectedRelease, onlinePlayerViewModel.selectedVideoId, true);
                         onlinePlayerViewModel.seenMarkedAtEnd = true;
                         onlinePlayerViewModel.refreshSingleVideo(onlinePlayerViewModel.selectedRelease, onlinePlayerViewModel.selectedVideo);
                         releasesViewModel.items.refreshSingleItem(onlinePlayerViewModel.selectedRelease);
@@ -346,7 +346,7 @@ Page {
                         iconWidth: 22
                         iconHeight: 22
                         onButtonPressed: {
-                            releasesViewModel.toggleSeenMark(releaseId, order);
+                            releasesViewModel.toggleSeenMark(releaseId, uniqueIdentifier);
                             onlinePlayerViewModel.refreshSingleVideo(releaseId, order);
                             releasesViewModel.items.refreshSingleItem(releaseId);
                         }

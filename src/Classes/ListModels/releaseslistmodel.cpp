@@ -52,7 +52,7 @@ ReleasesListModel::ReleasesListModel(QObject *parent) : QAbstractListModel(paren
 {
 }
 
-void ReleasesListModel::setup(QSharedPointer<QList<FullReleaseModel *>> releases, QMap<int, int> *schedules, QList<int> *userFavorites, QList<int> *hidedReleases, QHash<QString, bool> *seenMarks, QSharedPointer<QHash<int, HistoryModel *>> historyItems, QSharedPointer<ChangesModel> changes, QSharedPointer<CinemahallListModel> cinemahall, ReleaseCustomGroupsViewModel* customGroups)
+void ReleasesListModel::setup(QSharedPointer<QList<FullReleaseModel *>> releases, QMap<int, int> *schedules, QList<int> *userFavorites, QList<int> *hidedReleases, QHash<QString, std::tuple<bool, int>>* seenMarks, QSharedPointer<QHash<int, HistoryModel *>> historyItems, QSharedPointer<ChangesModel> changes, QSharedPointer<CinemahallListModel> cinemahall, ReleaseCustomGroupsViewModel* customGroups, QMap<QString, ReleaseOnlineVideoModel*>* videosMap)
 {
     m_releases = releases;
     m_scheduleReleases = schedules;
@@ -63,6 +63,7 @@ void ReleasesListModel::setup(QSharedPointer<QList<FullReleaseModel *>> releases
     m_changesModel = changes;
     m_cinemahall = cinemahall;
     m_customGroups = customGroups;
+    m_videosMap = videosMap;
 }
 
 void ReleasesListModel::setupLinkedSeries(ReleaseLinkedSeries *releaseLinkedSeries) noexcept
@@ -382,11 +383,21 @@ void ReleasesListModel::refreshItem(int id)
 
 int ReleasesListModel::getReleaseSeenMarkCount(int releaseId) const noexcept
 {
+    auto result = 0;
     auto keys = m_seenMarkModels->keys();
-    auto key = QString::number(releaseId) + ".";
-    return std::count_if(keys.cbegin(), keys.cend(), [key](const QString& item) {
-       return item.startsWith(key);
-    });
+    foreach (auto key, keys) {
+        auto item = m_seenMarkModels->value(key);
+        bool mark = std::get<0>(item);
+        if (!mark) continue;
+
+        if (!m_videosMap->contains(key)) continue;
+        auto video = m_videosMap->value(key);
+        if (video->releaseId() == releaseId) {
+            result += 1;
+        }
+    }
+
+    return result;
 }
 
 void ReleasesListModel::setHasReleaseSeriesFilter(bool hasReleaseSeriesFilter) noexcept
@@ -858,13 +869,15 @@ bool ReleasesListModel::checkAllCondition(const QStringList &source, const QStri
 
 QHash<int, int> &&ReleasesListModel::getAllSeenMarkCount(QHash<int, int>&& result) noexcept
 {
-    QHashIterator<QString, bool> iterator(*m_seenMarkModels);
-    while(iterator.hasNext()) {
-        iterator.next();
+    auto keys = m_seenMarkModels->keys();
+    foreach (auto key, keys) {
+        auto item = m_seenMarkModels->value(key);
+        bool mark = std::get<0>(item);
+        if (!mark) continue;
 
-        QString key = iterator.key();
-        auto keyParts = key.split(".");
-        auto releaseId = keyParts.first().toInt();
+        if (!m_videosMap->contains(key)) continue;
+        auto video = m_videosMap->value(key);
+        auto releaseId = video->releaseId();
         if (!result.contains(releaseId)) {
             result[releaseId] = 1;
         } else {
