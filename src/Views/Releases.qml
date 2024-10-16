@@ -214,13 +214,6 @@ Page {
                                 removeAllHidedReleasesConfirm.open();
                             }
                         }
-                        CommonMenuItem {
-                            text: "Синхронизировать локальный просмотр"
-                            onPressed: {
-                                seenMarkMenuPanel.close();
-                                releasesViewModel.synchronizeLocalSeensToExternal();
-                            }
-                        }
                     }
                 }
                 LeftPanelIconButton {
