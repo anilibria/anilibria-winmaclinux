@@ -25,6 +25,7 @@ ExtensionsViewModel::ExtensionsViewModel(QObject *parent)
     connect(m_innerObject, &ExtensionInnerObject::makeHttpPostHandler, this, &ExtensionsViewModel::makeHttpPost);
     connect(m_innerObject, &ExtensionInnerObject::makeHttpPutHandler, this, &ExtensionsViewModel::makeHttpPut);
     connect(m_innerObject, &ExtensionInnerObject::makeHttpDeleteHandler, this, &ExtensionsViewModel::makeHttpDelete);
+    connect(m_innerObject, &ExtensionInnerObject::sendInformationNotificationHandler, this, &ExtensionsViewModel::sendInformationNotification);
 }
 
 void ExtensionsViewModel::setReleases(const ReleasesViewModel* releases) noexcept
@@ -439,4 +440,9 @@ void ExtensionsViewModel::makeHttpPut(const QString &url, const QList<QString> h
     request.setAttribute(QNetworkRequest::FollowRedirectsAttribute, true);
     auto reply = m_networkManager->put(request, body.toUtf8());
     reply->setProperty("pendingIndentifier", identifier);
+}
+
+void ExtensionsViewModel::sendInformationNotification(const QString &message)
+{
+    emit sendInformationNotificationReceived(message);
 }

@@ -442,6 +442,14 @@ void OnlinePlayerViewModel::setVideoServerOverride(int videoServerOverride) noex
     emit videoServerOverrideChanged();
 }
 
+void OnlinePlayerViewModel::setIsMaximized(bool isMaximized) noexcept
+{
+    if (m_isMaximized == isMaximized) return;
+
+    m_isMaximized = isMaximized;
+    emit isMaximizedChanged();
+}
+
 void OnlinePlayerViewModel::setTorrentStream(const TorrentNotifierViewModel *torrentStream) noexcept
 {
     if (m_torrentStream == torrentStream) return;
@@ -452,6 +460,8 @@ void OnlinePlayerViewModel::setTorrentStream(const TorrentNotifierViewModel *tor
 
 void OnlinePlayerViewModel::toggleFullScreen()
 {
+    if (!m_isFullScreen) m_wasMaximized = m_isMaximized;
+
     setIsFullScreen(!m_isFullScreen);
 }
 

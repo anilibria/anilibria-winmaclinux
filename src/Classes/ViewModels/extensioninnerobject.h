@@ -30,12 +30,14 @@ public:
     Q_INVOKABLE QList<int> getFavorites();
     Q_INVOKABLE QList<int> getSeens();
     Q_INVOKABLE int getReleasesCount();
+    Q_INVOKABLE void sendInformationNotification(const QString& message);
 
 signals:
     void makeHttpGetHandler(const QString& url, const QList<QString> headers, const QJSValue& callback);
     void makeHttpPostHandler(const QString& url, const QList<QString> headers, const QString& body, const QJSValue& callback);
     void makeHttpPutHandler(const QString& url, const QList<QString> headers, const QString& body, const QJSValue& callback);
     void makeHttpDeleteHandler(const QString& url, const QList<QString> headers, const QJSValue& callback);
+    void sendInformationNotificationHandler(const QString& message);
 
 };
 

@@ -79,12 +79,14 @@ private slots:
     void makeHttpDelete(const QString& url, const QList<QString> headers, const QJSValue& callback);
     void makeHttpPost(const QString& url, const QList<QString> headers, const QString& body, const QJSValue& callback);
     void makeHttpPut(const QString& url, const QList<QString> headers, const QString& body, const QJSValue& callback);
+    void sendInformationNotification(const QString& message);
 
 signals:
     void displayedExtensionsChanged();
     void releasesChanged();
     void globalVariablesChanged();
     void isOpenedCardChanged();
+    void sendInformationNotificationReceived(const QString& message);
 
 };
 

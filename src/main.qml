@@ -946,6 +946,7 @@ ApplicationWindow {
         remotePlayer.port: userConfigurationViewModel.remotePort
         torrentStream: torrentNotifierViewModel
         videoServerOverride: userConfigurationViewModel.videoServer
+        isMaximized: window.visibility === Window.Maximized
         onIsFullScreenChanged: {
             if (isFullScreen) {
                 window.showFullScreen();
@@ -954,7 +955,11 @@ ApplicationWindow {
                 let currentScreen = getCurrentScreen();
                 if (!currentScreen) return;
 
-                window.showNormal();
+                if (onlinePlayerViewModel.wasMaximized) {
+                    window.showMaximized();
+                } else {
+                    window.showNormal();
+                }
             }
         }
         onNeedProxifiedChanged: {
@@ -1278,8 +1283,8 @@ ApplicationWindow {
                                 color: applicationThemeViewModel.notificationCenterItemBackground
 
                                 LinkedText {
-                                    padding: 10
-                                    maximumLineCount: 3
+                                    padding: 8
+                                    maximumLineCount: 4
                                     fontPointSize: 8
                                     width: parent.width
                                     wrapMode: Text.WordWrap
@@ -1525,6 +1530,9 @@ ApplicationWindow {
     ExtensionsViewModel {
         id: extensionsViewModel
         releases: releasesViewModel
+        onSendInformationNotificationReceived: {
+            notificationViewModel.sendInfoNotification(message);
+        }
         Component.onDestruction: {
             extensionsViewModel.saveValues();
         }

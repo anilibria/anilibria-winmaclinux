@@ -109,3 +109,8 @@ int ExtensionInnerObject::getReleasesCount()
 {
     return m_releases->countReleases();
 }
+
+void ExtensionInnerObject::sendInformationNotification(const QString &message)
+{
+    emit sendInformationNotificationHandler(message);
+}

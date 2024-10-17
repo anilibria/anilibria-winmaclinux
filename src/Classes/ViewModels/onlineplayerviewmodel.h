@@ -80,6 +80,8 @@ class OnlinePlayerViewModel : public QObject
     Q_PROPERTY(bool muted READ muted WRITE setMuted NOTIFY mutedChanged)
     Q_PROPERTY(bool needProxyFallback READ needProxyFallback WRITE setNeedProxyFallback NOTIFY needProxyFallbackChanged FINAL)
     Q_PROPERTY(int videoServerOverride READ videoServerOverride WRITE setVideoServerOverride NOTIFY videoServerOverrideChanged FINAL)
+    Q_PROPERTY(bool isMaximized READ isMaximized WRITE setIsMaximized NOTIFY isMaximizedChanged FINAL)
+    Q_PROPERTY(bool wasMaximized READ wasMaximized NOTIFY wasMaximizedChanged FINAL)
     Q_PROPERTY(TorrentNotifierViewModel* torrentStream READ torrentStream WRITE setTorrentStream NOTIFY torrentStreamChanged FINAL)
 
 private:
@@ -140,6 +142,8 @@ private:
     bool m_isStreamingTorrents { false };
     TorrentNotifierViewModel* m_torrentStream { nullptr };
     int m_videoServerOverride { 0 };
+    bool m_isMaximized { false };
+    bool m_wasMaximized { false };
 
 public:
     explicit OnlinePlayerViewModel(QObject *parent = nullptr);
@@ -278,6 +282,11 @@ public:
     int videoServerOverride() const noexcept { return m_videoServerOverride; }
     void setVideoServerOverride(int videoServerOverride) noexcept;
 
+    bool isMaximized() const noexcept { return m_isMaximized; }
+    void setIsMaximized(bool isMaximized) noexcept;
+
+    bool wasMaximized() const noexcept { return m_wasMaximized; }
+
     TorrentNotifierViewModel* torrentStream() const noexcept { return m_torrentStream; }
     void setTorrentStream(const TorrentNotifierViewModel* torrentStream) noexcept;
 
@@ -396,6 +405,8 @@ signals:
     void torrentStreamChanged();
     void videoServerOverrideChanged();
     void selectedVideoIdChanged();
+    void isMaximizedChanged();
+    void wasMaximizedChanged();
 
 };
 
