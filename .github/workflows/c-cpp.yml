@@ -60,7 +60,7 @@ jobs:
       run: |
         cp /usr/local/lib/libsharpyuv.0.dylib src/AniLibria.app/Contents/Frameworks/
         cp /usr/local/lib/libjxl_cms.0.11.dylib src/AniLibria.app/Contents/Frameworks/
-        cp /usr/local/opt/python@3.12/Frameworks/Python.framework/Versions/3.12/Python src/AniLibria.app/Contents/Frameworks/
+        cp /usr/local/opt/python@3.13/Frameworks/Python.framework/Versions/3.13/Python src/AniLibria.app/Contents/Frameworks/
       
         arch -x86_64 install_name_tool -change /usr/local/Cellar/ffmpeg/7.1/lib/libswresample.5.dylib @executable_path/../Frameworks/libswresample.5.dylib src/AniLibria.app/Contents/Frameworks/libavcodec.61.dylib
         arch -x86_64 install_name_tool -change /usr/local/Cellar/ffmpeg/7.1/lib/libavutil.59.dylib @executable_path/../Frameworks/libavutil.59.dylib src/AniLibria.app/Contents/Frameworks/libavcodec.61.dylib
@@ -96,7 +96,7 @@ jobs:
         arch -x86_64 install_name_tool -change /usr/local/opt/highway/lib/libhwy.1.dylib @executable_path/../Frameworks/libhwy.1.dylib src/AniLibria.app/Contents/Frameworks/libjxl_cms.0.11.dylib
         
         arch -x86_64 install_name_tool -change @loader_path/../../../../opt/libsamplerate/lib/libsamplerate.0.dylib @executable_path/../Frameworks/libhwy.1.dylib src/AniLibria.app/Contents/Frameworks/librubberband.2.dylib
-        arch -x86_64 install_name_tool -change /usr/local/opt/python@3.12/Frameworks/Python.framework/Versions/3.12/Python @executable_path/../Frameworks/Python src/AniLibria.app/Contents/Frameworks/libvapoursynth-script.0.dylib
+        arch -x86_64 install_name_tool -change /usr/local/opt/python@3.13/Frameworks/Python.framework/Versions/3.13/Python @executable_path/../Frameworks/Python src/AniLibria.app/Contents/Frameworks/libvapoursynth-script.0.dylib
         arch -x86_64 install_name_tool -change /usr/local/Cellar/nettle/3.10/lib/libnettle.8.dylib @executable_path/../Frameworks/libnettle.8.dylib src/AniLibria.app/Contents/Frameworks/libhogweed.6.dylib
         
         arch -x86_64 install_name_tool -change /usr/local/Cellar/libxcb/1.17.0/lib/libxcb.1.dylib @executable_path/../Frameworks/libxcb.1.dylib src/AniLibria.app/Contents/Frameworks/libxcb-shm.0.dylib
