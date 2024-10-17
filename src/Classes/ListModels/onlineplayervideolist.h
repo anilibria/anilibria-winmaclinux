@@ -66,6 +66,7 @@ private:
         EndingEndRole,
         OpeningStartRole,
         OpeningEndRole,
+        UniqueIdentifierRole
     };
 
 public:

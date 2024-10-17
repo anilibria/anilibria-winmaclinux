@@ -30,8 +30,8 @@
 ReleasesViewModel::ReleasesViewModel(QObject *parent) : QObject(parent)
 {
     m_items = new ReleasesListModel(this);
-    m_items->setup(m_releases, m_scheduleReleases, m_userFavorites, m_hiddenReleases, m_seenMarks, m_historyItems, m_releaseChanges, m_cinemahall, m_customGroups);
-    m_cinemahall->setup(m_releases, m_seenMarks);
+    m_items->setup(m_releases, m_scheduleReleases, m_userFavorites, m_hiddenReleases, &m_extendedSeenMarks, m_historyItems, m_releaseChanges, m_cinemahall, m_customGroups, &m_onlineVideosMap);
+    m_cinemahall->setup(m_releases, &m_extendedSeenMarks, &m_onlineVideosMap);
     connect(m_cinemahall.get(), &CinemahallListModel::hasItemsChanged, this, &ReleasesViewModel::cinemahallItemsChanged);
 
     m_imageBackgroundViewModel->setOptionFilePath("releasesbackground");
@@ -103,7 +103,7 @@ ReleasesViewModel::ReleasesViewModel(QObject *parent) : QObject(parent)
     createIfNotExistsFile(getCachePath(scheduleCacheFileName), "{}");
     createIfNotExistsFile(getCachePath(favoriteCacheFileName), "[]");
     createIfNotExistsFile(getCachePath(hidedReleasesCacheFileName), "[]");
-    createIfNotExistsFile(getCachePath(seenMarkCacheFileName), "[]");
+    createIfNotExistsFile(getCachePath(extendedSeenMarkCacheFileName), "[]");
     createIfNotExistsFile(getCachePath(historyCacheFileName), "[]");
     createIfNotExistsFile(getCachePath(notificationCacheFileName), "{ \"newReleases\": [], \"newOnlineSeries\": [], \"newTorrents\": [], \"newTorrentSeries\": [] }");
 
@@ -389,20 +389,17 @@ QStringList ReleasesViewModel::getMostPopularGenres() const noexcept
     QStringList allGenres;
     QSet<int> alreadyProcessed;
     QHash<QString, int> genresCount;
-    QHashIterator<QString, bool> iterator(*m_seenMarks);
 
-    while(iterator.hasNext()) {
-        iterator.next();
+    auto keys = m_extendedSeenMarks.keys();
+    foreach (auto key, keys) {
+        if (!m_onlineVideosMap.contains(key)) continue;
 
-        QString key = iterator.key();
-        auto parts = key.split(".");
+        auto videoReleaseId = m_onlineVideosMap[key]->releaseId();
+        if (alreadyProcessed.contains(videoReleaseId)) continue;
 
-        auto id = parts[0].toInt();
-        if (alreadyProcessed.contains(id)) continue;
+        alreadyProcessed.insert(videoReleaseId);
 
-        alreadyProcessed.insert(id);
-
-        auto release = getReleaseById(id);
+        auto release = getReleaseById(videoReleaseId);
         if (release == nullptr) continue;
         auto genres = release->genres().split(",");
         foreach (auto genre, genres) {
@@ -446,20 +443,19 @@ QStringList ReleasesViewModel::getMostPopularVoices() const noexcept
     QStringList allVoices;
     QSet<int> alreadyProcessed;
     QHash<QString, int> voicesCount;
-    QHashIterator<QString, bool> iterator(*m_seenMarks);
 
-    while(iterator.hasNext()) {
-        iterator.next();
+    auto keys = m_extendedSeenMarks.keys();
 
-        QString key = iterator.key();
-        auto parts = key.split(".");
+    foreach (auto key, keys) {
+        if (!m_onlineVideosMap.contains(key)) continue;
 
-        auto id = parts[0].toInt();
-        if (alreadyProcessed.contains(id)) continue;
+        auto videoReleaseId = m_onlineVideosMap[key]->releaseId();
 
-        alreadyProcessed.insert(id);
+        if (alreadyProcessed.contains(videoReleaseId)) continue;
 
-        auto release = getReleaseById(id);
+        alreadyProcessed.insert(videoReleaseId);
+
+        auto release = getReleaseById(videoReleaseId);
         if (release == nullptr) continue;
         auto voicers = release->voicers().split(",");
         foreach (auto voicer, voicers) {
@@ -546,18 +542,40 @@ void ReleasesViewModel::fillAbandonedSeens(QList<FullReleaseModel *> *list) cons
     auto now = QDateTime::currentDateTimeUtc().addDays(-18);
     auto timestamp = static_cast<int>(now.toSecsSinceEpoch());
 
+    QMap<int, int> releasesCount;
+    foreach (auto onlineVideo, m_onlineVideos) {
+        auto videoId = onlineVideo->uniqueId();
+
+        if (m_extendedSeenMarks.contains(videoId)) {
+            auto item = m_extendedSeenMarks.value(videoId);
+            auto mark = std::get<0>(item);
+            if (!mark) continue;
+
+            auto releaseId = onlineVideo->releaseId();
+            if (releasesCount.contains(releaseId)) {
+                auto count = releasesCount[releaseId];
+                count++;
+                releasesCount[releaseId] = count;
+            } else {
+                releasesCount.insert(releaseId, 1);
+            }
+        }
+    }
+
     foreach (auto release, *m_releases) {
         if (release->countOnlineVideos() == 0) continue;
-        if (!m_historyItems->contains(release->id())) continue;
+        auto releaseId = release->id();
+        if (!m_historyItems->contains(releaseId)) continue;
 
-        auto historyItem = m_historyItems->value(release->id());
+        auto historyItem = m_historyItems->value(releaseId);
         if (historyItem->watchTimestamp() == 0) continue;
 
-        auto seenVideos = m_items->getReleaseSeenMarkCount(release->id());
-        if (seenVideos > 0 && seenVideos < release->countOnlineVideos() && historyItem->watchTimestamp() < timestamp) {
+        if (releasesCount.contains(releaseId) && releasesCount.value(releaseId) < release->countOnlineVideos() && historyItem->watchTimestamp() < timestamp) {
             list->append(release);
         }
     }
+
+    releasesCount.clear();
 }
 
 void ReleasesViewModel::fillRecommendsByGenres(QList<FullReleaseModel *> *list) noexcept
@@ -605,12 +623,32 @@ void ReleasesViewModel::fillRecommendsByGenres(QList<FullReleaseModel *> *list) 
 
 void ReleasesViewModel::fillWillWatch(QList<FullReleaseModel *> *list) noexcept
 {
+    QMap<int, int> releasesCount;
+    foreach (auto onlineVideo, m_onlineVideos) {
+        auto videoId = onlineVideo->uniqueId();
+
+        if (m_extendedSeenMarks.contains(videoId)) {
+            auto item = m_extendedSeenMarks.value(videoId);
+            auto mark = std::get<0>(item);
+            if (!mark) continue;
+
+            auto releaseId = onlineVideo->releaseId();
+            if (releasesCount.contains(releaseId)) {
+                auto count = releasesCount[releaseId];
+                count++;
+                releasesCount[releaseId] = count;
+            } else {
+                releasesCount.insert(releaseId, 1);
+            }
+        }
+    }
+
     foreach (auto release, *m_releases) {
         if (release->countOnlineVideos() == 0) continue;
         auto releaseId = release->id();
         if (!m_userFavorites->contains(releaseId)) continue;
 
-        auto seenVideos = m_items->getReleaseSeenMarkCount(releaseId);
+        auto seenVideos = releasesCount[releaseId];
         int watchTimestamp = 0;
         if (m_historyItems->contains(releaseId)) {
             auto item = m_historyItems->value(releaseId);
@@ -619,14 +657,35 @@ void ReleasesViewModel::fillWillWatch(QList<FullReleaseModel *> *list) noexcept
 
         if (seenVideos == 0 && watchTimestamp == 0) list->append(release);
     }
+
+    releasesCount.clear();
 }
 
 void ReleasesViewModel::fillNextInReleaseSeries(QList<FullReleaseModel *> *list) noexcept
 {
     auto linkedReleases = m_items->getFullLinkedReleases();
     auto historyItems = m_historyItems;
-    auto items = m_items;
     auto releasesMap = m_releasesMap.get();
+
+    QMap<int, int> releasesCount;
+    foreach (auto onlineVideo, m_onlineVideos) {
+        auto videoId = onlineVideo->uniqueId();
+
+        if (m_extendedSeenMarks.contains(videoId)) {
+            auto item = m_extendedSeenMarks.value(videoId);
+            auto mark = std::get<0>(item);
+            if (!mark) continue;
+
+            auto releaseId = onlineVideo->releaseId();
+            if (releasesCount.contains(releaseId)) {
+                auto count = releasesCount[releaseId];
+                count++;
+                releasesCount[releaseId] = count;
+            } else {
+                releasesCount.insert(releaseId, 1);
+            }
+        }
+    }
 
     foreach (auto group, linkedReleases) {
         auto countWatched = 0;
@@ -636,8 +695,7 @@ void ReleasesViewModel::fillNextInReleaseSeries(QList<FullReleaseModel *> *list)
             auto release = releasesMap->value(releaseId);
             if (release->countOnlineVideos() == 0) continue;
 
-            auto countSeens = items->getReleaseSeenMarkCount(releaseId);
-            auto isFullWatch = release->countOnlineVideos() == countSeens;
+            auto isFullWatch = release->countOnlineVideos() == releasesCount.value(releaseId);
             if (isFullWatch) {
                 countWatched += 1;
             } else {
@@ -647,6 +705,8 @@ void ReleasesViewModel::fillNextInReleaseSeries(QList<FullReleaseModel *> *list)
 
         if (countWatched > 0 && !notFullWatched.isEmpty()) list->append(notFullWatched);
     }
+
+    releasesCount.clear();
 }
 
 void ReleasesViewModel::fillCurrentSeason(QList<FullReleaseModel *> *list) noexcept
@@ -833,29 +893,27 @@ QList<ApiTorrentModel *> ReleasesViewModel::getReleaseTorrents(int releaseId) no
 
 void ReleasesViewModel::getSeenIds(QList<int>* list)
 {
-    QMap<int, int> seenMap;
-    auto keys = m_seenMarks->keys();
-    foreach(auto item, keys) {
-        auto parts = item.splitRef(".", Qt::SkipEmptyParts);
-        auto key = parts[0].toInt();
-        if (seenMap.contains(key)) {
-            seenMap[key] += 1;
-        } else {
-            seenMap.insert(key, 1);
+    auto keys = m_extendedSeenMarks.keys();
+    QMap<int, int> releasesCount;
+
+    foreach (auto onlineVideo, m_onlineVideos) {
+        auto videoId = onlineVideo->uniqueId();
+
+        if (m_extendedSeenMarks.contains(videoId)) {
+            auto releaseId = onlineVideo->releaseId();
+            if (releasesCount.contains(releaseId)) {
+                auto count = releasesCount[releaseId];
+                count++;
+                auto allCount = m_releasesMap->value(releaseId)->countOnlineVideos();
+                if (count >= allCount) {
+                    list->append(releaseId);
+                    releasesCount.remove(releaseId);
+                }
+                releasesCount[releaseId] = count;
+            }
         }
     }
-
-    QMapIterator<int, int> seenIterator(seenMap);
-    while (seenIterator.hasNext()) {
-        seenIterator.next();
-
-        if (!m_releasesMap->contains(seenIterator.key())) continue;
-
-        auto release = m_releasesMap->value(seenIterator.key());
-        if (release->countOnlineVideos() == seenIterator.value()) {
-            list->append(release->id());
-        }
-    }
+    releasesCount.clear();
 }
 
 void ReleasesViewModel::copyToClipboard(const QString &text) const noexcept
@@ -1104,29 +1162,42 @@ void ReleasesViewModel::hideReleaseCard() noexcept
 
 void ReleasesViewModel::setSeenMarkAllSeries(int id, int countSeries, bool marked)
 {
-    setSeenMarkForRelease(id, countSeries, marked);
+    QList<QString> result;
+
+    foreach (auto item, m_onlineVideos) {
+        if (item->releaseId() != id) continue;
+
+        setSeenMarkInternal(item->uniqueId(), marked);
+        result.append(item->uniqueId());
+    }
 
     saveSeenMarks();
 
     m_items->refreshItem(id);
 
-    synchronizeSeenMarkForRelease(id, countSeries, marked);
+    synchronizeSeenMarkForRelease(result, marked);
 }
 
 void ReleasesViewModel::setSeenMarkAllSeriesSelectedReleases(bool marked)
 {
+    QList<QString> result;
     auto selectedReleases = m_items->getSelectedReleases();
     foreach (auto selectedRelease, *selectedReleases) {
         auto release = getReleaseById(selectedRelease);
 
-        setSeenMarkForRelease(selectedRelease, release->countOnlineVideos(), marked);
+        foreach (auto item, m_onlineVideos) {
+            if (item->releaseId() != release->id()) continue;
+
+            setSeenMarkInternal(item->uniqueId(), marked);
+            result.append(item->uniqueId());
+        }
         m_items->refreshItem(selectedRelease);
     }
 
     saveSeenMarks();
 
     QList<int> ids(selectedReleases->cbegin(), selectedReleases->cend());
-    synchronizeSeenMarkForRelease(ids, marked);
+    synchronizeSeenMarkForRelease(result, marked);
 }
 
 void ReleasesViewModel::setSeenMarkForSingleRelease(int id, bool marked)
@@ -1134,33 +1205,27 @@ void ReleasesViewModel::setSeenMarkForSingleRelease(int id, bool marked)
     auto release = getReleaseById(id);
     if (release == nullptr) return;
 
-    setSeenMarkForRelease(id, release->countOnlineVideos(), marked);
+    QList<QString> result;
+
+    foreach (auto item, m_onlineVideos) {
+        if (item->releaseId() != id) continue;
+
+        setSeenMarkInternal(item->uniqueId(), marked);
+        result.append(item->uniqueId());
+    }
+
     m_items->refreshItem(id);
     saveSeenMarks();
 
-    QList<int> ids;
-    ids.append(id);
-    synchronizeSeenMarkForRelease(ids, marked);
+    synchronizeSeenMarkForRelease(result, marked);
 }
 
-void ReleasesViewModel::setSeenMarkForRelease(int id, int countSeries, bool marked)
-{
-    for (int i = 0; i < countSeries; i++) {
-        auto key = QString::number(id) + "." + QString::number(i);
-        if (marked) {
-            if (!m_seenMarks->contains(key)) m_seenMarks->insert(key, true);
-        } else {
-            if (m_seenMarks->contains(key)) m_seenMarks->remove(key);
-        }
-    }
-}
-
-void ReleasesViewModel::synchronizeSeenMarkForRelease(const QList<int>& ids, bool marked)
+void ReleasesViewModel::synchronizeSeenMarkForRelease(const QList<QString>& ids, bool marked)
 {
     QList<QString> videosIds;
     foreach (auto video, m_onlineVideos) {
-        auto releaseId = video->releaseId();
-        if (!ids.contains(releaseId)) continue;
+        auto id = video->uniqueId();
+        if (!ids.contains(id)) continue;
 
         videosIds.append(video->uniqueId());
     }
@@ -1206,32 +1271,10 @@ void ReleasesViewModel::synchronizeSeenMarkForRelease(int id, int countSeries, b
     }
 }
 
-void ReleasesViewModel::synchronizeSeenMarkForSingleSeria(int id, int seria, bool marked)
+void ReleasesViewModel::synchronizeSeenMarkForSingleSeria(const QString& id, bool marked)
 {
-    QList<std::tuple<int, QString>> videosIds;
-    foreach (auto video, m_onlineVideos) {
-        if (video->releaseId() != id) continue;
-
-        auto tuple = std::make_tuple(video->order(),  video->uniqueId());
-        videosIds.append(tuple);
-    }
-
-    std::sort(
-        videosIds.begin(),
-        videosIds.end(),
-        [](std::tuple<int, QString> left, std::tuple<int, QString> right) {
-            auto leftIndex = std::get<0>(left);
-            auto rightIndex = std::get<0>(right);
-
-            return leftIndex < rightIndex;
-        }
-        );
-    if (seria >= videosIds.size()) return;
-
-    auto seriaTuple = videosIds.value(seria);
-
     QList<QString> result;
-    result.append(std::get<1>(seriaTuple));
+    result.append(id);
 
     if (marked) {
         emit addedSeenMarks(result);
@@ -1272,43 +1315,47 @@ void ReleasesViewModel::refreshOpenedReleaseCard()
     emit openedReleaseIsRutubeChanged();
 }
 
-void ReleasesViewModel::setSeenMark(int id, int seriaId, bool marked)
+void ReleasesViewModel::setSeenMark(int id, const QString& seriaId, bool marked)
 {
-    setSeenMarkInternal(id, seriaId, marked);
+    setSeenMarkInternal(seriaId, marked);
     saveSeenMarks();
-    synchronizeSeenMarkForSingleSeria(id, seriaId, marked);
+    synchronizeSeenMarkForSingleSeria(seriaId, marked);
 }
 
-bool ReleasesViewModel::toggleSeenMark(int id, int seriaId) noexcept
+void ReleasesViewModel::toggleSeenMark(int id, const QString& seriaId) noexcept
 {
-    auto key = QString::number(id) + "." + QString::number(seriaId);
-
-    if (m_seenMarks->contains(key)) {
-        m_seenMarks->remove(key);
-        saveSeenMarks();
-        synchronizeSeenMarkForSingleSeria(id, seriaId, false);
-        return false;
+    auto newState = false;
+    if (m_extendedSeenMarks.contains(seriaId)) {
+        auto oldItem = m_extendedSeenMarks.value(seriaId);
+        auto oldValue = std::get<0>(oldItem);
+        newState = !oldValue;
+    } else {
+        newState = true;
     }
 
-    if (!m_seenMarks->contains(key)) {
-        m_seenMarks->insert(key, true);
-        saveSeenMarks();
-        synchronizeSeenMarkForSingleSeria(id, seriaId, true);
-        return true;
+    setSeenMarkInternal(seriaId, newState);
+    saveSeenMarks();
+    synchronizeSeenMarkForSingleSeria(seriaId, newState);
+}
+
+bool ReleasesViewModel::getSeriaSeenMark(int id, const QString& seriaId) const noexcept
+{
+    if (m_extendedSeenMarks.contains(seriaId)) {
+        auto item = m_extendedSeenMarks.value(seriaId);
+        return std::get<0>(item);
     }
 
     return false;
 }
 
-bool ReleasesViewModel::getSeriaSeenMark(int id, int seriaId) const noexcept
+QHash<QString, std::tuple<bool, int>>& ReleasesViewModel::getSeenMarks()
 {
-    auto key = QString::number(id) + "." + QString::number(seriaId);
-    return m_seenMarks->contains(key);
+    return m_extendedSeenMarks;
 }
 
-QHash<QString, bool> *ReleasesViewModel::getSeenMarks()
+QMap<QString, ReleaseOnlineVideoModel *> &ReleasesViewModel::getVideosMap()
 {
-    return m_seenMarks;
+    return m_onlineVideosMap;
 }
 
 void ReleasesViewModel::updateAllReleases(const QList<QString> &releases, bool insideData)
@@ -1500,30 +1547,24 @@ void ReleasesViewModel::openOpenedReleaseMagnetTorrent(int identifier) noexcept
 void ReleasesViewModel::synchronizeSeens(const QVariantMap items) noexcept
 {
     QMap<QString, ReleaseOnlineVideoModel*> videosMap;
-    QMultiMap<int, ReleaseOnlineVideoModel*> releases;
     foreach (auto onlineVideo, m_onlineVideos) {
         videosMap.insert(onlineVideo->uniqueId(), onlineVideo);
-        releases.insert(onlineVideo->releaseId(), onlineVideo);
     }
 
     auto keys = items.keys();
     foreach (auto key, keys) {
         if (!videosMap.contains(key)) continue;
 
-        auto video = videosMap.value(key);
-        auto state = items.value(key).toBool();
+        auto value = items.value(key);
+        auto map = value.toMap();
+        auto state = map["mark"].toBool();
+        auto time = map["time"].toInt();
 
-        auto releaseVideos = releases.values(video->releaseId());
-
-        std::sort(
-            releaseVideos.begin(),
-            releaseVideos.end(),
-            [](ReleaseOnlineVideoModel* left, ReleaseOnlineVideoModel* right) {
-                return left->order() < right->order();
-            }
-        );
-        auto videoIndex = releaseVideos.indexOf(video);
-        setSeenMarkInternal(video->releaseId(), videoIndex, state);
+        if (m_extendedSeenMarks.contains(key)) {
+            m_extendedSeenMarks[key] = std::make_tuple(state, time);
+        } else {
+            m_extendedSeenMarks.insert(key, std::make_tuple(state, time));
+        }
     }
     saveSeenMarks();
     m_items->refresh(); // update releases after save seen marks
@@ -1531,55 +1572,6 @@ void ReleasesViewModel::synchronizeSeens(const QVariantMap items) noexcept
 
 void ReleasesViewModel::synchronizeLocalSeensToExternal() noexcept
 {
-    QMultiMap<int, int> seens;
-    auto keys = m_seenMarks->keys();
-    foreach(auto item, keys) {
-        auto parts = item.splitRef(".", Qt::SkipEmptyParts);
-        auto key = parts[0].toInt();
-        auto value = parts[1].toInt();
-        seens.insert(key, value);
-    }
-
-    QList<QString> result;
-    auto releasesIds = seens.keys();
-    foreach(auto releasesId, releasesIds) {
-        auto videoPositions = seens.values(releasesId);
-
-        QList<std::tuple<int, QString>> videosIds;
-        foreach (auto video, m_onlineVideos) {
-            if (video->releaseId() != releasesId) continue;
-
-            auto tuple = std::make_tuple(video->order(),  video->uniqueId());
-            videosIds.append(tuple);
-        }
-
-        std::sort(
-            videosIds.begin(),
-            videosIds.end(),
-            [](std::tuple<int, QString> left, std::tuple<int, QString> right) {
-                auto leftIndex = std::get<0>(left);
-                auto rightIndex = std::get<0>(right);
-
-                return leftIndex < rightIndex;
-            }
-            );
-        foreach (auto videoPosition, videoPositions) {
-            if (videoPosition >= videosIds.size()) continue;
-
-            auto videoItem = videosIds.value(videoPosition);
-            result.append(std::get<1>(videoItem));
-        }
-    }
-    int count = (result.size() / 50) + 1;
-    for(auto i = 0; i <= count; i++) {
-        if (result.size() > 50) {
-            auto partIds = result.mid(0, 50);
-            emit addedSeenMarks(partIds);
-            result = result.mid(50);
-        } else {
-            emit addedSeenMarks(result);
-        }
-    }
 }
 
 FullReleaseModel *ReleasesViewModel::getReleaseById(int id) const noexcept
@@ -1608,19 +1600,22 @@ void ReleasesViewModel::resetReleaseChanges(int releaseId) noexcept
     saveChanges();
 }
 
-void ReleasesViewModel::setSeenMarkInternal(int id, int seriaId, bool marked)
+void ReleasesViewModel::setSeenMarkInternal(const QString& id, bool marked)
 {
-    auto key = QString::number(id) + "." + QString::number(seriaId);
-    if (marked) {
-        if (!m_seenMarks->contains(key)) m_seenMarks->insert(key, true);
+    if (m_extendedSeenMarks.contains(id)) {
+        auto oldItem = m_extendedSeenMarks[id];
+        auto oldTime = std::get<1>(oldItem);
+        m_extendedSeenMarks[id] = std::make_tuple(marked, oldTime);
     } else {
-        if (m_seenMarks->contains(key)) m_seenMarks->remove(key);
+        m_extendedSeenMarks.insert(id, std::make_tuple(marked, 0));
     }
 }
 
 void ReleasesViewModel::removeAllSeenMark()
 {
-    m_seenMarks->clear();
+    m_extendedSeenMarks.clear();
+
+    //TODO: synchronize all
 
     saveSeenMarks();
     m_items->refresh();
@@ -1783,7 +1778,7 @@ void ReleasesViewModel::removeFromHidedReleases(const QList<int> &ids) noexcept
         auto index = m_hiddenReleases->indexOf(id);
         if (index == -1) continue;
 
-        m_hiddenReleases->remove(index);
+        m_hiddenReleases->removeAt(index);
     }
 
     saveHidedReleases();
@@ -1796,7 +1791,7 @@ void ReleasesViewModel::removeFromHidedSelectedReleases() noexcept
         auto index = m_hiddenReleases->indexOf(selectedRelease);
         if (index == -1) continue;
 
-        m_hiddenReleases->remove(index);
+        m_hiddenReleases->removeAt(index);
     }
 
     saveHidedReleases();
@@ -1852,6 +1847,7 @@ void ReleasesViewModel::loadNextReleasesWithoutReactive()
     m_releases->clear();
     m_releasesMap->clear();
     m_onlineVideos.clear();
+    m_onlineVideosMap.clear();
     m_torrentItems.clear();
 
     QFile metadataCacheFile(getCachePath(metadataCacheFileName));
@@ -1910,6 +1906,7 @@ void ReleasesViewModel::loadNextReleasesWithoutReactive()
                 jsonVideo->readFromApiModel(object, releaseId);
 
                 m_onlineVideos.append(jsonVideo);
+                m_onlineVideosMap.insert(jsonVideo->uniqueId(), jsonVideo);
             }
         }
     }
@@ -2104,7 +2101,7 @@ void ReleasesViewModel::saveHidedReleases()
 
 void ReleasesViewModel::loadSeenMarks()
 {
-    QFile seenMarkFile(getCachePath(seenMarkCacheFileName));
+    QFile seenMarkFile(getCachePath(extendedSeenMarkCacheFileName));
     if (!seenMarkFile.open(QFile::ReadOnly | QFile::Text)) return;
     auto seenMarkJson = seenMarkFile.readAll();
     seenMarkFile.close();
@@ -2112,10 +2109,15 @@ void ReleasesViewModel::loadSeenMarks()
     auto document = QJsonDocument::fromJson(seenMarkJson);
     auto jsonSeenMarks = document.array();
 
-    m_seenMarks->clear();
+    m_extendedSeenMarks.clear();
 
     foreach (auto item, jsonSeenMarks) {
-        m_seenMarks->insert(item.toString(), true);
+        auto object = item.toObject();
+        auto id = object.value("id").toString();
+        auto mark = object.value("mark").toBool();
+        auto time = object.value("time").toInt();
+        auto tuple = std::make_tuple(mark, time);
+        m_extendedSeenMarks.insert(id, tuple);
     }
 
     recalculateSeenCounts();
@@ -2123,32 +2125,32 @@ void ReleasesViewModel::loadSeenMarks()
 
 void ReleasesViewModel::recalculateSeenCounts()
 {
-    QMap<int, int> seenMap;
-    auto keys = m_seenMarks->keys();
-    foreach(auto item, keys) {
-#if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
-        auto parts = item.splitRef(".");
-#else
-        auto parts = item.splitRef(".", Qt::SkipEmptyParts);
-#endif
-        auto key = parts[0].toInt();
-        if (seenMap.contains(key)) {
-            seenMap[key] += 1;
-        } else {
-            seenMap.insert(key, 1);
+    QMap<int, int> releasesCount;
+    int countSeens = 0;
+    foreach (auto onlineVideo, m_onlineVideos) {
+        auto videoId = onlineVideo->uniqueId();
+
+        if (m_extendedSeenMarks.contains(videoId)) {
+            auto item = m_extendedSeenMarks.value(videoId);
+            auto mark = std::get<0>(item);
+            if (!mark) continue;
+
+            auto releaseId = onlineVideo->releaseId();
+            if (releasesCount.contains(releaseId)) {
+                auto count = releasesCount[releaseId];
+                count++;
+                auto allCount = m_releasesMap->value(releaseId)->countOnlineVideos();
+                if (count >= allCount) {
+                    countSeens++;
+                    continue;
+                }
+                releasesCount[releaseId] = count;
+            } else {
+                releasesCount.insert(releaseId, 1);
+            }
         }
     }
-
-    QMapIterator<int, int> seenIterator(seenMap);
-    int countSeens = 0;
-    while (seenIterator.hasNext()) {
-        seenIterator.next();
-
-        if (!m_releasesMap->contains(seenIterator.key())) continue;
-
-        auto release = m_releasesMap->value(seenIterator.key());
-        if (release->countOnlineVideos() == seenIterator.value()) countSeens += 1;
-    }
+    releasesCount.clear();
 
     setCountSeens(countSeens);
     emit hasCinemahallNotSeenVideosChanged();
@@ -2158,18 +2160,25 @@ void ReleasesViewModel::saveSeenMarks()
 {
     QJsonArray array;
 
-    QHashIterator<QString, bool> iterator(*m_seenMarks);
-    while (iterator.hasNext()) {
-        iterator.next();
+    auto keys = m_extendedSeenMarks.keys();
 
-        QJsonValue value(iterator.key());
-        array.append(value);
+    foreach(auto key, keys) {
+        auto item = m_extendedSeenMarks.value(key);
+
+        bool mark = std::get<0>(item);
+        int time = std::get<1>(item);
+        QJsonObject object;
+        object["id"] = key;
+        object["mark"] = mark;
+        object["time"] = time;
+
+        array.append(object);
     }
 
     QJsonDocument seenDocument(array);
     QString seenMarkJson(seenDocument.toJson());
 
-    QFile seenMarkFile(getCachePath(seenMarkCacheFileName));
+    QFile seenMarkFile(getCachePath(extendedSeenMarkCacheFileName));
     if (!seenMarkFile.open(QFile::WriteOnly | QFile::Text)) return;
 
     seenMarkFile.write(seenMarkJson.toUtf8());
@@ -2394,21 +2403,23 @@ void ReleasesViewModel::mapToFullReleaseModel(QJsonObject &&jsonObject, const bo
 
 QHash<int, int> ReleasesViewModel::getAllSeenMarkCount() noexcept
 {
-    QHash<int, int> result;
-    QHashIterator<QString, bool> iterator(*m_seenMarks);
-    while(iterator.hasNext()) {
-        iterator.next();
+    auto keys = m_extendedSeenMarks.keys();
+    QHash<int, int> releasesCount;
 
-        QString key = iterator.key();
-        auto keyParts = key.split(".");
-        auto releaseId = keyParts.first().toInt();
-        if (!result.contains(releaseId)) {
-            result[releaseId] = 1;
-        } else {
-            result[releaseId] += 1;
+    foreach (auto onlineVideo, m_onlineVideos) {
+        auto videoId = onlineVideo->uniqueId();
+
+        if (m_extendedSeenMarks.contains(videoId)) {
+            auto releaseId = onlineVideo->releaseId();
+            if (releasesCount.contains(releaseId)) {
+                auto count = releasesCount[releaseId];
+                count++;
+                releasesCount[releaseId] = count;
+            }
         }
     }
-    return result;
+
+    return releasesCount;
 }
 
 void ReleasesViewModel::synchronizedSchedule(const QString &data)

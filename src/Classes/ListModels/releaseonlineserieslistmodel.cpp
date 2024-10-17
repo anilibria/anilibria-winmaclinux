@@ -64,7 +64,7 @@ QVariant ReleaseOnlineSeriesListModel::data(const QModelIndex &index, int role) 
             return QVariant(isEmptyPoster);
         }
         case IsSeensRole: {
-            return QVariant(m_releases->getSeriaSeenMark(m_releaseId, onlineVideo->order()));
+            return QVariant(m_releases->getSeriaSeenMark(m_releaseId, onlineVideo->uniqueId()));
         }
         case IsCurrentVideoRole: {
             return QVariant(videoId == onlineVideo->order());

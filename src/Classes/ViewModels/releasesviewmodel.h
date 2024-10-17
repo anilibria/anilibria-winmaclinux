@@ -111,6 +111,7 @@ private:
     const QString favoriteCacheFileName { "favorites.cache" };
     const QString hidedReleasesCacheFileName { "hidedreleases.cache" };
     const QString seenMarkCacheFileName { "seenmark.cache" };
+    const QString extendedSeenMarkCacheFileName { "extendedseenmark.cache" };
     const QString historyCacheFileName { "history.cache" };
     const QString notificationCacheFileName { "notification.cache" };
     QStringList m_sectionNames;
@@ -122,6 +123,7 @@ private:
     QSharedPointer<QList<FullReleaseModel*>> m_releases { new QList<FullReleaseModel*>() };
     QScopedPointer<QMap<int, FullReleaseModel*>> m_releasesMap { new QMap<int, FullReleaseModel*>() };
     QList<ReleaseOnlineVideoModel*> m_onlineVideos { QList<ReleaseOnlineVideoModel*>() };
+    QMap<QString, ReleaseOnlineVideoModel*> m_onlineVideosMap { QMap<QString, ReleaseOnlineVideoModel*>() };
     QList<ApiTorrentModel*> m_torrentItems { QList<ApiTorrentModel*>() };
     ReleaseLinkedSeries* m_releaseLinkedSeries { nullptr };
     ReleaseCustomGroupsViewModel* m_customGroups { new ReleaseCustomGroupsViewModel(this) };
@@ -131,8 +133,8 @@ private:
     ReleasesListModel* m_items;
     QMap<int, int>* m_scheduleReleases { new QMap<int, int>() };
     QList<int>* m_userFavorites { new QList<int>() };
-    QVector<int>* m_hiddenReleases { new QVector<int>() };
-    QHash<QString, bool>* m_seenMarks { new QHash<QString, bool>() };
+    QList<int>* m_hiddenReleases { new QList<int>() };
+    QHash<QString, std::tuple<bool, int>> m_extendedSeenMarks { QHash<QString, std::tuple<bool, int>>() };
     QSharedPointer<QHash<int, HistoryModel*>> m_historyItems { new QHash<int, HistoryModel*>() };
     QSharedPointer<ChangesModel> m_releaseChanges { new ChangesModel() };
     ApplicationSettings* m_applicationSettings { nullptr };
@@ -300,10 +302,9 @@ public:
     Q_INVOKABLE void setSeenMarkAllSeries(int id, int countSeries, bool marked);
     Q_INVOKABLE void setSeenMarkAllSeriesSelectedReleases(bool marked);
     Q_INVOKABLE void setSeenMarkForSingleRelease(int id, bool marked);
-    Q_INVOKABLE void setSeenMarkForRelease(int id, int countSeries, bool marked);
-    Q_INVOKABLE void synchronizeSeenMarkForRelease(const QList<int>& ids, bool marked);
+    Q_INVOKABLE void synchronizeSeenMarkForRelease(const QList<QString>& ids, bool marked);
     Q_INVOKABLE void synchronizeSeenMarkForRelease(int id, int countSeries, bool marked);
-    Q_INVOKABLE void synchronizeSeenMarkForSingleSeria(int id, int seria, bool marked);
+    Q_INVOKABLE void synchronizeSeenMarkForSingleSeria(const QString& id, bool marked);
     Q_INVOKABLE void refreshOpenedReleaseCard();
     Q_INVOKABLE void removeAllSeenMark();
     Q_INVOKABLE void reloadReleases();
@@ -317,10 +318,11 @@ public:
     Q_INVOKABLE void removeAllHidedReleases() noexcept;
     Q_INVOKABLE void addToCinemahallSelectedReleases();
     Q_INVOKABLE void setupSortingForSection() const noexcept;
-    Q_INVOKABLE bool getSeriaSeenMark(int id, int seriaId) const noexcept;
-    Q_INVOKABLE bool toggleSeenMark(int id, int seriaId) noexcept;
-    Q_INVOKABLE void setSeenMark(int id, int seriaId, bool marked);
-    QHash<QString, bool>* getSeenMarks();
+    Q_INVOKABLE bool getSeriaSeenMark(int id, const QString& seriaId) const noexcept;
+    Q_INVOKABLE void toggleSeenMark(int id, const QString& seriaId) noexcept;
+    Q_INVOKABLE void setSeenMark(int id, const QString& seriaId, bool marked);
+    QHash<QString, std::tuple<bool, int>>& getSeenMarks();
+    QMap<QString, ReleaseOnlineVideoModel*>& getVideosMap();
     void updateAllReleases(const QList<QString> &releases, bool insideData);
     uint32_t getCountFromChanges(const QList<int> *releases, bool filterByFavorites);
     Q_INVOKABLE void openInExternalPlayer(const QString& url);
@@ -338,7 +340,7 @@ public:
     quint32 m_seedValue { 0 };
 
 private:
-    void setSeenMarkInternal(int id, int seriaId, bool marked);
+    void setSeenMarkInternal(const QString& id, bool marked);
     void loadReleases();
     void loadNextReleasesWithoutReactive();
     void reloadApiHostInItems();

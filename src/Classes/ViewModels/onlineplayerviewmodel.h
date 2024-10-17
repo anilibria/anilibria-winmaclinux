@@ -47,6 +47,7 @@ class OnlinePlayerViewModel : public QObject
     Q_PROPERTY(QString releasePoster READ releasePoster WRITE setReleasePoster NOTIFY releasePosterChanged)
     Q_PROPERTY(bool isFullHdAllowed READ isFullHdAllowed WRITE setIsFullHdAllowed NOTIFY isFullHdAllowedChanged)
     Q_PROPERTY(int selectedVideo READ selectedVideo WRITE setSelectedVideo NOTIFY selectedVideoChanged)
+    Q_PROPERTY(QString selectedVideoId READ selectedVideoId NOTIFY selectedVideoIdChanged)
     Q_PROPERTY(int positionIterator READ positionIterator WRITE setPositionIterator NOTIFY positionIteratorChanged)
     Q_PROPERTY(int lastMovedPosition READ lastMovedPosition WRITE setLastMovedPosition NOTIFY lastMovedPositionChanged)
     Q_PROPERTY(int restorePosition READ restorePosition WRITE setRestorePosition NOTIFY restorePositionChanged)
@@ -96,6 +97,7 @@ private:
     QString m_releasePoster;
     bool m_isFullHdAllowed;
     int m_selectedVideo;
+    QString m_selectedVideoId;
     int m_positionIterator;
     int m_lastMovedPosition;
     int m_restorePosition;
@@ -180,6 +182,9 @@ public:
 
     int selectedVideo() const { return m_selectedVideo; }
     void setSelectedVideo(int selectedVideo) noexcept;
+
+    QString selectedVideoId() const { return m_selectedVideoId; }
+    void setSelectedVideoId(const QString& selectedVideoId) noexcept;
 
     int positionIterator() const { return m_positionIterator; }
     void setPositionIterator(int positionIterator) noexcept;
@@ -292,7 +297,6 @@ public:
     Q_INVOKABLE void quickSetupForMultipleRelease(QList<int> releaseIds);
     Q_INVOKABLE void quickSetupForFavoritesCinemahall();
     Q_INVOKABLE void setupForCinemahall();
-    Q_INVOKABLE QString getReleasesSeenMarks(QList<int> ids);
     Q_INVOKABLE void selectVideo(int releaseId, int videoId);
     Q_INVOKABLE void changeVideoQuality(const QString& quality) noexcept;
     Q_INVOKABLE void setVideoSpeed(double speed) noexcept;
@@ -391,6 +395,7 @@ signals:
     void hidePanelIfItVisible();
     void torrentStreamChanged();
     void videoServerOverrideChanged();
+    void selectedVideoIdChanged();
 
 };
 

@@ -86,15 +86,17 @@ void CinemahallListModel::refreshItems() noexcept
 int CinemahallListModel::getReleaseSeenMarkCount(int releaseId) const noexcept
 {
     auto result = 0;
-    QHashIterator<QString, bool> iterator(*m_seenMarks);
-    while(iterator.hasNext()) {
-        iterator.next();
+    auto keys = m_seenMarks->keys();
+    foreach (auto key, keys) {
+        auto item = m_seenMarks->value(key);
+        bool mark = std::get<0>(item);
+        if (!mark) continue;
 
-        QString key = iterator.key();
-        auto id = QString::number(releaseId);
-        if (!key.startsWith(id)) continue;
-
-        result += 1;
+        if (!m_videosMap->contains(key)) continue;
+        auto video = m_videosMap->value(key);
+        if (video->releaseId() == releaseId) {
+            result += 1;
+        }
     }
 
     return result;
@@ -131,10 +133,11 @@ CinemahallListModel::CinemahallListModel(QObject *parent)
     loadItems();
 }
 
-void CinemahallListModel::setup(QSharedPointer<QList<FullReleaseModel *> > releases, QHash<QString, bool>* seenMarks)
+void CinemahallListModel::setup(QSharedPointer<QList<FullReleaseModel *> > releases, QHash<QString, std::tuple<bool, int>>* seenMarks, QMap<QString, ReleaseOnlineVideoModel*>* videosMap)
 {
     m_releases = releases;
     m_seenMarks = seenMarks;
+    m_videosMap = videosMap;
 }
 
 void CinemahallListModel::setDragRelease(const int dragRelease) noexcept

@@ -68,7 +68,7 @@ private:
     QString m_socialState { "" };
     int m_socialCheckTimer { 0 };
     int m_socialCheckTimerIterator { 0 };
-    QMap<QString, bool> m_synchronizedSeens { QMap<QString, bool>() };
+    QMap<QString, std::tuple<bool, int>> m_synchronizedSeens { QMap<QString, std::tuple<bool, int>>() };
 
 public:
     explicit Synchronizev2Service(QObject *parent = nullptr);

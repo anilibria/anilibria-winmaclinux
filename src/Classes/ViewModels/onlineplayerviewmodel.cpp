@@ -203,6 +203,12 @@ void OnlinePlayerViewModel::setSelectedVideo(int selectedVideo) noexcept
     emit selectedVideoChanged();
 }
 
+void OnlinePlayerViewModel::setSelectedVideoId(const QString &selectedVideoId) noexcept
+{
+    m_selectedVideoId = selectedVideoId;
+    emit selectedVideoIdChanged();
+}
+
 void OnlinePlayerViewModel::setPositionIterator(int positionIterator) noexcept
 {
     if (m_positionIterator == positionIterator) return;
@@ -500,6 +506,7 @@ void OnlinePlayerViewModel::nextVideo()
         if (nextVideo == nullptr) return;
 
         setSelectedVideo(nextVideo->order());
+        setSelectedVideoId(nextVideo->uniqueId());
         video = nextVideo;
     } else {
         if (!m_isMultipleRelease) {
@@ -508,6 +515,7 @@ void OnlinePlayerViewModel::nextVideo()
             setSelectedVideo(m_selectedVideo + 1);
 
             video = m_videos->getVideoAtIndex(m_selectedVideo);
+            setSelectedVideoId(video->uniqueId());
         } else {
             auto selectedRelease = m_selectedRelease;
             auto selectedVideo = m_selectedVideo;
@@ -526,7 +534,7 @@ void OnlinePlayerViewModel::nextVideo()
             if (video->isGroup()) video = m_videos->getVideoAtIndex(currentIndex + 1);
 
             setSelectedVideo(video->order());
-
+            setSelectedVideoId(video->uniqueId());
         }
     }
 
@@ -555,6 +563,7 @@ void OnlinePlayerViewModel::previousVideo()
         auto previousVideo = previousNotSeenVideo();
         if (previousVideo) {
             setSelectedVideo(previousVideo->order());
+            setSelectedVideoId(previousVideo->uniqueId());
             video = previousVideo;
         } else {
             return;
@@ -564,6 +573,7 @@ void OnlinePlayerViewModel::previousVideo()
         if (!m_isMultipleRelease) {
             setSelectedVideo(m_selectedVideo - 1);
             video = m_videos->getVideoAtIndex(m_selectedVideo);
+            setSelectedVideoId(video->uniqueId());
         } else {
             auto selectedRelease = m_selectedRelease;
             auto selectedVideo = m_selectedVideo;
@@ -585,7 +595,7 @@ void OnlinePlayerViewModel::previousVideo()
             }
 
             setSelectedVideo(video->order());
-
+            setSelectedVideoId(video->uniqueId());
         }
     }
 
@@ -700,6 +710,7 @@ void OnlinePlayerViewModel::quickSetupForSingleRelease(int releaseId, int custom
 
     qDebug() << "firstVideo: " << firstVideo->order();
     setSelectedVideo(firstVideo->order());
+    setSelectedVideoId(firstVideo->uniqueId());
     setIsFullHdAllowed(!firstVideo->fullhd().isEmpty());
     setVideoSource(getVideoFromQuality(firstVideo));
     setRutubeIdentifier(firstVideo);
@@ -744,6 +755,7 @@ void OnlinePlayerViewModel::quickSetupForSingleTorrentRelease(int releaseId, int
     if (firstVideo == nullptr) firstVideo = m_videos->getVideoAtIndex(0);
 
     setSelectedVideo(firstVideo->order());
+    setSelectedVideoId(firstVideo->uniqueId());
     setIsFullHdAllowed(!firstVideo->fullhd().isEmpty());
     setVideoSource(getVideoFromQuality(firstVideo));
     setRutubeIdentifier(firstVideo);
@@ -782,6 +794,7 @@ void OnlinePlayerViewModel::quickSetupForMultipleRelease(const QList<int> releas
     setSelectedRelease(video->releaseId());
     setReleasePoster(video->releasePoster());
     setSelectedVideo(video->order());
+    setSelectedVideoId(video->uniqueId());
     setIsFullHdAllowed(!video->fullhd().isEmpty());
     setVideoSource(getVideoFromQuality(video));
     setRutubeIdentifier(video);
@@ -812,7 +825,7 @@ void OnlinePlayerViewModel::quickSetupForFavoritesCinemahall()
         [seenMarks](OnlineVideoModel* video) {
             if (video->isGroup()) return false;
 
-            return !seenMarks->contains(QString::number(video->releaseId()) + "." + QString::number(video->order()));
+            return !seenMarks.contains(video->uniqueId());
         }
     );
 
@@ -825,6 +838,7 @@ void OnlinePlayerViewModel::quickSetupForFavoritesCinemahall()
     setSelectedRelease(video->releaseId());
     setReleasePoster(video->releasePoster());
     setSelectedVideo(video->order());
+    setSelectedVideoId(video->uniqueId());
     setIsFullHdAllowed(!video->fullhd().isEmpty());
     setVideoSource(getVideoFromQuality(video));
     setRutubeIdentifier(video);
@@ -852,7 +866,7 @@ void OnlinePlayerViewModel::setupForCinemahall()
         [seenMarks](OnlineVideoModel* video) {
             if (video->isGroup()) return false;
 
-            return !seenMarks->contains(QString::number(video->releaseId()) + "." + QString::number(video->order()));
+            return !seenMarks.contains(video->uniqueId());
         }
     );
 
@@ -865,6 +879,7 @@ void OnlinePlayerViewModel::setupForCinemahall()
     setSelectedRelease(video->releaseId());
     setReleasePoster(video->releasePoster());
     setSelectedVideo(video->order());
+    setSelectedVideoId(video->uniqueId());
     setIsFullHdAllowed(!video->fullhd().isEmpty());
     setVideoSource(getVideoFromQuality(video));
     setRutubeIdentifier(video);
@@ -874,43 +889,12 @@ void OnlinePlayerViewModel::setupForCinemahall()
     emit saveToWatchHistory(video->releaseId());
 }
 
-QString OnlinePlayerViewModel::getReleasesSeenMarks(QList<int> ids)
-{
-    QJsonObject result;
-    QHashIterator<QString, bool> iterator(*m_releasesViewModel->getSeenMarks());
-
-    while(iterator.hasNext()) {
-        auto seenMark = iterator.next();
-        auto key = seenMark.key();
-        auto parts = key.split(".");
-        auto releaseId = parts.at(0).toInt();
-        auto releseIdString = QString::number(releaseId);
-        auto videoId = parts.at(1).toInt();
-
-        if (!ids.contains(releaseId)) continue;
-
-        if (result.contains(releseIdString)) {
-            auto releaseObject = result.value(releseIdString);
-            auto object = releaseObject.toObject();
-            auto key = QString::number(videoId);
-            object.insert(key, QJsonValue(true));
-            result[releseIdString] = object;
-        } else {
-            QJsonObject releaseSeens;
-            releaseSeens.insert(QString::number(videoId), QJsonValue(true));
-            result.insert(releseIdString, releaseSeens);
-        }
-    }
-
-    QJsonDocument document(result);
-    return document.toJson();
-}
-
 void OnlinePlayerViewModel::selectVideo(int releaseId, int videoId)
 {
     setShowNextPosterRelease(false);
     setSeenMarkedAtEnd(false);
     setSelectedVideo(videoId);
+
     setSelectedRelease(releaseId);
     setIsFromNavigated(false);
 
@@ -919,6 +903,7 @@ void OnlinePlayerViewModel::selectVideo(int releaseId, int videoId)
             return video->releaseId() == releaseId && video->order() == videoId;
         }
     );
+    setSelectedVideoId(video->uniqueId());
 
     setIsFullHdAllowed(!video->fullhd().isEmpty());
     setVideoSource(getVideoFromQuality(video));
@@ -1064,6 +1049,7 @@ void OnlinePlayerViewModel::quickSetupForSingleDownloadedTorrent(const QStringLi
     if (firstVideo == nullptr) firstVideo = m_videos->getVideoAtIndex(0);
 
     setSelectedVideo(firstVideo->order());
+    setSelectedVideoId(firstVideo->uniqueId());
     setIsFullHdAllowed(!firstVideo->fullhd().isEmpty());
     setVideoSource(getVideoFromQuality(firstVideo));
     setRutubeIdentifier(firstVideo);
@@ -1204,8 +1190,7 @@ OnlineVideoModel* OnlinePlayerViewModel::nextNotSeenVideo()
             if (videoIndex <= currentIndex) return false;
             if (video->isGroup()) return false;
 
-            auto key = QString::number(video->releaseId()) + "." + QString::number(video->order());
-            if (seenMarks->contains(key)) return false;
+            if (seenMarks.contains(video->uniqueId())) return false;
 
             return true;
         }
@@ -1236,8 +1221,7 @@ OnlineVideoModel *OnlinePlayerViewModel::previousNotSeenVideo()
             auto videoIndex = videos->getVideoIndex(video);
             if (videoIndex >= currentIndex) return false;
 
-            auto key = QString::number(video->releaseId()) + "." + QString::number(video->order());
-            if (seenMarks->contains(key)) return false;
+            if (seenMarks.contains(video->uniqueId())) return false;
 
             return true;
         },
