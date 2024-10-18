@@ -58,6 +58,7 @@ class ReleasesListModel : public QAbstractListModel
     Q_PROPERTY(bool filterByFavorites READ filterByFavorites WRITE setFilterByFavorites NOTIFY filterByFavoritesChanged)
     Q_PROPERTY(QString scriptFilePath READ scriptFilePath WRITE setScriptFilePath NOTIFY scriptFilePathChanged)
     Q_PROPERTY(bool hasFilters READ hasFilters NOTIFY hasFiltersChanged)
+    Q_PROPERTY(bool grouping READ grouping NOTIFY groupingChanged)
 
 private:
     const QString winterValue { "зима" };
@@ -98,6 +99,7 @@ private:
     QString m_scheduleDayFilter { "" };
     QJSEngine* m_engine { new QJSEngine(this) };
     QString m_scriptFilePath { "" };
+    bool m_grouping { false };
     QSharedPointer<QSet<int>> m_selectedReleases { new QSet<int>() };
     enum FullReleaseRoles {
         ReleaseIdRole = Qt::UserRole + 1,
@@ -223,6 +225,8 @@ public:
 
     bool hasFilters() const noexcept;
 
+    bool grouping() const noexcept { return m_grouping; }
+
     int getReleaseIdByIndex(int index) noexcept;
 
     QSharedPointer<QSet<int>> getSelectedReleases();
@@ -276,6 +280,7 @@ signals:
     void scriptFilePathChanged();
     void scriptError(const QString& message);
     void hasFiltersChanged();
+    void groupingChanged();
 
 };
 
