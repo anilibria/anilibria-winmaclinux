@@ -30,6 +30,7 @@ jobs:
       run: arch -x86_64 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
     - name: Fix brew issue
       run: |
+        brew link --overwrite python@3.13
         rm /usr/local/bin/2to3
         rm /usr/local/bin/idle3
         rm /usr/local/bin/idle3.13
