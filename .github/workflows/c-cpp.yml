@@ -32,6 +32,7 @@ jobs:
       run: |
         rm /usr/local/bin/2to3
         rm /usr/local/bin/idle3
+        rm /usr/local/bin/idle3.13
     - name: install pkg-config
       run: arch -x86_64 /usr/local/bin/brew install pkg-config
     - name: install mpv
