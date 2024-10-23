@@ -1605,7 +1605,7 @@ Page {
 
                 CommonComboBox {
                     id: sortingComboBox
-                    visible: window.width > 970
+                    visible: window.width > 1060
                     width: 160
                     height: parent.height + 2
                     fontPointSize: 9
@@ -1664,13 +1664,26 @@ Page {
 
                 FilterPanelIconButton {
                     id: sortingDirectionButton
+                    visible: !mainViewModel.isSmallSizeMode
                     anchors.verticalCenter: parent.verticalCenter
-                    anchors.right: parent.right
-                    anchors.rightMargin: 14
+                    anchors.right: groupingButton.left
+                    anchors.rightMargin: 2
                     iconPath: releasesViewModel.items.sortingDescending ? applicationThemeViewModel.currentItems.iconReleaseCatalogSortDesc : applicationThemeViewModel.currentItems.iconReleaseCatalogSortAsc
                     tooltipMessage: "Направление сортировки списка"
                     onButtonPressed: {
                         releasesViewModel.items.sortingDescending = !releasesViewModel.items.sortingDescending;
+                        releasesViewModel.items.refresh();
+                    }
+                }
+                FilterPanelIconButton {
+                    id: groupingButton
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.right: parent.right
+                    anchors.rightMargin: 12
+                    iconPath: releasesViewModel.items.grouping ? applicationThemeViewModel.currentItems.iconEnableGrouping : applicationThemeViewModel.currentItems.iconDisableGrouping
+                    tooltipMessage: releasesViewModel.items.grouping ? "Выключить группировку по полю сортировки" : "Включить группировку по полю сортировки"
+                    onButtonPressed: {
+                        releasesViewModel.items.grouping = !releasesViewModel.items.grouping;
                         releasesViewModel.items.refresh();
                     }
                 }
@@ -1745,9 +1758,11 @@ Page {
                     Component {
                         id: releaseDelegate
                         Rectangle {
+                            id: itemRoot
                             color: "transparent"
                             width: scrollview.cellWidth
                             height: scrollview.cellHeight
+                            objectName: groupValue
 
                             ReleaseItem {
                                 anchors.centerIn: parent
@@ -1777,6 +1792,49 @@ Page {
 
                     Component.onCompleted: {
                         scrollview.maximumFlickVelocity = scrollview.maximumFlickVelocity - 1050;
+                    }
+                    onContentYChanged: {
+                        if (!releasesViewModel.items.grouping) return;
+
+                        if (scrollview.contentItem.children.length === 0) return;
+
+                        const countElements = scrollview.contentItem.children.length;
+                        const limitUp = scrollview.contentY + scrollview.height;
+                        for (let i = 0; i < countElements; i++) {
+                            const element = scrollview.contentItem.children[i];
+                            const bottomPosition = element.y + element.height;
+                            if (bottomPosition >= scrollview.contentY && bottomPosition <= limitUp) {
+                                currentGroupValueText.text = element.objectName;
+                                break;
+                            }
+                        }
+                    }
+                }
+
+                Item {
+                    visible: scrollview.contentY > 0 && currentGroupValueText.text.length > 0
+                    anchors.left: itemsContainer.left
+                    anchors.leftMargin: 4
+                    anchors.top: itemsContainer.top
+                    anchors.topMargin: 4
+                    width: currentGroupValueText.width + 12
+                    height: 24
+
+                    Rectangle {
+                        anchors.fill: parent
+                        color: applicationThemeViewModel.pageUpperPanel
+                        radius: 8
+                        border.color: applicationThemeViewModel.posterBorder
+                        border.width: 1
+                    }
+
+                    PlainText {
+                        id: currentGroupValueText
+                        anchors.left: parent.left
+                        anchors.leftMargin: 6
+                        anchors.bottom: parent.bottom
+                        anchors.verticalCenter: parent.verticalCenter
+                        fontPointSize: 14
                     }
                 }
             }

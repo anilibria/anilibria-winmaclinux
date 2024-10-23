@@ -1955,8 +1955,8 @@ void ReleasesViewModel::loadSchedules()
     auto schedule = jsonDocument.object();
     auto keys = schedule.keys();
     foreach (auto key, keys) {
-        auto scheduleDay = schedule.value(key).toString();
-        m_scheduleReleases->insert(key.toInt(), scheduleDay.toInt());
+        auto scheduleDay = schedule.value(key).toInt();
+        m_scheduleReleases->insert(key.toInt(), scheduleDay);
     }
 }
 

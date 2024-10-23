@@ -58,6 +58,7 @@ class ReleasesListModel : public QAbstractListModel
     Q_PROPERTY(bool filterByFavorites READ filterByFavorites WRITE setFilterByFavorites NOTIFY filterByFavoritesChanged)
     Q_PROPERTY(QString scriptFilePath READ scriptFilePath WRITE setScriptFilePath NOTIFY scriptFilePathChanged)
     Q_PROPERTY(bool hasFilters READ hasFilters NOTIFY hasFiltersChanged)
+    Q_PROPERTY(bool grouping READ grouping WRITE setGrouping NOTIFY groupingChanged)
 
 private:
     const QString winterValue { "зима" };
@@ -65,7 +66,7 @@ private:
     const QString springValue { "весна" };
     const QString summerValue { "лето" };
     QSharedPointer<QList<FullReleaseModel*>> m_releases;
-    QScopedPointer<QList<FullReleaseModel*>> m_filteredReleases { new QList<FullReleaseModel*>() };
+    QList<FullReleaseModel*> m_filteredReleases { QList<FullReleaseModel*>() };
     QList<int>* m_userFavorites { nullptr };
     QHash<QString, std::tuple<bool, int>>* m_seenMarkModels { nullptr };
     QMap<QString, ReleaseOnlineVideoModel*>* m_videosMap { nullptr };
@@ -98,7 +99,9 @@ private:
     QString m_scheduleDayFilter { "" };
     QJSEngine* m_engine { new QJSEngine(this) };
     QString m_scriptFilePath { "" };
+    bool m_grouping { false };
     QSharedPointer<QSet<int>> m_selectedReleases { new QSet<int>() };
+    QSet<int> m_startInGroups { QSet<int>() };
     enum FullReleaseRoles {
         ReleaseIdRole = Qt::UserRole + 1,
         TitleRole,
@@ -118,7 +121,9 @@ private:
         InFavoritesRole,
         SelectedRole,
         InScheduleRole,
-        ScheduledDayRole
+        ScheduledDayRole,
+        StartInGroupRole,
+        GroupRole
     };
 
     enum FilterSortingField {
@@ -207,7 +212,7 @@ public:
     int getReleaseSeenMarkCount(int releaseId) const noexcept;
 
     bool isHasSelectRelease() const noexcept { return !m_selectedReleases->isEmpty(); }
-    int countFilteredReleases() const noexcept { return m_filteredReleases->count(); }
+    int countFilteredReleases() const noexcept { return m_filteredReleases.count(); }
 
     bool hasReleaseSeriesFilter() const noexcept { return m_hasReleaseSeriesFilter; }
     void setHasReleaseSeriesFilter(bool hasReleaseSeriesFilter) noexcept;
@@ -222,6 +227,9 @@ public:
     void setFilterByFavorites(bool filterByFavorites) noexcept;
 
     bool hasFilters() const noexcept;
+
+    bool grouping() const noexcept { return m_grouping; }
+    void setGrouping(bool grouping) noexcept;
 
     int getReleaseIdByIndex(int index) noexcept;
 
@@ -247,6 +255,8 @@ private:
     QHash<int, int>&& getAllSeenMarkCount(QHash<int, int>&& result) noexcept;
     void sortingFilteringReleases(QHash<int, int>&& seenMarks);
     void refreshFilteredReleaseById(int id);
+    QString getGroupByRelease(const FullReleaseModel* model, const QHash<int, int>& seens);
+    QString getGroupForRating(int rating);
 
 
 signals:
@@ -276,6 +286,7 @@ signals:
     void scriptFilePathChanged();
     void scriptError(const QString& message);
     void hasFiltersChanged();
+    void groupingChanged();
 
 };
 

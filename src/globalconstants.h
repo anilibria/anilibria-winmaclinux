@@ -263,9 +263,10 @@ extern QString iconAuthorizationGoogleField;
 extern QString iconAuthorizationPatreonField;
 extern QString iconAuthorizationDiscordField;
 extern QString iconContextMenuField;
-
 extern QString iconMainMenuExtensionsField;
-
 extern QString iconMagnetField;
+
+extern QString iconDisableGroupingField;
+extern QString iconEnableGroupingField;
 
 #endif // GLOBALCONSTANTS_H

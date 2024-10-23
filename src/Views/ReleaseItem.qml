@@ -89,11 +89,40 @@ Item {
             rightPadding: 4
 
             CorneredImage {
+                id: itemPosterImage
                 visible: !isCompactReleaseMode
                 width: 182
                 height: 272
                 posterSource: releaseItem.posterPath
                 emptyBorderBackground: applicationThemeViewModel.currentItems.panelBackground
+
+                Item {
+                    visible: startInGroup
+                    anchors.right: itemPosterImage.left
+                    anchors.top: itemPosterImage.top
+                    width: groupHeaderText.width + 12
+                    height: 20
+                    rotation: 270
+                    transformOrigin: Item.Right
+
+                    Rectangle {
+                        anchors.fill: parent
+                        color: applicationThemeViewModel.pageUpperPanel
+                        radius: 8
+                        border.color: applicationThemeViewModel.posterBorder
+                        border.width: 1
+                    }
+
+                    PlainText {
+                        id: groupHeaderText
+                        anchors.left: parent.left
+                        anchors.leftMargin: 6
+                        anchors.bottom: parent.bottom
+                        anchors.verticalCenter: parent.verticalCenter
+                        text: groupValue
+                        fontPointSize: 10
+                    }
+                }
             }
 
             Item {

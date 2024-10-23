@@ -190,8 +190,10 @@ ApplicationThemeViewModel::ApplicationThemeViewModel(QObject *parent)
     lightTheme->insert(iconAuthorizationDiscordField, "qrc:/Assets/Icons/authorization/discord.svg");
     lightTheme->insert(iconContextMenuField, "qrc:/Assets/Icons/contextmenu.svg");
     lightTheme->insert(iconMainMenuExtensionsField, "qrc:/Assets/Icons/extensions.svg");
-
     lightTheme->insert(iconMagnetField, "qrc:/Assets/Icons/releases/magnet.svg");
+
+    lightTheme->insert(iconDisableGroupingField, "qrc:/Assets/Icons/releases/disablegrouping.svg");
+    lightTheme->insert(iconEnableGroupingField, "qrc:/Assets/Icons/releases/enablegrouping.svg");
 
     lightTheme->insert(basedOnThemeField, m_lightTheme);
     lightTheme->insert(externalIdField, "");
@@ -359,8 +361,10 @@ ApplicationThemeViewModel::ApplicationThemeViewModel(QObject *parent)
     darkTheme->insert(iconAuthorizationDiscordField, "qrc:/Assets/Icons/authorization/discord.svg");
     darkTheme->insert(iconContextMenuField, "qrc:/Assets/Icons/contextmenu.svg");
     darkTheme->insert(iconMagnetField, "qrc:/Assets/Icons/releases/magnet.svg");
-
     darkTheme->insert(iconMainMenuExtensionsField, "qrc:/Assets/Icons/extensions.svg");
+
+    darkTheme->insert(iconDisableGroupingField, "qrc:/Assets/Icons/releases/disablegrouping.svg");
+    darkTheme->insert(iconEnableGroupingField, "qrc:/Assets/Icons/releases/enablegrouping.svg");
 
     darkTheme->insert(basedOnThemeField, m_darkTheme);
     darkTheme->insert(externalIdField, "");
@@ -417,7 +421,6 @@ ApplicationThemeViewModel::ApplicationThemeViewModel(QObject *parent)
     m_fields.append(colorPosterFilterField);
     m_fields.append(colorPopupBackgroundField);
     m_fields.append(colorPopupBackgroundShadowField);
-
     m_fields.append(colorSwitchHighlightedRippleField);
     m_fields.append(colorSwitchRippleField);
     m_fields.append(colorSwitchCheckedTrackField);
@@ -440,11 +443,9 @@ ApplicationThemeViewModel::ApplicationThemeViewModel(QObject *parent)
     m_fields.append(colorDrawerDividerColorField);
     m_fields.append(colorDrawerDimColorField);
     m_fields.append(colorDrawerDialogColorField);
-
     m_fields.append(colorComboBoxAccentField);
     m_fields.append(colorComboBoxHintField);
     m_fields.append(colorComboBoxBackgroundField);
-
     m_fields.append(iconMainMenuField);
     m_fields.append(iconMainMenuReleasesField);
     m_fields.append(iconMainMenuCinemahallField);
@@ -532,8 +533,9 @@ ApplicationThemeViewModel::ApplicationThemeViewModel(QObject *parent)
     m_fields.append(iconAuthorizationDiscordField);
     m_fields.append(iconContextMenuField);
     m_fields.append(iconMainMenuExtensionsField);
-
     m_fields.append(iconMagnetField);
+    m_fields.append(iconDisableGroupingField);
+    m_fields.append(iconEnableGroupingField);
 
     m_fields.append(iconLogoutField);
     m_fields.append(externalIdField);
