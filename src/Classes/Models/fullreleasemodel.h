@@ -49,6 +49,7 @@ private:
     const QString m_isOngoingField { "isOngoing" };
     const QString m_ageRatingField { "ageRating" };
     QString m_posterHost { "" };
+    QString m_groupValue { "" };
 
 public:
     QString title() const { return m_Title; }
@@ -116,6 +117,9 @@ public:
 
     QString posterHost() const { return m_posterHost; }
     void setPosterHost(const QString& posterHost) noexcept { m_posterHost = posterHost; }
+
+    QString groupValue() const noexcept { return  m_groupValue; }
+    void setGroupValue(const QString& groupValue) noexcept { m_groupValue = groupValue; }
 
     void readFromJson(const QJsonObject &json);
 

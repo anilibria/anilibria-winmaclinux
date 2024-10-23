@@ -188,8 +188,10 @@ ThemeFieldListModel::ThemeFieldListModel(QObject *parent)
     m_descriptions.insert(iconAuthorizationDiscordField, "Иконка страницы Авторизация:Иконка находящаяся в панели авторизации");
     m_descriptions.insert(iconContextMenuField, "Иконка контекстного меню:Иконка находящаяся в наборе кнопок где требуется открытие контекстного меню");
     m_descriptions.insert(iconMainMenuExtensionsField, "Иконка страницы Расширения:Иконка находящаяся в главном меню");
-
     m_descriptions.insert(iconMagnetField, "Иконка Magnet:В карточке релиза позволяет копировать/открыть magnet ссылки");
+
+    m_descriptions.insert(iconDisableGroupingField, "Иконка Группировка:Иконка для состояния Выключено");
+    m_descriptions.insert(iconEnableGroupingField, "Иконка Группировка:Иконка для состояния Включено");
 
     m_saveMenuItems.append("Сохранить и добавить тему в список");
     m_saveMenuItems.append("Сохранить в файл");
