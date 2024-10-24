@@ -245,6 +245,17 @@ int ReleaseLinkedSeries::getSortedOrder(int id) const noexcept
     return 0;
 }
 
+QString ReleaseLinkedSeries::getFranchiseTitle(int id) const noexcept
+{
+    foreach (auto item, m_series) {
+        if (!item->releaseIds()->contains(id)) continue;
+
+        return item->title();
+    }
+
+    return "";
+}
+
 QList<QVariantMap> ReleaseLinkedSeries::fillReleaseSeries(const int id) noexcept
 {
     QList<QVariantMap> result;

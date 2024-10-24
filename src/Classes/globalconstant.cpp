@@ -205,17 +205,15 @@ QString colorComboBoxBackgroundField = "colorComboBoxBackground";
 
 QString iconCustomGroupField = "iconCustomGroup";
 QString iconEditField = "iconEdit";
-
 QString iconReleaseCatalogSearchFoundedField = "iconReleaseCatalogSearchFounded";
 QString iconCustomGroupFoundedField = "iconCustomGroupFounded";
-
 QString iconAuthorizationVkField = "iconAuthorizationVk";
 QString iconAuthorizationGoogleField = "iconAuthorizationGoogle";
 QString iconAuthorizationPatreonField = "iconAuthorizationPatreon";
 QString iconAuthorizationDiscordField = "iconAuthorizationDiscord";
 QString iconContextMenuField = "iconContextMenu";
-
 QString iconMainMenuExtensionsField = "iconMainMenuExtensions";
-
 QString iconMagnetField = "iconMagnet";
 
+QString iconDisableGroupingField = "iconDisableGrouping";
+QString iconEnableGroupingField = "iconEnableGrouping";

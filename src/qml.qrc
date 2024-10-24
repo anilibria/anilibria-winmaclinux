@@ -244,5 +244,7 @@
         <file>Assets/Icons/extensions.svg</file>
         <file>Assets/Icons/releases/magnet.svg</file>
         <file>Views/ExtensionsCard.qml</file>
+        <file>Assets/Icons/releases/disablegrouping.svg</file>
+        <file>Assets/Icons/releases/enablegrouping.svg</file>
     </qresource>
 </RCC>

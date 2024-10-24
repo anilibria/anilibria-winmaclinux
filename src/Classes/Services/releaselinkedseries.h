@@ -102,6 +102,7 @@ public:
     QSharedPointer<QList<int>> getAllLinkedReleases() const noexcept;
     QList<QList<int>> getFullLinkedReleases() const noexcept;
     int getSortedOrder(int id) const noexcept;
+    QString getFranchiseTitle(int id) const noexcept;
 
     QList<QVariantMap> fillReleaseSeries(const int id) noexcept;
 
