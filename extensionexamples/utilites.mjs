@@ -15,7 +15,10 @@ export const application = {
 export const logger = {
     message(message) {
         return appExtension.log(message);
-    }  
+    },
+    sendInformation(message) {
+        appExtension.sendInformationNotification(message);
+    }
 }
 
 export const globalValues = {

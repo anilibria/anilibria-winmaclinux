@@ -53,6 +53,12 @@ export function menuItems() {
         logger.message(release.status);
         logger.message(release.year);
       }
+    },
+    {
+      title: 'Оставить сообщение для пользователя',
+      handler: function () {
+        logger.sendInformation('Привет пользователь :)');
+      }
     }
   ]
 }
