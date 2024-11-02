@@ -385,7 +385,7 @@ ColumnLayout {
             width: parent.width - cardButtons.width
             clip: true
             boundsBehavior: Flickable.StopAtBounds
-            contentWidth: parent.width - 10
+            contentWidth: mainScrollArea.width - 10
             contentHeight: cardColumn.height
             ScrollBar.vertical: ScrollBar {
                 active: true
@@ -393,6 +393,7 @@ ColumnLayout {
 
             Column {
                 id: cardColumn
+                width: mainScrollArea.contentWidth - 10
 
                 Grid {
                     id: releaseInfo
