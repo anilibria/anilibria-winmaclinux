@@ -52,6 +52,8 @@ jobs:
       run: make -j4 -C src
     - name: Run MacDeployQt
       run: cd src && macdeployqt AniLibria.app -appstore-compliant -qmldir=.
+    - name: show all libraries in app folder
+      run: ls src/AniLibria.app/Contents/Frameworks/
     - name: patch libraries paths
       run: |
         cp /usr/local/lib/libsharpyuv.0.dylib src/AniLibria.app/Contents/Frameworks/
