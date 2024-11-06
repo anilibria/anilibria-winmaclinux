@@ -319,7 +319,7 @@ Page {
                     showCrossIcon: page.showButtonVisibleChanger && page.hideFilterButton
                     visible: page.showButtonVisibleChanger || !page.hideFilterButton
                     enablePulseAnimation: releasesViewModel.items.hasFilters
-                    tooltipMessage: "Добавить фильтры по дополнительным полям релиза таким как жанры озвучка и т.п."
+                    tooltipMessage: "Добавить фильтры по дополнительным полям релиза таким как жанры команда и т.п."
                     onButtonPressed: {
                         if (page.showButtonVisibleChanger) {
                             page.hideFilterButton = !page.hideFilterButton;
@@ -472,13 +472,13 @@ Page {
                                 anchors.top: genresSearchField.bottom
                                 anchors.rightMargin: 10
                                 fontPointSize: 11
-                                text: qsTr("Озвучка")
+                                text: qsTr("Команда")
                             }
                             CommonTextField {
                                 id: voicesSearchField
                                 width: parent.width * 0.7
                                 anchors.top: labelVoicesSearchField.bottom
-                                placeholderText: "Вводите войсеров через запятую"
+                                placeholderText: "Вводите людей через запятую"
                                 onTextChanged: {
                                     releasesViewModel.items.voicesFilter = text;
                                 }

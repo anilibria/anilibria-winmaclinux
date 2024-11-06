@@ -56,6 +56,14 @@ void FullReleaseModel::setGenres(const QString &genres) noexcept
     m_Genres = genres;
 }
 
+QString FullReleaseModel::limitVoicers()
+{
+    auto voices = m_Voices.split(", ");
+    if (voices.size() > 7) return voices.mid(0, 7).join(", ") + " +" + QString::number(voices.size() - 7);
+
+    return m_Voices;
+}
+
 void FullReleaseModel::setVoicers(const QString &voicers) noexcept
 {
     m_Voices = voicers;

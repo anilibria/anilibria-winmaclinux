@@ -458,6 +458,14 @@ void OnlinePlayerViewModel::setTorrentStream(const TorrentNotifierViewModel *tor
     emit torrentStreamChanged();
 }
 
+void OnlinePlayerViewModel::setRestoreVideoMode(int restoreVideoMode) noexcept
+{
+    if (m_restoreVideoMode == restoreVideoMode) return;
+
+    m_restoreVideoMode = restoreVideoMode;
+    emit restoreVideoModeChanged();
+}
+
 void OnlinePlayerViewModel::toggleFullScreen()
 {
     if (!m_isFullScreen) m_wasMaximized = m_isMaximized;
@@ -711,8 +719,16 @@ void OnlinePlayerViewModel::quickSetupForSingleRelease(int releaseId, int custom
     if (m_seenModels->contains(m_navigateReleaseId)) {
         auto model = m_seenModels->value(m_navigateReleaseId);
         videoIndex = model->videoId();
-        qDebug() << "videoIndex: " << videoIndex;
     }
+
+    // check if have watched videos behind current
+    if (m_restoreVideoMode == 1) {
+        qDebug() << "try to find not watch";
+        auto newVideoIndex = findNextNotWatchVideo(m_navigateReleaseId, videoIndex);
+        if (newVideoIndex != videoIndex) videoIndex = newVideoIndex;
+    }
+
+    qDebug() << "videoIndex: " << videoIndex;
 
     if (m_customPlaylistPosition > -1) videoIndex = m_customPlaylistPosition;
 
@@ -1316,6 +1332,37 @@ void OnlinePlayerViewModel::setRutubeIdentifier(const OnlineVideoModel *video) n
 void OnlinePlayerViewModel::clearRutubeIdentifier() noexcept
 {
     setRutubeVideoId("");
+}
+
+int OnlinePlayerViewModel::findNextNotWatchVideo(int releaseId, int videoIndex) noexcept
+{
+    auto videos = m_releasesViewModel->getReleaseVideos(m_navigateReleaseId);
+    auto seenModels = m_releasesViewModel->getSeenMarks();
+    auto videosCount = videos.count();
+    auto isEndVideo = videoIndex == videosCount - 1;
+    if (isEndVideo) return videoIndex;
+
+    std::sort(
+        videos.begin(),
+        videos.end(),
+        [](ReleaseOnlineVideoModel * left, ReleaseOnlineVideoModel * right) {
+            return left->order() < right->order();
+        }
+    );
+
+    for (int i = videoIndex; i < videosCount; i++) {
+        auto unique = videos.value(i)->uniqueId();
+        //first not watched video
+        if (!seenModels.contains(unique)) return i;
+
+        auto seenMark = seenModels.value(unique);
+        auto isSeen = std::get<0>(seenMark);
+        auto seenTime = std::get<1>(seenMark);
+        //if not seen and time greather zero
+        if (!isSeen && seenTime > 0) return i;
+    }
+
+    return videoIndex;
 }
 
 void OnlinePlayerViewModel::downloadPlaylist(QNetworkReply * reply)

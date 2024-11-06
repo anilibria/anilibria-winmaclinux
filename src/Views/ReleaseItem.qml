@@ -218,7 +218,7 @@ Item {
                         width: 280
                         wrapMode: Text.WordWrap
                         maximumLineCount: 2
-                        text: qsTr("<b>Озвучка:</b> ") + voices
+                        text: qsTr("<b>Команда:</b> ") + voices
                     }
                     Row {
                         visible: id > -1

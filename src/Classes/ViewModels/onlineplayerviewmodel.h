@@ -83,6 +83,7 @@ class OnlinePlayerViewModel : public QObject
     Q_PROPERTY(bool isMaximized READ isMaximized WRITE setIsMaximized NOTIFY isMaximizedChanged FINAL)
     Q_PROPERTY(bool wasMaximized READ wasMaximized NOTIFY wasMaximizedChanged FINAL)
     Q_PROPERTY(TorrentNotifierViewModel* torrentStream READ torrentStream WRITE setTorrentStream NOTIFY torrentStreamChanged FINAL)
+    Q_PROPERTY(int restoreVideoMode READ restoreVideoMode WRITE setRestoreVideoMode NOTIFY restoreVideoModeChanged FINAL)
 
 private:
     bool m_isFullScreen;
@@ -144,6 +145,7 @@ private:
     int m_videoServerOverride { 0 };
     bool m_isMaximized { false };
     bool m_wasMaximized { false };
+    int m_restoreVideoMode { 0 };
 
 public:
     explicit OnlinePlayerViewModel(QObject *parent = nullptr);
@@ -290,6 +292,9 @@ public:
     TorrentNotifierViewModel* torrentStream() const noexcept { return m_torrentStream; }
     void setTorrentStream(const TorrentNotifierViewModel* torrentStream) noexcept;
 
+    int restoreVideoMode() const noexcept { return m_restoreVideoMode; }
+    void setRestoreVideoMode(int restoreVideoMode) noexcept;
+
     bool endSkipOpening() const noexcept { return m_endSkipOpening; }
 
     Q_INVOKABLE void toggleFullScreen();
@@ -340,6 +345,7 @@ private:
     void receiveCountUsers();
     void setRutubeIdentifier(const OnlineVideoModel* video) noexcept;
     void clearRutubeIdentifier() noexcept;
+    int findNextNotWatchVideo(int releaseId, int videoIndex) noexcept;
 
 private slots:
     void downloadPlaylist(QNetworkReply *reply);
@@ -407,6 +413,7 @@ signals:
     void selectedVideoIdChanged();
     void isMaximizedChanged();
     void wasMaximizedChanged();
+    void restoreVideoModeChanged();
 
 };
 

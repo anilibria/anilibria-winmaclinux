@@ -946,6 +946,7 @@ ApplicationWindow {
         remotePlayer.port: userConfigurationViewModel.remotePort
         torrentStream: torrentNotifierViewModel
         videoServerOverride: userConfigurationViewModel.videoServer
+        restoreVideoMode: userConfigurationViewModel.restoreVideoMode
         isMaximized: window.visibility === Window.Maximized
         onIsFullScreenChanged: {
             if (isFullScreen) {

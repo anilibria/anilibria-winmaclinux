@@ -75,6 +75,7 @@ class UserConfigurationViewModel : public QObject
     Q_PROPERTY(bool useCacheFolder READ useCacheFolder WRITE setUseCacheFolder NOTIFY useCacheFolderChanged FINAL)
     Q_PROPERTY(QString cacheFolder READ cacheFolder WRITE setCacheFolder NOTIFY cacheFolderChanged FINAL)
     Q_PROPERTY(int videoServer READ videoServer WRITE setVideoServer NOTIFY videoServerChanged FINAL)
+    Q_PROPERTY(int restoreVideoMode READ restoreVideoMode WRITE setRestoreVideoMode NOTIFY restoreVideoModeChanged FINAL)
 
 private:
     QString m_cacheFileName { "userconfiguration.cache" };
@@ -128,6 +129,7 @@ private:
     const QString m_useCacheFolderField { "useCacheFolder" };
     const QString m_cacheFolderField { "cacheFolder" };
     const QString m_videoServerField { "videoServer" };
+    const QString m_restoreVideoModeField { "restoreVideoMode" };
     int m_opacityPlayerPanel { 50 };
     bool m_notCloseReleaseCardAfterWatch { false };
     bool m_usingScrollAcceleration { true };
@@ -178,6 +180,7 @@ private:
     bool m_useCacheFolder { false };
     QString m_cacheFolder { "" };
     int m_videoServer { 0 };
+    int m_restoreVideoMode { 0 };
 
 public:
     explicit UserConfigurationViewModel(QObject *parent = nullptr);
@@ -332,6 +335,9 @@ public:
     int videoServer() const noexcept { return m_videoServer; }
     void setVideoServer(int videoServer) noexcept;
 
+    int restoreVideoMode() const noexcept { return m_restoreVideoMode; }
+    void setRestoreVideoMode(int restoreVideoMode) noexcept;
+
     Q_INVOKABLE void refreshConfiguration() noexcept;
     Q_INVOKABLE void saveSettingsToFile();
 
@@ -390,6 +396,7 @@ signals:
     void useCacheFolderChanged();
     void cacheFolderChanged();
     void videoServerChanged();
+    void restoreVideoModeChanged();
 
 };
 

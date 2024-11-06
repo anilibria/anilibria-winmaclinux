@@ -126,7 +126,7 @@ QVariant ReleasesListModel::data(const QModelIndex &index, int role) const
             return QVariant(m_userFavorites->contains(release->id()));
         }
         case VoicesRole: {
-            return QVariant(release->voicers());
+            return QVariant(release->limitVoicers());
         }
         case RatingRole: {
             return QVariant(release->rating());

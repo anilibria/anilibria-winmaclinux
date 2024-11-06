@@ -365,7 +365,7 @@ QString ReleasesViewModel::openedReleaseVoicesDisplay() const noexcept
 {
     if (m_openedRelease == nullptr) return "";
 
-    return "<b>Озвучка:</b> " + getMultipleLinks(m_openedRelease->voicers());
+    return "<b>Команда:</b> " + getMultipleLinks(m_openedRelease->voicers());
 }
 
 bool ReleasesViewModel::openedReleaseIsAllSeen() const noexcept

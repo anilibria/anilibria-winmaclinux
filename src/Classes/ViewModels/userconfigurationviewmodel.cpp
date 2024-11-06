@@ -437,6 +437,14 @@ void UserConfigurationViewModel::setVideoServer(int videoServer) noexcept
     emit videoServerChanged();
 }
 
+void UserConfigurationViewModel::setRestoreVideoMode(int restoreVideoMode) noexcept
+{
+    if (m_restoreVideoMode == restoreVideoMode) return;
+
+    m_restoreVideoMode = restoreVideoMode;
+    emit restoreVideoModeChanged();
+}
+
 void UserConfigurationViewModel::refreshConfiguration() noexcept
 {
     readSettingsFromFile();
@@ -476,6 +484,7 @@ void UserConfigurationViewModel::refreshConfiguration() noexcept
     emit useCacheFolderChanged();
     emit cacheFolderChanged();
     emit videoServerChanged();
+    emit restoreVideoModeChanged();
 }
 
 void UserConfigurationViewModel::saveSettingsToFile()
@@ -531,6 +540,7 @@ void UserConfigurationViewModel::saveSettingsToFile()
     object[m_useCacheFolderField] = m_useCacheFolder;
     object[m_cacheFolderField] = m_cacheFolder;
     object[m_videoServerField] = m_videoServer;
+    object[m_restoreVideoModeField] = m_restoreVideoMode;
 
     QFile file(getCachePath(m_cacheFileName));
     file.open(QFile::WriteOnly | QFile::Text);
@@ -597,6 +607,7 @@ void UserConfigurationViewModel::readSettingsFromFile()
     m_useCacheFolder = object.contains(m_useCacheFolderField) ? object[m_useCacheFolderField].toBool() : false;
     m_cacheFolder = object.contains(m_cacheFolderField) ? object[m_cacheFolderField].toString() : "";
     m_videoServer = object.contains(m_videoServerField) ? object[m_videoServerField].toInt() : 0;
+    m_restoreVideoMode = object.contains(m_restoreVideoModeField) ? object[m_restoreVideoModeField].toInt() : 0;
 
     if (m_textFont != "Default") changeFont(m_textFont);
 }

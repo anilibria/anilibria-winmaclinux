@@ -74,6 +74,7 @@ public:
     void setGenres(const QString &genres) noexcept;
 
     QString voicers() const { return m_Voices; }
+    QString limitVoicers();
     void setVoicers(const QString &voicers) noexcept;
 
     QString season() const { return m_Season; }

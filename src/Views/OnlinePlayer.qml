@@ -1167,6 +1167,29 @@ Page {
                                         controlPanelBackground.opacity = value / 100;
                                     }
                                 }
+
+                                PlainText {
+                                    width: leftColumn.width
+                                    fontPointSize: 10
+                                    text: "Восстановить видео"
+                                }
+                                CommonComboBox {
+                                    id: videoRestoreComboBox
+                                    Layout.column: 0
+                                    width: leftColumn.width - 20
+                                    model: ListModel {
+                                        ListElement {
+                                            text: "из локальных отметок"
+                                        }
+                                        ListElement {
+                                            text: "из отметки просмотрено и времени"
+                                        }
+                                    }
+                                    currentIndex: userConfigurationViewModel.restoreVideoMode
+                                    onActivated: {
+                                        userConfigurationViewModel.restoreVideoMode = index;
+                                    }
+                                }
                             }
 
                             Column {
