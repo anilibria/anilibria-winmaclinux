@@ -143,7 +143,7 @@ void FullReleaseModel::readFromJson(const QJsonObject &json)
     setAnnounce(json["announce"].toString());
     setGenres(json["genres"].toString());
     setPoster(json["poster"].toString());
-    setVoicers(json["voices"].toString());
+    setVoicers(json["team"].toString());
     setIsOngoing(json[m_isOngoingField].toBool());
     setAgeRating(json[m_ageRatingField].toString());
 }
