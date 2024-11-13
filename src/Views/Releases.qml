@@ -153,6 +153,54 @@ Page {
                                 favoriteMenu.close();
                             }
                         }
+                        CommonMenuItem {
+                            text: "Добавить в коллекцию Запланировано"
+                            enabled: releasesViewModel.items.isHasSelectRelease
+                            onPressed: {
+                                synchronizationHub.addSelectedReleasesToCollection("PLANNED");
+                                favoriteMenu.close();
+                            }
+                        }
+                        CommonMenuItem {
+                            text: "Добавить в коллекцию Смотрю"
+                            enabled: releasesViewModel.items.isHasSelectRelease
+                            onPressed: {
+                                synchronizationHub.addSelectedReleasesToCollection("WATCHING");
+                                favoriteMenu.close();
+                            }
+                        }
+                        CommonMenuItem {
+                            text: "Добавить в коллекцию Просмотрено"
+                            enabled: releasesViewModel.items.isHasSelectRelease
+                            onPressed: {
+                                synchronizationHub.addSelectedReleasesToCollection("WATCHED");
+                                favoriteMenu.close();
+                            }
+                        }
+                        CommonMenuItem {
+                            text: "Добавить в коллекцию Отложено"
+                            enabled: releasesViewModel.items.isHasSelectRelease
+                            onPressed: {
+                                synchronizationHub.addSelectedReleasesToCollection("POSTPONED");
+                                favoriteMenu.close();
+                            }
+                        }
+                        CommonMenuItem {
+                            text: "Добавить в коллекцию Брошено"
+                            enabled: releasesViewModel.items.isHasSelectRelease
+                            onPressed: {
+                                synchronizationHub.addSelectedReleasesToCollection("ABANDONED");
+                                favoriteMenu.close();
+                            }
+                        }
+                        CommonMenuItem {
+                            text: "Удалить из коллекций"
+                            enabled: releasesViewModel.items.isHasSelectRelease
+                            onPressed: {
+                                synchronizationHub.deleteSelectedReleasesFromCollections();
+                                favoriteMenu.close();
+                            }
+                        }
                     }
                 }
                 LeftPanelIconButton {
@@ -1374,6 +1422,46 @@ Page {
                             tooltipMessage: "Избранное"
                             onButtonPressed: {
                                 changeSection(1);
+                            }
+                            onRightButtonPressed: {
+                                favoritesMenuSections.open();
+                            }
+
+                            CommonMenu {
+                                id: favoritesMenuSections
+                                autoWidth: true
+                                y: parent.height
+
+                                CommonMenuItem {
+                                    text: releasesViewModel.sectionNames[25]
+                                    onPressed: {
+                                        page.changeSection(25);
+                                    }
+                                }
+                                CommonMenuItem {
+                                    text: releasesViewModel.sectionNames[26]
+                                    onPressed: {
+                                        page.changeSection(26);
+                                    }
+                                }
+                                CommonMenuItem {
+                                    text: releasesViewModel.sectionNames[27]
+                                    onPressed: {
+                                        page.changeSection(27);
+                                    }
+                                }
+                                CommonMenuItem {
+                                    text: releasesViewModel.sectionNames[28]
+                                    onPressed: {
+                                        page.changeSection(28);
+                                    }
+                                }
+                                CommonMenuItem {
+                                    text: releasesViewModel.sectionNames[29]
+                                    onPressed: {
+                                        page.changeSection(29);
+                                    }
+                                }
                             }
                         }
                         FilterPanelIconButton {

@@ -70,6 +70,11 @@ void Synchronizev2Service::setCacheFolder(const QString &cacheFolder) noexcept
     emit cacheFolderChanged();
 }
 
+QMap<int, QString> &&Synchronizev2Service::getLocalCollections()
+{
+    return std::move(m_synchronizedCollection);
+}
+
 void Synchronizev2Service::authorize(QString login, QString password)
 {
     QNetworkRequest request(QUrl(m_apiv2host + "/api/v1/accounts/users/auth/login"));
@@ -266,6 +271,55 @@ void Synchronizev2Service::addSeenMarks(QList<QString> videoIds, bool seenMark)
     adjustIdentifier(reply, m_addUserSeenRequest);
 }
 
+void Synchronizev2Service::getCollections()
+{
+    QNetworkRequest request(QUrl(m_apiv2host + "/api/v1/accounts/users/me/collections/ids"));
+    adjustRequestToken(request);
+    auto reply = m_networkManager->get(request);
+    adjustIdentifier(reply, m_collectionsRequest);
+}
+
+void Synchronizev2Service::addReleasesToCollection(QList<int> releaseIds, const QString& collection)
+{
+    QNetworkRequest request(QUrl(m_apiv2host + "/api/v1/accounts/users/me/collections"));
+    adjustRequestToken(request);
+
+    request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
+    QJsonArray array;
+
+    foreach (auto releaseId, releaseIds) {
+        QJsonObject item;
+        item["release_id"] = releaseId;
+        item["type_of_collection"] = collection;
+
+        array.append(item);
+    }
+
+    auto body = QJsonDocument(array).toJson();
+    auto reply = m_networkManager->post(request, body);
+    adjustIdentifier(reply, m_addToCollectionRequest);
+ }
+
+void Synchronizev2Service::removeReleasesFromCollection(QList<int> releaseIds)
+{
+    QNetworkRequest request(QUrl(m_apiv2host + "/api/v1/accounts/users/me/collections"));
+    adjustRequestToken(request);
+
+    request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
+    QJsonArray array;
+
+    foreach (auto releaseId, releaseIds) {
+        QJsonObject item;
+        item["release_id"] = releaseId;
+
+        array.append(item);
+    }
+
+    auto body = QJsonDocument(array).toJson();
+    auto reply = m_networkManager->sendCustomRequest(request, "DELETE", body);
+    adjustIdentifier(reply, m_removeFromCollectionRequest);
+}
+
 void Synchronizev2Service::timerEvent(QTimerEvent *event)
 {
     Q_UNUSED(event);
@@ -387,6 +441,7 @@ void Synchronizev2Service::userProfileHandler(QNetworkReply *reply) noexcept
 
     getUserFavorites();
     getUserSeens();
+    getCollections();
 }
 
 void Synchronizev2Service::adjustRequestToken(QNetworkRequest &request) noexcept
@@ -904,6 +959,37 @@ void Synchronizev2Service::userSeenSynchronizationHandler(QNetworkReply *reply) 
     if (!m_synchronizedSeens.isEmpty()) emit synchronizeSeensCompleted();
 }
 
+void Synchronizev2Service::userCollectionSynchronizeHandler(QNetworkReply *reply) noexcept
+{
+    auto content = reply->readAll();
+    if (content.isEmpty()) {
+        emit synchronizeCollectionFailed("Контент ответа пустой");
+        return;
+    }
+
+    QJsonParseError* error = nullptr;
+    auto json = QJsonDocument::fromJson(content, error);
+    if (error != nullptr) {
+        emit synchronizeCollectionFailed("Ответ не содержит корректный JSON");
+        return;
+    }
+
+    m_synchronizedCollection.clear();
+
+    auto response = json.array();
+    foreach (auto item, response) {
+        auto itemArray = item.toArray();
+        if (itemArray.size() < 2) continue;
+
+        auto releaseId = itemArray.first().toInt();
+        auto collection = itemArray[1].toString();
+
+        m_synchronizedCollection.insert(releaseId, collection);
+    }
+
+    if (!m_synchronizedCollection.isEmpty()) emit synchronizeCollectionCompleted();
+}
+
 void Synchronizev2Service::loginHandler(QNetworkReply *reply) noexcept
 {
     auto content = reply->readAll();
@@ -1006,7 +1092,13 @@ void Synchronizev2Service::requestFinished(QNetworkReply *reply)
         userSeenSynchronizationHandler(reply);
         return;
     }
-    if (requestType == m_addUserSeenRequest) {
+    if (requestType == m_addUserSeenRequest || requestType == m_addToCollectionRequest || requestType == m_removeFromCollectionRequest) {
+        //don't require handle response
         return;
     }
+    if (requestType == m_collectionsRequest) {
+        userCollectionSynchronizeHandler(reply);
+        return;
+    }
+
 }

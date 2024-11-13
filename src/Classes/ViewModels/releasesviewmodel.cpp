@@ -30,7 +30,7 @@
 ReleasesViewModel::ReleasesViewModel(QObject *parent) : QObject(parent)
 {
     m_items = new ReleasesListModel(this);
-    m_items->setup(m_releases, m_scheduleReleases, m_userFavorites, m_hiddenReleases, &m_extendedSeenMarks, m_historyItems, m_releaseChanges, m_cinemahall, m_customGroups, &m_onlineVideosMap);
+    m_items->setup(m_releases, m_scheduleReleases, m_userFavorites, m_hiddenReleases, &m_extendedSeenMarks, m_historyItems, m_releaseChanges, m_cinemahall, m_customGroups, &m_onlineVideosMap, &m_collections);
     m_cinemahall->setup(m_releases, &m_extendedSeenMarks, &m_onlineVideosMap);
     connect(m_cinemahall.get(), &CinemahallListModel::hasItemsChanged, this, &ReleasesViewModel::cinemahallItemsChanged);
 
@@ -61,6 +61,11 @@ ReleasesViewModel::ReleasesViewModel(QObject *parent) : QObject(parent)
     m_sectionNames.append("Текущий сезон");
     m_sectionNames.append("Не текущий сезон");
     m_sectionNames.append("Свой фильтр");
+    m_sectionNames.append("Коллекция Запланировано");
+    m_sectionNames.append("Коллекция Смотрю");
+    m_sectionNames.append("Коллекция Просмотрено");
+    m_sectionNames.append("Коллекция Отложено");
+    m_sectionNames.append("Коллекция Брошено");
 
     int sectionIterator = 0;
     foreach (auto section, m_sectionNames) {
@@ -98,6 +103,11 @@ ReleasesViewModel::ReleasesViewModel(QObject *parent) : QObject(parent)
     m_sectionSorting->append(std::make_tuple<int, int>(0, 1));
     m_sectionSorting->append(std::make_tuple<int, int>(0, 1));
     m_sectionSorting->append(std::make_tuple<int, int>(0, 1));
+    m_sectionSorting->append(std::make_tuple<int, int>(0, 1));
+    m_sectionSorting->append(std::make_tuple<int, int>(0, 1));
+    m_sectionSorting->append(std::make_tuple<int, int>(0, 1));
+    m_sectionSorting->append(std::make_tuple<int, int>(0, 1));
+    m_sectionSorting->append(std::make_tuple<int, int>(0, 1));
 
     createIfNotExistsFile(getCachePath(scheduleCacheFileName), "{}");
     createIfNotExistsFile(getCachePath(favoriteCacheFileName), "[]");
@@ -105,6 +115,7 @@ ReleasesViewModel::ReleasesViewModel(QObject *parent) : QObject(parent)
     createIfNotExistsFile(getCachePath(extendedSeenMarkCacheFileName), "[]");
     createIfNotExistsFile(getCachePath(historyCacheFileName), "[]");
     createIfNotExistsFile(getCachePath(notificationCacheFileName), "{ \"newReleases\": [], \"newOnlineSeries\": [], \"newTorrents\": [], \"newTorrentSeries\": [] }");
+    createIfNotExistsFile(getCachePath(collectionsCacheFileName), "[]");
 
     loadSchedules();
     loadFavorites();
@@ -112,6 +123,7 @@ ReleasesViewModel::ReleasesViewModel(QObject *parent) : QObject(parent)
     loadSeenMarks();
     loadHistory();
     loadChanges();
+    loadCollections();
     loadReleases();
 
     m_items->refresh();
@@ -892,7 +904,6 @@ QList<ApiTorrentModel *> ReleasesViewModel::getReleaseTorrents(int releaseId) no
 
 void ReleasesViewModel::getSeenIds(QList<int>* list)
 {
-    auto keys = m_extendedSeenMarks.keys();
     QMap<int, int> releasesCount;
 
     foreach (auto onlineVideo, m_onlineVideos) {
@@ -913,6 +924,45 @@ void ReleasesViewModel::getSeenIds(QList<int>* list)
         }
     }
     releasesCount.clear();
+}
+
+void ReleasesViewModel::synchronizeCollections(QMap<int, QString> &&items) noexcept
+{
+    auto keys = items.keys();
+    foreach (auto key, keys) {
+        auto collection = items.value(key);
+        if (m_collections.contains(key)) {
+            m_collections[key] = collection;
+        } else {
+            m_collections.insert(key, collection);
+        }
+    }
+    auto savedRelases = m_collections.keys();
+    foreach (auto saveReleaseId, savedRelases) {
+        if (!keys.contains(saveReleaseId)) m_collections.remove(saveReleaseId);
+    }
+
+    items.clear();
+
+    saveCollections();
+}
+
+void ReleasesViewModel::setReleasesToCollection(QList<int> ids, const QString &collection) noexcept
+{
+    foreach (auto id, ids) {
+        if (m_collections.contains(id)) {
+            m_collections[id] = collection;
+        } else {
+            m_collections.insert(id, collection);
+        }
+    }
+}
+
+void ReleasesViewModel::removeReleasesFromCollections(QList<int> ids) noexcept
+{
+    foreach (auto id, ids) {
+        if (m_collections.contains(id)) m_collections.remove(id);
+    }
 }
 
 void ReleasesViewModel::copyToClipboard(const QString &text) const noexcept
@@ -2184,6 +2234,54 @@ void ReleasesViewModel::saveSeenMarks()
     seenMarkFile.close();
 
     recalculateSeenCounts();
+}
+
+void ReleasesViewModel::loadCollections()
+{
+    QFile collectionFile(getCachePath(collectionsCacheFileName));
+    if (!collectionFile.open(QFile::ReadOnly | QFile::Text)) return;
+    auto collectionJson = collectionFile.readAll();
+    collectionFile.close();
+
+    auto document = QJsonDocument::fromJson(collectionJson);
+    auto jsonCollections = document.array();
+
+    m_collections.clear();
+
+    foreach (auto item, jsonCollections) {
+        auto itemObject = item.toObject();
+        auto id = itemObject.value("id").toInt();
+        auto collection = itemObject.value("collection").toString();
+
+        m_collections.insert(id, collection);
+    }
+}
+
+void ReleasesViewModel::saveCollections()
+{
+    QJsonArray array;
+
+    auto keys = m_collections.keys();
+
+    foreach(auto key, keys) {
+        auto item = m_collections.value(key);
+
+        QJsonObject object;
+        object["id"] = key;
+        object["collection"] = item;
+
+        array.append(object);
+    }
+
+    QJsonDocument seenDocument(array);
+    QString seenMarkJson(seenDocument.toJson());
+
+    QFile collectionFile(getCachePath(collectionsCacheFileName));
+    if (!collectionFile.open(QFile::WriteOnly | QFile::Text)) return;
+
+    collectionFile.write(seenMarkJson.toUtf8());
+    collectionFile.close();
+
 }
 
 void ReleasesViewModel::loadHistory()

@@ -42,6 +42,11 @@ const int AddedToCinemahall = 21;
 const int CurrentSeasonSection = 22;
 const int NotCurrentSeasonSection = 23;
 const int CustomScriptSection = 24;
+const int PlannedCollectionSection = 25;
+const int WatchCollectionSection = 26;
+const int WatchedCollectionSection = 27;
+const int PostponedSection = 28;
+const int AbandonedSection = 29;
 
 const int winter = 0;
 const int autumn = 1;
@@ -52,7 +57,7 @@ ReleasesListModel::ReleasesListModel(QObject *parent) : QAbstractListModel(paren
 {
 }
 
-void ReleasesListModel::setup(QSharedPointer<QList<FullReleaseModel *>> releases, QMap<int, int> *schedules, QList<int> *userFavorites, QList<int> *hidedReleases, QHash<QString, std::tuple<bool, int>>* seenMarks, QSharedPointer<QHash<int, HistoryModel *>> historyItems, QSharedPointer<ChangesModel> changes, QSharedPointer<CinemahallListModel> cinemahall, ReleaseCustomGroupsViewModel* customGroups, QMap<QString, ReleaseOnlineVideoModel*>* videosMap)
+void ReleasesListModel::setup(QSharedPointer<QList<FullReleaseModel *>> releases, QMap<int, int> *schedules, QList<int> *userFavorites, QList<int> *hidedReleases, QHash<QString, std::tuple<bool, int>>* seenMarks, QSharedPointer<QHash<int, HistoryModel *>> historyItems, QSharedPointer<ChangesModel> changes, QSharedPointer<CinemahallListModel> cinemahall, ReleaseCustomGroupsViewModel* customGroups, QMap<QString, ReleaseOnlineVideoModel*>* videosMap, QMap<int, QString>* collections)
 {
     m_releases = releases;
     m_scheduleReleases = schedules;
@@ -64,6 +69,7 @@ void ReleasesListModel::setup(QSharedPointer<QList<FullReleaseModel *>> releases
     m_cinemahall = cinemahall;
     m_customGroups = customGroups;
     m_videosMap = videosMap;
+    m_collections = collections;
 }
 
 void ReleasesListModel::setupLinkedSeries(ReleaseLinkedSeries *releaseLinkedSeries) noexcept
@@ -603,6 +609,8 @@ void ReleasesListModel::refresh()
     bool isShowedScriptError = false;
 
     foreach (auto release, *m_releases) {
+        auto collectionValue = m_collections->contains(release->id()) ? m_collections->value(release->id()) : "";
+
         if (m_hiddenReleases->contains(release->id()) && m_section != HiddenReleasesSection) continue;
         if (m_grouping) {
             auto group = getGroupByRelease(release, seenMarks);
@@ -758,6 +766,12 @@ void ReleasesListModel::refresh()
 
         if (m_section == NotCurrentSeasonSection &&
             !((release->year() != currentYear || (release->year() == currentYear && release->season() != currentSeason)) && release->status().toLower() == "в работе")) continue;
+
+        if (m_section == PlannedCollectionSection && collectionValue != "PLANNED") continue;
+        if (m_section == WatchCollectionSection && collectionValue != "WATCHING") continue;
+        if (m_section == WatchedCollectionSection && collectionValue != "WATCHED") continue;
+        if (m_section == PostponedSection && collectionValue != "POSTPONED") continue;
+        if (m_section == AbandonedSection && collectionValue != "ABANDONED") continue;
 
         if (m_section == CustomScriptSection) {
             if (filterScript.isEmpty()) continue;

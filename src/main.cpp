@@ -71,6 +71,7 @@
 #include "Classes/ViewModels/applicationsviewmodel.h"
 #include "Classes/ViewModels/extensionsviewmodel.h"
 #include "Classes/Services/synchronizev2service.h"
+#include "Classes/ViewModels/synchronizationhub.h"
 #include "Classes/customstyle.h"
 #ifdef USE_VLC_PLAYER
 #include "vlc-qt/qml/VlcQmlPlayer.h"
@@ -193,6 +194,7 @@ int main(int argc, char *argv[])
     qmlRegisterType<ApplicationsViewModel>("Anilibria.ViewModels", 1, 0 , "ApplicationsViewModel");
     qmlRegisterType<ExtensionsViewModel>("Anilibria.ViewModels", 1, 0 , "ExtensionsViewModel");
     qmlRegisterType<Synchronizev2Service>("Anilibria.Services", 1, 0 , "Synchronizev2Service");
+    qmlRegisterType<SynchronizationHub>("Anilibria.Services", 1, 0 , "SynchronizationHub");
 
     qmlRegisterUncreatableType<CustomStyle>("CustomStyle", 1, 0, "CustomStyle", "CustomStyle is an attached property");
 

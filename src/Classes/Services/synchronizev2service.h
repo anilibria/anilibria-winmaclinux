@@ -49,6 +49,9 @@ private:
     const QString m_checkNetworkAvailability { "checknetworkavailability" };
     const QString m_userSeenRequest { "userseen" };
     const QString m_addUserSeenRequest { "adduserseen" };
+    const QString m_collectionsRequest { "collections" };
+    const QString m_addToCollectionRequest { "addtocollection" };
+    const QString m_removeFromCollectionRequest { "removefromcollection" };
     bool m_isAuhorized { false };
     QString m_nickName { "" };
     QString m_avatar { "" };
@@ -69,6 +72,7 @@ private:
     int m_socialCheckTimer { 0 };
     int m_socialCheckTimerIterator { 0 };
     QMap<QString, std::tuple<bool, int>> m_synchronizedSeens { QMap<QString, std::tuple<bool, int>>() };
+    QMap<int, QString> m_synchronizedCollection { QMap<int, QString>() };
 
 public:
     explicit Synchronizev2Service(QObject *parent = nullptr);
@@ -107,6 +111,8 @@ public:
 
     bool isSocialAuthentification() const noexcept { return m_socialCheckTimer > 0; }
 
+    QMap<int, QString>&& getLocalCollections();
+
     Q_INVOKABLE void authorize(QString login, QString password);
     Q_INVOKABLE void authorizeSocial(const QString& provider);
     Q_INVOKABLE void logout();
@@ -122,6 +128,9 @@ public:
     Q_INVOKABLE QVariantMap getUserSynchronizedSeens();
     Q_INVOKABLE void clearUserSynchronizedSeens();
     Q_INVOKABLE void addSeenMarks(QList<QString> videoIds, bool seenMark);
+    Q_INVOKABLE void getCollections();
+    Q_INVOKABLE void addReleasesToCollection(QList<int> releaseIds, const QString& collectionId);
+    Q_INVOKABLE void removeReleasesFromCollection(QList<int> releaseIds);
 
     void timerEvent(QTimerEvent *event) override;
 
@@ -152,6 +161,7 @@ private:
     void socialRequestTokenHandler(QNetworkReply* reply) noexcept;
     void checkNetworkAvailabilityHandler(QNetworkReply* reply) noexcept;
     void userSeenSynchronizationHandler(QNetworkReply* reply) noexcept;
+    void userCollectionSynchronizeHandler(QNetworkReply* reply) noexcept;
 
 private slots:
     void requestFinished(QNetworkReply* reply);
@@ -165,7 +175,9 @@ signals:
     void userFailedAuthentificated(QString errorMessage);
     void synchronizeFavoritesFailed(QString errorMessage);
     void synchronizeSeensFailed(QString errorMessage);
+    void synchronizeCollectionFailed(QString errorMessage);
     void synchronizeSeensCompleted();
+    void synchronizeCollectionCompleted();
     void getUserFailed(QString errorMessage);
     void isAuhorizedChanged();
     void tokenChanged();

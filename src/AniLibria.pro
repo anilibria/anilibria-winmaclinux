@@ -282,6 +282,7 @@ SOURCES += \
     Classes/ViewModels/onlineplayerwindowviewmodel.cpp \
     Classes/ViewModels/releasecustomgroupsviewmodel.cpp \
     Classes/ViewModels/releasesviewmodel.cpp \
+    Classes/ViewModels/synchronizationhub.cpp \
     Classes/ViewModels/torrentnotifierviewmodel.cpp \
     Classes/ViewModels/useractivityviewmodel.cpp \
     Classes/ViewModels/userconfigurationviewmodel.cpp \
@@ -399,6 +400,7 @@ HEADERS += \
     Classes/ViewModels/onlineplayerwindowviewmodel.h \
     Classes/ViewModels/releasecustomgroupsviewmodel.h \
     Classes/ViewModels/releasesviewmodel.h \
+    Classes/ViewModels/synchronizationhub.h \
     Classes/ViewModels/torrentnotifierviewmodel.h \
     Classes/ViewModels/useractivityviewmodel.h \
     Classes/ViewModels/userconfigurationviewmodel.h \

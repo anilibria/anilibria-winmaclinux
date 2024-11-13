@@ -114,6 +114,7 @@ private:
     const QString extendedSeenMarkCacheFileName { "extendedseenmark.cache" };
     const QString historyCacheFileName { "history.cache" };
     const QString notificationCacheFileName { "notification.cache" };
+    const QString collectionsCacheFileName { "collections.cache" };
     QStringList m_sectionNames;
     ReleaseTorrentsList* m_releaseTorrentsList { new ReleaseTorrentsList(this) };
     UserActivityViewModel* m_userActivity { nullptr };
@@ -157,6 +158,7 @@ private:
     QMap<int, int> m_oldReleasesCountTorrents { QMap<int, int>() };
     QMap<int, QString> m_oldReleasesTorrentsSeries { QMap<int, QString>() };
     QSet<int> m_oldReleasesIds { QSet<int>() };
+    QMap<int, QString> m_collections { QMap<int, QString>() };
 
 public:
     explicit ReleasesViewModel(QObject *parent = nullptr);
@@ -279,6 +281,9 @@ public:
     QList<ReleaseOnlineVideoModel*> getReleaseVideos(int releaseId) noexcept;
     QList<ApiTorrentModel*> getReleaseTorrents(int releaseId) noexcept;
     void getSeenIds(QList<int>* list);
+    void synchronizeCollections(QMap<int, QString>&& items) noexcept;
+    void setReleasesToCollection(QList<int> ids, const QString& collection) noexcept;
+    void removeReleasesFromCollections(QList<int> ids) noexcept;
 
     Q_INVOKABLE void copyToClipboard(const QString& text) const noexcept;
     Q_INVOKABLE void copyImageToClipboard(const QString& imagePath) const;
@@ -360,6 +365,9 @@ private:
     void loadSeenMarks();
     void recalculateSeenCounts();
     void saveSeenMarks();
+
+    void loadCollections();
+    void saveCollections();
 
     void loadHistory();
     void saveHistory();

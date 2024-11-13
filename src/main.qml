@@ -668,6 +668,10 @@ ApplicationWindow {
             releasesViewModel.synchronizeSeens(synchronizationServicev2.getUserSynchronizedSeens());
         }
 
+        onSynchronizeCollectionFailed: {
+            notificationViewModel.sendInfoNotification(`Не удалось получить коллекции:` + errorMessage);
+        }
+
         onTokenChanged: {
             userConfigurationViewModel.v2token = synchronizationServicev2.token;
         }
@@ -1526,6 +1530,12 @@ ApplicationWindow {
         onChangeTorrentStreamPath: {
             userConfigurationViewModel.torrentStreamPath = fullPath;
         }
+    }
+
+    SynchronizationHub {
+        id: synchronizationHub
+        releases: releasesViewModel
+        synchronization: synchronizationServicev2
     }
 
     ExtensionsViewModel {
