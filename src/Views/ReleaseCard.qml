@@ -909,4 +909,7 @@ ColumnLayout {
         }
     }
 
+    onVisibleChanged: {
+        mainScrollArea.contentY = 0;
+    }
 }
