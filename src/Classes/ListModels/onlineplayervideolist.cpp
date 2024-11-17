@@ -404,6 +404,7 @@ void OnlinePlayerVideoList::selectVideo(int releaseId, int videoId) noexcept
 
     m_openingStart = (*newSelected)->openingStartSeconds();
     m_openingEnd = (*newSelected)->openingEndSeconds();
+    m_endingStart = (*newSelected)->endingStartSeconds();
 
     m_selectedReleaseId = releaseId;
     m_selectedVideoId = videoId;
@@ -469,6 +470,13 @@ bool OnlinePlayerVideoList::isPositionInOpening(int position) const noexcept
     if (m_openingStart == -1) return false;
 
     return position >= m_openingStart && position < m_openingEnd;
+}
+
+bool OnlinePlayerVideoList::isPositionReachEnding(int position) const noexcept
+{
+    if (m_endingStart == -1) return false;
+
+    return position >= m_endingStart;
 }
 
 QVector<OnlineVideoModel*> OnlinePlayerVideoList::fillVideosFrom(const QList<ReleaseOnlineVideoModel *>& videos, int releaseId, const QString& poster)

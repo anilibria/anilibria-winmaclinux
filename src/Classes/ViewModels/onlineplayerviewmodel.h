@@ -72,6 +72,7 @@ class OnlinePlayerViewModel : public QObject
     Q_PROPERTY(bool seenMarkedAtEnd READ seenMarkedAtEnd WRITE setSeenMarkedAtEnd NOTIFY seenMarkedAtEndChanged)
     Q_PROPERTY(bool displaySkipOpening READ displaySkipOpening WRITE setDisplaySkipOpening NOTIFY displaySkipOpeningChanged)
     Q_PROPERTY(bool endSkipOpening READ endSkipOpening NOTIFY endSkipOpeningChanged)
+    Q_PROPERTY(bool reachEnding READ reachEnding NOTIFY reachEndingChanged FINAL)
     Q_PROPERTY(QString rutubeVideoId READ rutubeVideoId WRITE setRutubeVideoId NOTIFY rutubeVideoIdChanged)
     Q_PROPERTY(bool showedDropWarning READ showedDropWarning WRITE setShowedDropWarning NOTIFY showedDropWarningChanged)
     Q_PROPERTY(bool isReleaseLess2022 READ isReleaseLess2022 NOTIFY isReleaseLess2022Changed)
@@ -146,6 +147,7 @@ private:
     bool m_isMaximized { false };
     bool m_wasMaximized { false };
     int m_restoreVideoMode { 0 };
+    bool m_reachEnding { false };
 
 public:
     explicit OnlinePlayerViewModel(QObject *parent = nullptr);
@@ -297,6 +299,9 @@ public:
 
     bool endSkipOpening() const noexcept { return m_endSkipOpening; }
 
+    bool reachEnding() const noexcept { return m_reachEnding; }
+    void setReachEnding(bool reachEnding) noexcept;
+
     Q_INVOKABLE void toggleFullScreen();
     Q_INVOKABLE void changeVideoPosition(int duration, int position) noexcept;
     Q_INVOKABLE QString checkExistingVideoQuality(int index);    
@@ -414,6 +419,7 @@ signals:
     void isMaximizedChanged();
     void wasMaximizedChanged();
     void restoreVideoModeChanged();
+    void reachEndingChanged();
 
 };
 

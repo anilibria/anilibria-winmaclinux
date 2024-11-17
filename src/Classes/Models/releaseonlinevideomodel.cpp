@@ -24,7 +24,7 @@ void ReleaseOnlineVideoModel::readFromApiModel(const QJsonObject &jsonObject, in
     if (openingObject.contains("start")) m_openingStartSeconds = openingObject.value("start").toInt();
     if (openingObject.contains("stop")) m_openingEndSeconds = openingObject.value("stop").toInt();
 
-    auto endingObject = jsonObject.value("opening").toObject();
+    auto endingObject = jsonObject.value("ending").toObject();
     if (endingObject.contains("start")) m_endingStartSeconds = endingObject.value("start").toInt();
     if (endingObject.contains("stop")) m_endingEndSeconds = endingObject.value("stop").toInt();
 

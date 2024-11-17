@@ -46,6 +46,7 @@ private:
     ReleasesViewModel* m_releaseViewModel { nullptr };
     int m_openingStart { -1 };
     int m_openingEnd { -1 };
+    int m_endingStart { -1 };
 
     enum PlayListRoles {
         IdRole = Qt::UserRole + 1,
@@ -92,6 +93,7 @@ public:
     void setup(ReleasesViewModel* releaseViewModel);
     void refreshSingleVideo(int releaseId, int videoId) noexcept;
     bool isPositionInOpening(int position) const noexcept;
+    bool isPositionReachEnding(int position) const noexcept;
 
 private:
     QVector<OnlineVideoModel*> fillVideosFrom(const QList<ReleaseOnlineVideoModel *>& videos, int releaseId, const QString& poster);

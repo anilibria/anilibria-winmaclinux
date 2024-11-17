@@ -1364,6 +1364,37 @@ Page {
         }
     }
 
+    Rectangle {
+        id: skipEnding
+        visible: onlinePlayerViewModel.reachEnding
+        anchors.bottom: controlPanel.top
+        anchors.right: controlPanel.right
+        anchors.rightMargin: onlinePlayerViewModel.showNextPosterRelease ? 230 : 10
+        anchors.bottomMargin: 4
+        width: 200
+        height: 40
+        color: applicationThemeViewModel.playerControlBackground
+        border.width: 1
+        border.color: applicationThemeViewModel.plainTextColor
+
+        PlainText {
+            anchors.centerIn: parent
+            fontPointSize: 12
+            text: "Пропустить эндинг"
+        }
+
+        MouseArea {
+            enabled: skipEnding.visible
+            anchors.fill: parent
+            onPressed: {
+                if (onlinePlayerViewModel.restorePosition != 0) onlinePlayerViewModel.restorePosition = 0;
+                if (onlinePlayerViewModel.isFromNavigated) onlinePlayerViewModel.isFromNavigated = false;
+
+                onlinePlayerViewModel.nextVideo();
+            }
+        }
+    }
+
     Connections {
         target: onlinePlayerViewModel
         function onDisplaySkipOpeningChanged() {

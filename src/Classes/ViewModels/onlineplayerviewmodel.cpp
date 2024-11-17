@@ -466,6 +466,14 @@ void OnlinePlayerViewModel::setRestoreVideoMode(int restoreVideoMode) noexcept
     emit restoreVideoModeChanged();
 }
 
+void OnlinePlayerViewModel::setReachEnding(bool reachEnding) noexcept
+{
+    if (m_reachEnding == reachEnding) return;
+
+    m_reachEnding = reachEnding;
+    emit reachEndingChanged();
+}
+
 void OnlinePlayerViewModel::toggleFullScreen()
 {
     if (!m_isFullScreen) m_wasMaximized = m_isMaximized;
@@ -488,6 +496,8 @@ void OnlinePlayerViewModel::changeVideoPosition(int duration, int position) noex
     auto positionInSeconds = position / 1000;
 
     setDisplaySkipOpening(m_videos->isPositionInOpening(positionInSeconds));
+
+    setReachEnding(m_videos->isPositionReachEnding(positionInSeconds));
 
     QString start = getDisplayTimeFromSeconds(positionInSeconds);
     QString end = getDisplayTimeFromSeconds(duration / 1000);
@@ -564,6 +574,8 @@ void OnlinePlayerViewModel::nextVideo()
     setRutubeIdentifier(video);
 
     m_videos->selectVideo(m_selectedRelease, m_selectedVideo);
+
+    if (m_reachEnding) setReachEnding(false);
 
     if (!m_isCinemahall) emit needScrollSeriaPosition();
 }
