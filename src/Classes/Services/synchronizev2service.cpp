@@ -162,8 +162,13 @@ void Synchronizev2Service::removeUserFavorites(const QList<int> ids)
     adjustIdentifier(reply, m_removeFavoritesRequest);
 }
 
-void Synchronizev2Service::downloadTorrent(QString torrentPath, int releaseId)
+void Synchronizev2Service::downloadTorrent(QString torrentPath, int releaseId, const QString magnet)
 {
+    if (m_torrentDownloadMode == 3) {
+        QDesktopServices::openUrl(QUrl(magnet));
+        return;
+    }
+
     QUrl url;
     //if use torrent stream
     if (m_torrentDownloadMode == 2) {

@@ -120,7 +120,7 @@ public:
     Q_INVOKABLE void getUserFavorites();
     Q_INVOKABLE void addUserFavorites(const QList<int> ids);
     Q_INVOKABLE void removeUserFavorites(const QList<int> ids);
-    Q_INVOKABLE void downloadTorrent(QString torrentPath, int releaseId);
+    Q_INVOKABLE void downloadTorrent(QString torrentPath, int releaseId, const QString magnet);
     Q_INVOKABLE void synchronizeFullCache();
     Q_INVOKABLE QString checkFolderAvailability(const QString& folder);
     Q_INVOKABLE void checkNetworkAvailability(const QString& address);

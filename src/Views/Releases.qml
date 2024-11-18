@@ -1157,7 +1157,7 @@ Page {
                                 id: downloadTorrentMode
                                 currentIndex: 0
                                 width: 350
-                                model: ["Открыть в торрент клиенте", "Сохранить файл", "Использовать TorrentStream"]
+                                model: ["Открыть в торрент клиенте", "Сохранить файл", "Использовать TorrentStream", "Открыть magnet"]
                                 onCurrentIndexChanged: {
                                     userConfigurationViewModel.torrentDownloadMode = downloadTorrentMode.currentIndex;
                                 }

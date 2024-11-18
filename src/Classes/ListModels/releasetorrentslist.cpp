@@ -67,6 +67,9 @@ QVariant ReleaseTorrentsList::data(const QModelIndex &index, int role) const
             auto timeAsString = getLeadingZeroDigit(time.hour()) + ":" + getLeadingZeroDigit(time.minute());
             return QVariant(dateAsString + " " + timeAsString);
         }
+        case MagnetRole: {
+            return QVariant(torrent->magnet());
+        }
     }
 
     return QVariant();
@@ -102,6 +105,10 @@ QHash<int, QByteArray> ReleaseTorrentsList::roleNames() const
         {
             TimeCreationRole,
             "timecreation"
+        },
+        {
+            MagnetRole,
+            "magnet"
         }
     };
 }

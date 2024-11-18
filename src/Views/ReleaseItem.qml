@@ -331,7 +331,7 @@ Item {
                                             delegate: CommonMenuItem {
                                                 text: "Скачать " + quality + " [" + series + "] " + size + " " + timecreation
                                                 onPressed: {
-                                                    synchronizationServicev2.downloadTorrent(url, torrentMenuContainer.torrentReleaseId);
+                                                    synchronizationServicev2.downloadTorrent(url, torrentMenuContainer.torrentReleaseId, magnet);
                                                     torrentsMenu.close();
 
                                                     if (userConfigurationViewModel.markAsReadAfterDownload) {

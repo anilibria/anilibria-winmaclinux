@@ -20,6 +20,7 @@ private:
         UrlRole,
         IndexRole,
         TimeCreationRole,
+        MagnetUrlRole
     };
     QScopedPointer<QList<ApiTorrentModel*>> m_torrents { new QList<ApiTorrentModel*>() };
     QScopedPointer<QNetworkAccessManager> m_networkManager { new QNetworkAccessManager() };

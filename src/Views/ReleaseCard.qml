@@ -675,7 +675,7 @@ ColumnLayout {
                                         CommonMenuItem {
                                             text: "Скачать " + quality + " [" + series + "] " + size + " " + timecreation
                                             onPressed: {
-                                                synchronizationServicev2.downloadTorrent(url, releasesViewModel.openedReleaseId);
+                                                synchronizationServicev2.downloadTorrent(url, releasesViewModel.openedReleaseId, magnet);
 
                                                 if (userConfigurationViewModel.markAsReadAfterDownload) setSeenStateForOpenedRelease(true);
                                             }

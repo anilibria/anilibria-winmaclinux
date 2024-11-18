@@ -36,6 +36,7 @@ private:
         UrlRole,
         IdentifierRole,
         TimeCreationRole,
+        MagnetRole
     };
     QList<ApiTorrentModel*>* m_torrents { new QList<ApiTorrentModel*>() };
 
