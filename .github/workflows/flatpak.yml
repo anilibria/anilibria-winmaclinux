@@ -30,7 +30,3 @@ jobs:
         manifest-path: tv.anilibria.app.yml
         cache-key: flatpak-builder-${{ github.sha }}
         arch: ${{ matrix.arch }}
-    - uses: actions/upload-artifact@v3
-      with:
-        name: flatpak-package
-        path: anilibria.flatpak
