@@ -436,11 +436,10 @@ void MpvObject::timerEvent(QTimerEvent *event)
     if (playerEvent == nullptr) return;
 
     if (playerEvent->event_id == MPV_EVENT_START_FILE) {
-        qDebug() << "File Started!!!!";
+        emit startBuffering();
     }
     if(playerEvent->event_id == MPV_EVENT_FILE_LOADED) {
-        emit fileLoaded();
-        qDebug() << "File Loaded!!!!";
+        //emit fileLoaded();
     }
     if(playerEvent->event_id == MPV_EVENT_COMMAND_REPLY) {
         qDebug() << "Command reply!!!!";
