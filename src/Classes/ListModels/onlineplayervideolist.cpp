@@ -479,6 +479,11 @@ bool OnlinePlayerVideoList::isPositionReachEnding(int position) const noexcept
     return position >= m_endingStart;
 }
 
+bool OnlinePlayerVideoList::hasEnding() const noexcept
+{
+    return m_endingStart > 1;
+}
+
 QVector<OnlineVideoModel*> OnlinePlayerVideoList::fillVideosFrom(const QList<ReleaseOnlineVideoModel *>& videos, int releaseId, const QString& poster)
 {
     QVector<OnlineVideoModel*> result;

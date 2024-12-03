@@ -94,6 +94,7 @@ public:
     void refreshSingleVideo(int releaseId, int videoId) noexcept;
     bool isPositionInOpening(int position) const noexcept;
     bool isPositionReachEnding(int position) const noexcept;
+    bool hasEnding() const noexcept;
 
 private:
     QVector<OnlineVideoModel*> fillVideosFrom(const QList<ReleaseOnlineVideoModel *>& videos, int releaseId, const QString& poster);

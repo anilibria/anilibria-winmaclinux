@@ -244,25 +244,6 @@ Page {
                 onlinePlayerViewModel.positionIterator = 0;
                 onlinePlayerViewModel.setVideoSeens(onlinePlayerViewModel.selectedRelease, onlinePlayerViewModel.selectedVideo, position);
             }
-
-            if (!releasesViewModel.getSeriaSeenMark(onlinePlayerViewModel.selectedRelease, onlinePlayerViewModel.selectedVideoId)) {
-                if (duration > 0 && position > 0) {
-                    const positionPercent = position / duration * 100;
-                    if (positionPercent >= 90 && !onlinePlayerViewModel.seenMarkedAtEnd) {
-                        releasesViewModel.setSeenMark(onlinePlayerViewModel.selectedRelease, onlinePlayerViewModel.selectedVideoId, true);
-                        onlinePlayerViewModel.seenMarkedAtEnd = true;
-                        onlinePlayerViewModel.refreshSingleVideo(onlinePlayerViewModel.selectedRelease, onlinePlayerViewModel.selectedVideo);
-                        releasesViewModel.items.refreshSingleItem(onlinePlayerViewModel.selectedRelease);
-                        if (onlinePlayerViewModel.isLastSeriaIsSingleRelease()) {
-                            const nextReleaseId = releaseLinkedSeries.getNextLinkedRelease(onlinePlayerViewModel.selectedRelease);
-                            if (nextReleaseId > 0) {
-                                onlinePlayerViewModel.showNextPosterRelease = true;
-                                onlinePlayerViewModel.nextReleasePoster = releasesViewModel.getReleasePoster(nextReleaseId);
-                            }
-                        }
-                    }
-                }
-            }
         }
     }
 

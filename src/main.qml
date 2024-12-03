@@ -1011,6 +1011,20 @@ ApplicationWindow {
             const releaseTitle = releasesViewModel.getReleaseTitle(onlinePlayerViewModel.selectedRelease);
             extensionsViewModel.releaseOpenedInVideoPlayer(onlinePlayerViewModel.selectedRelease, releaseTitle, onlinePlayerViewModel.selectedVideo);
         }
+        onReachEndingChanged: {
+            if (!onlinePlayerViewModel.reachEnding) return;
+
+            releasesViewModel.setSeenMark(onlinePlayerViewModel.selectedRelease, onlinePlayerViewModel.selectedVideoId, true);
+            onlinePlayerViewModel.refreshSingleVideo(onlinePlayerViewModel.selectedRelease, onlinePlayerViewModel.selectedVideo);
+            releasesViewModel.items.refreshSingleItem(onlinePlayerViewModel.selectedRelease);
+            if (onlinePlayerViewModel.isLastSeriaIsSingleRelease()) {
+                const nextReleaseId = releaseLinkedSeries.getNextLinkedRelease(onlinePlayerViewModel.selectedRelease);
+                if (nextReleaseId > 0) {
+                    onlinePlayerViewModel.showNextPosterRelease = true;
+                    onlinePlayerViewModel.nextReleasePoster = releasesViewModel.getReleasePoster(nextReleaseId);
+                }
+            }
+        }
     }
 
     ReleasesViewModel {

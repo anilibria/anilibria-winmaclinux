@@ -497,8 +497,6 @@ void OnlinePlayerViewModel::changeVideoPosition(int duration, int position) noex
 
     setDisplaySkipOpening(m_videos->isPositionInOpening(positionInSeconds));
 
-    setReachEnding(m_videos->isPositionReachEnding(positionInSeconds));
-
     QString start = getDisplayTimeFromSeconds(positionInSeconds);
     QString end = getDisplayTimeFromSeconds(duration / 1000);
 
@@ -508,6 +506,17 @@ void OnlinePlayerViewModel::changeVideoPosition(int duration, int position) noex
 
     setVideoPosition(position);
     setVideoDuration(duration);
+
+    if (m_reachEnding) return;
+
+    if (m_videos->hasEnding()) {
+        setReachEnding(m_videos->isPositionReachEnding(positionInSeconds));
+    } else {
+        if (duration > 0 && position > 0) {
+            auto positionPercent = position / duration * 100;
+            if (positionPercent >= 90) setReachEnding(true);
+        }
+    }
 }
 
 QString OnlinePlayerViewModel::checkExistingVideoQuality(int index)
@@ -576,7 +585,6 @@ void OnlinePlayerViewModel::nextVideo()
     m_videos->selectVideo(m_selectedRelease, m_selectedVideo);
 
     if (m_reachEnding) setReachEnding(false);
-
     if (!m_isCinemahall) emit needScrollSeriaPosition();
 }
 
@@ -638,6 +646,7 @@ void OnlinePlayerViewModel::previousVideo()
 
     m_videos->selectVideo(m_selectedRelease, m_selectedVideo);
 
+    if (m_reachEnding) setReachEnding(false);
     if (!m_isCinemahall) emit needScrollSeriaPosition();
 }
 
@@ -710,6 +719,7 @@ void OnlinePlayerViewModel::quickSetupForSingleRelease(int releaseId, int custom
     setSeenMarkedAtEnd(false);
     setIsCinemahall(false);
     setIsMultipleRelease(false);
+    setReachEnding(false);
 
     auto release = m_releasesViewModel->getReleaseById(releaseId);
     m_navigateReleaseId = releaseId;
@@ -770,6 +780,7 @@ void OnlinePlayerViewModel::quickSetupForSingleTorrentRelease(int releaseId, int
     m_navigatePoster = release->poster();
     m_customPlaylistPosition = -1;
     m_isStreamingTorrents = true;
+    m_reachEnding = false;
 
     auto torrents = m_releasesViewModel->getReleaseTorrents(releaseId);
 
@@ -810,6 +821,7 @@ void OnlinePlayerViewModel::quickSetupForSingleTorrentRelease(int releaseId, int
 void OnlinePlayerViewModel::quickSetupForMultipleRelease(const QList<int> releaseIds)
 {
     m_isStreamingTorrents = false;
+    m_reachEnding = false;
     QList<FullReleaseModel*> releases;
     foreach (auto releaseId, releaseIds) {
         releases.append(m_releasesViewModel->getReleaseById(releaseId));
@@ -851,6 +863,7 @@ void OnlinePlayerViewModel::quickSetupForFavoritesCinemahall()
     setIsCinemahall(true);
     setIsMultipleRelease(false);
     m_isStreamingTorrents = false;
+    m_reachEnding = false;
 
     QList<FullReleaseModel*> fullReleases;
     m_releasesViewModel->getFavoritesReleases(&fullReleases);
@@ -893,6 +906,7 @@ void OnlinePlayerViewModel::setupForCinemahall()
     setIsCinemahall(true);
     setIsMultipleRelease(false);
     m_isStreamingTorrents = false;
+    m_reachEnding = false;
 
     auto fullReleases = m_releasesViewModel->cinemahall()->getCinemahallReleases();
     foreach (auto fullRelease, fullReleases) m_releasesViewModel->resetReleaseChanges(fullRelease->id());
