@@ -445,6 +445,14 @@ void UserConfigurationViewModel::setRestoreVideoMode(int restoreVideoMode) noexc
     emit restoreVideoModeChanged();
 }
 
+void UserConfigurationViewModel::setAutoSkipEnding(bool autoSkipEnding) noexcept
+{
+    if (m_autoSkipEnding == autoSkipEnding) return;
+
+    m_autoSkipEnding = autoSkipEnding;
+    emit autoSkipEndingChanged();
+}
+
 void UserConfigurationViewModel::refreshConfiguration() noexcept
 {
     readSettingsFromFile();
@@ -485,6 +493,7 @@ void UserConfigurationViewModel::refreshConfiguration() noexcept
     emit cacheFolderChanged();
     emit videoServerChanged();
     emit restoreVideoModeChanged();
+    emit autoSkipEndingChanged();
 }
 
 void UserConfigurationViewModel::saveSettingsToFile()
@@ -541,6 +550,7 @@ void UserConfigurationViewModel::saveSettingsToFile()
     object[m_cacheFolderField] = m_cacheFolder;
     object[m_videoServerField] = m_videoServer;
     object[m_restoreVideoModeField] = m_restoreVideoMode;
+    object[m_autoSkipEndingField] = m_autoSkipEnding;
 
     QFile file(getCachePath(m_cacheFileName));
     file.open(QFile::WriteOnly | QFile::Text);
@@ -608,6 +618,7 @@ void UserConfigurationViewModel::readSettingsFromFile()
     m_cacheFolder = object.contains(m_cacheFolderField) ? object[m_cacheFolderField].toString() : "";
     m_videoServer = object.contains(m_videoServerField) ? object[m_videoServerField].toInt() : 0;
     m_restoreVideoMode = object.contains(m_restoreVideoModeField) ? object[m_restoreVideoModeField].toInt() : 0;
+    m_autoSkipEnding = object.contains(m_autoSkipEndingField) ? object[m_autoSkipEndingField].toBool() : false;
 
     if (m_textFont != "Default") changeFont(m_textFont);
 }

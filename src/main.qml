@@ -1563,6 +1563,23 @@ ApplicationWindow {
         }
     }
 
+    /*Item {
+        anchors.right: parent.right
+        anchors.bottom: parent.bottom
+        width: 200
+        height: 200
+
+        Rectangle {
+            anchors.fill: parent
+            color: "red"
+        }
+
+        ShaderEffectSource {
+            anchors.fill: parent
+            sourceItem: videoplayer.videoOutputSource
+        }
+    }*/
+
     Item {
         id: assetsLocation
         property string path: Qt.resolvedUrl("../Assets/")

@@ -1263,6 +1263,19 @@ Page {
                                         }
                                     }
                                 }
+
+                                PlainText {
+                                    width: rightColumn.width - 20
+                                    fontPointSize: 10
+                                    text: "Автопропуск эндинга"
+                                }
+                                CommonSwitch {
+                                    id: autoSkipEndingSwitch
+                                    checked: userConfigurationViewModel.autoSkipEnding
+                                    onCheckedChanged: {
+                                        userConfigurationViewModel.autoSkipEnding = checked;
+                                    }
+                                }
                             }
                         }
                     }
@@ -1387,6 +1400,22 @@ Page {
                     playerLoader.item.seek(position);
                     notificationViewModel.sendInfoNotification(`Произошел автоматический пропуск опенинга`);
                 }
+            }
+        }
+    }
+
+    Connections {
+        target: onlinePlayerViewModel
+        function onReachEndingChanged() {
+            if (!onlinePlayerViewModel.reachEnding) return;
+
+            if (userConfigurationViewModel.autoSkipEnding) {
+                if (onlinePlayerViewModel.restorePosition != 0) onlinePlayerViewModel.restorePosition = 0;
+                if (onlinePlayerViewModel.isFromNavigated) onlinePlayerViewModel.isFromNavigated = false;
+
+                onlinePlayerViewModel.nextVideo();
+
+                notificationViewModel.sendInfoNotification(`Произошел автоматический пропуск эндинга`);
             }
         }
     }

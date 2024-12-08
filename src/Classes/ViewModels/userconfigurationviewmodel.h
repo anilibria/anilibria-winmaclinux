@@ -76,6 +76,7 @@ class UserConfigurationViewModel : public QObject
     Q_PROPERTY(QString cacheFolder READ cacheFolder WRITE setCacheFolder NOTIFY cacheFolderChanged FINAL)
     Q_PROPERTY(int videoServer READ videoServer WRITE setVideoServer NOTIFY videoServerChanged FINAL)
     Q_PROPERTY(int restoreVideoMode READ restoreVideoMode WRITE setRestoreVideoMode NOTIFY restoreVideoModeChanged FINAL)
+    Q_PROPERTY(bool autoSkipEnding READ autoSkipEnding WRITE setAutoSkipEnding NOTIFY autoSkipEndingChanged FINAL)
 
 private:
     QString m_cacheFileName { "userconfiguration.cache" };
@@ -130,6 +131,7 @@ private:
     const QString m_cacheFolderField { "cacheFolder" };
     const QString m_videoServerField { "videoServer" };
     const QString m_restoreVideoModeField { "restoreVideoMode" };
+    const QString m_autoSkipEndingField { "autoSkipEnding" };
     int m_opacityPlayerPanel { 50 };
     bool m_notCloseReleaseCardAfterWatch { false };
     bool m_usingScrollAcceleration { true };
@@ -181,6 +183,7 @@ private:
     QString m_cacheFolder { "" };
     int m_videoServer { 0 };
     int m_restoreVideoMode { 0 };
+    bool m_autoSkipEnding { false };
 
 public:
     explicit UserConfigurationViewModel(QObject *parent = nullptr);
@@ -338,6 +341,9 @@ public:
     int restoreVideoMode() const noexcept { return m_restoreVideoMode; }
     void setRestoreVideoMode(int restoreVideoMode) noexcept;
 
+    bool autoSkipEnding() const noexcept { return m_autoSkipEnding; }
+    void setAutoSkipEnding(bool autoSkipEnding) noexcept;
+
     Q_INVOKABLE void refreshConfiguration() noexcept;
     Q_INVOKABLE void saveSettingsToFile();
 
@@ -397,6 +403,7 @@ signals:
     void cacheFolderChanged();
     void videoServerChanged();
     void restoreVideoModeChanged();
+    void autoSkipEndingChanged();
 
 };
 
