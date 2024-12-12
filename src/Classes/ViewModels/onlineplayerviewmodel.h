@@ -85,6 +85,8 @@ class OnlinePlayerViewModel : public QObject
     Q_PROPERTY(bool wasMaximized READ wasMaximized NOTIFY wasMaximizedChanged FINAL)
     Q_PROPERTY(TorrentNotifierViewModel* torrentStream READ torrentStream WRITE setTorrentStream NOTIFY torrentStreamChanged FINAL)
     Q_PROPERTY(int restoreVideoMode READ restoreVideoMode WRITE setRestoreVideoMode NOTIFY restoreVideoModeChanged FINAL)
+    Q_PROPERTY(bool showEmbeddedVideoWindow READ showEmbeddedVideoWindow WRITE setShowEmbeddedVideoWindow NOTIFY showEmbeddedVideoWindowChanged FINAL)
+    Q_PROPERTY(bool showEmbeddedVideoWindowPanel READ showEmbeddedVideoWindowPanel WRITE setShowEmbeddedVideoWindowPanel NOTIFY showEmbeddedVideoWindowPanelChanged FINAL)
 
 private:
     bool m_isFullScreen;
@@ -148,6 +150,8 @@ private:
     bool m_wasMaximized { false };
     int m_restoreVideoMode { 0 };
     bool m_reachEnding { false };
+    bool m_showEmbeddedVideoWindow { false };
+    bool m_showEmbeddedVideoWindowPanel { false };
 
 public:
     explicit OnlinePlayerViewModel(QObject *parent = nullptr);
@@ -302,6 +306,12 @@ public:
     bool reachEnding() const noexcept { return m_reachEnding; }
     void setReachEnding(bool reachEnding) noexcept;
 
+    bool showEmbeddedVideoWindow() const noexcept { return m_showEmbeddedVideoWindow; }
+    void setShowEmbeddedVideoWindow(bool showEmbeddedVideoWindow) noexcept;
+
+    bool showEmbeddedVideoWindowPanel() const noexcept { return m_showEmbeddedVideoWindowPanel; }
+    void setShowEmbeddedVideoWindowPanel(bool showEmbeddedVideoWindowPanel) noexcept;
+
     Q_INVOKABLE void toggleFullScreen();
     Q_INVOKABLE void changeVideoPosition(int duration, int position) noexcept;
     Q_INVOKABLE QString checkExistingVideoQuality(int index);    
@@ -386,6 +396,7 @@ signals:
     void navigateVideosChanged();
     void navigatePosterChanged();
     void playInPlayer();
+    void pauseInPlayer();
     void saveToWatchHistory(int releaseId);
     void recalculateSeenCounts();
     void remotePlayerStartedChanged();
@@ -420,6 +431,8 @@ signals:
     void wasMaximizedChanged();
     void restoreVideoModeChanged();
     void reachEndingChanged();
+    void showEmbeddedVideoWindowChanged();
+    void showEmbeddedVideoWindowPanelChanged();
 
 };
 

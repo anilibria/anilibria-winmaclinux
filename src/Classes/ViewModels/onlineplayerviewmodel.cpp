@@ -474,6 +474,22 @@ void OnlinePlayerViewModel::setReachEnding(bool reachEnding) noexcept
     emit reachEndingChanged();
 }
 
+void OnlinePlayerViewModel::setShowEmbeddedVideoWindow(bool showEmbeddedVideoWindow) noexcept
+{
+    if (m_showEmbeddedVideoWindow == showEmbeddedVideoWindow) return;
+
+    m_showEmbeddedVideoWindow = showEmbeddedVideoWindow;
+    emit showEmbeddedVideoWindowChanged();
+}
+
+void OnlinePlayerViewModel::setShowEmbeddedVideoWindowPanel(bool showEmbeddedVideoWindowPanel) noexcept
+{
+    if (m_showEmbeddedVideoWindowPanel == showEmbeddedVideoWindowPanel) return;
+
+    m_showEmbeddedVideoWindowPanel = showEmbeddedVideoWindowPanel;
+    emit showEmbeddedVideoWindowPanelChanged();
+}
+
 void OnlinePlayerViewModel::toggleFullScreen()
 {
     if (!m_isFullScreen) m_wasMaximized = m_isMaximized;

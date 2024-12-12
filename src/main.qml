@@ -10,6 +10,7 @@ import CustomStyle 1.0
 import QtQuick.Particles 2.15
 import "Views"
 import "Controls"
+import "Views/Videoplayer"
 
 ApplicationWindow {
     id: window
@@ -985,6 +986,9 @@ ApplicationWindow {
         onPlayInPlayer: {
             videoplayer.playInPlayer();
         }
+        onPauseInPlayer: {
+            videoplayer.pauseInPlayer();
+        }
         onStopInPlayer: {
             videoplayer.stopInPlayer();
         }
@@ -1440,6 +1444,15 @@ ApplicationWindow {
         videoOrigin: videoplayer.videoOrigin
     }
 
+    EmbeddedVideoPlayer {
+        id: embeddedVideoPlayer
+
+        Component.onCompleted: {
+            embeddedVideoPlayer.x = window.width / 2 - embeddedVideoPlayer.width / 2;
+            embeddedVideoPlayer.y = window.height / 2 - embeddedVideoPlayer.height / 2;
+        }
+    }
+
     MyAnilibriaViewModel {
         id: myAnilibriaViewModel
         releasesViewModel: releasesViewModel
@@ -1562,23 +1575,6 @@ ApplicationWindow {
             extensionsViewModel.saveValues();
         }
     }
-
-    /*Item {
-        anchors.right: parent.right
-        anchors.bottom: parent.bottom
-        width: 200
-        height: 200
-
-        Rectangle {
-            anchors.fill: parent
-            color: "red"
-        }
-
-        ShaderEffectSource {
-            anchors.fill: parent
-            sourceItem: videoplayer.videoOutputSource
-        }
-    }*/
 
     Item {
         id: assetsLocation

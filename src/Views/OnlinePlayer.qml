@@ -16,6 +16,7 @@ Page {
     signal windowNotActived()
     signal playInPlayer()
     signal stopInPlayer()
+    signal pauseInPlayer()
     signal playerCreated()
     signal needHidePlayer()
 
@@ -25,6 +26,10 @@ Page {
 
     onStopInPlayer: {
         playerLoader.item.stop();
+    }
+
+    onPauseInPlayer: {
+        playerLoader.item.pause();
     }
 
     function togglePlayback() {
@@ -90,7 +95,7 @@ Page {
         onlinePlayerViewModel.isFullScreen = false;
         const enableVideoPreview = !onlinePlayerWindowViewModel.isStandartPlayer || (onlinePlayerWindowViewModel.isStandartPlayer && onlinePlayerWindowViewModel.isQt515);
         if (enableVideoPreview && playerLoader.item.isPlaying && userConfigurationViewModel.showVideoPreview) {
-            onlinePlayerWindow.showWindow();
+            onlinePlayerViewModel.showEmbeddedVideoWindow = true;
         } else {
             playerLoader.item.pause();
         }
@@ -98,7 +103,7 @@ Page {
 
     onNavigateTo: {
         _page.forceActiveFocus();
-        if (onlinePlayerWindowViewModel.opened) onlinePlayerWindow.hideWindow(false);
+        if (onlinePlayerViewModel.showEmbeddedVideoWindow) onlinePlayerViewModel.showEmbeddedVideoWindow = false;
         onlinePlayerViewModel.isFromNavigated = true;
         const userSettings = JSON.parse(localStorage.getUserSettings());
         playerLoader.item.volume = userSettings.volume < 1 ? 50 : userSettings.volume;
