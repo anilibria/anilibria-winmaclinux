@@ -20,7 +20,7 @@ ApplicationWindow {
     minimumWidth: 300
     font.family: userConfigurationViewModel.textFont
     minimumHeight: 300
-    title: qsTr("AniLibria.Qt")
+    title: qsTr("AniLibria.Qt CE")
     font.capitalization: Font.MixedCase
     property var userModel: ({})
     property string tempTorrentPath: ""
@@ -1366,7 +1366,7 @@ ApplicationWindow {
             releases.navigateTo();
         }
         //uncomment for christmas version
-        /*onIsOnlinePlayerPageVisibleChanged: {
+        onIsOnlinePlayerPageVisibleChanged: {
             if (mainViewModel.isOnlinePlayerPageVisible) {
                 particleEffect.visible = false;
                 particleSystem.reset();
@@ -1376,7 +1376,7 @@ ApplicationWindow {
                 particleEffect.visible = true;
                 particleSystem.running = true;
             }
-        }*/
+        }
         onChangeReleasesParameters: {
             if (!parameters.length) {
                 releasesViewModel.closeReleaseCard();
@@ -1584,7 +1584,7 @@ ApplicationWindow {
     }
 
     //uncomment for christmas version
-    /*Item {
+    Item {
         id: particleEffect
         anchors.fill: parent
 
@@ -1620,5 +1620,5 @@ ApplicationWindow {
             rotationVelocity: 60
             rotationVelocityVariation: 15
         }
-    }*/
+    }
 }
