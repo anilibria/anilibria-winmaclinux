@@ -529,7 +529,9 @@ void OnlinePlayerViewModel::changeVideoPosition(int duration, int position) noex
         setReachEnding(m_videos->isPositionReachEnding(positionInSeconds));
     } else {
         if (duration > 0 && position > 0) {
-            auto positionPercent = position / duration * 100;
+            double positionDouble = static_cast<double>(position);
+            double durationDouble = static_cast<double>(duration);
+            auto positionPercent = (positionDouble / durationDouble) * 100;
             if (positionPercent >= 90) setReachEnding(true);
         }
     }
