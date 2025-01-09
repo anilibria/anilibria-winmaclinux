@@ -1233,8 +1233,10 @@ Page {
 
                                     onActivated: {
                                         optionsPopup.close();
-                                        onlinePlayerViewModel.restorePosition = onlinePlayerViewModel.videoPosition;
                                         const newPlayer = onlinePlayerWindowViewModel.players[currentIndex];
+                                        if (newPlayer === onlinePlayerWindowViewModel.selectedPlayer) return;
+
+                                        onlinePlayerViewModel.restorePosition = onlinePlayerViewModel.videoPosition;
                                         onlinePlayerWindowViewModel.changePlayer(newPlayer);
                                         if (userConfigurationViewModel.needSavePlayer) userConfigurationViewModel.lastSelectedPlayer = newPlayer;
                                     }

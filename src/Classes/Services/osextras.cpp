@@ -39,7 +39,7 @@ void OsExtras::startPreventSleepMode()
 
             QDBusReply<uint> reply = screenSaverInterface.call("Inhibit", "AniLibria", "REASON");
             if (reply.isValid()) {
-                qDebug() << "valid value" << reply.value();
+                //qDebug() << "valid value" << reply.value();
                 m_dbusReply = reply.value();
                 break;
             }
