@@ -20,6 +20,7 @@ class Synchronizev2Service : public QObject
     Q_PROPERTY(int torrentStreamPort READ torrentStreamPort WRITE setTorrentStreamPort NOTIFY torrentStreamPortChanged FINAL)
     Q_PROPERTY(QString mainGithubCacheServer READ mainGithubCacheServer NOTIFY mainGithubCacheServerChanged FINAL)
     Q_PROPERTY(QString mainNextAPIServer READ mainNextAPIServer NOTIFY mainNextAPIServerChanged FINAL)
+    Q_PROPERTY(QString appMirrorNextAPIServer READ appMirrorNextAPIServer NOTIFY appMirrorNextAPIServerChanged FINAL)
     Q_PROPERTY(QString cacheFolder READ cacheFolder WRITE setCacheFolder NOTIFY cacheFolderChanged FINAL)
     Q_PROPERTY(bool isSocialAuthentification READ isSocialAuthentification NOTIFY isSocialAuthentificationChanged FINAL)
 
@@ -108,6 +109,8 @@ public:
     QString mainGithubCacheServer() const noexcept { return "https://raw.githubusercontent.com/trueromanus/LocalCacheChecker/main/cache"; }
 
     QString mainNextAPIServer() const noexcept { return "https://anilibria.top"; }
+
+    QString appMirrorNextAPIServer() const noexcept { return "https://api.anilibria.app"; }
 
     bool isSocialAuthentification() const noexcept { return m_socialCheckTimer > 0; }
 
@@ -199,6 +202,7 @@ signals:
     void isSocialAuthentificationChanged();
     void checkNetworkAvailibilityFailedChanged(const QString& message);
     void checkNetworkAvailibilityCompletedChanged();
+    void appMirrorNextAPIServerChanged();
 
 };
 

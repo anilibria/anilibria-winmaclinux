@@ -309,11 +309,18 @@ Page {
                                     ListElement {
                                         text: "Основной домен"
                                     }
+                                    ListElement {
+                                        text: "Зеркало app"
+                                    }
                                 }
+
 
                                 Component.onCompleted: {
                                     if (userConfigurationViewModel.apiv2host === synchronizationServicev2.mainNextAPIServer) {
                                         serversComboBox.currentIndex = 0;
+                                    }
+                                    if (userConfigurationViewModel.apiv2host === synchronizationServicev2.appMirrorNextAPIServer) {
+                                        serversComboBox.currentIndex = 1;
                                     }
                                 }
                             }
@@ -482,6 +489,9 @@ Page {
                                     switch (serversComboBox.currentIndex) {
                                         case 0:
                                             userConfigurationViewModel.apiv2host = synchronizationServicev2.mainNextAPIServer;
+                                            break;
+                                        case 1:
+                                            userConfigurationViewModel.apiv2host = synchronizationServicev2.appMirrorNextAPIServer;
                                             break;
                                     }
 
