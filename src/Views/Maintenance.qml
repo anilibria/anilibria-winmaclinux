@@ -455,7 +455,6 @@ Page {
                                 anchors.right: saveButton.left
                                 anchors.rightMargin: 10
                                 anchors.verticalCenter: parent.verticalCenter
-                                visible: !apiServiceConfigurator.isDefault
                                 text: "Проверить"
                                 width: 100
                                 onClicked: {
@@ -463,7 +462,7 @@ Page {
                                     if (localFolder.checked) {
                                         message = synchronizationServicev2.checkFolderAvailability(cacheFolderTextField.text);
                                     } else {
-                                        synchronizationServicev2.checkNetworkAvailability("");
+                                        synchronizationServicev2.checkNetworkAvailability(userConfigurationViewModel.apiv2host + "/api/docs/v1");
                                     }
 
                                     if (message) notificationViewModel.sendInfoNotification(message);
