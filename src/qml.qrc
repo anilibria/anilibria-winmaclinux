@@ -86,7 +86,6 @@
         <file>Assets/Icons/righthalf.svg</file>
         <file>Views/LeftPanelIconButton.qml</file>
         <file>Views/FilterPanelIconButton.qml</file>
-        <file>Views/OnlinePlayerWindow.qml</file>
         <file>Views/Videoplayer/QtPlayer515.qml</file>
         <file>Views/Videoplayer/QtVideo515Output.qml</file>
         <file>Controls/BackgroundImagePopup.qml</file>

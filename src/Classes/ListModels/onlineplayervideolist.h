@@ -85,7 +85,7 @@ public:
 
     void setVideosFromDownloadedTorrent(const QStringList& files, int releaseId, const QString& poster) noexcept;
     void setVideosFromSingleTorrent(const ApiTorrentModel& torrent, int releaseId, const QString& poster, int port, const TorrentNotifierViewModel* torrentStream) noexcept;
-    void setVideosFromSingleList(int releaseId, const QString& poster) noexcept;
+    void setVideosFromSingleList(int releaseId) noexcept;
     void setVideosFromCinemahall(QList<FullReleaseModel*>&& releases) noexcept;
     void selectVideo(int releaseId, int videoId) noexcept;
     int getVideoIndex(OnlineVideoModel* video) noexcept;

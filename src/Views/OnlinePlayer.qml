@@ -111,13 +111,7 @@ Page {
         jumpSecondComboBox.currentIndex = onlinePlayerViewModel.jumpSeconds.indexOf(userSettings.jumpSecond);
         remotePlayerPortComboBox.currentIndex = onlinePlayerViewModel.ports.indexOf(userConfigurationViewModel.remotePort);
 
-        if (!onlinePlayerViewModel.navigateReleaseId && !onlinePlayerViewModel.isCinemahall) {
-            const lastSeenReleaseId = onlinePlayerViewModel.getLastVideoSeen();
-            if (lastSeenReleaseId === 0) return;
-
-            onlinePlayerViewModel.quickSetupForSingleRelease(lastSeenReleaseId);
-        }
-
+        onlinePlayerViewModel.restoreLastRelease();
     }
 
     anchors.fill: parent
@@ -1233,12 +1227,16 @@ Page {
 
                                     onActivated: {
                                         optionsPopup.close();
+
                                         const newPlayer = onlinePlayerWindowViewModel.players[currentIndex];
                                         if (newPlayer === onlinePlayerWindowViewModel.selectedPlayer) return;
 
+                                        playerLoader.item.pause();
+
                                         onlinePlayerViewModel.restorePosition = onlinePlayerViewModel.videoPosition;
-                                        onlinePlayerWindowViewModel.changePlayer(newPlayer);
                                         if (userConfigurationViewModel.needSavePlayer) userConfigurationViewModel.lastSelectedPlayer = newPlayer;
+
+                                        onlinePlayerWindowViewModel.changePlayerWithTimeout(newPlayer);
                                     }
 
                                     Connections {
@@ -1324,14 +1322,6 @@ Page {
         Behavior on opacity {
             NumberAnimation { duration: 200 }
         }
-    }
-
-    Rectangle {
-        id: mask
-        width: 180
-        height: 260
-        radius: 10
-        visible: false
     }
 
     Rectangle {
