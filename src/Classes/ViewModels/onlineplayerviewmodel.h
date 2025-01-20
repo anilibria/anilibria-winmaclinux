@@ -316,6 +316,7 @@ public:
     Q_INVOKABLE void quickSetupForMultipleRelease(QList<int> releaseIds);
     Q_INVOKABLE void quickSetupForFavoritesCinemahall();
     Q_INVOKABLE void setupForCinemahall();
+    Q_INVOKABLE void quickSetupForSingleDownloadedTorrent(const QStringList& files, int releaseId) noexcept;
     Q_INVOKABLE void selectVideo(int releaseId, int videoId);
     Q_INVOKABLE void changeVideoQuality(const QString& quality) noexcept;
     Q_INVOKABLE void setVideoSpeed(double speed) noexcept;
@@ -329,7 +330,6 @@ public:
     Q_INVOKABLE int skipOpening() noexcept;
     Q_INVOKABLE void reloadCurrentVideo() noexcept;
     Q_INVOKABLE void openVideoInExternalPlayer(const QString& path) noexcept;
-    Q_INVOKABLE void quickSetupForSingleDownloadedTorrent(const QStringList& files, int releaseId) noexcept;
     Q_INVOKABLE bool releaseHasVideos(int releaseId) noexcept;
     Q_INVOKABLE bool releaseIsRutube(int releaseId) noexcept;
     Q_INVOKABLE void restoreLastRelease() noexcept;
@@ -354,6 +354,7 @@ private:
     int findNextNotWatchVideo(int releaseId, int videoIndex) noexcept;
     void refreshVideoSourceProxy(const QString& newVideoSource) noexcept;
     void preparePlayerForNewMode(const QString& mode);
+    void preparePlayerForNewRelease(OnlineVideoModel* video);
 
 private slots:
     void downloadPlaylist(QNetworkReply *reply);
