@@ -859,6 +859,8 @@ void OnlinePlayerViewModel::setupForCinemahall()
 
 void OnlinePlayerViewModel::quickSetupForSingleDownloadedTorrent(const QStringList &files, int releaseId) noexcept
 {
+    preparePlayerForNewMode(m_streamingTorrentMode);
+
     auto release = m_releasesViewModel->getReleaseById(releaseId);
 
     m_videos->setVideosFromDownloadedTorrent(files, releaseId, release->poster());
