@@ -116,9 +116,6 @@ Page {
                     iconHeight: 34
                     tooltipMessage: "Выполнить синхронизацию релизов"
                     onButtonPressed: {
-                        if (releasesViewModel.synchronizationEnabled) return;
-
-                        releasesViewModel.synchronizationEnabled = true;
                         synchronizationServicev2.synchronizeFullCache();
                     }
                 }
