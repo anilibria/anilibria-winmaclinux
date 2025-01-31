@@ -1416,7 +1416,7 @@ Page {
                         FilterPanelIconButton {
                             visible: !mainViewModel.isSmallSizeMode
                             iconPath: applicationThemeViewModel.currentItems.iconFavorites
-                            tooltipMessage: "Избранное"
+                            tooltipMessage: "Избранное  "
                             onButtonPressed: {
                                 changeSection(1);
                             }

@@ -749,7 +749,7 @@ void ReleasesListModel::refresh()
 
         if (m_section == WithinSeriesSection && linkedReleases != nullptr && !(linkedReleases->contains(release->id()))) continue;
 
-        if (m_section == MostPopular2021Section && !(release->status().toLower() == "завершен")) continue;
+        if (m_section == MostPopular2021Section && !(release->status().toLower() == releaseIsFinished)) continue;
 
         if (m_section == MostPopular2022Section && !(release->year() == "2022" && release->rating() > 0)) continue;
 
@@ -757,9 +757,9 @@ void ReleasesListModel::refresh()
 
         if (m_section == HiddenReleasesSection && !m_hiddenReleases->contains(release->id())) continue;
 
-        if (m_section == FinishedSeenSection && !(isAllSeens && release->status().toLower() == "завершен")) continue;
+        if (m_section == FinishedSeenSection && !(isAllSeens && release->status().toLower() == releaseIsFinished)) continue;
 
-        if (m_section == NotFinishedSeenSection && !(isAllSeens && release->status().toLower() != "завершен")) continue;
+        if (m_section == NotFinishedSeenSection && !(isAllSeens && release->status().toLower() != releaseIsFinished)) continue;
 
         if (m_section == CurrentSeasonSection &&
             !(release->year() == currentYear && release->status().toLower() == "в работе" && release->season() == currentSeason)) continue;
