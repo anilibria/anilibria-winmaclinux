@@ -19,6 +19,10 @@ Item {
     property bool isPaused: false
     property bool isStopped: false
     property bool isCropped: false
+    property alias selectedAudio: videoPlayer.audioTrack
+    property int selectedSubtitle: videoPlayer.subtitleTrack
+    readonly property int countSubtitles: 0
+    readonly property int countAudios: 0
 
     signal play();
     signal pause();
@@ -116,6 +120,13 @@ Item {
                     playerPlaybackStateChanged("stop");
                     break;
             }
+        }
+
+        onCountAudioTrackChanged: {
+            root.countAudios = videoPlayer.countAudioTrack;
+        }
+        onCountSubtitleTrackChanged: {
+            root.countSubtitles = videoPlayer.countSubtitleTrack;
         }
     }
 

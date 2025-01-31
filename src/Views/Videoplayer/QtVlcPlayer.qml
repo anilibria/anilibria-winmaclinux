@@ -21,6 +21,10 @@ Item {
     property bool isStopped: false
     property bool alreadyEnded: false
     property bool isCropped: false
+    property int selectedAudio: 0
+    property int selectedSubtitle: 0
+    property int countSubtitles: 0
+    property int countAudios: 0
 
     signal play();
     signal pause();
@@ -56,6 +60,7 @@ Item {
 
     onPause: {
         videoPlayer.pause();
+
     }
 
     onStop: {
