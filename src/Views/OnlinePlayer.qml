@@ -1006,10 +1006,10 @@ Page {
 
                         DefaultPopup {
                             id: optionsPopup
-                            x: optionsButton.width - 610
-                            y: optionsButton.height - 510
+                            x: -leftColumn.implicitWidth
+                            y: -(leftColumn.implicitHeight + 20)
                             width: 600
-                            height: 500
+                            height: leftColumn.implicitHeight + 20
 
                             modal: true
                             focus: true
