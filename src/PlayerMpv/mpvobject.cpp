@@ -253,6 +253,8 @@ MpvObject::MpvObject(QQuickItem * parent)
     mpv_set_option_string(mpv, "demuxer-cache-wait", "yes");
     mpv_set_option_string(mpv, "hwdec", "auto-safe");
     mpv_set_option_string(mpv, "config", "yes");
+    mpv_set_option_string(mpv, "sid", "no");
+
     auto mpvLocation = QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation) + "/mpv";
     qDebug() << "MPV config location: " << mpvLocation;
     QByteArray byteArray = mpvLocation.toLocal8Bit();
@@ -375,6 +377,54 @@ void MpvObject::setPlaybackRate(float playbackRate) noexcept
     emit playbackRateChanged();
 }
 
+void MpvObject::setSubtitleTrack(int subtitleTrack) noexcept
+{
+    if (m_subtitleTrack == subtitleTrack) return;
+
+    m_subtitleTrack = subtitleTrack;
+    switch (m_subtitleTrack) {
+        case 0:
+            setMpvProperty("sid", "no" );
+            break;
+        case 1:
+            setMpvProperty("sid", "1" );
+            break;
+        case 2:
+            setMpvProperty("sid", "2" );
+            break;
+        case 3:
+            setMpvProperty("sid", "3" );
+            break;
+        default: break;
+    }
+
+    emit subtitleTrackChanged();
+}
+
+void MpvObject::setAudioTrack(int audioTrack) noexcept
+{
+    if (m_audioTrack == audioTrack) return;
+
+    m_audioTrack = audioTrack;
+    switch (m_audioTrack) {
+    case 0:
+        setMpvProperty("aid", "no" );
+        break;
+    case 1:
+        setMpvProperty("aid", "1" );
+        break;
+    case 2:
+        setMpvProperty("aid", "2" );
+        break;
+    case 3:
+        setMpvProperty("aid", "3" );
+        break;
+    default: break;
+    }
+
+    emit audioTrackChanged();
+}
+
 void MpvObject::play()
 {
     setMpvProperty("pause", false);
@@ -439,7 +489,25 @@ void MpvObject::timerEvent(QTimerEvent *event)
         emit startBuffering();
     }
     if(playerEvent->event_id == MPV_EVENT_FILE_LOADED) {
-        //emit fileLoaded();
+        auto items = getMpvProperty("track-list");
+        auto list = items.toList();
+        m_subtitleTrack = 0;
+        m_audioTrack = 1;
+        m_countAudioTrack = 0;
+        m_countSubtitleTrack = 0;
+        foreach (auto listItem, list) {
+            auto map = listItem.toMap();
+            auto type = map.value("type").toString();
+            if (type == "audio") m_countAudioTrack++;
+            if (type == "sub") m_countSubtitleTrack++;
+        }
+
+        if (m_countSubtitleTrack > 0) m_countSubtitleTrack += 1; // dropdown started with option `no subtitle`
+
+        emit countAudioTrackChanged();
+        emit countSubtitleTrackChanged();
+        emit subtitleTrackChanged();
+        emit audioTrackChanged();
     }
     if(playerEvent->event_id == MPV_EVENT_COMMAND_REPLY) {
         qDebug() << "Command reply!!!!";
