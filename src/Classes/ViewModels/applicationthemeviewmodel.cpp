@@ -191,9 +191,10 @@ ApplicationThemeViewModel::ApplicationThemeViewModel(QObject *parent)
     lightTheme->insert(iconContextMenuField, "qrc:/Assets/Icons/contextmenu.svg");
     lightTheme->insert(iconMainMenuExtensionsField, "qrc:/Assets/Icons/extensions.svg");
     lightTheme->insert(iconMagnetField, "qrc:/Assets/Icons/releases/magnet.svg");
-
     lightTheme->insert(iconDisableGroupingField, "qrc:/Assets/Icons/releases/disablegrouping.svg");
     lightTheme->insert(iconEnableGroupingField, "qrc:/Assets/Icons/releases/enablegrouping.svg");
+
+    lightTheme->insert(iconSubtitlesPopupField, "qrc:/Assets/Icons/videoplayer/subtitles.svg");
 
     lightTheme->insert(basedOnThemeField, m_lightTheme);
     lightTheme->insert(externalIdField, "");
@@ -366,6 +367,8 @@ ApplicationThemeViewModel::ApplicationThemeViewModel(QObject *parent)
     darkTheme->insert(iconDisableGroupingField, "qrc:/Assets/Icons/releases/disablegrouping.svg");
     darkTheme->insert(iconEnableGroupingField, "qrc:/Assets/Icons/releases/enablegrouping.svg");
 
+    darkTheme->insert(iconSubtitlesPopupField, "qrc:/Assets/Icons/videoplayer/darksubtitles.svg");
+
     darkTheme->insert(basedOnThemeField, m_darkTheme);
     darkTheme->insert(externalIdField, "");
     m_themes.insert(m_darkTheme, darkTheme);
@@ -536,6 +539,7 @@ ApplicationThemeViewModel::ApplicationThemeViewModel(QObject *parent)
     m_fields.append(iconMagnetField);
     m_fields.append(iconDisableGroupingField);
     m_fields.append(iconEnableGroupingField);
+    m_fields.append(iconSubtitlesPopupField);
 
     m_fields.append(iconLogoutField);
     m_fields.append(externalIdField);

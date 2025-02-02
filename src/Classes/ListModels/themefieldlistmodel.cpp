@@ -193,6 +193,8 @@ ThemeFieldListModel::ThemeFieldListModel(QObject *parent)
     m_descriptions.insert(iconDisableGroupingField, "Иконка Группировка:Иконка для состояния Выключено");
     m_descriptions.insert(iconEnableGroupingField, "Иконка Группировка:Иконка для состояния Включено");
 
+    m_descriptions.insert(iconSubtitlesPopupField, "Иконка Субтитры:Иконка для меню субтитров");
+
     m_saveMenuItems.append("Сохранить и добавить тему в список");
     m_saveMenuItems.append("Сохранить в файл");
 }
