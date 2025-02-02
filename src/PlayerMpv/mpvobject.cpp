@@ -407,19 +407,16 @@ void MpvObject::setAudioTrack(int audioTrack) noexcept
 
     m_audioTrack = audioTrack;
     switch (m_audioTrack) {
-    case 0:
-        setMpvProperty("aid", "no" );
-        break;
-    case 1:
-        setMpvProperty("aid", "1" );
-        break;
-    case 2:
-        setMpvProperty("aid", "2" );
-        break;
-    case 3:
-        setMpvProperty("aid", "3" );
-        break;
-    default: break;
+        case 0:
+            setMpvProperty("aid", "1" );
+            break;
+        case 1:
+            setMpvProperty("aid", "2" );
+            break;
+        case 2:
+            setMpvProperty("aid", "3" );
+            break;
+        default: break;
     }
 
     emit audioTrackChanged();
@@ -492,9 +489,13 @@ void MpvObject::timerEvent(QTimerEvent *event)
         auto items = getMpvProperty("track-list");
         auto list = items.toList();
         m_subtitleTrack = 0;
-        m_audioTrack = 1;
+        m_audioTrack = 0;
         m_countAudioTrack = 0;
         m_countSubtitleTrack = 0;
+
+        setMpvProperty("sid", "no" );
+        setMpvProperty("aid", "auto" );
+
         foreach (auto listItem, list) {
             auto map = listItem.toMap();
             auto type = map.value("type").toString();

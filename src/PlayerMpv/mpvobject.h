@@ -41,7 +41,7 @@ private:
     const int stopedPlayback = 3;
     int m_countAudioTrack { 0 };
     int m_countSubtitleTrack { 0 };
-    int m_audioTrack { 1 };
+    int m_audioTrack { 0 };
 
 public:
     static void on_update(void *ctx);

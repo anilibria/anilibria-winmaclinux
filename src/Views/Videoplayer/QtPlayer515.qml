@@ -21,8 +21,8 @@ Item {
     property bool isCropped: false
     property int selectedAudio: 0
     property int selectedSubtitle: 0
-    property int countSubtitles: 0
-    property int countAudios: 0
+    property var subtitles: ['Без субтитров']
+    property var audios: ['Дорожка 1']
 
     signal play();
     signal pause();

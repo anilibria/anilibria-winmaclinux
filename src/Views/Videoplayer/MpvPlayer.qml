@@ -20,9 +20,9 @@ Item {
     property bool isStopped: false
     property bool isCropped: false
     property alias selectedAudio: videoPlayer.audioTrack
-    property int selectedSubtitle: videoPlayer.subtitleTrack
-    readonly property int countSubtitles: 0
-    readonly property int countAudios: 0
+    property alias selectedSubtitle: videoPlayer.subtitleTrack
+    property var subtitles: ['Без субтитров']
+    property var audios: ['Дорожка 1']
 
     signal play();
     signal pause();
@@ -123,10 +123,25 @@ Item {
         }
 
         onCountAudioTrackChanged: {
-            root.countAudios = videoPlayer.countAudioTrack;
+            if (videoPlayer.countAudioTrack === 1) {
+                root.audios = ['Дорожка 1'];
+            } else {
+                let arr = [];
+                for (let i = 0; i < videoPlayer.countAudioTrack; i++) {
+                    arr.push("Дорожка " + (i + 1));
+                }
+
+                root.audios = arr;
+            }
+
         }
         onCountSubtitleTrackChanged: {
-            root.countSubtitles = videoPlayer.countSubtitleTrack;
+            let arr = ['Без субтитров'];
+            for (let i = 1; i < videoPlayer.countSubtitleTrack; i++) {
+                arr.push("Субтитры " + i);
+            }
+
+            root.subtitles = arr
         }
     }
 
