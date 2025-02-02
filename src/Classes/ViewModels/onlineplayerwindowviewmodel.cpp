@@ -104,6 +104,8 @@ void OnlinePlayerWindowViewModel::setStartupPlayer(const QString &startupPlayer)
 
 void OnlinePlayerWindowViewModel::timerEvent(QTimerEvent *event)
 {
+    Q_UNUSED(event);
+
     if (!m_nextVideoPlayer.isEmpty()) changePlayer(m_nextVideoPlayer);
 
     killTimer(m_nextVideoPlayerTimer);
