@@ -65,6 +65,7 @@ private:
     const QString autumnValue { "осень" };
     const QString springValue { "весна" };
     const QString summerValue { "лето" };
+    const QString releaseIsFinished = "озвучка завершена";
     QSharedPointer<QList<FullReleaseModel*>> m_releases;
     QList<FullReleaseModel*> m_filteredReleases { QList<FullReleaseModel*>() };
     QList<int>* m_userFavorites { nullptr };

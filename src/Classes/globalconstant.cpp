@@ -217,3 +217,5 @@ QString iconMagnetField = "iconMagnet";
 
 QString iconDisableGroupingField = "iconDisableGrouping";
 QString iconEnableGroupingField = "iconEnableGrouping";
+
+QString iconSubtitlesPopupField = "iconSubtitlesPopup";

@@ -49,8 +49,6 @@ ApplicationWindow {
     Material.foreground: applicationThemeViewModel.colorMaterialText
 
     onClosing: {
-        onlinePlayerWindow.closeWindow();
-        onlinePlayerWindow.hide();
         applicationSettings.isMaximize = window.visibility === Window.Maximized;
     }
 
@@ -1082,9 +1080,6 @@ ApplicationWindow {
             onReturnToReleasesPage: {
                 mainViewModel.selectPage("release");
             }
-            onPlayerCreated: {
-                onlinePlayerWindow.loadPlayer();
-            }
         }
 
         Releases {
@@ -1435,13 +1430,6 @@ ApplicationWindow {
     OnlinePlayerWindowViewModel {
         id: onlinePlayerWindowViewModel
         startupPlayer: userConfigurationViewModel.needSavePlayer ? userConfigurationViewModel.lastSelectedPlayer : ""
-    }
-
-    OnlinePlayerWindow {
-        id: onlinePlayerWindow
-        videoSource: videoplayer.videoPlayerSource
-        videoOutput: videoplayer.videoOutputSource
-        videoOrigin: videoplayer.videoOrigin
     }
 
     EmbeddedVideoPlayer {

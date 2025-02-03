@@ -86,7 +86,6 @@
         <file>Assets/Icons/righthalf.svg</file>
         <file>Views/LeftPanelIconButton.qml</file>
         <file>Views/FilterPanelIconButton.qml</file>
-        <file>Views/OnlinePlayerWindow.qml</file>
         <file>Views/Videoplayer/QtPlayer515.qml</file>
         <file>Views/Videoplayer/QtVideo515Output.qml</file>
         <file>Controls/BackgroundImagePopup.qml</file>
@@ -235,7 +234,6 @@
         <file>Views/Applications.qml</file>
         <file>Assets/Icons/applications.svg</file>
         <file>Views/Videoplayer/MpvPlayer.qml</file>
-        <file>Views/Videoplayer/MpvPlayerOutput.qml</file>
         <file>Views/Extensions.qml</file>
         <file>Assets/Icons/authorization/discord.svg</file>
         <file>Assets/Icons/authorization/google.svg</file>
@@ -247,5 +245,7 @@
         <file>Assets/Icons/releases/disablegrouping.svg</file>
         <file>Assets/Icons/releases/enablegrouping.svg</file>
         <file>Views/Videoplayer/EmbeddedVideoPlayer.qml</file>
+        <file>Assets/Icons/videoplayer/subtitles.svg</file>
+        <file>Assets/Icons/videoplayer/darksubtitles.svg</file>
     </qresource>
 </RCC>

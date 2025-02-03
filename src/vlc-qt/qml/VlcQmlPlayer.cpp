@@ -289,6 +289,36 @@ void VlcQmlPlayer::setMuted(bool muted) noexcept
     emit mutedChanged();
 }
 
+void VlcQmlPlayer::setSelectedSubtitleTrack(int selectedSubtitleTrack)
+{
+    if (m_selectedSubtitleTrack == selectedSubtitleTrack) return;
+
+    m_selectedSubtitleTrack = selectedSubtitleTrack;
+    emit selectedSubtitleTrackChanged();
+
+    auto ids = _player->video()->subtitleIds();
+    if (!ids.isEmpty() && selectedSubtitleTrack < ids.size()) {
+        auto id = ids.value(selectedSubtitleTrack);
+        setSubtitleTrack(id);
+    }
+}
+
+void VlcQmlPlayer::setSelectedAudioTrack(int selectedAudioTrack)
+{
+    if (m_selectedAudioTrack == selectedAudioTrack) return;
+
+    m_selectedAudioTrack = selectedAudioTrack;
+    emit selectedAudioTrackChanged();
+
+    auto actualIndex = selectedAudioTrack + 1;
+
+    auto ids = _player->audio()->trackIds();
+    if (!ids.isEmpty() && actualIndex < ids.size()) {
+        auto id = ids.value(actualIndex);
+        setAudioTrack(id);
+    }
+}
+
 void VlcQmlPlayer::mediaParsed(bool parsed)
 {
     if (!parsed) {
@@ -315,6 +345,12 @@ void VlcQmlPlayer::mediaPlayerVout(int)
     _videoTrackModel->load(_player->video()->tracks());
 
     setVideoTrack(_player->video()->track());
+
+    m_selectedSubtitleTrack = 0;
+    m_selectedAudioTrack = 0;
+    emit selectedSubtitleTrackChanged();
+    emit selectedAudioTrackChanged();
+    emit voutLoaded();
 }
 
 void VlcQmlPlayer::buffering(int progress)

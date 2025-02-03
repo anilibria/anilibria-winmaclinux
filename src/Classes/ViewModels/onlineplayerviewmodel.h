@@ -58,9 +58,6 @@ class OnlinePlayerViewModel : public QObject
     Q_PROPERTY(bool sendPlaybackToRemoteSwitch READ sendPlaybackToRemoteSwitch WRITE setSendPlaybackToRemoteSwitch NOTIFY sendPlaybackToRemoteSwitchChanged)
     Q_PROPERTY(int volumeSlider READ volumeSlider WRITE setVolumeSlider NOTIFY volumeSliderChanged)
     Q_PROPERTY(QString playerPlaybackState READ playerPlaybackState WRITE setPlayerPlaybackState NOTIFY playerPlaybackStateChanged)
-    Q_PROPERTY(int navigateReleaseId READ navigateReleaseId WRITE setNavigateReleaseId NOTIFY navigateReleaseIdChanged)
-    Q_PROPERTY(int customPlaylistPosition READ customPlaylistPosition WRITE setCustomPlaylistPosition NOTIFY customPlaylistPositionChanged)
-    Q_PROPERTY(QString navigatePoster READ navigatePoster WRITE setNavigatePoster NOTIFY navigatePosterChanged)
     Q_PROPERTY(int videoPosition READ videoPosition WRITE setVideoPosition NOTIFY videoPositionChanged)
     Q_PROPERTY(int videoDuration READ videoDuration WRITE setVideoDuration NOTIFY videoDurationChanged)
     Q_PROPERTY(bool sendVolumeToRemote READ sendVolumeToRemote WRITE setSendVolumeToRemote NOTIFY sendVolumeToRemoteChanged)
@@ -90,6 +87,7 @@ class OnlinePlayerViewModel : public QObject
 
 private:
     bool m_isFullScreen;
+    bool m_firstRun { true };
     qreal m_playbackRate;
     bool m_isBuffering;
     QString m_videoQuality;
@@ -99,7 +97,8 @@ private:
     QList<int>* m_jumpMinutes;
     QList<int>* m_jumpSeconds;
     OnlinePlayerVideoList* m_videos;
-    QString m_videoSource;
+    QString m_videoSource { "" };
+    QString m_videoSourceProxy { "" };
     QString m_releasePoster;
     bool m_isFullHdAllowed;
     int m_selectedVideo;
@@ -120,9 +119,6 @@ private:
     int m_volumeSlider;
     QString m_playerPlaybackState;
     QHash<int, SeenModel*>* m_seenModels;
-    int m_navigateReleaseId;
-    int m_customPlaylistPosition;
-    QString m_navigatePoster;
     int m_videoPosition;
     int m_videoDuration;
     bool m_sendVolumeToRemote;
@@ -152,6 +148,9 @@ private:
     bool m_reachEnding { false };
     bool m_showEmbeddedVideoWindow { false };
     bool m_showEmbeddedVideoWindowPanel { false };
+    const QString m_cinemahallMode { "cinamehall" };
+    const QString m_multipleReleasesMode { "multiplereleases" };
+    const QString m_streamingTorrentMode { "streamingtorrent" };
 
 public:
     explicit OnlinePlayerViewModel(QObject *parent = nullptr);
@@ -225,15 +224,6 @@ public:
 
     QString playerPlaybackState() const { return m_playerPlaybackState; }
     void setPlayerPlaybackState(const QString& playerPlaybackState) noexcept;
-
-    int navigateReleaseId() const { return m_navigateReleaseId; }
-    void setNavigateReleaseId(int navigateReleaseId) noexcept;
-
-    int customPlaylistPosition() const { return m_customPlaylistPosition; }
-    void setCustomPlaylistPosition(int customPlaylistPosition) noexcept;
-
-    QString navigatePoster() const { return m_navigatePoster; }
-    void setNavigatePoster(const QString& navigatePoster) noexcept;
 
     int videoPosition() const { return m_videoPosition; }
     void setVideoPosition(int position) noexcept;
@@ -326,6 +316,7 @@ public:
     Q_INVOKABLE void quickSetupForMultipleRelease(QList<int> releaseIds);
     Q_INVOKABLE void quickSetupForFavoritesCinemahall();
     Q_INVOKABLE void setupForCinemahall();
+    Q_INVOKABLE void quickSetupForSingleDownloadedTorrent(const QStringList& files, int releaseId) noexcept;
     Q_INVOKABLE void selectVideo(int releaseId, int videoId);
     Q_INVOKABLE void changeVideoQuality(const QString& quality) noexcept;
     Q_INVOKABLE void setVideoSpeed(double speed) noexcept;
@@ -339,10 +330,10 @@ public:
     Q_INVOKABLE int skipOpening() noexcept;
     Q_INVOKABLE void reloadCurrentVideo() noexcept;
     Q_INVOKABLE void openVideoInExternalPlayer(const QString& path) noexcept;
-    Q_INVOKABLE void quickSetupForSingleDownloadedTorrent(const QStringList& files, int releaseId) noexcept;
     Q_INVOKABLE bool releaseHasVideos(int releaseId) noexcept;
     Q_INVOKABLE bool releaseIsRutube(int releaseId) noexcept;
-    Q_INVOKABLE void clearPanelTimer() noexcept;
+    Q_INVOKABLE void restoreLastRelease() noexcept;
+    Q_INVOKABLE void clearPanelTimer() noexcept;    
     Q_INVOKABLE void increasePanelTimer() noexcept;
 
 private:
@@ -361,6 +352,9 @@ private:
     void setRutubeIdentifier(const OnlineVideoModel* video) noexcept;
     void clearRutubeIdentifier() noexcept;
     int findNextNotWatchVideo(int releaseId, int videoIndex) noexcept;
+    void refreshVideoSourceProxy(const QString& newVideoSource) noexcept;
+    void preparePlayerForNewMode(const QString& mode);
+    void preparePlayerForNewRelease(OnlineVideoModel* video);
 
 private slots:
     void downloadPlaylist(QNetworkReply *reply);
@@ -391,10 +385,7 @@ signals:
     void volumeSliderChanged();
     void playerPlaybackStateChanged();
     void needScrollSeriaPosition();
-    void navigateReleaseIdChanged();
-    void customPlaylistPositionChanged();
     void navigateVideosChanged();
-    void navigatePosterChanged();
     void playInPlayer();
     void pauseInPlayer();
     void saveToWatchHistory(int releaseId);

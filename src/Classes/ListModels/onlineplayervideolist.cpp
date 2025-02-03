@@ -259,8 +259,12 @@ void OnlinePlayerVideoList::setVideosFromDownloadedTorrent(const QStringList &fi
         videoModel->setIsGroup(false);
         videoModel->setTitle("Файл торрента " + QString::number(iterator + 1));
         if (iterator < videos.count()) {
-            videoModel->setOpeningEndSeconds(videos.value(iterator)->openingEndSeconds());
-            videoModel->setOpeningStartSeconds(videos.value(iterator)->openingStartSeconds());
+            auto currentVideo = videos.value(iterator);
+            videoModel->setOpeningEndSeconds(currentVideo->openingEndSeconds());
+            videoModel->setOpeningStartSeconds(currentVideo->openingStartSeconds());
+            videoModel->setEndingEndSeconds(currentVideo->endingEndSeconds());
+            videoModel->setEndingStartSeconds(currentVideo->endingStartSeconds());
+            videoModel->setUniqueId(currentVideo->uniqueId());
         }
         m_videos->append(videoModel);
         iterator++;
@@ -314,8 +318,12 @@ void OnlinePlayerVideoList::setVideosFromSingleTorrent(const ApiTorrentModel& to
         videoModel->setIsGroup(false);
         videoModel->setTitle("Файл " + QString::number(i + 1));
         if (i < videos.count()) {
-            videoModel->setOpeningEndSeconds(videos.value(i)->openingEndSeconds());
-            videoModel->setOpeningStartSeconds(videos.value(i)->openingStartSeconds());
+            auto currentVideo = videos.value(i);
+            videoModel->setOpeningEndSeconds(currentVideo->openingEndSeconds());
+            videoModel->setOpeningStartSeconds(currentVideo->openingStartSeconds());
+            videoModel->setEndingEndSeconds(currentVideo->endingEndSeconds());
+            videoModel->setEndingStartSeconds(currentVideo->endingStartSeconds());
+            videoModel->setUniqueId(currentVideo->uniqueId());
         }
         m_videos->append(videoModel);
     }
@@ -323,10 +331,8 @@ void OnlinePlayerVideoList::setVideosFromSingleTorrent(const ApiTorrentModel& to
     endResetModel();
 }
 
-void OnlinePlayerVideoList::setVideosFromSingleList(int releaseId, const QString& poster) noexcept
+void OnlinePlayerVideoList::setVideosFromSingleList(int releaseId) noexcept
 {
-    Q_UNUSED(poster); //TODO: remake signature!!!
-
     beginResetModel();
 
     auto apiVideos = m_releaseViewModel->getReleaseVideos(releaseId);

@@ -19,6 +19,10 @@ class MpvObject : public QQuickFramebufferObject
     Q_PROPERTY(int position READ position NOTIFY positionChanged)
     Q_PROPERTY(int duration READ duration NOTIFY durationChanged)
     Q_PROPERTY(int playbackState READ playbackState WRITE setPlaybackState NOTIFY playbackStateChanged)
+    Q_PROPERTY(int subtitleTrack READ subtitleTrack WRITE setSubtitleTrack NOTIFY subtitleTrackChanged FINAL)
+    Q_PROPERTY(int audioTrack READ audioTrack WRITE setAudioTrack NOTIFY audioTrackChanged FINAL)
+    Q_PROPERTY(int countAudioTrack READ countAudioTrack NOTIFY countAudioTrackChanged FINAL)
+    Q_PROPERTY(int countSubtitleTrack READ countSubtitleTrack NOTIFY countSubtitleTrackChanged FINAL)
 
     friend class MpvRenderer;
 
@@ -31,9 +35,13 @@ private:
     bool m_paused { false };
     int m_duration { 0 };
     int m_position { 0 };
+    int m_subtitleTrack { false };
     const int pausedPlayback = 1;
     const int playedPlayback = 2;
     const int stopedPlayback = 3;
+    int m_countAudioTrack { 0 };
+    int m_countSubtitleTrack { 0 };
+    int m_audioTrack { 0 };
 
 public:
     static void on_update(void *ctx);
@@ -62,6 +70,15 @@ public:
 
     int position() const noexcept { return m_position; }
     int duration() const noexcept { return m_duration; }
+
+    int subtitleTrack() const noexcept { return m_subtitleTrack; }
+    void setSubtitleTrack(int subtitleTrack) noexcept;
+
+    int audioTrack() const noexcept { return m_audioTrack; }
+    void setAudioTrack(int audioTrack) noexcept;
+
+    int countAudioTrack() const noexcept { return m_countAudioTrack; }
+    int countSubtitleTrack() const noexcept { return m_countSubtitleTrack; }
 
     Q_INVOKABLE void play();
     Q_INVOKABLE void pause();
@@ -106,6 +123,10 @@ signals:
     void endBuffered();
     void playbackChanged(int newPlayback);
     void playbackStateChanged();
+    void subtitleTrackChanged();
+    void countAudioTrackChanged();
+    void countSubtitleTrackChanged();
+    void audioTrackChanged();
 
 };
 

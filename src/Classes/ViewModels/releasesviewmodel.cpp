@@ -1211,6 +1211,8 @@ void ReleasesViewModel::hideReleaseCard() noexcept
 
 void ReleasesViewModel::setSeenMarkAllSeries(int id, int countSeries, bool marked)
 {
+    Q_UNUSED(countSeries);
+
     QList<QString> result;
 
     foreach (auto item, m_onlineVideos) {
@@ -1366,6 +1368,8 @@ void ReleasesViewModel::refreshOpenedReleaseCard()
 
 void ReleasesViewModel::setSeenMark(int id, const QString& seriaId, bool marked)
 {
+    Q_UNUSED(id);
+
     setSeenMarkInternal(seriaId, marked);
     saveSeenMarks();
     synchronizeSeenMarkForSingleSeria(seriaId, marked);
@@ -1373,6 +1377,8 @@ void ReleasesViewModel::setSeenMark(int id, const QString& seriaId, bool marked)
 
 void ReleasesViewModel::toggleSeenMark(int id, const QString& seriaId) noexcept
 {
+    Q_UNUSED(id);
+
     auto newState = false;
     if (m_extendedSeenMarks.contains(seriaId)) {
         auto oldItem = m_extendedSeenMarks.value(seriaId);
@@ -1389,6 +1395,8 @@ void ReleasesViewModel::toggleSeenMark(int id, const QString& seriaId) noexcept
 
 bool ReleasesViewModel::getSeriaSeenMark(int id, const QString& seriaId) const noexcept
 {
+    Q_UNUSED(id);
+
     if (m_extendedSeenMarks.contains(seriaId)) {
         auto item = m_extendedSeenMarks.value(seriaId);
         return std::get<0>(item);

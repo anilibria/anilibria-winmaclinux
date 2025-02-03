@@ -33,12 +33,10 @@ class OnlinePlayerWindowViewModel : public QObject
     Q_PROPERTY(int windowCursorShape READ windowCursorShape WRITE setWindowCursorShape NOTIFY windowCursorShapeChanged)
     Q_PROPERTY(int panelOpacity READ panelOpacity WRITE setPanelOpacity NOTIFY panelOpacityChanged)
     Q_PROPERTY(QString playerComponent READ playerComponent NOTIFY playerComponentChanged)
-    Q_PROPERTY(QString playerOutputComponent READ playerOutputComponent NOTIFY playerOutputComponentChanged)
     Q_PROPERTY(bool supportOutput READ supportOutput NOTIFY supportOutputChanged)
     Q_PROPERTY(QStringList players READ players NOTIFY playersChanged)
     Q_PROPERTY(QString selectedPlayer READ selectedPlayer NOTIFY selectedPlayerChanged)
     Q_PROPERTY(bool isHasVlc READ isHasVlc NOTIFY isHasVlcChanged)
-    Q_PROPERTY(bool isSelectedQtAv READ isSelectedQtAv NOTIFY isSelectedQtAvChanged)
     Q_PROPERTY(bool isSelectedVlc READ isSelectedVlc NOTIFY isSelectedVlcChanged)
     Q_PROPERTY(QString startupPlayer READ startupPlayer WRITE setStartupPlayer NOTIFY startupPlayerChanged)
     Q_PROPERTY(bool isSelectedMpv READ isSelectedMpv NOTIFY isSelectedMpvChanged)
@@ -52,21 +50,20 @@ private:
     int m_windowCursorShape;
     int m_panelOpacity;
     QString m_playerComponent { "" };
-    QString m_playerOutputComponent { "" };
     bool m_supportOutput { false };
     QStringList m_players { QStringList() };
     QString m_selectedPlayer { "" };
     QMap<QString, QString> m_playerComponents { QMap<QString, QString>() };
-    QMap<QString, QString> m_playerOutputComponents { QMap<QString, QString>() };
     bool m_isHasVlc { false };
     bool m_isHasMpv { false };
-    bool m_isSelectedQtAv { false };
     bool m_isSelectedVlc { false };
     bool m_isSelectedMpv { false };
     const QString nameVLCPlayer { "VLC" };
     const QString nameMpvPlayer { "mpv" };
     QString m_startupPlayer { "" };
     bool m_alreadyRestorePlayer { false };
+    QString m_nextVideoPlayer { "" };
+    int m_nextVideoPlayerTimer { -1 };
 
 public:
     explicit OnlinePlayerWindowViewModel(QObject *parent = nullptr);
@@ -78,7 +75,6 @@ public:
     int windowCursorShape() const noexcept { return m_windowCursorShape; }
     int panelOpacity() const noexcept { return m_panelOpacity; }
     QString playerComponent() const noexcept { return m_playerComponent; };
-    QString playerOutputComponent() const noexcept { return m_playerOutputComponent; }
     bool supportOutput() const noexcept { return m_supportOutput; }
 
     void setPlayerButtonVisible(const bool& playerButtonVisible) noexcept;
@@ -93,7 +89,6 @@ public:
     QString selectedPlayer() const noexcept { return m_selectedPlayer; }
 
     bool isHasVlc() const noexcept { return m_isHasVlc; }
-    bool isSelectedQtAv() const noexcept { return m_isSelectedQtAv; }
     bool isSelectedVlc() const noexcept { return m_isSelectedVlc; }
     bool isSelectedMpv() const noexcept { return m_isSelectedMpv; }
     bool isHasMpv() const noexcept { return m_isHasMpv; }
@@ -101,11 +96,14 @@ public:
     QString startupPlayer() const noexcept { return m_startupPlayer; }
     void setStartupPlayer(const QString& startupPlayer) noexcept;
 
+    void timerEvent(QTimerEvent *event) override;
+
     Q_INVOKABLE void playbackStateChanged(const bool& isPlaying);
     Q_INVOKABLE void hideControlPanel();
     Q_INVOKABLE void showPanel();
     Q_INVOKABLE void clearCurrentPlayer();
     Q_INVOKABLE void changePlayer(const QString& player);
+    Q_INVOKABLE void changePlayerWithTimeout(const QString& player);
 
 private:
     void fillSupportedPlayers();
@@ -120,12 +118,10 @@ signals:
     void windowCursorShapeChanged();
     void panelOpacityChanged();
     void playerComponentChanged();
-    void playerOutputComponentChanged();
     void supportOutputChanged();
     void playersChanged();
     void selectedPlayerChanged();
     void isHasVlcChanged();
-    void isSelectedQtAvChanged();
     void isSelectedVlcChanged();
     void startupPlayerChanged();
     void isSelectedMpvChanged();

@@ -19,6 +19,10 @@ Item {
     property bool isPaused: false
     property bool isStopped: false
     property bool isCropped: false
+    property int selectedAudio: 0
+    property int selectedSubtitle: 0
+    property var subtitles: ['Без субтитров']
+    property var audios: ['Дорожка 1']
 
     signal play();
     signal pause();

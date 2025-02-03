@@ -111,13 +111,7 @@ Page {
         jumpSecondComboBox.currentIndex = onlinePlayerViewModel.jumpSeconds.indexOf(userSettings.jumpSecond);
         remotePlayerPortComboBox.currentIndex = onlinePlayerViewModel.ports.indexOf(userConfigurationViewModel.remotePort);
 
-        if (!onlinePlayerViewModel.navigateReleaseId && !onlinePlayerViewModel.isCinemahall) {
-            const lastSeenReleaseId = onlinePlayerViewModel.getLastVideoSeen();
-            if (lastSeenReleaseId === 0) return;
-
-            onlinePlayerViewModel.quickSetupForSingleRelease(lastSeenReleaseId);
-        }
-
+        onlinePlayerViewModel.restoreLastRelease();
     }
 
     anchors.fill: parent
@@ -497,7 +491,7 @@ Page {
                     anchors.horizontalCenter: parent.horizontalCenter
 
                     ToggleButton {
-                        height: 20
+                        height: 28
                         width: userConfigurationViewModel.hidedQuality && !isChecked ? 0 : 60
                         text: "1080p"
                         visible: onlinePlayerViewModel.videoDuration > 0 && onlinePlayerViewModel.isFullHdAllowed && !(userConfigurationViewModel.hidedQuality && !isChecked)
@@ -512,7 +506,7 @@ Page {
                         }
                     }
                     ToggleButton {
-                        height: 20
+                        height: 28
                         width: userConfigurationViewModel.hidedQuality && !isChecked ? 0 : 60
                         visible: onlinePlayerViewModel.videoDuration > 0 && !(userConfigurationViewModel.hidedQuality && !isChecked)
                         text: "720p"
@@ -527,7 +521,7 @@ Page {
                         }
                     }
                     ToggleButton {
-                        height: 20
+                        height: 28
                         width: userConfigurationViewModel.hidedQuality && !isChecked ? 0 : 60
                         visible: onlinePlayerViewModel.videoDuration > 0 && !(userConfigurationViewModel.hidedQuality && !isChecked)
                         text: "480p"
@@ -543,7 +537,7 @@ Page {
                     }
                     Rectangle {
                         width: 20
-                        height: 20
+                        height: 28
                         visible: onlinePlayerViewModel.videoDuration > 0
                         color: "transparent"
                         PlainText {
@@ -553,7 +547,7 @@ Page {
                         }
                     }
                     ToggleButton {
-                        height: 20
+                        height: 28
                         width: userConfigurationViewModel.hidedSpeed && !isChecked ? 0 : 40
                         visible: onlinePlayerViewModel.videoDuration > 0 && !(userConfigurationViewModel.hidedSpeed && !isChecked)
                         text: "x0.25"
@@ -566,7 +560,7 @@ Page {
                         }
                     }
                     ToggleButton {
-                        height: 20
+                        height: 28
                         width: userConfigurationViewModel.hidedSpeed && !isChecked ? 0 : 40
                         visible: onlinePlayerViewModel.videoDuration > 0 && !(userConfigurationViewModel.hidedSpeed && !isChecked)
                         text: "x0.5"
@@ -579,7 +573,7 @@ Page {
                         }
                     }
                     ToggleButton {
-                        height: 20
+                        height: 28
                         width: userConfigurationViewModel.hidedSpeed && !isChecked ? 0 : 40
                         visible: onlinePlayerViewModel.videoDuration > 0 && !(userConfigurationViewModel.hidedSpeed && !isChecked)
                         text: "x0.75"
@@ -592,7 +586,7 @@ Page {
                         }
                     }
                     ToggleButton {
-                        height: 20
+                        height: 28
                         width: userConfigurationViewModel.hidedSpeed && !isChecked ? 0 : 40
                         visible: onlinePlayerViewModel.videoDuration > 0 && !(userConfigurationViewModel.hidedSpeed && !isChecked)
                         text: "x1"
@@ -605,7 +599,7 @@ Page {
                         }
                     }
                     ToggleButton {
-                        height: 20
+                        height: 28
                         width: userConfigurationViewModel.hidedSpeed && !isChecked ? 0 : 40
                         visible: onlinePlayerViewModel.videoDuration > 0 && !(userConfigurationViewModel.hidedSpeed && !isChecked)
                         text: "x1.25"
@@ -618,7 +612,7 @@ Page {
                         }
                     }
                     ToggleButton {
-                        height: 20
+                        height: 28
                         width: userConfigurationViewModel.hidedSpeed && !isChecked ? 0 : 40
                         visible: onlinePlayerViewModel.videoDuration > 0 && !(userConfigurationViewModel.hidedSpeed && !isChecked)
                         text: "x1.5"
@@ -631,7 +625,7 @@ Page {
                         }
                     }
                     ToggleButton {
-                        height: 20
+                        height: 28
                         width: userConfigurationViewModel.hidedSpeed && !isChecked ? 0 : 40
                         visible: onlinePlayerViewModel.videoDuration > 0 && !(userConfigurationViewModel.hidedSpeed && !isChecked)
                         text: "x1.75"
@@ -644,7 +638,7 @@ Page {
                         }
                     }
                     ToggleButton {
-                        height: 20
+                        height: 28
                         width: userConfigurationViewModel.hidedSpeed && !isChecked ? 0 : 40
                         visible: onlinePlayerViewModel.videoDuration > 0 && !(userConfigurationViewModel.hidedSpeed && !isChecked)
                         text: "x2"
@@ -657,7 +651,7 @@ Page {
                         }
                     }
                     ToggleButton {
-                        height: 20
+                        height: 28
                         width: userConfigurationViewModel.hidedSpeed && !isChecked ? 0 : 40
                         visible: onlinePlayerViewModel.videoDuration > 0 && !(userConfigurationViewModel.hidedSpeed && !isChecked)
                         text: "x3"
@@ -716,6 +710,71 @@ Page {
                         onMoved: {
                             playerLoader.item.volume = Math.round(value);
                             if (playerLoader.item.muted) playerLoader.item.muted = false;
+                        }
+                    }
+                    IconButton {
+                        id: tracksButton
+                        visible: !mainViewModel.isSmallSizeMode
+                        width: 40
+                        height: 40
+                        hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
+                        iconPath: applicationThemeViewModel.currentItems.iconSubtitlesPopup
+                        iconWidth: 24
+                        iconHeight: 24
+                        onButtonPressed: {
+                            tracksPopup.open();
+                        }
+
+                        DefaultPopup {
+                            id: tracksPopup
+                            y: -tracksPopup.height
+                            width: 300
+                            height: tracksColumn.implicitHeight
+                            modal: true
+                            closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
+
+                            Column {
+                                id: tracksColumn
+                                anchors.fill: parent
+                                spacing: 2
+
+                                PlainText {
+                                    id: subtitlesText
+                                    text: "Субтитры"
+                                    fontPointSize: 11
+                                }
+
+                                CommonComboBox {
+                                    id: subtitlesComboBox
+                                    width: tracksColumn.width - 4
+                                    currentIndex: playerLoader.item.selectedSubtitle
+                                    model: playerLoader.item.subtitles
+                                    onActivated: {
+                                        playerLoader.item.selectedSubtitle = subtitlesComboBox.currentIndex;
+                                    }
+                                }
+
+                                PlainText {
+                                    id: audiosText
+                                    text: "Аудио"
+                                    fontPointSize: 11
+                                }
+
+                                CommonComboBox {
+                                    id: audiosComboBox
+                                    width: tracksColumn.width - 4
+                                    currentIndex: playerLoader.item.selectedAudio
+                                    model: playerLoader.item.audios
+                                    onActivated: {
+                                        playerLoader.item.selectedAudio = audiosComboBox.currentIndex;
+                                    }
+                                }
+
+                                PlainText {
+                                    text: " "
+                                    fontPointSize: 9
+                                }
+                            }
                         }
                     }
                     IconButton {
@@ -1012,10 +1071,10 @@ Page {
 
                         DefaultPopup {
                             id: optionsPopup
-                            x: optionsButton.width - 610
-                            y: optionsButton.height - 510
+                            x: -leftColumn.implicitWidth
+                            y: -(leftColumn.implicitHeight + 20)
                             width: 600
-                            height: 500
+                            height: leftColumn.implicitHeight + 20
 
                             modal: true
                             focus: true
@@ -1233,12 +1292,16 @@ Page {
 
                                     onActivated: {
                                         optionsPopup.close();
+
                                         const newPlayer = onlinePlayerWindowViewModel.players[currentIndex];
                                         if (newPlayer === onlinePlayerWindowViewModel.selectedPlayer) return;
 
+                                        playerLoader.item.pause();
+
                                         onlinePlayerViewModel.restorePosition = onlinePlayerViewModel.videoPosition;
-                                        onlinePlayerWindowViewModel.changePlayer(newPlayer);
                                         if (userConfigurationViewModel.needSavePlayer) userConfigurationViewModel.lastSelectedPlayer = newPlayer;
+
+                                        onlinePlayerWindowViewModel.changePlayerWithTimeout(newPlayer);
                                     }
 
                                     Connections {
@@ -1324,14 +1387,6 @@ Page {
         Behavior on opacity {
             NumberAnimation { duration: 200 }
         }
-    }
-
-    Rectangle {
-        id: mask
-        width: 180
-        height: 260
-        radius: 10
-        visible: false
     }
 
     Rectangle {

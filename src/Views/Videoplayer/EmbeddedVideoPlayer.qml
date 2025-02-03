@@ -186,8 +186,9 @@ Rectangle {
         ShaderEffectSource {
             anchors.fill: parent
             anchors.margins: 1
-            sourceItem: videoplayer.videoPlayerSource
+            sourceItem: onlinePlayerWindowViewModel.isSelectedMpv ? videoplayer.videoPlayerSource : videoplayer.videoOutputSource
         }
+
     }
 
     onVisibleChanged: {
