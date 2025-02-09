@@ -8,7 +8,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     container:
-      image: bilelmoussaoui/flatpak-github-actions:gnome-44
+      image: ghcr.io/flathub-infra/flatpak-github-actions:kde-6.8
       options: --privileged
     strategy:
       matrix:
@@ -24,7 +24,7 @@ jobs:
       uses: docker/setup-qemu-action@v3
       with:
         platforms: arm64
-    - uses: flatpak/flatpak-github-actions/flatpak-builder@v6.3
+    - uses: flatpak/flatpak-github-actions/flatpak-builder@master
       with:
         bundle: anilibria.flatpak
         manifest-path: tv.anilibria.app.yml
