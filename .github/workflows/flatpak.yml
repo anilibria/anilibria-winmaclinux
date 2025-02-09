@@ -13,24 +13,20 @@ jobs:
     strategy:
       matrix:
         arch: [x86_64, aarch64]
-      # Don't fail the whole workflow if one architecture fails
-      fail-fast: false
+      fail-fast: true
     steps:
     - uses: actions/checkout@v4
-    # Docker is required by the docker/setup-qemu-action which enables emulation
     - name: Install deps
-      if: ${{ matrix.arch != 'x86_64' }}
       run: |
         dnf -y install docker
     - name: Set up QEMU
-      if: ${{ matrix.arch != 'x86_64' }}
       id: qemu
-      uses: docker/setup-qemu-action@v2
+      uses: docker/setup-qemu-action@v3
       with:
         platforms: arm64
     - uses: flatpak/flatpak-github-actions/flatpak-builder@v6
       with:
-        bundle: palette.flatpak
+        bundle: anilibria.flatpak
         manifest-path: tv.anilibria.app.yml
         cache-key: flatpak-builder-${{ github.sha }}
         arch: ${{ matrix.arch }}
