@@ -1603,15 +1603,8 @@ void ReleasesViewModel::openOpenedReleaseMagnetTorrent(int identifier) noexcept
 
 void ReleasesViewModel::synchronizeSeens(const QVariantMap items) noexcept
 {
-    QMap<QString, ReleaseOnlineVideoModel*> videosMap;
-    foreach (auto onlineVideo, m_onlineVideos) {
-        videosMap.insert(onlineVideo->uniqueId(), onlineVideo);
-    }
-
     auto keys = items.keys();
     foreach (auto key, keys) {
-        if (!videosMap.contains(key)) continue;
-
         auto value = items.value(key);
         auto map = value.toMap();
         auto state = map["mark"].toBool();
