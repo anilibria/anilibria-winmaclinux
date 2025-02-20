@@ -16,10 +16,12 @@ OsExtras::OsExtras(QObject *parent) : QObject(parent)
     m_dbusServices.append("org.gnome.ScreenSaver");
     m_dbusServices.append("org.freedesktop.ScreenSaver");
     m_dbusServices.append("org.kde.ScreenSaver");
+    m_dbusServices.append("org.freedesktop.PowerManagement");
 
     m_dbusPaths.append("/org/gnome/ScreenSaver");
     m_dbusPaths.append("/ScreenSaver");
     m_dbusPaths.append("/org/kde/ScreenSaver");
+    m_dbusPaths.append("/org/freedesktop/PowerManagement");
 #endif
 }
 
