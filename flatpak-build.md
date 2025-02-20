@@ -1,6 +1,6 @@
 ## Сборка пакета flatpak
 ### Для сборки на Fedora
-Предварительно надо скопировать файл `tv.anilibria.app.yml` из корня репозитория.
+Предварительно надо скопировать файл `tv.anilibria.app.yml` из [корня репозитория](https://github.com/anilibria/anilibria-winmaclinux/blob/master/tv.anilibria.app.yml).
 ```
 sudo dnf install flatpak flatpak-builder
 sudo flatpak install flathub org.kde.Platform//5.15-22.08 org.kde.Sdk//5.15-22.08
