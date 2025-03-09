@@ -95,6 +95,7 @@ class ReleasesViewModel : public QObject
     Q_PROPERTY(bool openedReleaseInFavorites READ openedReleaseInFavorites NOTIFY openedReleaseInFavoritesChanged)
     Q_PROPERTY(QString openedReleaseAnnounce READ openedReleaseAnnounce NOTIFY openedReleaseAnnounceChanged)
     Q_PROPERTY(bool openedReleaseIsRutube READ openedReleaseIsRutube NOTIFY openedReleaseIsRutubeChanged)
+    Q_PROPERTY(bool openedReleaseInCollections READ openedReleaseInCollections NOTIFY openedReleaseInCollectionsChanged)
     Q_PROPERTY(bool synchronizationEnabled READ synchronizationEnabled WRITE setSynchronizationEnabled NOTIFY synchronizationEnabledChanged)
     Q_PROPERTY(QString newEntities READ newEntities WRITE setNewEntities NOTIFY newEntitiesChanged)
     Q_PROPERTY(bool notCloseReleaseCardAfterWatch READ notCloseReleaseCardAfterWatch WRITE setNotCloseReleaseCardAfterWatch NOTIFY notCloseReleaseCardAfterWatchChanged)
@@ -260,6 +261,7 @@ public:
     bool openedReleaseInFavorites() const noexcept { return m_openedRelease != nullptr ? m_userFavorites->contains(m_openedRelease->id()) : false; }
     QString openedReleaseAnnounce() const noexcept { return m_openedRelease != nullptr ? m_openedRelease->announce() : ""; }
     bool openedReleaseIsRutube() const noexcept;
+    bool openedReleaseInCollections() const noexcept;
     QStringList getMostPopularGenres() const noexcept;
     QStringList getMostPopularVoices() const noexcept;
     QList<int> countSections() const noexcept { return m_sectionCounters; };
@@ -340,6 +342,7 @@ public:
     Q_INVOKABLE void openOpenedReleaseMagnetTorrent(int identifier) noexcept;
     Q_INVOKABLE void synchronizeSeens(const QVariantMap items) noexcept;
     Q_INVOKABLE void synchronizeLocalSeensToExternal() noexcept;
+    Q_INVOKABLE void recheckOpenedReleaseInCollections() noexcept;
     FullReleaseModel* getReleaseById(int id) const noexcept;
     void resetReleaseChanges(int releaseId) noexcept;
     quint32 m_seedValue { 0 };
@@ -457,6 +460,7 @@ signals:
     void releasesFullyLoaded();
     void addedSeenMarks(QList<QString> uniqueIds);
     void removeSeenMarks(QList<QString> uniqueIds);
+    void openedReleaseInCollectionsChanged();
 
 };
 

@@ -164,6 +164,60 @@ ColumnLayout {
                             cardFavoritesMenu.close();
                         }
                     }
+                    CommonMenuItem {
+                        text: "Добавить в коллекцию Запланировано"
+                        enabled: !releasesViewModel.openedReleaseInCollections
+                        onPressed: {
+                            synchronizationHub.addReleaseToCollection(releasesViewModel.openedReleaseId, "PLANNED");
+                            releasesViewModel.recheckOpenedReleaseInCollections();
+                            cardFavoritesMenu.close();
+                        }
+                    }
+                    CommonMenuItem {
+                        text: "Добавить в коллекцию Смотрю"
+                        enabled: !releasesViewModel.openedReleaseInCollections
+                        onPressed: {
+                            synchronizationHub.addReleaseToCollection(releasesViewModel.openedReleaseId, "WATCHING");
+                            releasesViewModel.recheckOpenedReleaseInCollections();
+                            cardFavoritesMenu.close();
+                        }
+                    }
+                    CommonMenuItem {
+                        text: "Добавить в коллекцию Просмотрено"
+                        enabled: !releasesViewModel.openedReleaseInCollections
+                        onPressed: {
+                            synchronizationHub.addReleaseToCollection(releasesViewModel.openedReleaseId, "WATCHED");
+                            releasesViewModel.recheckOpenedReleaseInCollections();
+                            cardFavoritesMenu.close();
+                        }
+                    }
+                    CommonMenuItem {
+                        text: "Добавить в коллекцию Отложено"
+                        enabled: !releasesViewModel.openedReleaseInCollections
+                        onPressed: {
+                            synchronizationHub.addReleaseToCollection(releasesViewModel.openedReleaseId, "POSTPONED");
+                            releasesViewModel.recheckOpenedReleaseInCollections();
+                            cardFavoritesMenu.close();
+                        }
+                    }
+                    CommonMenuItem {
+                        text: "Добавить в коллекцию Брошено"
+                        enabled: !releasesViewModel.openedReleaseInCollections
+                        onPressed: {
+                            synchronizationHub.addReleaseToCollection(releasesViewModel.openedReleaseId, "ABANDONED");
+                            releasesViewModel.recheckOpenedReleaseInCollections();
+                            cardFavoritesMenu.close();
+                        }
+                    }
+                    CommonMenuItem {
+                        text: "Удалить из коллекций"
+                        enabled: releasesViewModel.openedReleaseInCollections
+                        onPressed: {
+                            synchronizationHub.deleteReleaseFromCollections(releasesViewModel.openedReleaseId);
+                            releasesViewModel.recheckOpenedReleaseInCollections();
+                            cardFavoritesMenu.close();
+                        }
+                    }
                 }
             }
             IconButton {

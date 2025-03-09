@@ -395,6 +395,13 @@ bool ReleasesViewModel::openedReleaseIsRutube() const noexcept
     return false;
 }
 
+bool ReleasesViewModel::openedReleaseInCollections() const noexcept
+{
+    if (m_openedRelease == nullptr) return false;
+
+    return m_collections.contains(m_openedRelease->id());
+}
+
 QStringList ReleasesViewModel::getMostPopularGenres() const noexcept
 {
     QStringList allGenres;
@@ -1364,6 +1371,7 @@ void ReleasesViewModel::refreshOpenedReleaseCard()
     emit openedReleaseSeenCountVideosChanged();
     emit openedReleaseAnnounceChanged();
     emit openedReleaseIsRutubeChanged();
+    emit openedReleaseInCollectionsChanged();
 }
 
 void ReleasesViewModel::setSeenMark(int id, const QString& seriaId, bool marked)
@@ -1622,6 +1630,11 @@ void ReleasesViewModel::synchronizeSeens(const QVariantMap items) noexcept
 
 void ReleasesViewModel::synchronizeLocalSeensToExternal() noexcept
 {
+}
+
+void ReleasesViewModel::recheckOpenedReleaseInCollections() noexcept
+{
+    emit openedReleaseInCollectionsChanged();
 }
 
 FullReleaseModel *ReleasesViewModel::getReleaseById(int id) const noexcept
