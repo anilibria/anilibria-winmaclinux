@@ -230,6 +230,13 @@ Page {
                                         text: countInFavorites
                                     }
 
+                                    PlainText {
+                                        Layout.preferredHeight: 20
+                                        Layout.fillWidth: true
+                                        fontPointSize: 9
+                                        text: totalTime + ", эпизодов " + totalEpisode + ", рейтинг " + totalRating
+                                    }
+
                                     Item {
                                         Layout.fillHeight: true
                                     }

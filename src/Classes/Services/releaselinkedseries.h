@@ -70,6 +70,9 @@ private:
         GenresRole,
         CountInFavoritesRole,
         IdentifierRole,
+        TotalTimeRole,
+        TotalEpisodesRole,
+        TotalRatingRole,
     };
 
 public:

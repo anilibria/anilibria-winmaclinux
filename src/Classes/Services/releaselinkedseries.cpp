@@ -20,13 +20,14 @@
 #include <QDebug>
 #include <QVector>
 #include <QRegularExpression>
-#include <QtConcurrent>
 #include <QFuture>
 #include <QMap>
 #include <QSet>
 #include <QJsonDocument>
 #include <QJsonArray>
 #include <QJsonObject>
+#include <QDir>
+#include <QStandardPaths>
 #include "releaselinkedseries.h"
 #include "globalconstants.h"
 
@@ -102,6 +103,15 @@ QVariant ReleaseLinkedSeries::data(const QModelIndex &index, int role) const
         case IdentifierRole: {
             return QVariant(m_series.indexOf(element));
         }
+        case TotalTimeRole: {
+            return QVariant(element->totalSecondsDisplay());
+        }
+        case TotalEpisodesRole: {
+            return QVariant(element->totalEpisodes());
+        }
+        case TotalRatingRole: {
+            return QVariant(element->totalRating());
+        }
     }
 
     return QVariant();
@@ -149,6 +159,18 @@ QHash<int, QByteArray> ReleaseLinkedSeries::roleNames() const
         {
             IdentifierRole,
             "identifier"
+        },
+        {
+            TotalTimeRole,
+            "totalTime"
+        },
+        {
+            TotalEpisodesRole,
+            "totalEpisode"
+        },
+        {
+            TotalRatingRole,
+            "totalRating"
         }
     };
 }

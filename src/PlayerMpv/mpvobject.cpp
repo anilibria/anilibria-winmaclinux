@@ -514,7 +514,8 @@ void MpvObject::timerEvent(QTimerEvent *event)
         qDebug() << "Command reply!!!!";
     }
     if (playerEvent->event_id == MPV_EVENT_IDLE) {
-        if (m_duration > 0 && m_position > 0) {
+        auto duration = getMpvProperty("duration");
+        if (duration.isValid() && duration.toInt() > 0) {
             qDebug() << "End reached file!!!!";
             emit endFileReached();
         }

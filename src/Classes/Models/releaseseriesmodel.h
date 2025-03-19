@@ -22,6 +22,10 @@ private:
     int m_sumOfSeeds { 0 };
     QString m_posterHost { "" };
     QString m_title { "" };
+    int64_t m_totalSeconds { 0 };
+    int32_t m_totalEpisodes { 0 };
+    double_t m_totalRating { 0.0 };
+    QString m_totalSecondsDisplay { "" };
 
 public:
     explicit ReleaseSeriesModel();
@@ -43,6 +47,10 @@ public:
     int sumOfSeeds() const { return m_sumOfSeeds; }
     QString posterHost() const { return m_posterHost; }
     QString title() const { return m_title; }
+    int64_t totalSeconds() const { return m_totalSeconds; }
+    QString totalSecondsDisplay() const { return m_totalSecondsDisplay; }
+    int32_t totalEpisodes() const { return m_totalEpisodes; }
+    qreal totalRating() const { return m_totalRating; }
 
     void recalculateCountReleases();
     bool appendReleaseId(const int id);
@@ -55,6 +63,9 @@ public:
     void setSumOfSeeds(int sumOfSeeds) noexcept { m_sumOfSeeds = sumOfSeeds; }
     void setPosterHost(const QString& posterHost) noexcept { m_posterHost = posterHost; }
     void setTitle(const QString& title) noexcept { m_title = title; }
+    void setTotalSeconds(int64_t value) noexcept { m_totalSeconds = value; }
+    void setTotalEpisodes(int32_t value) noexcept { m_totalEpisodes = value; }
+    void setTotalRating(double_t value) noexcept { m_totalRating = value; }
 
     void readFromJson(const QJsonObject &jsonObject) noexcept;
 };
