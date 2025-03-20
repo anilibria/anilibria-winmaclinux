@@ -24,7 +24,7 @@ private:
     QString m_title { "" };
     int64_t m_totalSeconds { 0 };
     int32_t m_totalEpisodes { 0 };
-    double_t m_totalRating { 0.0 };
+    double m_totalRating { 0.0 };
     QString m_totalSecondsDisplay { "" };
 
 public:
@@ -65,7 +65,7 @@ public:
     void setTitle(const QString& title) noexcept { m_title = title; }
     void setTotalSeconds(int64_t value) noexcept { m_totalSeconds = value; }
     void setTotalEpisodes(int32_t value) noexcept { m_totalEpisodes = value; }
-    void setTotalRating(double_t value) noexcept { m_totalRating = value; }
+    void setTotalRating(double value) noexcept { m_totalRating = value; }
 
     void readFromJson(const QJsonObject &jsonObject) noexcept;
 };
