@@ -112,6 +112,9 @@ QVariant ReleaseLinkedSeries::data(const QModelIndex &index, int role) const
         case TotalRatingRole: {
             return QVariant(element->totalRating());
         }
+        case TotalSeenRole: {
+            return QVariant(element->countSeens());
+        }
     }
 
     return QVariant();
@@ -171,15 +174,20 @@ QHash<int, QByteArray> ReleaseLinkedSeries::roleNames() const
         {
             TotalRatingRole,
             "totalRating"
+        },
+        {
+            TotalSeenRole,
+            "totalSeen"
         }
     };
 }
 
-void ReleaseLinkedSeries::setup(QSharedPointer<QList<FullReleaseModel *> > releases, QList<int>* userFavorites, QList<ApiTorrentModel*>* torrents)
+void ReleaseLinkedSeries::setup(QSharedPointer<QList<FullReleaseModel *> > releases, QList<int>* userFavorites, QList<ApiTorrentModel*>* torrents, std::function<int(int)> getReleaseCountSeen)
 {
     m_releases = releases;
     m_userFavorites = userFavorites;
     m_torrents = torrents;
+    m_getReleaseCountSeen = getReleaseCountSeen;
 }
 
 void ReleaseLinkedSeries::setNameFilter(const QString& nameFilter) noexcept
@@ -617,6 +625,7 @@ void ReleaseLinkedSeries::refreshDataFromReleases()
         seasons.clear();
 
         auto ids = series->releaseIds();
+        auto countSeens = 0;
         foreach (auto id, *ids) {
             auto identifier = id.toInt();
             if (!m_releasesMap.contains(identifier)) continue;
@@ -630,8 +639,11 @@ void ReleaseLinkedSeries::refreshDataFromReleases()
             foreach (auto genre, release->genres().split(",")) {
                 series->appendGenre(genre.trimmed());
             }
+
+            countSeens += m_getReleaseCountSeen(id.toInt());
         }
 
+        series->setCountSeens(countSeens);
         series->setSumOfRatings(rating);
         series->setSumOfSeeds(seeds);
         std::sort(

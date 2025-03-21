@@ -326,7 +326,10 @@ void ReleasesViewModel::setReleaseLinkedSeries(ReleaseLinkedSeries *releaseLinke
     if (m_releaseLinkedSeries == nullptr) return;
 
     m_items->setupLinkedSeries(m_releaseLinkedSeries);
-    m_releaseLinkedSeries->setup(m_releases, m_userFavorites, &m_torrentItems);
+    auto getReleaseCountSeens = [=](int releaseId) {
+        return this->items()->getReleaseSeenMarkCount(releaseId);
+    };
+    m_releaseLinkedSeries->setup(m_releases, m_userFavorites, &m_torrentItems, getReleaseCountSeens);
 }
 
 QString ReleasesViewModel::openedReleaseStatusDisplay() const noexcept

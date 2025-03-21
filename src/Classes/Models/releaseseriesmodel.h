@@ -26,6 +26,7 @@ private:
     int32_t m_totalEpisodes { 0 };
     double m_totalRating { 0.0 };
     QString m_totalSecondsDisplay { "" };
+    int m_countSeens { 0 };
 
 public:
     explicit ReleaseSeriesModel();
@@ -51,6 +52,7 @@ public:
     QString totalSecondsDisplay() const { return m_totalSecondsDisplay; }
     int32_t totalEpisodes() const { return m_totalEpisodes; }
     qreal totalRating() const { return m_totalRating; }
+    int countSeens() const { return m_countSeens; }
 
     void recalculateCountReleases();
     bool appendReleaseId(const int id);
@@ -66,6 +68,7 @@ public:
     void setTotalSeconds(int64_t value) noexcept { m_totalSeconds = value; }
     void setTotalEpisodes(int32_t value) noexcept { m_totalEpisodes = value; }
     void setTotalRating(double value) noexcept { m_totalRating = value; }
+    void setCountSeens(int value) noexcept { m_countSeens = value; }
 
     void readFromJson(const QJsonObject &jsonObject) noexcept;
 };

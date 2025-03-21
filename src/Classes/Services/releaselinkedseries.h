@@ -57,6 +57,7 @@ private:
     bool m_sortingDirection { false };
     ReleaseSeriesCardListModel* m_releaseSeriesCardList { new ReleaseSeriesCardListModel(this) };
     QString m_apiv2host { "" };
+    std::function<int(int)> m_getReleaseCountSeen { nullptr };
 
     enum ItemRoles {
         CountReleasesRole = Qt::UserRole + 1,
@@ -73,6 +74,7 @@ private:
         TotalTimeRole,
         TotalEpisodesRole,
         TotalRatingRole,
+        TotalSeenRole,
     };
 
 public:
@@ -82,7 +84,7 @@ public:
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
     QHash<int,QByteArray> roleNames() const override;
 
-    void setup(QSharedPointer<QList<FullReleaseModel *>> releases, QList<int>* userFavorites, QList<ApiTorrentModel*>* onlineVideos);
+    void setup(QSharedPointer<QList<FullReleaseModel *>> releases, QList<int>* userFavorites, QList<ApiTorrentModel*>* onlineVideos, std::function<int(int)> getReleaseCountSeen);
 
     QString nameFilter() const { return m_nameFilter; }
     void setNameFilter(const QString& nameFilter) noexcept;
