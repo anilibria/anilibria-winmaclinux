@@ -234,7 +234,7 @@ Page {
                                         Layout.preferredHeight: 20
                                         Layout.fillWidth: true
                                         fontPointSize: 9
-                                        text: totalTime + ", эпизодов " + totalEpisode + ", рейтинг " + totalRating
+                                        text: totalEpisode + " эпизодов на " + totalTime + ", рейтинг " + totalRating
                                     }
 
                                     Item {
