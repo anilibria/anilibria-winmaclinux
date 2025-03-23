@@ -439,6 +439,7 @@ ColumnLayout {
             width: parent.width - cardButtons.width
             clip: true
             boundsBehavior: Flickable.StopAtBounds
+            interactive: userConfigurationViewModel.usingScrollAcceleration
             contentWidth: mainScrollArea.width - 10
             contentHeight: cardColumn.height
             ScrollBar.vertical: ScrollBar {

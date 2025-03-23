@@ -374,13 +374,13 @@ ApplicationWindow {
                 x: -250
                 y: 40
                 width: 350
-                height: 180
+                height: themePopupColumn.implicitHeight
                 modal: true
                 focus: true
                 closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
 
                 Column {
-                    height: 80
+                    id: themePopupColumn
                     width: 120
                     spacing: 4
 
@@ -424,6 +424,31 @@ ApplicationWindow {
                         Component.onCompleted: {
                             currentIndex = mainViewModel.fontFamilies.indexOf(userConfigurationViewModel.textFont);
                         }
+                    }
+                    PlainText {
+                        id: enableScrollDecelerationLabel
+                        fontPointSize: 11
+                        text: "Поменять чувствительность скролирования"
+                    }
+
+                    Item {
+                        height: usingVideoProxySwitch.height + 10
+                        width: 120
+
+                        CommonSwitch {
+                            id: usingVideoProxySwitch
+                            anchors.verticalCenter: parent.verticalCenter
+                            checked: userConfigurationViewModel.usingScrollAcceleration
+                            tooltipMessage: "Если режим включен то используется режим с инерцией и возможностью потянуть мышкой список,\n если выключено то потянуть мышкой будет нельзя но по колесику мыши скролирование будет более похожим на системное"
+                            onCheckedChanged: {
+                                userConfigurationViewModel.usingScrollAcceleration = usingVideoProxySwitch.checked;
+                            }
+                        }
+                    }
+
+                    Item {
+                        width: 10
+                        height: 20
                     }
                 }
             }

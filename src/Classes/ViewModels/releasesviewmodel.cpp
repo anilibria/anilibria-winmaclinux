@@ -326,8 +326,14 @@ void ReleasesViewModel::setReleaseLinkedSeries(ReleaseLinkedSeries *releaseLinke
     if (m_releaseLinkedSeries == nullptr) return;
 
     m_items->setupLinkedSeries(m_releaseLinkedSeries);
-    auto getReleaseCountSeens = [=](int releaseId) {
-        return this->items()->getReleaseSeenMarkCount(releaseId);
+    auto getReleaseCountSeens = [=](QList<int>& releases) {
+        int result = 0;
+
+        foreach (auto releaseId, releases) {
+            result += this->items()->getReleaseSeenMarkCount(releaseId);
+        }
+
+        return result;
     };
     m_releaseLinkedSeries->setup(m_releases, m_userFavorites, &m_torrentItems, getReleaseCountSeens);
 }
