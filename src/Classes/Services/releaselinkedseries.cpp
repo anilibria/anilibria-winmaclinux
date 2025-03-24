@@ -26,7 +26,7 @@
 #include <QJsonDocument>
 #include <QJsonArray>
 #include <QJsonObject>
-#include <QtConcurrent\QtConcurrent>
+#include <QtConcurrent/QtConcurrent>
 #include <QDir>
 #include <QStandardPaths>
 #include "releaselinkedseries.h"
