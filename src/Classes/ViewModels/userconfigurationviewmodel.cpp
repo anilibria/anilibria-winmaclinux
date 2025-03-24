@@ -604,7 +604,7 @@ void UserConfigurationViewModel::readSettingsFromFile()
     m_sendPlaybackToRemote = object.contains(m_sendPlaybackToRemoteField) ? object[m_sendPlaybackToRemoteField].toBool() : false;
     m_usingVideoProxyVLC = object.contains(m_usingVideoProxyVLCField) ? object[m_usingVideoProxyVLCField].toBool() : false;
     m_textFont = object.contains(m_textFontField) ? object[m_textFontField].toString() : "Default";
-    m_usingStrongProxy = object.contains(m_usingStrongProxyField) ? object[m_usingStrongProxyField].toBool() : false;
+    m_usingStrongProxy = object.contains(m_usingStrongProxyField) ? object[m_usingStrongProxyField].toBool() : true;
     m_usingVideoProxyMPV = object.contains(m_usingVideoProxyMPVField) ? object[m_usingVideoProxyMPVField].toBool() : true;
     m_showVideoPreview = object.contains(m_showVideoPreviewField) ? object[m_showVideoPreviewField].toBool() : false;
     m_showReleaseInfo = object.contains(m_showReleaseInfoField) ? object[m_showReleaseInfoField].toBool() : true;

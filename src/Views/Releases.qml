@@ -1828,7 +1828,7 @@ Page {
                     cellHeight: 290
                     delegate: releaseDelegate
                     model: releasesViewModel.items
-                    flickDeceleration: userConfigurationViewModel.usingScrollAcceleration ? 1000 : 10000
+                    interactive: userConfigurationViewModel.usingScrollAcceleration
                     clip: true
                     ScrollBar.vertical: ScrollBar {
                         active: true
@@ -1875,9 +1875,6 @@ Page {
                         }
                     }
 
-                    Component.onCompleted: {
-                        scrollview.maximumFlickVelocity = scrollview.maximumFlickVelocity - 1050;
-                    }
                     onContentYChanged: {
                         if (!releasesViewModel.items.grouping) return;
 

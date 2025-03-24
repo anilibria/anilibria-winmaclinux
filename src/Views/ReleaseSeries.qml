@@ -230,6 +230,13 @@ Page {
                                         text: countInFavorites
                                     }
 
+                                    PlainText {
+                                        Layout.preferredHeight: 20
+                                        Layout.fillWidth: true
+                                        fontPointSize: 9
+                                        text: totalEpisode + (totalSeen > 0 ? "/" + totalSeen : "") + " эпизодов на " + totalTime + ", рейтинг " + totalRating
+                                    }
+
                                     Item {
                                         Layout.fillHeight: true
                                     }

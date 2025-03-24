@@ -185,6 +185,7 @@ Page {
                         id: scrollview
                         Layout.fillHeight: true
                         Layout.fillWidth: true
+                        interactive: userConfigurationViewModel.usingScrollAcceleration
                         clip: true
                         model: myAnilibriaViewModel.myList
                         delegate: Component {

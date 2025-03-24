@@ -78,6 +78,16 @@ void ReleaseSeriesModel::readFromJson(const QJsonObject &jsonObject) noexcept
     m_titlesAsString = m_titles->join(", ");
 
     if (jsonObject.contains("title")) m_title = jsonObject.value("title").toString();
+    if (jsonObject.contains("sec")) m_totalSeconds = jsonObject.value("sec").toInt();
+    if (jsonObject.contains("eps")) m_totalEpisodes = jsonObject.value("eps").toInt();
+    if (jsonObject.contains("rat")) m_totalRating = jsonObject.value("rat").toInt();
+
+    if (m_totalSeconds > 0) {
+        auto minutes = static_cast<int>((double)m_totalSeconds / (double)60.0);
+        auto hours = static_cast<int>((double)minutes / (double)60.0);
+        auto hoursInMinutes = hours * 60;
+        m_totalSecondsDisplay = QString::number(hours) + " часов " + QString::number(minutes - hoursInMinutes) + " минут";
+    }
 
     if (jsonObject.contains("genres")) {
         auto genres = jsonObject.value("genres").toArray();

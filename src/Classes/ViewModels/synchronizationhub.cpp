@@ -34,6 +34,14 @@ void SynchronizationHub::addSelectedReleasesToCollection(const QString &collecti
     m_releases->clearSelectedReleases();
 }
 
+void SynchronizationHub::addReleaseToCollection(int releaseId, const QString &collection)
+{
+    QList<int> ids;
+    ids.append(releaseId);
+    m_synchronization->addReleasesToCollection(ids, collection);
+    m_releases->setReleasesToCollection(ids, collection);
+}
+
 void SynchronizationHub::deleteSelectedReleasesFromCollections()
 {
     auto releaseIds = m_releases->items()->getSelectedReleases();
@@ -42,6 +50,14 @@ void SynchronizationHub::deleteSelectedReleasesFromCollections()
     m_synchronization->removeReleasesFromCollection(ids);
     m_releases->removeReleasesFromCollections(ids);
     m_releases->clearSelectedReleases();
+}
+
+void SynchronizationHub::deleteReleaseFromCollections(int releaseId)
+{
+    QList<int> ids;
+    ids.append(releaseId);
+    m_synchronization->removeReleasesFromCollection(ids);
+    m_releases->removeReleasesFromCollections(ids);
 }
 
 void SynchronizationHub::synchronizeCollections()

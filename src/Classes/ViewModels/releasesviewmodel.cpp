@@ -326,7 +326,16 @@ void ReleasesViewModel::setReleaseLinkedSeries(ReleaseLinkedSeries *releaseLinke
     if (m_releaseLinkedSeries == nullptr) return;
 
     m_items->setupLinkedSeries(m_releaseLinkedSeries);
-    m_releaseLinkedSeries->setup(m_releases, m_userFavorites, &m_torrentItems);
+    auto getReleaseCountSeens = [=](QList<int>& releases) {
+        int result = 0;
+
+        foreach (auto releaseId, releases) {
+            result += this->items()->getReleaseSeenMarkCount(releaseId);
+        }
+
+        return result;
+    };
+    m_releaseLinkedSeries->setup(m_releases, m_userFavorites, &m_torrentItems, getReleaseCountSeens);
 }
 
 QString ReleasesViewModel::openedReleaseStatusDisplay() const noexcept
@@ -393,6 +402,13 @@ bool ReleasesViewModel::openedReleaseIsRutube() const noexcept
 
     //TODO: remake on new model
     return false;
+}
+
+bool ReleasesViewModel::openedReleaseInCollections() const noexcept
+{
+    if (m_openedRelease == nullptr) return false;
+
+    return m_collections.contains(m_openedRelease->id());
 }
 
 QStringList ReleasesViewModel::getMostPopularGenres() const noexcept
@@ -1364,6 +1380,7 @@ void ReleasesViewModel::refreshOpenedReleaseCard()
     emit openedReleaseSeenCountVideosChanged();
     emit openedReleaseAnnounceChanged();
     emit openedReleaseIsRutubeChanged();
+    emit openedReleaseInCollectionsChanged();
 }
 
 void ReleasesViewModel::setSeenMark(int id, const QString& seriaId, bool marked)
@@ -1603,15 +1620,8 @@ void ReleasesViewModel::openOpenedReleaseMagnetTorrent(int identifier) noexcept
 
 void ReleasesViewModel::synchronizeSeens(const QVariantMap items) noexcept
 {
-    QMap<QString, ReleaseOnlineVideoModel*> videosMap;
-    foreach (auto onlineVideo, m_onlineVideos) {
-        videosMap.insert(onlineVideo->uniqueId(), onlineVideo);
-    }
-
     auto keys = items.keys();
     foreach (auto key, keys) {
-        if (!videosMap.contains(key)) continue;
-
         auto value = items.value(key);
         auto map = value.toMap();
         auto state = map["mark"].toBool();
@@ -1629,6 +1639,11 @@ void ReleasesViewModel::synchronizeSeens(const QVariantMap items) noexcept
 
 void ReleasesViewModel::synchronizeLocalSeensToExternal() noexcept
 {
+}
+
+void ReleasesViewModel::recheckOpenedReleaseInCollections() noexcept
+{
+    emit openedReleaseInCollectionsChanged();
 }
 
 FullReleaseModel *ReleasesViewModel::getReleaseById(int id) const noexcept

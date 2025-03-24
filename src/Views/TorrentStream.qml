@@ -110,6 +110,7 @@ Page {
                         anchors.right: parent.right
                         anchors.bottom: parent.bottom
                         model: torrentNotifierViewModel.torrents
+                        interactive: userConfigurationViewModel.usingScrollAcceleration
                         clip: true
                         spacing: 4
                         ScrollBar.vertical: ScrollBar {

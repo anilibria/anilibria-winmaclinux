@@ -46,6 +46,7 @@ ColumnLayout {
             anchors.top: parent.top
             anchors.topMargin: 2
             model: releaseLinkedSeries.cardList
+            interactive: userConfigurationViewModel.usingScrollAcceleration
             clip: true
             spacing: 4
             ScrollBar.vertical: ScrollBar {

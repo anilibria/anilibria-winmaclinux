@@ -191,6 +191,7 @@ Page {
                         anchors.right: parent.right
                         anchors.bottom: parent.bottom
                         model: applicationThemeViewModel.localThemes
+                        interactive: userConfigurationViewModel.usingScrollAcceleration
                         delegate: Item {
                             width: localThemes.width
                             height: 100
@@ -280,6 +281,7 @@ Page {
                         visible: !applicationThemeViewModel.service.loading && !applicationThemeViewModel.externalThemes.listIsEmpty
                         anchors.fill: parent
                         model: applicationThemeViewModel.externalThemes
+                        interactive: userConfigurationViewModel.usingScrollAcceleration
                         delegate: Item {
                             width: externalThemes.width
                             height: 200
@@ -704,6 +706,7 @@ Page {
                                 clip: true
                                 spacing: 1
                                 model: applicationThemeViewModel.fieldList
+                                interactive: userConfigurationViewModel.usingScrollAcceleration
                                 ScrollBar.vertical: ScrollBar {
                                     active: true
                                 }

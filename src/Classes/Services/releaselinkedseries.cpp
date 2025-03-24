@@ -20,22 +20,21 @@
 #include <QDebug>
 #include <QVector>
 #include <QRegularExpression>
-#include <QtConcurrent>
 #include <QFuture>
 #include <QMap>
 #include <QSet>
 #include <QJsonDocument>
 #include <QJsonArray>
 #include <QJsonObject>
+#include <QtConcurrent/QtConcurrent>
+#include <QDir>
+#include <QStandardPaths>
 #include "releaselinkedseries.h"
 #include "globalconstants.h"
 
 ReleaseLinkedSeries::ReleaseLinkedSeries(QObject *parent) : QAbstractListModel(parent)
 {
     createCacheFileIfNotExists();
-
-    auto watcher = m_cacheUpdateWatcher.get();
-    connect(watcher, &QFutureWatcher<bool>::finished, this, &ReleaseLinkedSeries::cacheUpdated);
 }
 
 int ReleaseLinkedSeries::rowCount(const QModelIndex &parent) const
@@ -102,6 +101,18 @@ QVariant ReleaseLinkedSeries::data(const QModelIndex &index, int role) const
         case IdentifierRole: {
             return QVariant(m_series.indexOf(element));
         }
+        case TotalTimeRole: {
+            return QVariant(element->totalSecondsDisplay());
+        }
+        case TotalEpisodesRole: {
+            return QVariant(element->totalEpisodes());
+        }
+        case TotalRatingRole: {
+            return QVariant(element->totalRating());
+        }
+        case TotalSeenRole: {
+            return QVariant(element->countSeens());
+        }
     }
 
     return QVariant();
@@ -149,15 +160,32 @@ QHash<int, QByteArray> ReleaseLinkedSeries::roleNames() const
         {
             IdentifierRole,
             "identifier"
+        },
+        {
+            TotalTimeRole,
+            "totalTime"
+        },
+        {
+            TotalEpisodesRole,
+            "totalEpisode"
+        },
+        {
+            TotalRatingRole,
+            "totalRating"
+        },
+        {
+            TotalSeenRole,
+            "totalSeen"
         }
     };
 }
 
-void ReleaseLinkedSeries::setup(QSharedPointer<QList<FullReleaseModel *> > releases, QList<int>* userFavorites, QList<ApiTorrentModel*>* torrents)
+void ReleaseLinkedSeries::setup(QSharedPointer<QList<FullReleaseModel *> > releases, QList<int>* userFavorites, QList<ApiTorrentModel*>* torrents, std::function<int(QList<int>&)> getReleaseCountSeen)
 {
     m_releases = releases;
     m_userFavorites = userFavorites;
     m_torrents = torrents;
+    m_getReleaseCountSeen = getReleaseCountSeen;
 }
 
 void ReleaseLinkedSeries::setNameFilter(const QString& nameFilter) noexcept
@@ -580,57 +608,67 @@ void ReleaseLinkedSeries::sortNonFiltered()
 
 void ReleaseLinkedSeries::refreshDataFromReleases()
 {
-    QMap<int, FullReleaseModel*> m_releasesMap;
-    foreach (auto release, *m_releases){
-        m_releasesMap.insert(release->id(), release);
-    }
-
-    QStringList years;
-    QStringList seasons;
-
-    foreach (auto series, m_series){
-        int rating = 0;
-        int seeds = 0;
-        years.clear();
-        seasons.clear();
-
-        auto ids = series->releaseIds();
-        foreach (auto id, *ids) {
-            auto identifier = id.toInt();
-            if (!m_releasesMap.contains(identifier)) continue;
-            auto release = m_releasesMap[identifier];
-
-            rating += release->rating();
-            if (!years.contains(release->year())) years.append(release->year());
-            if (!seasons.contains(release->season())) seasons.append(release->season());
-            seeds += getSeeders(release);
-
-            foreach (auto genre, release->genres().split(",")) {
-                series->appendGenre(genre.trimmed());
-            }
+    QtConcurrent::run([=]() {
+        QMap<int, FullReleaseModel*> m_releasesMap;
+        foreach (auto release, *m_releases){
+            m_releasesMap.insert(release->id(), release);
         }
 
-        series->setSumOfRatings(rating);
-        series->setSumOfSeeds(seeds);
-        std::sort(
-            years.begin(),
-            years.end(),
-            [](const QString& left, const QString& right) {
-                return left < right;
+        QStringList years;
+        QStringList seasons;
+
+        foreach (auto series, m_series){
+            int rating = 0;
+            int seeds = 0;
+            years.clear();
+            seasons.clear();
+
+            auto ids = series->releaseIds();
+            foreach (auto id, *ids) {
+                auto identifier = id.toInt();
+                if (!m_releasesMap.contains(identifier)) continue;
+                auto release = m_releasesMap[identifier];
+
+                rating += release->rating();
+                if (!years.contains(release->year())) years.append(release->year());
+                if (!seasons.contains(release->season())) seasons.append(release->season());
+                seeds += getSeeders(release);
+
+                foreach (auto genre, release->genres().split(",")) {
+                    series->appendGenre(genre.trimmed());
+                }
             }
-        );
-        std::sort(
-            seasons.begin(),
-            seasons.end(),
-            [](const QString& left, const QString& right) {
-                return left < right;
+
+            QList<int> idsInts;
+            foreach (auto id, *ids) {
+                idsInts.append(id.toInt());
             }
-        );
-        auto yearsString = years.join(", ");
-        auto seasonsString = seasons.join(", ");
-        series->setYears(yearsString);
-        series->setSeasons(seasonsString);
-    }
+
+            auto countSeens = m_getReleaseCountSeen(idsInts);
+
+            series->setCountSeens(countSeens);
+            series->setSumOfRatings(rating);
+            series->setSumOfSeeds(seeds);
+            std::sort(
+                years.begin(),
+                years.end(),
+                [](const QString& left, const QString& right) {
+                    return left < right;
+                }
+                );
+            std::sort(
+                seasons.begin(),
+                seasons.end(),
+                [](const QString& left, const QString& right) {
+                    return left < right;
+                }
+                );
+            auto yearsString = years.join(", ");
+            auto seasonsString = seasons.join(", ");
+            series->setYears(yearsString);
+            series->setSeasons(seasonsString);
+        }
+    });
 }
 
 int ReleaseLinkedSeries::getSeeders(FullReleaseModel *release)
@@ -647,8 +685,6 @@ int ReleaseLinkedSeries::getSeeders(FullReleaseModel *release)
 
 void ReleaseLinkedSeries::cacheUpdated()
 {
-    if (!m_cacheUpdateWatcher->result()) return;
-
     refreshDataFromReleases();
 
     sortNonFiltered();

@@ -25,7 +25,9 @@ public:
     void setSynchronization(Synchronizev2Service* synchronization);
 
     Q_INVOKABLE void addSelectedReleasesToCollection(const QString& collection);
+    Q_INVOKABLE void addReleaseToCollection(int releaseId, const QString& collection);
     Q_INVOKABLE void deleteSelectedReleasesFromCollections();
+    Q_INVOKABLE void deleteReleaseFromCollections(int releaseId);
 
 private slots:
     void synchronizeCollections();

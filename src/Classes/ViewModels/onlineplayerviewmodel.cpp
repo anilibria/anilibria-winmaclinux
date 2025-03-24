@@ -164,7 +164,7 @@ void OnlinePlayerViewModel::setVideoSource(const QString &videoSource)
     m_endSkipOpening = false;
     emit endSkipOpeningChanged();
 
-    m_videoSource = m_videoSourceProxy + videoSource;
+    m_videoSource = m_videoSourceProxy + innerVideoSource;
     emit videoSourceChanged();
 
     m_remotePlayer->broadcastCommand(m_videoSourceChangedCommand, innerVideoSource);
