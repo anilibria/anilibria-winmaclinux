@@ -12,6 +12,7 @@ import "Views"
 import "Controls"
 import "Views/Videoplayer"
 
+
 ApplicationWindow {
     id: window
     visible: true
