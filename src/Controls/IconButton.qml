@@ -124,7 +124,7 @@ Item {
     }
 
     ToolTip {
-        delay: 2000
+        delay: 1000
         visible: tooltipMessage && hovered
         text: tooltipMessage
         CustomStyle.tooltipColor: applicationThemeViewModel.currentItems.colorTooltipBackground

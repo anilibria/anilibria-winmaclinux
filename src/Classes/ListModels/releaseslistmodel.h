@@ -212,6 +212,7 @@ public:
 
     void refreshItem(int id);
     int getReleaseSeenMarkCount(int releaseId) const noexcept;
+    QMap<int,int> getReleasesSeenMarkCount(QList<int> releaseIds) const noexcept;
 
     bool isHasSelectRelease() const noexcept { return !m_selectedReleases->isEmpty(); }
     int countFilteredReleases() const noexcept { return m_filteredReleases.count(); }

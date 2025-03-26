@@ -426,6 +426,30 @@ int ReleasesListModel::getReleaseSeenMarkCount(int releaseId) const noexcept
     return result;
 }
 
+QMap<int,int> ReleasesListModel::getReleasesSeenMarkCount(QList<int> releaseIds) const noexcept
+{
+    QMap<int,int> countSeens;
+    foreach (auto releaseId, releaseIds) {
+        countSeens.insert(releaseId, 0);
+    }
+
+    auto keys = m_seenMarkModels->keys();
+    foreach (auto key, keys) {
+        auto item = m_seenMarkModels->value(key);
+        bool mark = std::get<0>(item);
+        if (!mark) continue;
+
+        if (!m_videosMap->contains(key)) continue;
+        auto video = m_videosMap->value(key);
+        auto releaseId = video->releaseId();
+        if (releaseIds.contains(releaseId)) {
+            countSeens[releaseId] += 1;
+        }
+    }
+
+    return countSeens;
+}
+
 void ReleasesListModel::setHasReleaseSeriesFilter(bool hasReleaseSeriesFilter) noexcept
 {
     if (m_hasReleaseSeriesFilter == hasReleaseSeriesFilter) return;
