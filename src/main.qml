@@ -740,7 +740,6 @@ ApplicationWindow {
 
             notificationViewModel.sendInfoNotification("Синхронизация релизов успешно завершена в " + new Date().toLocaleTimeString());
 
-            releaseLinkedSeries.refreshSeries();
             releasesViewModel.reloadReleases();
         }
 

@@ -12,7 +12,7 @@ IconButton {
     iconHeight: 24
 
     ToolTip {
-        delay: 2000
+        delay: 1000
         visible: hovered && tooltipMessage
         text: tooltipMessage
         CustomStyle.tooltipColor: window.tooltipColor

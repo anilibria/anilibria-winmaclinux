@@ -10,7 +10,7 @@ Image {
     property bool tooltipMessageVisible
 
     ToolTip {
-        delay: 2000
+        delay: 1000
         visible: tooltipMessageVisible && tooltipMessage
         text: tooltipMessage
         CustomStyle.tooltipColor: applicationThemeViewModel.currentItems.colorTooltipBackground

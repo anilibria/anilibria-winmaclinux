@@ -15,7 +15,7 @@ Switch {
     CustomStyle.switchDisabledHandle: applicationThemeViewModel.currentItems.colorSwitchDisabledHandle
 
     ToolTip {
-        delay: 2000
+        delay: 1000
         visible: hovered && tooltipMessage
         text: tooltipMessage
         CustomStyle.tooltipColor: applicationThemeViewModel.currentItems.colorTooltipBackground
