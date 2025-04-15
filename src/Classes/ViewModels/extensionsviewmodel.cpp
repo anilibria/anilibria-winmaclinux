@@ -66,6 +66,37 @@ void ExtensionsViewModel::releaseOpenedInVideoPlayer(int releaseId, const QStrin
     }
 }
 
+QString ExtensionsViewModel::releaseOpenedInReleaseCard(int releaseId)
+{
+    if (m_importedModules.isEmpty()) return "";
+
+    QString releaseCardContent = "";
+
+    foreach (auto module, m_importedModules) {
+        if (!module.hasProperty("releaseOpenedInReleaseCard")) continue;
+
+        QJSValue handleFunction = module.property("releaseOpenedInReleaseCard");
+        if (handleFunction.isUndefined() || handleFunction.isNull()) continue;
+
+        QJSValueList args;
+
+        QJSValue releaseIdValue(releaseId);
+        args.append(releaseIdValue);
+
+        auto result = handleFunction.call(args);
+        if (result.isError()) {
+            qDebug() << "[extension]: Error caught at line " << result.property("lineNumber").toInt() << ": " << result.toString();
+            return "";
+        }
+
+        if (!result.isString()) return "";
+
+        releaseCardContent += result.toString();
+    }
+
+    return releaseCardContent;
+}
+
 void ExtensionsViewModel::saveValue(const QString &key, const QString &value)
 {
     m_values->insert(key, value);

@@ -51,6 +51,7 @@ public:
     bool isOpenedCard() const noexcept { return m_isOpenedCard; }
 
     Q_INVOKABLE void releaseOpenedInVideoPlayer(int releaseId, const QString& title, int seria);
+    Q_INVOKABLE QString releaseOpenedInReleaseCard(int releaseId);
     Q_INVOKABLE void saveValue(const QString& key, const QString& value);
     Q_INVOKABLE QString readValue(const QString& key);
     Q_INVOKABLE void deleteValue(const QString& key);

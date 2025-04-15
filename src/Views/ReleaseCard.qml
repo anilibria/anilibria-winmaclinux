@@ -863,6 +863,17 @@ ColumnLayout {
                     }
                 }
 
+                PlainText {
+                    id: extensionContentText
+                    width: mainScrollArea.width - 10
+                    fontPointSize: 10
+                    leftPadding: 8
+                    topPadding: 4
+                    wrapMode: Text.WordWrap
+                    textFormat: Text.RichText
+                    text: releasesViewModel.openedReleseExtensionContent
+                }
+
                 Item {
                     width: mainScrollArea.width
                     height: 30

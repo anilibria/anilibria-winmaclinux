@@ -104,6 +104,7 @@ class ReleasesViewModel : public QObject
     Q_PROPERTY(Synchronizev2Service* synchronizationServicev2 READ synchronizationServicev2 WRITE setSynchronizationServicev2 NOTIFY synchronizationServicev2Changed)
     Q_PROPERTY(int proxyPort READ proxyPort WRITE setProxyPort NOTIFY proxyPortChanged FINAL)
     Q_PROPERTY(ReleaseLinkedSeries* releaseLinkedSeries READ releaseLinkedSeries WRITE setReleaseLinkedSeries NOTIFY releaseLinkedSeriesChanged)
+    Q_PROPERTY(QString openedReleseExtensionContent READ openedReleseExtensionContent WRITE setOpenedReleseExtensionContent NOTIFY openedReleseExtensionContentChanged FINAL)
 
 private:
     const QString releasesCacheFileName { "releases.cache" };
@@ -160,6 +161,7 @@ private:
     QMap<int, QString> m_oldReleasesTorrentsSeries { QMap<int, QString>() };
     QSet<int> m_oldReleasesIds { QSet<int>() };
     QMap<int, QString> m_collections { QMap<int, QString>() };
+    QString m_openedReleseExtensionContent { "" };
 
 public:
     explicit ReleasesViewModel(QObject *parent = nullptr);
@@ -231,6 +233,9 @@ public:
 
     ReleaseLinkedSeries* releaseLinkedSeries() const noexcept { return m_releaseLinkedSeries; }
     void setReleaseLinkedSeries(ReleaseLinkedSeries* releaseLinkedSeries) noexcept;
+
+    QString openedReleseExtensionContent() const noexcept { return m_openedReleseExtensionContent; }
+    void setOpenedReleseExtensionContent(const QString& openedReleseExtensionContent) noexcept;
 
     bool isOpenedCard() const noexcept { return m_openedRelease != nullptr; }
     int openedReleaseId() const noexcept { return m_openedRelease != nullptr ? m_openedRelease->id() : 0; }
@@ -461,6 +466,7 @@ signals:
     void addedSeenMarks(QList<QString> uniqueIds);
     void removeSeenMarks(QList<QString> uniqueIds);
     void openedReleaseInCollectionsChanged();
+    void openedReleseExtensionContentChanged();
 
 };
 

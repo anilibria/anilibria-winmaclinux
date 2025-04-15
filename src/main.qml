@@ -1078,6 +1078,8 @@ ApplicationWindow {
 
             analyticsService.sendView("releasecard", "open", "%2Frelease");
             userActivityViewModel.addOpenedCardToCounter();
+
+            releasesViewModel.openedReleseExtensionContent = extensionsViewModel.releaseOpenedInReleaseCard(releasesViewModel.openedReleaseId);
         }
         onReleasesFullyLoaded: {
             releaseLinkedSeries.refreshSeries();
