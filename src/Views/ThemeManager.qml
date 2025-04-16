@@ -706,7 +706,6 @@ Page {
                                 clip: true
                                 spacing: 1
                                 model: applicationThemeViewModel.fieldList
-                                interactive: userConfigurationViewModel.usingScrollAcceleration
                                 ScrollBar.vertical: ScrollBar {
                                     active: true
                                 }

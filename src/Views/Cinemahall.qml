@@ -185,7 +185,6 @@ Page {
                         Layout.fillWidth: true
                         orientation: ListView.Horizontal
                         boundsBehavior: Flickable.StopAtBounds
-                        interactive: userConfigurationViewModel.usingScrollAcceleration
                         model: releasesViewModel.cinemahall
                         clip: true
                         ScrollBar.horizontal: ScrollBar {
