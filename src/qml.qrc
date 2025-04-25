@@ -247,5 +247,6 @@
         <file>Views/Videoplayer/EmbeddedVideoPlayer.qml</file>
         <file>Assets/Icons/videoplayer/subtitles.svg</file>
         <file>Assets/Icons/videoplayer/darksubtitles.svg</file>
+        <file>Views/TorrentStreamCard.qml</file>
     </qresource>
 </RCC>

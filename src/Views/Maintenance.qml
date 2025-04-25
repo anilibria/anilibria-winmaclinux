@@ -312,6 +312,9 @@ Page {
                                     ListElement {
                                         text: "Зеркало app"
                                     }
+                                    ListElement {
+                                        text: "Зеркало wtf"
+                                    }
                                 }
 
 
@@ -321,6 +324,9 @@ Page {
                                     }
                                     if (userConfigurationViewModel.apiv2host === synchronizationServicev2.appMirrorNextAPIServer) {
                                         serversComboBox.currentIndex = 1;
+                                    }
+                                    if (userConfigurationViewModel.apiv2host === synchronizationServicev2.appMirrorWtfNextAPIServer) {
+                                        serversComboBox.currentIndex = 2;
                                     }
                                 }
                             }
@@ -491,6 +497,9 @@ Page {
                                             break;
                                         case 1:
                                             userConfigurationViewModel.apiv2host = synchronizationServicev2.appMirrorNextAPIServer;
+                                            break;
+                                        case 2:
+                                            userConfigurationViewModel.apiv2host = synchronizationServicev2.appMirrorWtfNextAPIServer;
                                             break;
                                     }
 

@@ -92,6 +92,16 @@ Page {
                                 torrentNotifierViewModel.startGetNotifiers(userConfigurationViewModel.playerBuffer);
                             }
                         }
+                        RoundedActionButton {
+                            id: deleteRedundantButton
+                            visible: !mainViewModel.isSmallSizeMode
+                            anchors.right: parent.right
+                            anchors.verticalCenter: parent.verticalCenter
+                            text: "Удалить лишнее"
+                            onClicked: {
+                                torrentNotifierViewModel.removeRedundant();
+                            }
+                        }
                         LinkedText {
                             id: guideText
                             visible: !torrentNotifierViewModel.activated && !mainViewModel.isSmallSizeMode
@@ -133,7 +143,7 @@ Page {
                                     Item {
                                         height: parent.height
                                         Layout.topMargin: 6
-                                        Layout.preferredWidth: 200
+                                        Layout.preferredWidth: 145
                                         Layout.fillHeight: true
                                         Layout.leftMargin: 6
 

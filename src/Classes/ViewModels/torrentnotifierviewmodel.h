@@ -95,6 +95,7 @@ public:
     Q_INVOKABLE void watchDownloadedTorrents(int index) noexcept;
     Q_INVOKABLE void clearOnlyTorrent(const QString& path) noexcept;
     Q_INVOKABLE void clearTorrentAndData(const QString& path) noexcept;
+    Q_INVOKABLE void removeRedundant() noexcept;
 
 private:
     void getTorrentData() const noexcept;
