@@ -176,6 +176,34 @@ void TorrentNotifierViewModel::clearTorrentAndData(const QString &path) noexcept
     m_manager->get(request);
 }
 
+void TorrentNotifierViewModel::removeRedundant() noexcept
+{
+    QList<QString> needRemoveTorrents;
+    QMap<int, int> torrentCountSeries;
+    auto index = 0;
+    foreach (auto torrent, *m_downloadedTorrents) {
+        auto releaseId = torrent->releaseId();
+        if (torrentCountSeries.contains(releaseId)) {
+            auto oldItemIndex = torrentCountSeries.value(releaseId);
+            auto oldItem = m_downloadedTorrents->value(oldItemIndex);
+            if (oldItem->countFiles() < torrent->countFiles()) {
+                needRemoveTorrents.append(oldItem->downloadPath());
+                torrentCountSeries[releaseId] = index;
+            } else {
+                needRemoveTorrents.append(torrent->downloadPath());
+            }
+        } else {
+            torrentCountSeries.insert(releaseId, index);
+        }
+        index++;
+    }
+    torrentCountSeries.clear();
+
+    foreach (auto torrentPath, needRemoveTorrents) {
+        clearOnlyTorrent(torrentPath);
+    }
+}
+
 void TorrentNotifierViewModel::getTorrentData() const noexcept
 {
     QUrl url("http://localhost:" + QString::number(m_port) + "/torrents");

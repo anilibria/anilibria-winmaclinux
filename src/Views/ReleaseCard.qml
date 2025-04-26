@@ -439,7 +439,6 @@ ColumnLayout {
             width: parent.width - cardButtons.width
             clip: true
             boundsBehavior: Flickable.StopAtBounds
-            interactive: userConfigurationViewModel.usingScrollAcceleration
             contentWidth: mainScrollArea.width - 10
             contentHeight: cardColumn.height
             ScrollBar.vertical: ScrollBar {
@@ -861,6 +860,17 @@ ColumnLayout {
                         acceptedButtons: Qt.NoButton
                         cursorShape: parent.hoveredLink ? Qt.PointingHandCursor : Qt.ArrowCursor
                     }
+                }
+
+                PlainText {
+                    id: extensionContentText
+                    width: mainScrollArea.width - 10
+                    fontPointSize: 10
+                    leftPadding: 8
+                    topPadding: 4
+                    wrapMode: Text.WordWrap
+                    textFormat: Text.RichText
+                    text: releasesViewModel.openedReleseExtensionContent
                 }
 
                 Item {

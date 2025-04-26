@@ -332,6 +332,14 @@ void ReleasesViewModel::setReleaseLinkedSeries(ReleaseLinkedSeries *releaseLinke
     m_releaseLinkedSeries->setup(m_releases, m_userFavorites, &m_torrentItems, getReleaseCountSeens);
 }
 
+void ReleasesViewModel::setOpenedReleseExtensionContent(const QString &openedReleseExtensionContent) noexcept
+{
+    if (m_openedReleseExtensionContent == openedReleseExtensionContent) return;
+
+    m_openedReleseExtensionContent = openedReleseExtensionContent;
+    emit openedReleseExtensionContentChanged();
+}
+
 QString ReleasesViewModel::openedReleaseStatusDisplay() const noexcept
 {
     if (m_openedRelease == nullptr) return "";
@@ -1146,7 +1154,6 @@ void ReleasesViewModel::showReleaseCard(int id, bool needHandle) noexcept
     setToReleaseHistory(release->id(), 0);
 
     resetReleaseChanges(release->id());
-
 
     refreshOpenedReleaseCard();
 

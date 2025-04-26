@@ -68,6 +68,10 @@ export function releaseOpenedInVideoPlayer(releaseId, title, seria) {
   logger.message(`releaseOpenedInVideoPlayer(${releaseId}, ${title}, ${seria})`);
 }
 
+export function releaseOpenedInReleaseCard(releaseId) {
+  return releaseId === 9937 ? "<b>Разгадываю тайны и здесь тоже</b>" : "";
+}
+
 // way to define module name and author
 export const moduleName = 'Module Example';
 export const moduleAuthor = 'Ikari';

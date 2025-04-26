@@ -133,6 +133,9 @@ Page {
                 onlinePlayerViewModel.clearPanelTimer();
                 _page.setControlVisible(true);
             }
+            if (mouse.button === Qt.RightButton) {
+                togglePlayback();
+            }
         }
         onDoubleClicked: {
             onlinePlayerViewModel.toggleFullScreen();
