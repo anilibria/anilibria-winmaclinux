@@ -2212,7 +2212,8 @@ void ReleasesViewModel::recalculateSeenCounts()
             if (releasesCount.contains(releaseId)) {
                 auto count = releasesCount[releaseId];
                 count++;
-                auto allCount = m_releasesMap->value(releaseId)->countOnlineVideos();
+                auto allCount = 0;
+                if (m_releasesMap->contains(releaseId)) allCount = m_releasesMap->value(releaseId)->countOnlineVideos();
                 if (count >= allCount) {
                     countSeens++;
                     continue;
