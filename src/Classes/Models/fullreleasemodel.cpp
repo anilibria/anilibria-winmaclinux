@@ -69,6 +69,14 @@ void FullReleaseModel::setVoicers(const QString &voicers) noexcept
     m_Voices = voicers;
 }
 
+QString FullReleaseModel::limitFullTeam()
+{
+    auto team = m_fullTeam.split(", ");
+    if (team.size() > 7) return team.mid(0, 7).join(", ") + " +" + QString::number(team.size() - 7);
+
+    return m_fullTeam;
+}
+
 void FullReleaseModel::setSeason(const QString &season) noexcept
 {
     m_Season = season;
@@ -143,7 +151,8 @@ void FullReleaseModel::readFromJson(const QJsonObject &json)
     setAnnounce(json["announce"].toString());
     setGenres(json["genres"].toString());
     setPoster(json["poster"].toString());
-    setVoicers(json["team"].toString());
+    setVoicers(json["voices"].toString());
+    setFullTeam(json["team"].toString());
     setIsOngoing(json[m_isOngoingField].toBool());
     setAgeRating(json[m_ageRatingField].toString());
 }

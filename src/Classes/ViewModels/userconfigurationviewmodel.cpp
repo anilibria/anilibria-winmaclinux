@@ -453,6 +453,14 @@ void UserConfigurationViewModel::setAutoSkipEnding(bool autoSkipEnding) noexcept
     emit autoSkipEndingChanged();
 }
 
+void UserConfigurationViewModel::setShowFullTeam(bool showFullTeam) noexcept
+{
+    if (m_showFullTeam == showFullTeam) return;
+
+    m_showFullTeam = showFullTeam;
+    emit showFullTeamChanged();
+}
+
 void UserConfigurationViewModel::refreshConfiguration() noexcept
 {
     readSettingsFromFile();
@@ -551,6 +559,7 @@ void UserConfigurationViewModel::saveSettingsToFile()
     object[m_videoServerField] = m_videoServer;
     object[m_restoreVideoModeField] = m_restoreVideoMode;
     object[m_autoSkipEndingField] = m_autoSkipEnding;
+    object[m_showFullTeamField] = m_showFullTeam;
 
     QFile file(getCachePath(m_cacheFileName));
     file.open(QFile::WriteOnly | QFile::Text);
@@ -619,6 +628,7 @@ void UserConfigurationViewModel::readSettingsFromFile()
     m_videoServer = object.contains(m_videoServerField) ? object[m_videoServerField].toInt() : 0;
     m_restoreVideoMode = object.contains(m_restoreVideoModeField) ? object[m_restoreVideoModeField].toInt() : 0;
     m_autoSkipEnding = object.contains(m_autoSkipEndingField) ? object[m_autoSkipEndingField].toBool() : false;
+    m_showFullTeam = object.contains(m_showFullTeamField) ? object[m_showFullTeamField].toBool() : true;
 
     if (m_textFont != "Default") changeFont(m_textFont);
 }

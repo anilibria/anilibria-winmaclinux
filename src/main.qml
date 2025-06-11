@@ -1066,6 +1066,7 @@ ApplicationWindow {
         imageBackgroundViewModel.containerHeight: releases.backgroundImageHeight
         releaseLinkedSeries: releaseLinkedSeries
         items.scriptFilePath: userConfigurationViewModel.customScriptFile
+        items.showFullTeam: userConfigurationViewModel.showFullTeam
         Component.onDestruction: {
             releasesViewModel.customGroups.saveState();
         }

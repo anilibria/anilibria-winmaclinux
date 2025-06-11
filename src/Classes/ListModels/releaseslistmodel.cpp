@@ -132,7 +132,7 @@ QVariant ReleasesListModel::data(const QModelIndex &index, int role) const
             return QVariant(m_userFavorites->contains(release->id()));
         }
         case VoicesRole: {
-            return QVariant(release->limitVoicers());
+            return QVariant(m_showFullTeam ? release->limitFullTeam() : release->limitVoicers());
         }
         case RatingRole: {
             return QVariant(release->rating());
@@ -521,6 +521,14 @@ void ReleasesListModel::setGrouping(bool grouping) noexcept
     emit groupingChanged();
 }
 
+void ReleasesListModel::setShowFullTeam(bool showFullTeam) noexcept
+{
+    if (m_showFullTeam == showFullTeam) return;
+
+    m_showFullTeam = showFullTeam;
+    emit showFullTeamChanged();
+}
+
 int ReleasesListModel::getReleaseIdByIndex(int index) noexcept
 {
     if (index >= m_filteredReleases.count()) return -1;
@@ -691,7 +699,7 @@ void ReleasesListModel::refresh()
 
         //voices
         if (!voicesFilter.isEmpty()) {
-            QStringList releaseVoicesList = release->voicers().split(",");
+            QStringList releaseVoicesList = m_showFullTeam ? release->fullTeam().split(",") : release->voicers().split(",");
             if (m_voicesFilterOr) {
                 if (!checkAllCondition(voicesFilter, releaseVoicesList)) continue;
             } else {

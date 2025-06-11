@@ -1137,6 +1137,19 @@ Page {
                                     }
                                 }
                             }
+
+                            PlainText {
+                                fontPointSize: 11
+                                text: "Отображать всю команду"
+                            }
+                            CommonSwitch {
+                                tooltipMessage: "Если настройка включена то в карточке и списке отображается вся команда если нет то только войсеры"
+                                checked: userConfigurationViewModel.showFullTeam
+                                onCheckedChanged: {
+                                    userConfigurationViewModel.showFullTeam = checked;
+                                    releasesViewModel.items.refresh();
+                                }
+                            }
                         }
 
                         Column {
