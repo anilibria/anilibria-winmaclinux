@@ -63,6 +63,7 @@ private:
     QString m_token { "" };
     int m_torrentDownloadMode { 0 };
     bool m_synchronizeCacheActived { false };
+    bool m_synchronizeCacheForce { false };
     int m_countEpisodes { 0 };
     int m_countReleases { 0 };
     int m_currentSynchronizationItem { 0 };
@@ -128,6 +129,7 @@ public:
     Q_INVOKABLE void removeUserFavorites(const QList<int> ids);
     Q_INVOKABLE void downloadTorrent(QString torrentPath, int releaseId, const QString magnet);
     Q_INVOKABLE void synchronizeFullCache();
+    Q_INVOKABLE void synchronizeFullCacheForce();
     Q_INVOKABLE QString checkFolderAvailability(const QString& folder);
     Q_INVOKABLE void checkNetworkAvailability(const QString& address);
     Q_INVOKABLE void getUserSeens();

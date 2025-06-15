@@ -118,6 +118,23 @@ Page {
                     onButtonPressed: {
                         synchronizationServicev2.synchronizeFullCache();
                     }
+                    onRightButtonPressed: {
+                        synchronizeMenu.open();
+                    }
+
+                    CommonMenu {
+                        id: synchronizeMenu
+                        y: parent.height
+                        autoWidth: true
+
+                        CommonMenuItem {
+                            text: "Принудительная синхронизация"
+                            onPressed: {
+                                synchronizationServicev2.synchronizeFullCacheForce();
+                                synchronizeMenu.close();
+                            }
+                        }
+                    }
                 }
 
                 LeftPanelIconButton {
