@@ -190,6 +190,29 @@ void Synchronizev2Service::synchronizeFullCache()
     if (m_synchronizeCacheActived) return;
 
     m_synchronizeCacheActived = true;
+    m_synchronizeCacheForce = false;
+    emit synchronizeCacheActivedChanged();
+
+    if (m_cacheHostIsFolder) {
+        QDir cacheDir(m_cacheFolder);
+        if (!cacheDir.exists()) {
+            emit synchronizeCacheFailed("Папка с кешем не найдена или не доступна " + cacheDir.absolutePath());
+            return;
+        }
+        cacheFolderHandler(cacheDir.absolutePath());
+    } else {
+        QNetworkRequest request(QUrl(m_cachehost + "/metadata"));
+        auto reply = m_networkManager->get(request);
+        adjustIdentifier(reply, m_cacheMetadataRequest);
+    }
+}
+
+void Synchronizev2Service::synchronizeFullCacheForce()
+{
+    if (m_synchronizeCacheActived) return;
+
+    m_synchronizeCacheActived = true;
+    m_synchronizeCacheForce = true;
     emit synchronizeCacheActivedChanged();
 
     if (m_cacheHostIsFolder) {
@@ -557,7 +580,7 @@ void Synchronizev2Service::metadataCacheHandler(QNetworkReply *reply) noexcept
         }
     }
 
-    if (lastTimeStamp > 0 && m_lastReleaseTimeStamp <= lastTimeStamp) {
+    if (m_synchronizeCacheForce == false && lastTimeStamp > 0 && m_lastReleaseTimeStamp <= lastTimeStamp) {
         m_synchronizeCacheActived = false;
         emit synchronizeCacheActivedChanged();
         emit synchronizationCompletedNoChanges();

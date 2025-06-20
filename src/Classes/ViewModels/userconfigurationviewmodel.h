@@ -77,6 +77,7 @@ class UserConfigurationViewModel : public QObject
     Q_PROPERTY(int videoServer READ videoServer WRITE setVideoServer NOTIFY videoServerChanged FINAL)
     Q_PROPERTY(int restoreVideoMode READ restoreVideoMode WRITE setRestoreVideoMode NOTIFY restoreVideoModeChanged FINAL)
     Q_PROPERTY(bool autoSkipEnding READ autoSkipEnding WRITE setAutoSkipEnding NOTIFY autoSkipEndingChanged FINAL)
+    Q_PROPERTY(bool showFullTeam READ showFullTeam WRITE setShowFullTeam NOTIFY showFullTeamChanged FINAL)
 
 private:
     QString m_cacheFileName { "userconfiguration.cache" };
@@ -132,6 +133,7 @@ private:
     const QString m_videoServerField { "videoServer" };
     const QString m_restoreVideoModeField { "restoreVideoMode" };
     const QString m_autoSkipEndingField { "autoSkipEnding" };
+    const QString m_showFullTeamField { "showFullTeam" };
     int m_opacityPlayerPanel { 50 };
     bool m_notCloseReleaseCardAfterWatch { false };
     bool m_usingScrollAcceleration { true };
@@ -184,6 +186,7 @@ private:
     int m_videoServer { 0 };
     int m_restoreVideoMode { 0 };
     bool m_autoSkipEnding { false };
+    bool m_showFullTeam { false };
 
 public:
     explicit UserConfigurationViewModel(QObject *parent = nullptr);
@@ -344,6 +347,9 @@ public:
     bool autoSkipEnding() const noexcept { return m_autoSkipEnding; }
     void setAutoSkipEnding(bool autoSkipEnding) noexcept;
 
+    bool showFullTeam() const noexcept { return m_showFullTeam; }
+    void setShowFullTeam(bool showFullTeam) noexcept;
+
     Q_INVOKABLE void refreshConfiguration() noexcept;
     Q_INVOKABLE void saveSettingsToFile();
 
@@ -404,6 +410,7 @@ signals:
     void videoServerChanged();
     void restoreVideoModeChanged();
     void autoSkipEndingChanged();
+    void showFullTeamChanged();
 
 };
 

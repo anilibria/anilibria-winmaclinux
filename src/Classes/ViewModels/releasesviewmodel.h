@@ -335,7 +335,6 @@ public:
     Q_INVOKABLE void setSeenMark(int id, const QString& seriaId, bool marked);
     QHash<QString, std::tuple<bool, int>>& getSeenMarks();
     QMap<QString, ReleaseOnlineVideoModel*>& getVideosMap();
-    void updateAllReleases(const QList<QString> &releases, bool insideData);
     uint32_t getCountFromChanges(const QList<int> *releases, bool filterByFavorites);
     Q_INVOKABLE void openInExternalPlayer(const QString& url);
     Q_INVOKABLE void prepareTorrentsForListItem(const int id);
@@ -390,7 +389,6 @@ private:
     QString getMultipleLinks(QString text) const noexcept;
     FullReleaseModel* getReleaseByCode(QString code) const noexcept;
     int randomBetween(int low, int high) const noexcept;
-    void mapToFullReleaseModel(QJsonObject &&jsonObject, const bool isFirstStart, QSharedPointer<QSet<int>> hittedIds);
     QHash<int, int> getAllSeenMarkCount() noexcept;
 
 private slots:

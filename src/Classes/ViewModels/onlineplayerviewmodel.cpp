@@ -1120,13 +1120,13 @@ QString OnlinePlayerViewModel::getVideoFromQuality(OnlineVideoModel *video)
         return video->fullhd();
     }
 
-    if (!video->sd().isEmpty()) {
-        setVideoQuality("sd");
-        return video->sd();
-    }
     if (!video->hd().isEmpty()) {
         setVideoQuality("hd");
         return video->hd();
+    }
+    if (!video->sd().isEmpty()) {
+        setVideoQuality("sd");
+        return video->sd();
     }
     if (!video->fullhd().isEmpty()) {
         setVideoQuality("fullhd");

@@ -50,6 +50,7 @@ private:
     const QString m_ageRatingField { "ageRating" };
     QString m_posterHost { "" };
     QString m_groupValue { "" };
+    QString m_fullTeam;
 
 public:
     QString title() const { return m_Title; }
@@ -76,6 +77,10 @@ public:
     QString voicers() const { return m_Voices; }
     QString limitVoicers();
     void setVoicers(const QString &voicers) noexcept;
+
+    QString fullTeam() const { return m_fullTeam; }
+    QString limitFullTeam();
+    void setFullTeam(const QString &fullTeam) noexcept { m_fullTeam = fullTeam; }
 
     QString season() const { return m_Season; }
     void setSeason(const QString &season) noexcept;

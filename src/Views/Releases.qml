@@ -118,6 +118,23 @@ Page {
                     onButtonPressed: {
                         synchronizationServicev2.synchronizeFullCache();
                     }
+                    onRightButtonPressed: {
+                        synchronizeMenu.open();
+                    }
+
+                    CommonMenu {
+                        id: synchronizeMenu
+                        y: parent.height
+                        autoWidth: true
+
+                        CommonMenuItem {
+                            text: "Принудительная синхронизация"
+                            onPressed: {
+                                synchronizationServicev2.synchronizeFullCacheForce();
+                                synchronizeMenu.close();
+                            }
+                        }
+                    }
                 }
 
                 LeftPanelIconButton {
@@ -1135,6 +1152,19 @@ Page {
                                     onClicked: {
                                         openScriptFileDialog.open();
                                     }
+                                }
+                            }
+
+                            PlainText {
+                                fontPointSize: 11
+                                text: "Отображать всю команду"
+                            }
+                            CommonSwitch {
+                                tooltipMessage: "Если настройка включена то в карточке и списке отображается вся команда если нет то только войсеры"
+                                checked: userConfigurationViewModel.showFullTeam
+                                onCheckedChanged: {
+                                    userConfigurationViewModel.showFullTeam = checked;
+                                    releasesViewModel.items.refresh();
                                 }
                             }
                         }

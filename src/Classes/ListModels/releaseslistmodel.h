@@ -59,6 +59,7 @@ class ReleasesListModel : public QAbstractListModel
     Q_PROPERTY(QString scriptFilePath READ scriptFilePath WRITE setScriptFilePath NOTIFY scriptFilePathChanged)
     Q_PROPERTY(bool hasFilters READ hasFilters NOTIFY hasFiltersChanged)
     Q_PROPERTY(bool grouping READ grouping WRITE setGrouping NOTIFY groupingChanged)
+    Q_PROPERTY(bool showFullTeam READ showFullTeam WRITE setShowFullTeam NOTIFY showFullTeamChanged FINAL)
 
 private:
     const QString winterValue { "зима" };
@@ -104,6 +105,7 @@ private:
     bool m_grouping { false };
     QSharedPointer<QSet<int>> m_selectedReleases { new QSet<int>() };
     QSet<int> m_startInGroups { QSet<int>() };
+    bool m_showFullTeam { false };
     enum FullReleaseRoles {
         ReleaseIdRole = Qt::UserRole + 1,
         TitleRole,
@@ -234,6 +236,9 @@ public:
     bool grouping() const noexcept { return m_grouping; }
     void setGrouping(bool grouping) noexcept;
 
+    bool showFullTeam() const noexcept { return m_showFullTeam; }
+    void setShowFullTeam(bool showFullTeam) noexcept;
+
     int getReleaseIdByIndex(int index) noexcept;
 
     QSharedPointer<QSet<int>> getSelectedReleases();
@@ -290,6 +295,7 @@ signals:
     void scriptError(const QString& message);
     void hasFiltersChanged();
     void groupingChanged();
+    void showFullTeamChanged();
 
 };
 
