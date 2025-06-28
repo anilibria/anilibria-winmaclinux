@@ -228,7 +228,7 @@ void ApplicationsViewModel::createApplications()
 
     auto cacheChecker = new ExternalApplicationModel();
     cacheChecker->setName("LocalCacheChecker");
-    cacheChecker->setDescription("Программа позволяет выполнять синхронизацию релизов, франшиз и расписания и формировать файлы кеша которые впоследствии может потребить приложение AniLibria.Qt.");
+    cacheChecker->setDescription("Программа позволяет выполнять синхронизацию релизов, франшиз и расписания и формировать файлы кеша которые впоследствии может потребить приложение AniLiberty.Qt.");
     cacheChecker->setRepositoryPath("trueromanus/LocalCacheChecker");
     cacheChecker->setIsIncludedInsideDistributive(false);
     cacheChecker->setIsInstalled(false);

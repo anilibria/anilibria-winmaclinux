@@ -21,7 +21,7 @@ ApplicationWindow {
     minimumWidth: 300
     font.family: userConfigurationViewModel.textFont
     minimumHeight: 300
-    title: qsTr("AniLibria.Qt")
+    title: qsTr("AniLiberty.Qt")
     font.capitalization: Font.MixedCase
     property var userModel: ({})
     property string tempTorrentPath: ""
@@ -945,7 +945,7 @@ ApplicationWindow {
                     PlainText {
                         color: applicationThemeViewModel.currentItems.colorDrawerItemText
                         fontPointSize: 11
-                        text: qsTr("AniLibria.Qt")
+                        text: qsTr("AniLiberty.Qt")
                     }
                     PlainText {
                         color: applicationThemeViewModel.currentItems.colorDrawerItemText

@@ -87,7 +87,7 @@ Page {
                             PlainText {
                                 anchors.centerIn: parent
                                 fontPointSize: 15
-                                text: "AniLibria.Qt"
+                                text: "AniLiberty.Qt"
                             }
                         }
 
@@ -102,7 +102,7 @@ Page {
                             LinkedText {
                                 anchors.centerIn: parent
                                 fontPointSize: 14
-                                text: "<a href='https://www.anilibria.tv/'>https://www.anilibria.tv/</a>"
+                                text: "<a href='https://www.anilibria.top/'>https://www.anilibria.top/</a>"
                             }
                         }
 
