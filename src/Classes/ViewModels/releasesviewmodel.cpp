@@ -23,7 +23,7 @@
 #include <QDesktopServices>
 #include <QtConcurrent>
 #include <QFuture>
-#include <QMutableStringListIterator>
+//#include <QMutableStringListIterator>
 #include "releasesviewmodel.h"
 #include "../../globalhelpers.h"
 
@@ -1946,10 +1946,11 @@ void ReleasesViewModel::saveSchedule(QString json)
     QJsonObject savedObject;
 
     foreach (auto dataItem, data) {
-        auto day = dataItem["day"].toString();
-        auto items = dataItem["items"].toArray();
+        auto itemObject = dataItem.toObject();
+        auto day = itemObject["day"].toString();
+        auto items = itemObject["items"].toArray();
         foreach (auto item, items) {
-            auto key = QString::number(item["id"].toInt());
+            auto key = QString::number(itemObject["id"].toInt());
             savedObject[key] = day;
         }
     }
@@ -1979,7 +1980,8 @@ void ReleasesViewModel::saveFavoritesFromJson(QString data)
 
     QList<int> ids;
     foreach (auto item, items) {
-        ids.append(item["id"].toInt());
+        auto currentObject = item.toObject();
+        ids.append(currentObject["id"].toInt());
     }
 
     saveFavoritesFromArray(ids);

@@ -62,7 +62,7 @@
 #include "Classes/ListModels/themefieldlistmodel.h"
 #include "Classes/ListModels/localthemeslistmodel.h"
 #include "Classes/ListModels/myanilibriasearchlistmodel.h"
-#include "Classes/ViewModels/torrentnotifierviewmodel.cpp"
+#include "Classes/ViewModels/torrentnotifierviewmodel.h"
 #include "Classes/ViewModels/globaleventtrackerviewmodel.h"
 #include "Classes/ListModels/releaseserieslistmodel.h"
 #include "Classes/ViewModels/externalplayerviewmodel.h"

@@ -28,7 +28,7 @@ private:
     ExternalApplicationModel* m_currentApplication { nullptr };
     bool m_loading { false };
     QString m_installPath { "" };
-    QString m_installIndex { -1 };
+    QString m_installIndex { "" };
     QString m_lastInstallPath { "" };
     QString m_lastInstallPathPrefix { "" };
 

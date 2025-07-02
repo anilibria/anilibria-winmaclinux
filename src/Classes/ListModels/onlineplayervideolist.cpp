@@ -288,7 +288,7 @@ void OnlinePlayerVideoList::setVideosFromSingleTorrent(const ApiTorrentModel& to
     auto countSeries = 0;
     auto series = torrent.description();
     if (series.indexOf("-") > -1) {
-        auto parts = series.splitRef("-");
+        auto parts = series.split("-");
         auto start = parts[0].toInt();
         auto end = parts[1].toInt();
 

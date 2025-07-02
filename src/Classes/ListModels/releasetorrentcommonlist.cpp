@@ -1,6 +1,7 @@
 #include <QUrl>
 #include <QFile>
 #include <QDesktopServices>
+#include <QStandardPaths>
 #include "releasetorrentcommonlist.h"
 #include "../../globalhelpers.h"
 

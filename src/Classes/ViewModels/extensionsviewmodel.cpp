@@ -380,7 +380,7 @@ void ExtensionsViewModel::makeHttpGet(const QString &url, const QList<QString> h
         }
     }
 
-    request.setAttribute(QNetworkRequest::FollowRedirectsAttribute, true);
+    request.setAttribute(QNetworkRequest::RedirectPolicyAttribute, QNetworkRequest::NoLessSafeRedirectPolicy);
     auto reply = m_networkManager->get(request);
     reply->setProperty("pendingIndentifier", identifier);
 
@@ -410,7 +410,7 @@ void ExtensionsViewModel::makeHttpDelete(const QString &url, const QList<QString
         }
     }
 
-    request.setAttribute(QNetworkRequest::FollowRedirectsAttribute, true);
+    request.setAttribute(QNetworkRequest::RedirectPolicyAttribute, QNetworkRequest::NoLessSafeRedirectPolicy);
     auto reply = m_networkManager->deleteResource(request);
     reply->setProperty("pendingIndentifier", identifier);
 }
@@ -439,7 +439,7 @@ void ExtensionsViewModel::makeHttpPost(const QString &url, const QList<QString> 
         }
     }
 
-    request.setAttribute(QNetworkRequest::FollowRedirectsAttribute, true);
+    request.setAttribute(QNetworkRequest::RedirectPolicyAttribute, QNetworkRequest::NoLessSafeRedirectPolicy);
     auto reply = m_networkManager->post(request, body.toUtf8());
     reply->setProperty("pendingIndentifier", identifier);
 }
@@ -468,7 +468,7 @@ void ExtensionsViewModel::makeHttpPut(const QString &url, const QList<QString> h
         }
     }
 
-    request.setAttribute(QNetworkRequest::FollowRedirectsAttribute, true);
+    request.setAttribute(QNetworkRequest::RedirectPolicyAttribute, QNetworkRequest::NoLessSafeRedirectPolicy);
     auto reply = m_networkManager->put(request, body.toUtf8());
     reply->setProperty("pendingIndentifier", identifier);
 }
