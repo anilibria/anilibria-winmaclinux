@@ -220,7 +220,7 @@ int main(int argc, char *argv[])
     QQmlApplicationEngine engine;    
     engine.rootContext()->setContextProperty("ApplicationVersion", ApplicationVersion);
 
-    const QUrl url(QStringLiteral("qrc:/main.qml"));
+    const QUrl url(QStringLiteral("qrc:/Main.qml"));
     QObject::connect(
         &engine,
         &QQmlApplicationEngine::objectCreated,

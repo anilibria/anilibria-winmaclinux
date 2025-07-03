@@ -111,15 +111,23 @@ if (WIN32)
 
     add_compile_definitions(NO_NEED_STANDART_PLAYER)
     add_compile_definitions(USE_MPV_PLAYER)
-endif (WIN32)
+endif ()
 
 if (APPLE)
     # mac specified
-endif (APPLE)
+    list(APPEND appsources PlayerMpv/mpvobject.h PlayerMpv/mpvobject.cpp)
+
+    add_compile_definitions(NO_NEED_STANDART_PLAYER)
+    add_compile_definitions(USE_MPV_PLAYER)
+endif ()
 
 if (NOT (APPLE OR WIN32))
     # linux specified
-endif (APPLE)
+    list(APPEND appsources PlayerMpv/mpvobject.h PlayerMpv/mpvobject.cpp)
+
+    add_compile_definitions(NO_NEED_STANDART_PLAYER)
+    add_compile_definitions(USE_MPV_PLAYER)
+endif ()
 
 list(APPEND appsources main.cpp)
 
@@ -420,10 +428,28 @@ target_link_libraries(appAniLiberty
 if (WIN32)
     target_link_libraries(appAniLiberty PRIVATE kernel32)
 
-    # libmpv
+    # libmpv for windows
     target_include_directories(appAniLiberty PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/windows-mpv)
     target_link_libraries(appAniLiberty PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/windows-mpv/libmpv.dll.lib")
-endif (WIN32)
+endif ()
+if (APPLE)
+    # libmpv for macos
+    find_package(PkgConfig)
+    pkg_check_modules(LIBMPV REQUIRED mpv)
+
+    target_include_directories(appAniLiberty PUBLIC ${LIBMPV_INCLUDE_DIRS})
+    target_link_libraries(appAniLiberty PUBLIC ${LIBMPV_LIBRARIES})
+    target_compile_options(appAniLiberty PUBLIC ${LIBMPV_CFLAGS_OTHER})
+endif ()
+if (NOT (APPLE OR WIN32))
+    # libmpv for macos
+    find_package(PkgConfig)
+    pkg_check_modules(LIBMPV REQUIRED mpv)
+
+    target_include_directories(appAniLiberty PUBLIC ${LIBMPV_INCLUDE_DIRS})
+    target_link_libraries(appAniLiberty PUBLIC ${LIBMPV_LIBRARIES})
+    target_compile_options(appAniLiberty PUBLIC ${LIBMPV_CFLAGS_OTHER})
+endif ()
 
 
 include(GNUInstallDirs)

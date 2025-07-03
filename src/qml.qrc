@@ -1,6 +1,5 @@
 <RCC>
     <qresource prefix="/">
-        <file>main.qml</file>
         <file>Views/Releases.qml</file>
         <file>Views/OnlinePlayer.qml</file>
         <file>Views/Authorization.qml</file>
@@ -248,5 +247,6 @@
         <file>Assets/Icons/videoplayer/subtitles.svg</file>
         <file>Assets/Icons/videoplayer/darksubtitles.svg</file>
         <file>Views/TorrentStreamCard.qml</file>
+        <file>Main.qml</file>
     </qresource>
 </RCC>
