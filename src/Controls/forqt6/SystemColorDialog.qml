@@ -3,7 +3,13 @@ import QtQuick.Dialogs
 
 Item {   
     property alias title: colorDialog.title
-    property alias showAlphaChannel: colorDialog.showAlphaChannel
+    property bool showAlphaChannel
+
+    onShowAlphaChannelChanged: {
+        if (showAlphaChannel) {
+            colorDialog.options = ColorDialog.ShowAlphaChannel;
+        }
+    }
 
     signal colorSelected(int color)
     signal cancelDialog()

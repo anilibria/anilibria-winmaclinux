@@ -18,6 +18,8 @@ class ApplicationsViewModel : public QObject
     Q_PROPERTY(bool isInstalledInstaller READ isInstalledInstaller NOTIFY isInstalledInstallerChanged FINAL)
     Q_PROPERTY(QString lastInstallPath READ lastInstallPath NOTIFY lastInstallPathChanged FINAL)
     Q_PROPERTY(QString lastInstallPathPrefix READ lastInstallPathPrefix NOTIFY lastInstallPathPrefixChanged FINAL)
+    Q_PROPERTY(QString pathToIconsFolder READ pathToIconsFolder NOTIFY pathToIconsFolderChanged FINAL)
+    Q_PROPERTY(QString pathToBackgroundsFolder READ pathToBackgroundsFolder NOTIFY pathToBackgroundsFolderChanged FINAL)
 
 private:
     const QString m_cacheFileName { "applications.cache" };
@@ -51,6 +53,18 @@ public:
 
     bool isInstalledInstaller() const noexcept;
 
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+    QString pathToIconsFolder() const noexcept { return "qrc:/qt/qml/aniliberty/Assets/Icons/"; }
+#else
+    QString pathToIconsFolder() const noexcept { return "qrc:/Assets/Icons/"; }
+#endif
+
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+    QString pathToBackgroundsFolder() const noexcept { return "qrc:/qt/qml/aniliberty/Assets/Backgrounds/"; }
+#else
+    QString pathToBackgroundsFolder() const noexcept { return "qrc:/Assets/Backgrounds/"; }
+#endif
+
     Q_INVOKABLE void refresh();
     Q_INVOKABLE void installByIndex();
     Q_INVOKABLE void checkNewVersions();
@@ -79,6 +93,8 @@ signals:
     void lastInstallPathChanged();
     void lastInstallPathPrefixChanged();
     void changeTorrentStreamPath(const QString& fullPath);
+    void pathToIconsFolderChanged();
+    void pathToBackgroundsFolderChanged();
 
 };
 

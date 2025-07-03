@@ -19,9 +19,9 @@ ApplicationWindow {
     width: 800
     height: 600
     minimumWidth: 300
-    font.family: userConfigurationViewModel.textFont
+    //font.family: userConfigurationViewModel.textFont
     minimumHeight: 300
-    title: qsTr("AniLiberty.Qt")
+    title: "AniLiberty.Qt"
     font.capitalization: Font.MixedCase
     property var userModel: ({})
     property string tempTorrentPath: ""
@@ -1594,9 +1594,8 @@ ApplicationWindow {
 
     Item {
         id: assetsLocation
-        property string path: Qt.resolvedUrl("../Assets/")
-        property string backgroundsPath: Qt.resolvedUrl("../Assets/Backgrounds/")
-        property string iconsPath: Qt.resolvedUrl("../Assets/Icons/")
+        property string backgroundsPath: applicationsViewModel.pathToBackgroundsFolder
+        property string iconsPath: applicationsViewModel.pathToIconsFolder
     }
 
     //uncomment for christmas version

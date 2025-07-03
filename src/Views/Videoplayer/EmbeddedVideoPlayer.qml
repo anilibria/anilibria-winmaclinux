@@ -30,7 +30,7 @@ Rectangle {
             anchors.centerIn: parent
             paused: !embeddedVideoPlayer.visible
             playing: embeddedVideoPlayer.visible && onlinePlayerViewModel.isBuffering
-            source: assetsLocation.path + "Icons/spinner.gif"
+            source: assetsLocation.iconsPath + "spinner.gif"
         }
     }
 

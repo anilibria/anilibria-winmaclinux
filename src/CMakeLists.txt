@@ -4,7 +4,7 @@ project(AniLiberty VERSION 2.2.29 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 
 find_package(Qt6 REQUIRED COMPONENTS Quick Network Concurrent WebSockets)
 find_package(Qt6 COMPONENTS Svg REQUIRED)
@@ -106,13 +106,19 @@ set(appsources
     Classes/ViewModels/youtubeviewmodel.h Classes/ViewModels/youtubeviewmodel.cpp
 )
 if (WIN32)
+    # windows specified
     list(APPEND appsources PlayerMpv/mpvobject.h PlayerMpv/mpvobject.cpp)
+
+    add_compile_definitions(NO_NEED_STANDART_PLAYER)
+    add_compile_definitions(USE_MPV_PLAYER)
 endif (WIN32)
 
 if (APPLE)
+    # mac specified
 endif (APPLE)
 
 if (NOT (APPLE OR WIN32))
+    # linux specified
 endif (APPLE)
 
 list(APPEND appsources main.cpp)
@@ -126,9 +132,11 @@ set_target_properties(${PROJECT-NAME} PROPERTIES OUTPUT_NAME "aniliberty")
 qt_policy(SET QTP0004 NEW)
 
 qt_add_qml_module(appAniLiberty
-    URI AniLiberty
+    URI aniliberty
     VERSION 1.0
     QML_FILES
+        Main.qml
+
         Views/About.qml
         Views/Applications.qml
         Views/Authorization.qml
@@ -195,7 +203,20 @@ qt_add_qml_module(appAniLiberty
         Controls/forqt6/SystemOpenFolderDialog.qml
         Controls/forqt6/SystemSaveFileDialog.qml
 
-        main.qml
+        CustomStyleQt6/BoxShadow.qml
+        CustomStyleQt6/ComboBox.qml
+        CustomStyleQt6/CursorDelegate.qml
+        CustomStyleQt6/Drawer.qml
+        CustomStyleQt6/ElevationEffect.qml
+        CustomStyleQt6/Label.qml
+        CustomStyleQt6/Menu.qml
+        CustomStyleQt6/MenuItem.qml
+        CustomStyleQt6/Popup.qml
+        CustomStyleQt6/RectangularGlow.qml
+        CustomStyleQt6/Switch.qml
+        CustomStyleQt6/SwitchIndicator.qml
+        CustomStyleQt6/TextField.qml
+        CustomStyleQt6/ToolTip.qml
 
     RESOURCES
         Assets/Backgrounds/authbackground.jpg
@@ -376,7 +397,6 @@ qt_add_qml_module(appAniLiberty
         Assets/Icons/videoplayer/topmost.svg
 )
 
-
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
 # If you are developing for iOS or macOS you should consider setting an
 # explicit, fixed bundle identifier manually though.
@@ -396,6 +416,15 @@ target_link_libraries(appAniLiberty
         PRIVATE Qt6::Svg
         PRIVATE Qt6::QuickControls2
 )
+
+if (WIN32)
+    target_link_libraries(appAniLiberty PRIVATE kernel32)
+
+    # libmpv
+    target_include_directories(appAniLiberty PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/windows-mpv)
+    target_link_libraries(appAniLiberty PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/windows-mpv/libmpv.dll.lib")
+endif (WIN32)
+
 
 include(GNUInstallDirs)
 install(TARGETS appAniLiberty

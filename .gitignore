@@ -84,3 +84,5 @@ pac.deb
 Cargo.lock
 
 src/AniLiberty
+
+*.ini
