@@ -34,7 +34,7 @@ jobs:
         target: 'desktop'
         arch: 'clang_64'        
     - name: configure
-      run: cmake -DCMAKE_BUILD_TYPE=Release ..
+      run: cmake -S src -DCMAKE_BUILD_TYPE=Release ..
     - name: run cmake
       run: cmake —-build . --config Release --parallel
     - name: Run MacDeployQt
