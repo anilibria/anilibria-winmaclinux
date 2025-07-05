@@ -36,7 +36,7 @@ jobs:
     - name: cmakeversion
       run: cmake --version
     - name: run cmake
-      run: cmake —-build . —-config Release --parallel
+      run: cmake —-build . --parallel
     - name: Run MacDeployQt
       run: cd src && macdeployqt aniliberty.app -appstore-compliant -qmldir=.
     - name: show all libraries in app folder
