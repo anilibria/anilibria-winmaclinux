@@ -28,15 +28,16 @@ jobs:
     - name: install mpv
       run: brew install mpv
     - name: Install Qt dependencies
-      uses: jurplel/install-qt-action@v4.3.0
+      uses: jurplel/install-qt-action@v4
       with:
-        version: 6.8.0
+        version: '6.8.3'
         target: 'desktop'
-        arch: 'clang_64'        
+        arch: 'clang_64'
+        modules: 'qtimageformats qtwebsockets'
     - name: configure
       run: cmake -S src -DCMAKE_BUILD_TYPE=Release ..
     - name: run cmake
-      run: cmake —-build . --config Release --parallel
+      run: cmake —-build src --config Release --parallel
     - name: Run MacDeployQt
       run: cd src && macdeployqt aniliberty.app -appstore-compliant -qmldir=.
     - name: show all libraries in app folder
