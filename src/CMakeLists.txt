@@ -445,8 +445,9 @@ if (APPLE)
 
     find_package(PkgConfig REQUIRED)
     pkg_check_modules(LIBMPV REQUIRED mpv)
-    target_include_directories(appAniLiberty PRIVATE ${LIBMPV_INCLUDE_DIRS})
-    target_link_libraries(appAniLiberty PRIVATE ${LIBMPV_LIBRARIES})
+    target_include_directories(appAniLiberty PRIVATE ${LIBMPV_INCLUDE_DIRS}) #_INCLUDEDIR or _INCLUDE_DIR
+    #target_link_libraries(appAniLiberty PRIVATE ${LIBMPV_LIBRARIES})
+    target_link_libraries(appAniLiberty PRIVATE PkgConfig::LIBMPV)
     target_compile_options(appAniLiberty PRIVATE ${LIBMPV_CFLAGS_OTHER})
 
     #find_package(mpv REQUIRED)
