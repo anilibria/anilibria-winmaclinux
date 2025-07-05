@@ -33,6 +33,8 @@ jobs:
         version: 6.8.0
         target: 'desktop'
         arch: 'clang_64'        
+    - name: cmakeversion
+      run: cmake --version
     - name: run cmake
       run: cmake —-build . —-config Release --parallel
     - name: Run MacDeployQt
