@@ -34,7 +34,7 @@ jobs:
         target: 'desktop'
         arch: 'clang_64'        
     - name: run cmake
-      run: cmake —-build . —-config Release -j 4
+      run: cmake —-build . —-config Release --parallel
     - name: Run MacDeployQt
       run: cd src && macdeployqt aniliberty.app -appstore-compliant -qmldir=.
     - name: show all libraries in app folder
