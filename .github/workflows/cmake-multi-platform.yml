@@ -35,7 +35,7 @@ jobs:
         arch: 'clang_64'
         modules: 'qtimageformats qtwebsockets'
     - name: configure
-      run: cmake -S src -DCMAKE_BUILD_TYPE=Release ..
+      run: cmake -S src -B . -DCMAKE_BUILD_TYPE=Release
     - name: run cmake
       run: cmake --build src --config Release --parallel
     - name: Run MacDeployQt
