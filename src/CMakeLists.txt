@@ -131,8 +131,16 @@ endif ()
 
 list(APPEND appsources main.cpp)
 
+set(app_icon_resource_windows "${CMAKE_CURRENT_SOURCE_DIR}/fullsizesicon.rc")
+
+set(MACOSX_BUNDLE_ICON_FILE anilibria.icns)
+set(macos_ICON ${CMAKE_CURRENT_SOURCE_DIR}/anilibria.icns)
+set_source_files_properties(${macos_ICON} PROPERTIES MACOSX_PACKAGE_LOCATION "Resources")
+
 qt_add_executable(appAniLiberty
     ${appsources}
+    ${app_icon_resource_windows}
+    ${macos_ICON}
 )
 
 set_target_properties(${PROJECT-NAME} PROPERTIES OUTPUT_NAME "aniliberty")
@@ -434,12 +442,25 @@ if (WIN32)
 endif ()
 if (APPLE)
     # libmpv for macos
-    find_package(PkgConfig)
-    pkg_check_modules(LIBMPV REQUIRED mpv)
+    #find_package(PkgConfig REQUIRED)
 
-    target_include_directories(appAniLiberty PUBLIC ${LIBMPV_INCLUDE_DIRS})
-    target_link_libraries(appAniLiberty PUBLIC ${LIBMPV_LIBRARIES})
-    target_compile_options(appAniLiberty PUBLIC ${LIBMPV_CFLAGS_OTHER})
+    #pkg_check_modules(LIBMPV REQUIRED mpv)
+    #target_include_directories(appAniLiberty PUBLIC ${LIBMPV_INCLUDE_DIRS})
+    #target_link_libraries(appAniLiberty PUBLIC ${LIBMPV_LIBRARIES})
+    #target_compile_options(appAniLiberty PUBLIC ${LIBMPV_CFLAGS_OTHER})
+
+    find_package(mpv REQUIRED)
+    target_link_libraries(YourTargetName PRIVATE mpv::mpv)
+
+    find_path(MPV_INCLUDE_DIR NAMES mpv/client.h PATHS /usr/local/include /opt/homebrew/include)
+    find_library(MPV_LIBRARY NAMES mpv PATHS /usr/local/lib /opt/homebrew/lib)
+
+    if(MPV_INCLUDE_DIR AND MPV_LIBRARY)
+        include_directories(${MPV_INCLUDE_DIR})
+        target_link_libraries(YourTargetName PRIVATE ${MPV_LIBRARY})
+    else()
+        message(FATAL_ERROR "mpv library or headers not found!")
+    endif()
 endif ()
 if (NOT (APPLE OR WIN32))
     # libmpv for macos
