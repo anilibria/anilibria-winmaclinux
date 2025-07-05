@@ -24,9 +24,9 @@ jobs:
         rm '/usr/local/bin/python3.13-config'
         rm '/usr/local/bin/pip3.13'
     - name: install pkg-config
-      run: /usr/local/bin/brew install pkg-config
+      run: brew install pkg-config
     - name: install mpv
-      run: /usr/local/bin/brew install mpv --formula
+      run: brew install mpv
     - name: Install Qt dependencies
       uses: jurplel/install-qt-action@v4.3.0
       with:
