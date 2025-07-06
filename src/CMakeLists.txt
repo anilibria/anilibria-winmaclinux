@@ -447,8 +447,6 @@ if (APPLE)
     pkg_check_modules(LIBMPV REQUIRED IMPORTED_TARGET GLOBAL mpv)
 
     message("LIBMPV_INCLUDE_DIRS is: ${LIBMPV_INCLUDE_DIRS}")
-    message("LIBMPV_LIBRARIES is: ${LIBMPV_LIBRARIES}")
-    message("PkgConfig::LIBMPV is: ${PkgConfig::LIBMPV}")
 
     target_include_directories(appAniLiberty PRIVATE ${LIBMPV_INCLUDE_DIRS}) #_INCLUDEDIR or _INCLUDE_DIR
     #target_link_libraries(appAniLiberty PRIVATE ${LIBMPV_LIBRARIES})
