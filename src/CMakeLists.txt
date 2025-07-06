@@ -137,17 +137,15 @@ set(MACOSX_BUNDLE_ICON_FILE anilibria.icns)
 set(macos_ICON ${CMAKE_CURRENT_SOURCE_DIR}/anilibria.icns)
 set_source_files_properties(${macos_ICON} PROPERTIES MACOSX_PACKAGE_LOCATION "Resources")
 
-qt_add_executable(appAniLiberty
+qt_add_executable(AniLiberty
     ${appsources}
     ${app_icon_resource_windows}
     ${macos_ICON}
 )
 
-set_target_properties(${PROJECT-NAME} PROPERTIES OUTPUT_NAME "aniliberty")
-
 qt_policy(SET QTP0004 NEW)
 
-qt_add_qml_module(appAniLiberty
+qt_add_qml_module(AniLiberty
     URI aniliberty
     VERSION 1.0
     QML_FILES
@@ -413,18 +411,15 @@ qt_add_qml_module(appAniLiberty
         Assets/Icons/videoplayer/topmost.svg
 )
 
-# Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
-# If you are developing for iOS or macOS you should consider setting an
-# explicit, fixed bundle identifier manually though.
-set_target_properties(appAniLiberty PROPERTIES
-    # MACOSX_BUNDLE_GUI_IDENTIFIER com.example.appAniLiberty
+set_target_properties(AniLiberty PROPERTIES
+    MACOSX_BUNDLE_GUI_IDENTIFIER com.emptyFlow.aniLiberty
     MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION}
     MACOSX_BUNDLE_SHORT_VERSION_STRING ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}
     MACOSX_BUNDLE TRUE
     WIN32_EXECUTABLE TRUE
 )
 
-target_link_libraries(appAniLiberty
+target_link_libraries(AniLiberty
     PRIVATE Qt6::Quick
 	PRIVATE Qt6::Network
 	PRIVATE Qt6::Concurrent
@@ -434,37 +429,30 @@ target_link_libraries(appAniLiberty
 )
 
 if (WIN32)
-    target_link_libraries(appAniLiberty PRIVATE kernel32)
+    target_link_libraries(AniLiberty PRIVATE kernel32)
 
     # libmpv for windows
-    target_include_directories(appAniLiberty PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/windows-mpv)
-    target_link_libraries(appAniLiberty PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/windows-mpv/libmpv.dll.lib")
+    target_include_directories(AniLiberty PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/windows-mpv)
+    target_link_libraries(AniLiberty PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/windows-mpv/libmpv.dll.lib")
 endif ()
 if (APPLE)
     set(ENV{PKG_CONFIG_PATH} "/opt/homebrew/bin/pkg-config") # change path to PkgConfig (it can be founded in Qt directory which is not correct)
 
     find_package(PkgConfig REQUIRED)
     pkg_check_modules(LIBMPV REQUIRED IMPORTED_TARGET GLOBAL mpv)
-
-    message("LIBMPV_INCLUDE_DIRS is: ${LIBMPV_INCLUDE_DIRS}")
-
-    target_include_directories(appAniLiberty PRIVATE ${LIBMPV_INCLUDE_DIRS}) #_INCLUDEDIR or _INCLUDE_DIR
-    #target_link_libraries(appAniLiberty PRIVATE ${LIBMPV_LIBRARIES})
-    target_link_libraries(appAniLiberty PUBLIC PkgConfig::LIBMPV)
+    target_include_directories(AniLiberty PRIVATE ${LIBMPV_INCLUDE_DIRS})
+    target_link_libraries(AniLiberty PUBLIC PkgConfig::LIBMPV)
 endif ()
 if (NOT (APPLE OR WIN32))
-    # libmpv for macos
     find_package(PkgConfig)
-    pkg_check_modules(LIBMPV REQUIRED mpv)
-
-    target_include_directories(appAniLiberty PUBLIC ${LIBMPV_INCLUDE_DIRS})
-    target_link_libraries(appAniLiberty PUBLIC ${LIBMPV_LIBRARIES})
-    target_compile_options(appAniLiberty PUBLIC ${LIBMPV_CFLAGS_OTHER})
+    pkg_check_modules(LIBMPV REQUIRED IMPORTED_TARGET GLOBAL mpv)
+    target_include_directories(AniLiberty PRIVATE ${LIBMPV_INCLUDE_DIRS})
+    target_link_libraries(AniLiberty PUBLIC PkgConfig::LIBMPV)
 endif ()
 
 
 include(GNUInstallDirs)
-install(TARGETS appAniLiberty
+install(TARGETS AniLiberty
     BUNDLE DESTINATION .
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
