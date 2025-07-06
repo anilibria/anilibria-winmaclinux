@@ -444,24 +444,15 @@ if (APPLE)
     set(ENV{PKG_CONFIG_PATH} "/opt/homebrew/bin/pkg-config") # change path to PkgConfig (it can be founded in Qt directory which is not correct)
 
     find_package(PkgConfig REQUIRED)
-    pkg_check_modules(LIBMPV REQUIRED mpv)
+    pkg_check_modules(LIBMPV REQUIRED IMPORTED_TARGET GLOBAL mpv)
+
+    message("LIBMPV_INCLUDE_DIRS is: ${LIBMPV_INCLUDE_DIRS}")
+    message("LIBMPV_LIBRARIES is: ${LIBMPV_LIBRARIES}")
+    message("PkgConfig::LIBMPV is: ${PkgConfig::LIBMPV}")
+
     target_include_directories(appAniLiberty PRIVATE ${LIBMPV_INCLUDE_DIRS}) #_INCLUDEDIR or _INCLUDE_DIR
     #target_link_libraries(appAniLiberty PRIVATE ${LIBMPV_LIBRARIES})
-    target_link_libraries(appAniLiberty PRIVATE PkgConfig::LIBMPV)
-    target_compile_options(appAniLiberty PRIVATE ${LIBMPV_CFLAGS_OTHER})
-
-    #find_package(mpv REQUIRED)
-    #target_link_libraries(YourTargetName PRIVATE mpv::mpv)
-
-    #find_path(MPV_INCLUDE_DIR NAMES mpv/client.h PATHS /usr/local/include /opt/homebrew/include)
-    #find_library(MPV_LIBRARY NAMES mpv PATHS /usr/local/lib /opt/homebrew/lib)
-
-    #if(MPV_INCLUDE_DIR AND MPV_LIBRARY)
-    #    include_directories(${MPV_INCLUDE_DIR})
-    #    target_link_libraries(YourTargetName PRIVATE ${MPV_LIBRARY})
-    #else()
-    #    message(FATAL_ERROR "mpv library or headers not found!")
-    #endif()
+    target_link_libraries(appAniLiberty PUBLIC PkgConfig::LIBMPV)
 endif ()
 if (NOT (APPLE OR WIN32))
     # libmpv for macos
