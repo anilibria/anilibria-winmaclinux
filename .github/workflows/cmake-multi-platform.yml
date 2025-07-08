@@ -26,7 +26,7 @@ jobs:
     - name: install pkg-config
       run: brew list pkg-config || brew install pkg-config
     - name: install mpv
-      run: brew install mpv --universal
+      run: brew install mpv
     - name: Install Qt dependencies
       uses: jurplel/install-qt-action@v4
       with:
@@ -35,7 +35,7 @@ jobs:
         arch: 'clang_64'
         modules: 'qtimageformats qtwebsockets'
     - name: configure
-      run: cmake -S src -B . -DCMAKE_OSX_ARCHITECTURES="x86_64;arm64"
+      run: cmake -S src -B .
     - name: run cmake
       run: cmake --build . --parallel 8
     - name: Run MacDeployQt
