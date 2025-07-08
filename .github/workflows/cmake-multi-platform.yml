@@ -26,7 +26,7 @@ jobs:
     - name: install pkg-config
       run: brew list pkg-config || brew install pkg-config
     - name: install mpv
-      run: brew list mpv || brew install mpv
+      run: brew install mpv --universal
     - name: Install Qt dependencies
       uses: jurplel/install-qt-action@v4
       with:
