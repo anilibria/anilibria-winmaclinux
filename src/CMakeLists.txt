@@ -425,6 +425,8 @@ if (APPLE)
     target_link_libraries(AniLiberty PUBLIC PkgConfig::LIBMPV)
 endif ()
 if (NOT (APPLE OR WIN32))
+    target_link_libraries(AniLiberty PRIVATE Qt6::DBus)
+
     find_package(PkgConfig)
     pkg_check_modules(LIBMPV REQUIRED IMPORTED_TARGET GLOBAL mpv)
     target_include_directories(AniLiberty PRIVATE ${LIBMPV_INCLUDE_DIRS})
