@@ -105,30 +105,11 @@ set(appsources
     Classes/ViewModels/userconfigurationviewmodel.h Classes/ViewModels/userconfigurationviewmodel.cpp
     Classes/ViewModels/youtubeviewmodel.h Classes/ViewModels/youtubeviewmodel.cpp
 )
-if (WIN32)
-    # windows specified
-    list(APPEND appsources PlayerMpv/mpvobject.h PlayerMpv/mpvobject.cpp)
 
-    add_compile_definitions(NO_NEED_STANDART_PLAYER)
-    add_compile_definitions(USE_MPV_PLAYER)
-endif ()
+add_compile_definitions(NO_NEED_STANDART_PLAYER)
+add_compile_definitions(USE_MPV_PLAYER)
 
-if (APPLE)
-    # mac specified
-    list(APPEND appsources PlayerMpv/mpvobject.h PlayerMpv/mpvobject.cpp)
-
-    add_compile_definitions(NO_NEED_STANDART_PLAYER)
-    add_compile_definitions(USE_MPV_PLAYER)
-endif ()
-
-if (NOT (APPLE OR WIN32))
-    # linux specified
-    list(APPEND appsources PlayerMpv/mpvobject.h PlayerMpv/mpvobject.cpp)
-
-    add_compile_definitions(NO_NEED_STANDART_PLAYER)
-    add_compile_definitions(USE_MPV_PLAYER)
-endif ()
-
+list(APPEND appsources PlayerMpv/mpvobject.h PlayerMpv/mpvobject.cpp)
 list(APPEND appsources main.cpp)
 
 set(app_icon_resource_windows "${CMAKE_CURRENT_SOURCE_DIR}/fullsizesicon.rc")

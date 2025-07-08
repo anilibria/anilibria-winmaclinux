@@ -35,7 +35,7 @@ jobs:
         arch: 'clang_64'
         modules: 'qtimageformats qtwebsockets'
     - name: configure
-      run: cmake -S src -B .
+      run: cmake -S src -B . -DCMAKE_OSX_ARCHITECTURES="x86_64;arm64"
     - name: run cmake
       run: cmake --build . --parallel 8
     - name: Run MacDeployQt
