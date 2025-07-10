@@ -102,7 +102,7 @@ Page {
                             LinkedText {
                                 anchors.centerIn: parent
                                 fontPointSize: 14
-                                text: "<a href='https://www.anilibria.top/'>https://www.anilibria.top/</a>"
+                                text: "<a href='https://www.aniliberty.top/'>https://www.aniliberty.top/</a>"
                             }
                         }
 

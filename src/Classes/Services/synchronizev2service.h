@@ -110,11 +110,11 @@ public:
 
     QString mainGithubCacheServer() const noexcept { return "https://raw.githubusercontent.com/trueromanus/LocalCacheChecker/main/cache"; }
 
-    QString mainNextAPIServer() const noexcept { return "https://anilibria.top"; }
+    QString mainNextAPIServer() const noexcept { return "https://aniliberty.top"; }
 
     QString appMirrorNextAPIServer() const noexcept { return "https://api.anilibria.app"; }
 
-    QString appMirrorWtfNextAPIServer() const noexcept { return "https://anilibria.wtf"; }
+    QString appMirrorWtfNextAPIServer() const noexcept { return "https://aniliberty.wtf"; }
 
     bool isSocialAuthentification() const noexcept { return m_socialCheckTimer > 0; }
 

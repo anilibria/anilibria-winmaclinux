@@ -398,5 +398,5 @@ void MainViewModel::selectedItemInMainMenu(QString pageName)
         return;
     }
 
-    QDesktopServices::openUrl(QUrl("https://anilibria.top/support"));
+    QDesktopServices::openUrl(QUrl("https://aniliberty.top/support"));
 }
