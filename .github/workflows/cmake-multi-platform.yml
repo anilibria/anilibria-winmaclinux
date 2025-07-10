@@ -22,7 +22,7 @@ jobs:
     - name: run make
       run: cmake -S src -B .
     - name: run make
-      run: cmake --build . --parallel 8
+      run: cmake --build . --parallel -- /p:CL_MPcount=8 
 #  macosbuild:
 #    runs-on: macos-latest
 #    steps:
