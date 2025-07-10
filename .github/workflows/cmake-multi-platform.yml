@@ -19,8 +19,6 @@ jobs:
       with:
         version: 6.8.3
         modules: qtscxml qt5compat qtimageformats qtwebsockets
-    - name: run qmake
-      run: qmake -makefile -o src/Makefile src/ArdorQuery.pro
     - name: run make
       run: cmake -S src -B .
     - name: run make
