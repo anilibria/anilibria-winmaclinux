@@ -23,13 +23,9 @@ jobs:
       run: cmake -S src -B .
     - name: build cmake
       run: cmake --build . --parallel -- /p:CL_MPcount=8 
-    - name: copy to deploy folder
-      run: |
-        mkdir deploy
-        Copy-Item -Path AniLiberty.exe -Destination deploy
     - name: make deploy
       run: |
-        cd deploy
+        cd Debug
         windeployqt AniLiberty.exe -qmldir=../
 #  macosbuild:
 #    runs-on: macos-latest
