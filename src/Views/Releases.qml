@@ -1060,7 +1060,7 @@ Page {
                     DefaultPopup {
                         id: releaseSettingsPopup
                         x: 40
-                        y: -480
+                        y: -200
                         width: 720
                         height: 470
                         modal: true
