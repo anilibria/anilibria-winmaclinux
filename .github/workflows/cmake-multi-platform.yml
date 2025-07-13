@@ -27,6 +27,14 @@ jobs:
       run: |
         cd Debug
         windeployqt AniLiberty.exe -qmldir=../
+    - name: compress archive
+      run: |
+        cd Debug
+        Compress-Archive -Path (Get-Location).Path -DestinationPath "../aniliberty_win.zip"
+    - uses: actions/upload-artifact@v4
+    - name: Create artifact
+      with:
+        path: aniliberty_win.zip
 #  macosbuild:
 #    runs-on: macos-latest
 #    steps:
@@ -114,4 +122,4 @@ jobs:
 #        hdiutil create -fs HFS+ -srcfolder AniLiberty.app/ -volname AniLiberty AniLiberty.dmg
 #    - uses: actions/upload-artifact@v4
 #      with:
-#        path: AniLiberty.dmg
+#        path: aniliberty_mac.dmg
