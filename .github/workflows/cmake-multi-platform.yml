@@ -32,7 +32,6 @@ jobs:
         cd Debug
         Compress-Archive -Path (Get-Location).Path -DestinationPath "../aniliberty_win.zip"
     - uses: actions/upload-artifact@v4
-    - name: Create artifact
       with:
         path: aniliberty_win.zip
 #  macosbuild:
