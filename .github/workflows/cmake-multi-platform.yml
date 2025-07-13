@@ -25,8 +25,7 @@ jobs:
       run: cmake --build . --parallel -- /p:CL_MPcount=8 
     - name: make deploy
       run: |
-        cd Debug
-        windeployqt AniLiberty.exe -qmldir=../
+        windeployqt --no-translations -qmldir=src Debug
     - name: compress archive
       run: |
         cd Debug
