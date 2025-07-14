@@ -26,6 +26,12 @@ jobs:
     - name: make deploy
       run: |
         windeployqt --no-translations -qmldir=src Debug
+    - name: remove redundant files
+      run: |
+        Remove-Item -Path "Debug/AniLiberty.exp"
+        Remove-Item -Path "Debug/AniLiberty.lib"
+        Remove-Item -Path "Debug/AniLiberty.pdb"
+        Remove-Item -Path "Debug/qmltooling"
     - name: download libmpv
       run: |
         Invoke-WebRequest -Uri "https://github.com/anilibria/anilibria-winmaclinux/releases/download/2.2.28/libmpv-2.dll" -OutFile "libmpv-2.dll"
