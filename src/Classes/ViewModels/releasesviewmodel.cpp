@@ -1546,6 +1546,15 @@ void ReleasesViewModel::recheckOpenedReleaseInCollections() noexcept
     emit openedReleaseInCollectionsChanged();
 }
 
+QString ReleasesViewModel::getReleasePoster(int releaseId) noexcept
+{
+    auto release = getReleaseById(releaseId);
+    if (release == nullptr) return "";
+
+    auto poster = release->poster();
+    return m_localStorage->getReleasePosterPath(releaseId, poster);
+}
+
 FullReleaseModel *ReleasesViewModel::getReleaseById(int id) const noexcept
 {
     auto iterator = std::find_if(

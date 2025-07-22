@@ -57,6 +57,10 @@ public:
 
     QStringList getFiles() const noexcept;
 
+    QList<std::tuple<bool,int, QString>> getOriginalFiles() const noexcept;
+
+    int64_t getSizeAllFiles() const noexcept;
+
     QString getDownloadedFile(int index) const noexcept;
 
     void resetData();

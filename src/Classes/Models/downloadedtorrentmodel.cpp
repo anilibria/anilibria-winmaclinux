@@ -53,6 +53,22 @@ QStringList DownloadedTorrentModel::getFiles() const noexcept
     return result;
 }
 
+QList<std::tuple<bool, int, QString> > DownloadedTorrentModel::getOriginalFiles() const noexcept
+{
+    return m_files;
+}
+
+int64_t DownloadedTorrentModel::getSizeAllFiles() const noexcept
+{
+    int64_t resultSize = 0;
+
+    foreach (auto file, m_files) {
+        resultSize += std::get<1>(file);
+    }
+
+    return resultSize;
+}
+
 QString DownloadedTorrentModel::getDownloadedFile(int index) const noexcept
 {
     if (index >= m_files.size()) return "";

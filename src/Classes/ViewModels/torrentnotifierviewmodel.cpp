@@ -204,12 +204,87 @@ void TorrentNotifierViewModel::removeRedundant() noexcept
     }
 }
 
+void TorrentNotifierViewModel::showCard(int index) noexcept
+{
+    if (index >= m_downloadedTorrents->count()) return;
+
+    auto torrent = m_downloadedTorrents->at(index);
+    m_cardTorrent = torrent;
+    m_cardTorrentFiles.clear();
+    auto files = torrent->getOriginalFiles();
+    foreach (auto file, files) {
+        bool isDownloaded = std::get<0>(file);
+        int size = std::get<1>(file);
+        QString path = std::get<2>(file);
+
+        QFileInfo fileInfo(path);
+
+        QVariantMap map;
+        map["isdownloaded"] = isDownloaded;
+        map["size"] = getReadableSize(size);
+        map["filename"] = fileInfo.fileName();
+        map["fullpath"] = path;
+
+        m_cardTorrentFiles.append(map);
+    }
+
+    m_isCardShowed = true;
+    emit isCardShowedChanged();
+    emit cardReleaseIdChanged();
+    emit cardReleaseNameChanged();
+    emit cardDownloadStatusChanged();
+    emit cardTorrentFilesChanged();
+    emit cardDownloadSizeChanged();
+    emit cardDownloadFileStatusChanged();
+}
+
+void TorrentNotifierViewModel::closeCard() noexcept
+{
+    m_cardTorrentFiles.clear();
+
+    m_isCardShowed = false;
+    emit isCardShowedChanged();
+}
+
 void TorrentNotifierViewModel::getTorrentData() const noexcept
 {
     QUrl url("http://localhost:" + QString::number(m_port) + "/torrents");
     QNetworkRequest request(url);
     auto reply = m_manager->get(request);
     reply->setProperty("responsecode", "torrentsData");
+}
+
+QString TorrentNotifierViewModel::getReadableSize(int64_t size) const noexcept
+{
+    QList<QString> sizes;
+    sizes.append("B");
+    sizes.append("KB");
+    sizes.append("MB");
+    sizes.append("GB");
+    sizes.append("TB");
+
+    int order = 0;
+    while (size >= 1024 && order < 4) {
+        order++;
+        size = size / 1024;
+    }
+
+    auto stringSize = QString::number(size);
+    QString result;
+    result.append(stringSize);
+    result.append(" ");
+    result.append(sizes[order]);
+    return result;
+}
+
+QString TorrentNotifierViewModel::getCardDownloadFileStatus() const noexcept
+{
+    if (m_cardTorrent == nullptr) return "";
+
+    auto countFiles = m_cardTorrent->countFiles();
+    auto countDownloadedFiles = m_cardTorrent->countDownloadedFiles();
+
+    return QString("Скачано ") + QString::number(countDownloadedFiles) + " из " + QString::number(countFiles);
 }
 
 void TorrentNotifierViewModel::triggerNotifier()

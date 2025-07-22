@@ -199,6 +199,13 @@ Page {
                                                 Layout.fillHeight: true
                                             }
                                         }
+
+                                        MouseArea {
+                                            anchors.fill: parent
+                                            onClicked: {
+                                                torrentNotifierViewModel.showCard(identifier);
+                                            }
+                                        }
                                     }
                                     Rectangle {
                                         id: rightBlock
@@ -480,5 +487,10 @@ Page {
                 torrentNotifierViewModel.startGetTorrentData(false);
             }
         }
+    }
+
+    TorrentStreamCard {
+        id: torrentStreamCard
+        visible: torrentNotifierViewModel.isCardShowed
     }
 }
