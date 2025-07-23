@@ -31,7 +31,7 @@ private:
     QString m_title { "" };
     QString m_poster { "" };
     QString m_torrentPoster { "" };
-    QList<std::tuple<bool,int, QString>> m_files { QList<std::tuple<bool,int, QString>>() };
+    QList<std::tuple<bool,int, QString, int64_t>> m_files { QList<std::tuple<bool,int, QString, int64_t>>() };
 
 public:
     DownloadedTorrentModel();
@@ -50,14 +50,14 @@ public:
     void setPoster(const QString& poster) noexcept { m_poster = poster; }
     void setTorrentPoster(const QString& torrentPoster) noexcept { m_torrentPoster = torrentPoster; }
 
-    void addFile(bool isDownloaded, int downloadPercent, const QString& downloadedPath);
+    void addFile(bool isDownloaded, int downloadPercent, const QString& downloadedPath, int64_t size);
 
     int countFiles() const noexcept;
     int countDownloadedFiles() const noexcept;
 
     QStringList getFiles() const noexcept;
 
-    QList<std::tuple<bool,int, QString>> getOriginalFiles() const noexcept;
+    QList<std::tuple<bool,int, QString, int64_t>> getOriginalFiles() const noexcept;
 
     int64_t getSizeAllFiles() const noexcept;
 

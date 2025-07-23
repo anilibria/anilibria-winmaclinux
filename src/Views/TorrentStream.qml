@@ -204,6 +204,7 @@ Page {
                                             anchors.fill: parent
                                             onClicked: {
                                                 torrentNotifierViewModel.showCard(identifier);
+                                                mainViewModel.selectPage("torrentstream:" + identifier);
                                             }
                                         }
                                     }

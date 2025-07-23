@@ -1427,6 +1427,14 @@ ApplicationWindow {
 
             extensionsViewModel.openCard();
         }
+        onChangeTorrentStreamParameters: {
+            if (!parameters.length) {
+                torrentNotifierViewModel.closeCard();
+                return;
+            }
+
+            torrentNotifierViewModel.showCard(parseInt(parameters));
+        }
 
         Component.onDestruction: {
             mainViewModel.saveState();

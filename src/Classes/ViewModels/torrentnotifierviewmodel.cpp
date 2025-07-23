@@ -212,20 +212,45 @@ void TorrentNotifierViewModel::showCard(int index) noexcept
     m_cardTorrent = torrent;
     m_cardTorrentFiles.clear();
     auto files = torrent->getOriginalFiles();
+
+    auto videos = m_releasesViewModel->getReleaseVideos(m_cardTorrent->releaseId());
+
+    int iterator = 0;
     foreach (auto file, files) {
         bool isDownloaded = std::get<0>(file);
-        int size = std::get<1>(file);
+        int percent = std::get<1>(file);
+        int size = std::get<3>(file);
         QString path = std::get<2>(file);
 
         QFileInfo fileInfo(path);
 
         QVariantMap map;
-        map["isdownloaded"] = isDownloaded;
+        map["isdownloaded"] = isDownloaded ? "Полностью скачан" : (percent == 0 ? "Не скачан" : "Частично скачан");
         map["size"] = getReadableSize(size);
         map["filename"] = fileInfo.fileName();
+        map["percent"] = percent;
         map["fullpath"] = path;
+        auto currentVideoIterator = std::find_if(
+            videos.begin(),
+            videos.end(),
+            [iterator](const ReleaseOnlineVideoModel* video) {
+                return video->order() == iterator;
+            }
+        );
+        QString posterPath = "";
+        if (currentVideoIterator != videos.end()) {
+            posterPath = (*currentVideoIterator)->videoPoster();
+        }
+        map["poster"] = posterPath;
+
+        QString videoDescription = "";
+        if (currentVideoIterator != videos.end()) {
+            videoDescription = (*currentVideoIterator)->description();
+        }
+        map["description"] = videoDescription;
 
         m_cardTorrentFiles.append(map);
+        iterator++;
     }
 
     m_isCardShowed = true;
@@ -284,7 +309,7 @@ QString TorrentNotifierViewModel::getCardDownloadFileStatus() const noexcept
     auto countFiles = m_cardTorrent->countFiles();
     auto countDownloadedFiles = m_cardTorrent->countDownloadedFiles();
 
-    return QString("Скачано ") + QString::number(countDownloadedFiles) + " из " + QString::number(countFiles);
+    return QString("Скачано файлов ") + QString::number(countDownloadedFiles) + " из " + QString::number(countFiles);
 }
 
 void TorrentNotifierViewModel::triggerNotifier()
@@ -393,10 +418,14 @@ void TorrentNotifierViewModel::requestResponse(QNetworkReply *reply)
             auto files = torrentItem.value("files").toArray();
             foreach (auto file, files) {
                 auto fileObject = file.toObject();
+                auto size = 0;
+                if (fileObject.contains("size")) size = fileObject.value("size").toInt();
+
                 downloadedItem->addFile(
                     fileObject.value("isDownloaded").toBool(),
                     fileObject.value("percentComplete").toInt(),
-                    fileObject.value("downloadedPath").toString()
+                    fileObject.value("downloadedPath").toString(),
+                    size
                 );
             }
             downloadedItem->setTitle(releaseItem->title());

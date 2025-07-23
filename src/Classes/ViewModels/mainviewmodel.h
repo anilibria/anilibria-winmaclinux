@@ -172,6 +172,7 @@ signals:
     void releasesSeriesPageToNavigated();
     void changeReleaseSeriesParameters(QString parameters);
     void changeExtensionsParameters(QString parameters);
+    void changeTorrentStreamParameters(QString parameters);
     void leftToolbarChanged();
     void editLeftToolbarChanged();
     void otherLeftToolbarChanged();
