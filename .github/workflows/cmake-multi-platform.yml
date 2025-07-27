@@ -128,4 +128,4 @@ jobs:
         hdiutil create -fs HFS+ -srcfolder AniLiberty.app/ -volname AniLiberty AniLiberty.dmg
     - uses: actions/upload-artifact@v4
       with:
-        path: aniliberty_mac.dmg
+        path: AniLiberty.dmg
