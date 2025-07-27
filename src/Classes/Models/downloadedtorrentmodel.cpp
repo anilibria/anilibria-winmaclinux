@@ -23,9 +23,9 @@ DownloadedTorrentModel::DownloadedTorrentModel()
 
 }
 
-void DownloadedTorrentModel::addFile(bool isDownloaded, int downloadPercent, const QString &downloadedPath)
+void DownloadedTorrentModel::addFile(bool isDownloaded, int downloadPercent, const QString &downloadedPath, int64_t size)
 {
-    m_files.append(std::make_tuple(isDownloaded, downloadPercent, downloadedPath));
+    m_files.append(std::make_tuple(isDownloaded, downloadPercent, downloadedPath, size));
 }
 
 int DownloadedTorrentModel::countFiles() const noexcept
@@ -51,6 +51,22 @@ QStringList DownloadedTorrentModel::getFiles() const noexcept
     }
 
     return result;
+}
+
+QList<std::tuple<bool, int, QString, int64_t> > DownloadedTorrentModel::getOriginalFiles() const noexcept
+{
+    return m_files;
+}
+
+int64_t DownloadedTorrentModel::getSizeAllFiles() const noexcept
+{
+    int64_t resultSize = 0;
+
+    foreach (auto file, m_files) {
+        resultSize += std::get<3>(file);
+    }
+
+    return resultSize;
 }
 
 QString DownloadedTorrentModel::getDownloadedFile(int index) const noexcept

@@ -118,7 +118,11 @@ void ApplicationsViewModel::installByIndex()
     qDebug() << "Install URL: " << downloadUrl;
     auto url = QUrl(downloadUrl);
     QNetworkRequest request(url);
+#if QT_VERSION > QT_VERSION_CHECK(6, 0, 0)
+    request.setAttribute(QNetworkRequest::RedirectPolicyAttribute, QNetworkRequest::NoLessSafeRedirectPolicy);
+#else
     request.setAttribute(QNetworkRequest::FollowRedirectsAttribute, true);
+#endif
     m_networkManager->get(request);
     m_loading = true;
     emit loadingChanged();
@@ -138,7 +142,7 @@ void ApplicationsViewModel::checkNewVersions()
 void ApplicationsViewModel::clearInstallData()
 {
     m_installPath = "";
-    m_installIndex  = -1;
+    m_installIndex  = "";
 
     emit installPathChanged();
     emit installIndexChanged();
@@ -228,7 +232,7 @@ void ApplicationsViewModel::createApplications()
 
     auto cacheChecker = new ExternalApplicationModel();
     cacheChecker->setName("LocalCacheChecker");
-    cacheChecker->setDescription("Программа позволяет выполнять синхронизацию релизов, франшиз и расписания и формировать файлы кеша которые впоследствии может потребить приложение AniLibria.Qt.");
+    cacheChecker->setDescription("Программа позволяет выполнять синхронизацию релизов, франшиз и расписания и формировать файлы кеша которые впоследствии может потребить приложение AniLiberty.Qt.");
     cacheChecker->setRepositoryPath("trueromanus/LocalCacheChecker");
     cacheChecker->setIsIncludedInsideDistributive(false);
     cacheChecker->setIsInstalled(false);

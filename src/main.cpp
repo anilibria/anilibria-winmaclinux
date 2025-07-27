@@ -62,7 +62,7 @@
 #include "Classes/ListModels/themefieldlistmodel.h"
 #include "Classes/ListModels/localthemeslistmodel.h"
 #include "Classes/ListModels/myanilibriasearchlistmodel.h"
-#include "Classes/ViewModels/torrentnotifierviewmodel.cpp"
+#include "Classes/ViewModels/torrentnotifierviewmodel.h"
 #include "Classes/ViewModels/globaleventtrackerviewmodel.h"
 #include "Classes/ListModels/releaseserieslistmodel.h"
 #include "Classes/ViewModels/externalplayerviewmodel.h"
@@ -122,7 +122,6 @@ int main(int argc, char *argv[])
 
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
     QQuickWindow::setGraphicsApi(QSGRendererInterface::OpenGL);
-    QQuickWindow::setSceneGraphBackend("opengl");
 #else
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     QCoreApplication::setAttribute(Qt::AA_ShareOpenGLContexts);
@@ -141,12 +140,12 @@ int main(int argc, char *argv[])
 
     QGuiApplication app(argc, argv);
 
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+    QQuickStyle::setStyle("aniliberty");
+#else
     QQuickStyle::setStyle("CustomStyle");
-    QQuickStyle::setFallbackStyle("Material");
-
-#if QT_VERSION >= QT_VERSION_CHECK(5, 15, 0)
-    app.setHighDpiScaleFactorRoundingPolicy(Qt::HighDpiScaleFactorRoundingPolicy::PassThrough);
 #endif
+    QQuickStyle::setFallbackStyle("Material");
 
     qmlRegisterType<SynchronizationService>("Anilibria.Services", 1, 0, "SynchronizationService");
     qmlRegisterType<LocalStorageService>("Anilibria.Services", 1, 0, "LocalStorage");
@@ -221,14 +220,7 @@ int main(int argc, char *argv[])
     QQmlApplicationEngine engine;    
     engine.rootContext()->setContextProperty("ApplicationVersion", ApplicationVersion);
 
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-    auto selector = QQmlFileSelector::get(&engine);
-    QStringList qtOldVersionSelector;
-    qtOldVersionSelector.append("qtis6");
-    selector->setExtraSelectors(qtOldVersionSelector);
-#endif
-
-    const QUrl url(QStringLiteral("qrc:/main.qml"));
+    const QUrl url(QStringLiteral("qrc:/Main.qml"));
     QObject::connect(
         &engine,
         &QQmlApplicationEngine::objectCreated,
@@ -238,7 +230,12 @@ int main(int argc, char *argv[])
         },
         Qt::QueuedConnection
     );
+
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+    engine.loadFromModule("aniliberty", "Main");
+#else
     engine.load(url);
+#endif
 
     return app.exec();
 }

@@ -347,6 +347,7 @@ public:
     Q_INVOKABLE void synchronizeSeens(const QVariantMap items) noexcept;
     Q_INVOKABLE void synchronizeLocalSeensToExternal() noexcept;
     Q_INVOKABLE void recheckOpenedReleaseInCollections() noexcept;
+    Q_INVOKABLE QString getReleasePoster(int releaseId) noexcept;
     FullReleaseModel* getReleaseById(int id) const noexcept;
     void resetReleaseChanges(int releaseId) noexcept;
     quint32 m_seedValue { 0 };

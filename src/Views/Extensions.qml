@@ -62,7 +62,7 @@ Page {
                                 Column {
                                     LinkedText {
                                         fontPointSize: 11
-                                        text: "<a href='https://github.com/anilibria/anilibria-winmaclinux/blob/master/extensions.md'>Как создавать расширения для приложения AniLibria.Qt</a>"
+                                        text: "<a href='https://github.com/anilibria/anilibria-winmaclinux/blob/master/extensions.md'>Как создавать расширения для приложения AniLiberty.Qt</a>"
                                     }
                                 }
                             }

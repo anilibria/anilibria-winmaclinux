@@ -1316,7 +1316,7 @@ QString ReleasesListModel::getGroupByRelease(const FullReleaseModel* model, cons
         auto title = model->title().toUpper();
         if (title.isEmpty()) return "";
 
-        auto firstChar = title[0] + " символ";
+        auto firstChar = QString(title[0]) + " символ";
         return QString(firstChar);
     }
 
@@ -1324,7 +1324,7 @@ QString ReleasesListModel::getGroupByRelease(const FullReleaseModel* model, cons
         auto title = model->originalName().toUpper();
         if (title.isEmpty()) return "";
 
-        auto firstChar = title[0] + " символ";
+        auto firstChar = QString(title[0]) + " символ";
         return QString(firstChar);
     }
 

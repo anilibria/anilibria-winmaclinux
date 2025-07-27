@@ -1219,7 +1219,7 @@ void OnlinePlayerViewModel::receiveCommand(const unsigned int id, const QString 
     }
     if (command == "getcurrentplayback" && m_sendPlaybackToRemoteSwitch){
         qDebug() << "m_playerPlaybackState: " << m_playerPlaybackState;
-        if (m_playerPlaybackState == 3) m_remotePlayer->sendCommandToUser(id, m_videoPlaybackCommand, "pause");
+        if (m_playerPlaybackState == "3") m_remotePlayer->sendCommandToUser(id, m_videoPlaybackCommand, "pause");
     }
 }
 

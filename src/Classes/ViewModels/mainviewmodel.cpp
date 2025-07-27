@@ -143,6 +143,7 @@ void MainViewModel::selectPage(const QString& pageId) noexcept
     if (pageIdentifier == "release") emit changeReleasesParameters(m_pageParameters);
     if (pageIdentifier == "releaseseries") emit changeReleaseSeriesParameters(m_pageParameters);
     if (pageIdentifier == "extensions") emit changeExtensionsParameters(m_pageParameters);
+    if (pageIdentifier == "torrentstream") emit changeTorrentStreamParameters(m_pageParameters);
 
     m_analyticsService->sendView("page", "view", "%2F" + pageIdentifier);
 }
@@ -327,6 +328,12 @@ void MainViewModel::selectToPage(const QString &pageId)
             emit changeExtensionsParameters(m_pageParameters);
         }
     }
+    if (pageIdentifier == "torrentstream") {
+        if (m_pageParameters != parameters) {
+            m_pageParameters = parameters;
+            emit changeTorrentStreamParameters(m_pageParameters);
+        }
+    }
 }
 
 void MainViewModel::loadLeftToolbar()
@@ -398,5 +405,5 @@ void MainViewModel::selectedItemInMainMenu(QString pageName)
         return;
     }
 
-    QDesktopServices::openUrl(QUrl("https://anilibria.top/support"));
+    QDesktopServices::openUrl(QUrl("https://aniliberty.top/support"));
 }

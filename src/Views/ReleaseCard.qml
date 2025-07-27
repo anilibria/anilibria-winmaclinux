@@ -830,7 +830,7 @@ ColumnLayout {
                                 anchors.left: openCommentsButton.right
                                 anchors.leftMargin: 4
                                 onClicked: {
-                                    Qt.openUrlExternally("https://anilibria.top/anime/releases/release/" + releasesViewModel.openedReleaseCode + "/episodes");
+                                    Qt.openUrlExternally("https://aniliberty.top/anime/releases/release/" + releasesViewModel.openedReleaseCode + "/episodes");
                                 }
 
                                 property bool isNeedSmallMode: mainViewModel.isSmallSizeMode
