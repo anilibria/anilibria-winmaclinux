@@ -78,3 +78,56 @@ void OsExtras::stopPreventSleepMode()
     SetThreadExecutionState(ES_CONTINUOUS);
 #endif
 }
+
+bool OsExtras::initializeTorrentStream(int port, const QString& pathToLibrary, const QString& downloadPath, const QString& listenAddress, bool showui)
+{
+    void *lib = loadLibrary(pathToLibrary);
+    torrentStreamInitialize = (torrentstreaminitializemethod)getExport(lib, "initializetorrentstream");
+    torrentStreamStop = (stoptorrentstreammethod)getExport(lib, "stoptorrentstream");
+    if (torrentStreamInitialize == nullptr) {
+        qDebug() << "Can't initialize torrentStreamInitialize method";
+        return false;
+    }
+    if (torrentStreamStop == nullptr) {
+        qDebug() << "Can't initialize torrentStreamInitialize method";
+        return false;
+    }
+    auto wDownloadPath = downloadPath.toStdWString();
+    auto cDownloadPath = const_cast<wchar_t*>(wDownloadPath.c_str());
+
+    auto wListenAddress = listenAddress.toStdWString();
+    auto cListenAddress = const_cast<wchar_t*>(wListenAddress.c_str());
+
+    auto result = torrentStreamInitialize(port, cDownloadPath, cListenAddress, showui);
+    if (result != 0) qDebug() << "Can't initialize torrentStream inside library code is " << result;
+
+    return result == 0;
+}
+
+void* OsExtras::loadLibrary(const QString& path)
+{
+#ifdef Q_OS_WIN
+    auto wstring = path.toStdWString();
+    HMODULE h = ::LoadLibraryW(wstring.c_str());
+    assert(h != nullptr);
+    return (void*)h;
+#else
+    auto wstring = path->toStdWString();
+    void *h = dlopen(wstring.c_str(), RTLD_LAZY | RTLD_LOCAL);
+    assert(h != nullptr);
+    return h;
+#endif
+}
+
+void *OsExtras::getExport(void *h, const char *name)
+{
+#ifdef Q_OS_WIN
+    void *f = ::GetProcAddress((HMODULE)h, name);
+    assert(f != nullptr);
+    return f;
+#else
+    void *f = dlsym(h, name);
+    assert(f != nullptr);
+    return f;
+#endif
+}
