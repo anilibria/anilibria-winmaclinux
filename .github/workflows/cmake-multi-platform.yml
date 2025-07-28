@@ -40,6 +40,7 @@ jobs:
       run: Compress-Archive -Path "Debug/*" -DestinationPath "aniliberty_win.zip"
     - uses: actions/upload-artifact@v4
       with:
+        name: windows
         path: aniliberty_win.zip
   macosbuild:
     runs-on: macos-latest
@@ -128,4 +129,5 @@ jobs:
         hdiutil create -fs HFS+ -srcfolder AniLiberty.app/ -volname AniLiberty AniLiberty.dmg
     - uses: actions/upload-artifact@v4
       with:
+        name: macos
         path: AniLiberty.dmg
