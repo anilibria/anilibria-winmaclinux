@@ -10,6 +10,9 @@
 #include <QtDBus/QDBusReply>
 #include <dlfcn.h>
 #endif
+#ifdef Q_OS_MACOS
+#include <dlfcn.h>
+#endif
 
 OsExtras::OsExtras(QObject *parent) : QObject(parent)
 {
