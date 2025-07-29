@@ -113,7 +113,7 @@ void* OsExtras::loadLibrary(const QString& path)
     assert(h != nullptr);
     return (void*)h;
 #else
-    auto wstring = path->toStdWString();
+    auto wstring = path.toStdWString();
     void *h = dlopen(wstring.c_str(), RTLD_LAZY | RTLD_LOCAL);
     assert(h != nullptr);
     return h;
