@@ -2,6 +2,7 @@ QT += quick multimedia network concurrent svg websockets quickcontrols2
 CONFIG += c++14
 
 macx {
+    LIBS += -ldl
     QT -= virualkeyboard
     QMAKE_LFLAGS_SONAME = -Wl,-install_name,@rpath/
     CONFIG += link_pkgconfig
