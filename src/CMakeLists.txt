@@ -417,6 +417,8 @@ if (WIN32)
     target_link_libraries(AniLiberty PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/windows-mpv/libmpv.dll.lib")
 endif ()
 if (APPLE)
+    target_link_libraries(AniLiberty PRIVATE dl)
+
     set(ENV{PKG_CONFIG_PATH} "/opt/homebrew/bin/pkg-config") # change path to PkgConfig (it can be founded in Qt directory which is not correct)
 
     find_package(PkgConfig REQUIRED)
@@ -426,6 +428,7 @@ if (APPLE)
 endif ()
 if (NOT (APPLE OR WIN32))
     target_link_libraries(AniLiberty PRIVATE Qt6::DBus)
+    target_link_libraries(AniLiberty PRIVATE dl)
 
     find_package(PkgConfig)
     pkg_check_modules(LIBMPV REQUIRED IMPORTED_TARGET GLOBAL mpv)
