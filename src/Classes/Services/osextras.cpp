@@ -8,6 +8,7 @@
 #include <QtDBus/QDBusConnection>
 #include <QtDBus/QDBusInterface>
 #include <QtDBus/QDBusReply>
+#include <dlfcn.h>
 #endif
 
 OsExtras::OsExtras(QObject *parent) : QObject(parent)
