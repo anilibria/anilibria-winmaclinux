@@ -140,6 +140,7 @@ buildwithvlc {
 }
 
 unix: {
+    LIBS += -ldl
     QT += dbus
     ENV_PREFIX=$$(PREFIX)
     isEmpty(ENV_PREFIX){
