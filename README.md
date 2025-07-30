@@ -60,7 +60,7 @@ $ yay -S anilibria-winmaclinux-git
 $ sudo dnf install anilibria-winmaclinux
 ```
 
-### AltLinux
+### ALT Linux
 Вы можете установить anilibria-winmaclinux через любой графический менеджер пакетов или через консоль:
 
 ```console
