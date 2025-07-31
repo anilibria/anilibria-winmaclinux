@@ -1443,6 +1443,9 @@ ApplicationWindow {
 
     OsExtras {
         id: osExtras
+        onTorrentStreamConnected: {
+            torrentNotifierViewModel.startGetNotifiers();
+        }
     }
 
     UserActivityViewModel {
@@ -1560,10 +1563,24 @@ ApplicationWindow {
             mainViewModel.selectPage("videoplayer");
         }
         Component.onCompleted: {
-            torrentNotifierViewModel.tryStartTorrentStreamApplication();
+            if (userConfigurationViewModel.useTorrentStreamLibrary) {
+                osExtras.initializeTorrentStream(
+                    userConfigurationViewModel.playerBuffer,
+                    "C:/work/Repositories/TorrentStream/TorrentStream/TorrentStreamLibrary/bin/Release/net9.0/win-x64/native/TorrentStreamLibrary.dll",
+                    "C:/work/Repositories/TorrentStream/content",
+                    "",
+                    false
+                );
+            } else {
+                torrentNotifierViewModel.tryStartTorrentStreamApplication();
+            }
         }
         Component.onDestruction: {
-            torrentNotifierViewModel.closeConnectionsAndApplication();
+            if (userConfigurationViewModel.useTorrentStreamLibrary) {
+                osExtras.deinitializeTorrentStream();
+            } else {
+                torrentNotifierViewModel.closeConnectionsAndApplication();
+            }
         }
     }
 

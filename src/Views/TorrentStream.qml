@@ -351,7 +351,7 @@ Page {
 
                     AccentText {
                         width: torrentStreamPopup.width
-                        text: "Использовать проксирование видео для QtAv"
+                        text: "Использовать проксирование видео"
                         fontPointSize: 12
                         font.bold: true
                         elide: Text.ElideRight
@@ -361,33 +361,32 @@ Page {
                         width: torrentStreamPopup.width
                         height: 15
 
-                        CommonSwitch {
-                            id: usingVideoProxySwitch
-                            height: 15
-                            checked: userConfigurationViewModel.usingVideoProxy
+                        Row {
+                            PlainText {
+                                text: "для VLC"
+                                fontPointSize: 12
+                            }
+
+                            CommonSwitch {
+                                id: usingVideoProxyVLCSwitch
+                                height: 15
+                                checked: userConfigurationViewModel.usingVideoProxyVLC
+                            }
+
+                            PlainText {
+                                text: "для mpv"
+                                fontPointSize: 12
+                            }
+
+                            CommonSwitch {
+                                id: usingVideoProxyMpvSwitch
+                                height: 15
+                                checked: userConfigurationViewModel.usingVideoProxyMPV
+                            }
                         }
                     }
 
-                    AccentText {
-                        width: torrentStreamPopup.width
-                        text: "Использовать проксирование видео для VLC"
-                        fontPointSize: 12
-                        font.bold: true
-                        elide: Text.ElideRight
-                    }
-
-                    Item {
-                        width: torrentStreamPopup.width
-                        height: 15
-
-                        CommonSwitch {
-                            id: usingVideoProxyVLCSwitch
-                            height: 15
-                            checked: userConfigurationViewModel.usingVideoProxyVLC
-                        }
-                    }
-
-                    AccentText {
+                    /*AccentText {
                         width: torrentStreamPopup.width
                         text: "Использовать проксирование видео для mpv"
                         fontPointSize: 12
@@ -404,7 +403,7 @@ Page {
                             height: 15
                             checked: userConfigurationViewModel.usingVideoProxyMPV
                         }
-                    }
+                    }*/
 
                     AccentText {
                         width: torrentStreamPopup.width
@@ -444,6 +443,25 @@ Page {
                         }
                     }
 
+                    AccentText {
+                        width: torrentStreamPopup.width
+                        text: "Подключить как библиотеку"
+                        fontPointSize: 12
+                        font.bold: true
+                        elide: Text.ElideRight
+                    }
+
+                    Item {
+                        width: torrentStreamPopup.width
+                        height: 15
+
+                        CommonSwitch {
+                            id: useTorrentStreamLibrarySwitch
+                            height: 15
+                            checked: userConfigurationViewModel.useTorrentStreamLibrary
+                        }
+                    }
+
                     Item {
                         width: torrentStreamPopup.width - 20
                         height: 40
@@ -465,6 +483,7 @@ Page {
                                 userConfigurationViewModel.usingVideoProxyVLC = usingVideoProxyVLCSwitch.checked;
                                 userConfigurationViewModel.usingStrongProxy = usingStrongProxySwitch.checked;
                                 userConfigurationViewModel.usingVideoProxyMPV = usingVideoProxyMpvSwitch.checked;
+                                userConfigurationViewModel.useTorrentStreamLibrary = useTorrentStreamLibrarySwitch.checked;
 
                                 torrentStreamPopup.close();
                             }

@@ -1,6 +1,7 @@
 #include "osextras.h"
 #include <QString>
 #include <QDebug>
+#include <QThread>
 #ifdef Q_OS_WIN
 #include <windows.h>
 #endif
@@ -27,6 +28,7 @@ OsExtras::OsExtras(QObject *parent) : QObject(parent)
     m_dbusPaths.append("/org/kde/ScreenSaver");
     m_dbusPaths.append("/org/freedesktop/PowerManagement");
 #endif
+    instance = this;
 }
 
 void OsExtras::startPreventSleepMode()
@@ -102,10 +104,17 @@ bool OsExtras::initializeTorrentStream(int port, const QString& pathToLibrary, c
     auto wListenAddress = listenAddress.toStdWString();
     auto cListenAddress = const_cast<wchar_t*>(wListenAddress.c_str());
 
-    auto result = torrentStreamInitialize(port, cDownloadPath, cListenAddress, showui);
+    auto result = torrentStreamInitialize(port, cDownloadPath, cListenAddress, showui, &callbackConnectedExternal);
     if (result != 0) qDebug() << "Can't initialize torrentStream inside library code is " << result;
 
     return result == 0;
+}
+
+void OsExtras::deinitializeTorrentStream() noexcept
+{
+    if (torrentStreamStop == nullptr) return;
+
+    torrentStreamStop();
 }
 
 void* OsExtras::loadLibrary(const QString& path)
@@ -134,4 +143,15 @@ void *OsExtras::getExport(void *h, const char *name)
     assert(f != nullptr);
     return f;
 #endif
+}
+
+void OsExtras::callbackConnected()
+{
+    QThread::msleep(300);
+    emit torrentStreamConnected();
+}
+
+void OsExtras::callbackRefresh()
+{
+
 }
