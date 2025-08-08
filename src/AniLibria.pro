@@ -1,5 +1,5 @@
 QT += quick multimedia network concurrent svg websockets quickcontrols2
-CONFIG += c++17
+CONFIG += c++14
 
 macx {
     LIBS += -ldl
@@ -264,7 +264,6 @@ SOURCES += \
     Classes/Services/osextras.cpp \
     Classes/Services/proxyconfigurator.cpp \
     Classes/Services/releaselinkedseries.cpp \
-    Classes/Services/synchronizationservice.cpp \
     Classes/Services/synchronizev2service.cpp \
     Classes/Services/thememanagerservice.cpp \
     Classes/Services/versionchecker.cpp \
@@ -381,7 +380,6 @@ HEADERS += \
     Classes/Services/osextras.h \
     Classes/Services/proxyconfigurator.h \
     Classes/Services/releaselinkedseries.h \
-    Classes/Services/synchronizationservice.h \
     Classes/Services/synchronizev2service.h \
     Classes/Services/thememanagerservice.h \
     Classes/Services/versionchecker.h \
