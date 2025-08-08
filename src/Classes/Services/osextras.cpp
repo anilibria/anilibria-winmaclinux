@@ -161,7 +161,7 @@ void OsExtras::tsSaveState() noexcept
 QString OsExtras::tsGetAll() noexcept
 {
     auto pointer = torrentstreamGetAll();
-    return QString(pointer);
+    return QString::fromWCharArray(pointer);
 }
 
 void OsExtras::tsStartFullDownload(int id, QString downloadPath) noexcept
