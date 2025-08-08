@@ -95,7 +95,7 @@ static void CORECLR_DELEGATE_CALLTYPE callbackRefreshExternal(bool isResult) {
 static void CORECLR_DELEGATE_CALLTYPE callbackStartDownloadExternal(int id, wchar_t* path, bool isAdded) {
     if (OsExtras::instance == nullptr) return;
 
-    QString downloadPath(path);
+    QString downloadPath = QString::fromWCharArray(path);
     OsExtras::instance->callbackStartDownload(id, downloadPath, isAdded);
 }
 
