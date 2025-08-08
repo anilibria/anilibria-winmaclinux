@@ -22,7 +22,7 @@ jobs:
     - name: configure cmake
       run: cmake -S src -B .
     - name: build cmake
-      run: cmake --build . --parallel -- /p:CL_MPcount=8 
+      run: cmake --build . --config Release --parallel -- /p:CL_MPcount=8 
     - name: make deploy
       run: |
         windeployqt --no-translations -qmldir=src Debug
