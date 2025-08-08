@@ -22,7 +22,7 @@ jobs:
     - name: configure cmake
       run: cmake -S src -B .
     - name: build cmake
-      run: cmake --build . --parallel -- /p:CL_MPcount=8 
+      run: cmake --build . --config Release --parallel -- /p:CL_MPcount=8 
     - name: make deploy
       run: |
         windeployqt --no-translations -qmldir=src Debug
@@ -32,6 +32,9 @@ jobs:
         Remove-Item -Path "Debug/AniLiberty.lib"
         Remove-Item -Path "Debug/AniLiberty.pdb"
         Remove-Item -Path "Debug/qmltooling" -Force -Recurse
+    - name: copy missed files
+      run: |
+        Copy-Item -Path "c:/windows/system32/ucrtbased.dll" -OutFile "Debug/ucrtbased.dll"
     - name: download libmpv
       run: |
         Invoke-WebRequest -Uri "https://github.com/anilibria/anilibria-winmaclinux/releases/download/2.2.28/libmpv-2.dll" -OutFile "libmpv-2.dll"
