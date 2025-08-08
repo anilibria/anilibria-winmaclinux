@@ -240,18 +240,6 @@ void AnilibriaApiService::removeMultiFavorites(QString token, QString ids)
     performRemoveFavorite(token, firstFavoriteId);
 }
 
-void AnilibriaApiService::downloadTorrent(QString path)
-{
-    auto networkManager = new QNetworkAccessManager(this);
-    auto url = QUrl(path);
-    QNetworkRequest request(url);
-
-    connect(networkManager,&QNetworkAccessManager::finished,this,&AnilibriaApiService::downloadTorrentResponse);
-
-    networkManager->get(request);
-
-}
-
 void AnilibriaApiService::getAllReleasesResponse(QNetworkReply *reply)
 {
     if (reply->error() == QNetworkReply::TimeoutError) return;

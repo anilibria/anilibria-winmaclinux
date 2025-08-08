@@ -90,6 +90,13 @@ bool OsExtras::initializeTorrentStream(int port, const QString& pathToLibrary, c
     void *lib = loadLibrary(pathToLibrary);
     torrentStreamInitialize = (torrentstreaminitializemethod)getExport(lib, "initializetorrentstream");
     torrentStreamStop = (stoptorrentstreammethod)getExport(lib, "stoptorrentstream");
+    torrentStreamClearAll = (torrentstreamclearallmethod)getExport(lib, "torrentstreamclearall");
+    torrentStreamClearOnlyTorrent = (torrentstreamclearonlytorrentmethod)getExport(lib, "torrentstreamclearonlytorrent");
+    torrentStreamClearTorrentAndData = (torrentstreamcleartorrentanddatamethod)getExport(lib, "torrentstreamclearonlytorrentanddata");
+    torrentStreamSaveState = (savestatemethod)getExport(lib, "torrentstreamsavestate");
+    torrentstreamGetAll = (torrentstreamgetallmethod)getExport(lib, "torrentstreamgetall");
+    torrentstreamStartDownload = (torrentstreamstartdownload)getExport(lib, "torrentstreamstartdownload");
+
     if (torrentStreamInitialize == nullptr) {
         qDebug() << "Can't initialize torrentStreamInitialize method";
         return false;
@@ -115,6 +122,54 @@ void OsExtras::deinitializeTorrentStream() noexcept
     if (torrentStreamStop == nullptr) return;
 
     torrentStreamStop();
+}
+
+void OsExtras::tsClearAll() noexcept
+{
+    if (torrentStreamClearAll == nullptr) return;
+
+    torrentStreamClearAll(&callbackRefreshExternal);
+}
+
+void OsExtras::tsClearOnlyTorrent(const QString& downloadPath) noexcept
+{
+    if (torrentStreamClearOnlyTorrent == nullptr) return;
+
+    auto wDownloadPath = downloadPath.toStdWString();
+    auto cDownloadPath = const_cast<wchar_t*>(wDownloadPath.c_str());
+
+    torrentStreamClearOnlyTorrent(cDownloadPath, &callbackRefreshExternal);
+}
+
+void OsExtras::tsClearTorrentAndData(const QString& downloadPath) noexcept
+{
+    if (torrentStreamClearTorrentAndData == nullptr) return;
+
+    auto wDownloadPath = downloadPath.toStdWString();
+    auto cDownloadPath = const_cast<wchar_t*>(wDownloadPath.c_str());
+
+    torrentStreamClearTorrentAndData(cDownloadPath, &callbackRefreshExternal);
+}
+
+void OsExtras::tsSaveState() noexcept
+{
+    if (torrentStreamSaveState == nullptr) return;
+
+    torrentStreamSaveState();
+}
+
+QString OsExtras::tsGetAll() noexcept
+{
+    auto pointer = torrentstreamGetAll();
+    return QString(pointer);
+}
+
+void OsExtras::tsStartFullDownload(int id, QString downloadPath) noexcept
+{
+    auto wDownloadPath = downloadPath.toStdWString();
+    auto cDownloadPath = const_cast<wchar_t*>(wDownloadPath.c_str());
+
+    torrentstreamStartDownload(id, cDownloadPath, &callbackStartDownloadExternal);
 }
 
 void* OsExtras::loadLibrary(const QString& path)
@@ -151,7 +206,12 @@ void OsExtras::callbackConnected()
     emit torrentStreamConnected();
 }
 
-void OsExtras::callbackRefresh()
+void OsExtras::callbackRefresh(bool isResult)
 {
+    emit torrentStreamRefreshed(isResult);
+}
 
+void OsExtras::callbackStartDownload(int id, const QString &path, bool isAdded)
+{
+    emit torrentStreamStartDownload(id, path, isAdded);
 }

@@ -79,6 +79,7 @@ class UserConfigurationViewModel : public QObject
     Q_PROPERTY(bool autoSkipEnding READ autoSkipEnding WRITE setAutoSkipEnding NOTIFY autoSkipEndingChanged FINAL)
     Q_PROPERTY(bool showFullTeam READ showFullTeam WRITE setShowFullTeam NOTIFY showFullTeamChanged FINAL)
     Q_PROPERTY(bool useTorrentStreamLibrary READ useTorrentStreamLibrary WRITE setUseTorrentStreamLibrary NOTIFY useTorrentStreamLibraryChanged FINAL)
+    Q_PROPERTY(bool torrentStreamUI READ torrentStreamUI WRITE setTorrentStreamUI NOTIFY torrentStreamUIChanged FINAL)
 
 private:
     QString m_cacheFileName { "userconfiguration.cache" };
@@ -136,6 +137,7 @@ private:
     const QString m_autoSkipEndingField { "autoSkipEnding" };
     const QString m_showFullTeamField { "showFullTeam" };
     const QString m_useTorrentStreamLibraryField { "useTorrentStreamLibrary" };
+    const QString m_torrentStreamUIField { "torrentStreamUI" };
     int m_opacityPlayerPanel { 50 };
     bool m_notCloseReleaseCardAfterWatch { false };
     bool m_usingScrollAcceleration { true };
@@ -190,6 +192,7 @@ private:
     bool m_autoSkipEnding { false };
     bool m_showFullTeam { false };
     bool m_useTorrentStreamLibrary { false };
+    bool m_torrentStreamUI { false };
 
 public:
     explicit UserConfigurationViewModel(QObject *parent = nullptr);
@@ -356,6 +359,9 @@ public:
     bool useTorrentStreamLibrary() const noexcept { return m_useTorrentStreamLibrary; }
     void setUseTorrentStreamLibrary(bool useTorrentStreamLibrary) noexcept;
 
+    bool torrentStreamUI() const noexcept { return m_torrentStreamUI; }
+    void setTorrentStreamUI(bool torrentStreamUI) noexcept;
+
     Q_INVOKABLE void refreshConfiguration() noexcept;
     Q_INVOKABLE void saveSettingsToFile();
 
@@ -418,6 +424,7 @@ signals:
     void autoSkipEndingChanged();
     void showFullTeamChanged();
     void useTorrentStreamLibraryChanged();
+    void torrentStreamUIChanged();
 
 };
 

@@ -70,6 +70,14 @@ void Synchronizev2Service::setCacheFolder(const QString &cacheFolder) noexcept
     emit cacheFolderChanged();
 }
 
+void Synchronizev2Service::setUseTorrentStreamAsLibrary(bool useTorrentStreamAsLibrary) noexcept
+{
+    if (m_useTorrentStreamAsLibrary == useTorrentStreamAsLibrary) return;
+
+    m_useTorrentStreamAsLibrary = useTorrentStreamAsLibrary;
+    emit useTorrentStreamAsLibraryChanged();
+}
+
 QMap<int, QString> &&Synchronizev2Service::getLocalCollections()
 {
     return std::move(m_synchronizedCollection);
@@ -172,7 +180,13 @@ void Synchronizev2Service::downloadTorrent(QString torrentPath, int releaseId, c
     QUrl url;
     //if use torrent stream
     if (m_torrentDownloadMode == 2) {
-        url = QUrl("http://localhost:" + QString::number(m_torrentStreamPort) + "/fulldownload?id=" + QString::number(releaseId) + "&path=" + torrentPath);
+        if (m_useTorrentStreamAsLibrary) {
+            emit tsDownloadTorrent(releaseId, torrentPath);
+            qDebug() << "Download in library by path " << torrentPath;
+            return;
+        } else {
+            url = QUrl("http://localhost:" + QString::number(m_torrentStreamPort) + "/fulldownload?id=" + QString::number(releaseId) + "&path=" + torrentPath);
+        }
     } else {
         url = QUrl(torrentPath);
     }
@@ -346,6 +360,48 @@ void Synchronizev2Service::removeReleasesFromCollection(QList<int> releaseIds)
     auto body = QJsonDocument(array).toJson();
     auto reply = m_networkManager->sendCustomRequest(request, "DELETE", body);
     adjustIdentifier(reply, m_removeFromCollectionRequest);
+}
+
+void Synchronizev2Service::checkVersionTorrentStreamLibrary()
+{
+    /*auto isWindows = false;
+    auto isMacos = false;
+    auto isLinux = false;
+
+    auto isArm = false;
+
+#ifdef Q_OS_WIN
+    isWindows = true;
+#endif
+#ifdef Q_OS_MACOS
+    isMacos = true;
+#endif
+
+#ifdef Q_OS_LINUX
+    isLinux = true;
+#endif
+
+#ifdef Q_PROCESSOR_ARM64
+    isArm = true;
+#endif
+
+    auto path = "";
+    if (isWindows) {
+
+    }
+
+    if (isMacos) {
+    }
+
+    if (isLinux) {
+    }*/
+
+    QNetworkRequest request(QUrl("https://api.github.com/repos/trueromanus/TorrentStream/releases/latest"));
+    request.setRawHeader("User-Agent", "Anilibria CP Client");
+    adjustRequestToken(request);
+
+    auto reply = m_networkManager->get(request);
+    adjustIdentifier(reply, m_checkVersionTorrentStream);
 }
 
 void Synchronizev2Service::timerEvent(QTimerEvent *event)
@@ -1126,6 +1182,10 @@ void Synchronizev2Service::requestFinished(QNetworkReply *reply)
     }
     if (requestType == m_collectionsRequest) {
         userCollectionSynchronizeHandler(reply);
+        return;
+    }
+    if (requestType == m_checkVersionTorrentStream) {
+
         return;
     }
 

@@ -659,6 +659,7 @@ ApplicationWindow {
         cacheFolder: userConfigurationViewModel.cacheFolder
         torrentDownloadMode: userConfigurationViewModel.torrentDownloadMode
         torrentStreamPort: userConfigurationViewModel.playerBuffer
+        useTorrentStreamAsLibrary: userConfigurationViewModel.useTorrentStreamLibrary
 
         onUserCompleteAuthentificated: {
             notificationViewModel.sendInfoNotification(`Вы успешно вошли в аккаунт.`);
@@ -753,6 +754,10 @@ ApplicationWindow {
 
         onCheckNetworkAvailibilityFailedChanged: {
             notificationViewModel.sendInfoNotification(message);
+        }
+
+        onTsDownloadTorrent: {
+            osExtras.tsStartFullDownload(releaseId, downloadPath);
         }
     }
 
@@ -1444,7 +1449,22 @@ ApplicationWindow {
     OsExtras {
         id: osExtras
         onTorrentStreamConnected: {
-            torrentNotifierViewModel.startGetNotifiers();
+            torrentNotifierViewModel.setConnectionStarted();
+        }
+        onTorrentStreamRefreshed: {
+            if (isResult) {
+            }
+
+            const json = osExtras.tsGetAll();
+            torrentNotifierViewModel.setTorrents(json);
+        }
+        onTorrentStreamStartDownload: {
+            if (isAdded) {
+                notificationViewModel.sendInfoNotification("Релиз добавлен в TorrentStream");
+                torrentNotifierViewModel.setTorrents(osExtras.tsGetAll());
+            } else {
+                notificationViewModel.sendInfoNotification("Релиз не был добавлен в TorrentStream из-за ошибки");
+            }
         }
     }
 
@@ -1531,7 +1551,7 @@ ApplicationWindow {
         releasesViewModel: releasesViewModel
         onTorrentFullyDownloaded: {
             notificationViewModel.sendInfoNotification("Торрент скачан " + releaseName);
-            torrentNotifierViewModel.startGetTorrentData(false);
+            if (!userConfigurationViewModel.useTorrentStreamLibrary) torrentNotifierViewModel.startGetTorrentData(false);
         }
         onTorrentStreamNotConfigured: {
             torrentNotifierViewModel.startGetNotifiers();
@@ -1540,7 +1560,7 @@ ApplicationWindow {
             torrentNotifierViewModel.startGetNotifiers();
         }
         onActivatedChanged: {
-            if (activated) torrentNotifierViewModel.startGetTorrentData(false);
+            if (activated && !userConfigurationViewModel.useTorrentStreamLibrary) torrentNotifierViewModel.startGetTorrentData(false);
         }
         onPrepareWatchTorrentFiles: {
             onlinePlayerViewModel.quickSetupForSingleDownloadedTorrent(files, releaseId);
@@ -1569,7 +1589,7 @@ ApplicationWindow {
                     "C:/work/Repositories/TorrentStream/TorrentStream/TorrentStreamLibrary/bin/Release/net9.0/win-x64/native/TorrentStreamLibrary.dll",
                     "C:/work/Repositories/TorrentStream/content",
                     "",
-                    false
+                    userConfigurationViewModel.torrentStreamUI
                 );
             } else {
                 torrentNotifierViewModel.tryStartTorrentStreamApplication();

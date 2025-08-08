@@ -78,7 +78,6 @@ set(appsources
     Classes/Services/osextras.h Classes/Services/osextras.cpp
     Classes/Services/proxyconfigurator.h Classes/Services/proxyconfigurator.cpp
     Classes/Services/releaselinkedseries.h Classes/Services/releaselinkedseries.cpp
-    Classes/Services/synchronizationservice.h Classes/Services/synchronizationservice.cpp
     Classes/Services/synchronizev2service.h Classes/Services/synchronizev2service.cpp
     Classes/Services/thememanagerservice.h Classes/Services/thememanagerservice.cpp
     Classes/Services/versionchecker.h Classes/Services/versionchecker.cpp

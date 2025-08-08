@@ -24,7 +24,6 @@
 #include <QQuickStyle>
 #include <QQmlFileSelector>
 #include <QQuickWindow>
-#include "Classes/Services/synchronizationservice.h"
 #include "Classes/Services/localstorageservice.h"
 #include "Classes/Services/applicationsettings.h"
 #include "Classes/Services/analyticsservice.h"
@@ -147,7 +146,6 @@ int main(int argc, char *argv[])
 #endif
     QQuickStyle::setFallbackStyle("Material");
 
-    qmlRegisterType<SynchronizationService>("Anilibria.Services", 1, 0, "SynchronizationService");
     qmlRegisterType<LocalStorageService>("Anilibria.Services", 1, 0, "LocalStorage");
     qmlRegisterType<ApplicationSettings>("Anilibria.Services", 1, 0, "ApplicationSettings");    
     qmlRegisterType<AnalyticsService>("Anilibria.Services", 1, 0, "AnalyticsService");

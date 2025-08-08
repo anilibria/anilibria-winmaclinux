@@ -778,8 +778,10 @@ ColumnLayout {
                                                     return;
                                                 }
 
-                                                torrentNotifierViewModel.lastRefreshIdentifier = identifier;
-                                                torrentNotifierViewModel.startGetTorrentData(true);
+                                                if (!userConfigurationViewModel.useTorrentStreamLibrary) {
+                                                    torrentNotifierViewModel.lastRefreshIdentifier = identifier;
+                                                    torrentNotifierViewModel.startGetTorrentData(true);
+                                                }
                                             }
                                         }
                                     }

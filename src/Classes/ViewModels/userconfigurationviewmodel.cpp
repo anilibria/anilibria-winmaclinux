@@ -469,6 +469,14 @@ void UserConfigurationViewModel::setUseTorrentStreamLibrary(bool useTorrentStrea
     emit useTorrentStreamLibraryChanged();
 }
 
+void UserConfigurationViewModel::setTorrentStreamUI(bool torrentStreamUI) noexcept
+{
+    if (m_torrentStreamUI == torrentStreamUI) return;
+
+    m_torrentStreamUI = torrentStreamUI;
+    emit torrentStreamUIChanged();
+}
+
 void UserConfigurationViewModel::refreshConfiguration() noexcept
 {
     readSettingsFromFile();
@@ -511,6 +519,7 @@ void UserConfigurationViewModel::refreshConfiguration() noexcept
     emit restoreVideoModeChanged();
     emit autoSkipEndingChanged();
     emit useTorrentStreamLibraryChanged();
+    emit torrentStreamUIChanged();
 }
 
 void UserConfigurationViewModel::saveSettingsToFile()
@@ -570,6 +579,7 @@ void UserConfigurationViewModel::saveSettingsToFile()
     object[m_autoSkipEndingField] = m_autoSkipEnding;
     object[m_showFullTeamField] = m_showFullTeam;
     object[m_useTorrentStreamLibraryField] = m_useTorrentStreamLibrary;
+    object[m_torrentStreamUIField] = m_torrentStreamUI;
 
     QFile file(getCachePath(m_cacheFileName));
     file.open(QFile::WriteOnly | QFile::Text);
@@ -640,6 +650,7 @@ void UserConfigurationViewModel::readSettingsFromFile()
     m_autoSkipEnding = object.contains(m_autoSkipEndingField) ? object[m_autoSkipEndingField].toBool() : false;
     m_showFullTeam = object.contains(m_showFullTeamField) ? object[m_showFullTeamField].toBool() : true;
     m_useTorrentStreamLibrary = object.contains(m_useTorrentStreamLibraryField) ? object[m_useTorrentStreamLibraryField].toBool() : false;
+    m_torrentStreamUI = object.contains(m_torrentStreamUIField) ? object[m_torrentStreamUIField].toBool() : false;
 
     if (m_textFont != "Default") changeFont(m_textFont);
 }
