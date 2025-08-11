@@ -46,7 +46,7 @@ private:
 public:
     explicit OsExtras(QObject *parent = nullptr);
 
-    inline static OsExtras* instance = nullptr;
+    static OsExtras* instance;
 
 #ifdef Q_OS_LINUX
     QStringList m_dbusServices { QStringList() };

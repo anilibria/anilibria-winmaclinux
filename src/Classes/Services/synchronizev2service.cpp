@@ -11,6 +11,11 @@
 Synchronizev2Service::Synchronizev2Service(QObject *parent)
     : QObject{parent}
 {
+    m_libraryCacheHost = getCachePath("libraries.cache");
+    m_newVersionFileHost = getCachePath("tsnewversion");
+
+    installTorrentStreamNewVersion();
+
     connect(m_networkManager, &QNetworkAccessManager::finished, this, &Synchronizev2Service::requestFinished);
 }
 
@@ -364,44 +369,23 @@ void Synchronizev2Service::removeReleasesFromCollection(QList<int> releaseIds)
 
 void Synchronizev2Service::checkVersionTorrentStreamLibrary()
 {
-    /*auto isWindows = false;
-    auto isMacos = false;
-    auto isLinux = false;
-
-    auto isArm = false;
-
-#ifdef Q_OS_WIN
-    isWindows = true;
-#endif
-#ifdef Q_OS_MACOS
-    isMacos = true;
-#endif
-
-#ifdef Q_OS_LINUX
-    isLinux = true;
-#endif
-
-#ifdef Q_PROCESSOR_ARM64
-    isArm = true;
-#endif
-
-    auto path = "";
-    if (isWindows) {
-
-    }
-
-    if (isMacos) {
-    }
-
-    if (isLinux) {
-    }*/
-
     QNetworkRequest request(QUrl("https://api.github.com/repos/trueromanus/TorrentStream/releases/latest"));
     request.setRawHeader("User-Agent", "Anilibria CP Client");
     adjustRequestToken(request);
 
     auto reply = m_networkManager->get(request);
     adjustIdentifier(reply, m_checkVersionTorrentStream);
+}
+
+void Synchronizev2Service::downloadTorrentStreamLibrary(const QString &path)
+{
+    auto url = QUrl(path);
+    QNetworkRequest request(url);
+    request.setRawHeader("User-Agent", "Anilibria CP Client");
+    adjustRequestToken(request);
+
+    auto reply = m_networkManager->get(request);
+    adjustIdentifier(reply, m_downloadTorrentStreamLibraryRequest);
 }
 
 void Synchronizev2Service::timerEvent(QTimerEvent *event)
@@ -1074,6 +1058,135 @@ void Synchronizev2Service::userCollectionSynchronizeHandler(QNetworkReply *reply
     if (!m_synchronizedCollection.isEmpty()) emit synchronizeCollectionCompleted();
 }
 
+void Synchronizev2Service::torrentStreamNewVersionHandler(QNetworkReply *reply) noexcept
+{
+    auto content = reply->readAll();
+    if (content.isEmpty()) {
+        emit torrentStreamNewVersionFailed("Контент ответа пустой");
+        return;
+    }
+
+    QJsonParseError* error = nullptr;
+    auto jsonDocument = QJsonDocument::fromJson(content, error);
+    if (error != nullptr) {
+        emit torrentStreamNewVersionFailed("Ответ не содержит корректный JSON");
+        return;
+    }
+
+    auto latestRelease = jsonDocument.object();
+
+    if (latestRelease.contains("message")) {
+        auto message = latestRelease.value("message").toString();
+        if (message == "Not Found") return;
+    }
+
+    auto version = latestRelease.value("tag_name").toString();
+
+    if (version == m_savedTorrentStreamVersion) return;
+
+    m_savedTorrentStreamNewVersion = version;
+    auto filename = getTorrentStreamFileName();
+
+    auto assetsArray = latestRelease.value("assets").toArray();
+    foreach (auto assetArrayItem, assetsArray) {
+        auto item = assetArrayItem.toObject();
+        auto name = item.value("name").toString();
+        if (name == filename) {
+            auto downloadUrl = item.value("browser_download_url").toString();
+            downloadTorrentStreamLibrary(downloadUrl);
+            break;
+        }
+    }
+}
+
+void Synchronizev2Service::downloadTorrentStreamLibraryHandler(QNetworkReply *reply) noexcept
+{
+    auto content = reply->readAll();
+    if (content.isEmpty()) {
+        emit torrentStreamNewVersionFailed("Контент файл новой версии пустой");
+        return;
+    }
+
+    if (QFile::exists(m_newVersionFileHost)) QFile::remove(m_newVersionFileHost);
+    QFile file(m_newVersionFileHost);
+    if (file.open(QFile::WriteOnly)) {
+        file.write(content);
+        file.close();
+
+        saveLibraryData();
+    }
+}
+
+void Synchronizev2Service::loadLibraryData() noexcept
+{
+    QFile file(m_libraryCacheHost);
+    if (file.open(QFile::ReadOnly | QFile::Text)) {
+        auto content = file.readAll();
+        file.close();
+
+        auto document = QJsonDocument::fromJson(content);
+        auto item = document.object();
+        m_savedTorrentStreamVersion = item.value("currentVersion").toString();
+        m_savedTorrentStreamNewVersion = item.value("newVersion").toString();
+    }
+}
+
+void Synchronizev2Service::saveLibraryData() noexcept
+{
+    auto object = QJsonObject();
+    object["currentVersion"] = m_savedTorrentStreamVersion;
+    object["newVersion"] = m_savedTorrentStreamNewVersion;
+
+    auto json = QJsonDocument(object).toJson();
+
+    QFile file(m_libraryCacheHost);
+    if (file.open(QFile::WriteOnly | QFile::Text)) {
+        file.write(json);
+        file.close();
+    }
+}
+
+void Synchronizev2Service::installTorrentStreamNewVersion() noexcept
+{
+    loadLibraryData();
+    if (m_savedTorrentStreamNewVersion != m_savedTorrentStreamVersion) {
+        auto filename = getTorrentStreamFileName();
+        if (QFile::copy(m_newVersionFileHost, filename)) {
+
+        }
+    }
+}
+
+QString Synchronizev2Service::getTorrentStreamFileName() noexcept
+{
+    auto isWindows = false;
+    auto isMacos = false;
+    auto isLinux = false;
+
+    auto isArm = false;
+
+#ifdef Q_OS_WIN
+    isWindows = true;
+#endif
+#ifdef Q_OS_MACOS
+    isMacos = true;
+#endif
+
+#ifdef Q_OS_LINUX
+    isLinux = true;
+#endif
+
+#ifdef Q_PROCESSOR_ARM64
+    isArm = true;
+#endif
+
+    if (isWindows) return isArm ? "tslarm64.so" : "tsl64.so";
+    if (isMacos) return isArm ? "tslarm64.dylib" : "tsl64.dylib";
+    if (isLinux) return isArm ? "tslarm64.dll" : "tsl64.dll";
+
+    return "";
+}
+
 void Synchronizev2Service::loginHandler(QNetworkReply *reply) noexcept
 {
     auto content = reply->readAll();
@@ -1185,7 +1298,11 @@ void Synchronizev2Service::requestFinished(QNetworkReply *reply)
         return;
     }
     if (requestType == m_checkVersionTorrentStream) {
-
+        torrentStreamNewVersionHandler(reply);
+        return;
+    }
+    if (requestType == m_downloadTorrentStreamLibraryRequest) {
+        downloadTorrentStreamLibraryHandler(reply);
         return;
     }
 

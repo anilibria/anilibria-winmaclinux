@@ -15,6 +15,8 @@
 #include <dlfcn.h>
 #endif
 
+OsExtras* OsExtras::instance = nullptr;
+
 OsExtras::OsExtras(QObject *parent) : QObject(parent)
 {
 #ifdef Q_OS_LINUX

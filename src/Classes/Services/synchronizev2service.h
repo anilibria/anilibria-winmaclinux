@@ -29,6 +29,8 @@ class Synchronizev2Service : public QObject
 private:
     QString m_apiv2host { "" };
     QString m_cachehost { "" };
+    QString m_libraryCacheHost { "" };
+    QString m_newVersionFileHost { "" };
     bool m_cacheHostIsFolder { false };
     QNetworkAccessManager* m_networkManager { new QNetworkAccessManager(this) };
     QMap<QString, QString> m_pendingRequests { QMap<QString, QString>() };
@@ -56,6 +58,7 @@ private:
     const QString m_addToCollectionRequest { "addtocollection" };
     const QString m_removeFromCollectionRequest { "removefromcollection" };
     const QString m_checkVersionTorrentStream { "checkVersionTorrentStream" };
+    const QString m_downloadTorrentStreamLibraryRequest { "downloadTorrentStreamLibrary" };
     bool m_isAuhorized { false };
     QString m_nickName { "" };
     QString m_avatar { "" };
@@ -79,6 +82,8 @@ private:
     bool m_useTorrentStreamAsLibrary { false };
     QMap<QString, std::tuple<bool, int>> m_synchronizedSeens { QMap<QString, std::tuple<bool, int>>() };
     QMap<int, QString> m_synchronizedCollection { QMap<int, QString>() };
+    QString m_savedTorrentStreamVersion { "" };
+    QString m_savedTorrentStreamNewVersion { "" };
 
 public:
     explicit Synchronizev2Service(QObject *parent = nullptr);
@@ -146,6 +151,7 @@ public:
     Q_INVOKABLE void addReleasesToCollection(QList<int> releaseIds, const QString& collectionId);
     Q_INVOKABLE void removeReleasesFromCollection(QList<int> releaseIds);
     Q_INVOKABLE void checkVersionTorrentStreamLibrary();
+    Q_INVOKABLE void downloadTorrentStreamLibrary(const QString& path);
 
     void timerEvent(QTimerEvent *event) override;
 
@@ -177,6 +183,12 @@ private:
     void checkNetworkAvailabilityHandler(QNetworkReply* reply) noexcept;
     void userSeenSynchronizationHandler(QNetworkReply* reply) noexcept;
     void userCollectionSynchronizeHandler(QNetworkReply* reply) noexcept;
+    void torrentStreamNewVersionHandler(QNetworkReply* reply) noexcept;
+    void downloadTorrentStreamLibraryHandler(QNetworkReply* reply) noexcept;
+    void loadLibraryData() noexcept;
+    void saveLibraryData() noexcept;
+    void installTorrentStreamNewVersion() noexcept;
+    QString getTorrentStreamFileName() noexcept;
 
 private slots:
     void requestFinished(QNetworkReply* reply);
@@ -191,6 +203,7 @@ signals:
     void synchronizeFavoritesFailed(QString errorMessage);
     void synchronizeSeensFailed(QString errorMessage);
     void synchronizeCollectionFailed(QString errorMessage);
+    void torrentStreamNewVersionFailed(QString errorMessage);
     void synchronizeSeensCompleted();
     void synchronizeCollectionCompleted();
     void getUserFailed(QString errorMessage);
