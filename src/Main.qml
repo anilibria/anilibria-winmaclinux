@@ -712,6 +712,8 @@ ApplicationWindow {
         }
 
         Component.onCompleted: {
+            synchronizationServicev2.checkVersionTorrentStreamLibrary();
+
             if (synchronizationServicev2.token) synchronizationServicev2.getUserData();
 
             synchronizationServicev2.synchronizeFullCache();
@@ -728,6 +730,10 @@ ApplicationWindow {
 
         onSynchronizeCacheFailed: {
             notificationViewModel.sendInfoNotification("Ошибка во время синхронизации: " + errorMessage);
+        }
+
+        onTorrentStreamNewVersionFailed: {
+            notificationViewModel.sendInfoNotification("Ошибка проверки библиотеки TorrentStream : " + errorMessage);
         }
 
         onSynchronizationCompletedNoChanges: {
@@ -1584,6 +1590,7 @@ ApplicationWindow {
         }
         Component.onCompleted: {
             if (userConfigurationViewModel.useTorrentStreamLibrary) {
+                console.log("Try to start TorrentStream as library...");
                 osExtras.initializeTorrentStream(
                     userConfigurationViewModel.playerBuffer,
                     "C:/work/Repositories/TorrentStream/TorrentStream/TorrentStreamLibrary/bin/Release/net9.0/win-x64/native/TorrentStreamLibrary.dll",

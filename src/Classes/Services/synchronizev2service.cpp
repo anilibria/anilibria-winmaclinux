@@ -14,6 +14,8 @@ Synchronizev2Service::Synchronizev2Service(QObject *parent)
     m_libraryCacheHost = getCachePath("libraries.cache");
     m_newVersionFileHost = getCachePath("tsnewversion");
 
+    createIfNotExistsFile(m_libraryCacheHost, "{}");
+
     installTorrentStreamNewVersion();
 
     connect(m_networkManager, &QNetworkAccessManager::finished, this, &Synchronizev2Service::requestFinished);
@@ -371,7 +373,6 @@ void Synchronizev2Service::checkVersionTorrentStreamLibrary()
 {
     QNetworkRequest request(QUrl("https://api.github.com/repos/trueromanus/TorrentStream/releases/latest"));
     request.setRawHeader("User-Agent", "Anilibria CP Client");
-    adjustRequestToken(request);
 
     auto reply = m_networkManager->get(request);
     adjustIdentifier(reply, m_checkVersionTorrentStream);
@@ -382,7 +383,6 @@ void Synchronizev2Service::downloadTorrentStreamLibrary(const QString &path)
     auto url = QUrl(path);
     QNetworkRequest request(url);
     request.setRawHeader("User-Agent", "Anilibria CP Client");
-    adjustRequestToken(request);
 
     auto reply = m_networkManager->get(request);
     adjustIdentifier(reply, m_downloadTorrentStreamLibraryRequest);
@@ -1108,6 +1108,7 @@ void Synchronizev2Service::downloadTorrentStreamLibraryHandler(QNetworkReply *re
     }
 
     if (QFile::exists(m_newVersionFileHost)) QFile::remove(m_newVersionFileHost);
+
     QFile file(m_newVersionFileHost);
     if (file.open(QFile::WriteOnly)) {
         file.write(content);
@@ -1149,11 +1150,20 @@ void Synchronizev2Service::saveLibraryData() noexcept
 void Synchronizev2Service::installTorrentStreamNewVersion() noexcept
 {
     loadLibraryData();
-    if (m_savedTorrentStreamNewVersion != m_savedTorrentStreamVersion) {
+    if (m_savedTorrentStreamNewVersion != m_savedTorrentStreamVersion && QFile::exists(m_newVersionFileHost)) {
         auto filename = getTorrentStreamFileName();
-        if (QFile::copy(m_newVersionFileHost, filename)) {
+        auto newVersionPath = getCachePath(filename);
 
+        if (QFile::exists(newVersionPath)) {
+            if (!QFile::remove(newVersionPath)) return;
         }
+
+        if (!QFile::copy(m_newVersionFileHost, newVersionPath)) {
+            qDebug() << "Can't copy new version of Torrent Stream Library for path: " << newVersionPath;
+            return;
+        }
+
+        QFile::remove(m_newVersionFileHost);
     }
 }
 
@@ -1180,9 +1190,9 @@ QString Synchronizev2Service::getTorrentStreamFileName() noexcept
     isArm = true;
 #endif
 
-    if (isWindows) return isArm ? "tslarm64.so" : "tsl64.so";
+    if (isLinux) return isArm ? "tslarm64.so" : "tsl64.so";
     if (isMacos) return isArm ? "tslarm64.dylib" : "tsl64.dylib";
-    if (isLinux) return isArm ? "tslarm64.dll" : "tsl64.dll";
+    if (isWindows) return isArm ? "tslarm64.dll" : "tsl64.dll";
 
     return "";
 }
