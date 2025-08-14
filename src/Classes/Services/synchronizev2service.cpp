@@ -1150,21 +1150,25 @@ void Synchronizev2Service::saveLibraryData() noexcept
 void Synchronizev2Service::installTorrentStreamNewVersion() noexcept
 {
     loadLibraryData();
-    if (m_savedTorrentStreamNewVersion != m_savedTorrentStreamVersion && QFile::exists(m_newVersionFileHost)) {
-        auto filename = getTorrentStreamFileName();
-        auto newVersionPath = getCachePath(filename);
+    auto filename = getTorrentStreamFileName();
+    auto currentVersionPath = getCachePath(filename);
 
-        if (QFile::exists(newVersionPath)) {
-            if (!QFile::remove(newVersionPath)) return;
+    if (m_savedTorrentStreamNewVersion != m_savedTorrentStreamVersion && QFile::exists(m_newVersionFileHost)) {
+        if (QFile::exists(currentVersionPath)) {
+            if (!QFile::remove(currentVersionPath)) return;
         }
 
-        if (!QFile::copy(m_newVersionFileHost, newVersionPath)) {
-            qDebug() << "Can't copy new version of Torrent Stream Library for path: " << newVersionPath;
+        if (!QFile::copy(m_newVersionFileHost, currentVersionPath)) {
+            qDebug() << "Can't copy new version of Torrent Stream Library for path: " << currentVersionPath;
             return;
         }
 
         QFile::remove(m_newVersionFileHost);
+        m_savedTorrentStreamVersion = m_savedTorrentStreamNewVersion;
+        saveLibraryData();
     }
+
+    if(QFile::exists(currentVersionPath)) m_pathToTSLibrary = currentVersionPath;
 }
 
 QString Synchronizev2Service::getTorrentStreamFileName() noexcept

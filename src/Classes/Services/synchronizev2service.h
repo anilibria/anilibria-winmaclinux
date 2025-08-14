@@ -25,6 +25,7 @@ class Synchronizev2Service : public QObject
     Q_PROPERTY(QString cacheFolder READ cacheFolder WRITE setCacheFolder NOTIFY cacheFolderChanged FINAL)
     Q_PROPERTY(bool isSocialAuthentification READ isSocialAuthentification NOTIFY isSocialAuthentificationChanged FINAL)
     Q_PROPERTY(bool useTorrentStreamAsLibrary READ useTorrentStreamAsLibrary WRITE setUseTorrentStreamAsLibrary NOTIFY useTorrentStreamAsLibraryChanged FINAL)
+    Q_PROPERTY(QString pathToTSLibrary READ pathToTSLibrary NOTIFY pathToTSLibraryChanged FINAL)
 
 private:
     QString m_apiv2host { "" };
@@ -84,6 +85,7 @@ private:
     QMap<int, QString> m_synchronizedCollection { QMap<int, QString>() };
     QString m_savedTorrentStreamVersion { "" };
     QString m_savedTorrentStreamNewVersion { "" };
+    QString m_pathToTSLibrary { "" };
 
 public:
     explicit Synchronizev2Service(QObject *parent = nullptr);
@@ -128,6 +130,8 @@ public:
 
     bool useTorrentStreamAsLibrary() const noexcept { return m_useTorrentStreamAsLibrary; }
     void setUseTorrentStreamAsLibrary(bool useTorrentStreamAsLibrary) noexcept;
+
+    QString pathToTSLibrary() const noexcept { return m_pathToTSLibrary; }
 
     QMap<int, QString>&& getLocalCollections();
 
@@ -231,6 +235,7 @@ signals:
     void appMirrorWtfNextAPIServerChanged();
     void useTorrentStreamAsLibraryChanged();
     void tsDownloadTorrent(int releaseId, QString downloadPath);
+    void pathToTSLibraryChanged();
 
 };
 
