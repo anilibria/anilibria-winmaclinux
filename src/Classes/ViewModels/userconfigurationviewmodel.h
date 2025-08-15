@@ -80,6 +80,7 @@ class UserConfigurationViewModel : public QObject
     Q_PROPERTY(bool showFullTeam READ showFullTeam WRITE setShowFullTeam NOTIFY showFullTeamChanged FINAL)
     Q_PROPERTY(bool useTorrentStreamLibrary READ useTorrentStreamLibrary WRITE setUseTorrentStreamLibrary NOTIFY useTorrentStreamLibraryChanged FINAL)
     Q_PROPERTY(bool torrentStreamUI READ torrentStreamUI WRITE setTorrentStreamUI NOTIFY torrentStreamUIChanged FINAL)
+    Q_PROPERTY(QString pathToTSContent READ pathToTSContent WRITE setPathToTSContent NOTIFY pathToTSContentChanged FINAL)
 
 private:
     QString m_cacheFileName { "userconfiguration.cache" };
@@ -138,6 +139,7 @@ private:
     const QString m_showFullTeamField { "showFullTeam" };
     const QString m_useTorrentStreamLibraryField { "useTorrentStreamLibrary" };
     const QString m_torrentStreamUIField { "torrentStreamUI" };
+    const QString m_pathToTSContentField { "pathToTSContent" };
     int m_opacityPlayerPanel { 50 };
     bool m_notCloseReleaseCardAfterWatch { false };
     bool m_usingScrollAcceleration { true };
@@ -193,6 +195,7 @@ private:
     bool m_showFullTeam { false };
     bool m_useTorrentStreamLibrary { false };
     bool m_torrentStreamUI { false };
+    QString m_pathToTSContent { "" };
 
 public:
     explicit UserConfigurationViewModel(QObject *parent = nullptr);
@@ -362,6 +365,9 @@ public:
     bool torrentStreamUI() const noexcept { return m_torrentStreamUI; }
     void setTorrentStreamUI(bool torrentStreamUI) noexcept;
 
+    QString pathToTSContent() const noexcept { return m_pathToTSContent; }
+    void setPathToTSContent(QString pathToTSContent) noexcept;
+
     Q_INVOKABLE void refreshConfiguration() noexcept;
     Q_INVOKABLE void saveSettingsToFile();
 
@@ -425,6 +431,7 @@ signals:
     void showFullTeamChanged();
     void useTorrentStreamLibraryChanged();
     void torrentStreamUIChanged();
+    void pathToTSContentChanged();
 
 };
 

@@ -16,6 +16,12 @@ Synchronizev2Service::Synchronizev2Service(QObject *parent)
 
     createIfNotExistsFile(m_libraryCacheHost, "{}");
 
+    auto tsDefaultContent = getCachePath("content");
+    QDir dir;
+    if (!dir.exists(tsDefaultContent)) dir.mkdir(tsDefaultContent);
+
+    m_pathToTSContent = tsDefaultContent;
+
     installTorrentStreamNewVersion();
 
     connect(m_networkManager, &QNetworkAccessManager::finished, this, &Synchronizev2Service::requestFinished);

@@ -1590,14 +1590,23 @@ ApplicationWindow {
         }
         Component.onCompleted: {
             if (userConfigurationViewModel.useTorrentStreamLibrary) {
-                console.log("Try to start TorrentStream as library...");
-                osExtras.initializeTorrentStream(
-                    userConfigurationViewModel.playerBuffer,
-                    "C:/work/Repositories/TorrentStream/TorrentStream/TorrentStreamLibrary/bin/Release/net9.0/win-x64/native/TorrentStreamLibrary.dll",
-                    "C:/work/Repositories/TorrentStream/content",
-                    "",
-                    userConfigurationViewModel.torrentStreamUI
-                );
+                if (synchronizationServicev2.pathToTSLibrary) {
+                    console.log("Try to start TorrentStream as library from path: " + synchronizationServicev2.pathToTSLibrary);
+
+                    const pathToTSContent = userConfigurationViewModel.pathToTSContent ?
+                        userConfigurationViewModel.pathToTSContent :
+                        synchronizationServicev2.pathToTSContent;
+                    console.log("TorrentStream content folder: " + pathToTSContent);
+
+                    osExtras.initializeTorrentStream(
+                        userConfigurationViewModel.playerBuffer,
+                        //"C:/work/Repositories/TorrentStream/TorrentStream/TorrentStreamLibrary/bin/Release/net9.0/win-x64/native/TorrentStreamLibrary.dll",
+                        synchronizationServicev2.pathToTSLibrary,
+                        pathToTSContent,
+                        "",
+                        userConfigurationViewModel.torrentStreamUI
+                    );
+                }
             } else {
                 torrentNotifierViewModel.tryStartTorrentStreamApplication();
             }

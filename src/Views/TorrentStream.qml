@@ -474,6 +474,26 @@ Page {
                         }
                     }
 
+                    AccentText {
+                        width: torrentStreamPopup.width
+                        text: "Путь к скаченному контенту"
+                        fontPointSize: 12
+                        font.bold: true
+                        elide: Text.ElideRight
+                    }
+
+                    Item {
+                        width: torrentStreamPopup.width - 30
+                        height: torrentStreamPort.height
+
+                        CommonTextField {
+                            id: torrentStreamContentPath
+                            width: parent.width
+                            placeholderText: "Введите путь куда будут скачиваться файлы"
+                            text: userConfigurationViewModel.pathToTSContent
+                        }
+                    }
+
                     Item {
                         width: torrentStreamPopup.width - 20
                         height: 40
@@ -497,6 +517,7 @@ Page {
                                 userConfigurationViewModel.usingVideoProxyMPV = usingVideoProxyMpvSwitch.checked;
                                 userConfigurationViewModel.useTorrentStreamLibrary = useTorrentStreamLibrarySwitch.checked;
                                 userConfigurationViewModel.torrentStreamUI = torrentStreamUISwitch.checked;
+                                userConfigurationViewModel.pathToTSContent = torrentStreamContentPath.text;
 
                                 torrentStreamPopup.close();
                             }
