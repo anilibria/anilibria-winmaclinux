@@ -389,6 +389,9 @@ void Synchronizev2Service::downloadTorrentStreamLibrary(const QString &path)
     auto url = QUrl(path);
     QNetworkRequest request(url);
     request.setRawHeader("User-Agent", "Anilibria CP Client");
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+    request.setAttribute(QNetworkRequest::RedirectPolicyAttribute, QNetworkRequest::NoLessSafeRedirectPolicy);
+#endif
 
     auto reply = m_networkManager->get(request);
     adjustIdentifier(reply, m_downloadTorrentStreamLibraryRequest);
