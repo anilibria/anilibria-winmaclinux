@@ -78,7 +78,6 @@ set(appsources
     Classes/Services/osextras.h Classes/Services/osextras.cpp
     Classes/Services/proxyconfigurator.h Classes/Services/proxyconfigurator.cpp
     Classes/Services/releaselinkedseries.h Classes/Services/releaselinkedseries.cpp
-    Classes/Services/synchronizationservice.h Classes/Services/synchronizationservice.cpp
     Classes/Services/synchronizev2service.h Classes/Services/synchronizev2service.cpp
     Classes/Services/thememanagerservice.h Classes/Services/thememanagerservice.cpp
     Classes/Services/versionchecker.h Classes/Services/versionchecker.cpp
@@ -417,6 +416,8 @@ if (WIN32)
     target_link_libraries(AniLiberty PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/windows-mpv/libmpv.dll.lib")
 endif ()
 if (APPLE)
+    target_link_libraries(AniLiberty PRIVATE dl)
+
     set(ENV{PKG_CONFIG_PATH} "/opt/homebrew/bin/pkg-config") # change path to PkgConfig (it can be founded in Qt directory which is not correct)
 
     find_package(PkgConfig REQUIRED)
@@ -426,6 +427,7 @@ if (APPLE)
 endif ()
 if (NOT (APPLE OR WIN32))
     target_link_libraries(AniLiberty PRIVATE Qt6::DBus)
+    target_link_libraries(AniLiberty PRIVATE dl)
 
     find_package(PkgConfig)
     pkg_check_modules(LIBMPV REQUIRED IMPORTED_TARGET GLOBAL mpv)

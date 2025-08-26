@@ -39,7 +39,14 @@ Page {
                             iconHeight: 34
                             tooltipMessage: "Обновить список"
                             onButtonPressed: {
-                                torrentNotifierViewModel.startGetTorrentData(false);
+                                if (!torrentNotifierViewModel.activated) return;
+
+                                if (userConfigurationViewModel.useTorrentStreamLibrary) {
+                                    const json = osExtras.tsGetAll();
+                                    torrentNotifierViewModel.setTorrents(json);
+                                } else {
+                                    torrentNotifierViewModel.startGetTorrentData(false);
+                                }
                             }
                         }
 
@@ -49,7 +56,11 @@ Page {
                             iconHeight: 29
                             tooltipMessage: "Удалить все торренты и скачанные файлы"
                             onButtonPressed: {
-                                torrentNotifierViewModel.clearAllData();
+                                if (userConfigurationViewModel.useTorrentStreamLibrary) {
+                                    osExtras.tsClearAll();
+                                } else {
+                                    torrentNotifierViewModel.clearAllData();
+                                }
                             }
                         }
 
@@ -89,7 +100,24 @@ Page {
                             anchors.verticalCenter: parent.verticalCenter
                             text: "Подключиться"
                             onClicked: {
-                                torrentNotifierViewModel.startGetNotifiers(userConfigurationViewModel.playerBuffer);
+                                if (userConfigurationViewModel.useTorrentStreamLibrary) {
+                                    console.log("Try to start TorrentStream as library from path: " + synchronizationServicev2.pathToTSLibrary);
+
+                                    const pathToTSContent = userConfigurationViewModel.pathToTSContent ?
+                                        userConfigurationViewModel.pathToTSContent :
+                                        synchronizationServicev2.pathToTSContent;
+                                    console.log("TorrentStream content folder: " + pathToTSContent);
+
+                                    osExtras.initializeTorrentStream(
+                                        userConfigurationViewModel.playerBuffer,
+                                        synchronizationServicev2.pathToTSLibrary,
+                                        pathToTSContent,
+                                        "",
+                                        userConfigurationViewModel.torrentStreamUI
+                                    );
+                                } else {
+                                    torrentNotifierViewModel.startGetNotifiers(userConfigurationViewModel.playerBuffer);
+                                }
                             }
                         }
                         RoundedActionButton {
@@ -237,7 +265,11 @@ Page {
                                                         onPressed: {
                                                             torrentActionsMenu.close();
 
-                                                            torrentNotifierViewModel.clearOnlyTorrent(torrentPath);
+                                                            if (userConfigurationViewModel.useTorrentStreamLibrary) {
+                                                                osExtras.tsClearOnlyTorrent(torrentPath);
+                                                            } else {
+                                                                torrentNotifierViewModel.clearOnlyTorrent(torrentPath);
+                                                            }
                                                         }
                                                     }
                                                     CommonMenuItem {
@@ -245,7 +277,11 @@ Page {
                                                         onPressed: {
                                                             torrentActionsMenu.close();
 
-                                                            torrentNotifierViewModel.clearTorrentAndData(torrentPath);
+                                                            if (userConfigurationViewModel.useTorrentStreamLibrary) {
+                                                                osExtras.tsClearTorrentAndData(torrentPath);
+                                                            } else {
+                                                                torrentNotifierViewModel.clearTorrentAndData(torrentPath);
+                                                            }
                                                         }
                                                     }
                                                 }
@@ -351,7 +387,7 @@ Page {
 
                     AccentText {
                         width: torrentStreamPopup.width
-                        text: "Использовать проксирование видео для QtAv"
+                        text: "Использовать проксирование видео"
                         fontPointSize: 12
                         font.bold: true
                         elide: Text.ElideRight
@@ -361,67 +397,39 @@ Page {
                         width: torrentStreamPopup.width
                         height: 15
 
-                        CommonSwitch {
-                            id: usingVideoProxySwitch
-                            height: 15
-                            checked: userConfigurationViewModel.usingVideoProxy
-                        }
-                    }
+                        Row {
+                            PlainText {
+                                text: "для VLC"
+                                fontPointSize: 12
+                            }
 
-                    AccentText {
-                        width: torrentStreamPopup.width
-                        text: "Использовать проксирование видео для VLC"
-                        fontPointSize: 12
-                        font.bold: true
-                        elide: Text.ElideRight
-                    }
+                            CommonSwitch {
+                                id: usingVideoProxyVLCSwitch
+                                height: 15
+                                checked: userConfigurationViewModel.usingVideoProxyVLC
+                            }
 
-                    Item {
-                        width: torrentStreamPopup.width
-                        height: 15
+                            PlainText {
+                                text: "для mpv"
+                                fontPointSize: 12
+                            }
 
-                        CommonSwitch {
-                            id: usingVideoProxyVLCSwitch
-                            height: 15
-                            checked: userConfigurationViewModel.usingVideoProxyVLC
-                        }
-                    }
+                            CommonSwitch {
+                                id: usingVideoProxyMpvSwitch
+                                height: 15
+                                checked: userConfigurationViewModel.usingVideoProxyMPV
+                            }
 
-                    AccentText {
-                        width: torrentStreamPopup.width
-                        text: "Использовать проксирование видео для mpv"
-                        fontPointSize: 12
-                        font.bold: true
-                        elide: Text.ElideRight
-                    }
+                            PlainText {
+                                text: "надежное"
+                                fontPointSize: 12
+                            }
 
-                    Item {
-                        width: torrentStreamPopup.width
-                        height: 15
-
-                        CommonSwitch {
-                            id: usingVideoProxyMpvSwitch
-                            height: 15
-                            checked: userConfigurationViewModel.usingVideoProxyMPV
-                        }
-                    }
-
-                    AccentText {
-                        width: torrentStreamPopup.width
-                        text: "Использовать надежное проксирование видео"
-                        fontPointSize: 12
-                        font.bold: true
-                        elide: Text.ElideRight
-                    }
-
-                    Item {
-                        width: torrentStreamPopup.width
-                        height: 15
-
-                        CommonSwitch {
-                            id: usingStrongProxySwitch
-                            height: 15
-                            checked: userConfigurationViewModel.usingStrongProxy
+                            CommonSwitch {
+                                id: usingStrongProxySwitch
+                                height: 15
+                                checked: userConfigurationViewModel.usingStrongProxy
+                            }
                         }
                     }
 
@@ -441,6 +449,61 @@ Page {
                             id: removeAllDownloadedTorrentSwitch
                             height: 15
                             checked: userConfigurationViewModel.removeAllDownloadedTorrent
+                        }
+                    }
+
+                    AccentText {
+                        width: torrentStreamPopup.width
+                        text: "Подключить как библиотеку"
+                        fontPointSize: 12
+                        font.bold: true
+                        elide: Text.ElideRight
+                    }
+
+                    Item {
+                        width: torrentStreamPopup.width
+                        height: 15
+
+                        Row {
+                            PlainText {
+                                text: "Подключить"
+                                fontPointSize: 12
+                            }
+                            CommonSwitch {
+                                id: useTorrentStreamLibrarySwitch
+                                height: 15
+                                checked: userConfigurationViewModel.useTorrentStreamLibrary
+                            }
+
+                            PlainText {
+                                text: "Показывать UI"
+                                fontPointSize: 12
+                            }
+                            CommonSwitch {
+                                id: torrentStreamUISwitch
+                                height: 15
+                                checked: userConfigurationViewModel.torrentStreamUI
+                            }
+                        }
+                    }
+
+                    AccentText {
+                        width: torrentStreamPopup.width
+                        text: "Путь к скаченному контенту"
+                        fontPointSize: 12
+                        font.bold: true
+                        elide: Text.ElideRight
+                    }
+
+                    Item {
+                        width: torrentStreamPopup.width - 30
+                        height: torrentStreamPort.height
+
+                        CommonTextField {
+                            id: torrentStreamContentPath
+                            width: parent.width
+                            placeholderText: "Введите путь куда будут скачиваться файлы"
+                            text: userConfigurationViewModel.pathToTSContent
                         }
                     }
 
@@ -465,6 +528,9 @@ Page {
                                 userConfigurationViewModel.usingVideoProxyVLC = usingVideoProxyVLCSwitch.checked;
                                 userConfigurationViewModel.usingStrongProxy = usingStrongProxySwitch.checked;
                                 userConfigurationViewModel.usingVideoProxyMPV = usingVideoProxyMpvSwitch.checked;
+                                userConfigurationViewModel.useTorrentStreamLibrary = useTorrentStreamLibrarySwitch.checked;
+                                userConfigurationViewModel.torrentStreamUI = torrentStreamUISwitch.checked;
+                                userConfigurationViewModel.pathToTSContent = torrentStreamContentPath.text;
 
                                 torrentStreamPopup.close();
                             }
@@ -485,7 +551,14 @@ Page {
             }
 
             Component.onCompleted: {
-                torrentNotifierViewModel.startGetTorrentData(false);
+                if (!torrentNotifierViewModel.activated) return;
+
+                if (userConfigurationViewModel.useTorrentStreamLibrary) {
+                    const json = osExtras.tsGetAll();
+                    torrentNotifierViewModel.setTorrents(json);
+                } else {
+                    torrentNotifierViewModel.startGetTorrentData(false);
+                }
             }
         }
     }

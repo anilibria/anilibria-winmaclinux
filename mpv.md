@@ -5,7 +5,7 @@
 Необходимо открыть папку кеша:
 * Linux - `cd ~/<user>/.local/share/EmptyFlow/AnilibriaDesktopClient`
 * Windows - `cd %LOCALAPPDATA%\EmptyFlow\AnilibriaDesktopClient`
-* macOS - `cd ~/.local/share/EmptyFlow/AnilibriaDesktopClient`
+* macOS - `cd /Users/<user>/Library/Application Support/EmptyFlow/AnilibriaDesktopClient`
   
 Далее в этой папке создаем папку `mpv`.  
 Создаем в ней файл `mpv.conf` и добавляем интересующие Вас настройки для плеера mpv.

@@ -98,6 +98,20 @@ void TorrentNotifierViewModel::startGetNotifiers()
     m_webSocket->open(QUrl("ws://localhost:" + QString::number(m_port) + "/ws"));
 }
 
+void TorrentNotifierViewModel::setConnectionStarted()
+{
+    m_activated = true;
+    emit activatedChanged();
+
+    qInfo() << "TorrentStream library loaded";
+
+    if (m_removeAllData && !m_dataRemoved) {
+        m_dataRemoved = true;
+        clearAllData();
+        qInfo() << "TorrentStream clear downloaded data";
+    }
+}
+
 void TorrentNotifierViewModel::closeConnectionsAndApplication()
 {
     if (!m_activated) return;
@@ -271,6 +285,12 @@ void TorrentNotifierViewModel::closeCard() noexcept
     emit isCardShowedChanged();
 }
 
+void TorrentNotifierViewModel::setTorrents(const QString &json) noexcept
+{
+    setTorrentsFromJson(json);
+}
+
+
 void TorrentNotifierViewModel::getTorrentData() const noexcept
 {
     QUrl url("http://localhost:" + QString::number(m_port) + "/torrents");
@@ -310,6 +330,48 @@ QString TorrentNotifierViewModel::getCardDownloadFileStatus() const noexcept
     auto countDownloadedFiles = m_cardTorrent->countDownloadedFiles();
 
     return QString("Скачано файлов ") + QString::number(countDownloadedFiles) + " из " + QString::number(countFiles);
+}
+
+void TorrentNotifierViewModel::setTorrentsFromJson(const QString &json) noexcept
+{
+    foreach (auto downloadedTorrent, *m_downloadedTorrents) downloadedTorrent->resetData();
+    m_downloadedTorrents->clear();
+
+    auto jsonDocument = QJsonDocument::fromJson(json.toUtf8());
+    auto array = jsonDocument.array();
+
+    foreach (auto item, array) {
+        auto torrentItem = item.toObject();
+        auto releaseId = torrentItem.value("identifier").toInt();
+        if (releaseId == 0) continue;
+        auto releaseItem = m_releasesViewModel->getReleaseById(releaseId);
+        if (releaseItem == nullptr) continue;
+
+        auto downloadedItem = new DownloadedTorrentModel();
+        downloadedItem->setReleaseId(releaseId);
+        downloadedItem->setDownloadPath(torrentItem.value("downloadPath").toString());
+        downloadedItem->setAllDownloaded(torrentItem.value("allDownloaded").toBool());
+        auto files = torrentItem.value("files").toArray();
+        foreach (auto file, files) {
+            auto fileObject = file.toObject();
+            auto size = 0;
+            if (fileObject.contains("size")) size = fileObject.value("size").toInt();
+
+            downloadedItem->addFile(
+                fileObject.value("isDownloaded").toBool(),
+                fileObject.value("percentComplete").toInt(),
+                fileObject.value("downloadedPath").toString(),
+                size
+                );
+        }
+        downloadedItem->setTitle(releaseItem->title());
+        downloadedItem->setPoster(releaseItem->poster());
+        //TODO: torrent title
+        //downloadedItem->setTorrentPoster(releaseItem->torrents())
+        m_downloadedTorrents->append(downloadedItem);
+    }
+
+    m_torrents->refresh();
 }
 
 void TorrentNotifierViewModel::triggerNotifier()
@@ -397,45 +459,8 @@ void TorrentNotifierViewModel::requestResponse(QNetworkReply *reply)
     auto response = responseCode.toString();
 
     if (response == "torrentsData") {
-        foreach (auto downloadedTorrent, *m_downloadedTorrents) downloadedTorrent->resetData();
-        m_downloadedTorrents->clear();
+        setTorrentsFromJson(reply->readAll());
 
-        auto json = reply->readAll();
-
-        auto jsonDocument = QJsonDocument::fromJson(json);
-        auto array = jsonDocument.array();
-        foreach (auto item, array) {
-            auto torrentItem = item.toObject();
-            auto releaseId = torrentItem.value("identifier").toInt();
-            if (releaseId == 0) continue;
-            auto releaseItem = m_releasesViewModel->getReleaseById(releaseId);
-            if (releaseItem == nullptr) continue;
-
-            auto downloadedItem = new DownloadedTorrentModel();
-            downloadedItem->setReleaseId(releaseId);
-            downloadedItem->setDownloadPath(torrentItem.value("downloadPath").toString());
-            downloadedItem->setAllDownloaded(torrentItem.value("allDownloaded").toBool());
-            auto files = torrentItem.value("files").toArray();
-            foreach (auto file, files) {
-                auto fileObject = file.toObject();
-                auto size = 0;
-                if (fileObject.contains("size")) size = fileObject.value("size").toInt();
-
-                downloadedItem->addFile(
-                    fileObject.value("isDownloaded").toBool(),
-                    fileObject.value("percentComplete").toInt(),
-                    fileObject.value("downloadedPath").toString(),
-                    size
-                );
-            }
-            downloadedItem->setTitle(releaseItem->title());
-            downloadedItem->setPoster(releaseItem->poster());
-            //TODO: torrent title
-            //downloadedItem->setTorrentPoster(releaseItem->torrents())
-            m_downloadedTorrents->append(downloadedItem);
-        }
-
-        m_torrents->refresh();
         if (isNeedNotify) emit torrentsRefreshed();
     }
 }

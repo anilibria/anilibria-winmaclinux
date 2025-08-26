@@ -24,10 +24,15 @@ class Synchronizev2Service : public QObject
     Q_PROPERTY(QString appMirrorWtfNextAPIServer READ appMirrorWtfNextAPIServer NOTIFY appMirrorWtfNextAPIServerChanged FINAL)
     Q_PROPERTY(QString cacheFolder READ cacheFolder WRITE setCacheFolder NOTIFY cacheFolderChanged FINAL)
     Q_PROPERTY(bool isSocialAuthentification READ isSocialAuthentification NOTIFY isSocialAuthentificationChanged FINAL)
+    Q_PROPERTY(bool useTorrentStreamAsLibrary READ useTorrentStreamAsLibrary WRITE setUseTorrentStreamAsLibrary NOTIFY useTorrentStreamAsLibraryChanged FINAL)
+    Q_PROPERTY(QString pathToTSLibrary READ pathToTSLibrary NOTIFY pathToTSLibraryChanged FINAL)
+    Q_PROPERTY(QString pathToTSContent READ pathToTSContent NOTIFY pathToTSContentChanged FINAL)
 
 private:
     QString m_apiv2host { "" };
     QString m_cachehost { "" };
+    QString m_libraryCacheHost { "" };
+    QString m_newVersionFileHost { "" };
     bool m_cacheHostIsFolder { false };
     QNetworkAccessManager* m_networkManager { new QNetworkAccessManager(this) };
     QMap<QString, QString> m_pendingRequests { QMap<QString, QString>() };
@@ -54,6 +59,8 @@ private:
     const QString m_collectionsRequest { "collections" };
     const QString m_addToCollectionRequest { "addtocollection" };
     const QString m_removeFromCollectionRequest { "removefromcollection" };
+    const QString m_checkVersionTorrentStream { "checkVersionTorrentStream" };
+    const QString m_downloadTorrentStreamLibraryRequest { "downloadTorrentStreamLibrary" };
     bool m_isAuhorized { false };
     QString m_nickName { "" };
     QString m_avatar { "" };
@@ -74,8 +81,13 @@ private:
     QString m_socialState { "" };
     int m_socialCheckTimer { 0 };
     int m_socialCheckTimerIterator { 0 };
+    bool m_useTorrentStreamAsLibrary { false };
     QMap<QString, std::tuple<bool, int>> m_synchronizedSeens { QMap<QString, std::tuple<bool, int>>() };
     QMap<int, QString> m_synchronizedCollection { QMap<int, QString>() };
+    QString m_savedTorrentStreamVersion { "" };
+    QString m_savedTorrentStreamNewVersion { "" };
+    QString m_pathToTSLibrary { "" };
+    QString m_pathToTSContent { "" };
 
 public:
     explicit Synchronizev2Service(QObject *parent = nullptr);
@@ -118,6 +130,13 @@ public:
 
     bool isSocialAuthentification() const noexcept { return m_socialCheckTimer > 0; }
 
+    bool useTorrentStreamAsLibrary() const noexcept { return m_useTorrentStreamAsLibrary; }
+    void setUseTorrentStreamAsLibrary(bool useTorrentStreamAsLibrary) noexcept;
+
+    QString pathToTSLibrary() const noexcept { return m_pathToTSLibrary; }
+
+    QString pathToTSContent() const noexcept { return m_pathToTSContent; }
+
     QMap<int, QString>&& getLocalCollections();
 
     Q_INVOKABLE void authorize(QString login, QString password);
@@ -139,6 +158,8 @@ public:
     Q_INVOKABLE void getCollections();
     Q_INVOKABLE void addReleasesToCollection(QList<int> releaseIds, const QString& collectionId);
     Q_INVOKABLE void removeReleasesFromCollection(QList<int> releaseIds);
+    Q_INVOKABLE void checkVersionTorrentStreamLibrary();
+    Q_INVOKABLE void downloadTorrentStreamLibrary(const QString& path);
 
     void timerEvent(QTimerEvent *event) override;
 
@@ -170,6 +191,12 @@ private:
     void checkNetworkAvailabilityHandler(QNetworkReply* reply) noexcept;
     void userSeenSynchronizationHandler(QNetworkReply* reply) noexcept;
     void userCollectionSynchronizeHandler(QNetworkReply* reply) noexcept;
+    void torrentStreamNewVersionHandler(QNetworkReply* reply) noexcept;
+    void downloadTorrentStreamLibraryHandler(QNetworkReply* reply) noexcept;
+    void loadLibraryData() noexcept;
+    void saveLibraryData() noexcept;
+    void installTorrentStreamNewVersion() noexcept;
+    QString getTorrentStreamFileName() noexcept;
 
 private slots:
     void requestFinished(QNetworkReply* reply);
@@ -184,6 +211,7 @@ signals:
     void synchronizeFavoritesFailed(QString errorMessage);
     void synchronizeSeensFailed(QString errorMessage);
     void synchronizeCollectionFailed(QString errorMessage);
+    void torrentStreamNewVersionFailed(QString errorMessage);
     void synchronizeSeensCompleted();
     void synchronizeCollectionCompleted();
     void getUserFailed(QString errorMessage);
@@ -209,6 +237,10 @@ signals:
     void checkNetworkAvailibilityCompletedChanged();
     void appMirrorNextAPIServerChanged();
     void appMirrorWtfNextAPIServerChanged();
+    void useTorrentStreamAsLibraryChanged();
+    void tsDownloadTorrent(int releaseId, QString downloadPath);
+    void pathToTSLibraryChanged();
+    void pathToTSContentChanged();
 
 };
 

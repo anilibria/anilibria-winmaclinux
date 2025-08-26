@@ -461,6 +461,30 @@ void UserConfigurationViewModel::setShowFullTeam(bool showFullTeam) noexcept
     emit showFullTeamChanged();
 }
 
+void UserConfigurationViewModel::setUseTorrentStreamLibrary(bool useTorrentStreamLibrary) noexcept
+{
+    if (m_useTorrentStreamLibrary == useTorrentStreamLibrary) return;
+
+    m_useTorrentStreamLibrary = useTorrentStreamLibrary;
+    emit useTorrentStreamLibraryChanged();
+}
+
+void UserConfigurationViewModel::setTorrentStreamUI(bool torrentStreamUI) noexcept
+{
+    if (m_torrentStreamUI == torrentStreamUI) return;
+
+    m_torrentStreamUI = torrentStreamUI;
+    emit torrentStreamUIChanged();
+}
+
+void UserConfigurationViewModel::setPathToTSContent(QString pathToTSContent) noexcept
+{
+    if (m_pathToTSContent == pathToTSContent) return;
+
+    m_pathToTSContent = pathToTSContent;
+    emit pathToTSContentChanged();
+}
+
 void UserConfigurationViewModel::refreshConfiguration() noexcept
 {
     readSettingsFromFile();
@@ -502,6 +526,9 @@ void UserConfigurationViewModel::refreshConfiguration() noexcept
     emit videoServerChanged();
     emit restoreVideoModeChanged();
     emit autoSkipEndingChanged();
+    emit useTorrentStreamLibraryChanged();
+    emit torrentStreamUIChanged();
+    emit pathToTSContentChanged();
 }
 
 void UserConfigurationViewModel::saveSettingsToFile()
@@ -560,6 +587,9 @@ void UserConfigurationViewModel::saveSettingsToFile()
     object[m_restoreVideoModeField] = m_restoreVideoMode;
     object[m_autoSkipEndingField] = m_autoSkipEnding;
     object[m_showFullTeamField] = m_showFullTeam;
+    object[m_useTorrentStreamLibraryField] = m_useTorrentStreamLibrary;
+    object[m_torrentStreamUIField] = m_torrentStreamUI;
+    object[m_pathToTSContentField] = m_pathToTSContent;
 
     QFile file(getCachePath(m_cacheFileName));
     file.open(QFile::WriteOnly | QFile::Text);
@@ -629,6 +659,9 @@ void UserConfigurationViewModel::readSettingsFromFile()
     m_restoreVideoMode = object.contains(m_restoreVideoModeField) ? object[m_restoreVideoModeField].toInt() : 0;
     m_autoSkipEnding = object.contains(m_autoSkipEndingField) ? object[m_autoSkipEndingField].toBool() : false;
     m_showFullTeam = object.contains(m_showFullTeamField) ? object[m_showFullTeamField].toBool() : true;
+    m_useTorrentStreamLibrary = object.contains(m_useTorrentStreamLibraryField) ? object[m_useTorrentStreamLibraryField].toBool() : false;
+    m_torrentStreamUI = object.contains(m_torrentStreamUIField) ? object[m_torrentStreamUIField].toBool() : false;
+    m_pathToTSContent = object.contains(m_pathToTSContentField) ? object[m_pathToTSContentField].toString() : "";
 
     if (m_textFont != "Default") changeFont(m_textFont);
 }

@@ -115,6 +115,7 @@ public:
     void setLastRefreshIdentifier(int lastRefreshIdentifier) noexcept;
 
     Q_INVOKABLE void startGetNotifiers();
+    Q_INVOKABLE void setConnectionStarted();
     Q_INVOKABLE void closeConnectionsAndApplication();
     Q_INVOKABLE void tryStartTorrentStreamApplication();
     Q_INVOKABLE void startGetTorrentData(bool needNotify);
@@ -125,11 +126,13 @@ public:
     Q_INVOKABLE void removeRedundant() noexcept;
     Q_INVOKABLE void showCard(int index) noexcept;
     Q_INVOKABLE void closeCard() noexcept;
+    Q_INVOKABLE void setTorrents(const QString& json) noexcept;
 
 private:
     void getTorrentData() const noexcept;
     QString getReadableSize(int64_t size) const noexcept;
     QString getCardDownloadFileStatus() const noexcept;
+    void setTorrentsFromJson(const QString& json) noexcept;
 
 private slots:
     void triggerNotifier();
