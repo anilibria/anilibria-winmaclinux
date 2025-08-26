@@ -101,7 +101,20 @@ Page {
                             text: "Подключиться"
                             onClicked: {
                                 if (userConfigurationViewModel.useTorrentStreamLibrary) {
-                                    //TODO: implemente it
+                                    console.log("Try to start TorrentStream as library from path: " + synchronizationServicev2.pathToTSLibrary);
+
+                                    const pathToTSContent = userConfigurationViewModel.pathToTSContent ?
+                                        userConfigurationViewModel.pathToTSContent :
+                                        synchronizationServicev2.pathToTSContent;
+                                    console.log("TorrentStream content folder: " + pathToTSContent);
+
+                                    osExtras.initializeTorrentStream(
+                                        userConfigurationViewModel.playerBuffer,
+                                        synchronizationServicev2.pathToTSLibrary,
+                                        pathToTSContent,
+                                        "",
+                                        userConfigurationViewModel.torrentStreamUI
+                                    );
                                 } else {
                                     torrentNotifierViewModel.startGetNotifiers(userConfigurationViewModel.playerBuffer);
                                 }
