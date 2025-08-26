@@ -25,22 +25,19 @@ jobs:
       run: cmake --build . --config Release --parallel -- /p:CL_MPcount=8 
     - name: make deploy
       run: |
-        windeployqt --no-translations -qmldir=src Debug
+        windeployqt --no-translations -qmldir=src Release
     - name: remove redundant files
       run: |
-        Remove-Item -Path "Debug/AniLiberty.exp"
-        Remove-Item -Path "Debug/AniLiberty.lib"
-        Remove-Item -Path "Debug/AniLiberty.pdb"
-        Remove-Item -Path "Debug/qmltooling" -Force -Recurse
-    - name: copy missed files
-      run: |
-        Copy-Item -Path "c:/windows/system32/ucrtbased.dll" -OutFile "Debug/ucrtbased.dll"
+        Remove-Item -Path "Release/AniLiberty.exp"
+        Remove-Item -Path "Release/AniLiberty.lib"
+        Remove-Item -Path "Release/AniLiberty.pdb"
+        Remove-Item -Path "Release/qmltooling" -Force -Recurse
     - name: download libmpv
       run: |
         Invoke-WebRequest -Uri "https://github.com/anilibria/anilibria-winmaclinux/releases/download/2.2.28/libmpv-2.dll" -OutFile "libmpv-2.dll"
-        Copy-Item -Path "libmpv-2.dll" -Destination "Debug"
+        Copy-Item -Path "libmpv-2.dll" -Destination "Release"
     - name: compress archive
-      run: Compress-Archive -Path "Debug/*" -DestinationPath "aniliberty_win.zip"
+      run: Compress-Archive -Path "Release/*" -DestinationPath "aniliberty_win.zip"
     - uses: actions/upload-artifact@v4
       with:
         name: windows
