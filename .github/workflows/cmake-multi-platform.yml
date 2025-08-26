@@ -30,7 +30,6 @@ jobs:
       run: |
         Remove-Item -Path "Release/AniLiberty.exp"
         Remove-Item -Path "Release/AniLiberty.lib"
-        Remove-Item -Path "Release/AniLiberty.pdb"
         Remove-Item -Path "Release/qmltooling" -Force -Recurse
     - name: download libmpv
       run: |
