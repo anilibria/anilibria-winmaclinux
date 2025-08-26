@@ -108,9 +108,7 @@ bool OsExtras::initializeTorrentStream(int port, const QString& pathToLibrary, c
         return false;
     }
     auto wDownloadPath = downloadPath.toStdWString();
-    qDebug() << "Download path length: " << wDownloadPath.length();
     auto cDownloadPath = const_cast<wchar_t*>(wDownloadPath.c_str());
-    qDebug() << "Download path cstr length: " << wcsnlen(cDownloadPath, 10000);
 
     auto wListenAddress = listenAddress.toStdWString();
     auto cListenAddress = const_cast<wchar_t*>(wListenAddress.c_str());
