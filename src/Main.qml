@@ -19,7 +19,6 @@ ApplicationWindow {
     width: 800
     height: 600
     minimumWidth: 300
-    //font.family: userConfigurationViewModel.textFont
     minimumHeight: 300
     title: "AniLiberty.Qt"
     font.capitalization: Font.MixedCase
