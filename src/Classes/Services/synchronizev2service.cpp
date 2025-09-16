@@ -1094,6 +1094,7 @@ void Synchronizev2Service::torrentStreamNewVersionHandler(QNetworkReply *reply) 
     if (version == m_savedTorrentStreamVersion) return;
 
     m_savedTorrentStreamNewVersion = version;
+    emit tsNewVersionChanged();
     auto filename = getTorrentStreamFileName();
 
     auto assetsArray = latestRelease.value("assets").toArray();
@@ -1138,6 +1139,8 @@ void Synchronizev2Service::loadLibraryData() noexcept
         auto item = document.object();
         m_savedTorrentStreamVersion = item.value("currentVersion").toString();
         m_savedTorrentStreamNewVersion = item.value("newVersion").toString();
+        emit tsCurrentVersionChanged();
+        emit tsNewVersionChanged();
     }
 }
 

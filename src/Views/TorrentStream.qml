@@ -487,6 +487,23 @@ Page {
                         }
                     }
 
+                    Item {
+                        width: torrentStreamPopup.width
+                        height: 15
+
+                        Row {
+                            PlainText {
+                                text: "Текущая: " + synchronizationServicev2.tsCurrentVersion
+                                fontPointSize: 12
+                            }
+                            PlainText {
+                                visible: synchronizationServicev2.tsCurrentVersion !== synchronizationServicev2.tsNewVersion
+                                text: " Следующая: " + synchronizationServicev2.tsNewVersion
+                                fontPointSize: 12
+                            }
+                        }
+                    }
+
                     AccentText {
                         width: torrentStreamPopup.width
                         text: "Путь к скаченному контенту"

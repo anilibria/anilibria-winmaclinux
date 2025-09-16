@@ -27,6 +27,8 @@ class Synchronizev2Service : public QObject
     Q_PROPERTY(bool useTorrentStreamAsLibrary READ useTorrentStreamAsLibrary WRITE setUseTorrentStreamAsLibrary NOTIFY useTorrentStreamAsLibraryChanged FINAL)
     Q_PROPERTY(QString pathToTSLibrary READ pathToTSLibrary NOTIFY pathToTSLibraryChanged FINAL)
     Q_PROPERTY(QString pathToTSContent READ pathToTSContent NOTIFY pathToTSContentChanged FINAL)
+    Q_PROPERTY(QString tsCurrentVersion READ tsCurrentVersion NOTIFY tsCurrentVersionChanged FINAL)
+    Q_PROPERTY(QString tsNewVersion READ tsNewVersion NOTIFY tsNewVersionChanged FINAL)
 
 private:
     QString m_apiv2host { "" };
@@ -137,6 +139,10 @@ public:
 
     QString pathToTSContent() const noexcept { return m_pathToTSContent; }
 
+    QString tsCurrentVersion() const noexcept { return m_savedTorrentStreamVersion; }
+
+    QString tsNewVersion() const noexcept { return m_savedTorrentStreamNewVersion; }
+
     QMap<int, QString>&& getLocalCollections();
 
     Q_INVOKABLE void authorize(QString login, QString password);
@@ -241,6 +247,8 @@ signals:
     void tsDownloadTorrent(int releaseId, QString downloadPath);
     void pathToTSLibraryChanged();
     void pathToTSContentChanged();
+    void tsCurrentVersionChanged();
+    void tsNewVersionChanged();
 
 };
 
