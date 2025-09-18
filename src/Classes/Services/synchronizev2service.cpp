@@ -194,8 +194,8 @@ void Synchronizev2Service::downloadTorrent(QString torrentPath, int releaseId, c
     //if use torrent stream
     if (m_torrentDownloadMode == 2) {
         if (m_useTorrentStreamAsLibrary) {
-            emit tsDownloadTorrent(releaseId, torrentPath);
-            qDebug() << "Download in library by path " << torrentPath;
+            emit tsDownloadTorrent(releaseId, magnet);
+            qDebug() << "Download in library by path " << magnet;
             return;
         } else {
             url = QUrl("http://localhost:" + QString::number(m_torrentStreamPort) + "/fulldownload?id=" + QString::number(releaseId) + "&path=" + torrentPath);
