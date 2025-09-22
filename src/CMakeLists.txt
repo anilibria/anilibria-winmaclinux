@@ -6,6 +6,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 set(CMAKE_CXX_STANDARD 20)
 
+option(BUILD_APPDIR "Pack linux build" OFF)
+
 find_package(Qt6 REQUIRED COMPONENTS Quick Network Concurrent WebSockets)
 find_package(Qt6 COMPONENTS Svg REQUIRED)
 find_package(Qt6 COMPONENTS QuickControls2 REQUIRED)
@@ -435,6 +437,24 @@ if (NOT (APPLE OR WIN32))
     target_link_libraries(AniLiberty PUBLIC PkgConfig::LIBMPV)
 endif ()
 
+# create directories for AppImage
+if(BUILD_APPDIR)
+	file(MAKE_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/AppDir/usr/bin)
+	file(MAKE_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/AppDir/usr/lib)
+	file(MAKE_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/AppDir/usr/share/icons/hicolor/256x256)
+	file(MAKE_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/AppDir/usr/share/applications)
+	file(MAKE_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/AppDir/usr/share/AniLiberty)
+	file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/res DESTINATION ${CMAKE_CURRENT_SOURCE_DIR}/AppDir/usr/share/AniLiberty)
+	file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/anilibria.iconset/icon_256x256@2x.png DESTINATION ${CMAKE_CURRENT_SOURCE_DIR}/AppDir/usr/share/icons/hicolor/256x256)
+	file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/anilibria.iconset/icon_128x128.png DESTINATION ${CMAKE_CURRENT_SOURCE_DIR}/AppDir)
+	file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/anilibria.iconset/icon_128x128.png DESTINATION ${CMAKE_CURRENT_SOURCE_DIR}/AppDir/.dirIcon)
+	file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/appimage/AniLiberty.desktop DESTINATION ${CMAKE_CURRENT_SOURCE_DIR}/AppDir/usr/share/applications)
+	file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/appimage/AniLiberty.desktop DESTINATION ${CMAKE_CURRENT_SOURCE_DIR}/AppDir/)
+	set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/AppDir/usr/lib)
+	set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/AppDir/usr/lib)
+	set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/AppDir/usr/bin)
+	install(TARGETS AniLiberty DESTINATION ${CMAKE_CURRENT_SOURCE_DIR}/AppDir/usr/bin)
+endif()
 
 include(GNUInstallDirs)
 install(TARGETS AniLiberty
