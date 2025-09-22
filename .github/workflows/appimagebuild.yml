@@ -20,7 +20,7 @@ jobs:
           version: 6.8.3
           modules: qtscxml qt5compat qtimageformats qtwebsockets
       - name: Configure
-        run: cmake -S . -B build -DCMAKE_POLICY_VERSION_MINIMUM=3.5 -DCMAKE_BUILD_TYPE=Release
+        run: cmake -S src -B build -DCMAKE_POLICY_VERSION_MINIMUM=3.5 -DCMAKE_BUILD_TYPE=Release
       - name: Build
         run: cmake --build build -t install
       - name: Build AppImage
