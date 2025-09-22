@@ -23,6 +23,8 @@ jobs:
         run: cmake -S src -B build -DCMAKE_POLICY_VERSION_MINIMUM=3.5 -DCMAKE_BUILD_TYPE=Release
       - name: Build
         run: cmake --build build -t install
+      - name: Show Build Dir
+        run: ls /usr/local/bin/
       - name: Build AppImage
         uses: AppImageCrafters/build-appimage@master
         env:
