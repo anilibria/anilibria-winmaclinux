@@ -6,7 +6,7 @@ AppDir:
     name: AniLiberty
     icon: AniLiberty
     version: latest
-    exec: usr/bin/AniLiberty
+    exec: /usr/local/bin/AniLiberty
   apt:
     arch: amd64
     sources:
