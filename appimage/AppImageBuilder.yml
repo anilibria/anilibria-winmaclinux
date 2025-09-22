@@ -17,7 +17,7 @@ AppDir:
     - sourceline: deb http://archive.ubuntu.com/ubuntu/ jammy-backports main restricted universe multiverse
     - sourceline: deb http://archive.ubuntu.com/ubuntu/ jammy-security main restricted universe multiverse
     include:
-    - libmpv
+    - libmpv-dev
   files:
     exclude:
     - usr/share/man
