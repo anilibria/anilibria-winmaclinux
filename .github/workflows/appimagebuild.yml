@@ -1,5 +1,3 @@
-# This starter workflow is for a CMake project running on multiple platforms. There is a different starter workflow if you just want a single platform.
-# See: https://github.com/actions/starter-workflows/blob/main/ci/cmake-single-platform.yml
 name: Build AppImage
 
 on:
@@ -20,7 +18,7 @@ jobs:
         uses: jurplel/install-qt-action@v4
         with:
           version: 6.8.3
-          modules: qtscxml qt5compat qtimageformats qtwebsockets qtdbus
+          modules: qtscxml qt5compat qtimageformats qtwebsockets
       - name: Configure
         run: cmake -S . -B build -DCMAKE_POLICY_VERSION_MINIMUM=3.5 -DCMAKE_BUILD_TYPE=Release
       - name: Build
