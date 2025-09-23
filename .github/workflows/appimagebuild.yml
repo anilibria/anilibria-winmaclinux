@@ -26,7 +26,7 @@ jobs:
       - name: Show Build Dir
         run: |
           cp -R src/AppDir .
-          ls
+          ls AppDir
       - name: Build AppImage
         uses: AppImageCrafters/build-appimage@fe2205a4d6056be47051f7b1b3811106e9814910
         env:
