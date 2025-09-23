@@ -1,6 +1,6 @@
 version: 1
 AppDir:
-  path: AppDir
+  path: ./AppDir
   app_info:
     id: AniLiberty
     name: AniLiberty
