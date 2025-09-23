@@ -20,7 +20,6 @@ AppDir:
     - libmpv-dev
     - libfuse2
     - qt6-base-dev
-    - qt6-websockets
   files:
     exclude:
     - usr/share/man
