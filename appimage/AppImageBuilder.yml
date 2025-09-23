@@ -18,6 +18,7 @@ AppDir:
     - sourceline: deb http://archive.ubuntu.com/ubuntu/ jammy-security main restricted universe multiverse
     include:
     - libmpv-dev
+    - libfuse2
   files:
     exclude:
     - usr/share/man
