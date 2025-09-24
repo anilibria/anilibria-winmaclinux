@@ -19,6 +19,8 @@ AppDir:
     include:
     - libmpv-dev
     - libqt6core6
+    - libqt6dbus6
+    - libqt6network6
     - libqt6websockets6
   files:
     exclude:
