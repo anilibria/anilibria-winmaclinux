@@ -17,7 +17,7 @@ cd anilibria-winmaclinux/src/
 **Этап 3. Выполняем сборку и установку**
 Подготовка сборки:
 ```shell
-cmake -S src -B build -DCMAKE_BUILD_TYPE=Release
+cmake -S src -B build -DCMAKE_BUILD_TYPE=Release -DANILIBERTY_LESS_68_QT=On
 ```
 Сборка и установка:
 ```shell
