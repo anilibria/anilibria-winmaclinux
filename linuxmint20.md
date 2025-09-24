@@ -1,11 +1,11 @@
-## Сборка из исходников на Ubuntu/Linux Mint 20
+## Сборка из исходников на Ubuntu/Linux Mint 23+
 
 *Данный набор команд написан для полностью чистой системы.*  
 **Внимание! Если найдете ошибки в командах или будут предложения по улучшению то создавайте ишью!**
 
 **Этап 1. Устанавливаем зависимости необходимые для сборки**
 ```shell
-sudo apt install git build-essential qtdeclarative5-dev qtmultimedia5-dev libqt5multimedia5-plugins libqt5svg5-dev libqt5webview5-dev qtwebengine5-dev qml-module-qtgraphicaleffects  qml-module-qtquick-layouts qml-module-qtquick-dialogs qml-module-qtquick-controls qml-module-qtquick-controls2 qml-module-qt-labs-folderlistmodel qml-module-qt-labs-settings qml-module-qtmultimedia qml-module-qtwebview libqt5websockets5-dev qdbus-qt5 qdbus qtquickcontrols2-5-dev qml-module-qtquick-particles2 libvlccore-dev libvlc-dev vlc libmpv-dev pkg-config
+sudo apt install git build-essential git libmpv-dev pkg-config cmake qt6-base-dev qt6-declarative-dev qt6-websockets-dev qt6-svg-dev libxkbcommon-dev qml6-module-*
 ```
 **Этап 2. Создаем папку для проекта, переходим в нее и извлекаем исходники (предполагается что Вы находитесь в домашней папке)**
 ```shell
@@ -14,32 +14,15 @@ cd anilibria/
 git clone https://github.com/anilibria/anilibria-winmaclinux.git
 cd anilibria-winmaclinux/src/
 ```
-**Этап 3. Настройка сборки**
-Сборка с VLC:
+**Этап 3. Выполняем сборку и установку**
+Подготовка сборки:
 ```shell
-qmake CONFIG+=unixvlc
+cmake -S src -B build -DCMAKE_BUILD_TYPE=Release
 ```
-Сборка с mpv:
+Сборка и установка:
 ```shell
-qmake CONFIG+=unixmpv
+cmake --build build -t install
 ```
-Сборка с VLC и mpv:
-```shell
-qmake CONFIG+=unixvlc CONFIG+=unixmpv
-```
-Только со стандартным плеером:
-
-```shell
-qmake
-```
-
-**Этап 4. Выполняем сборку и установку**
-
-```shell
-make
-sudo make install
-````
-
 **Необязательный последний этап. После всех манипуляций можно удалить созданную папку командой**
 ```shell
 cd ~
@@ -47,7 +30,7 @@ rm -rf anilibria/
 ```
 
 ### Как найти приложение?
-Приложение будет доступно из меню по имени AniLibria.
+Приложение будет доступно по имени AniLiberty.
 
 ### Как обновить приложение?
 Для того чтобы обновить приложение можно выполнить шаги начиная с этапа 2. Первый этап в таком случае выполнять не надо!
