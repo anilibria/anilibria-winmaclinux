@@ -28,7 +28,7 @@ jobs:
           cp -R src/AppDir .
           ls AppDir
       - name: Build AppImage
-        uses: AppImageCrafters/build-appimage@fe2205a4d6056be47051f7b1b3811106e9814910
+        uses: AppImageCrafters/build-appimage@master
         env:
           UPDATE_INFO: gh-releases-zsync|anilibria|anilibria-winmaclinux|latest|*x86_64.AppImage.zsync
         with:
