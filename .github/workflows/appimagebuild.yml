@@ -13,7 +13,7 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y build-essential dbus libmpv-dev pkg-config cmake
+          sudo apt-get install -y build-essential dbus libmpv-dev pkg-config cmake squashfs-tools
       - name: Install Qt
         uses: jurplel/install-qt-action@v4
         with:
