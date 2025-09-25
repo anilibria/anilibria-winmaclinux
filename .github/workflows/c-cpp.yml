@@ -72,7 +72,6 @@ jobs:
         
         arch -x86_64 install_name_tool -change /usr/local/Cellar/ffmpeg/7.1.1_5/lib/libavutil.59.dylib @executable_path/../Frameworks/libavutil.59.dylib src/AniLibria.app/Contents/Frameworks/libswresample.6.dylib
         arch -x86_64 install_name_tool -change /usr/local/Cellar/ffmpeg/7.1.1_5/lib/libavutil.59.dylib @executable_path/../Frameworks/libavutil.59.dylib src/AniLibria.app/Contents/Frameworks/libswscale.9.dylib
-        arch -x86_64 install_name_tool -change /usr/local/Cellar/ffmpeg/7.1.1_5/lib/libavutil.59.dylib @executable_path/../Frameworks/libavutil.59.dylib src/AniLibria.app/Contents/Frameworks/libpostproc.58.dylib
 
         arch -x86_64 install_name_tool -change /usr/local/Cellar/ffmpeg/7.1.1_5/lib/libavcodec.62.dylib @executable_path/../Frameworks/libavcodec.62.dylib src/AniLibria.app/Contents/Frameworks/libavformat.62.dylib
         arch -x86_64 install_name_tool -change /usr/local/Cellar/ffmpeg/7.1.1_5/lib/libswresample.6.dylib @executable_path/../Frameworks/libswresample.6.dylib src/AniLibria.app/Contents/Frameworks/libavformat.62.dylib
