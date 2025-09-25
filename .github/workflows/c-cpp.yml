@@ -100,9 +100,14 @@ jobs:
         
         arch -x86_64 install_name_tool -change /usr/local/Cellar/libxcb/1.17.0/lib/libxcb.1.dylib @executable_path/../Frameworks/libxcb.1.dylib src/AniLibria.app/Contents/Frameworks/libxcb-shm.0.dylib
         arch -x86_64 install_name_tool -change /usr/local/Cellar/libxcb/1.17.0/lib/libxcb.1.dylib @executable_path/../Frameworks/libxcb.1.dylib src/AniLibria.app/Contents/Frameworks/libxcb-shape.0.dylib
-        arch -x86_64 install_name_tool -change /usr/local/Cellar/libxcb/1.17.0/lib/libxcb.1.dylib @executable_path/../Frameworks/libxcb.1.dylib src/AniLibria.app/Contents/Frameworks/libxcb-xfixes.0.dylib
-        
-        hdiutil create -fs HFS+ -srcfolder src/AniLibria.app/ -volname AniLibria AniLibria.dmg
+        arch -x86_64 install_name_tool -change /usr/local/Cellar/libxcb/1.17.0/lib/libxcb.1.dylib @executable_path/../Frameworks/libxcb.1.dylib src/AniLibria.app/Contents/Frameworks/libxcb-xfixes.0.dylib      
+
+    - name: TestRun
+      run: |
+        open -n src/AniLibria.app --args testrun
+        log show --predicate 'process == "AniLibria"' --level error --last 1h
+    - name: Create DMG
+      run: hdiutil create -fs HFS+ -srcfolder src/AniLibria.app/ -volname AniLibria AniLibria.dmg
     - uses: actions/upload-artifact@v4
       with:
         path: AniLibria.dmg
