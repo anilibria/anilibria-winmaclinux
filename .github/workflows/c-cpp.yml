@@ -104,7 +104,7 @@ jobs:
     - name: TestRun
       run: |
         open -n src/AniLibria.app --args testrun
-        log show --predicate 'process == "AniLibria"' --level error --last 1h
+        log show --predicate 'process == "AniLibria"' --last 1h
     - name: Create DMG
       run: hdiutil create -fs HFS+ -srcfolder src/AniLibria.app/ -volname AniLibria AniLibria.dmg
     - uses: actions/upload-artifact@v4
