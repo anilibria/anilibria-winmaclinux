@@ -6,7 +6,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 set(CMAKE_CXX_STANDARD 20)
 
-option(ANILIBERTY_BUILD_APPDIR "Pack linux build" OFF)
+option(ANILIBERTY_LESS_68_QT "Using qt version less then 6.8" OFF)
 
 find_package(Qt6 REQUIRED COMPONENTS Quick Network Concurrent WebSockets)
 find_package(Qt6 COMPONENTS Svg REQUIRED)
@@ -125,7 +125,9 @@ qt_add_executable(AniLiberty
     ${macos_ICON}
 )
 
-qt_policy(SET QTP0004 NEW)
+if (NOT ANILIBERTY_LESS_68_QT)
+    qt_policy(SET QTP0004 NEW)
+endif()
 
 qt_add_qml_module(AniLiberty
     URI aniliberty
@@ -391,6 +393,7 @@ qt_add_qml_module(AniLiberty
         Assets/Icons/videoplayer/seenmarkselected.svg
         Assets/Icons/videoplayer/subtitles.svg
         Assets/Icons/videoplayer/topmost.svg
+        QML_FILES Controls/InfoAboutTorrentStream.qml
 )
 
 set_target_properties(AniLiberty PROPERTIES
@@ -436,26 +439,6 @@ if (NOT (APPLE OR WIN32))
     target_include_directories(AniLiberty PRIVATE ${LIBMPV_INCLUDE_DIRS})
     target_link_libraries(AniLiberty PUBLIC PkgConfig::LIBMPV)
 endif ()
-
-# create directories for AppImage
-if(ANILIBERTY_BUILD_APPDIR)
-    message(WARNING "Prepare AppImage bundle")
-    file(MAKE_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/AppDir/usr/bin)
-    file(MAKE_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/AppDir/usr/lib)
-    file(MAKE_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/AppDir/usr/share/icons/hicolor/256x256)
-    file(MAKE_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/AppDir/usr/share/applications)
-    file(MAKE_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/AppDir/usr/share/AniLiberty)
-    #file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/res DESTINATION ${CMAKE_CURRENT_SOURCE_DIR}/AppDir/usr/share/AniLiberty)
-    file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/../appimage/AniLiberty.png DESTINATION ${CMAKE_CURRENT_SOURCE_DIR}/AppDir/usr/share/icons/hicolor/256x256)
-    file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/../appimage/AniLiberty.png DESTINATION ${CMAKE_CURRENT_SOURCE_DIR}/AppDir)
-    file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/../appimage/AniLiberty.png DESTINATION ${CMAKE_CURRENT_SOURCE_DIR}/AppDir/.dirIcon)
-    file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/../appimage/AniLiberty.desktop DESTINATION ${CMAKE_CURRENT_SOURCE_DIR}/AppDir/usr/share/applications)
-    file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/../appimage/AniLiberty.desktop DESTINATION ${CMAKE_CURRENT_SOURCE_DIR}/AppDir/)
-    set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/AppDir/usr/lib)
-    set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/AppDir/usr/lib)
-    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/AppDir/usr/bin)
-    install(TARGETS AniLiberty DESTINATION ${CMAKE_CURRENT_SOURCE_DIR}/AppDir/usr/bin)
-endif()
 
 include(GNUInstallDirs)
 install(TARGETS AniLiberty

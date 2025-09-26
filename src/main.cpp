@@ -130,11 +130,14 @@ int main(int argc, char *argv[])
     if (isNeedLogging) freopen("output.log", "w", stdout); //redirect output to file
 #endif
 
+    bool onlyStart = false;
+
     if (argc >= 2) {
         auto parameter = QString(argv[1]);
         if (parameter == "portable" || parameter == "-portable") {
             IsPortable = true;
         }
+        if (parameter == "testrun") onlyStart = true; // there need to be check if
     }
 
     QGuiApplication app(argc, argv);
@@ -234,6 +237,8 @@ int main(int argc, char *argv[])
 #else
     engine.load(url);
 #endif
+
+    if (onlyStart) return 0; // for this case we need just check if all dependencies correct and don't need to run application
 
     return app.exec();
 }

@@ -397,6 +397,11 @@ void Synchronizev2Service::downloadTorrentStreamLibrary(const QString &path)
     adjustIdentifier(reply, m_downloadTorrentStreamLibraryRequest);
 }
 
+void Synchronizev2Service::installNewTsVersion()
+{
+    installTorrentStreamNewVersion();
+}
+
 void Synchronizev2Service::timerEvent(QTimerEvent *event)
 {
     Q_UNUSED(event);
@@ -1125,6 +1130,8 @@ void Synchronizev2Service::downloadTorrentStreamLibraryHandler(QNetworkReply *re
         file.close();
 
         saveLibraryData();
+        emit notInstalledTorrentStreamChanged();
+        if (m_savedTorrentStreamVersion.isEmpty()) emit tsWasFirstlyInstalled();
     }
 }
 
@@ -1141,6 +1148,7 @@ void Synchronizev2Service::loadLibraryData() noexcept
         m_savedTorrentStreamNewVersion = item.value("newVersion").toString();
         emit tsCurrentVersionChanged();
         emit tsNewVersionChanged();
+        emit notInstalledTorrentStreamChanged();
     }
 }
 
@@ -1178,6 +1186,7 @@ void Synchronizev2Service::installTorrentStreamNewVersion() noexcept
         QFile::remove(m_newVersionFileHost);
         m_savedTorrentStreamVersion = m_savedTorrentStreamNewVersion;
         saveLibraryData();
+        emit notInstalledTorrentStreamChanged();
     }
 
     if(QFile::exists(currentVersionPath)) m_pathToTSLibrary = currentVersionPath;
