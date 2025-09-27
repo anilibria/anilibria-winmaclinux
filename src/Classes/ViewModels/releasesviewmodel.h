@@ -163,6 +163,16 @@ private:
     QMap<int, QString> m_collections { QMap<int, QString>() };
     QString m_openedReleseExtensionContent { "" };
 
+    QList<int> m_myAnilibriaNewInFavorites;
+    QList<int> m_myAnilibriaNewFromStart;
+    QList<int> m_myAnilibriaNewFromLastTwoDays;
+    QList<int> m_myAnilibriaCurrentSeasons;
+    QList<int> m_myAnilibriaAbandonReleases;
+    QList<int> m_myAnilibriaWillWatchReleases;
+    QList<int> m_myAnilibriaNextInReleaseSeries;
+    QList<int> m_myAnilibriaRecommendsForGenres;
+    QList<int> m_myAnilibriaRecommendsForVoices;
+
 public:
     explicit ReleasesViewModel(QObject *parent = nullptr);
 
@@ -270,6 +280,8 @@ public:
     QStringList getMostPopularGenres() const noexcept;
     QStringList getMostPopularVoices() const noexcept;
     QList<int> countSections() const noexcept { return m_sectionCounters; };
+    void fillMyAnilibriaData() noexcept;
+    void getFilledMyAnilibriaSection(int mode, QList<FullReleaseModel*>* list) noexcept;
     void fillNewInFavorites(QList<FullReleaseModel*>* list) const noexcept;
     void fillNewFromStart(QList<FullReleaseModel*>* list) const noexcept;
     void fillNewFromLastTwoDays(QList<FullReleaseModel*>* list) const noexcept;
@@ -348,6 +360,7 @@ public:
     Q_INVOKABLE void synchronizeLocalSeensToExternal() noexcept;
     Q_INVOKABLE void recheckOpenedReleaseInCollections() noexcept;
     Q_INVOKABLE QString getReleasePoster(int releaseId) noexcept;
+    Q_INVOKABLE void refreshMyAnilibriaCache() noexcept;
     FullReleaseModel* getReleaseById(int id) const noexcept;
     void resetReleaseChanges(int releaseId) noexcept;
     quint32 m_seedValue { 0 };

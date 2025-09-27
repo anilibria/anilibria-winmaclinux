@@ -1518,6 +1518,10 @@ ApplicationWindow {
         id: myAnilibriaViewModel
         releasesViewModel: releasesViewModel
         myList.userConfiguration: userConfigurationViewModel
+        Component.onCompleted: {
+            releasesViewModel.refreshMyAnilibriaCache();
+            myAnilibriaViewModel.refreshAllSectionsModels();
+        }
         Component.onDestruction: {
             myAnilibriaViewModel.saveSectionsToFile();
         }

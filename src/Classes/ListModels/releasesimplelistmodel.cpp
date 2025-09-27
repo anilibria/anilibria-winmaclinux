@@ -122,61 +122,61 @@ void ReleaseSimpleListModel::refresh()
     m_releases->clear();
 
     if (m_filterMode == NewInFavoritesSectionId) {
-        m_releasesViewModel->fillNewInFavorites(m_releases.get());
+        m_releasesViewModel->getFilledMyAnilibriaSection(0, m_releases.get());
 
         std::sort(m_releases->begin(), m_releases->end(), compareTimeStampDescending);
     }
 
     if (m_filterMode == NewFromStartSectionId) {
-        m_releasesViewModel->fillNewFromStart(m_releases.get());
+        m_releasesViewModel->getFilledMyAnilibriaSection(1, m_releases.get());
 
         std::sort(m_releases->begin(), m_releases->end(), compareTimeStampDescending);
     }
 
     if (m_filterMode == LastTwoDaysSectionId) {
-        m_releasesViewModel->fillNewFromLastTwoDays(m_releases.get());
+       m_releasesViewModel->getFilledMyAnilibriaSection(2, m_releases.get());
 
-        std::sort(m_releases->begin(), m_releases->end(), compareTimeStampDescending);
+       std::sort(m_releases->begin(), m_releases->end(), compareTimeStampDescending);
     }
 
     if (m_filterMode == AbandonedSeensSectionId) {
-        m_releasesViewModel->fillAbandonedSeens(m_releases.get());
+        m_releasesViewModel->getFilledMyAnilibriaSection(4, m_releases.get());
 
         std::sort(m_releases->begin(), m_releases->end(), compareTimeStampDescending);
     }
 
     if (m_filterMode == RecommendedByGenresSectionId) {
-        m_releasesViewModel->fillRecommendsByGenres(m_releases.get());
+        m_releasesViewModel->getFilledMyAnilibriaSection(7, m_releases.get());
 
         std::sort(m_releases->begin(), m_releases->end(), compareTimeStampDescending);
     }
 
     if (m_filterMode == WillWatchSectionId) {
-        m_releasesViewModel->fillWillWatch(m_releases.get());
+        m_releasesViewModel->getFilledMyAnilibriaSection(5, m_releases.get());
 
         std::sort(m_releases->begin(), m_releases->end(), compareTimeStampDescending);
     }
 
     if (m_filterMode == NextInReleaseSeriesSectionId) {
-        m_releasesViewModel->fillNextInReleaseSeries(m_releases.get());
+        m_releasesViewModel->getFilledMyAnilibriaSection(6, m_releases.get());
 
         std::sort(m_releases->begin(), m_releases->end(), compareTimeStampDescending);
     }
 
     if (m_filterMode == CurrentSeasonSectionId) {
-        m_releasesViewModel->fillCurrentSeason(m_releases.get());
+        m_releasesViewModel->getFilledMyAnilibriaSection(3, m_releases.get());
 
         std::sort(m_releases->begin(), m_releases->end(), compareTimeStampDescending);
     }
 
     if (m_filterMode == ActualInCurrentSeasonSectionId) {
-        m_releasesViewModel->fillCurrentSeason(m_releases.get());
+        m_releasesViewModel->getFilledMyAnilibriaSection(3, m_releases.get());
 
         std::sort(m_releases->begin(), m_releases->end(), compareRatingDescending);
     }
 
     if (m_filterMode == RecommendedByVoicesSectionId) {
-        m_releasesViewModel->fillRecommendedByVoices(m_releases.get());
+        m_releasesViewModel->getFilledMyAnilibriaSection(8, m_releases.get());
 
         std::sort(m_releases->begin(), m_releases->end(), compareTimeStampDescending);
     }
