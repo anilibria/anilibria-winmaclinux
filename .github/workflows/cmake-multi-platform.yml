@@ -84,30 +84,29 @@ jobs:
         cp /opt/homebrew/lib/libjxl_cms.0.11.dylib AniLiberty.app/Contents/Frameworks/
         cp /opt/homebrew/opt/python@3.13/Frameworks/Python.framework/Versions/3.13/Python AniLiberty.app/Contents/Frameworks/
         
-        install_name_tool -change /opt/homebrew/Cellar/ffmpeg/7.1.1_5/lib/libswresample.5.dylib @executable_path/../Frameworks/libswresample.5.dylib AniLiberty.app/Contents/Frameworks/libavcodec.61.dylib
-        install_name_tool -change /opt/homebrew/Cellar/ffmpeg/7.1.1_5/lib/libavutil.59.dylib @executable_path/../Frameworks/libavutil.59.dylib AniLiberty.app/Contents/Frameworks/libavcodec.61.dylib
-        install_name_tool -change /opt/homebrew/Cellar/ffmpeg/7.1.1_5/lib/libswscale.8.dylib @executable_path/../Frameworks/libswscale.8.dylib AniLiberty.app/Contents/Frameworks/libavfilter.10.dylib
-        install_name_tool -change /opt/homebrew/Cellar/ffmpeg/7.1.1_5/lib/libavutil.59.dylib @executable_path/../Frameworks/libavutil.59.dylib AniLiberty.app/Contents/Frameworks/libavfilter.10.dylib
-        install_name_tool -change /opt/homebrew/Cellar/ffmpeg/7.1.1_5/lib/libavcodec.61.dylib @executable_path/../Frameworks/libavcodec.61.dylib AniLiberty.app/Contents/Frameworks/libavfilter.10.dylib
-        install_name_tool -change /opt/homebrew/Cellar/ffmpeg/7.1.1_5/lib/libavformat.61.dylib @executable_path/../Frameworks/libavformat.61.dylib AniLiberty.app/Contents/Frameworks/libavfilter.10.dylib
-        install_name_tool -change /opt/homebrew/Cellar/ffmpeg/7.1.1_5/lib/libpostproc.58.dylib @executable_path/../Frameworks/libpostproc.58.dylib AniLiberty.app/Contents/Frameworks/libavfilter.10.dylib
-        install_name_tool -change /opt/homebrew/Cellar/ffmpeg/7.1.1_5/lib/libswresample.5.dylib @executable_path/../Frameworks/libswresample.5.dylib AniLiberty.app/Contents/Frameworks/libavfilter.10.dylib
+        install_name_tool -change /opt/homebrew/Cellar/ffmpeg/8.0_1/lib/libswresample.6.dylib @executable_path/../Frameworks/libswresample.6.dylib AniLiberty.app/Contents/Frameworks/libavcodec.62.dylib
+        install_name_tool -change /opt/homebrew/Cellar/ffmpeg/8.0_1/lib/libavutil.60.dylib @executable_path/../Frameworks/libavutil.60.dylib AniLiberty.app/Contents/Frameworks/libavcodec.62.dylib
+        install_name_tool -change /opt/homebrew/Cellar/ffmpeg/8.0_1/lib/libswscale.9.dylib @executable_path/../Frameworks/libswscale.9.dylib AniLiberty.app/Contents/Frameworks/libavfilter.11.dylib
+        install_name_tool -change /opt/homebrew/Cellar/ffmpeg/8.0_1/lib/libavutil.60.dylib @executable_path/../Frameworks/libavutil.60.dylib AniLiberty.app/Contents/Frameworks/libavfilter.11.dylib
+        install_name_tool -change /opt/homebrew/Cellar/ffmpeg/8.0_1/lib/libavcodec.62.dylib @executable_path/../Frameworks/libavcodec.62.dylib AniLiberty.app/Contents/Frameworks/libavfilter.11.dylib
+        install_name_tool -change /opt/homebrew/Cellar/ffmpeg/8.0_1/lib/libavformat.62.dylib @executable_path/../Frameworks/libavformat.62.dylib AniLiberty.app/Contents/Frameworks/libavfilter.11.dylib
+        install_name_tool -change /opt/homebrew/Cellar/ffmpeg/8.0_1/lib/libpostproc.58.dylib @executable_path/../Frameworks/libpostproc.58.dylib AniLiberty.app/Contents/Frameworks/libavfilter.11.dylib
+        install_name_tool -change /opt/homebrew/Cellar/ffmpeg/8.0_1/lib/libswresample.6.dylib @executable_path/../Frameworks/libswresample.6.dylib AniLiberty.app/Contents/Frameworks/libavfilter.11.dylib
         
-        install_name_tool -change /opt/homebrew/Cellar/ffmpeg/7.1.1_5/lib/libavutil.59.dylib @executable_path/../Frameworks/libavutil.59.dylib AniLiberty.app/Contents/Frameworks/libswresample.5.dylib
-        install_name_tool -change /opt/homebrew/Cellar/ffmpeg/7.1.1_5/lib/libavutil.59.dylib @executable_path/../Frameworks/libavutil.59.dylib AniLiberty.app/Contents/Frameworks/libswscale.8.dylib
-        install_name_tool -change /opt/homebrew/Cellar/ffmpeg/7.1.1_5/lib/libavutil.59.dylib @executable_path/../Frameworks/libavutil.59.dylib AniLiberty.app/Contents/Frameworks/libpostproc.58.dylib
+        install_name_tool -change /opt/homebrew/Cellar/ffmpeg/8.0_1/lib/libavutil.60.dylib @executable_path/../Frameworks/libavutil.60.dylib AniLiberty.app/Contents/Frameworks/libswresample.6.dylib
+        install_name_tool -change /opt/homebrew/Cellar/ffmpeg/8.0_1/lib/libavutil.60.dylib @executable_path/../Frameworks/libavutil.60.dylib AniLiberty.app/Contents/Frameworks/libswscale.9.dylib
 
-        install_name_tool -change /opt/homebrew/Cellar/ffmpeg/7.1.1_5/lib/libavcodec.61.dylib @executable_path/../Frameworks/libavcodec.61.dylib AniLiberty.app/Contents/Frameworks/libavformat.61.dylib
-        install_name_tool -change /opt/homebrew/Cellar/ffmpeg/7.1.1_5/lib/libswresample.5.dylib @executable_path/../Frameworks/libswresample.5.dylib AniLiberty.app/Contents/Frameworks/libavformat.61.dylib
-        install_name_tool -change /opt/homebrew/Cellar/ffmpeg/7.1.1_5/lib/libavutil.59.dylib @executable_path/../Frameworks/libavutil.59.dylib AniLiberty.app/Contents/Frameworks/libavformat.61.dylib
+        install_name_tool -change /opt/homebrew/Cellar/ffmpeg/8.0_1/lib/libavcodec.62.dylib @executable_path/../Frameworks/libavcodec.62.dylib AniLiberty.app/Contents/Frameworks/libavformat.62.dylib
+        install_name_tool -change /opt/homebrew/Cellar/ffmpeg/8.0_1/lib/libswresample.6.dylib @executable_path/../Frameworks/libswresample.6.dylib AniLiberty.app/Contents/Frameworks/libavformat.62.dylib
+        install_name_tool -change /opt/homebrew/Cellar/ffmpeg/8.0_1/lib/libavutil.60.dylib @executable_path/../Frameworks/libavutil.60.dylib AniLiberty.app/Contents/Frameworks/libavformat.62.dylib
 
-        install_name_tool -change /opt/homebrew/Cellar/ffmpeg/7.1.1_5/lib/libavfilter.10.dylib @executable_path/../Frameworks/libavfilter.10.dylib AniLiberty.app/Contents/Frameworks/libavdevice.61.dylib
-        install_name_tool -change /opt/homebrew/Cellar/ffmpeg/7.1.1_5/lib/libswscale.8.dylib @executable_path/../Frameworks/libswscale.8.dylib AniLiberty.app/Contents/Frameworks/libavdevice.61.dylib
-        install_name_tool -change /opt/homebrew/Cellar/ffmpeg/7.1.1_5/lib/libpostproc.58.dylib @executable_path/../Frameworks/libpostproc.58.dylib AniLiberty.app/Contents/Frameworks/libavdevice.61.dylib
-        install_name_tool -change /opt/homebrew/Cellar/ffmpeg/7.1.1_5/lib/libavformat.61.dylib @executable_path/../Frameworks/libavformat.61.dylib AniLiberty.app/Contents/Frameworks/libavdevice.61.dylib
-        install_name_tool -change /opt/homebrew/Cellar/ffmpeg/7.1.1_5/lib/libavcodec.61.dylib @executable_path/../Frameworks/libavcodec.61.dylib AniLiberty.app/Contents/Frameworks/libavdevice.61.dylib
-        install_name_tool -change /opt/homebrew/Cellar/ffmpeg/7.1.1_5/lib/libswresample.5.dylib @executable_path/../Frameworks/libswresample.5.dylib AniLiberty.app/Contents/Frameworks/libavdevice.61.dylib
-        install_name_tool -change /opt/homebrew/Cellar/ffmpeg/7.1.1_5/lib/libavutil.59.dylib @executable_path/../Frameworks/libavutil.59.dylib AniLiberty.app/Contents/Frameworks/libavdevice.61.dylib
+        install_name_tool -change /opt/homebrew/Cellar/ffmpeg/8.0_1/lib/libavfilter.11.dylib @executable_path/../Frameworks/libavfilter.11.dylib AniLiberty.app/Contents/Frameworks/libavdevice.62.dylib
+        install_name_tool -change /opt/homebrew/Cellar/ffmpeg/8.0_1/lib/libswscale.9.dylib @executable_path/../Frameworks/libswscale.9.dylib AniLiberty.app/Contents/Frameworks/libavdevice.62.dylib
+        install_name_tool -change /opt/homebrew/Cellar/ffmpeg/8.0_1/lib/libpostproc.58.dylib @executable_path/../Frameworks/libpostproc.58.dylib AniLiberty.app/Contents/Frameworks/libavdevice.62.dylib
+        install_name_tool -change /opt/homebrew/Cellar/ffmpeg/8.0_1/lib/libavformat.62.dylib @executable_path/../Frameworks/libavformat.62.dylib AniLiberty.app/Contents/Frameworks/libavdevice.62.dylib
+        install_name_tool -change /opt/homebrew/Cellar/ffmpeg/8.0_1/lib/libavcodec.62.dylib @executable_path/../Frameworks/libavcodec.62.dylib AniLiberty.app/Contents/Frameworks/libavdevice.62.dylib
+        install_name_tool -change /opt/homebrew/Cellar/ffmpeg/8.0_1/lib/libswresample.6.dylib @executable_path/../Frameworks/libswresample.6.dylib AniLiberty.app/Contents/Frameworks/libavdevice.62.dylib
+        install_name_tool -change /opt/homebrew/Cellar/ffmpeg/8.0_1/lib/libavutil.60.dylib @executable_path/../Frameworks/libavutil.60.dylib AniLiberty.app/Contents/Frameworks/libavdevice.62.dylib
 
         install_name_tool -change /opt/homebrew/Cellar/brotli/1.1.0/lib/libbrotlicommon.1.dylib @executable_path/../Frameworks/libbrotlicommon.1.dylib AniLiberty.app/Contents/Frameworks/libbrotlidec.1.dylib
         install_name_tool -change /opt/homebrew/Cellar/brotli/1.1.0/lib/libbrotlicommon.1.dylib @executable_path/../Frameworks/libbrotlicommon.1.dylib AniLiberty.app/Contents/Frameworks/libbrotlienc.1.dylib
