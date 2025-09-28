@@ -248,5 +248,6 @@
         <file>Assets/Icons/videoplayer/darksubtitles.svg</file>
         <file>Views/TorrentStreamCard.qml</file>
         <file>Main.qml</file>
+        <file>Controls/InfoAboutTorrentStream.qml</file>
     </qresource>
 </RCC>
