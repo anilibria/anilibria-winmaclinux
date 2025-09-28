@@ -904,6 +904,8 @@ void OnlinePlayerViewModel::selectVideo(int releaseId, int videoId)
 
     m_videos->selectVideo(releaseId, videoId);
 
+    if (m_reachEnding) setReachEnding(false);
+    if (m_displaySkipOpening) setDisplaySkipOpening(false);
     emit playInPlayer();
 }
 

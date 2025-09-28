@@ -516,11 +516,245 @@ QStringList ReleasesViewModel::getMostPopularVoices() const noexcept
     foreach (auto item, allVoices) {
         if (iteratorIndex == 3) break;
 
-        result.append(item);
+        result.append(item.toLower());
         iteratorIndex++;
     }
 
     return result;
+}
+
+void ReleasesViewModel::fillMyAnilibriaData() noexcept
+{
+    m_myAnilibriaNewInFavorites.clear();
+    m_myAnilibriaNewFromStart.clear();
+    m_myAnilibriaNewFromLastTwoDays.clear();
+    m_myAnilibriaCurrentSeasons.clear();
+    m_myAnilibriaAbandonReleases.clear();
+    m_myAnilibriaWillWatchReleases.clear();
+    m_myAnilibriaNextInReleaseSeries.clear();
+    m_myAnilibriaRecommendsForGenres.clear();
+    m_myAnilibriaRecommendsForVoices.clear();
+
+    // new in favorites
+    QSet<int> favorites;
+    foreach (auto favorite, *m_userFavorites) favorites.insert(favorite);
+
+    // new from start
+    auto applicationStart = m_userActivity->previousApplicationStart();
+
+    // new from last two days
+    auto now = QDateTime::currentDateTimeUtc().addDays(-3);
+    auto timestamp = static_cast<int>(now.toSecsSinceEpoch());
+
+    // current season
+    auto currentYear = QString::number(QDate::currentDate().year());
+    auto currentSeason = m_items->getCurrentSeason();
+
+    // abandon seens
+    auto abandonNow = QDateTime::currentDateTimeUtc().addDays(-18);
+    auto adandonTimestamp = static_cast<int>(abandonNow.toSecsSinceEpoch());
+    QMap<int, int> adandonReleasesCount;
+    foreach (auto onlineVideo, m_onlineVideos) {
+        auto videoId = onlineVideo->uniqueId();
+
+        if (m_extendedSeenMarks.contains(videoId)) {
+            auto item = m_extendedSeenMarks.value(videoId);
+            auto mark = std::get<0>(item);
+            if (!mark) continue;
+
+            auto releaseId = onlineVideo->releaseId();
+            if (adandonReleasesCount.contains(releaseId)) {
+                auto count = adandonReleasesCount[releaseId];
+                count++;
+                adandonReleasesCount[releaseId] = count;
+            } else {
+                adandonReleasesCount.insert(releaseId, 1);
+            }
+        }
+    }
+
+    // next in release series
+    auto linkedReleases = m_items->getFullLinkedReleases();
+    auto releasesMap = m_releasesMap.get();
+
+    // recommends for genres
+    auto genres = getMostPopularGenres();
+    if (!genres.isEmpty()) {
+        QMutableStringListIterator iterator(genres);
+        while (iterator.hasNext()) {
+            auto value = iterator.next();
+            iterator.setValue(value.toLower());
+        }
+    }
+
+    // recommends for voices
+    auto popularVoices = getMostPopularVoices();
+
+    foreach (auto release, *m_releases) {
+        if (release->countOnlineVideos() == 0) continue;
+
+        auto releaseId = release->id();
+        auto hasInHistory = m_historyItems->contains(releaseId);
+
+        // new in favorites
+        if (favorites.contains(release->id())) {
+            auto seenVideos = m_items->getReleaseSeenMarkCount(releaseId);
+            if (release->countOnlineVideos() > seenVideos) m_myAnilibriaNewInFavorites.append(releaseId);
+        }
+
+        // new from start
+        if (release->timestamp() > applicationStart) m_myAnilibriaNewFromStart.append(releaseId);
+
+        // new from last two days
+        if (release->timestamp() >= timestamp) m_myAnilibriaNewFromLastTwoDays.append(releaseId);
+
+        // current season
+        if (release->year() == currentYear && release->status().toLower() == "в работе" && release->season() == currentSeason) m_myAnilibriaCurrentSeasons.append(releaseId);
+
+        // abandon seens
+        if (hasInHistory) {
+            auto historyItem = m_historyItems->value(releaseId);
+            auto isAdandonRelease = historyItem->watchTimestamp() > 0 && adandonReleasesCount.contains(releaseId) &&
+                adandonReleasesCount.value(releaseId) < release->countOnlineVideos() &&
+                historyItem->watchTimestamp() < adandonTimestamp;
+
+            if (isAdandonRelease) m_myAnilibriaAbandonReleases.append(releaseId);
+        }
+
+        // will watch
+        if (m_userFavorites->contains(releaseId)) {
+            auto seenVideos = adandonReleasesCount[releaseId];
+            int watchTimestamp = 0;
+            if (hasInHistory) {
+                auto item = m_historyItems->value(releaseId);
+                watchTimestamp = item->watchTimestamp();
+            }
+
+            if (seenVideos == 0 && watchTimestamp == 0) m_myAnilibriaWillWatchReleases.append(releaseId);
+        }
+
+        if (hasInHistory) {
+            auto historyItem = m_historyItems->value(releaseId);
+
+            if (historyItem->watchTimestamp() == 0) {
+                // recommends for genres
+                if (m_myAnilibriaRecommendsForGenres.count() < 30) {
+                    auto releaseGenres = release->genres().toLower();
+                    foreach (auto genre, genres) {
+                        if (releaseGenres.contains(genre)) m_myAnilibriaRecommendsForGenres.append(releaseId);
+                    }
+                }
+                // recommends for voices
+                if (m_myAnilibriaRecommendsForVoices.count() < 30) {
+                    auto releaseVoices = release->voicers().toLower();
+                    foreach (auto voice, popularVoices) {
+                        if (releaseVoices.contains(voice)) m_myAnilibriaRecommendsForVoices.append(releaseId);
+                    }
+                }
+            }
+        }
+
+
+
+    }
+
+    // next in release series
+    foreach (auto group, linkedReleases) {
+        auto countWatched = 0;
+        auto notFullWatched = QList<FullReleaseModel *>();
+        foreach (auto releaseId, group) {
+            if (!releasesMap->contains(releaseId)) continue;
+            auto release = releasesMap->value(releaseId);
+            if (release->countOnlineVideos() == 0) continue;
+
+            auto isFullWatch = release->countOnlineVideos() == adandonReleasesCount.value(releaseId);
+            if (isFullWatch) {
+                countWatched += 1;
+            } else {
+                if (notFullWatched.count() < 4) notFullWatched.append(release);
+            }
+        }
+
+        if (countWatched > 0 && !notFullWatched.isEmpty()) {
+            foreach (auto notFullWatchedItem, notFullWatched) m_myAnilibriaNextInReleaseSeries.append(notFullWatchedItem->id());
+        }
+    }
+
+    adandonReleasesCount.clear();
+
+    if (m_myAnilibriaRecommendsForGenres.count() > 5) {
+        if (randomBetween(0, 10) > 5) std::reverse(m_myAnilibriaRecommendsForGenres.begin(), m_myAnilibriaRecommendsForGenres.end());
+
+        m_seedValue += QRandomGenerator::system()->generate();
+        QRandomGenerator generator(m_seedValue);
+
+        auto index = 0;
+        while (m_myAnilibriaRecommendsForGenres.count() > 5) {
+            if (generator.bounded(0, 1000) % 2 == 0) {
+                m_myAnilibriaRecommendsForGenres.removeAt(randomBetween(0, m_myAnilibriaRecommendsForGenres.count() - 1));
+            }
+
+            index++;
+            if (index >= m_myAnilibriaRecommendsForGenres.count()) index = 0;
+        }
+    }
+    if (m_myAnilibriaRecommendsForVoices.count() > 5) {
+        if (randomBetween(0, 10) > 5) std::reverse(m_myAnilibriaRecommendsForVoices.begin(), m_myAnilibriaRecommendsForVoices.end());
+
+        m_seedValue += QRandomGenerator::system()->generate();
+        QRandomGenerator generator(m_seedValue);
+
+        auto index = 0;
+        while (m_myAnilibriaRecommendsForVoices.count() > 5) {
+            if (generator.bounded(0, 1000) % 2 == 0) {
+                m_myAnilibriaRecommendsForVoices.removeAt(randomBetween(0, m_myAnilibriaRecommendsForVoices.count() - 1));
+            }
+
+            index++;
+            if (index >= m_myAnilibriaRecommendsForVoices.count()) index = 0;
+        }
+    }
+}
+
+void ReleasesViewModel::getFilledMyAnilibriaSection(int mode, QList<FullReleaseModel *> *list) noexcept
+{
+    QList<int> listReleases;
+    switch (mode) {
+        case 0:
+            listReleases = m_myAnilibriaNewInFavorites;
+            break;
+        case 1:
+            listReleases = m_myAnilibriaNewFromStart;
+            break;
+        case 2:
+            listReleases = m_myAnilibriaNewFromLastTwoDays;
+            break;
+        case 3:
+            listReleases = m_myAnilibriaCurrentSeasons;
+            break;
+        case 4:
+            listReleases = m_myAnilibriaAbandonReleases;
+            break;
+        case 5:
+            listReleases = m_myAnilibriaWillWatchReleases;
+            break;
+        case 6:
+            listReleases = m_myAnilibriaNextInReleaseSeries;
+            break;
+        case 7:
+            listReleases = m_myAnilibriaRecommendsForGenres;
+            break;
+        case 8:
+            listReleases = m_myAnilibriaRecommendsForVoices;
+            break;
+    }
+    auto releases = m_releasesMap.get();
+
+    foreach (auto item, listReleases) {
+        if (!releases->contains(item)) continue;
+
+        list->append(releases->value(item));
+    }
 }
 
 void ReleasesViewModel::fillNewInFavorites(QList<FullReleaseModel *>* list) const noexcept
@@ -693,7 +927,6 @@ void ReleasesViewModel::fillWillWatch(QList<FullReleaseModel *> *list) noexcept
 void ReleasesViewModel::fillNextInReleaseSeries(QList<FullReleaseModel *> *list) noexcept
 {
     auto linkedReleases = m_items->getFullLinkedReleases();
-    auto historyItems = m_historyItems;
     auto releasesMap = m_releasesMap.get();
 
     QMap<int, int> releasesCount;
@@ -1553,6 +1786,11 @@ QString ReleasesViewModel::getReleasePoster(int releaseId) noexcept
 
     auto poster = release->poster();
     return m_localStorage->getReleasePosterPath(releaseId, poster);
+}
+
+void ReleasesViewModel::refreshMyAnilibriaCache() noexcept
+{
+    fillMyAnilibriaData();
 }
 
 FullReleaseModel *ReleasesViewModel::getReleaseById(int id) const noexcept

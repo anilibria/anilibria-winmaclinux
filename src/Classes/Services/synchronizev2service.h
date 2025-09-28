@@ -27,6 +27,9 @@ class Synchronizev2Service : public QObject
     Q_PROPERTY(bool useTorrentStreamAsLibrary READ useTorrentStreamAsLibrary WRITE setUseTorrentStreamAsLibrary NOTIFY useTorrentStreamAsLibraryChanged FINAL)
     Q_PROPERTY(QString pathToTSLibrary READ pathToTSLibrary NOTIFY pathToTSLibraryChanged FINAL)
     Q_PROPERTY(QString pathToTSContent READ pathToTSContent NOTIFY pathToTSContentChanged FINAL)
+    Q_PROPERTY(QString tsCurrentVersion READ tsCurrentVersion NOTIFY tsCurrentVersionChanged FINAL)
+    Q_PROPERTY(QString tsNewVersion READ tsNewVersion NOTIFY tsNewVersionChanged FINAL)
+    Q_PROPERTY(bool notInstalledTorrentStream READ notInstalledTorrentStream NOTIFY notInstalledTorrentStreamChanged FINAL)
 
 private:
     QString m_apiv2host { "" };
@@ -137,6 +140,12 @@ public:
 
     QString pathToTSContent() const noexcept { return m_pathToTSContent; }
 
+    QString tsCurrentVersion() const noexcept { return m_savedTorrentStreamVersion; }
+
+    QString tsNewVersion() const noexcept { return m_savedTorrentStreamNewVersion; }
+
+    bool notInstalledTorrentStream() const noexcept { return m_savedTorrentStreamVersion.isEmpty() && m_savedTorrentStreamNewVersion.isEmpty(); }
+
     QMap<int, QString>&& getLocalCollections();
 
     Q_INVOKABLE void authorize(QString login, QString password);
@@ -160,6 +169,7 @@ public:
     Q_INVOKABLE void removeReleasesFromCollection(QList<int> releaseIds);
     Q_INVOKABLE void checkVersionTorrentStreamLibrary();
     Q_INVOKABLE void downloadTorrentStreamLibrary(const QString& path);
+    Q_INVOKABLE void installNewTsVersion();
 
     void timerEvent(QTimerEvent *event) override;
 
@@ -241,6 +251,10 @@ signals:
     void tsDownloadTorrent(int releaseId, QString downloadPath);
     void pathToTSLibraryChanged();
     void pathToTSContentChanged();
+    void tsCurrentVersionChanged();
+    void tsNewVersionChanged();
+    void notInstalledTorrentStreamChanged();
+    void tsWasFirstlyInstalled();
 
 };
 

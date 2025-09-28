@@ -91,6 +91,22 @@ Page {
                         }
 
                         IconButton {
+                            id: refreshButton
+                            anchors.right: openAllButton.left
+                            height: 45
+                            width: 40
+                            hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
+                            iconPath: applicationThemeViewModel.currentItems.iconReleaseCatalogSynchronization
+                            iconWidth: 28
+                            iconHeight: 28
+                            tooltipMessage: "Обновить"
+                            onButtonPressed: {
+                                releasesViewModel.refreshMyAnilibriaCache();
+                                myAnilibriaViewModel.refreshAllSectionsModels();
+                            }
+                        }
+
+                        IconButton {
                             id: openAllButton
                             anchors.right: closeAllButton.left
                             height: 45

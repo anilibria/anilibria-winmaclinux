@@ -331,7 +331,7 @@ Page {
                 x: window.width / 2 - torrentStreamPopup.width / 2
                 y: window.height / 2 - torrentStreamPopup.height / 2
                 width: 550
-                height: 480
+                height: 500
                 modal: true
                 focus: true
                 closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
@@ -483,6 +483,54 @@ Page {
                                 id: torrentStreamUISwitch
                                 height: 15
                                 checked: userConfigurationViewModel.torrentStreamUI
+                            }
+                        }
+                    }
+
+                    Item {
+                        width: torrentStreamPopup.width
+                        height: 40
+
+                        Row {
+                            height: parent.height
+
+                            Item {
+                                width: tsCurrentVersion.width
+                                height: parent.height
+
+                                PlainText {
+                                    id: tsCurrentVersion
+                                    anchors.verticalCenter: parent.verticalCenter
+                                    text: "Текущая: " + synchronizationServicev2.tsCurrentVersion
+                                    fontPointSize: 12
+                                }
+                            }
+
+                            Item {
+                                width: tsNewVersion.width
+                                height: parent.height
+
+                                PlainText {
+                                    id: tsNewVersion
+                                    anchors.verticalCenter: parent.verticalCenter
+                                    visible: synchronizationServicev2.tsCurrentVersion !== synchronizationServicev2.tsNewVersion
+                                    text: " Следующая: " + synchronizationServicev2.tsNewVersion + " "
+                                    fontPointSize: 12
+                                }
+                            }
+
+                            Item {
+                                width: 200
+                                height: parent.height
+
+                                RoundedActionButton {
+                                    anchors.verticalCenter: parent.verticalCenter
+                                    text: "Проверить новую версию"
+                                    width: 200
+                                    onClicked: {
+                                        synchronizationServicev2.checkVersionTorrentStreamLibrary();
+                                    }
+                                }
                             }
                         }
                     }

@@ -101,7 +101,7 @@ $ flatpak install --user anilibria.flatpak
 
 ### Готовые инструкции для сборки под дистрибутивы:
 
-[Ubuntu/Linux Mint 20](https://github.com/anilibria/anilibria-winmaclinux/blob/master/linuxmint20.md)  
+[Ubuntu/Linux Mint 23+](https://github.com/anilibria/anilibria-winmaclinux/blob/master/linuxmint20.md)  
 [openSUSE](https://github.com/anilibria/anilibria-winmaclinux/blob/master/openSUSE.md)  
 [Fedora](https://github.com/anilibria/anilibria-winmaclinux/blob/master/fedora.md)  
 [macOS](https://github.com/anilibria/anilibria-winmaclinux/blob/master/macosbuild.md)  
@@ -110,11 +110,12 @@ $ flatpak install --user anilibria.flatpak
 [Steam Deck](https://github.com/JerzyEx/anilibria_at_steamdeck)
 
 ### Для сборки необходимо:
-- Минимальная поддерживаемая версия Qt 5.15.2
-- Поддержка C++14 (минимальные версии компиляторов MSVC17, GCC 6 или CLANG 3.4)
+Поддерживаются две версии Qt6 и Qt5. Рекомендовано собирать на Qt6 потому что Qt5 
+- Для Qt6 минимальная поддерживаемая версия 6.4. Для Qt5 минимальная поддерживаемая версия Qt 5.15.2.
+- Для Qt6 минимальная версия C++20. Для Qt5 минимальная версия C++14.
 - Модули Qt - multimedia, graphicaleffects, svg, websocket, particleeffects
-- Для сборки проекта используется qmake
-- Для Windows сборки требуется зависимость libVLC версии 3.0.20 и libmpv
+- Для сборки проекта Qt6 используется cmake, для сборки проекта Qt5 используется qmake.
+- Для сборки требуется зависимость libmpv. Для Qt5 также нужно libVLC версии 3.0.20.
 
 ### Linux
 
@@ -122,6 +123,13 @@ OpenSSL 1.1.1 и старше
 GStreamer 1.10  
 libmpv-2
 
+Для Qt6
+```bash
+cmake -S src -B build
+cmake --build build -t install
+```
+
+Для Qt5
 ```bash
 cd src
 qmake

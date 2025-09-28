@@ -19,7 +19,6 @@ ApplicationWindow {
     width: 800
     height: 600
     minimumWidth: 300
-    //font.family: userConfigurationViewModel.textFont
     minimumHeight: 300
     title: "AniLiberty.Qt"
     font.capitalization: Font.MixedCase
@@ -764,6 +763,15 @@ ApplicationWindow {
 
         onTsDownloadTorrent: {
             osExtras.tsStartFullDownload(releaseId, downloadPath);
+        }
+
+        onTsWasFirstlyInstalled: {
+            if (userConfigurationViewModel.useTorrentStreamLibrary) {
+                synchronizationServicev2.installNewTsVersion();
+                initializeTorrentStreamLibrary();
+            } else {
+                notificationViewModel.sendInfoNotification("TorrentStream установлен, перезапустите пожалуйста приложение!");
+            }
         }
     }
 
@@ -1510,6 +1518,10 @@ ApplicationWindow {
         id: myAnilibriaViewModel
         releasesViewModel: releasesViewModel
         myList.userConfiguration: userConfigurationViewModel
+        Component.onCompleted: {
+            releasesViewModel.refreshMyAnilibriaCache();
+            myAnilibriaViewModel.refreshAllSectionsModels();
+        }
         Component.onDestruction: {
             myAnilibriaViewModel.saveSectionsToFile();
         }
@@ -1590,23 +1602,7 @@ ApplicationWindow {
         }
         Component.onCompleted: {
             if (userConfigurationViewModel.useTorrentStreamLibrary) {
-                if (synchronizationServicev2.pathToTSLibrary) {
-                    console.log("Try to start TorrentStream as library from path: " + synchronizationServicev2.pathToTSLibrary);
-
-                    const pathToTSContent = userConfigurationViewModel.pathToTSContent ?
-                        userConfigurationViewModel.pathToTSContent :
-                        synchronizationServicev2.pathToTSContent;
-                    console.log("TorrentStream content folder: " + pathToTSContent);
-
-                    osExtras.initializeTorrentStream(
-                        userConfigurationViewModel.playerBuffer,
-                        //"C:/work/Repositories/TorrentStream/TorrentStream/TorrentStreamLibrary/bin/Release/net9.0/win-x64/native/TorrentStreamLibrary.dll",
-                        synchronizationServicev2.pathToTSLibrary,
-                        pathToTSContent,
-                        "",
-                        userConfigurationViewModel.torrentStreamUI
-                    );
-                }
+                initializeTorrentStreamLibrary();
             } else {
                 torrentNotifierViewModel.tryStartTorrentStreamApplication();
             }
@@ -1653,10 +1649,38 @@ ApplicationWindow {
         }
     }
 
+    InfoAboutTorrentStream {
+        id: infoAboutTorrentStream
+        anchors.bottom: parent.bottom
+        anchors.right: parent.right
+        anchors.rightMargin: 10
+        anchors.bottomMargin: 80
+    }
+
     Item {
         id: assetsLocation
         property string backgroundsPath: applicationsViewModel.pathToBackgroundsFolder
         property string iconsPath: applicationsViewModel.pathToIconsFolder
+    }
+
+    function initializeTorrentStreamLibrary() {
+        if (synchronizationServicev2.pathToTSLibrary) {
+            console.log("Try to start TorrentStream as library from path: " + synchronizationServicev2.pathToTSLibrary);
+
+            const pathToTSContent = userConfigurationViewModel.pathToTSContent ?
+                userConfigurationViewModel.pathToTSContent :
+                synchronizationServicev2.pathToTSContent;
+            console.log("TorrentStream content folder: " + pathToTSContent);
+
+            osExtras.initializeTorrentStream(
+                userConfigurationViewModel.playerBuffer,
+                //"C:/work/Repositories/TorrentStream/TorrentStream/TorrentStreamLibrary/bin/Release/net9.0/win-x64/native/TorrentStreamLibrary.dll",
+                synchronizationServicev2.pathToTSLibrary,
+                pathToTSContent,
+                "",
+                userConfigurationViewModel.torrentStreamUI
+            );
+        }
     }
 
     //uncomment for christmas version
