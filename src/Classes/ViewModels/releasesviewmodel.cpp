@@ -516,7 +516,7 @@ QStringList ReleasesViewModel::getMostPopularVoices() const noexcept
     foreach (auto item, allVoices) {
         if (iteratorIndex == 3) break;
 
-        result.append(item);
+        result.append(item.toLower());
         iteratorIndex++;
     }
 
@@ -588,8 +588,7 @@ void ReleasesViewModel::fillMyAnilibriaData() noexcept
     }
 
     // recommends for voices
-    auto voices = getMostPopularVoices();
-    if (voices.isEmpty()) return;
+    auto popularVoices = getMostPopularVoices();
 
     foreach (auto release, *m_releases) {
         if (release->countOnlineVideos() == 0) continue;
@@ -634,26 +633,28 @@ void ReleasesViewModel::fillMyAnilibriaData() noexcept
             if (seenVideos == 0 && watchTimestamp == 0) m_myAnilibriaWillWatchReleases.append(releaseId);
         }
 
-        // recommends for genres
         if (hasInHistory) {
             auto historyItem = m_historyItems->value(releaseId);
+
             if (historyItem->watchTimestamp() == 0) {
+                // recommends for genres
                 if (m_myAnilibriaRecommendsForGenres.count() < 30) {
                     auto releaseGenres = release->genres().toLower();
                     foreach (auto genre, genres) {
                         if (releaseGenres.contains(genre)) m_myAnilibriaRecommendsForGenres.append(releaseId);
                     }
                 }
+                // recommends for voices
                 if (m_myAnilibriaRecommendsForVoices.count() < 30) {
                     auto releaseVoices = release->voicers().toLower();
-                    foreach (auto voice, voices) {
+                    foreach (auto voice, popularVoices) {
                         if (releaseVoices.contains(voice)) m_myAnilibriaRecommendsForVoices.append(releaseId);
                     }
                 }
             }
         }
 
-        // recommends for voices
+
 
     }
 
