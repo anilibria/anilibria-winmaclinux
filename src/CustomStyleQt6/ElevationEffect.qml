@@ -215,7 +215,7 @@ Item {
             offsetY: effect._shadow.angularValues[0].offset
             blurRadius: effect._shadow.angularValues[0].blur
             spreadRadius: effect._shadow.angularValues[0].spread
-            strength: effect._shadow.strength
+            //strength: effect._shadow.strength
             color: Qt.rgba(backgroundColor.r, backgroundColor.g, backgroundColor.b, 0.2)
 
             fullWidth: effect.fullWidth
@@ -227,7 +227,7 @@ Item {
             offsetY: effect._shadow.angularValues[1].offset
             blurRadius: effect._shadow.angularValues[1].blur
             spreadRadius: effect._shadow.angularValues[1].spread
-            strength: effect._shadow.strength
+            //strength: effect._shadow.strength
             color: Qt.rgba(backgroundColor.r, backgroundColor.g, backgroundColor.b, 0.14)
 
             fullWidth: effect.fullWidth
@@ -239,7 +239,7 @@ Item {
             offsetY: effect._shadow.angularValues[2].offset
             blurRadius: effect._shadow.angularValues[2].blur
             spreadRadius: effect._shadow.angularValues[2].spread
-            strength: effect._shadow.strength
+            //strength: effect._shadow.strength
             color: Qt.rgba(backgroundColor.r, backgroundColor.g, backgroundColor.b, 0.12)
 
             fullWidth: effect.fullWidth

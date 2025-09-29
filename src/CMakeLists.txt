@@ -132,6 +132,7 @@ endif()
 qt_add_qml_module(AniLiberty
     URI aniliberty
     VERSION 1.0
+    RESOURCE_PREFIX /qt/qml
     QML_FILES
         Main.qml
 
