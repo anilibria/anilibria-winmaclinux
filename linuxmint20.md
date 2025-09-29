@@ -21,7 +21,7 @@ cmake -S src -B build -DCMAKE_BUILD_TYPE=Release -DANILIBERTY_LESS_68_QT=On
 ```
 Сборка и установка:
 ```shell
-cmake --build build -t install
+sudo cmake --build build -t install
 ```
 **Необязательный последний этап. После всех манипуляций можно удалить созданную папку командой**
 ```shell
