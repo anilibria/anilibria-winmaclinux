@@ -235,7 +235,7 @@ int main(int argc, char *argv[])
 #if QT_VERSION >= QT_VERSION_CHECK(6, 5, 0)
     engine.loadFromModule("aniliberty", "Main");
 #else
-    engine.load(url);
+    engine.load(QStringLiteral("qrc:/aniliberty/Main.qml"));
 #endif
 
     if (onlyStart) return 0; // for this case we need just check if all dependencies correct and don't need to run application
