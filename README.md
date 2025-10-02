@@ -23,7 +23,8 @@
 
 Для установки просто качаем релиз и распаковываем, внутри запуcкаем файл Anilibria.exe.  
 Для обновления выполняем ровно тоже действие, старую версию можно будет удалить или сохранить это остается на Ваше усмотрение.  
-На `Windows 7` необходимо заменить библиотеку `libmpv-2.dll` на другую которую можно [скачать тут](https://sourceforge.net/projects/mpv-player-windows/files/libmpv/mpv-dev-x86_64-20230917-git-181eddc.7z/download).
+На `Windows 7/8` необходимо заменить библиотеку `libmpv-2.dll` на другую которую можно [скачать тут](https://sourceforge.net/projects/mpv-player-windows/files/libmpv/mpv-dev-x86_64-20230917-git-181eddc.7z/download).  
+Если на `Windows 7/8` Вы скачали версию Qt6 Вам надо заменить файлы в папке на [эти](https://github.com/crystalidea/qt6windows7) иначе ничего работать не будет.
 
 ### macOS
 
