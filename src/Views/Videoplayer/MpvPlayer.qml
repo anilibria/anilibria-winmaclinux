@@ -91,6 +91,9 @@ Item {
         }
         onEndFileReached: {
             playerStatusChanged("endofmedia");
+            root.isPlaying = false;
+            root.isPaused = false;
+            root.isStopped = false;
         }
         onFileLoaded: {
             playerStatusChanged("loading");
