@@ -608,11 +608,11 @@ Page {
                     torrentNotifierViewModel.startGetTorrentData(false);
                 }
             }
-        }
-    }
 
-    TorrentStreamCard {
-        id: torrentStreamCard
-        visible: torrentNotifierViewModel.isCardShowed
+            TorrentStreamCard {
+                id: torrentStreamCard
+                visible: torrentNotifierViewModel.isCardShowed
+            }
+        }
     }
 }
