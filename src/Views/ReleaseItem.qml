@@ -170,7 +170,6 @@ Item {
                         enabled: false
                         fontPointSize: 12
                         width: 280
-                        height: 70
                         leftPadding: 8
                         topPadding: 6
                         wrapMode: Text.Wrap
