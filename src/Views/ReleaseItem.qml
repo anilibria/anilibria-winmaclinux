@@ -168,14 +168,15 @@ Item {
                     id: gridItemtextContainer
                     AccentText {
                         enabled: false
-                        textFormat: Text.RichText
                         fontPointSize: 12
                         width: 280
+                        height: 70
                         leftPadding: 8
                         topPadding: 6
-                        wrapMode: Text.WordWrap
+                        wrapMode: Text.Wrap
                         maximumLineCount: 3
-                        text: qsTr(title)
+                        elide: Text.ElideRight
+                        text: title
                     }
                     PlainText {
                         enabled: false
@@ -354,19 +355,6 @@ Item {
                             fontPointSize: 12
                             text: '' + countTorrents
                         }
-                        TooltipedImage {
-                            visible: inSchedule
-                            source: applicationThemeViewModel.currentItems.iconReleaseCatalogSchedule
-                            width: 22
-                            height: 22
-                        }
-                        PlainText {
-                            visible: inSchedule
-                            leftPadding: 8
-                            topPadding: 1
-                            fontPointSize: 11
-                            text: scheduledDay
-                        }
                     }
                 }
                 Rectangle {
@@ -411,6 +399,20 @@ Item {
                                 rightPadding: 4
                                 fontPointSize: 12
                                 text: rating
+                            }
+
+                            TooltipedImage {
+                                visible: inSchedule
+                                source: applicationThemeViewModel.currentItems.iconReleaseCatalogSchedule
+                                width: 22
+                                height: 22
+                            }
+                            PlainText {
+                                visible: inSchedule
+                                leftPadding: 8
+                                topPadding: 1
+                                fontPointSize: 11
+                                text: scheduledDay
                             }
                         }
 

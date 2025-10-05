@@ -144,7 +144,7 @@ QVariant ReleasesListModel::data(const QModelIndex &index, int role) const
             return QVariant(m_scheduleReleases->contains(release->id()));
         }
         case ScheduledDayRole: {
-            return m_scheduleReleases->contains(release->id()) ? QVariant(getScheduleDay(m_scheduleReleases->value(release->id()))) : QVariant("");
+            return m_scheduleReleases->contains(release->id()) ? QVariant(getScheduleShortDay(m_scheduleReleases->value(release->id()))) : QVariant("");
         }
         case StartInGroupRole: {
             return QVariant(m_startInGroups.contains(release->id()));
@@ -478,6 +478,20 @@ QString ReleasesListModel::getScheduleDay(int dayNumber) const noexcept
         case 5: return QString("пятница");
         case 6: return QString("суббота");
         case 7: return QString("воскресенье");
+        default: return "";
+    }
+}
+
+QString ReleasesListModel::getScheduleShortDay(int dayNumber) const noexcept
+{
+    switch (dayNumber){
+        case 1: return QString("пн");
+        case 2: return QString("вт");
+        case 3: return QString("ср");
+        case 4: return QString("чт");
+        case 5: return QString("пт");
+        case 6: return QString("сб");
+        case 7: return QString("вс");
         default: return "";
     }
 }
