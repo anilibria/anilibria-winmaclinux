@@ -1322,7 +1322,7 @@ Page {
 
                 RoundedActionButton {
                     id: showPanelInCompactModeButton
-                    visible: compactModeSwitch.checked && !releasesViewModel.synchronizationEnabled
+                    visible: compactModeSwitch.checked && !synchronizationServicev2.synchronizeCacheActived
                     text: releasesViewModel.showSidePanel ? "Скрыть панель" : "Показать панель"
                     anchors.verticalCenter: parent.verticalCenter
                     anchors.horizontalCenter: parent.horizontalCenter
