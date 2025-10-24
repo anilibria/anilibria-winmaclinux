@@ -146,13 +146,15 @@ Item {
 
                 AccentText {
                     fontPointSize: 10
+                    width: parent.width - 40
+                    height: parent.height
+                    anchors.left: parent.left
+                    anchors.leftMargin: 10
                     horizontalAlignment: Text.AlignHCenter
-                    verticalAlignment: Text.AlignVCenter
-                    width: parent.width
-                    leftPadding: 8
-                    topPadding: 6
-                    wrapMode: Text.WordWrap
+                    topPadding: 2
+                    wrapMode: Text.Wrap
                     maximumLineCount: 2
+                    elide: Text.ElideRight
                     text: title
                 }
             }
