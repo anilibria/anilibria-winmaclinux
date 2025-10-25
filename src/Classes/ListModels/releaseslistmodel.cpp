@@ -797,7 +797,7 @@ void ReleasesListModel::refresh()
 
         if (m_section == MostPopular2021Section && !(release->status().toLower() == releaseIsFinished)) continue;
 
-        if (m_section == MostPopular2022Section && !(release->year() == "2022" && release->rating() > 0)) continue;
+        if (m_section == MostPopular2022Section && !(release->year() == currentYear && release->rating() > 0)) continue;
 
         if (m_section == AddedToCinemahall && !(m_cinemahall->isReleaseInCinemahall(release->id()))) continue;
 

@@ -56,7 +56,7 @@ ReleasesViewModel::ReleasesViewModel(QObject *parent) : QObject(parent)
     m_sectionNames.append("Завершенные");
     m_sectionNames.append("Просмотренные до конца");
     m_sectionNames.append("Просмотренные не до конца");
-    m_sectionNames.append("Популярное в 2022");
+    m_sectionNames.append("Популярное в текущем году");
     m_sectionNames.append("В кинозале");
     m_sectionNames.append("Текущий сезон");
     m_sectionNames.append("Не текущий сезон");
