@@ -195,6 +195,8 @@ ThemeFieldListModel::ThemeFieldListModel(QObject *parent)
 
     m_descriptions.insert(iconSubtitlesPopupField, "Иконка Субтитры:Иконка для меню субтитров");
 
+    m_descriptions.insert(backgroundsPagesField, "Настройка фона страниц:Выбрать фоны для страниц приложения");
+
     m_saveMenuItems.append("Сохранить и добавить тему в список");
     m_saveMenuItems.append("Сохранить в файл");
 }

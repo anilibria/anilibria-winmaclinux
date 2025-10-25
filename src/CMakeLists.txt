@@ -105,6 +105,7 @@ set(appsources
     Classes/ViewModels/useractivityviewmodel.h Classes/ViewModels/useractivityviewmodel.cpp
     Classes/ViewModels/userconfigurationviewmodel.h Classes/ViewModels/userconfigurationviewmodel.cpp
     Classes/ViewModels/youtubeviewmodel.h Classes/ViewModels/youtubeviewmodel.cpp
+    Classes/Models/pagebackgroundmodel.h Classes/Models/pagebackgroundmodel.cpp
 )
 
 add_compile_definitions(NO_NEED_STANDART_PLAYER)

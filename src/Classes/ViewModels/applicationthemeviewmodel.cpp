@@ -200,6 +200,7 @@ ApplicationThemeViewModel::ApplicationThemeViewModel(QObject *parent)
     lightTheme->insert(iconEnableGroupingField, resourcePrefix + "/Icons/releases/enablegrouping.svg");
 
     lightTheme->insert(iconSubtitlesPopupField, resourcePrefix + "/Icons/videoplayer/subtitles.svg");
+    lightTheme->insert(backgroundsPagesField, "[]");
 
     lightTheme->insert(basedOnThemeField, m_lightTheme);
     lightTheme->insert(externalIdField, "");
@@ -374,6 +375,8 @@ ApplicationThemeViewModel::ApplicationThemeViewModel(QObject *parent)
 
     darkTheme->insert(iconSubtitlesPopupField, resourcePrefix + "/Icons/videoplayer/darksubtitles.svg");
 
+    darkTheme->insert(backgroundsPagesField, "[]");
+
     darkTheme->insert(basedOnThemeField, m_darkTheme);
     darkTheme->insert(externalIdField, "");
     m_themes.insert(m_darkTheme, darkTheme);
@@ -545,6 +548,7 @@ ApplicationThemeViewModel::ApplicationThemeViewModel(QObject *parent)
     m_fields.append(iconDisableGroupingField);
     m_fields.append(iconEnableGroupingField);
     m_fields.append(iconSubtitlesPopupField);
+    m_fields.append(backgroundsPagesField);
 
     m_fields.append(iconLogoutField);
     m_fields.append(externalIdField);

@@ -219,3 +219,5 @@ QString iconDisableGroupingField = "iconDisableGrouping";
 QString iconEnableGroupingField = "iconEnableGrouping";
 
 QString iconSubtitlesPopupField = "iconSubtitlesPopup";
+
+QString backgroundsPagesField = "backgroundsPages";
