@@ -23,7 +23,6 @@
 #include <QDesktopServices>
 #include <QtConcurrent>
 #include <QFuture>
-//#include <QMutableStringListIterator>
 #include "releasesviewmodel.h"
 #include "../../globalhelpers.h"
 

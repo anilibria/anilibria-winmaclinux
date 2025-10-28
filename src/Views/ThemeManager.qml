@@ -856,6 +856,27 @@ Page {
                                             }
                                         }
 
+                                        Item {
+                                            id: backgroundsContainer
+                                            anchors.left: selectIconFromFileButton.right
+                                            anchors.leftMargin: 10
+                                            anchors.verticalCenter: parent.verticalCenter
+                                            visible: fieldType === 'backgrounds'
+                                            width: 100
+                                            height: 30
+
+                                            RoundedActionButton {
+                                                visible: isDefined
+                                                width: parent.width
+                                                text: "Выбрать"
+                                                onClicked: {
+                                                    applicationThemeViewModel.fieldList.selectedIndex = identifier;
+                                                    backgroundImagePopup.pagesData = fieldValue;
+                                                    backgroundImagePopup.open();
+                                                }
+                                            }
+                                        }
+
                                         Rectangle {
                                             id: colorRectangle
                                             anchors.left: buttonsSeparator.right
@@ -1055,6 +1076,18 @@ Page {
             onClosing: {
                 previewWindowLoader.sourceComponent = null;
             }
+        }
+    }
+
+    BackgroundImagePopup {
+        id: backgroundImagePopup
+        x: root.width / 2 - (backgroundImagePopup.width / 2)
+        y: root.height / 2  - (backgroundImagePopup.height / 2)
+        modal: true
+        focus: true
+        closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
+        onSavedData: {
+            applicationThemeViewModel.fieldList.setValueToItem(backgroundImagePopup.pagesData);
         }
     }
 

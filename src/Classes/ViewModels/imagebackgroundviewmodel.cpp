@@ -18,6 +18,19 @@ ImageBackgroundViewModel::ImageBackgroundViewModel(QObject *parent) : QObject(pa
     m_alignmentModes->addItem(2, "Правый верхний угол");
     m_alignmentModes->addItem(3, "Левый нижний угол");
     m_alignmentModes->addItem(4, "Правый нижний угол");
+    m_alignmentModes->addItem(5, "Центр");
+
+    m_pages->addItem(0, "Каталог релизов");
+    m_pages->addItem(1, "Видеоплеер");
+    m_pages->addItem(2, "Моя Анилибрия");
+    m_pages->addItem(3, "Кинозал");
+    m_pages->addItem(4, "Связанные релизы");
+    m_pages->addItem(5, "TorrentStream");
+    m_pages->addItem(6, "Менеджер тем");
+    m_pages->addItem(7, "Youtube");
+    m_pages->addItem(8, "Обслуживание");
+    m_pages->addItem(9, "Приложения");
+    m_pages->addItem(10, "Расширения");
 
     connect(m_imageModes, &CommonComboBoxListModel::selectedItemChanged, this, &ImageBackgroundViewModel::imageModesItemsChanged);
     connect(m_alignmentModes, &CommonComboBoxListModel::selectedItemChanged, this, &ImageBackgroundViewModel::aligmentModeChanged);

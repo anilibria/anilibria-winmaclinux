@@ -16,6 +16,7 @@ class ImageBackgroundViewModel : public QObject
     Q_PROPERTY(int alignment READ alignment WRITE setAlignment NOTIFY alignmentChanged)
     Q_PROPERTY(CommonComboBoxListModel* imageModes READ imageModes NOTIFY imageModesChanged)
     Q_PROPERTY(CommonComboBoxListModel* alignmentModes READ alignmentModes NOTIFY alignmentModesChanged)
+    Q_PROPERTY(CommonComboBoxListModel* pages READ pages NOTIFY pagesChanged)
     Q_PROPERTY(int opacity READ opacity WRITE setOpacity NOTIFY opacityChanged)
     Q_PROPERTY(int containerWidth READ containerWidth WRITE setContainerWidth NOTIFY containerWidthChanged)
     Q_PROPERTY(int containerHeight READ containerHeight WRITE setContainerHeight NOTIFY containerHeightChanged)
@@ -28,6 +29,7 @@ class ImageBackgroundViewModel : public QObject
 private:
     CommonComboBoxListModel* m_imageModes { new CommonComboBoxListModel(this) };
     CommonComboBoxListModel* m_alignmentModes { new CommonComboBoxListModel(this) };
+    CommonComboBoxListModel* m_pages { new CommonComboBoxListModel(this) };
     QString m_imagePath { "" };
     QString m_optionFilePath { "" };
     int m_imageMode { 0 };
@@ -74,6 +76,7 @@ public:
 
     CommonComboBoxListModel* imageModes() { return m_imageModes; }
     CommonComboBoxListModel* alignmentModes() { return m_alignmentModes; }
+    CommonComboBoxListModel* pages() { return m_pages; }
 
     QString processedImagePath();
 
@@ -103,6 +106,7 @@ signals:
     void imageXChanged();
     void imageYChanged();
     void processedImagePathChanged();
+    void pagesChanged();
 
 };
 

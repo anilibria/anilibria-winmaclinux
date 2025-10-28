@@ -200,7 +200,7 @@ ApplicationThemeViewModel::ApplicationThemeViewModel(QObject *parent)
     lightTheme->insert(iconEnableGroupingField, resourcePrefix + "/Icons/releases/enablegrouping.svg");
 
     lightTheme->insert(iconSubtitlesPopupField, resourcePrefix + "/Icons/videoplayer/subtitles.svg");
-    lightTheme->insert(backgroundsPagesField, "[]");
+    lightTheme->insert(backgroundsPagesField, "{}");
 
     lightTheme->insert(basedOnThemeField, m_lightTheme);
     lightTheme->insert(externalIdField, "");
@@ -375,7 +375,7 @@ ApplicationThemeViewModel::ApplicationThemeViewModel(QObject *parent)
 
     darkTheme->insert(iconSubtitlesPopupField, resourcePrefix + "/Icons/videoplayer/darksubtitles.svg");
 
-    darkTheme->insert(backgroundsPagesField, "[]");
+    darkTheme->insert(backgroundsPagesField, "{}");
 
     darkTheme->insert(basedOnThemeField, m_darkTheme);
     darkTheme->insert(externalIdField, "");
@@ -565,6 +565,7 @@ ApplicationThemeViewModel::ApplicationThemeViewModel(QObject *parent)
     connect(m_service, &ThemeManagerService::themesLoaded, this, &ApplicationThemeViewModel::themesLoaded);
     connect(m_service, &ThemeManagerService::themeLoaded, this, &ApplicationThemeViewModel::themeLoaded);
 
+    m_releasesPageBackground["activated"] = false;
     setCurrentItems();
 }
 
@@ -625,6 +626,8 @@ void ApplicationThemeViewModel::setCurrentItems() noexcept
     auto theme = m_themes.value(m_selectedTheme);
 
     foreach (auto field, m_fields) {
+        if (field == backgroundsPagesField) continue; // omit background because it will be filled below
+
         if (m_currentItems->contains(field)) {
             m_currentItems->insert(field, theme->value(field));
         } else {
@@ -633,6 +636,60 @@ void ApplicationThemeViewModel::setCurrentItems() noexcept
     }
 
     emit currentItemsChanged();
+
+    if (theme->contains(backgroundsPagesField)) {
+        auto json = theme->value(backgroundsPagesField);
+        if (json.isEmpty()) return;
+
+        m_releasesPageBackground = QVariantMap();
+        m_releasesPageBackground["activated"] = false;
+        emit releasesPageBackgroundChanged();
+
+        try {
+            auto document = QJsonDocument::fromJson(json.toUtf8());
+            auto object = document.object();
+            foreach (auto key, object.keys()) {
+                if (key == "0") {
+                    auto item = object.value(key).toObject();
+                    QVariantMap map;
+                    map["url"] = item.value("url").toString();
+                    map["imageMode"] = item.value("im").toInt();
+                    map["alignmentMode"] = item.value("al").toInt();
+                    map["opacity"] = item.value("op").toVariant();
+                    auto alignMode = item.value("im").toInt();
+                    map["halign"] = 1;
+                    map["valign"] = 32;
+                    switch (alignMode) {
+                        case 1:
+                            map["halign"] = 1;
+                            map["valign"] = 32;
+                            break;
+                        case 2:
+                            map["halign"] = 2;
+                            map["valign"] = 32;
+                            break;
+                        case 3:
+                            map["halign"] = 1;
+                            map["valign"] = 64;
+                            break;
+                        case 4:
+                            map["halign"] = 2;
+                            map["valign"] = 64;
+                            break;
+                        case 5:
+                            map["halign"] = 4;
+                            map["valign"] = 128;
+                            break;
+                    }
+                    map["activated"] = true;
+                    m_releasesPageBackground = map;
+                    emit releasesPageBackgroundChanged();
+                }
+            }
+        } catch(...) {
+            qDebug() << "Couldn't load theme backgrounds!";
+        }
+    }
 }
 
 void ApplicationThemeViewModel::setNotAddCopyToName(bool notAddCopyToName) noexcept
@@ -977,6 +1034,8 @@ void ApplicationThemeViewModel::emitAllFields()
     emit colorMaterialTextChanged();
     emit colorBackgroundNavigationButtonChanged();
     emit colorPageIndexTextChanged();
+
+
 }
 
 void ApplicationThemeViewModel::themesLoaded()
