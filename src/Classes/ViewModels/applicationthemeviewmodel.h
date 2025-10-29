@@ -104,6 +104,15 @@ class ApplicationThemeViewModel : public QObject
     Q_PROPERTY(QQmlPropertyMap* currentItems READ currentItems NOTIFY currentItemsChanged)
     Q_PROPERTY(bool notAddCopyToName READ notAddCopyToName WRITE setNotAddCopyToName NOTIFY notAddCopyToNameChanged)
     Q_PROPERTY(QVariantMap releasesPageBackground READ releasesPageBackground NOTIFY releasesPageBackgroundChanged FINAL)
+    Q_PROPERTY(QVariantMap videoPlayerPageBackground READ videoPlayerPageBackground NOTIFY videoPlayerPageBackgroundChanged FINAL)
+    Q_PROPERTY(QVariantMap myAnilibriaPageBackground READ myAnilibriaPageBackground NOTIFY myAnilibriaPageBackgroundChanged FINAL)
+    Q_PROPERTY(QVariantMap cinemahallPageBackground READ cinemahallPageBackground NOTIFY cinemahallPageBackgroundChanged FINAL)
+    Q_PROPERTY(QVariantMap linkedReleasesPageBackground READ linkedReleasesPageBackground NOTIFY linkedReleasesPageBackgroundChanged FINAL)
+    Q_PROPERTY(QVariantMap torrentStreamPageBackground READ torrentStreamPageBackground NOTIFY torrentStreamPageBackgroundChanged FINAL)
+    Q_PROPERTY(QVariantMap themeManagerPageBackground READ themeManagerPageBackground NOTIFY themeManagerPageBackgroundChanged FINAL)
+    Q_PROPERTY(QVariantMap maintenancePageBackground READ maintenancePageBackground NOTIFY maintenancePageBackgroundChanged FINAL)
+    Q_PROPERTY(QVariantMap applicationsPageBackground READ applicationsPageBackground NOTIFY applicationsPageBackgroundChanged FINAL)
+    Q_PROPERTY(QVariantMap extensionsPageBackground READ extensionsPageBackground NOTIFY extensionsPageBackgroundChanged FINAL)
 
 private:
     QString m_cachePathName { "applicationtheme.cache" };
@@ -124,6 +133,15 @@ private:
     QQmlPropertyMap* m_currentItems { new QQmlPropertyMap(this) };
     bool m_notAddCopyToName { false };
     QVariantMap m_releasesPageBackground { QVariantMap() };
+    QVariantMap m_videoPlayerPageBackground { QVariantMap() };
+    QVariantMap m_myAnilibriaPageBackground { QVariantMap() };
+    QVariantMap m_cinemahallPageBackground { QVariantMap() };
+    QVariantMap m_linkedReleasesPageBackground { QVariantMap() };
+    QVariantMap m_torrentStreamPageBackground { QVariantMap() };
+    QVariantMap m_themeManagerPageBackground { QVariantMap() };
+    QVariantMap m_maintenancePageBackground { QVariantMap() };
+    QVariantMap m_applicationsPageBackground { QVariantMap() };
+    QVariantMap m_extensionsPageBackground { QVariantMap() };
 
 public:
     explicit ApplicationThemeViewModel(QObject *parent = nullptr);
@@ -215,6 +233,15 @@ public:
     LocalThemesListModel* localThemes() const noexcept { return m_localThemes; }
 
     QVariantMap releasesPageBackground() const noexcept { return m_releasesPageBackground; }
+    QVariantMap videoPlayerPageBackground() const noexcept { return m_videoPlayerPageBackground; }
+    QVariantMap myAnilibriaPageBackground() const noexcept { return m_myAnilibriaPageBackground; }
+    QVariantMap cinemahallPageBackground() const noexcept { return m_cinemahallPageBackground; }
+    QVariantMap linkedReleasesPageBackground() const noexcept { return m_linkedReleasesPageBackground; }
+    QVariantMap torrentStreamPageBackground() const noexcept { return m_torrentStreamPageBackground; }
+    QVariantMap themeManagerPageBackground() const noexcept { return m_themeManagerPageBackground; }
+    QVariantMap maintenancePageBackground() const noexcept { return m_maintenancePageBackground; }
+    QVariantMap applicationsPageBackground() const noexcept { return m_applicationsPageBackground; }
+    QVariantMap extensionsPageBackground() const noexcept { return m_extensionsPageBackground; }
 
     QStringList copyMenuItems() const noexcept {
         auto items = m_themes.keys();
@@ -238,6 +265,7 @@ private:
     void readCacheFile();
     void setThemeValue(QMap<QString, QString>* theme, const QJsonObject& themeItem, const QMap<QString, QString>* baseTheme, const QString& name);
     void emitAllFields();
+    QVariantMap fillBackgroundTheme(QJsonObject object);
 
 private slots:
     void themesLoaded();
@@ -319,7 +347,15 @@ signals:
     void currentItemsChanged();
     void notAddCopyToNameChanged();
     void releasesPageBackgroundChanged();
-
+    void videoPlayerPageBackgroundChanged();
+    void myAnilibriaPageBackgroundChanged();
+    void cinemahallPageBackgroundChanged();
+    void linkedReleasesPageBackgroundChanged();
+    void torrentStreamPageBackgroundChanged();
+    void themeManagerPageBackgroundChanged();
+    void maintenancePageBackgroundChanged();
+    void applicationsPageBackgroundChanged();
+    void extensionsPageBackgroundChanged();
 };
 
 #endif // APPLICATIONTHEMEVIEWMODEL_H

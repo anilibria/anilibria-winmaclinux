@@ -643,7 +643,33 @@ void ApplicationThemeViewModel::setCurrentItems() noexcept
 
         m_releasesPageBackground = QVariantMap();
         m_releasesPageBackground["activated"] = false;
-        emit releasesPageBackgroundChanged();
+
+        m_videoPlayerPageBackground = QVariantMap();
+        m_videoPlayerPageBackground["activated"] = false;
+
+        m_myAnilibriaPageBackground = QVariantMap();
+        m_myAnilibriaPageBackground["activated"] = false;
+
+        m_cinemahallPageBackground = QVariantMap();
+        m_cinemahallPageBackground["activated"] = false;
+
+        m_linkedReleasesPageBackground = QVariantMap();
+        m_linkedReleasesPageBackground["activated"] = false;
+
+        m_torrentStreamPageBackground = QVariantMap();
+        m_torrentStreamPageBackground["activated"] = false;
+
+        m_themeManagerPageBackground = QVariantMap();
+        m_themeManagerPageBackground["activated"] = false;
+
+        m_maintenancePageBackground = QVariantMap();
+        m_maintenancePageBackground["activated"] = false;
+
+        m_applicationsPageBackground = QVariantMap();
+        m_applicationsPageBackground["activated"] = false;
+
+        m_extensionsPageBackground = QVariantMap();
+        m_extensionsPageBackground["activated"] = false;
 
         try {
             auto document = QJsonDocument::fromJson(json.toUtf8());
@@ -651,44 +677,69 @@ void ApplicationThemeViewModel::setCurrentItems() noexcept
             foreach (auto key, object.keys()) {
                 if (key == "0") {
                     auto item = object.value(key).toObject();
-                    QVariantMap map;
-                    map["url"] = item.value("url").toString();
-                    map["imageMode"] = item.value("im").toInt();
-                    map["alignmentMode"] = item.value("al").toInt();
-                    map["opacity"] = item.value("op").toVariant();
-                    auto alignMode = item.value("im").toInt();
-                    map["halign"] = 1;
-                    map["valign"] = 32;
-                    switch (alignMode) {
-                        case 1:
-                            map["halign"] = 1;
-                            map["valign"] = 32;
-                            break;
-                        case 2:
-                            map["halign"] = 2;
-                            map["valign"] = 32;
-                            break;
-                        case 3:
-                            map["halign"] = 1;
-                            map["valign"] = 64;
-                            break;
-                        case 4:
-                            map["halign"] = 2;
-                            map["valign"] = 64;
-                            break;
-                        case 5:
-                            map["halign"] = 4;
-                            map["valign"] = 128;
-                            break;
-                    }
-                    map["activated"] = true;
+                    auto map = fillBackgroundTheme(item);
                     m_releasesPageBackground = map;
-                    emit releasesPageBackgroundChanged();
+                }
+                if (key == "1") {
+                    auto item = object.value(key).toObject();
+                    auto map = fillBackgroundTheme(item);
+                    m_videoPlayerPageBackground = map;
+                }
+                if (key == "2") {
+                    auto item = object.value(key).toObject();
+                    auto map = fillBackgroundTheme(item);
+                    m_myAnilibriaPageBackground = map;
+                }
+                if (key == "3") {
+                    auto item = object.value(key).toObject();
+                    auto map = fillBackgroundTheme(item);
+                    m_cinemahallPageBackground = map;
+                }
+                if (key == "4") {
+                    auto item = object.value(key).toObject();
+                    auto map = fillBackgroundTheme(item);
+                    m_linkedReleasesPageBackground = map;
+                }
+                if (key == "5") {
+                    auto item = object.value(key).toObject();
+                    auto map = fillBackgroundTheme(item);
+                    m_torrentStreamPageBackground = map;
+                }
+                if (key == "6") {
+                    auto item = object.value(key).toObject();
+                    auto map = fillBackgroundTheme(item);
+                    m_themeManagerPageBackground = map;
+                }
+                if (key == "8") {
+                    auto item = object.value(key).toObject();
+                    auto map = fillBackgroundTheme(item);
+                    m_maintenancePageBackground = map;
+                }
+                if (key == "9") {
+                    auto item = object.value(key).toObject();
+                    auto map = fillBackgroundTheme(item);
+                    m_applicationsPageBackground = map;
+                }
+                if (key == "10") {
+                    auto item = object.value(key).toObject();
+                    auto map = fillBackgroundTheme(item);
+                    m_extensionsPageBackground = map;
                 }
             }
         } catch(...) {
             qDebug() << "Couldn't load theme backgrounds!";
         }
+
+        emit releasesPageBackgroundChanged();
+        emit videoPlayerPageBackgroundChanged();
+        emit myAnilibriaPageBackgroundChanged();
+        emit cinemahallPageBackgroundChanged();
+        emit linkedReleasesPageBackgroundChanged();
+        emit torrentStreamPageBackgroundChanged();
+        emit themeManagerPageBackgroundChanged();
+        emit maintenancePageBackgroundChanged();
+        emit applicationsPageBackgroundChanged();
+        emit extensionsPageBackgroundChanged();
     }
 }
 
@@ -1036,6 +1087,42 @@ void ApplicationThemeViewModel::emitAllFields()
     emit colorPageIndexTextChanged();
 
 
+}
+
+QVariantMap ApplicationThemeViewModel::fillBackgroundTheme(QJsonObject object)
+{
+    QVariantMap map;
+    map["url"] = object.value("url").toString();
+    map["imageMode"] = object.value("im").toInt();
+    map["alignmentMode"] = object.value("al").toInt();
+    map["opacity"] = object.value("op").toVariant();
+    auto alignMode = object.value("al").toInt();
+    map["halign"] = 1;
+    map["valign"] = 32;
+    switch (alignMode) {
+    case 1:
+        map["halign"] = 1;
+        map["valign"] = 32;
+        break;
+    case 2:
+        map["halign"] = 2;
+        map["valign"] = 32;
+        break;
+    case 3:
+        map["halign"] = 1;
+        map["valign"] = 64;
+        break;
+    case 4:
+        map["halign"] = 2;
+        map["valign"] = 64;
+        break;
+    case 5:
+        map["halign"] = 4;
+        map["valign"] = 128;
+        break;
+    }
+    map["activated"] = true;
+    return map;
 }
 
 void ApplicationThemeViewModel::themesLoaded()

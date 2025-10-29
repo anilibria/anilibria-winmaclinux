@@ -27,7 +27,6 @@ ImageBackgroundViewModel::ImageBackgroundViewModel(QObject *parent) : QObject(pa
     m_pages->addItem(4, "Связанные релизы");
     m_pages->addItem(5, "TorrentStream");
     m_pages->addItem(6, "Менеджер тем");
-    m_pages->addItem(7, "Youtube");
     m_pages->addItem(8, "Обслуживание");
     m_pages->addItem(9, "Приложения");
     m_pages->addItem(10, "Расширения");
