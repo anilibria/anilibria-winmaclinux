@@ -160,6 +160,19 @@ Page {
                 Layout.fillHeight: true
                 Layout.fillWidth: true
 
+                Image {
+                    id: backgroundFile
+                    asynchronous: true
+                    visible: applicationThemeViewModel.themeManagerPageBackground.activated
+                    fillMode: applicationThemeViewModel.themeManagerPageBackground.activated ? applicationThemeViewModel.themeManagerPageBackground.imageMode : Image.Pad
+                    source: applicationThemeViewModel.themeManagerPageBackground.activated ? applicationThemeViewModel.themeManagerPageBackground.url : 'http://lala12121.com'
+                    opacity: applicationThemeViewModel.themeManagerPageBackground.activated ? applicationThemeViewModel.themeManagerPageBackground.opacity / 100 : 1
+                    horizontalAlignment: applicationThemeViewModel.themeManagerPageBackground.activated ? applicationThemeViewModel.themeManagerPageBackground.halign : Image.AlignLeft
+                    verticalAlignment: applicationThemeViewModel.themeManagerPageBackground.activated ? applicationThemeViewModel.themeManagerPageBackground.valign : Image.AlignTop
+                    width: parent.width
+                    height: parent.height
+                }
+
                 Item {
                     visible: applicationThemeViewModel.selectedMenuItem === 0
                     anchors.fill: parent

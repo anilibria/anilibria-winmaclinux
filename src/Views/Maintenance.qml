@@ -48,227 +48,243 @@ Page {
                     color: applicationThemeViewModel.pageUpperPanel
                 }
 
-                Flickable {
-                    id: scrollview
+                Item {
                     Layout.fillHeight: true
                     Layout.fillWidth: true
                     Layout.alignment: Qt.AlignJustify
-                    clip: true
-                    contentWidth: parent.width
-                    contentHeight: flickableContent.height
-                    ScrollBar.vertical: ScrollBar {
-                        active: true
+
+                    Image {
+                        id: backgroundFile
+                        asynchronous: true
+                        anchors.fill: parent
+                        visible: applicationThemeViewModel.maintenancePageBackground.activated
+                        fillMode: applicationThemeViewModel.maintenancePageBackground.activated ? applicationThemeViewModel.maintenancePageBackground.imageMode : Image.Pad
+                        source: applicationThemeViewModel.maintenancePageBackground.activated ? applicationThemeViewModel.maintenancePageBackground.url : 'http://lala12121.com'
+                        opacity: applicationThemeViewModel.maintenancePageBackground.activated ? applicationThemeViewModel.maintenancePageBackground.opacity / 100 : 1
+                        horizontalAlignment: applicationThemeViewModel.maintenancePageBackground.activated ? applicationThemeViewModel.maintenancePageBackground.halign : Image.AlignLeft
+                        verticalAlignment: applicationThemeViewModel.maintenancePageBackground.activated ? applicationThemeViewModel.maintenancePageBackground.valign : Image.AlignTop
                     }
 
-                    Rectangle {
-                        id: flickableContent
-                        width: scrollview.width - 10
-                        height: 840
-                        color: "transparent"
-                        border.color: applicationThemeViewModel.colorBorderInPanel
-                        border.width: 1
+                    Flickable {
+                        id: scrollview
+                        anchors.fill: parent
+                        clip: true
+                        contentWidth: parent.width
+                        contentHeight: flickableContent.height
+                        ScrollBar.vertical: ScrollBar {
+                            active: true
+                        }
 
-                        GridLayout {
-                            width: parent.width
-                            columns: 2
+                        Rectangle {
+                            id: flickableContent
+                            width: scrollview.width - 10
+                            height: 840
+                            color: "transparent"
+                            border.color: applicationThemeViewModel.colorBorderInPanel
+                            border.width: 1
 
-                            Item {
-                                width: 220
-                                height: 100
+                            GridLayout {
+                                width: parent.width
+                                columns: 2
 
-                                RoundedActionButton {
-                                    anchors.verticalCenter: parent.verticalCenter
-                                    anchors.left: parent.left
-                                    anchors.leftMargin: 10
-                                    width: parent.width - 10
-                                    text: "Очистить кеш постеров"
-                                    onClicked: {
-                                        localStorage.clearPostersCache();
-                                    }
-                                }
-                            }
+                                Item {
+                                    width: 220
+                                    height: 100
 
-                            Rectangle {
-                                color: "transparent"
-                                Layout.fillWidth: true
-                                Layout.fillHeight: true
-
-                                PlainText {
-                                    fontPointSize: 12
-                                    anchors.verticalCenter: parent.verticalCenter
-                                    anchors.left: parent.left
-                                    width: parent.width
-                                    wrapMode: Text.WordWrap
-                                    text: "Удалить все сохраненные локально сохраненные постеры, после выполнения операции необходимо перезапустить приложение"
-                                }
-                            }
-
-                            Item {
-                                width: 220
-                                height: 100
-
-                                RoundedActionButton {
-                                    anchors.verticalCenter: parent.verticalCenter
-                                    anchors.left: parent.left
-                                    anchors.leftMargin: 10
-                                    width: parent.width - 10
-                                    text: "nextAPI"
-                                    onClicked: {
-                                        apiAddressPopup.open();
-                                    }
-                                }
-                            }
-
-                            Rectangle {
-                                color: "transparent"
-                                Layout.fillWidth: true
-                                Layout.fillHeight: true
-
-                                PlainText {
-                                    fontPointSize: 12
-                                    anchors.verticalCenter: parent.verticalCenter
-                                    anchors.left: parent.left
-                                    width: parent.width
-                                    wrapMode: Text.WordWrap
-                                    text: "Настройка nextAPI и кеш серверов, позволяет менять адреса и проверять их работоспособность."
-                                }
-                            }
-
-                            Item {
-                                width: 220
-                                height: 100
-
-                                RoundedActionButton {
-                                    anchors.verticalCenter: parent.verticalCenter
-                                    anchors.left: parent.left
-                                    anchors.leftMargin: 10
-                                    width: parent.width - 10
-                                    text: "Настроить прокси"
-                                    onClicked: {
-                                        proxyType.currentIndex = 0;
-                                        switch (proxyConfigurator.proxyType) {
-                                            case `SOCKS5`:
-                                                proxyType.currentIndex = 1;
-                                                break;
-                                            case `Http`:
-                                                proxyType.currentIndex = 2;
-                                                break;
+                                    RoundedActionButton {
+                                        anchors.verticalCenter: parent.verticalCenter
+                                        anchors.left: parent.left
+                                        anchors.leftMargin: 10
+                                        width: parent.width - 10
+                                        text: "Очистить кеш постеров"
+                                        onClicked: {
+                                            localStorage.clearPostersCache();
                                         }
-                                        proxyPort.text = proxyConfigurator.port;
-                                        proxyAddress.text = proxyConfigurator.address;
-                                        proxyUsername.text = proxyConfigurator.userName;
-                                        proxyPassword.text = proxyConfigurator.password;
-
-                                        proxyPopup.open();
                                     }
                                 }
-                            }
 
-                            Rectangle {
-                                color: "transparent"
-                                Layout.fillWidth: true
-                                Layout.fillHeight: true
+                                Rectangle {
+                                    color: "transparent"
+                                    Layout.fillWidth: true
+                                    Layout.fillHeight: true
 
-                                PlainText {
-                                    fontPointSize: 12
-                                    anchors.verticalCenter: parent.verticalCenter
-                                    anchors.left: parent.left
-                                    width: parent.width
-                                    wrapMode: Text.WordWrap
-                                    text: "Позволяет указать настройки проксирования запросов для всего приложения."
-                                }
-                            }
-
-                            Item {
-                                width: 220
-                                height: 100
-
-                                RoundedActionButton {
-                                    anchors.verticalCenter: parent.verticalCenter
-                                    anchors.left: parent.left
-                                    anchors.leftMargin: 10
-                                    width: parent.width - 10
-                                    text: "Удалить лишнее"
-                                    onClicked: {
-                                        localStorage.clearRedundantFilesFromCache();
+                                    PlainText {
+                                        fontPointSize: 12
+                                        anchors.verticalCenter: parent.verticalCenter
+                                        anchors.left: parent.left
+                                        width: parent.width
+                                        wrapMode: Text.WordWrap
+                                        text: "Удалить все сохраненные локально сохраненные постеры, после выполнения операции необходимо перезапустить приложение"
                                     }
                                 }
-                            }
 
-                            Rectangle {
-                                color: "transparent"
-                                Layout.fillWidth: true
-                                Layout.fillHeight: true
+                                Item {
+                                    width: 220
+                                    height: 100
 
-                                PlainText {
-                                    fontPointSize: 12
-                                    anchors.verticalCenter: parent.verticalCenter
-                                    anchors.left: parent.left
-                                    width: parent.width
-                                    wrapMode: Text.WordWrap
-                                    text: "Удалить из кеша лишние файлы которые могли появиться во время работы приложения, например torrent файлы, m3u файлы и т.п."
-                                }
-                            }
-
-                            Item {
-                                width: 220
-                                height: 100
-
-                                RoundedActionButton {
-                                    anchors.verticalCenter: parent.verticalCenter
-                                    anchors.left: parent.left
-                                    anchors.leftMargin: 10
-                                    width: parent.width - 10
-                                    text: "Бэкап кеша приложения"
-                                    onClicked: {
-                                        selectFolderBackupDialog.open();
+                                    RoundedActionButton {
+                                        anchors.verticalCenter: parent.verticalCenter
+                                        anchors.left: parent.left
+                                        anchors.leftMargin: 10
+                                        width: parent.width - 10
+                                        text: "nextAPI"
+                                        onClicked: {
+                                            apiAddressPopup.open();
+                                        }
                                     }
                                 }
-                            }
 
-                            Rectangle {
-                                color: "transparent"
-                                Layout.fillWidth: true
-                                Layout.fillHeight: true
+                                Rectangle {
+                                    color: "transparent"
+                                    Layout.fillWidth: true
+                                    Layout.fillHeight: true
 
-                                PlainText {
-                                    fontPointSize: 12
-                                    anchors.verticalCenter: parent.verticalCenter
-                                    anchors.left: parent.left
-                                    width: parent.width
-                                    wrapMode: Text.WordWrap
-                                    text: "Вы можете сделать бэкап файлов кеша приложения содержащего историю просмотра, кинозал, настройки и многое другое. Очень полезно если Вы хотите переезжать на другую машину или переустанавливать систему на текущей."
-                                }
-                            }
-
-                            Item {
-                                width: 220
-                                height: 100
-
-                                RoundedActionButton {
-                                    anchors.verticalCenter: parent.verticalCenter
-                                    anchors.left: parent.left
-                                    anchors.leftMargin: 10
-                                    width: parent.width - 10
-                                    text: "Восстановить из бэкапа"
-                                    onClicked: {
-                                        selectFolderRestoreDialog.open();
+                                    PlainText {
+                                        fontPointSize: 12
+                                        anchors.verticalCenter: parent.verticalCenter
+                                        anchors.left: parent.left
+                                        width: parent.width
+                                        wrapMode: Text.WordWrap
+                                        text: "Настройка nextAPI и кеш серверов, позволяет менять адреса и проверять их работоспособность."
                                     }
                                 }
-                            }
 
-                            Rectangle {
-                                color: "transparent"
-                                Layout.fillWidth: true
-                                Layout.fillHeight: true
+                                Item {
+                                    width: 220
+                                    height: 100
 
-                                PlainText {
-                                    fontPointSize: 12
-                                    anchors.verticalCenter: parent.verticalCenter
-                                    anchors.left: parent.left
-                                    width: parent.width
-                                    wrapMode: Text.WordWrap
-                                    text: "Вы можете восстановить состояние из созданного ранее бекапа кеша файлов приложения. Очень важно чтобы на момент выполнения синхронизация релизов была завершена иначе кеш может побится! После выполнения перезапустите приложение!"
+                                    RoundedActionButton {
+                                        anchors.verticalCenter: parent.verticalCenter
+                                        anchors.left: parent.left
+                                        anchors.leftMargin: 10
+                                        width: parent.width - 10
+                                        text: "Настроить прокси"
+                                        onClicked: {
+                                            proxyType.currentIndex = 0;
+                                            switch (proxyConfigurator.proxyType) {
+                                                case `SOCKS5`:
+                                                    proxyType.currentIndex = 1;
+                                                    break;
+                                                case `Http`:
+                                                    proxyType.currentIndex = 2;
+                                                    break;
+                                            }
+                                            proxyPort.text = proxyConfigurator.port;
+                                            proxyAddress.text = proxyConfigurator.address;
+                                            proxyUsername.text = proxyConfigurator.userName;
+                                            proxyPassword.text = proxyConfigurator.password;
+
+                                            proxyPopup.open();
+                                        }
+                                    }
+                                }
+
+                                Rectangle {
+                                    color: "transparent"
+                                    Layout.fillWidth: true
+                                    Layout.fillHeight: true
+
+                                    PlainText {
+                                        fontPointSize: 12
+                                        anchors.verticalCenter: parent.verticalCenter
+                                        anchors.left: parent.left
+                                        width: parent.width
+                                        wrapMode: Text.WordWrap
+                                        text: "Позволяет указать настройки проксирования запросов для всего приложения."
+                                    }
+                                }
+
+                                Item {
+                                    width: 220
+                                    height: 100
+
+                                    RoundedActionButton {
+                                        anchors.verticalCenter: parent.verticalCenter
+                                        anchors.left: parent.left
+                                        anchors.leftMargin: 10
+                                        width: parent.width - 10
+                                        text: "Удалить лишнее"
+                                        onClicked: {
+                                            localStorage.clearRedundantFilesFromCache();
+                                        }
+                                    }
+                                }
+
+                                Rectangle {
+                                    color: "transparent"
+                                    Layout.fillWidth: true
+                                    Layout.fillHeight: true
+
+                                    PlainText {
+                                        fontPointSize: 12
+                                        anchors.verticalCenter: parent.verticalCenter
+                                        anchors.left: parent.left
+                                        width: parent.width
+                                        wrapMode: Text.WordWrap
+                                        text: "Удалить из кеша лишние файлы которые могли появиться во время работы приложения, например torrent файлы, m3u файлы и т.п."
+                                    }
+                                }
+
+                                Item {
+                                    width: 220
+                                    height: 100
+
+                                    RoundedActionButton {
+                                        anchors.verticalCenter: parent.verticalCenter
+                                        anchors.left: parent.left
+                                        anchors.leftMargin: 10
+                                        width: parent.width - 10
+                                        text: "Бэкап кеша приложения"
+                                        onClicked: {
+                                            selectFolderBackupDialog.open();
+                                        }
+                                    }
+                                }
+
+                                Rectangle {
+                                    color: "transparent"
+                                    Layout.fillWidth: true
+                                    Layout.fillHeight: true
+
+                                    PlainText {
+                                        fontPointSize: 12
+                                        anchors.verticalCenter: parent.verticalCenter
+                                        anchors.left: parent.left
+                                        width: parent.width
+                                        wrapMode: Text.WordWrap
+                                        text: "Вы можете сделать бэкап файлов кеша приложения содержащего историю просмотра, кинозал, настройки и многое другое. Очень полезно если Вы хотите переезжать на другую машину или переустанавливать систему на текущей."
+                                    }
+                                }
+
+                                Item {
+                                    width: 220
+                                    height: 100
+
+                                    RoundedActionButton {
+                                        anchors.verticalCenter: parent.verticalCenter
+                                        anchors.left: parent.left
+                                        anchors.leftMargin: 10
+                                        width: parent.width - 10
+                                        text: "Восстановить из бэкапа"
+                                        onClicked: {
+                                            selectFolderRestoreDialog.open();
+                                        }
+                                    }
+                                }
+
+                                Rectangle {
+                                    color: "transparent"
+                                    Layout.fillWidth: true
+                                    Layout.fillHeight: true
+
+                                    PlainText {
+                                        fontPointSize: 12
+                                        anchors.verticalCenter: parent.verticalCenter
+                                        anchors.left: parent.left
+                                        width: parent.width
+                                        wrapMode: Text.WordWrap
+                                        text: "Вы можете восстановить состояние из созданного ранее бекапа кеша файлов приложения. Очень важно чтобы на момент выполнения синхронизация релизов была завершена иначе кеш может побится! После выполнения перезапустите приложение!"
+                                    }
                                 }
                             }
                         }

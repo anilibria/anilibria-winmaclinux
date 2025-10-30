@@ -116,8 +116,22 @@ Page {
 
     anchors.fill: parent
 
-    background: Rectangle {
-        color: "black"
+    background: Item {
+        Rectangle {
+            anchors.fill: parent
+            color: "black"
+        }
+        Image {
+            id: backgroundFile
+            asynchronous: true
+            anchors.fill: parent
+            visible: applicationThemeViewModel.videoPlayerPageBackground.activated
+            fillMode: applicationThemeViewModel.videoPlayerPageBackground.activated ? applicationThemeViewModel.videoPlayerPageBackground.imageMode : Image.Pad
+            source: applicationThemeViewModel.videoPlayerPageBackground.activated ? applicationThemeViewModel.videoPlayerPageBackground.url : 'http://lala12121.com'
+            opacity: applicationThemeViewModel.videoPlayerPageBackground.activated ? applicationThemeViewModel.videoPlayerPageBackground.opacity / 100 : 1
+            horizontalAlignment: applicationThemeViewModel.videoPlayerPageBackground.activated ? applicationThemeViewModel.videoPlayerPageBackground.halign : Image.AlignLeft
+            verticalAlignment: applicationThemeViewModel.videoPlayerPageBackground.activated ? applicationThemeViewModel.videoPlayerPageBackground.valign : Image.AlignTop
+        }
     }
 
     MouseArea {

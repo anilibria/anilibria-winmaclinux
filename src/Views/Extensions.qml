@@ -22,12 +22,17 @@ Page {
         Item {
             anchors.fill: parent
 
-            Rectangle {
-                id: mask
-                width: 472
-                height: 240
-                radius: 10
-                visible: false
+            Image {
+                id: backgroundFile
+                asynchronous: true
+                visible: applicationThemeViewModel.extensionsPageBackground.activated
+                fillMode: applicationThemeViewModel.extensionsPageBackground.activated ? applicationThemeViewModel.extensionsPageBackground.imageMode : Image.Pad
+                source: applicationThemeViewModel.extensionsPageBackground.activated ? applicationThemeViewModel.extensionsPageBackground.url : 'http://lala12121.com'
+                opacity: applicationThemeViewModel.extensionsPageBackground.activated ? applicationThemeViewModel.extensionsPageBackground.opacity / 100 : 1
+                horizontalAlignment: applicationThemeViewModel.extensionsPageBackground.activated ? applicationThemeViewModel.extensionsPageBackground.halign : Image.AlignLeft
+                verticalAlignment: applicationThemeViewModel.extensionsPageBackground.activated ? applicationThemeViewModel.extensionsPageBackground.valign : Image.AlignTop
+                width: root.width
+                height: root.height
             }
 
             RowLayout {
