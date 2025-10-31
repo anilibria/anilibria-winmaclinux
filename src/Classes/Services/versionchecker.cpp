@@ -22,14 +22,19 @@
 VersionChecker::VersionChecker(QObject *parent) : QObject(parent)
 {
 #ifdef USE_VERSION_CHECK
-    auto networkManager = new QNetworkAccessManager(this);
+    m_networkManager = new QNetworkAccessManager(this);
+    connect(m_networkManager,&QNetworkAccessManager::finished,this,&VersionChecker::latestDownloaded);
+#endif
+}
+
+void VersionChecker::checkNewVersion() noexcept
+{
+#ifdef USE_VERSION_CHECK
     auto url = QUrl("https://api.github.com/repos/anilibria/anilibria-winmaclinux/releases/latest");
     QNetworkRequest request(url);
     request.setRawHeader("User-Agent", "Anilibria CP Client");
 
-    connect(networkManager,&QNetworkAccessManager::finished,this,&VersionChecker::latestDownloaded);
-
-    networkManager->get(request);
+    m_networkManager->get(request);
 #endif
 }
 

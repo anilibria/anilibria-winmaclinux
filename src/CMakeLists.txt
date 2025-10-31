@@ -16,6 +16,8 @@ qt_standard_project_setup(REQUIRES 6.5)
 
 set(QT_QML_GENERATE_QMLLS_INI ON)
 
+add_definitions(-DUSE_VERSION_CHECK=1)
+
 set(appsources
     globalhelpers.h globalhelpers.cpp
     globalconstants.h Classes/globalconstant.cpp

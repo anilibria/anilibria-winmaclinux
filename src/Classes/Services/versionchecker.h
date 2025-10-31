@@ -33,11 +33,13 @@ class VersionChecker : public QObject
 
 private:
     bool m_isHaveNewVersion { false };
+    QNetworkAccessManager* m_networkManager { nullptr };
 
 public:
     explicit VersionChecker(QObject *parent = nullptr);
 
     bool isHaveNewVersion() const noexcept { return m_isHaveNewVersion; }
+    Q_INVOKABLE void checkNewVersion() noexcept;
 
 signals:
     void newVersionAvailable(QString version, QString url);
