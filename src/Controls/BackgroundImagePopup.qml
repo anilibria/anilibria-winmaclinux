@@ -4,14 +4,42 @@ import QtQuick.Controls 2.15
 DefaultPopup {
     id: backgroundPopup
     width: 450
-    height: 330
+    height: 390
     modal: true
     focus: true
     closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
 
+    property string pagesData: '{}'
+    property var pagesDataObject
+
+    signal savedData()
+
+    PlainText {
+        id: pagesLabel
+        anchors.top: parent.top
+        width: parent.width
+        fontPointSize: 11
+        text: "Страница"
+    }
+
+    DictionaryComboBox {
+        id: pagesComboBox
+        anchors.top: pagesLabel.bottom
+        width: parent.width
+        model: releasesViewModel.imageBackgroundViewModel.pages
+        onActivated: {
+            // save current state for previous selected item
+            refreshDataForPage(releasesViewModel.imageBackgroundViewModel.pages.selectedItem);
+
+            // fill data for new selected page
+            releasesViewModel.imageBackgroundViewModel.pages.selectedItem = currentValue;
+            setupFieldsForPage(releasesViewModel.imageBackgroundViewModel.pages.selectedItem);
+        }
+    }
+
     PlainText {
         id: imagePathLabel
-        anchors.top: parent.top
+        anchors.top: pagesComboBox.bottom
         width: parent.width
         fontPointSize: 11
         text: "Изображение"
@@ -23,9 +51,9 @@ DefaultPopup {
         anchors.top: imagePathLabel.bottom
         anchors.rightMargin: 10
         placeholderText: "Путь к файлу или url"
-        text: releasesViewModel.imageBackgroundViewModel.imagePath
+        enabled: releasesViewModel.imageBackgroundViewModel.pages.selectedItem > -1
         onTextChanged: {
-            releasesViewModel.imageBackgroundViewModel.imagePath = imagePathTextField.text;
+            refreshDataForPage(releasesViewModel.imageBackgroundViewModel.pages.selectedItem);
         }
     }
 
@@ -42,8 +70,9 @@ DefaultPopup {
         anchors.top: imageModesLabel.bottom
         width: parent.width
         model: releasesViewModel.imageBackgroundViewModel.imageModes
+        enabled: releasesViewModel.imageBackgroundViewModel.pages.selectedItem > -1
         onActivated: {
-            releasesViewModel.imageBackgroundViewModel.imageModes.selectedItem = currentValue;
+            refreshDataForPage(releasesViewModel.imageBackgroundViewModel.pages.selectedItem);
         }
     }
 
@@ -60,8 +89,9 @@ DefaultPopup {
         anchors.top: aligmentLabel.bottom
         width: parent.width
         model: releasesViewModel.imageBackgroundViewModel.alignmentModes
+        enabled: releasesViewModel.imageBackgroundViewModel.pages.selectedItem > -1
         onActivated: {
-            releasesViewModel.imageBackgroundViewModel.alignmentModes.selectedItem = currentValue;
+            refreshDataForPage(releasesViewModel.imageBackgroundViewModel.pages.selectedItem);
         }
     }
 
@@ -76,12 +106,12 @@ DefaultPopup {
     Slider {
         id: opacitySlider
         anchors.top: opacityLabel.bottom
-        value: releasesViewModel.imageBackgroundViewModel.opacity
         from: 1
         to: 100
         width: parent.width
+        enabled: releasesViewModel.imageBackgroundViewModel.pages.selectedItem > -1
         onMoved: {
-            releasesViewModel.imageBackgroundViewModel.opacity = value;
+            refreshDataForPage(releasesViewModel.imageBackgroundViewModel.pages.selectedItem);
         }
     }
 
@@ -94,9 +124,9 @@ DefaultPopup {
             width: 120
             text: "Сохранить"
             onClicked: {
-                releasesViewModel.imageBackgroundViewModel.saveCurrentState();
-
+                backgroundPopup.pagesData = JSON.stringify(backgroundPopup.pagesDataObject);
                 backgroundPopup.close();
+                savedData();
             }
         }
 
@@ -109,20 +139,50 @@ DefaultPopup {
         }
     }
 
-    function setupComboboxes() {
-        imageModesComboBox.currentIndex = imageModesComboBox.indexOfValue(releasesViewModel.imageBackgroundViewModel.imageModes.selectedItem);
-        aligmentComboBox.currentIndex = aligmentComboBox.indexOfValue(releasesViewModel.imageBackgroundViewModel.alignmentModes.selectedItem);
+    function setupFieldsForPage(page) {
+        const key = page.toString();
+        const existingsItem = backgroundPopup.pagesDataObject[key];
+        if (!existingsItem) {
+            imageModesComboBox.currentIndex = 6;
+            aligmentComboBox.currentIndex = 0;
+            opacitySlider.value = 100;
+            imagePathTextField.text = "";
+        } else {
+            imageModesComboBox.currentIndex = existingsItem.im;
+            aligmentComboBox.currentIndex = existingsItem.al;
+            opacitySlider.value = existingsItem.op;
+            imagePathTextField.text = existingsItem.url;
+        }
+    }
+
+    function refreshDataForPage(page) {
+        const key = page.toString();
+        const existingsItem = backgroundPopup.pagesDataObject.hasOwnProperty(key);
+        if (!existingsItem) {
+            backgroundPopup.pagesDataObject[key] = {
+                "im": imageModesComboBox.currentIndex,
+                "al": aligmentComboBox.currentIndex,
+                "op": opacitySlider.value,
+                "url": imagePathTextField.text
+            }
+        } else {
+            backgroundPopup.pagesDataObject[key].im = imageModesComboBox.currentIndex;
+            backgroundPopup.pagesDataObject[key].al = aligmentComboBox.currentIndex;
+            backgroundPopup.pagesDataObject[key].op = opacitySlider.value;
+            backgroundPopup.pagesDataObject[key].url = imagePathTextField.text;
+        }
     }
 
     function cancelModal() {
-        releasesViewModel.imageBackgroundViewModel.restoreToSavedState();
-
-        setupComboboxes();
         backgroundPopup.close();
     }
 
     onOpened: {
-        setupComboboxes();
+        if (!backgroundPopup.pagesData) backgroundPopup.pagesData = '{}';
+
+        backgroundPopup.pagesDataObject = JSON.parse(backgroundPopup.pagesData);
+        setupFieldsForPage(0);
+        pagesComboBox.currentIndex = 0;
     }
 
     onClosed: {

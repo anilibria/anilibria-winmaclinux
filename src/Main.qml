@@ -618,6 +618,9 @@ ApplicationWindow {
         onNewVersionAvailable: {
             notificationViewModel.sendInfoNotification(`Доступна новая версия ${version}. Перейдите для скачивания по <a href='${url}'>этой ссылке</a>`)
         }
+        Component.onCompleted: {
+            versionChecker.checkNewVersion();
+        }
     }
 
     ApplicationSettings {

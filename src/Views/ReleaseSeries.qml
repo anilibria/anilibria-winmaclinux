@@ -14,12 +14,17 @@ Page {
     signal navigateFrom()
     signal navigateTo()
 
-    Rectangle {
-        id: mask
-        width: 180
-        height: 260
-        radius: 10
-        visible: false
+    Image {
+        id: backgroundFile
+        asynchronous: true
+        visible: applicationThemeViewModel.linkedReleasesPageBackground.activated
+        fillMode: applicationThemeViewModel.linkedReleasesPageBackground.activated ? applicationThemeViewModel.linkedReleasesPageBackground.imageMode : Image.Pad
+        source: applicationThemeViewModel.linkedReleasesPageBackground.activated ? applicationThemeViewModel.linkedReleasesPageBackground.url : 'http://lala12121.com'
+        opacity: applicationThemeViewModel.linkedReleasesPageBackground.activated ? applicationThemeViewModel.linkedReleasesPageBackground.opacity / 100 : 1
+        horizontalAlignment: applicationThemeViewModel.linkedReleasesPageBackground.activated ? applicationThemeViewModel.linkedReleasesPageBackground.halign : Image.AlignLeft
+        verticalAlignment: applicationThemeViewModel.linkedReleasesPageBackground.activated ? applicationThemeViewModel.linkedReleasesPageBackground.valign : Image.AlignTop
+        width: root.width
+        height: root.height
     }
 
     RowLayout {

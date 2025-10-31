@@ -21,7 +21,7 @@
 QString AnilibriaImagesPath = "https://anilibriaqt.anilib.top";
 QString AnilibriaApiPath = "https://anilibriaqt.anilib.top/";
 bool IsPortable = false;
-QString ApplicationVersion = "2.2.31";
+QString ApplicationVersion = "2.2.32";
 
 int HistoryReleaseCardMode = 0;
 int HistoryWatchReleaseCardMode = 1;
@@ -219,3 +219,5 @@ QString iconDisableGroupingField = "iconDisableGrouping";
 QString iconEnableGroupingField = "iconEnableGrouping";
 
 QString iconSubtitlesPopupField = "iconSubtitlesPopup";
+
+QString backgroundsPagesField = "backgroundsPages";

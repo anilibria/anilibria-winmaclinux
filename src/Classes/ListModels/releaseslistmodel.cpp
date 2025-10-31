@@ -144,7 +144,7 @@ QVariant ReleasesListModel::data(const QModelIndex &index, int role) const
             return QVariant(m_scheduleReleases->contains(release->id()));
         }
         case ScheduledDayRole: {
-            return m_scheduleReleases->contains(release->id()) ? QVariant(getScheduleDay(m_scheduleReleases->value(release->id()))) : QVariant("");
+            return m_scheduleReleases->contains(release->id()) ? QVariant(getScheduleShortDay(m_scheduleReleases->value(release->id()))) : QVariant("");
         }
         case StartInGroupRole: {
             return QVariant(m_startInGroups.contains(release->id()));
@@ -482,6 +482,20 @@ QString ReleasesListModel::getScheduleDay(int dayNumber) const noexcept
     }
 }
 
+QString ReleasesListModel::getScheduleShortDay(int dayNumber) const noexcept
+{
+    switch (dayNumber){
+        case 1: return QString("пн");
+        case 2: return QString("вт");
+        case 3: return QString("ср");
+        case 4: return QString("чт");
+        case 5: return QString("пт");
+        case 6: return QString("сб");
+        case 7: return QString("вс");
+        default: return "";
+    }
+}
+
 int ReleasesListModel::getScheduleDayNumber(const QString &day) const noexcept
 {
     auto loweredDay = day.toLower();
@@ -783,7 +797,7 @@ void ReleasesListModel::refresh()
 
         if (m_section == MostPopular2021Section && !(release->status().toLower() == releaseIsFinished)) continue;
 
-        if (m_section == MostPopular2022Section && !(release->year() == "2022" && release->rating() > 0)) continue;
+        if (m_section == MostPopular2022Section && !(release->year() == currentYear && release->rating() > 0)) continue;
 
         if (m_section == AddedToCinemahall && !(m_cinemahall->isReleaseInCinemahall(release->id()))) continue;
 

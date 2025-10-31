@@ -16,6 +16,8 @@ qt_standard_project_setup(REQUIRES 6.5)
 
 set(QT_QML_GENERATE_QMLLS_INI ON)
 
+add_definitions(-DUSE_VERSION_CHECK=1)
+
 set(appsources
     globalhelpers.h globalhelpers.cpp
     globalconstants.h Classes/globalconstant.cpp
@@ -105,6 +107,7 @@ set(appsources
     Classes/ViewModels/useractivityviewmodel.h Classes/ViewModels/useractivityviewmodel.cpp
     Classes/ViewModels/userconfigurationviewmodel.h Classes/ViewModels/userconfigurationviewmodel.cpp
     Classes/ViewModels/youtubeviewmodel.h Classes/ViewModels/youtubeviewmodel.cpp
+    Classes/Models/pagebackgroundmodel.h Classes/Models/pagebackgroundmodel.cpp
 )
 
 add_compile_definitions(NO_NEED_STANDART_PLAYER)
@@ -132,6 +135,7 @@ endif()
 qt_add_qml_module(AniLiberty
     URI aniliberty
     VERSION 1.0
+    RESOURCE_PREFIX /qt/qml
     QML_FILES
         Main.qml
 

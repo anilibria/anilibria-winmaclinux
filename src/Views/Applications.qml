@@ -27,6 +27,19 @@ Page {
         Item {
             anchors.fill: parent
 
+            Image {
+                id: backgroundFile
+                asynchronous: true
+                visible: applicationThemeViewModel.applicationsPageBackground.activated
+                fillMode: applicationThemeViewModel.applicationsPageBackground.activated ? applicationThemeViewModel.applicationsPageBackground.imageMode : Image.Pad
+                source: applicationThemeViewModel.applicationsPageBackground.activated ? applicationThemeViewModel.applicationsPageBackground.url : 'http://lala12121.com'
+                opacity: applicationThemeViewModel.applicationsPageBackground.activated ? applicationThemeViewModel.applicationsPageBackground.opacity / 100 : 1
+                horizontalAlignment: applicationThemeViewModel.applicationsPageBackground.activated ? applicationThemeViewModel.applicationsPageBackground.halign : Image.AlignLeft
+                verticalAlignment: applicationThemeViewModel.applicationsPageBackground.activated ? applicationThemeViewModel.applicationsPageBackground.valign : Image.AlignTop
+                width: rootPage.width
+                height: rootPage.height
+            }
+
             RowLayout {
                 id: panelContainer
                 anchors.fill: parent

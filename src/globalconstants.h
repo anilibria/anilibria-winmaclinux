@@ -261,7 +261,7 @@ extern QString iconMainMenuExtensionsField;
 extern QString iconMagnetField;
 extern QString iconDisableGroupingField;
 extern QString iconEnableGroupingField;
-
 extern QString iconSubtitlesPopupField;
+extern QString backgroundsPagesField;
 
 #endif // GLOBALCONSTANTS_H

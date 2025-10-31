@@ -32,11 +32,11 @@ jobs:
         arch -x86_64 rm /usr/local/bin/pydoc3
         arch -x86_64 rm /usr/local/bin/python3
         arch -x86_64 rm /usr/local/bin/python3-config
-        arch -x86_64 rm '/usr/local/bin/idle3.13'
-        arch -x86_64 rm '/usr/local/bin/pydoc3.13'
-        arch -x86_64 rm '/usr/local/bin/python3.13'
-        arch -x86_64 rm '/usr/local/bin/python3.13-config'
-        arch -x86_64 rm '/usr/local/bin/pip3.13'
+        arch -x86_64 rm '/usr/local/bin/idle3.14'
+        arch -x86_64 rm '/usr/local/bin/pydoc3.14'
+        arch -x86_64 rm '/usr/local/bin/python3.14'
+        arch -x86_64 rm '/usr/local/bin/python3.14-config'
+        arch -x86_64 rm '/usr/local/bin/pip3.14'
     - name: install pkg-config
       run: arch -x86_64 /usr/local/bin/brew install pkg-config
     - name: install mpv
@@ -59,7 +59,7 @@ jobs:
       run: |
         cp /usr/local/lib/libsharpyuv.0.dylib src/AniLibria.app/Contents/Frameworks/
         cp /usr/local/lib/libjxl_cms.0.11.dylib src/AniLibria.app/Contents/Frameworks/
-        cp /usr/local/opt/python@3.13/Frameworks/Python.framework/Versions/3.13/Python src/AniLibria.app/Contents/Frameworks/
+        cp /usr/local/opt/python@3.14/Frameworks/Python.framework/Versions/3.14/Python src/AniLibria.app/Contents/Frameworks/
       
         arch -x86_64 install_name_tool -change /usr/local/Cellar/ffmpeg/8.0_1/lib/libswresample.6.dylib @executable_path/../Frameworks/libswresample.6.dylib src/AniLibria.app/Contents/Frameworks/libavcodec.62.dylib
         arch -x86_64 install_name_tool -change /usr/local/Cellar/ffmpeg/8.0_1/lib/libavutil.60.dylib @executable_path/../Frameworks/libavutil.60.dylib src/AniLibria.app/Contents/Frameworks/libavcodec.62.dylib
@@ -94,7 +94,7 @@ jobs:
         arch -x86_64 install_name_tool -change /usr/local/opt/highway/lib/libhwy.1.dylib @executable_path/../Frameworks/libhwy.1.dylib src/AniLibria.app/Contents/Frameworks/libjxl_cms.0.11.dylib
         
         arch -x86_64 install_name_tool -change @loader_path/../../../../opt/libsamplerate/lib/libsamplerate.0.dylib @executable_path/../Frameworks/libhwy.1.dylib src/AniLibria.app/Contents/Frameworks/librubberband.3.dylib
-        arch -x86_64 install_name_tool -change /usr/local/opt/python@3.13/Frameworks/Python.framework/Versions/3.13/Python @executable_path/../Frameworks/Python src/AniLibria.app/Contents/Frameworks/libvapoursynth-script.0.dylib
+        arch -x86_64 install_name_tool -change /usr/local/opt/python@3.14/Frameworks/Python.framework/Versions/3.14/Python @executable_path/../Frameworks/Python src/AniLibria.app/Contents/Frameworks/libvapoursynth-script.0.dylib
         arch -x86_64 install_name_tool -change /usr/local/Cellar/nettle/3.10.2/lib/libnettle.8.dylib @executable_path/../Frameworks/libnettle.8.dylib src/AniLibria.app/Contents/Frameworks/libhogweed.6.dylib
         
         arch -x86_64 install_name_tool -change /usr/local/Cellar/libxcb/1.17.0/lib/libxcb.1.dylib @executable_path/../Frameworks/libxcb.1.dylib src/AniLibria.app/Contents/Frameworks/libxcb-shm.0.dylib

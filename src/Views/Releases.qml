@@ -20,6 +20,8 @@ Page {
     property bool toggler: false
     property alias backgroundImageWidth: itemsContainer.width
     property alias backgroundImageHeight: itemsContainer.height
+    property var backgroundImageObject
+    property bool hasBackgroundImageObject
 
     signal navigateFrom()
     signal watchSingleRelease(int releaseId, int startSeria)
@@ -1235,14 +1237,6 @@ Page {
                             }
 
                             RoundedActionButton {
-                                text: "Настроить фон"
-                                onClicked: {
-                                    releaseSettingsPopup.close();
-                                    backgroundImagePopup.open();
-                                }
-                            }
-
-                            RoundedActionButton {
                                 buttonEnabled: userConfigurationViewModel.startPage !==  "release"
                                 text: "Сделать страницу стартовой"
                                 onClicked: {
@@ -1250,12 +1244,6 @@ Page {
                                 }
                             }
                         }
-                    }
-
-                    BackgroundImagePopup {
-                        id: backgroundImagePopup
-                        x: 40
-                        y: -390
                     }
                 }
 
@@ -1322,7 +1310,7 @@ Page {
 
                 RoundedActionButton {
                     id: showPanelInCompactModeButton
-                    visible: compactModeSwitch.checked && !releasesViewModel.synchronizationEnabled
+                    visible: compactModeSwitch.checked && !synchronizationServicev2.synchronizeCacheActived
                     text: releasesViewModel.showSidePanel ? "Скрыть панель" : "Показать панель"
                     anchors.verticalCenter: parent.verticalCenter
                     anchors.horizontalCenter: parent.horizontalCenter
@@ -1813,14 +1801,14 @@ Page {
                 Image {
                     id: backgroundFile
                     asynchronous: true
-                    visible: releasesViewModel.imageBackgroundViewModel.isHasImage
-                    fillMode: releasesViewModel.imageBackgroundViewModel.imageMode
-                    source: releasesViewModel.imageBackgroundViewModel.processedImagePath
-                    opacity: releasesViewModel.imageBackgroundViewModel.opacity / 100
-                    width: releasesViewModel.imageBackgroundViewModel.imageWidth
-                    height: releasesViewModel.imageBackgroundViewModel.imageHeight
-                    x: releasesViewModel.imageBackgroundViewModel.imageX
-                    y: releasesViewModel.imageBackgroundViewModel.imageY
+                    visible: applicationThemeViewModel.releasesPageBackground.activated
+                    fillMode: applicationThemeViewModel.releasesPageBackground.activated ? applicationThemeViewModel.releasesPageBackground.imageMode : Image.Pad
+                    source: applicationThemeViewModel.releasesPageBackground.activated ? applicationThemeViewModel.releasesPageBackground.url : 'http://lala12121.com'
+                    opacity: applicationThemeViewModel.releasesPageBackground.activated ? applicationThemeViewModel.releasesPageBackground.opacity / 100 : 1
+                    horizontalAlignment: applicationThemeViewModel.releasesPageBackground.activated ? applicationThemeViewModel.releasesPageBackground.halign : Image.AlignLeft
+                    verticalAlignment: applicationThemeViewModel.releasesPageBackground.activated ? applicationThemeViewModel.releasesPageBackground.valign : Image.AlignTop
+                    width: page.width
+                    height: page.height
                 }
 
                 MouseArea {

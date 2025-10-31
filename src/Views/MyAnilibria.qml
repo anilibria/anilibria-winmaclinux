@@ -197,19 +197,36 @@ Page {
                         }
                     }
 
-                    ListView {
-                        id: scrollview
+                    Item {
                         Layout.fillHeight: true
                         Layout.fillWidth: true
-                        clip: true
-                        model: myAnilibriaViewModel.myList
-                        delegate: Component {
-                            Loader {
-                                source: "./MyAnilibria/" + componentId + ".qml"
-                            }
+
+                        Image {
+                            id: backgroundFile
+                            asynchronous: true
+                            visible: applicationThemeViewModel.myAnilibriaPageBackground.activated
+                            fillMode: applicationThemeViewModel.myAnilibriaPageBackground.activated ? applicationThemeViewModel.myAnilibriaPageBackground.imageMode : Image.Pad
+                            source: applicationThemeViewModel.myAnilibriaPageBackground.activated ? applicationThemeViewModel.myAnilibriaPageBackground.url : 'http://lala12121.com'
+                            opacity: applicationThemeViewModel.myAnilibriaPageBackground.activated ? applicationThemeViewModel.myAnilibriaPageBackground.opacity / 100 : 1
+                            horizontalAlignment: applicationThemeViewModel.myAnilibriaPageBackground.activated ? applicationThemeViewModel.myAnilibriaPageBackground.halign : Image.AlignLeft
+                            verticalAlignment: applicationThemeViewModel.myAnilibriaPageBackground.activated ? applicationThemeViewModel.myAnilibriaPageBackground.valign : Image.AlignTop
+                            width: myAnilibriaPage.width
+                            height: myAnilibriaPage.height
                         }
-                        ScrollBar.vertical: ScrollBar {
-                            active: true
+
+                        ListView {
+                            id: scrollview
+                            anchors.fill: parent
+                            clip: true
+                            model: myAnilibriaViewModel.myList
+                            delegate: Component {
+                                Loader {
+                                    source: "./MyAnilibria/" + componentId + ".qml"
+                                }
+                            }
+                            ScrollBar.vertical: ScrollBar {
+                                active: true
+                            }
                         }
                     }
                 }

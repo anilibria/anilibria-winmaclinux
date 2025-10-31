@@ -160,6 +160,19 @@ Page {
                 Layout.fillHeight: true
                 Layout.fillWidth: true
 
+                Image {
+                    id: backgroundFile
+                    asynchronous: true
+                    visible: applicationThemeViewModel.themeManagerPageBackground.activated
+                    fillMode: applicationThemeViewModel.themeManagerPageBackground.activated ? applicationThemeViewModel.themeManagerPageBackground.imageMode : Image.Pad
+                    source: applicationThemeViewModel.themeManagerPageBackground.activated ? applicationThemeViewModel.themeManagerPageBackground.url : null
+                    opacity: applicationThemeViewModel.themeManagerPageBackground.activated ? applicationThemeViewModel.themeManagerPageBackground.opacity / 100 : 1
+                    horizontalAlignment: applicationThemeViewModel.themeManagerPageBackground.activated ? applicationThemeViewModel.themeManagerPageBackground.halign : Image.AlignLeft
+                    verticalAlignment: applicationThemeViewModel.themeManagerPageBackground.activated ? applicationThemeViewModel.themeManagerPageBackground.valign : Image.AlignTop
+                    width: parent.width
+                    height: parent.height
+                }
+
                 Item {
                     visible: applicationThemeViewModel.selectedMenuItem === 0
                     anchors.fill: parent
@@ -856,6 +869,27 @@ Page {
                                             }
                                         }
 
+                                        Item {
+                                            id: backgroundsContainer
+                                            anchors.left: selectIconFromFileButton.right
+                                            anchors.leftMargin: 10
+                                            anchors.verticalCenter: parent.verticalCenter
+                                            visible: fieldType === 'backgrounds'
+                                            width: 100
+                                            height: 30
+
+                                            RoundedActionButton {
+                                                visible: isDefined
+                                                width: parent.width
+                                                text: "Выбрать"
+                                                onClicked: {
+                                                    applicationThemeViewModel.fieldList.selectedIndex = identifier;
+                                                    backgroundImagePopup.pagesData = fieldValue;
+                                                    backgroundImagePopup.open();
+                                                }
+                                            }
+                                        }
+
                                         Rectangle {
                                             id: colorRectangle
                                             anchors.left: buttonsSeparator.right
@@ -1055,6 +1089,18 @@ Page {
             onClosing: {
                 previewWindowLoader.sourceComponent = null;
             }
+        }
+    }
+
+    BackgroundImagePopup {
+        id: backgroundImagePopup
+        x: root.width / 2 - (backgroundImagePopup.width / 2)
+        y: root.height / 2  - (backgroundImagePopup.height / 2)
+        modal: true
+        focus: true
+        closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
+        onSavedData: {
+            applicationThemeViewModel.fieldList.setValueToItem(backgroundImagePopup.pagesData);
         }
     }
 

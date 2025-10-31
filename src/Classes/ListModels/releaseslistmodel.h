@@ -226,6 +226,7 @@ public:
     void setScheduleDayFilter(const QString& scheduleDayFilter) noexcept;
 
     QString getScheduleDay(int dayNumber) const noexcept;
+    QString getScheduleShortDay(int dayNumber) const noexcept;
     int getScheduleDayNumber(const QString& day) const noexcept;
 
     bool filterByFavorites() const noexcept { return m_filterByFavorites; }

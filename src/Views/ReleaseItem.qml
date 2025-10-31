@@ -146,13 +146,15 @@ Item {
 
                 AccentText {
                     fontPointSize: 10
+                    width: parent.width - 40
+                    height: parent.height
+                    anchors.left: parent.left
+                    anchors.leftMargin: 10
                     horizontalAlignment: Text.AlignHCenter
-                    verticalAlignment: Text.AlignVCenter
-                    width: parent.width
-                    leftPadding: 8
-                    topPadding: 6
-                    wrapMode: Text.WordWrap
+                    topPadding: 2
+                    wrapMode: Text.Wrap
                     maximumLineCount: 2
+                    elide: Text.ElideRight
                     text: title
                 }
             }
@@ -168,14 +170,14 @@ Item {
                     id: gridItemtextContainer
                     AccentText {
                         enabled: false
-                        textFormat: Text.RichText
                         fontPointSize: 12
                         width: 280
                         leftPadding: 8
                         topPadding: 6
-                        wrapMode: Text.WordWrap
+                        wrapMode: Text.Wrap
                         maximumLineCount: 3
-                        text: qsTr(title)
+                        elide: Text.ElideRight
+                        text: title
                     }
                     PlainText {
                         enabled: false
@@ -354,19 +356,6 @@ Item {
                             fontPointSize: 12
                             text: '' + countTorrents
                         }
-                        TooltipedImage {
-                            visible: inSchedule
-                            source: applicationThemeViewModel.currentItems.iconReleaseCatalogSchedule
-                            width: 22
-                            height: 22
-                        }
-                        PlainText {
-                            visible: inSchedule
-                            leftPadding: 8
-                            topPadding: 1
-                            fontPointSize: 11
-                            text: scheduledDay
-                        }
                     }
                 }
                 Rectangle {
@@ -411,6 +400,20 @@ Item {
                                 rightPadding: 4
                                 fontPointSize: 12
                                 text: rating
+                            }
+
+                            TooltipedImage {
+                                visible: inSchedule
+                                source: applicationThemeViewModel.currentItems.iconReleaseCatalogSchedule
+                                width: 22
+                                height: 22
+                            }
+                            PlainText {
+                                visible: inSchedule
+                                leftPadding: 8
+                                topPadding: 1
+                                fontPointSize: 11
+                                text: scheduledDay
                             }
                         }
 
