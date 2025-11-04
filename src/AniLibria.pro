@@ -158,7 +158,7 @@ unix {
     desktop.path = $$PREFIX/share/applications
 
 #Setup icons for following resolutions: 16x16; 32x32; 128x128; 256x256 and 512x512.
-#https://specifications.freedesktop.org/icon-theme-spec/icon-theme-spec-latest.html
+#https://specifications.freedesktop.org/icon-theme/latest/
 
 #16x16
     icon_16.path = $$PREFIX/share/icons/hicolor/16x16/apps
