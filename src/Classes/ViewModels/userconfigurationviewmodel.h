@@ -81,6 +81,7 @@ class UserConfigurationViewModel : public QObject
     Q_PROPERTY(bool useTorrentStreamLibrary READ useTorrentStreamLibrary WRITE setUseTorrentStreamLibrary NOTIFY useTorrentStreamLibraryChanged FINAL)
     Q_PROPERTY(bool torrentStreamUI READ torrentStreamUI WRITE setTorrentStreamUI NOTIFY torrentStreamUIChanged FINAL)
     Q_PROPERTY(QString pathToTSContent READ pathToTSContent WRITE setPathToTSContent NOTIFY pathToTSContentChanged FINAL)
+    Q_PROPERTY(double playerVolume READ playerVolume WRITE setPlayerVolume NOTIFY playerVolumeChanged FINAL)
 
 private:
     QString m_cacheFileName { "userconfiguration.cache" };
@@ -140,6 +141,7 @@ private:
     const QString m_useTorrentStreamLibraryField { "useTorrentStreamLibrary" };
     const QString m_torrentStreamUIField { "torrentStreamUI" };
     const QString m_pathToTSContentField { "pathToTSContent" };
+    const QString m_playerVolumeField { "playerVolume" };
     int m_opacityPlayerPanel { 50 };
     bool m_notCloseReleaseCardAfterWatch { false };
     bool m_usingScrollAcceleration { true };
@@ -196,6 +198,7 @@ private:
     bool m_useTorrentStreamLibrary { false };
     bool m_torrentStreamUI { false };
     QString m_pathToTSContent { "" };
+    double m_playerVolume { 0 };
 
 public:
     explicit UserConfigurationViewModel(QObject *parent = nullptr);
@@ -368,6 +371,9 @@ public:
     QString pathToTSContent() const noexcept { return m_pathToTSContent; }
     void setPathToTSContent(QString pathToTSContent) noexcept;
 
+    double playerVolume() const noexcept { return m_playerVolume; }
+    void setPlayerVolume(double playerVolume) noexcept;
+
     Q_INVOKABLE void refreshConfiguration() noexcept;
     Q_INVOKABLE void saveSettingsToFile();
 
@@ -432,6 +438,7 @@ signals:
     void useTorrentStreamLibraryChanged();
     void torrentStreamUIChanged();
     void pathToTSContentChanged();
+    void playerVolumeChanged();
 
 };
 

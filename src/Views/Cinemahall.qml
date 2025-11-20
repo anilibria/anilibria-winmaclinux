@@ -28,7 +28,7 @@ Page {
                 asynchronous: true
                 visible: applicationThemeViewModel.cinemahallPageBackground.activated
                 fillMode: applicationThemeViewModel.cinemahallPageBackground.activated ? applicationThemeViewModel.cinemahallPageBackground.imageMode : Image.Pad
-                source: applicationThemeViewModel.cinemahallPageBackground.activated ? applicationThemeViewModel.cinemahallPageBackground.url : 'http://lala12121.com'
+                source: applicationThemeViewModel.cinemahallPageBackground.activated ? applicationThemeViewModel.cinemahallPageBackground.url : ''
                 opacity: applicationThemeViewModel.cinemahallPageBackground.activated ? applicationThemeViewModel.cinemahallPageBackground.opacity / 100 : 1
                 horizontalAlignment: applicationThemeViewModel.cinemahallPageBackground.activated ? applicationThemeViewModel.cinemahallPageBackground.halign : Image.AlignLeft
                 verticalAlignment: applicationThemeViewModel.cinemahallPageBackground.activated ? applicationThemeViewModel.cinemahallPageBackground.valign : Image.AlignTop

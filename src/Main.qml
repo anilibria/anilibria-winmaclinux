@@ -1158,11 +1158,6 @@ ApplicationWindow {
             visible: mainViewModel.isAuthorizationPageVisible
         }
 
-        Youtube {
-            id: youtube
-            visible: mainViewModel.isYoutubePageVisible
-        }
-
         About {
             id: about
             visible: mainViewModel.isAboutPageVisible

@@ -12,7 +12,6 @@ MainViewModel::MainViewModel(QObject *parent) : QObject(parent)
     m_displayNames->insert("release", "Каталог релизов");
     m_displayNames->insert("videoplayer", "Видеоплеер");
     m_displayNames->insert("myanilibria", "Моя Анилибрия");
-    m_displayNames->insert("youtube", "Youtube");
     m_displayNames->insert("about", "О Программе");
     m_displayNames->insert("cinemahall", "Кинозал");
     m_displayNames->insert("maintenance", "Обслуживание");
@@ -267,7 +266,6 @@ void MainViewModel::refreshPageVisible() noexcept
 {
     emit isReleasesPageVisibleChanged();
     emit isOnlinePlayerPageVisibleChanged();
-    emit isYoutubePageVisibleChanged();
     emit isAboutPageVisibleChanged();
     emit isCinemahallPageVisibleChanged();
     emit isDownloadPageVisibleChanged();

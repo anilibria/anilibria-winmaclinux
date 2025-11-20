@@ -203,15 +203,6 @@ void LocalStorageService::saveDownloads()
     downloadsFile.close();
 }
 
-void LocalStorageService::setVolume(double volume)
-{
-    if (volume < 0) return;
-
-    m_UserSettingsModel->setVolume(volume);
-
-    saveSettings();
-}
-
 void LocalStorageService::setVideoQuality(int quality)
 {
     m_UserSettingsModel->setQuality(quality);

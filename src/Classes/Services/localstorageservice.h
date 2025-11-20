@@ -54,7 +54,6 @@ public:
     void setup(QSharedPointer<QList<FullReleaseModel *>> releases);
     void invalidateReleasePoster(int id);
 
-    Q_INVOKABLE void setVolume(double volume);
     Q_INVOKABLE void setVideoQuality(int quality);
     Q_INVOKABLE void setAutoNextVideo(bool autoNextVideo);
     Q_INVOKABLE void setAutoTopMost(bool autoTopMost);

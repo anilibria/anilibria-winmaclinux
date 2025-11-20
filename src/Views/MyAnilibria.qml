@@ -206,7 +206,7 @@ Page {
                             asynchronous: true
                             visible: applicationThemeViewModel.myAnilibriaPageBackground.activated
                             fillMode: applicationThemeViewModel.myAnilibriaPageBackground.activated ? applicationThemeViewModel.myAnilibriaPageBackground.imageMode : Image.Pad
-                            source: applicationThemeViewModel.myAnilibriaPageBackground.activated ? applicationThemeViewModel.myAnilibriaPageBackground.url : 'http://lala12121.com'
+                            source: applicationThemeViewModel.myAnilibriaPageBackground.activated ? applicationThemeViewModel.myAnilibriaPageBackground.url : ''
                             opacity: applicationThemeViewModel.myAnilibriaPageBackground.activated ? applicationThemeViewModel.myAnilibriaPageBackground.opacity / 100 : 1
                             horizontalAlignment: applicationThemeViewModel.myAnilibriaPageBackground.activated ? applicationThemeViewModel.myAnilibriaPageBackground.halign : Image.AlignLeft
                             verticalAlignment: applicationThemeViewModel.myAnilibriaPageBackground.activated ? applicationThemeViewModel.myAnilibriaPageBackground.valign : Image.AlignTop

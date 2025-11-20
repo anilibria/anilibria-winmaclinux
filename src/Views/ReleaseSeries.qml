@@ -19,7 +19,7 @@ Page {
         asynchronous: true
         visible: applicationThemeViewModel.linkedReleasesPageBackground.activated
         fillMode: applicationThemeViewModel.linkedReleasesPageBackground.activated ? applicationThemeViewModel.linkedReleasesPageBackground.imageMode : Image.Pad
-        source: applicationThemeViewModel.linkedReleasesPageBackground.activated ? applicationThemeViewModel.linkedReleasesPageBackground.url : 'http://lala12121.com'
+        source: applicationThemeViewModel.linkedReleasesPageBackground.activated ? applicationThemeViewModel.linkedReleasesPageBackground.url : ''
         opacity: applicationThemeViewModel.linkedReleasesPageBackground.activated ? applicationThemeViewModel.linkedReleasesPageBackground.opacity / 100 : 1
         horizontalAlignment: applicationThemeViewModel.linkedReleasesPageBackground.activated ? applicationThemeViewModel.linkedReleasesPageBackground.halign : Image.AlignLeft
         verticalAlignment: applicationThemeViewModel.linkedReleasesPageBackground.activated ? applicationThemeViewModel.linkedReleasesPageBackground.valign : Image.AlignTop

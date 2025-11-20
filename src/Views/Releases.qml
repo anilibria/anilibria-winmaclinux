@@ -1803,7 +1803,7 @@ Page {
                     asynchronous: true
                     visible: applicationThemeViewModel.releasesPageBackground.activated
                     fillMode: applicationThemeViewModel.releasesPageBackground.activated ? applicationThemeViewModel.releasesPageBackground.imageMode : Image.Pad
-                    source: applicationThemeViewModel.releasesPageBackground.activated ? applicationThemeViewModel.releasesPageBackground.url : 'http://lala12121.com'
+                    source: applicationThemeViewModel.releasesPageBackground.activated ? applicationThemeViewModel.releasesPageBackground.url : ''
                     opacity: applicationThemeViewModel.releasesPageBackground.activated ? applicationThemeViewModel.releasesPageBackground.opacity / 100 : 1
                     horizontalAlignment: applicationThemeViewModel.releasesPageBackground.activated ? applicationThemeViewModel.releasesPageBackground.halign : Image.AlignLeft
                     verticalAlignment: applicationThemeViewModel.releasesPageBackground.activated ? applicationThemeViewModel.releasesPageBackground.valign : Image.AlignTop

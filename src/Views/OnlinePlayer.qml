@@ -106,7 +106,7 @@ Page {
         if (onlinePlayerViewModel.showEmbeddedVideoWindow) onlinePlayerViewModel.showEmbeddedVideoWindow = false;
         onlinePlayerViewModel.isFromNavigated = true;
         const userSettings = JSON.parse(localStorage.getUserSettings());
-        playerLoader.item.volume = userSettings.volume < 1 ? 50 : userSettings.volume;
+        playerLoader.item.volume = userConfigurationViewModel.playerVolume;//userSettings.volume < 1 ? 50 : userSettings.volume;
         jumpMinuteComboBox.currentIndex = onlinePlayerViewModel.jumpMinutes.indexOf(userSettings.jumpMinute);
         jumpSecondComboBox.currentIndex = onlinePlayerViewModel.jumpSeconds.indexOf(userSettings.jumpSecond);
         remotePlayerPortComboBox.currentIndex = onlinePlayerViewModel.ports.indexOf(userConfigurationViewModel.remotePort);
@@ -127,7 +127,7 @@ Page {
             anchors.fill: parent
             visible: applicationThemeViewModel.videoPlayerPageBackground.activated
             fillMode: applicationThemeViewModel.videoPlayerPageBackground.activated ? applicationThemeViewModel.videoPlayerPageBackground.imageMode : Image.Pad
-            source: applicationThemeViewModel.videoPlayerPageBackground.activated ? applicationThemeViewModel.videoPlayerPageBackground.url : 'http://lala12121.com'
+            source: applicationThemeViewModel.videoPlayerPageBackground.activated ? applicationThemeViewModel.videoPlayerPageBackground.url : ''
             opacity: applicationThemeViewModel.videoPlayerPageBackground.activated ? applicationThemeViewModel.videoPlayerPageBackground.opacity / 100 : 1
             horizontalAlignment: applicationThemeViewModel.videoPlayerPageBackground.activated ? applicationThemeViewModel.videoPlayerPageBackground.halign : Image.AlignLeft
             verticalAlignment: applicationThemeViewModel.videoPlayerPageBackground.activated ? applicationThemeViewModel.videoPlayerPageBackground.valign : Image.AlignTop
@@ -720,7 +720,7 @@ Page {
                         to: 100
                         onPressedChanged: {
                             if (!pressed) {
-                                localStorage.setVolume(playerLoader.item.volume);
+                                userConfigurationViewModel.playerVolume = playerLoader.item.volume;
                             }
                             controlPanel.forceActiveFocus();
                         }

@@ -163,7 +163,7 @@ qt_add_qml_module(AniLiberty
         Views/ThemeManagerPreview.qml
         Views/TorrentStream.qml
         Views/TorrentStreamCard.qml
-        Views/Youtube.qml
+
 
         Views/Videoplayer/EmbeddedVideoPlayer.qml
         Views/Videoplayer/ExternalPlayer.qml

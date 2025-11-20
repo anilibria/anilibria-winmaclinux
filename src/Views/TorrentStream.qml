@@ -29,7 +29,7 @@ Page {
                 asynchronous: true
                 visible: applicationThemeViewModel.torrentStreamPageBackground.activated
                 fillMode: applicationThemeViewModel.torrentStreamPageBackground.activated ? applicationThemeViewModel.torrentStreamPageBackground.imageMode : Image.Pad
-                source: applicationThemeViewModel.torrentStreamPageBackground.activated ? applicationThemeViewModel.torrentStreamPageBackground.url : 'http://lala12121.com'
+                source: applicationThemeViewModel.torrentStreamPageBackground.activated ? applicationThemeViewModel.torrentStreamPageBackground.url : ''
                 opacity: applicationThemeViewModel.torrentStreamPageBackground.activated ? applicationThemeViewModel.torrentStreamPageBackground.opacity / 100 : 1
                 horizontalAlignment: applicationThemeViewModel.torrentStreamPageBackground.activated ? applicationThemeViewModel.torrentStreamPageBackground.halign : Image.AlignLeft
                 verticalAlignment: applicationThemeViewModel.torrentStreamPageBackground.activated ? applicationThemeViewModel.torrentStreamPageBackground.valign : Image.AlignTop
