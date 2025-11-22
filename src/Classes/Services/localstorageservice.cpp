@@ -203,13 +203,6 @@ void LocalStorageService::saveDownloads()
     downloadsFile.close();
 }
 
-void LocalStorageService::setVideoQuality(int quality)
-{
-    m_UserSettingsModel->setQuality(quality);
-
-    saveSettings();
-}
-
 void LocalStorageService::setAutoNextVideo(bool autoNextVideo)
 {
     m_UserSettingsModel->setAutoNextVideos(autoNextVideo);

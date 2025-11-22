@@ -516,7 +516,7 @@ Page {
                         onButtonClicked: {
                             onlinePlayerViewModel.restorePosition = playerLoader.item.position;
                             onlinePlayerViewModel.changeVideoQuality(`fullhd`);
-                            localStorage.setVideoQuality(2);
+                            userConfigurationViewModel.playerQuality = `fullhd`;
                         }
                         onButtonAlreadyClicked: {
                             userConfigurationViewModel.hidedQuality = !userConfigurationViewModel.hidedQuality;
@@ -531,7 +531,7 @@ Page {
                         onButtonClicked: {
                             onlinePlayerViewModel.restorePosition = playerLoader.item.position;
                             onlinePlayerViewModel.changeVideoQuality(`hd`);
-                            localStorage.setVideoQuality(1);
+                            userConfigurationViewModel.playerQuality = `hd`;
                         }
                         onButtonAlreadyClicked: {
                             userConfigurationViewModel.hidedQuality = !userConfigurationViewModel.hidedQuality;
@@ -546,7 +546,7 @@ Page {
                         onButtonClicked: {
                             onlinePlayerViewModel.restorePosition = playerLoader.item.position;
                             onlinePlayerViewModel.changeVideoQuality(`sd`);
-                            localStorage.setVideoQuality(0);
+                            userConfigurationViewModel.playerQuality = `sd`;
                         }
                         onButtonAlreadyClicked: {
                             userConfigurationViewModel.hidedQuality = !userConfigurationViewModel.hidedQuality;
@@ -1430,7 +1430,7 @@ Page {
             anchors.fill: parent
             onPressed: {
                 const position = onlinePlayerViewModel.skipOpening();
-                if (onlinePlayerViewModel.restorePosition != 0) onlinePlayerViewModel.restorePosition = 0;
+                if (onlinePlayerViewModel.restorePosition !== 0) onlinePlayerViewModel.restorePosition = 0;
                 if (onlinePlayerViewModel.isFromNavigated) onlinePlayerViewModel.isFromNavigated = false;
                 playerLoader.item.seek(position);
             }
@@ -1460,7 +1460,7 @@ Page {
             enabled: skipEnding.visible
             anchors.fill: parent
             onPressed: {
-                if (onlinePlayerViewModel.restorePosition != 0) onlinePlayerViewModel.restorePosition = 0;
+                if (onlinePlayerViewModel.restorePosition !== 0) onlinePlayerViewModel.restorePosition = 0;
                 if (onlinePlayerViewModel.isFromNavigated) onlinePlayerViewModel.isFromNavigated = false;
 
                 onlinePlayerViewModel.nextVideo();
@@ -1474,7 +1474,7 @@ Page {
             if (userConfigurationViewModel.autoSkipOpening) {
                 if (onlinePlayerViewModel.displaySkipOpening && !onlinePlayerViewModel.endSkipOpening) {
                     const position = onlinePlayerViewModel.skipOpening();
-                    if (onlinePlayerViewModel.restorePosition != 0) onlinePlayerViewModel.restorePosition = 0;
+                    if (onlinePlayerViewModel.restorePosition !== 0) onlinePlayerViewModel.restorePosition = 0;
                     if (onlinePlayerViewModel.isFromNavigated) onlinePlayerViewModel.isFromNavigated = false;
                     playerLoader.item.seek(position);
                     notificationViewModel.sendInfoNotification(`Произошел автоматический пропуск опенинга`);
@@ -1489,7 +1489,7 @@ Page {
             if (!onlinePlayerViewModel.reachEnding) return;
 
             if (userConfigurationViewModel.autoSkipEnding) {
-                if (onlinePlayerViewModel.restorePosition != 0) onlinePlayerViewModel.restorePosition = 0;
+                if (onlinePlayerViewModel.restorePosition !== 0) onlinePlayerViewModel.restorePosition = 0;
                 if (onlinePlayerViewModel.isFromNavigated) onlinePlayerViewModel.isFromNavigated = false;
 
                 onlinePlayerViewModel.nextVideo();
@@ -1606,18 +1606,6 @@ Page {
 
     Component.onCompleted: {
         volumeSlider.value = playerLoader.item.volume;
-
-        const userSettings = JSON.parse(localStorage.getUserSettings());
-        switch (userSettings.quality) {
-            case 0:
-                onlinePlayerViewModel.videoQuality = "sd";
-                break;
-            case 1:
-                onlinePlayerViewModel.videoQuality = "hd";
-                break;
-            case 2:
-                onlinePlayerViewModel.videoQuality = "fullhd";
-                break;
-        }
+        onlinePlayerViewModel.videoQuality = userConfigurationViewModel.playerQuality;
     }
 }

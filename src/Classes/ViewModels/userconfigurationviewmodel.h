@@ -82,6 +82,7 @@ class UserConfigurationViewModel : public QObject
     Q_PROPERTY(bool torrentStreamUI READ torrentStreamUI WRITE setTorrentStreamUI NOTIFY torrentStreamUIChanged FINAL)
     Q_PROPERTY(QString pathToTSContent READ pathToTSContent WRITE setPathToTSContent NOTIFY pathToTSContentChanged FINAL)
     Q_PROPERTY(double playerVolume READ playerVolume WRITE setPlayerVolume NOTIFY playerVolumeChanged FINAL)
+    Q_PROPERTY(QString playerQuality READ playerQuality WRITE setPlayerQuality NOTIFY playerQualityChanged FINAL)
 
 private:
     QString m_cacheFileName { "userconfiguration.cache" };
@@ -142,6 +143,7 @@ private:
     const QString m_torrentStreamUIField { "torrentStreamUI" };
     const QString m_pathToTSContentField { "pathToTSContent" };
     const QString m_playerVolumeField { "playerVolume" };
+    const QString m_playerQualityField { "playerQuality" };
     int m_opacityPlayerPanel { 50 };
     bool m_notCloseReleaseCardAfterWatch { false };
     bool m_usingScrollAcceleration { true };
@@ -199,6 +201,7 @@ private:
     bool m_torrentStreamUI { false };
     QString m_pathToTSContent { "" };
     double m_playerVolume { 0 };
+    QString m_playerQuality { "" };
 
 public:
     explicit UserConfigurationViewModel(QObject *parent = nullptr);
@@ -374,6 +377,9 @@ public:
     double playerVolume() const noexcept { return m_playerVolume; }
     void setPlayerVolume(double playerVolume) noexcept;
 
+    QString playerQuality() const noexcept { return m_playerQuality; }
+    void setPlayerQuality(const QString& playerQuality) noexcept;
+
     Q_INVOKABLE void refreshConfiguration() noexcept;
     Q_INVOKABLE void saveSettingsToFile();
 
@@ -439,6 +445,7 @@ signals:
     void torrentStreamUIChanged();
     void pathToTSContentChanged();
     void playerVolumeChanged();
+    void playerQualityChanged();
 
 };
 
