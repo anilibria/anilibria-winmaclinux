@@ -105,10 +105,9 @@ Page {
         _page.forceActiveFocus();
         if (onlinePlayerViewModel.showEmbeddedVideoWindow) onlinePlayerViewModel.showEmbeddedVideoWindow = false;
         onlinePlayerViewModel.isFromNavigated = true;
-        const userSettings = JSON.parse(localStorage.getUserSettings());
-        playerLoader.item.volume = userConfigurationViewModel.playerVolume;//userSettings.volume < 1 ? 50 : userSettings.volume;
-        jumpMinuteComboBox.currentIndex = onlinePlayerViewModel.jumpMinutes.indexOf(userSettings.jumpMinute);
-        jumpSecondComboBox.currentIndex = onlinePlayerViewModel.jumpSeconds.indexOf(userSettings.jumpSecond);
+        playerLoader.item.volume = userConfigurationViewModel.playerVolume;
+        jumpMinuteComboBox.currentIndex = onlinePlayerViewModel.jumpMinutes.indexOf(userConfigurationViewModel.playerJumpMinute);
+        jumpSecondComboBox.currentIndex = onlinePlayerViewModel.jumpSeconds.indexOf(userConfigurationViewModel.playerJumpSecond);
         remotePlayerPortComboBox.currentIndex = onlinePlayerViewModel.ports.indexOf(userConfigurationViewModel.remotePort);
 
         onlinePlayerViewModel.restoreLastRelease();
@@ -1126,7 +1125,7 @@ Page {
                                             }
                                         }
                                         onActivated: {
-                                            localStorage.setJumpMinute(onlinePlayerViewModel.jumpMinutes[index]);
+                                            userConfigurationViewModel.playerJumpMinute = onlinePlayerViewModel.jumpMinutes[index];
                                         }
                                     }
                                     CommonComboBox {
@@ -1157,7 +1156,7 @@ Page {
                                         }
 
                                         onActivated: {
-                                            localStorage.setJumpSecond(onlinePlayerViewModel.jumpSeconds[index]);
+                                            userConfigurationViewModel.playerJumpSecond = onlinePlayerViewModel.jumpSeconds[index];
                                         }
                                     }
                                 }

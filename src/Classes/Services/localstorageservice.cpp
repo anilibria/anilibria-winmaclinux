@@ -203,20 +203,6 @@ void LocalStorageService::saveDownloads()
     downloadsFile.close();
 }
 
-void LocalStorageService::setAutoNextVideo(bool autoNextVideo)
-{
-    m_UserSettingsModel->setAutoNextVideos(autoNextVideo);
-
-    saveSettings();
-}
-
-void LocalStorageService::setAutoTopMost(bool autoTopMost)
-{
-    m_UserSettingsModel->setAutoTopMost(autoTopMost);
-
-    saveSettings();
-}
-
 void LocalStorageService::setTorrentDownloadMode(int torrentDownloadMode)
 {
     m_UserSettingsModel->setTorrentDownloadMode(torrentDownloadMode);
@@ -232,27 +218,6 @@ bool LocalStorageService::isUseTorrentStreamMode()
 void LocalStorageService::setNotificationForFavorites(bool notificationForFavorites)
 {
     m_UserSettingsModel->setNotificationForFavorites(notificationForFavorites);
-
-    saveSettings();
-}
-
-void LocalStorageService::setJumpMinute(int jumpMinute)
-{
-    m_UserSettingsModel->setJumpMinute(jumpMinute);
-
-    saveSettings();
-}
-
-void LocalStorageService::setJumpSecond(int jumpSecond)
-{
-    m_UserSettingsModel->setJumpSecond(jumpSecond);
-
-    saveSettings();
-}
-
-void LocalStorageService::setShowReleaseInfo(bool showReleaseInfo)
-{
-    m_UserSettingsModel->setShowReleaseInfo(showReleaseInfo);
 
     saveSettings();
 }
