@@ -706,7 +706,7 @@ void UserConfigurationViewModel::readSettingsFromFile()
     m_pathToTSContent = object.contains(m_pathToTSContentField) ? object[m_pathToTSContentField].toString() : "";
     m_playerVolume = object.contains(m_playerVolumeField) ? object[m_playerVolumeField].toInt() : 80;
     m_playerQuality = object.contains(m_playerQualityField) ? object[m_playerQualityField].toString() : "hd";
-    m_playerJumpMinute = object.contains(m_playerJumpMinuteField) ? object[m_playerJumpMinuteField].toInt() : 0;
+    m_playerJumpMinute = object.contains(m_playerJumpMinuteField) ? object[m_playerJumpMinuteField].toInt() : 1;
     m_playerJumpSecond = object.contains(m_playerJumpSecondField) ? object[m_playerJumpSecondField].toInt() : 0;
 
     if (m_textFont != "Default") changeFont(m_textFont);
