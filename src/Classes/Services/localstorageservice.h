@@ -54,16 +54,9 @@ public:
     void setup(QSharedPointer<QList<FullReleaseModel *>> releases);
     void invalidateReleasePoster(int id);
 
-    Q_INVOKABLE void setVolume(double volume);
-    Q_INVOKABLE void setVideoQuality(int quality);
-    Q_INVOKABLE void setAutoNextVideo(bool autoNextVideo);
-    Q_INVOKABLE void setAutoTopMost(bool autoTopMost);
     Q_INVOKABLE void setTorrentDownloadMode(int torrentDownloadMode);
     Q_INVOKABLE bool isUseTorrentStreamMode();
     Q_INVOKABLE void setNotificationForFavorites(bool notificationForFavorites);
-    Q_INVOKABLE void setJumpMinute(int jumpMinute);
-    Q_INVOKABLE void setJumpSecond(int jumpSecond);
-    Q_INVOKABLE void setShowReleaseInfo(bool showReleaseInfo);
     Q_INVOKABLE void setClearFiltersAfterChangeSection(bool clearFiltersAfterChangeSection);
     Q_INVOKABLE void setCompactMode(bool compactMode);
     Q_INVOKABLE void setHideCinemhallButton(bool hideCinemhallButton);

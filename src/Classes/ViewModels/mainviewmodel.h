@@ -16,7 +16,6 @@ class MainViewModel : public QObject
     Q_PROPERTY(QString currentPageDisplayName READ currentPageDisplayName WRITE setCurrentPageDisplayName NOTIFY currentPageDisplayNameChanged)
     Q_PROPERTY(bool isReleasesPageVisible READ isReleasesPageVisible NOTIFY isReleasesPageVisibleChanged)
     Q_PROPERTY(bool isOnlinePlayerPageVisible READ isOnlinePlayerPageVisible NOTIFY isOnlinePlayerPageVisibleChanged)
-    Q_PROPERTY(bool isYoutubePageVisible READ isYoutubePageVisible NOTIFY isYoutubePageVisibleChanged)
     Q_PROPERTY(bool isAboutPageVisible READ isAboutPageVisible NOTIFY isAboutPageVisibleChanged)
     Q_PROPERTY(bool isCinemahallPageVisible READ isCinemahallPageVisible NOTIFY isCinemahallPageVisibleChanged)
     Q_PROPERTY(bool isDownloadPageVisible READ isDownloadPageVisible NOTIFY isDownloadPageVisibleChanged)
@@ -89,7 +88,6 @@ public:
 
     bool isReleasesPageVisible() const noexcept { return m_currentPageId == "release"; }
     bool isOnlinePlayerPageVisible() const noexcept { return m_currentPageId == "videoplayer"; }
-    bool isYoutubePageVisible() const noexcept { return m_currentPageId == "youtube"; }
     bool isAboutPageVisible() const noexcept { return m_currentPageId == "about"; }
     bool isCinemahallPageVisible() const noexcept { return m_currentPageId == "cinemahall"; }
     bool isDownloadPageVisible() const noexcept { return m_currentPageId == "download"; }
@@ -149,7 +147,6 @@ signals:
     void currentPageDisplayNameChanged();
     void isReleasesPageVisibleChanged();
     void isOnlinePlayerPageVisibleChanged();
-    void isYoutubePageVisibleChanged();
     void isCinemahallPageVisibleChanged();
     void isAboutPageVisibleChanged();
     void isDownloadPageVisibleChanged();

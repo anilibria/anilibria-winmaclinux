@@ -163,7 +163,7 @@ qt_add_qml_module(AniLiberty
         Views/ThemeManagerPreview.qml
         Views/TorrentStream.qml
         Views/TorrentStreamCard.qml
-        Views/Youtube.qml
+
 
         Views/Videoplayer/EmbeddedVideoPlayer.qml
         Views/Videoplayer/ExternalPlayer.qml
@@ -462,6 +462,15 @@ endif ()
 #    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/AppDir/usr/bin)
 #    install(TARGETS AniLiberty DESTINATION ${CMAKE_CURRENT_SOURCE_DIR}/AppDir/usr/bin)
 #endif()
+
+if (NOT (APPLE OR WIN32))
+install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/../anilibria.iconset/icon_16x16.png" DESTINATION share/icons/hicolor/16x16/apps RENAME aniliberty.png)
+install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/../anilibria.iconset/icon_32x32.png" DESTINATION share/icons/hicolor/32x32/apps RENAME aniliberty.png)
+install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/../anilibria.iconset/icon_128x128.png" DESTINATION share/icons/hicolor/128x128/apps RENAME aniliberty.png)
+install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/../anilibria.iconset/icon_256x256.png" DESTINATION share/icons/hicolor/256x256/apps RENAME aniliberty.png)
+install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/../anilibria.iconset/icon_512x512.png" DESTINATION share/icons/hicolor/512x512/apps RENAME aniliberty.png)
+install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/../data/tv.aniliberty.AniLiberty.desktop" DESTINATION share/applications)
+endif ()
 
 include(GNUInstallDirs)
 install(TARGETS AniLiberty

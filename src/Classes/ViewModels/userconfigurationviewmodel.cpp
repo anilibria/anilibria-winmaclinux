@@ -485,6 +485,40 @@ void UserConfigurationViewModel::setPathToTSContent(QString pathToTSContent) noe
     emit pathToTSContentChanged();
 }
 
+void UserConfigurationViewModel::setPlayerVolume(double playerVolume) noexcept
+{
+    if (playerVolume < 0) playerVolume = 0;
+
+    if (m_playerVolume == playerVolume) return;
+
+    m_playerVolume = playerVolume;
+    emit playerVolumeChanged();
+}
+
+void UserConfigurationViewModel::setPlayerQuality(const QString& playerQuality) noexcept
+{
+    if (m_playerQuality == playerQuality) return;
+
+    m_playerQuality = playerQuality;
+    emit playerQualityChanged();
+}
+
+void UserConfigurationViewModel::setPlayerJumpMinute(int playerJumpMinute) noexcept
+{
+    if (m_playerJumpMinute == playerJumpMinute) return;
+
+    m_playerJumpMinute = playerJumpMinute;
+    emit playerJumpMinuteChanged();
+}
+
+void UserConfigurationViewModel::setPlayerJumpSecond(int playerJumpSecond) noexcept
+{
+    if (m_playerJumpSecond == playerJumpSecond) return;
+
+    m_playerJumpSecond = playerJumpSecond;
+    emit playerJumpSecondChanged();
+}
+
 void UserConfigurationViewModel::refreshConfiguration() noexcept
 {
     readSettingsFromFile();
@@ -529,6 +563,10 @@ void UserConfigurationViewModel::refreshConfiguration() noexcept
     emit useTorrentStreamLibraryChanged();
     emit torrentStreamUIChanged();
     emit pathToTSContentChanged();
+    emit playerVolumeChanged();
+    emit playerQualityChanged();
+    emit playerJumpMinuteChanged();
+    emit playerJumpSecondChanged();
 }
 
 void UserConfigurationViewModel::saveSettingsToFile()
@@ -590,6 +628,10 @@ void UserConfigurationViewModel::saveSettingsToFile()
     object[m_useTorrentStreamLibraryField] = m_useTorrentStreamLibrary;
     object[m_torrentStreamUIField] = m_torrentStreamUI;
     object[m_pathToTSContentField] = m_pathToTSContent;
+    object[m_playerVolumeField] = m_playerVolume;
+    object[m_playerQualityField] = m_playerQuality;
+    object[m_playerJumpMinuteField] = m_playerJumpMinute;
+    object[m_playerJumpSecondField] = m_playerJumpSecond;
 
     QFile file(getCachePath(m_cacheFileName));
     file.open(QFile::WriteOnly | QFile::Text);
@@ -662,6 +704,10 @@ void UserConfigurationViewModel::readSettingsFromFile()
     m_useTorrentStreamLibrary = object.contains(m_useTorrentStreamLibraryField) ? object[m_useTorrentStreamLibraryField].toBool() : false;
     m_torrentStreamUI = object.contains(m_torrentStreamUIField) ? object[m_torrentStreamUIField].toBool() : false;
     m_pathToTSContent = object.contains(m_pathToTSContentField) ? object[m_pathToTSContentField].toString() : "";
+    m_playerVolume = object.contains(m_playerVolumeField) ? object[m_playerVolumeField].toInt() : 80;
+    m_playerQuality = object.contains(m_playerQualityField) ? object[m_playerQualityField].toString() : "hd";
+    m_playerJumpMinute = object.contains(m_playerJumpMinuteField) ? object[m_playerJumpMinuteField].toInt() : 1;
+    m_playerJumpSecond = object.contains(m_playerJumpSecondField) ? object[m_playerJumpSecondField].toInt() : 0;
 
     if (m_textFont != "Default") changeFont(m_textFont);
 }

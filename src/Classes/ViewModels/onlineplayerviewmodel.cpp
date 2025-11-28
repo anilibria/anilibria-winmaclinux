@@ -168,6 +168,16 @@ void OnlinePlayerViewModel::setVideoSource(const QString &videoSource)
     emit videoSourceChanged();
 
     m_remotePlayer->broadcastCommand(m_videoSourceChangedCommand, innerVideoSource);
+
+    // reset duration and position to zero
+    m_videoPosition = 0;
+    m_videoDuration = 0;
+    m_displayVideoPosition = "00:00:00";
+    m_displayEndVideoPosition = "00:00:00";
+    emit videoPositionChanged();
+    emit videoDurationChanged();
+    emit displayVideoPositionChanged();
+    emit displayEndVideoPositionChanged();
 }
 
 void OnlinePlayerViewModel::setReleasePoster(const QString &releasePoster) noexcept

@@ -27,7 +27,7 @@ Page {
                 asynchronous: true
                 visible: applicationThemeViewModel.extensionsPageBackground.activated
                 fillMode: applicationThemeViewModel.extensionsPageBackground.activated ? applicationThemeViewModel.extensionsPageBackground.imageMode : Image.Pad
-                source: applicationThemeViewModel.extensionsPageBackground.activated ? applicationThemeViewModel.extensionsPageBackground.url : 'http://lala12121.com'
+                source: applicationThemeViewModel.extensionsPageBackground.activated ? applicationThemeViewModel.extensionsPageBackground.url : ''
                 opacity: applicationThemeViewModel.extensionsPageBackground.activated ? applicationThemeViewModel.extensionsPageBackground.opacity / 100 : 1
                 horizontalAlignment: applicationThemeViewModel.extensionsPageBackground.activated ? applicationThemeViewModel.extensionsPageBackground.halign : Image.AlignLeft
                 verticalAlignment: applicationThemeViewModel.extensionsPageBackground.activated ? applicationThemeViewModel.extensionsPageBackground.valign : Image.AlignTop

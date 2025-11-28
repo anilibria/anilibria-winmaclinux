@@ -105,10 +105,9 @@ Page {
         _page.forceActiveFocus();
         if (onlinePlayerViewModel.showEmbeddedVideoWindow) onlinePlayerViewModel.showEmbeddedVideoWindow = false;
         onlinePlayerViewModel.isFromNavigated = true;
-        const userSettings = JSON.parse(localStorage.getUserSettings());
-        playerLoader.item.volume = userSettings.volume < 1 ? 50 : userSettings.volume;
-        jumpMinuteComboBox.currentIndex = onlinePlayerViewModel.jumpMinutes.indexOf(userSettings.jumpMinute);
-        jumpSecondComboBox.currentIndex = onlinePlayerViewModel.jumpSeconds.indexOf(userSettings.jumpSecond);
+        playerLoader.item.volume = userConfigurationViewModel.playerVolume;
+        jumpMinuteComboBox.currentIndex = onlinePlayerViewModel.jumpMinutes.indexOf(userConfigurationViewModel.playerJumpMinute);
+        jumpSecondComboBox.currentIndex = onlinePlayerViewModel.jumpSeconds.indexOf(userConfigurationViewModel.playerJumpSecond);
         remotePlayerPortComboBox.currentIndex = onlinePlayerViewModel.ports.indexOf(userConfigurationViewModel.remotePort);
 
         onlinePlayerViewModel.restoreLastRelease();
@@ -127,7 +126,7 @@ Page {
             anchors.fill: parent
             visible: applicationThemeViewModel.videoPlayerPageBackground.activated
             fillMode: applicationThemeViewModel.videoPlayerPageBackground.activated ? applicationThemeViewModel.videoPlayerPageBackground.imageMode : Image.Pad
-            source: applicationThemeViewModel.videoPlayerPageBackground.activated ? applicationThemeViewModel.videoPlayerPageBackground.url : 'http://lala12121.com'
+            source: applicationThemeViewModel.videoPlayerPageBackground.activated ? applicationThemeViewModel.videoPlayerPageBackground.url : ''
             opacity: applicationThemeViewModel.videoPlayerPageBackground.activated ? applicationThemeViewModel.videoPlayerPageBackground.opacity / 100 : 1
             horizontalAlignment: applicationThemeViewModel.videoPlayerPageBackground.activated ? applicationThemeViewModel.videoPlayerPageBackground.halign : Image.AlignLeft
             verticalAlignment: applicationThemeViewModel.videoPlayerPageBackground.activated ? applicationThemeViewModel.videoPlayerPageBackground.valign : Image.AlignTop
@@ -516,7 +515,7 @@ Page {
                         onButtonClicked: {
                             onlinePlayerViewModel.restorePosition = playerLoader.item.position;
                             onlinePlayerViewModel.changeVideoQuality(`fullhd`);
-                            localStorage.setVideoQuality(2);
+                            userConfigurationViewModel.playerQuality = `fullhd`;
                         }
                         onButtonAlreadyClicked: {
                             userConfigurationViewModel.hidedQuality = !userConfigurationViewModel.hidedQuality;
@@ -531,7 +530,7 @@ Page {
                         onButtonClicked: {
                             onlinePlayerViewModel.restorePosition = playerLoader.item.position;
                             onlinePlayerViewModel.changeVideoQuality(`hd`);
-                            localStorage.setVideoQuality(1);
+                            userConfigurationViewModel.playerQuality = `hd`;
                         }
                         onButtonAlreadyClicked: {
                             userConfigurationViewModel.hidedQuality = !userConfigurationViewModel.hidedQuality;
@@ -546,7 +545,7 @@ Page {
                         onButtonClicked: {
                             onlinePlayerViewModel.restorePosition = playerLoader.item.position;
                             onlinePlayerViewModel.changeVideoQuality(`sd`);
-                            localStorage.setVideoQuality(0);
+                            userConfigurationViewModel.playerQuality = `sd`;
                         }
                         onButtonAlreadyClicked: {
                             userConfigurationViewModel.hidedQuality = !userConfigurationViewModel.hidedQuality;
@@ -720,7 +719,7 @@ Page {
                         to: 100
                         onPressedChanged: {
                             if (!pressed) {
-                                localStorage.setVolume(playerLoader.item.volume);
+                                userConfigurationViewModel.playerVolume = playerLoader.item.volume;
                             }
                             controlPanel.forceActiveFocus();
                         }
@@ -1126,7 +1125,7 @@ Page {
                                             }
                                         }
                                         onActivated: {
-                                            localStorage.setJumpMinute(onlinePlayerViewModel.jumpMinutes[index]);
+                                            userConfigurationViewModel.playerJumpMinute = onlinePlayerViewModel.jumpMinutes[index];
                                         }
                                     }
                                     CommonComboBox {
@@ -1157,7 +1156,7 @@ Page {
                                         }
 
                                         onActivated: {
-                                            localStorage.setJumpSecond(onlinePlayerViewModel.jumpSeconds[index]);
+                                            userConfigurationViewModel.playerJumpSecond = onlinePlayerViewModel.jumpSeconds[index];
                                         }
                                     }
                                 }
@@ -1430,7 +1429,7 @@ Page {
             anchors.fill: parent
             onPressed: {
                 const position = onlinePlayerViewModel.skipOpening();
-                if (onlinePlayerViewModel.restorePosition != 0) onlinePlayerViewModel.restorePosition = 0;
+                if (onlinePlayerViewModel.restorePosition !== 0) onlinePlayerViewModel.restorePosition = 0;
                 if (onlinePlayerViewModel.isFromNavigated) onlinePlayerViewModel.isFromNavigated = false;
                 playerLoader.item.seek(position);
             }
@@ -1460,7 +1459,7 @@ Page {
             enabled: skipEnding.visible
             anchors.fill: parent
             onPressed: {
-                if (onlinePlayerViewModel.restorePosition != 0) onlinePlayerViewModel.restorePosition = 0;
+                if (onlinePlayerViewModel.restorePosition !== 0) onlinePlayerViewModel.restorePosition = 0;
                 if (onlinePlayerViewModel.isFromNavigated) onlinePlayerViewModel.isFromNavigated = false;
 
                 onlinePlayerViewModel.nextVideo();
@@ -1474,7 +1473,7 @@ Page {
             if (userConfigurationViewModel.autoSkipOpening) {
                 if (onlinePlayerViewModel.displaySkipOpening && !onlinePlayerViewModel.endSkipOpening) {
                     const position = onlinePlayerViewModel.skipOpening();
-                    if (onlinePlayerViewModel.restorePosition != 0) onlinePlayerViewModel.restorePosition = 0;
+                    if (onlinePlayerViewModel.restorePosition !== 0) onlinePlayerViewModel.restorePosition = 0;
                     if (onlinePlayerViewModel.isFromNavigated) onlinePlayerViewModel.isFromNavigated = false;
                     playerLoader.item.seek(position);
                     notificationViewModel.sendInfoNotification(`Произошел автоматический пропуск опенинга`);
@@ -1489,7 +1488,7 @@ Page {
             if (!onlinePlayerViewModel.reachEnding) return;
 
             if (userConfigurationViewModel.autoSkipEnding) {
-                if (onlinePlayerViewModel.restorePosition != 0) onlinePlayerViewModel.restorePosition = 0;
+                if (onlinePlayerViewModel.restorePosition !== 0) onlinePlayerViewModel.restorePosition = 0;
                 if (onlinePlayerViewModel.isFromNavigated) onlinePlayerViewModel.isFromNavigated = false;
 
                 onlinePlayerViewModel.nextVideo();
@@ -1606,18 +1605,6 @@ Page {
 
     Component.onCompleted: {
         volumeSlider.value = playerLoader.item.volume;
-
-        const userSettings = JSON.parse(localStorage.getUserSettings());
-        switch (userSettings.quality) {
-            case 0:
-                onlinePlayerViewModel.videoQuality = "sd";
-                break;
-            case 1:
-                onlinePlayerViewModel.videoQuality = "hd";
-                break;
-            case 2:
-                onlinePlayerViewModel.videoQuality = "fullhd";
-                break;
-        }
+        onlinePlayerViewModel.videoQuality = userConfigurationViewModel.playerQuality;
     }
 }

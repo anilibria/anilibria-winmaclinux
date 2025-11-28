@@ -32,7 +32,7 @@ Page {
                 asynchronous: true
                 visible: applicationThemeViewModel.applicationsPageBackground.activated
                 fillMode: applicationThemeViewModel.applicationsPageBackground.activated ? applicationThemeViewModel.applicationsPageBackground.imageMode : Image.Pad
-                source: applicationThemeViewModel.applicationsPageBackground.activated ? applicationThemeViewModel.applicationsPageBackground.url : 'http://lala12121.com'
+                source: applicationThemeViewModel.applicationsPageBackground.activated ? applicationThemeViewModel.applicationsPageBackground.url : ''
                 opacity: applicationThemeViewModel.applicationsPageBackground.activated ? applicationThemeViewModel.applicationsPageBackground.opacity / 100 : 1
                 horizontalAlignment: applicationThemeViewModel.applicationsPageBackground.activated ? applicationThemeViewModel.applicationsPageBackground.halign : Image.AlignLeft
                 verticalAlignment: applicationThemeViewModel.applicationsPageBackground.activated ? applicationThemeViewModel.applicationsPageBackground.valign : Image.AlignTop

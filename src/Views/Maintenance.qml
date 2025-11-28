@@ -59,7 +59,7 @@ Page {
                         anchors.fill: parent
                         visible: applicationThemeViewModel.maintenancePageBackground.activated
                         fillMode: applicationThemeViewModel.maintenancePageBackground.activated ? applicationThemeViewModel.maintenancePageBackground.imageMode : Image.Pad
-                        source: applicationThemeViewModel.maintenancePageBackground.activated ? applicationThemeViewModel.maintenancePageBackground.url : 'http://lala12121.com'
+                        source: applicationThemeViewModel.maintenancePageBackground.activated ? applicationThemeViewModel.maintenancePageBackground.url : ''
                         opacity: applicationThemeViewModel.maintenancePageBackground.activated ? applicationThemeViewModel.maintenancePageBackground.opacity / 100 : 1
                         horizontalAlignment: applicationThemeViewModel.maintenancePageBackground.activated ? applicationThemeViewModel.maintenancePageBackground.halign : Image.AlignLeft
                         verticalAlignment: applicationThemeViewModel.maintenancePageBackground.activated ? applicationThemeViewModel.maintenancePageBackground.valign : Image.AlignTop
@@ -331,6 +331,9 @@ Page {
                                     ListElement {
                                         text: "Зеркало wtf"
                                     }
+                                    ListElement {
+                                        text: "Основной старый домен"
+                                    }
                                 }
 
 
@@ -343,6 +346,9 @@ Page {
                                     }
                                     if (userConfigurationViewModel.apiv2host === synchronizationServicev2.appMirrorWtfNextAPIServer) {
                                         serversComboBox.currentIndex = 2;
+                                    }
+                                    if (userConfigurationViewModel.apiv2host === synchronizationServicev2.mainOldNextAPIServer) {
+                                        serversComboBox.currentIndex = 3;
                                     }
                                 }
                             }
@@ -516,6 +522,9 @@ Page {
                                             break;
                                         case 2:
                                             userConfigurationViewModel.apiv2host = synchronizationServicev2.appMirrorWtfNextAPIServer;
+                                            break;
+                                        case 3:
+                                            userConfigurationViewModel.apiv2host = synchronizationServicev2.mainOldNextAPIServer;
                                             break;
                                     }
 
