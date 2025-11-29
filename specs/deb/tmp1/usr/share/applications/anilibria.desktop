@@ -1,7 +1,7 @@
 [Desktop Entry]
-Name=AniLibria
-Exec=/usr/bin/AniLibria
-Comment=AniLibria desktop client
+Name=AniLiberty
+Exec=/usr/bin/AniLiberty
+Comment=AniLiberty desktop client
 Icon=anilibria
 Type=Application
 Terminal=false
