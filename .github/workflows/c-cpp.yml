@@ -18,7 +18,7 @@ jobs:
     - name: configure cmake
       run: cmake -S src -B . -DCMAKE_BUILD_TYPE=Release -DANILIBERTY_LESS_68_QT=On
     - name: build cmake
-      run: cmake --build . --config Release --parallel
+      run: cmake --build . --parallel
     - name: copy to deb package
       run: mkdir specs/deb/tmp1/usr/bin; cp AniLiberty specs/deb/tmp1/usr/bin
     - name: build deb package
