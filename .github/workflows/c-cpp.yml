@@ -21,6 +21,7 @@ jobs:
       with:
         version: 6.9
         target: 'desktop'
+        modules: 'qtwebsockets'
     - name: configure cmake
       run: cmake -S src -B build
     - name: build cmake
