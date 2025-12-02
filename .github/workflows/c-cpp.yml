@@ -16,7 +16,7 @@ jobs:
     - name: apt get qt
       run: sudo apt-get install -y --no-install-recommends cmake libmpv-dev pkg-config cmake qt6-base-dev qt6-declarative-dev qt6-websockets-dev qt6-svg-dev libxkbcommon-dev qml6-module-*
     - name: configure cmake
-      run: cmake -S src -B . -DCMAKE_BUILD_TYPE=Release -DANILIBERTY_LESS_68_QT=On
+      run: cmake -S src -B . -DANILIBERTY_LESS_68_QT=On
     - name: build cmake
       run: cmake --build .
     - name: copy to deb package
