@@ -30,7 +30,7 @@ jobs:
           mkdir -p AppDir/usr/bin
           cp build/AniLiberty AppDir/usr/bin/
           cp appimage/AniLiberty.desktop AppDir/aniliberty.desktop
-          cp appimage/AniLiberty.png AppDir/aniliberty.png
+          cp appimage/AniLiberty.png AppDir/AniLiberty.png
     - name: Download and use appimagetool
       run: |
         wget -q -O appimagetool https://github.com/AppImage/appimagetool/releases/download/continuous/appimagetool-x86_64.AppImage
