@@ -24,12 +24,12 @@ jobs:
     - name: configure cmake
       run: cmake -S src -B build
     - name: build cmake
-      run: cmake --build build
+      run: cmake --build build -j$(nproc)
     - name: prepare AppDir
       run: |
           mkdir -p AppDir/usr/bin
           cp build/AniLiberty AppDir/usr/bin/
-          cp appimage/AniLiberty.desktop > AppDir/aniliberty.desktop
+          cp appimage/AniLiberty.desktop AppDir/aniliberty.desktop
           cp appimage/AniLiberty.png AppDir/aniliberty.png
     - name: Download and use appimagetool
       run: |
