@@ -31,6 +31,7 @@ jobs:
           cp build/AniLiberty AppDir/usr/bin/
           cp appimage/AniLiberty.desktop AppDir/aniliberty.desktop
           cp appimage/AniLiberty.png AppDir/AniLiberty.png
+          python3 appimagedeps.py
     - name: Download and use appimagetool
       run: |
         wget -q -O appimagetool https://github.com/AppImage/appimagetool/releases/download/continuous/appimagetool-x86_64.AppImage
@@ -44,7 +45,7 @@ jobs:
     - uses: actions/upload-artifact@v4
       with:
         name: deb-package
-        path: AniLiberty.AppImage
+        path: AniLiberty-x86_64.AppImage
 #  macosbuild:
 #    runs-on: macos-14
 #    steps:
