@@ -29,7 +29,7 @@ jobs:
       run: |
           mkdir -p AppDir/usr/bin
           cp build/AniLiberty AppDir/usr/bin/
-          echo "[Desktop Entry]\nName=AniLiberty\nExec=AniLiberty\nIcon=aniliberty\nType=Application" > AppDir/aniliberty.desktop
+          cp appimage/AniLiberty.desktop > AppDir/aniliberty.desktop
           cp appimage/AniLiberty.png AppDir/aniliberty.png
     - name: Download and use appimagetool
       run: |
