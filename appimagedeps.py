@@ -7,6 +7,7 @@ def get_dependencies(executable_path):
     try:
         output = subprocess.check_output(['ldd', executable_path], universal_newlines=True)
         for line in output.splitlines():
+            print(f"Line founded: {line}")
             parts = line.split()
             if len(parts) > 0 and '=> ' in line:
                 dependencies.append(parts[0])
