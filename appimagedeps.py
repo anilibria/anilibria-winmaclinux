@@ -7,10 +7,9 @@ def get_dependencies(executable_path):
     try:
         output = subprocess.check_output(['ldd', executable_path], universal_newlines=True)
         for line in output.splitlines():
-            print(f"Line founded: {line}")
-            parts = line.split()
-            if len(parts) > 0 and '=> ' in line:
-                dependencies.append(parts[0])
+            parts = line.split('=>')
+            if len(parts) > 1:
+                dependencies.append(parts[1].split('(')[0].strip())
     except subprocess.CalledProcessError as e:
         print(f"Error on ldd: {e}")
     return dependencies
