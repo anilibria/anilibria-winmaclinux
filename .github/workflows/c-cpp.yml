@@ -14,8 +14,7 @@ jobs:
     - name: apt-update
       run: sudo apt-get update -qq
     - name: apt get qt
-      run: sudo apt-get install cmake libmpv-dev pkg-config
-# qt6-base-dev qt6-declarative-dev qt6-websockets-dev qt6-svg-dev libxkbcommon-dev qml6-module-qt-labs-folderlistmodel qml6-module-qt-labs-platform qml6-module-qtcore qml6-module-qtqml qml6-module-qtqml-models qml6-module-qtquick qml6-module-qtquick-controls qml6-module-qtquick-dialogs qml6-module-qtquick-layouts qml6-module-qtquick-particles qml6-module-qtquick-window 
+      run: sudo apt-get install cmake build-essential libmpv-dev pkg-config
     - name: Install Qt dependencies
       uses: jurplel/install-qt-action@v4
       with:
@@ -26,18 +25,26 @@ jobs:
       run: cmake -S src -B build
     - name: build cmake
       run: cmake --build build
-    - name: copy to deb package
-      run: mkdir specs/deb/tmp1/usr/bin; cp build/AniLiberty specs/deb/tmp1/usr/bin
-    - name: build deb package
-      run: dpkg-deb -b specs/deb/tmp1 anilibria_amd64.deb
+    - name: prepare AppDir
+      run: |
+          mkdir -p AppDir/usr/bin
+          cp build/AniLiberty AppDir/usr/bin/
+          echo "[Desktop Entry]\nName=AniLiberty\nExec=AniLiberty\nIcon=aniliberty\nType=Application" > AppDir/aniliberty.desktop
+          cp appimage/AniLiberty.png AppDir/aniliberty.png
+    - name: Download and use appimagetool
+      run: |
+        wget -q -O appimagetool https://github.com/AppImage/appimagetool/releases/download/continuous/appimagetool-x86_64.AppImage
+        chmod +x appimagetool
+        ./appimagetool AppDir/
+    #- name: copy to deb package
+    #  run: mkdir specs/deb/tmp1/usr/bin; cp build/AniLiberty specs/deb/tmp1/usr/bin
+    #- name: build deb package
+    #  run: dpkg-deb -b specs/deb/tmp1 anilibria_amd64.deb
+    
     - uses: actions/upload-artifact@v4
       with:
         name: deb-package
-        path: anilibria_amd64.deb      
-    - uses: actions/upload-artifact@v4
-      with:
-        name: piz-package
-        path: build/AniLiberty
+        path: AniLiberty.AppImage
 #  macosbuild:
 #    runs-on: macos-14
 #    steps:
