@@ -31,7 +31,7 @@ jobs:
           cp build/AniLiberty AppDir/usr/bin/
           cp appimage/AniLiberty.desktop AppDir/AniLiberty.desktop
           cp appimage/AniLiberty.png AppDir/AniLiberty.png
-	  chmod +x appimage/AppRun
+          chmod +x appimage/AppRun
           cp appimage/AppRun AppDir/AppRun
           python3 appimagedeps.py
     - name: Download and use appimagetool
