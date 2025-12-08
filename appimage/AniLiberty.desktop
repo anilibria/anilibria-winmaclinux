@@ -1,7 +1,7 @@
 [Desktop Entry]
 Name=AniLiberty
 Comment=AniLiberty desktop client
-Exec=/usr/bin/AniLiberty
+Exec=AniLiberty
 Icon=AniLiberty
 Type=Application
 Terminal=false

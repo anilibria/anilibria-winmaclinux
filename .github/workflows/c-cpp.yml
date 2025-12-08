@@ -29,19 +29,15 @@ jobs:
       run: |
           mkdir -p AppDir/usr/bin
           cp build/AniLiberty AppDir/usr/bin/
-          cp appimage/AniLiberty.desktop AppDir/aniliberty.desktop
+          cp appimage/AniLiberty.desktop AppDir/AniLiberty.desktop
           cp appimage/AniLiberty.png AppDir/AniLiberty.png
+          cp appimage/AppRun AppDir/AppRun
           python3 appimagedeps.py
     - name: Download and use appimagetool
       run: |
         wget -q -O appimagetool https://github.com/AppImage/appimagetool/releases/download/continuous/appimagetool-x86_64.AppImage
         chmod +x appimagetool
         ./appimagetool AppDir/
-    #- name: copy to deb package
-    #  run: mkdir specs/deb/tmp1/usr/bin; cp build/AniLiberty specs/deb/tmp1/usr/bin
-    #- name: build deb package
-    #  run: dpkg-deb -b specs/deb/tmp1 anilibria_amd64.deb
-    
     - uses: actions/upload-artifact@v4
       with:
         name: deb-package
