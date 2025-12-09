@@ -27,7 +27,7 @@ jobs:
       run: cmake --build build -j$(nproc)
     - name: prepare AppDir
       run: |
-          patchelf --set-rpath "\$ORIGIN/usr/lib" build/AniLiberty
+          patchelf --set-rpath '$ORIGIN/usr/lib' build/AniLiberty
           mkdir -p AppDir/usr/bin
           cp build/AniLiberty AppDir/usr/bin/
           cp appimage/AniLiberty.desktop AppDir/AniLiberty.desktop
