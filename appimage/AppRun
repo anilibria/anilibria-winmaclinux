@@ -1,5 +1,9 @@
 #!/bin/sh
 
-CURRENTDIR="$(readlink -f "$(dirname "$0")")"
+#CURRENTDIR="$(readlink -f "$(dirname "$0")")"
+
+HERE="$(dirname "$(readlink -f "$0")")"
+export LD_LIBRARY_PATH="${HERE}/usr/lib:${LD_LIBRARY_PATH}"
+# export QT_PLUGIN_PATH="${HERE}/usr/lib/plugins"
 
 exec "$CURRENTDIR"/usr/bin/AniLiberty "$@"
