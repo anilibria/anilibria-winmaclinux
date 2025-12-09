@@ -27,7 +27,7 @@ jobs:
       run: cmake --build build -j$(nproc)
     - name: test dir
       run: |
-        ls Qt/6.9.3/gcc_64
+        ls
     - name: prepare AppDir
       run: |
           patchelf --set-rpath '$ORIGIN/usr/lib' build/AniLiberty
