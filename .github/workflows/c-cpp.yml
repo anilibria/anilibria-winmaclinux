@@ -28,6 +28,7 @@ jobs:
     - name: test dir
       run: |
         ls
+        pwd
     - name: prepare AppDir
       run: |
           patchelf --set-rpath '$ORIGIN/usr/lib' build/AniLiberty
