@@ -38,6 +38,12 @@ jobs:
           chmod +x appimage/AppRun
           cp appimage/AppRun AppDir/AppRun
           python3 appimagedeps.py
+          mkdir AppDir/usr/plugins
+          cp -r ../Qt/6.9.*/gcc_64/plugins/platforms AppDir/usr/plugins
+          cp -r ../Qt/6.9.*/gcc_64/plugins/imageformats AppDir/usr/plugins
+          cp -r ../Qt/6.9.*/gcc_64/plugins/iconengines AppDir/usr/plugins
+          cp -r ../Qt/6.9.*/gcc_64/plugins/platformthemes AppDir/usr/plugins
+          cp -r ../Qt/6.9.*/gcc_64/plugins/qmlls AppDir/usr/plugins
     - name: Download and use appimagetool
       run: |
         wget -q -O appimagetool https://github.com/AppImage/appimagetool/releases/download/continuous/appimagetool-x86_64.AppImage
