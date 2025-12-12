@@ -6,5 +6,6 @@
 HERE="$(dirname "$(readlink -f "$0")")"
 export LD_LIBRARY_PATH="${HERE}/usr/lib:${LD_LIBRARY_PATH}"
 export QT_PLUGIN_PATH="${HERE}/usr/lib/plugins"
+export QT_QPA_PLATFORM_PLUGIN_PATH="${HERE}/usr/lib/plugins"
 
 exec "${HERE}/usr/bin/AniLiberty" "$@"
