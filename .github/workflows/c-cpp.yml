@@ -38,6 +38,7 @@ jobs:
           chmod +x appimage/AppRun
           cp appimage/AppRun AppDir/AppRun
           python3 appimagedeps.py
+          cp -r ../Qt/6.9.*/gcc_64/plugins/designer AppDir/usr/lib/plugins
           cp -r ../Qt/6.9.*/gcc_64/plugins/generic AppDir/usr/lib/plugins
           cp -r ../Qt/6.9.*/gcc_64/plugins/platforms AppDir/usr/lib/plugins
           cp -r ../Qt/6.9.*/gcc_64/plugins/imageformats AppDir/usr/lib/plugins
