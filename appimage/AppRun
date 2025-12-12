@@ -3,7 +3,7 @@
 #CURRENTDIR="$(readlink -f "$(dirname "$0")")"
 #exec "$CURRENTDIR"/usr/bin/AniLiberty "$@"
 
-HERE="$(dirname "$(readlink -f "$0")")"
+$HERE="$(dirname "$(readlink -f "$0")")"
 export LD_LIBRARY_PATH="${HERE}/usr/lib:${LD_LIBRARY_PATH}"
 export QT_PLUGIN_PATH="${HERE}/usr/lib/plugins"
 export QT_QPA_PLATFORM_PLUGIN_PATH="${HERE}/usr/lib/plugins/platforms"
