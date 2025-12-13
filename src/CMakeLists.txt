@@ -132,6 +132,11 @@ if (NOT ANILIBERTY_LESS_68_QT)
     qt_policy(SET QTP0004 NEW)
 endif()
 
+set_source_files_properties(Controls/forqt6/SystemColorDialog.qml PROPERTIES QT_RESOURCE_ALIAS "Controls/SystemColorDialog.qml")
+set_source_files_properties(Controls/forqt6/SystemOpenFileDialog.qml PROPERTIES QT_RESOURCE_ALIAS "Controls/SystemOpenFileDialog.qml")
+set_source_files_properties(Controls/forqt6/SystemOpenFolderDialog.qml PROPERTIES QT_RESOURCE_ALIAS "Controls/SystemOpenFolderDialog.qml")
+set_source_files_properties(Controls/forqt6/SystemSaveFileDialog.qml PROPERTIES QT_RESOURCE_ALIAS "Controls/SystemSaveFileDialog.qml")
+
 qt_add_qml_module(AniLiberty
     URI aniliberty
     VERSION 1.0
