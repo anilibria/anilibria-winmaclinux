@@ -38,15 +38,22 @@ jobs:
           chmod +x appimage/AppRun
           cp appimage/AppRun AppDir/AppRun
           python3 appimagedeps.py
-          mkdir AppDir/usr/plugins
-          cp -r ../Qt/6.9.*/gcc_64/plugins/platforms AppDir/usr/lib/plugins
+          cp -r ../Qt/6.9.*/gcc_64/plugins/designer AppDir/usr/lib/plugins
           cp -r ../Qt/6.9.*/gcc_64/plugins/generic AppDir/usr/lib/plugins
+          cp -r ../Qt/6.9.*/gcc_64/plugins/platforms AppDir/usr/lib/plugins
           cp -r ../Qt/6.9.*/gcc_64/plugins/imageformats AppDir/usr/lib/plugins
           cp -r ../Qt/6.9.*/gcc_64/plugins/iconengines AppDir/usr/lib/plugins
           cp -r ../Qt/6.9.*/gcc_64/plugins/platformthemes AppDir/usr/lib/plugins
           cp -r ../Qt/6.9.*/gcc_64/plugins/qmlls AppDir/usr/lib/plugins
           cp -r ../Qt/6.9.*/gcc_64/plugins/tls AppDir/usr/lib/plugins
           cp -r ../Qt/6.9.*/gcc_64/plugins/qmllint AppDir/usr/lib/plugins
+          cp -r ../Qt/6.9.*/gcc_64/plugins/wayland-graphics-integration-client AppDir/usr/lib/plugins
+          cp -r ../Qt/6.9.*/gcc_64/plugins/wayland-decoration-client AppDir/usr/lib/plugins
+          cp -r ../Qt/6.9.*/gcc_64/plugins/wayland-shell-integration AppDir/usr/lib/plugins
+          cp -r ../Qt/6.9.*/gcc_64/plugins/xcbglintegrations AppDir/usr/lib/plugins
+          cp -r ../Qt/6.9.*/gcc_64/plugins/egldeviceintegrations AppDir/usr/lib/plugins
+          cp -r ../Qt/6.9.*/gcc_64/plugins/platforminputcontexts AppDir/usr/lib/plugins
+          cp -r ../Qt/6.9.*/gcc_64/plugins/networkinformation AppDir/usr/lib/plugins
     - name: Download and use appimagetool
       run: |
         wget -q -O appimagetool https://github.com/AppImage/appimagetool/releases/download/continuous/appimagetool-x86_64.AppImage
@@ -56,6 +63,10 @@ jobs:
       with:
         name: deb-package
         path: AniLiberty-x86_64.AppImage
+    - uses: actions/upload-artifact@v4
+      with:
+        name: appdircontent
+        path: AppDir
 #  macosbuild:
 #    runs-on: macos-14
 #    steps:
