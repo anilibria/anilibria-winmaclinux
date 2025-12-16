@@ -30,6 +30,7 @@ jobs:
         ls ../Qt/6.9.*/gcc_64/plugins
     - name: prepare AppDir
       run: |
+          [ -d "AppDir" ] && rm -rf "AppDir"
           patchelf --set-rpath '$ORIGIN/usr/lib' build/AniLiberty
           mkdir -p AppDir/usr/bin
           cp build/AniLiberty AppDir/usr/bin/
