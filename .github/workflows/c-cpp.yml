@@ -24,7 +24,7 @@ jobs:
     - name: test qml dir
       run: |
         ls
-        cat src/Views/Releases.qml
+        tail -n 150 src/Views/Releases.qml
     - name: configure cmake
       run: cmake -S src -B build
     - name: build cmake
