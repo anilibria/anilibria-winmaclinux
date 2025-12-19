@@ -24,6 +24,7 @@
 #include <QQuickStyle>
 #include <QQmlFileSelector>
 #include <QQuickWindow>
+#include <QDebug>
 #include "Classes/Services/localstorageservice.h"
 #include "Classes/Services/applicationsettings.h"
 #include "Classes/Services/analyticsservice.h"
@@ -118,6 +119,8 @@ int main(int argc, char *argv[])
     if (isNeedLogging) qInstallMessageHandler(myMessageOutput);
 
     qputenv("QML_DISABLE_DISK_CACHE", "1");
+
+    qDebug() << "Aniliberty application";
 
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
     QQuickWindow::setGraphicsApi(QSGRendererInterface::OpenGL);
