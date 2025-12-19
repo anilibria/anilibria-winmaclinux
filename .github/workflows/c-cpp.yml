@@ -55,6 +55,11 @@ jobs:
           cp -r ../Qt/6.9.*/gcc_64/plugins/egldeviceintegrations AppDir/usr/lib/plugins
           cp -r ../Qt/6.9.*/gcc_64/plugins/platforminputcontexts AppDir/usr/lib/plugins
           cp -r ../Qt/6.9.*/gcc_64/plugins/networkinformation AppDir/usr/lib/plugins
+          cp -r ../Qt/6.9.*/gcc_64/qml/QML AppDir/usr/lib/qml
+          cp -r ../Qt/6.9.*/gcc_64/qml/Qt AppDir/usr/lib/qml
+          cp -r ../Qt/6.9.*/gcc_64/qml/QtQml AppDir/usr/lib/qml
+          cp -r ../Qt/6.9.*/gcc_64/qml/QtQuick AppDir/usr/lib/qml
+          cp -r ../Qt/6.9.*/gcc_64/qml/QtWayland AppDir/usr/lib/qml          
     - name: Download and use appimagetool
       run: |
         wget -q -O appimagetool https://github.com/AppImage/appimagetool/releases/download/continuous/appimagetool-x86_64.AppImage
