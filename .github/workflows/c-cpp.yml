@@ -27,7 +27,9 @@ jobs:
       run: cmake --build build -j$(nproc)
     - name: test dir
       run: |
-        ls ../Qt/6.9.*/gcc_64/plugins
+        ls ../Qt/6.9.*/gcc_64/
+    - name: try app
+      run: build/AniLiberty testrun
     - name: prepare AppDir
       run: |
           [ -d "AppDir" ] && rm -rf "AppDir"
