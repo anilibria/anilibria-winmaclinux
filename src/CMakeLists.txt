@@ -213,7 +213,7 @@ qt_add_qml_module(AniLiberty
         Controls/ToggleButton.qml
         Controls/TooltipedImage.qml
         Controls/Qt6SystemColorDialog.qml
-        Controls/Qt6SystemOpenFileDialog.qml
+        #Controls/Qt6SystemOpenFileDialog.qml
         Controls/Qt6SystemOpenFolderDialog.qml
         Controls/Qt6SystemSaveFileDialog.qml
         Controls/InfoAboutTorrentStream.qml
