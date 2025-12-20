@@ -21,6 +21,10 @@ jobs:
         version: 6.9
         target: 'desktop'
         modules: 'qtwebsockets'
+    - name: test qml dir
+      run: |
+        ls
+        tail -n 150 src/Views/Releases.qml
     - name: configure cmake
       run: cmake -S src -B build
     - name: build cmake
