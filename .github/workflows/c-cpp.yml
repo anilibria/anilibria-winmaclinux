@@ -14,7 +14,7 @@ jobs:
     - name: apt-update
       run: sudo apt-get update -qq
     - name: apt get dependencies
-      run: sudo apt-get install cmake build-essential libmpv-dev pkg-config
+      run: sudo apt-get install cmake build-essential libmpv-dev pkg-config libxcb-cursor0
     - name: Install Qt dependencies
       uses: jurplel/install-qt-action@v4
       with:
@@ -43,6 +43,7 @@ jobs:
           chmod +x appimage/AppRun
           cp appimage/AppRun AppDir/AppRun
           python3 appimagedeps.py
+          cp /lib/x86_64-linux-gnu/libxcb-cursor.so.0 AppDir/usr/lib
           cp -r ../Qt/6.9.*/gcc_64/plugins/designer AppDir/usr/lib/plugins
           cp -r ../Qt/6.9.*/gcc_64/plugins/generic AppDir/usr/lib/plugins
           cp -r ../Qt/6.9.*/gcc_64/plugins/platforms AppDir/usr/lib/plugins
