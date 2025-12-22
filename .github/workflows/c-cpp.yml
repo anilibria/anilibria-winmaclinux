@@ -42,7 +42,6 @@ jobs:
           cp appimage/AniLiberty.png AppDir/AniLiberty.png
           chmod +x appimage/AppRun
           cp appimage/AppRun AppDir/AppRun
-          python3 appimagedeps.py
           cp -r ../Qt/6.9.*/gcc_64/plugins/designer AppDir/usr/lib/plugins
           cp -r ../Qt/6.9.*/gcc_64/plugins/generic AppDir/usr/lib/plugins
           cp -r ../Qt/6.9.*/gcc_64/plugins/platforms AppDir/usr/lib/plugins
@@ -63,7 +62,8 @@ jobs:
           cp -r ../Qt/6.9.*/gcc_64/qml/Qt AppDir/usr/lib/qml
           cp -r ../Qt/6.9.*/gcc_64/qml/QtQml AppDir/usr/lib/qml
           cp -r ../Qt/6.9.*/gcc_64/qml/QtQuick AppDir/usr/lib/qml
-          cp -r ../Qt/6.9.*/gcc_64/qml/QtWayland AppDir/usr/lib/qml          
+          cp -r ../Qt/6.9.*/gcc_64/qml/QtWayland AppDir/usr/lib/qml
+          python3 appimagedeps.py
     - name: Download and use appimagetool
       run: |
         wget -q -O appimagetool https://github.com/AppImage/appimagetool/releases/download/continuous/appimagetool-x86_64.AppImage

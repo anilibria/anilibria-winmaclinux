@@ -30,6 +30,10 @@ def main():
     target_dir = 'AppDir/usr/lib'
 
     dependencies = get_dependencies(executable_path)
+    xcbDependencies = get_dependencies('AppDir/usr/lib/plugins/platforms/libqxcb.so')
+    dependencies.expand(xcbDependencies)
+    waylandDependencies = get_dependencies('AppDir/usr/lib/plugins/platforms/libqwayland-generic.so')
+    dependencies.expand(waylandDependencies)
     print(f"Founed dependencies: {dependencies}")
     
     copy_dependencies(dependencies, target_dir)
