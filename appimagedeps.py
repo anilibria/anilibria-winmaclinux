@@ -34,6 +34,8 @@ def main():
     dependencies.extend(xcbDependencies)
     waylandDependencies = get_dependencies('AppDir/usr/lib/plugins/platforms/libqwayland-generic.so')
     dependencies.extend(waylandDependencies)
+    libqtquickcontrols2pluginDependencies = get_dependencies('AppDir/usr/lib/qml/QtQuick/Controls/libqtquickcontrols2plugin.so')
+    dependencies.extend(libqtquickcontrols2pluginDependencies)
     print(f"Founed dependencies: {dependencies}")
     
     copy_dependencies(dependencies, target_dir)
