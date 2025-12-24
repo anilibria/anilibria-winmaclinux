@@ -40,6 +40,8 @@ def main():
     dependencies.extend(libqtquickcontrols2pluginDependencies)
     libqtquickcontrols2materialstylepluginDependencies = get_dependencies('AppDir/usr/lib/qml/QtQuick/Controls/Material/libqtquickcontrols2materialstyleplugin.so')
     dependencies.extend(libqtquickcontrols2materialstylepluginDependencies)
+    libqtquickcontrols2basicstylepluginDependencies = get_dependencies('AppDir/usr/lib/qml/QtQuick/Controls/Basic/libqtquickcontrols2basicstyleplugin.so')
+    dependencies.extend(libqtquickcontrols2basicstylepluginDependencies)
     print(f"Founed dependencies: {dependencies}")
     
     copy_dependencies(dependencies, target_dir)
