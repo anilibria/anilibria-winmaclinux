@@ -44,6 +44,8 @@ def main():
     dependencies.extend(libqtquickcontrols2basicstylepluginDependencies)
     libparticlespluginDependencies = get_dependencies('AppDir/usr/lib/qml/QtQuick/Particles/libparticlesplugin.so')
     dependencies.extend(libparticlespluginDependencies)
+    libqtquickdialogspluginDependencies = get_dependencies('AppDir/usr/lib/qml/QtQuick/Dialogs/libqtquickdialogsplugin.so')
+    dependencies.extend(libqtquickdialogspluginDependencies)    
     print(f"Founed dependencies: {dependencies}")
     
     copy_dependencies(dependencies, target_dir)
