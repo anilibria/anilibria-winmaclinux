@@ -1,5 +1,5 @@
 #include "osextras.h"
-#include "../globalhelpers.h"
+#include "globalhelpers.h"
 #include <QString>
 #include <QDebug>
 #include <QThread>
