@@ -111,7 +111,7 @@ $ flatpak install --user anilibria.flatpak
 [Steam Deck](https://github.com/JerzyEx/anilibria_at_steamdeck)
 
 ### Для сборки необходимо:
-Поддерживаются две версии Qt6 и Qt5. Рекомендовано собирать на Qt6 потому что Qt5 
+Поддерживаются две версии Qt6 и Qt5. Рекомендовано собирать на Qt6 потому что Qt5 скоро перестанет поддерживаться
 - Для Qt6 минимальная поддерживаемая версия 6.4. Для Qt5 минимальная поддерживаемая версия Qt 5.15.2.
 - Для Qt6 минимальная версия C++20. Для Qt5 минимальная версия C++14.
 - Модули Qt - multimedia, graphicaleffects, svg, websocket, particleeffects

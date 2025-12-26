@@ -37,11 +37,12 @@ jobs:
           [ -d "AppDir" ] && rm -rf "AppDir"
           patchelf --set-rpath '$ORIGIN/usr/lib' build/AniLiberty
           mkdir -p AppDir/usr/bin
+          mkdir -p AppDir/usr/lib/plugins
           cp build/AniLiberty AppDir/usr/bin/
           cp appimage/AniLiberty.desktop AppDir/AniLiberty.desktop
           cp appimage/AniLiberty.png AppDir/AniLiberty.png
           chmod +x appimage/AppRun
-          cp appimage/AppRun AppDir/AppRun
+          cp appimage/AppRun AppDir/AppRun          
           cp -r ../Qt/6.9.*/gcc_64/plugins/designer AppDir/usr/lib/plugins
           cp -r ../Qt/6.9.*/gcc_64/plugins/generic AppDir/usr/lib/plugins
           cp -r ../Qt/6.9.*/gcc_64/plugins/platforms AppDir/usr/lib/plugins
