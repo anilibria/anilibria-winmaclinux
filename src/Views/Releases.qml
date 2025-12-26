@@ -136,6 +136,45 @@ Page {
                                 synchronizeMenu.close();
                             }
                         }
+                        CommonMenuItem {
+                            text: "Синхронизация типов"
+                            enabled: osExtras.localCacheCheckerConnected
+                            onPressed: {
+                                osExtras.synchronizeRoutine();
+                                synchronizeMenu.close();
+                            }
+                        }
+                        CommonMenuItem {
+                            text: "Синхронизация последних изменений"
+                            enabled: osExtras.localCacheCheckerConnected
+                            onPressed: {
+                                osExtras.synchronizeChanges();
+                                synchronizeMenu.close();
+                            }
+                        }
+                        CommonMenuItem {
+                            text: "Синхронизация последних релизов"
+                            enabled: osExtras.localCacheCheckerConnected
+                            onPressed: {
+                                osExtras.synchronizeLatest();
+                                synchronizeMenu.close();
+                            }
+                        }
+                        CommonMenuItem {
+                            text: "Синхронизация всех релизов"
+                            enabled: osExtras.localCacheCheckerConnected
+                            onPressed: {
+                                osExtras.synchronizeLatest();
+                                synchronizeMenu.close();
+                            }
+                        }
+                        /*CommonMenuItem {
+                            text: "Синхронизация постеров"
+                            onPressed: {
+                                osExtras.synchronizeLatest();
+                                synchronizeMenu.close();
+                            }
+                        }*/
                     }
                 }
 

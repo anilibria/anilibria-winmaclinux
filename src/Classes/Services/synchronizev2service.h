@@ -31,12 +31,14 @@ class Synchronizev2Service : public QObject
     Q_PROPERTY(QString tsCurrentVersion READ tsCurrentVersion NOTIFY tsCurrentVersionChanged FINAL)
     Q_PROPERTY(QString tsNewVersion READ tsNewVersion NOTIFY tsNewVersionChanged FINAL)
     Q_PROPERTY(bool notInstalledTorrentStream READ notInstalledTorrentStream NOTIFY notInstalledTorrentStreamChanged FINAL)
+    Q_PROPERTY(QString pathToLCCLibrary READ pathToLCCLibrary NOTIFY pathToLCCLibraryChanged FINAL)
 
 private:
     QString m_apiv2host { "" };
     QString m_cachehost { "" };
     QString m_libraryCacheHost { "" };
     QString m_newVersionFileHost { "" };
+    QString m_newVersionLCCFileHost { "" };
     bool m_cacheHostIsFolder { false };
     QNetworkAccessManager* m_networkManager { new QNetworkAccessManager(this) };
     QMap<QString, QString> m_pendingRequests { QMap<QString, QString>() };
@@ -64,7 +66,9 @@ private:
     const QString m_addToCollectionRequest { "addtocollection" };
     const QString m_removeFromCollectionRequest { "removefromcollection" };
     const QString m_checkVersionTorrentStream { "checkVersionTorrentStream" };
+    const QString m_checkVersionLocalChecker { "checkVersionLocalChecker" };
     const QString m_downloadTorrentStreamLibraryRequest { "downloadTorrentStreamLibrary" };
+    const QString m_downloadLocalCacheCheckerLibraryRequest { "downloadLocalCacheCheckerLibrary" };
     bool m_isAuhorized { false };
     QString m_nickName { "" };
     QString m_avatar { "" };
@@ -92,6 +96,9 @@ private:
     QString m_savedTorrentStreamNewVersion { "" };
     QString m_pathToTSLibrary { "" };
     QString m_pathToTSContent { "" };
+    QString m_savedLCCVersion { "" };
+    QString m_savedLCCNewVersion { "" };
+    QString m_pathToLCCLibrary { "" };
 
 public:
     explicit Synchronizev2Service(QObject *parent = nullptr);
@@ -147,6 +154,8 @@ public:
 
     QString tsNewVersion() const noexcept { return m_savedTorrentStreamNewVersion; }
 
+    QString pathToLCCLibrary() const noexcept { return m_pathToLCCLibrary; }
+
     bool notInstalledTorrentStream() const noexcept { return m_savedTorrentStreamVersion.isEmpty() && m_savedTorrentStreamNewVersion.isEmpty(); }
 
     QMap<int, QString>&& getLocalCollections();
@@ -171,8 +180,11 @@ public:
     Q_INVOKABLE void addReleasesToCollection(QList<int> releaseIds, const QString& collectionId);
     Q_INVOKABLE void removeReleasesFromCollection(QList<int> releaseIds);
     Q_INVOKABLE void checkVersionTorrentStreamLibrary();
+    Q_INVOKABLE void checkVersionLocalCheckerLibrary();
     Q_INVOKABLE void downloadTorrentStreamLibrary(const QString& path);
+    Q_INVOKABLE void downloadLocalCacheCheckerLibrary(const QString& path);
     Q_INVOKABLE void installNewTsVersion();
+    Q_INVOKABLE void installNewLccVersion();
 
     void timerEvent(QTimerEvent *event) override;
 
@@ -205,11 +217,15 @@ private:
     void userSeenSynchronizationHandler(QNetworkReply* reply) noexcept;
     void userCollectionSynchronizeHandler(QNetworkReply* reply) noexcept;
     void torrentStreamNewVersionHandler(QNetworkReply* reply) noexcept;
+    void localCheckerNewVersionHandler(QNetworkReply* reply) noexcept;
     void downloadTorrentStreamLibraryHandler(QNetworkReply* reply) noexcept;
+    void downloadLocalCacheCheckerLibraryHandler(QNetworkReply* reply) noexcept;
     void loadLibraryData() noexcept;
     void saveLibraryData() noexcept;
     void installTorrentStreamNewVersion() noexcept;
+    void installLocalCacheCheckerNewVersion() noexcept;
     QString getTorrentStreamFileName() noexcept;
+    QString getLocalCacheCheckerFileName() noexcept;
 
 private slots:
     void requestFinished(QNetworkReply* reply);
@@ -256,9 +272,12 @@ signals:
     void pathToTSContentChanged();
     void tsCurrentVersionChanged();
     void tsNewVersionChanged();
+    void lccNewVersionChanged();
     void notInstalledTorrentStreamChanged();
+    void notInstalledLocalCacheCheckerChanged();
     void tsWasFirstlyInstalled();
     void mainOldNextAPIServerChanged();
+    void pathToLCCLibraryChanged();
 
 };
 

@@ -18,6 +18,9 @@ typedef void (CORECLR_DELEGATE_CALLTYPE *startTorrentDownloadCallback)(int id, w
 class OsExtras : public QObject
 {
     Q_OBJECT
+
+    Q_PROPERTY(bool localCacheCheckerConnected READ localCacheCheckerConnected NOTIFY localCacheCheckerConnectedChanged FINAL)
+
 private:
     typedef int (CORECLR_DELEGATE_CALLTYPE* torrentstreaminitializemethod)(int port, wchar_t* downloadPath, wchar_t* listenAddress, bool showui, connectedCallback callback);
     torrentstreaminitializemethod torrentStreamInitialize = nullptr;
@@ -43,6 +46,15 @@ private:
     typedef void (CORECLR_DELEGATE_CALLTYPE* torrentstreamstartdownload)(int id, wchar_t* path, startTorrentDownloadCallback callback);
     torrentstreamstartdownload torrentstreamStartDownload = nullptr;
 
+    void* m_LocalCacheChecker { nullptr };
+
+    bool m_startedSynchronization { false };
+    int32_t m_synchronizationReleases { 0 };
+
+    bool m_localCacheCheckerConnected { false };
+
+    bool localCacheCheckerConnected() const noexcept { return m_localCacheCheckerConnected; }
+
 public:
     explicit OsExtras(QObject *parent = nullptr);
 
@@ -57,6 +69,11 @@ public:
     Q_INVOKABLE void startPreventSleepMode();
     Q_INVOKABLE void stopPreventSleepMode();
     Q_INVOKABLE bool initializeTorrentStream(int port, const QString& pathToLibrary, const QString& downloadPath, const QString& listenAddress, bool showui);
+    Q_INVOKABLE bool initializeLocalCacheChecker(const QString& pathToLibrary);
+    Q_INVOKABLE void synchronizeRoutine();
+    Q_INVOKABLE void synchronizeChanges();
+    Q_INVOKABLE void synchronizeLatest();
+    Q_INVOKABLE void synchronizeAllReleases();
     Q_INVOKABLE void deinitializeTorrentStream() noexcept;
     Q_INVOKABLE void tsClearAll() noexcept;
     Q_INVOKABLE void tsClearOnlyTorrent(const QString& downloadPath) noexcept;
@@ -73,11 +90,17 @@ public slots:
     void callbackConnected();
     void callbackRefresh(bool isResult);
     void callbackStartDownload(int id, const QString& path, bool isAdded);
+    void synchronizationFinished(bool completed);
+    void rountineFinished(bool completed);
+    void synchronizationLatestChanges(int32_t percent, int32_t processesReleases);
 
 signals:
     void torrentStreamConnected();
     void torrentStreamRefreshed(bool isResult);
     void torrentStreamStartDownload(int id, const QString& path, bool isAdded);
+    void synchronizationRoutine(bool completed);
+    void needReloadReleases();
+    void localCacheCheckerConnectedChanged();
 };
 
 static void CORECLR_DELEGATE_CALLTYPE callbackConnectedExternal() {

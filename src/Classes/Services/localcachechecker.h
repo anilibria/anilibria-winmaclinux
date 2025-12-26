@@ -18,15 +18,12 @@
 #endif
 
 typedef void (*routine_types_call_back)(bool completed);
-typedef void (*changed_releases_call_back)(bool completed);
 typedef void (*latest_releases_progress)(int32_t percent, int32_t processesReleases);
-typedef void (*full_releases_progress)(int32_t percent, int32_t processesReleases, int32_t pagesProcessed);
 typedef void (*share_cache_call_back)(bool completed, const char* message);
 
 typedef void (FLOWBRIDGER_DELEGATE_CALLTYPE *synchronize_routines)(bool franchises, bool schedule, bool types, const char* path, routine_types_call_back callBack);
-typedef void (FLOWBRIDGER_DELEGATE_CALLTYPE *synchronize_changed_releases)(int32_t maximumPages, const char* path, changed_releases_call_back callBack);
-typedef void (FLOWBRIDGER_DELEGATE_CALLTYPE *synchronize_latest_releases)(int32_t countReleases, int32_t countPages, const char* path, latest_releases_progress callback);
-typedef void (FLOWBRIDGER_DELEGATE_CALLTYPE *synchronize_full_releases)(const char* path, full_releases_progress callback);
+typedef void (FLOWBRIDGER_DELEGATE_CALLTYPE *synchronize_changed_releases)(int32_t maximumPages, const char* path, latest_releases_progress callBack, routine_types_call_back finalCallBack);
+typedef void (FLOWBRIDGER_DELEGATE_CALLTYPE *synchronize_latest_releases)(int32_t countReleases, int32_t countPages, const char* path, latest_releases_progress callback, routine_types_call_back finalCallBack);
 typedef void (FLOWBRIDGER_DELEGATE_CALLTYPE *share_cache)(bool posters, bool torrents, bool releaseCache, const char* cachePath, const char* resultPath, share_cache_call_back callBack);
 typedef void (FLOWBRIDGER_DELEGATE_CALLTYPE *load_cache)(const char* cacheFile, const char* cachePath, share_cache_call_back callBack);
 
@@ -65,7 +62,6 @@ public:
         synchronizeRoutines = (synchronize_routines)getExport(lib, "synchronize_routines");
         synchronizeChangedReleases = (synchronize_changed_releases)getExport(lib, "synchronize_changed_releases");
         synchronizeLatestReleases = (synchronize_latest_releases)getExport(lib, "synchronize_latest_releases");
-        synchronizeFullReleases = (synchronize_full_releases)getExport(lib, "synchronize_full_releases");
         shareCache = (share_cache)getExport(lib, "share_cache");
         loadCache = (load_cache)getExport(lib, "load_cache");
     }
@@ -73,7 +69,6 @@ public:
     synchronize_routines synchronizeRoutines = nullptr;
     synchronize_changed_releases synchronizeChangedReleases = nullptr;
     synchronize_latest_releases synchronizeLatestReleases = nullptr;
-    synchronize_full_releases synchronizeFullReleases = nullptr;
     share_cache shareCache = nullptr;
     load_cache loadCache = nullptr;
 };

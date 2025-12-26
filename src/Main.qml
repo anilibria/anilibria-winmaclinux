@@ -715,6 +715,7 @@ ApplicationWindow {
 
         Component.onCompleted: {
             synchronizationServicev2.checkVersionTorrentStreamLibrary();
+            synchronizationServicev2.checkVersionLocalCheckerLibrary();
 
             if (synchronizationServicev2.token) synchronizationServicev2.getUserData();
 
@@ -776,6 +777,7 @@ ApplicationWindow {
                 notificationViewModel.sendInfoNotification("TorrentStream установлен, перезапустите пожалуйста приложение!");
             }
         }
+
     }
 
     Drawer {
@@ -1477,6 +1479,12 @@ ApplicationWindow {
             } else {
                 notificationViewModel.sendInfoNotification("Релиз не был добавлен в TorrentStream из-за ошибки");
             }
+        }
+        onNeedReloadReleases: {
+            releasesViewModel.reloadReleases();
+        }
+        Component.onCompleted: {
+            osExtras.initializeLocalCacheChecker(synchronizationServicev2.pathToLCCLibrary);
         }
     }
 
