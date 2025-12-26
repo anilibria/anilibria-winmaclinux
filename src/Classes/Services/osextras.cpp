@@ -1,9 +1,9 @@
 #include "osextras.h"
+#include "../globalhelpers.h"
 #include <QString>
 #include <QDebug>
 #include <QThread>
 #include <QFile>
-#include "../globalhelpers.h"
 #ifdef Q_OS_WIN
 #include <windows.h>
 #endif
