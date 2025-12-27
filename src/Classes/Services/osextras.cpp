@@ -150,6 +150,7 @@ bool OsExtras::initializeLocalCacheChecker(const QString &pathToLibrary)
         auto importFunctions = new ImportFunctions(pathToLibrary.toStdWString());
         m_LocalCacheChecker = importFunctions;
         m_localCacheCheckerConnected = true;
+        qDebug() << "LocalCacheChecker connected!";
     } catch (std::exception& e) {
         qDebug() << "initializeLocalCacheChecker: failed to load library " << e.what();
         return false;
@@ -306,11 +307,13 @@ void OsExtras::callbackStartDownload(int id, const QString &path, bool isAdded)
 void OsExtras::synchronizationFinished(bool completed)
 {
     if (completed && m_synchronizationReleases > 0) emit needReloadReleases();
+
+    emit releasesSynchronized(completed ? "Релизы успешно синхронизированы" : "Не удалось синхронизировать релизы!");
 }
 
 void OsExtras::rountineFinished(bool completed)
 {
-    //TODO: reload routines
+    emit routineSynchronized(completed ? "Типы успешно синхронизированы" : "Не удалось синхронизировать типы!");
 }
 
 void OsExtras::synchronizationLatestChanges(int32_t percent, int32_t processesReleases)

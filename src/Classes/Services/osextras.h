@@ -101,6 +101,8 @@ signals:
     void synchronizationRoutine(bool completed);
     void needReloadReleases();
     void localCacheCheckerConnectedChanged();
+    void routineSynchronized(const QString& message);
+    void releasesSynchronized(const QString& message);
 };
 
 static void CORECLR_DELEGATE_CALLTYPE callbackConnectedExternal() {

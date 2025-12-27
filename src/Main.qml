@@ -1483,6 +1483,12 @@ ApplicationWindow {
         onNeedReloadReleases: {
             releasesViewModel.reloadReleases();
         }
+        onRoutineSynchronized: {
+            notificationViewModel.sendInfoNotification("Синхронизация типов: " + message);
+        }
+        onReleasesSynchronized: {
+            notificationViewModel.sendInfoNotification("Синхронизация релизов: " + message);
+        }
         Component.onCompleted: {
             osExtras.initializeLocalCacheChecker(synchronizationServicev2.pathToLCCLibrary);
         }
