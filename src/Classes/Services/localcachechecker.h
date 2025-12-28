@@ -36,7 +36,8 @@ private:
         assert(h != nullptr);
         return (void*)h;
 #else
-        void *h = dlopen(path.c_str(), RTLD_LAZY | RTLD_LOCAL);
+        auto wstring = path.toStdString();
+        void *h = dlopen(wstring.c_str(), RTLD_LAZY | RTLD_LOCAL);
         assert(h != nullptr);
         return h;
 #endif

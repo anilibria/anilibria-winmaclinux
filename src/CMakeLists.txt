@@ -85,6 +85,7 @@ set(appsources
     Classes/Services/synchronizev2service.h Classes/Services/synchronizev2service.cpp
     Classes/Services/thememanagerservice.h Classes/Services/thememanagerservice.cpp
     Classes/Services/versionchecker.h Classes/Services/versionchecker.cpp
+    Classes/Services/localcachechecker.h
 
     Classes/ViewModels/torrentnotifierviewmodel.h Classes/ViewModels/torrentnotifierviewmodel.cpp
     Classes/ViewModels/applicationsviewmodel.h Classes/ViewModels/applicationsviewmodel.cpp
