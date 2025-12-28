@@ -6,6 +6,8 @@
 #include <cstdlib>
 #include <cassert>
 
+#include <vector>
+
 #if defined(_WIN32)
 #include <windows.h>
 #else
@@ -37,12 +39,7 @@ private:
         assert(h != nullptr);
         return (void*)h;
 #else
-        std::string str;
-        size_t size;
-        str.resize(path.length());
-        std::wcstombs(&size, &str[0], str.size() + 1, path.c_str(), path.size());
-
-        void *h = dlopen(str.c_str(), RTLD_LAZY | RTLD_LOCAL);
+        void *h = dlopen(wstringToString(path).c_str(), RTLD_LAZY | RTLD_LOCAL);
         assert(h != nullptr);
         return h;
 #endif
@@ -59,6 +56,21 @@ private:
         assert(f != nullptr);
         return f;
 #endif
+    }
+
+    std::string wstringToString(const std::wstring& wstr) {
+        size_t size_needed = std::wcstombs(nullptr, wstr.c_str(), 0);
+
+        if (size_needed == (size_t)-1) return "";
+
+        // Allocate buffer (add 1 for null terminator)
+        std::vector<char> buffer(size_needed + 1);
+
+        // Perform the conversion
+        std::wcstombs(buffer.data(), wstr.c_str(), size_needed + 1);
+
+        // Construct std::string from buffer
+        return std::string(buffer.data());
     }
 
 public:
