@@ -3,6 +3,7 @@
 
 #include <string>
 #include <cmath>
+#include <cstdlib>
 #include <cassert>
 
 #if defined(_WIN32)
@@ -36,7 +37,7 @@ private:
         assert(h != nullptr);
         return (void*)h;
 #else
-        void *h = dlopen(WStringToString(path), RTLD_LAZY | RTLD_LOCAL);
+        void *h = dlopen(WStringToString(path).c_str(), RTLD_LAZY | RTLD_LOCAL);
         assert(h != nullptr);
         return h;
 #endif
