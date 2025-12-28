@@ -5,7 +5,6 @@
 #include <cmath>
 #include <cstdlib>
 #include <cassert>
-
 #include <vector>
 
 #if defined(_WIN32)
@@ -63,13 +62,10 @@ private:
 
         if (size_needed == (size_t)-1) return "";
 
-        // Allocate buffer (add 1 for null terminator)
         std::vector<char> buffer(size_needed + 1);
 
-        // Perform the conversion
         std::wcstombs(buffer.data(), wstr.c_str(), size_needed + 1);
 
-        // Construct std::string from buffer
         return std::string(buffer.data());
     }
 
