@@ -37,7 +37,12 @@ private:
         assert(h != nullptr);
         return (void*)h;
 #else
-        void *h = dlopen(WStringToString(path).c_str(), RTLD_LAZY | RTLD_LOCAL);
+        std::string str;
+        size_t size;
+        str.resize(path.length());
+        std::wcstombs(&size, &str[0], str.size() + 1, path.c_str(), path.size());
+
+        void *h = dlopen(str.c_str(), RTLD_LAZY | RTLD_LOCAL);
         assert(h != nullptr);
         return h;
 #endif
@@ -54,15 +59,6 @@ private:
         assert(f != nullptr);
         return f;
 #endif
-    }
-
-    std::string WStringToString(const std::wstring& wstr)
-    {
-        std::string str;
-        size_t size;
-        str.resize(wstr.length());
-        wcstombs_s(&size, &str[0], str.size() + 1, wstr.c_str(), wstr.size());
-        return str;
     }
 
 public:
