@@ -377,6 +377,7 @@ HEADERS += \
     Classes/Services/applicationversionchecker.h \
     Classes/Services/downloadmanager.h \
     Classes/Services/imageloader.h \
+    Classes/Services/localcachechecker.h \
     Classes/Services/localstorageservice.h \
     Classes/Services/offlineimagecacheservice.h \
     Classes/Services/osextras.h \

@@ -1,7 +1,9 @@
 #include "osextras.h"
+#include "globalhelpers.h"
 #include <QString>
 #include <QDebug>
 #include <QThread>
+#include <QFile>
 #ifdef Q_OS_WIN
 #include <windows.h>
 #endif
@@ -15,7 +17,27 @@
 #include <dlfcn.h>
 #endif
 
+#include "localcachechecker.h"
+
 OsExtras* OsExtras::instance = nullptr;
+
+void routineCallBack(bool completed) {
+    if (OsExtras::instance == nullptr) return;
+
+    OsExtras::instance->rountineFinished(completed);
+}
+
+void releasesCallBack(bool completed) {
+    if (OsExtras::instance == nullptr) return;
+
+    OsExtras::instance->synchronizationFinished(completed);
+}
+
+void latestChangesCallback(int32_t percent, int32_t processesReleases) {
+    if (OsExtras::instance == nullptr) return;
+
+    OsExtras::instance->synchronizationLatestChanges(percent, processesReleases);
+}
 
 OsExtras::OsExtras(QObject *parent) : QObject(parent)
 {
@@ -119,6 +141,70 @@ bool OsExtras::initializeTorrentStream(int port, const QString& pathToLibrary, c
     return result == 0;
 }
 
+bool OsExtras::initializeLocalCacheChecker(const QString &pathToLibrary)
+{
+    if (!QFile::exists(pathToLibrary)) return false;
+    if (m_localCacheCheckerConnected) return true;
+
+    try {
+        auto importFunctions = new ImportFunctions(pathToLibrary.toStdWString());
+        m_LocalCacheChecker = importFunctions;
+        m_localCacheCheckerConnected = true;
+        qDebug() << "LocalCacheChecker connected!";
+    } catch (std::exception& e) {
+        qDebug() << "initializeLocalCacheChecker: failed to load library " << e.what();
+        return false;
+    }
+
+    emit localCacheCheckerConnectedChanged();
+
+    return true;
+}
+
+void OsExtras::synchronizeRoutine()
+{
+    if (m_LocalCacheChecker == nullptr) return;
+
+    auto path = getCacheOnlyPath();
+
+    auto checker = (ImportFunctions*)m_LocalCacheChecker;
+    auto pathChar = path.toUtf8();
+    checker->synchronizeRoutines(true, true, true, pathChar.constData(), &routineCallBack);
+}
+
+void OsExtras::synchronizeChanges()
+{
+    if (m_LocalCacheChecker == nullptr) return;
+
+    m_synchronizationReleases = 0;
+    auto path = getCacheOnlyPath();
+    auto checker = (ImportFunctions*)m_LocalCacheChecker;
+    auto pathChar = path.toUtf8();
+    checker->synchronizeChangedReleases(50, pathChar.constData(), &latestChangesCallback, &releasesCallBack);
+}
+
+void OsExtras::synchronizeLatest()
+{
+    if (m_LocalCacheChecker == nullptr) return;
+
+    m_synchronizationReleases = 0;
+    auto path = getCacheOnlyPath();
+    auto checker = (ImportFunctions*)m_LocalCacheChecker;
+    auto pathChar = path.toUtf8();
+    checker->synchronizeLatestReleases(50, 3, pathChar.constData(), &latestChangesCallback, &releasesCallBack);
+}
+
+void OsExtras::synchronizeAllReleases()
+{
+    if (m_LocalCacheChecker == nullptr) return;
+
+    m_synchronizationReleases = 0;
+    auto path = getCacheOnlyPath();
+    auto checker = (ImportFunctions*)m_LocalCacheChecker;
+    auto pathChar = path.toUtf8();
+    checker->synchronizeLatestReleases(50, 80, pathChar.constData(), &latestChangesCallback, &releasesCallBack);
+}
+
 void OsExtras::deinitializeTorrentStream() noexcept
 {
     if (torrentStreamStop == nullptr) return;
@@ -216,4 +302,22 @@ void OsExtras::callbackRefresh(bool isResult)
 void OsExtras::callbackStartDownload(int id, const QString &path, bool isAdded)
 {
     emit torrentStreamStartDownload(id, path, isAdded);
+}
+
+void OsExtras::synchronizationFinished(bool completed)
+{
+    if (completed && m_synchronizationReleases > 0) emit needReloadReleases();
+
+    emit releasesSynchronized(completed ? "Релизы успешно синхронизированы" : "Не удалось синхронизировать релизы!");
+}
+
+void OsExtras::rountineFinished(bool completed)
+{
+    emit routineSynchronized(completed ? "Типы успешно синхронизированы" : "Не удалось синхронизировать типы!");
+}
+
+void OsExtras::synchronizationLatestChanges(int32_t percent, int32_t processesReleases)
+{
+    qDebug() << "Latest changes process: " << percent << "%, releases processed " << processesReleases;
+    m_synchronizationReleases = processesReleases;
 }

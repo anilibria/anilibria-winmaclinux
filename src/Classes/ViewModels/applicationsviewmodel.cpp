@@ -5,6 +5,7 @@
 #include <QNetworkRequest>
 #include <QCoreApplication>
 #include <QFile>
+#include <QDir>
 #include <QGuiApplication>
 #include <QClipboard>
 #include "applicationsviewmodel.h"
@@ -164,9 +165,15 @@ void ApplicationsViewModel::deleteByIndex(const QString& index)
 
     auto item = *iterator;
 
-    auto path = item->installedPath() + "/" + item->executableName();
-    QFile file (path);
-    if (!file.remove(path)) return;
+    QDir dir(item->installedPath());
+    if (dir.exists(item->installedPath())) {
+
+        auto path = item->installedPath() + "/" + item->executableName();
+        QFile file (path);
+        if (file.exists()) {
+            if (!file.remove(path)) return;
+        }
+    }
 
     item->setInstalledPath("");
     item->setIsInstalled(false);

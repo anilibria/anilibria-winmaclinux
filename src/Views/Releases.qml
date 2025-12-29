@@ -136,6 +136,45 @@ Page {
                                 synchronizeMenu.close();
                             }
                         }
+                        CommonMenuItem {
+                            text: "Синхронизация типов"
+                            enabled: osExtras.localCacheCheckerConnected
+                            onPressed: {
+                                osExtras.synchronizeRoutine();
+                                synchronizeMenu.close();
+                            }
+                        }
+                        CommonMenuItem {
+                            text: "Синхронизация последних изменений"
+                            enabled: osExtras.localCacheCheckerConnected
+                            onPressed: {
+                                osExtras.synchronizeChanges();
+                                synchronizeMenu.close();
+                            }
+                        }
+                        CommonMenuItem {
+                            text: "Синхронизация последних релизов"
+                            enabled: osExtras.localCacheCheckerConnected
+                            onPressed: {
+                                osExtras.synchronizeLatest();
+                                synchronizeMenu.close();
+                            }
+                        }
+                        CommonMenuItem {
+                            text: "Синхронизация всех релизов"
+                            enabled: osExtras.localCacheCheckerConnected
+                            onPressed: {
+                                osExtras.synchronizeLatest();
+                                synchronizeMenu.close();
+                            }
+                        }
+                        /*CommonMenuItem {
+                            text: "Синхронизация постеров"
+                            onPressed: {
+                                osExtras.synchronizeLatest();
+                                synchronizeMenu.close();
+                            }
+                        }*/
                     }
                 }
 
@@ -1152,7 +1191,7 @@ Page {
                                     anchors.rightMargin: 20
                                     text: "Выбрать"
                                     onClicked: {
-                                        openScriptFileDialog.open();
+                                        //openScriptFileDialog.open();
                                     }
                                 }
                             }
@@ -2157,14 +2196,14 @@ Page {
         releasesViewModel.items.refresh();
     }
 
-    SystemOpenFileDialog {
+    /*SystemOpenFileDialog {
         id: openScriptFileDialog
         title: "Выбрать файл скрипта для раздела Свой скрипт"
         nameFilters: [ "Файлы скрипта (*.ajs)", "Image files (*.jpg *.png)" ]
         onNeedOpenFile: {
             userConfigurationViewModel.customScriptFile = fileUrl;
         }
-    }
+    }*/
 
     Component.onCompleted: {
         const userSettings = JSON.parse(localStorage.getUserSettings());

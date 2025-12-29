@@ -21,7 +21,7 @@
 QString AnilibriaImagesPath = "https://anilibriaqt.anilib.top";
 QString AnilibriaApiPath = "https://anilibriaqt.anilib.top/";
 bool IsPortable = false;
-QString ApplicationVersion = "2.2.33";
+QString ApplicationVersion = "2.2.34";
 
 int HistoryReleaseCardMode = 0;
 int HistoryWatchReleaseCardMode = 1;

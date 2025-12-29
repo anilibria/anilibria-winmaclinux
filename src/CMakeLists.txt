@@ -85,6 +85,7 @@ set(appsources
     Classes/Services/synchronizev2service.h Classes/Services/synchronizev2service.cpp
     Classes/Services/thememanagerservice.h Classes/Services/thememanagerservice.cpp
     Classes/Services/versionchecker.h Classes/Services/versionchecker.cpp
+    Classes/Services/localcachechecker.h
 
     Classes/ViewModels/torrentnotifierviewmodel.h Classes/ViewModels/torrentnotifierviewmodel.cpp
     Classes/ViewModels/applicationsviewmodel.h Classes/ViewModels/applicationsviewmodel.cpp
@@ -131,6 +132,18 @@ qt_add_executable(AniLiberty
 if (NOT ANILIBERTY_LESS_68_QT)
     qt_policy(SET QTP0004 NEW)
 endif()
+
+set_source_files_properties(Controls/Qt6SystemColorDialog.qml PROPERTIES QT_RESOURCE_ALIAS "Controls/SystemColorDialog.qml")
+set_source_files_properties(Controls/Qt6SystemColorDialog.qml PROPERTIES QT_QML_SOURCE_TYPENAME SystemColorDialog)
+
+set_source_files_properties(Controls/Qt6SystemOpenFileDialog.qml PROPERTIES QT_RESOURCE_ALIAS "Controls/SystemOpenFileDialog.qml")
+set_source_files_properties(Controls/Qt6SystemOpenFileDialog.qml PROPERTIES QT_QML_SOURCE_TYPENAME SystemOpenFileDialog)
+
+set_source_files_properties(Controls/Qt6SystemOpenFolderDialog.qml PROPERTIES QT_RESOURCE_ALIAS "Controls/SystemOpenFolderDialog.qml")
+set_source_files_properties(Controls/Qt6SystemOpenFolderDialog.qml PROPERTIES QT_QML_SOURCE_TYPENAME SystemOpenFolderDialog)
+
+set_source_files_properties(Controls/Qt6SystemSaveFileDialog.qml PROPERTIES QT_RESOURCE_ALIAS "Controls/SystemSaveFileDialog.qml")
+set_source_files_properties(Controls/Qt6SystemSaveFileDialog.qml PROPERTIES QT_QML_SOURCE_TYPENAME SystemSaveFileDialog)
 
 qt_add_qml_module(AniLiberty
     URI aniliberty
@@ -200,10 +213,11 @@ qt_add_qml_module(AniLiberty
         Controls/RoundedTextBox.qml
         Controls/ToggleButton.qml
         Controls/TooltipedImage.qml
-        Controls/forqt6/SystemColorDialog.qml
-        Controls/forqt6/SystemOpenFileDialog.qml
-        Controls/forqt6/SystemOpenFolderDialog.qml
-        Controls/forqt6/SystemSaveFileDialog.qml
+        Controls/Qt6SystemColorDialog.qml
+        Controls/Qt6SystemOpenFileDialog.qml
+        Controls/Qt6SystemOpenFolderDialog.qml
+        Controls/Qt6SystemSaveFileDialog.qml
+        Controls/InfoAboutTorrentStream.qml
 
         CustomStyleQt6/BoxShadow.qml
         CustomStyleQt6/ComboBox.qml
@@ -397,7 +411,6 @@ qt_add_qml_module(AniLiberty
         Assets/Icons/videoplayer/seenmarkselected.svg
         Assets/Icons/videoplayer/subtitles.svg
         Assets/Icons/videoplayer/topmost.svg
-        QML_FILES Controls/InfoAboutTorrentStream.qml
 )
 
 set_target_properties(AniLiberty PROPERTIES

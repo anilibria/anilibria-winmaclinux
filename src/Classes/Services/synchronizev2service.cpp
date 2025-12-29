@@ -13,6 +13,7 @@ Synchronizev2Service::Synchronizev2Service(QObject *parent)
 {
     m_libraryCacheHost = getCachePath("libraries.cache");
     m_newVersionFileHost = getCachePath("tsnewversion");
+    m_newVersionLCCFileHost = getCachePath("lccnewversion");
 
     createIfNotExistsFile(m_libraryCacheHost, "{}");
 
@@ -22,7 +23,9 @@ Synchronizev2Service::Synchronizev2Service(QObject *parent)
 
     m_pathToTSContent = tsDefaultContent;
 
+    loadLibraryData();
     installTorrentStreamNewVersion();
+    installLocalCacheCheckerNewVersion();
 
     connect(m_networkManager, &QNetworkAccessManager::finished, this, &Synchronizev2Service::requestFinished);
 }
@@ -384,6 +387,15 @@ void Synchronizev2Service::checkVersionTorrentStreamLibrary()
     adjustIdentifier(reply, m_checkVersionTorrentStream);
 }
 
+void Synchronizev2Service::checkVersionLocalCheckerLibrary()
+{
+    QNetworkRequest request(QUrl("https://api.github.com/repos/trueromanus/LocalCacheChecker/releases/latest"));
+    request.setRawHeader("User-Agent", "Anilibria CP Client");
+
+    auto reply = m_networkManager->get(request);
+    adjustIdentifier(reply, m_checkVersionLocalChecker);
+}
+
 void Synchronizev2Service::downloadTorrentStreamLibrary(const QString &path)
 {
     auto url = QUrl(path);
@@ -397,9 +409,27 @@ void Synchronizev2Service::downloadTorrentStreamLibrary(const QString &path)
     adjustIdentifier(reply, m_downloadTorrentStreamLibraryRequest);
 }
 
+void Synchronizev2Service::downloadLocalCacheCheckerLibrary(const QString &path)
+{
+    auto url = QUrl(path);
+    QNetworkRequest request(url);
+    request.setRawHeader("User-Agent", "Anilibria CP Client");
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+    request.setAttribute(QNetworkRequest::RedirectPolicyAttribute, QNetworkRequest::NoLessSafeRedirectPolicy);
+#endif
+
+    auto reply = m_networkManager->get(request);
+    adjustIdentifier(reply, m_downloadLocalCacheCheckerLibraryRequest);
+}
+
 void Synchronizev2Service::installNewTsVersion()
 {
     installTorrentStreamNewVersion();
+}
+
+void Synchronizev2Service::installNewLccVersion()
+{
+    installLocalCacheCheckerNewVersion();
 }
 
 void Synchronizev2Service::timerEvent(QTimerEvent *event)
@@ -1114,6 +1144,48 @@ void Synchronizev2Service::torrentStreamNewVersionHandler(QNetworkReply *reply) 
     }
 }
 
+void Synchronizev2Service::localCheckerNewVersionHandler(QNetworkReply *reply) noexcept
+{
+    auto content = reply->readAll();
+    if (content.isEmpty()) {
+        emit torrentStreamNewVersionFailed("Контент ответа пустой");
+        return;
+    }
+
+    QJsonParseError* error = nullptr;
+    auto jsonDocument = QJsonDocument::fromJson(content, error);
+    if (error != nullptr) {
+        emit torrentStreamNewVersionFailed("Ответ не содержит корректный JSON");
+        return;
+    }
+
+    auto latestRelease = jsonDocument.object();
+
+    if (latestRelease.contains("message")) {
+        auto message = latestRelease.value("message").toString();
+        if (message == "Not Found") return;
+    }
+
+    auto version = latestRelease.value("tag_name").toString();
+
+    if (version == m_savedLCCVersion) return;
+
+    m_savedLCCNewVersion = version;
+    emit lccNewVersionChanged();
+    auto filename = getLocalCacheCheckerFileName();
+
+    auto assetsArray = latestRelease.value("assets").toArray();
+    foreach (auto assetArrayItem, assetsArray) {
+        auto item = assetArrayItem.toObject();
+        auto name = item.value("name").toString();
+        if (name == filename) {
+            auto downloadUrl = item.value("browser_download_url").toString();
+            downloadLocalCacheCheckerLibrary(downloadUrl);
+            break;
+        }
+    }
+}
+
 void Synchronizev2Service::downloadTorrentStreamLibraryHandler(QNetworkReply *reply) noexcept
 {
     auto content = reply->readAll();
@@ -1135,6 +1207,25 @@ void Synchronizev2Service::downloadTorrentStreamLibraryHandler(QNetworkReply *re
     }
 }
 
+void Synchronizev2Service::downloadLocalCacheCheckerLibraryHandler(QNetworkReply *reply) noexcept
+{
+    auto content = reply->readAll();
+    if (content.isEmpty()) {
+        emit torrentStreamNewVersionFailed("Контент файл новой версии пустой");
+        return;
+    }
+
+    if (QFile::exists(m_newVersionLCCFileHost)) QFile::remove(m_newVersionLCCFileHost);
+
+    QFile file(m_newVersionLCCFileHost);
+    if (file.open(QFile::WriteOnly)) {
+        file.write(content);
+        file.close();
+
+        saveLibraryData();
+    }
+}
+
 void Synchronizev2Service::loadLibraryData() noexcept
 {
     QFile file(m_libraryCacheHost);
@@ -1146,6 +1237,8 @@ void Synchronizev2Service::loadLibraryData() noexcept
         auto item = document.object();
         m_savedTorrentStreamVersion = item.value("currentVersion").toString();
         m_savedTorrentStreamNewVersion = item.value("newVersion").toString();
+        m_savedLCCVersion = item.value("lccCurrentVersion").toString();
+        m_savedLCCNewVersion = item.value("lccNewVersion").toString();
         emit tsCurrentVersionChanged();
         emit tsNewVersionChanged();
         emit notInstalledTorrentStreamChanged();
@@ -1157,6 +1250,8 @@ void Synchronizev2Service::saveLibraryData() noexcept
     auto object = QJsonObject();
     object["currentVersion"] = m_savedTorrentStreamVersion;
     object["newVersion"] = m_savedTorrentStreamNewVersion;
+    object["lccCurrentVersion"] = m_savedLCCVersion;
+    object["lccNewVersion"] = m_savedLCCNewVersion;
 
     auto json = QJsonDocument(object).toJson();
 
@@ -1169,7 +1264,6 @@ void Synchronizev2Service::saveLibraryData() noexcept
 
 void Synchronizev2Service::installTorrentStreamNewVersion() noexcept
 {
-    loadLibraryData();
     auto filename = getTorrentStreamFileName();
     auto currentVersionPath = getCachePath(filename);
 
@@ -1190,6 +1284,29 @@ void Synchronizev2Service::installTorrentStreamNewVersion() noexcept
     }
 
     if(QFile::exists(currentVersionPath)) m_pathToTSLibrary = currentVersionPath;
+}
+
+void Synchronizev2Service::installLocalCacheCheckerNewVersion() noexcept
+{
+    auto filename = getLocalCacheCheckerFileName();
+    auto currentVersionPath = getCachePath(filename);
+
+    if (m_savedLCCNewVersion != m_savedLCCVersion && QFile::exists(m_newVersionLCCFileHost)) {
+        if (QFile::exists(currentVersionPath)) {
+            if (!QFile::remove(currentVersionPath)) return;
+        }
+
+        if (!QFile::copy(m_newVersionLCCFileHost, currentVersionPath)) {
+            qDebug() << "Can't copy new version of Torrent Stream Library for path: " << currentVersionPath;
+            return;
+        }
+
+        QFile::remove(m_newVersionLCCFileHost);
+        m_savedLCCVersion = m_savedLCCNewVersion;
+        saveLibraryData();
+    }
+
+    if(QFile::exists(currentVersionPath)) m_pathToLCCLibrary = currentVersionPath;
 }
 
 QString Synchronizev2Service::getTorrentStreamFileName() noexcept
@@ -1218,6 +1335,36 @@ QString Synchronizev2Service::getTorrentStreamFileName() noexcept
     if (isLinux) return isArm ? "tslarm64.so" : "tsl64.so";
     if (isMacos) return isArm ? "tslarm64.dylib" : "tsl64.dylib";
     if (isWindows) return isArm ? "tslarm64.dll" : "tsl64.dll";
+
+    return "";
+}
+
+QString Synchronizev2Service::getLocalCacheCheckerFileName() noexcept
+{
+    auto isWindows = false;
+    auto isMacos = false;
+    auto isLinux = false;
+
+    auto isArm = false;
+
+#ifdef Q_OS_WIN
+    isWindows = true;
+#endif
+#ifdef Q_OS_MACOS
+    isMacos = true;
+#endif
+
+#ifdef Q_OS_LINUX
+    isLinux = true;
+#endif
+
+#ifdef Q_PROCESSOR_ARM64
+    isArm = true;
+#endif
+
+    if (isLinux) return isArm ? "lccarm64.so" : "lcc64.so";
+    if (isMacos) return isArm ? "lccarm64.dylib" : "lcc64.dylib";
+    if (isWindows) return isArm ? "lccarm64.dll" : "lcc64.dll";
 
     return "";
 }
@@ -1336,8 +1483,16 @@ void Synchronizev2Service::requestFinished(QNetworkReply *reply)
         torrentStreamNewVersionHandler(reply);
         return;
     }
+    if (requestType == m_checkVersionLocalChecker) {
+        localCheckerNewVersionHandler(reply);
+        return;
+    }
     if (requestType == m_downloadTorrentStreamLibraryRequest) {
         downloadTorrentStreamLibraryHandler(reply);
+        return;
+    }
+    if (requestType == m_downloadLocalCacheCheckerLibraryRequest) {
+        downloadLocalCacheCheckerLibraryHandler(reply);
         return;
     }
 

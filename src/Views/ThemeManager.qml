@@ -190,7 +190,7 @@ Page {
                             textSize: 10
                             text: "Импорт темы из файла"
                             onClicked: {
-                                openThemeToFileDialog.open();
+                                //openThemeToFileDialog.open();
                             }
                         }
                     }
@@ -843,8 +843,8 @@ Page {
                                             iconPath: applicationThemeViewModel.currentItems.iconMainMenuThemeManager
                                             tooltipMessage: "Выбрать файл изображения для иконки"
                                             onButtonPressed: {
-                                                openIconFileDialog.selectedIconIndex = identifier;
-                                                openIconFileDialog.open();
+                                                /*openIconFileDialog.selectedIconIndex = identifier;
+                                                openIconFileDialog.open();*/
                                             }
                                         }
 
@@ -1031,14 +1031,14 @@ Page {
         }
     }
 
-    SystemOpenFileDialog {
+    /*SystemOpenFileDialog {
         id: openThemeToFileDialog
         title: "Open theme from file"
         nameFilters: ["Theme files (*.theme)"]
         onNeedOpenFile: {
             applicationThemeViewModel.importThemeFromFile(fileUrl);
         }
-    }
+    }*/
 
     SystemSaveFileDialog {
         id: saveThemeToFileDialog
@@ -1048,7 +1048,7 @@ Page {
         }
     }
 
-    SystemOpenFileDialog {
+    /*SystemOpenFileDialog {
         id: openIconFileDialog
         nameFilters: ["Image files (*.jpg *.jpeg *.gif *.svg *.png)"]
 
@@ -1060,7 +1060,7 @@ Page {
                 openIconFileDialog.selectedIconIndex
             );
         }
-    }
+    }*/
 
     SystemColorDialog {
         id: colorDialog

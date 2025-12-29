@@ -16,6 +16,15 @@ QString getCachePath(const QString& filename) noexcept
     }
 }
 
+QString getCacheOnlyPath() noexcept
+{
+    if (IsPortable) {
+        return QDir::currentPath();
+    } else {
+        return QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation);
+    }
+}
+
 void createIfNotExistsFile(const QString& path, const QString& defaultContent) noexcept
 {
     if (QFile::exists(path)) return;
@@ -109,3 +118,4 @@ bool readJsonObjectFromFile(const QString &path, QJsonObject &object) noexcept
 
     return false;
 }
+

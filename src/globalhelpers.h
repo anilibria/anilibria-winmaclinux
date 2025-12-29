@@ -4,6 +4,8 @@
 
 QString getCachePath(const QString& filename) noexcept;
 
+QString getCacheOnlyPath() noexcept;
+
 void createIfNotExistsFile(const QString& path, const QString& defaultContent) noexcept;
 
 void createIfNotExistsCacheFile(const QString& fileName, const QString& defaultContent) noexcept;
