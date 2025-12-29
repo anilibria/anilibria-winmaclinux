@@ -74,10 +74,6 @@ jobs:
       with:
         name: deb-package
         path: AniLiberty-x86_64.AppImage
-    - uses: actions/upload-artifact@v4
-      with:
-        name: appdircontent
-        path: AppDir
 #  macosbuild:
 #    runs-on: macos-14
 #    steps:
