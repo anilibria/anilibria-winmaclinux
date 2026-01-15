@@ -1,0 +1,39 @@
+name: Debian package build
+
+on:
+  push:
+    branches: [ "build/deb" ]
+
+jobs:
+  debianPackageBuild:
+    runs-on: ubuntu-latest
+    steps:
+
+    - uses: actions/checkout@v4
+    - name: Update packages
+      run: sudo apt-get update
+
+    - name: Install QT6 libraries
+      run: sudo apt-get install -y --no-install-recommends libmpv-dev pkg-config qt6-base-dev qt6-declarative-dev qt6-websockets-dev qt6-svg-dev libxkbcommon-dev qml6-module-qt-labs-folderlistmodel qml6-module-qt-labs-platform qml6-module-qtcore qml6-module-qtqml qml6-module-qtqml-models qml6-module-qtquick qml6-module-qtquick-controls qml6-module-qtquick-dialogs qml6-module-qtquick-layouts qml6-module-qtquick-particles qml6-module-qtquick-window qml6-module-qtquick-dialogs qml6-module-qtqml-workerscript qml6-module-qtquick-templates
+
+    - name: Program build
+      run: cmake src -B src/build -DCMAKE_BUILD_TYPE=Release -DANILIBERTY_LESS_68_QT=On
+
+    - name: Program compile
+      run: cmake --build src/build
+
+    - name: Fix empty dir
+      run: mkdir -p specs/deb/usr/bin/
+
+    - name: Copy program to deb-package
+      run: sudo cp src/build/AniLiberty specs/deb/usr/bin/aniliberty
+
+    - name: Build deb-package v2.2.34
+      run: sudo dpkg-deb --build specs/deb/ aniliberty-2.2.34-amd64.deb
+
+    - name: Upload package artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: aniliberty-2.2.34-amd64.deb
+        path: aniliberty-2.2.34-amd64.deb
+
