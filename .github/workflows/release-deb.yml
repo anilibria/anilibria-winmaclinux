@@ -29,7 +29,7 @@ jobs:
       run: sudo cp src/build/AniLiberty specs/deb/usr/bin/aniliberty
 
     - name: Build deb-package v2.2.34
-      run: sudo dpkg-deb --build specs/deb/ aniliberty-2.2.34-amd64.deb
+      run: sudo dpkg-deb --build specs/deb/ aniliberty-amd64.deb
 
     - name: Upload package artifact
       uses: actions/upload-artifact@v4
