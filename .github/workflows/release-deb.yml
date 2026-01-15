@@ -2,7 +2,7 @@ name: Debian package build
 
 on:
   push:
-    branches: [ "build/deb" ]
+    branches: [ "deploy" ]
 
 jobs:
   debianPackageBuild:
@@ -34,6 +34,6 @@ jobs:
     - name: Upload package artifact
       uses: actions/upload-artifact@v4
       with:
-        name: aniliberty-2.2.34-amd64.deb
-        path: aniliberty-2.2.34-amd64.deb
+        name: deb-package
+        path: aniliberty-amd64.deb
 
