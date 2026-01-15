@@ -2,7 +2,7 @@ name: Debian package build
 
 on:
   push:
-    branches: [ "deploy" ]
+    branches: [deploy]
 
 jobs:
   debianPackageBuild:
