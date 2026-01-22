@@ -5,7 +5,7 @@
 
 **Этап 1. Устанавливаем зависимости необходимые для сборки**
 ```shell
-sudo apk add qt5-qtbase-dev qt5-qtwebview-dev qt5-qtwebengine-dev qt5-qtmultimedia-dev qt5-qtsvg-dev qt5-qtwebsockets-dev qt5-qtdeclarative-dev qt5-qtquickcontrols2-dev qt5-qtquickcontrols 
+sudo apk add cmake ninja git qt6-qttools qt6-qtbase-dev qt6-qtdeclarative-dev qt6-qtwebengine-dev qt6-qtsvg-dev qt6-qtmultimedia-dev mpv-dev qt6-qtshadertools-dev qt6-qtdeclarative-private-dev
 sudo apk add mpv-dev g++ make git pkgconf
 ```
 **Этап 2. Создаем папку для проекта, переходим в нее и извлекаем исходники (предполагается что Вы находитесь в домашней папке)**
@@ -16,11 +16,15 @@ git clone https://github.com/anilibria/anilibria-winmaclinux.git
 cd anilibria-winmaclinux/src/
 ```
 
-**Этап 3. Выполняем сборку**
+**Этап 3. Настройка сборки**
+
 ```shell
-qmake-qt5 CONFIG+=unixmpv
-make
-sudo make install
+cmake -S src -B build -DCMAKE_BUILD_TYPE=Release -DANILIBERTY_LESS_68_QT=On
+```
+
+**Этап 4. Выполняем сборку и установку**
+```shell
+sudo cmake --build build --parallel --target install
 ```
 
 **Необязательный последний этап. После всех манипуляций можно удалить созданную папку командой**
