@@ -24,7 +24,7 @@ cmake -S src -B build -DCMAKE_BUILD_TYPE=Release -DANILIBERTY_LESS_68_QT=On
 
 **Этап 4. Выполняем сборку и установку**
 ```shell
-sudo cmake --build build --parallel --target install
+sudo cmake --build build --target install
 ```
 
 **Необязательный последний этап. После всех манипуляций можно удалить созданную папку командой**
