@@ -82,7 +82,6 @@ jobs:
       run: ls /opt/homebrew/lib/      
     - name: patch libraries paths
       run: |
-        cp /opt/homebrew/lib/libjxl_cms.0.11.dylib AniLiberty.app/Contents/Frameworks/
         cp /opt/homebrew/opt/python@3.14/Frameworks/Python.framework/Versions/3.14/Python AniLiberty.app/Contents/Frameworks/
         
         install_name_tool -change /opt/homebrew/Cellar/ffmpeg/8.0.1/lib/libswresample.6.dylib @executable_path/../Frameworks/libswresample.6.dylib AniLiberty.app/Contents/Frameworks/libavcodec.62.dylib
@@ -114,8 +113,6 @@ jobs:
 
         install_name_tool -change /opt/homebrew/Cellar/brotli/1.1.0/lib/libbrotlicommon.1.dylib @executable_path/../Frameworks/ AniLiberty.app/Contents/Frameworks/librubberband.3.dylib
         
-        install_name_tool -change /usr/local/opt/little-cms2/lib/liblcms2.2.dylib @executable_path/../Frameworks/liblcms2.2.dylib AniLiberty.app/Contents/Frameworks/libjxl_cms.0.11.dylib
-        install_name_tool -change /usr/local/opt/highway/lib/libhwy.1.dylib @executable_path/../Frameworks/libhwy.1.dylib AniLiberty.app/Contents/Frameworks/libjxl_cms.0.11.dylib
         
         install_name_tool -change @loader_path/../../../../opt/libsamplerate/lib/libsamplerate.0.dylib @executable_path/../Frameworks/libhwy.1.dylib AniLiberty.app/Contents/Frameworks/librubberband.3.dylib
         install_name_tool -change /usr/local/opt/python@3.14/Frameworks/Python.framework/Versions/3.14/Python @executable_path/../Frameworks/Python AniLiberty.app/Contents/Frameworks/libvapoursynth-script.0.dylib
