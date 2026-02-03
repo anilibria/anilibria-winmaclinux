@@ -108,11 +108,7 @@ jobs:
         install_name_tool -change /opt/homebrew/Cellar/ffmpeg/8.0.1/lib/libswresample.6.dylib @executable_path/../Frameworks/libswresample.6.dylib AniLiberty.app/Contents/Frameworks/libavdevice.62.dylib
         install_name_tool -change /opt/homebrew/Cellar/ffmpeg/8.0.1/lib/libavutil.60.dylib @executable_path/../Frameworks/libavutil.60.dylib AniLiberty.app/Contents/Frameworks/libavdevice.62.dylib
 
-        install_name_tool -change /opt/homebrew/Cellar/brotli/1.1.0/lib/libbrotlicommon.1.dylib @executable_path/../Frameworks/libbrotlicommon.1.dylib AniLiberty.app/Contents/Frameworks/libbrotlidec.1.dylib
-        install_name_tool -change /opt/homebrew/Cellar/brotli/1.1.0/lib/libbrotlicommon.1.dylib @executable_path/../Frameworks/libbrotlicommon.1.dylib AniLiberty.app/Contents/Frameworks/libbrotlienc.1.dylib
-
         install_name_tool -change /opt/homebrew/Cellar/brotli/1.1.0/lib/libbrotlicommon.1.dylib @executable_path/../Frameworks/ AniLiberty.app/Contents/Frameworks/librubberband.3.dylib
-        
         
         install_name_tool -change @loader_path/../../../../opt/libsamplerate/lib/libsamplerate.0.dylib @executable_path/../Frameworks/libhwy.1.dylib AniLiberty.app/Contents/Frameworks/librubberband.3.dylib
         install_name_tool -change /usr/local/opt/python@3.14/Frameworks/Python.framework/Versions/3.14/Python @executable_path/../Frameworks/Python AniLiberty.app/Contents/Frameworks/libvapoursynth-script.0.dylib
