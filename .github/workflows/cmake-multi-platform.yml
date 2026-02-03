@@ -78,6 +78,8 @@ jobs:
       run: macdeployqt AniLiberty.app -appstore-compliant -qmldir=.
     - name: show all libraries in app folder
       run: ls AniLiberty.app/Contents/Frameworks/
+    - name: show all libraries in app folder
+      run: ls /opt/homebrew/lib/      
     - name: patch libraries paths
       run: |
         cp /opt/homebrew/lib/libjxl_cms.0.11.dylib AniLiberty.app/Contents/Frameworks/
