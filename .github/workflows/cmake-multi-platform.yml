@@ -54,11 +54,11 @@ jobs:
         rm /usr/local/bin/pydoc3
         rm /usr/local/bin/python3
         rm /usr/local/bin/python3-config
-        rm '/usr/local/bin/idle3.13'
-        rm '/usr/local/bin/pydoc3.13'
-        rm '/usr/local/bin/python3.13'
-        rm '/usr/local/bin/python3.13-config'
-        rm '/usr/local/bin/pip3.13'
+        rm '/usr/local/bin/idle3.14'
+        rm '/usr/local/bin/pydoc3.14'
+        rm '/usr/local/bin/python3.14'
+        rm '/usr/local/bin/python3.14-config'
+        rm '/usr/local/bin/pip3.14'
     - name: install pkg-config
       run: brew list pkg-config || brew install pkg-config
     - name: install mpv
@@ -80,9 +80,8 @@ jobs:
       run: ls AniLiberty.app/Contents/Frameworks/
     - name: patch libraries paths
       run: |
-        cp /opt/homebrew/lib/libsharpyuv.0.dylib AniLiberty.app/Contents/Frameworks/
         cp /opt/homebrew/lib/libjxl_cms.0.11.dylib AniLiberty.app/Contents/Frameworks/
-        cp /opt/homebrew/opt/python@3.13/Frameworks/Python.framework/Versions/3.13/Python AniLiberty.app/Contents/Frameworks/
+        cp /opt/homebrew/opt/python@3.14/Frameworks/Python.framework/Versions/3.14/Python AniLiberty.app/Contents/Frameworks/
         
         install_name_tool -change /opt/homebrew/Cellar/ffmpeg/8.0.1/lib/libswresample.6.dylib @executable_path/../Frameworks/libswresample.6.dylib AniLiberty.app/Contents/Frameworks/libavcodec.62.dylib
         install_name_tool -change /opt/homebrew/Cellar/ffmpeg/8.0.1/lib/libavutil.60.dylib @executable_path/../Frameworks/libavutil.60.dylib AniLiberty.app/Contents/Frameworks/libavcodec.62.dylib
