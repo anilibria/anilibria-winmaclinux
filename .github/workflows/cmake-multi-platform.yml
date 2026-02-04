@@ -112,11 +112,7 @@ jobs:
         
         install_name_tool -change @loader_path/../../../../opt/libsamplerate/lib/libsamplerate.0.dylib @executable_path/../Frameworks/libhwy.1.dylib AniLiberty.app/Contents/Frameworks/librubberband.3.dylib
         install_name_tool -change /usr/local/opt/python@3.14/Frameworks/Python.framework/Versions/3.14/Python @executable_path/../Frameworks/Python AniLiberty.app/Contents/Frameworks/libvapoursynth-script.0.dylib
-        
-        install_name_tool -change /opt/homebrew/Cellar/libxcb/1.17.0/lib/libxcb.1.dylib @executable_path/../Frameworks/libxcb.1.dylib AniLiberty.app/Contents/Frameworks/libxcb-shm.0.dylib
-        install_name_tool -change /opt/homebrew/Cellar/libxcb/1.17.0/lib/libxcb.1.dylib @executable_path/../Frameworks/libxcb.1.dylib AniLiberty.app/Contents/Frameworks/libxcb-shape.0.dylib
-        install_name_tool -change /opt/homebrew/Cellar/libxcb/1.17.0/lib/libxcb.1.dylib @executable_path/../Frameworks/libxcb.1.dylib AniLiberty.app/Contents/Frameworks/libxcb-xfixes.0.dylib
-        
+       
         hdiutil create -fs HFS+ -srcfolder AniLiberty.app/ -volname AniLiberty AniLiberty.dmg
     - uses: actions/upload-artifact@v4
       with:
