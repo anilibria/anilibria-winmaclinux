@@ -6,6 +6,7 @@ on:
 
 jobs:
   windows:
+    if: false
     runs-on: windows-latest
     steps:
     - uses: actions/checkout@v4
@@ -78,8 +79,6 @@ jobs:
       run: macdeployqt AniLiberty.app -appstore-compliant -qmldir=.
     - name: show all libraries in app folder
       run: ls AniLiberty.app/Contents/Frameworks/
-    - name: show all libraries in app folder
-      run: ls /opt/homebrew/lib/      
     - name: patch libraries paths
       run: |
         cp /opt/homebrew/opt/python@3.14/Frameworks/Python.framework/Versions/3.14/Python AniLiberty.app/Contents/Frameworks/
@@ -111,7 +110,8 @@ jobs:
         install_name_tool -change /opt/homebrew/Cellar/brotli/1.1.0/lib/libbrotlicommon.1.dylib @executable_path/../Frameworks/ AniLiberty.app/Contents/Frameworks/librubberband.3.dylib
         
         install_name_tool -change @loader_path/../../../../opt/libsamplerate/lib/libsamplerate.0.dylib @executable_path/../Frameworks/libhwy.1.dylib AniLiberty.app/Contents/Frameworks/librubberband.3.dylib
-        install_name_tool -change /usr/local/opt/python@3.14/Frameworks/Python.framework/Versions/3.14/Python @executable_path/../Frameworks/Python AniLiberty.app/Contents/Frameworks/libvapoursynth-script.0.dylib
+        
+        install_name_tool -change /opt/homebrew/*/Python.framework/Versions/3.14/Python @executable_path/../Frameworks/Python AniLiberty.app/Contents/Frameworks/libvapoursynth-script.0.dylib
        
         hdiutil create -fs HFS+ -srcfolder AniLiberty.app/ -volname AniLiberty AniLiberty.dmg
     - uses: actions/upload-artifact@v4
