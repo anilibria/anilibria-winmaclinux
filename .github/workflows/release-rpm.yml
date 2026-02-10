@@ -1,0 +1,47 @@
+name: Fedora package build
+
+on:
+  push:
+    branches: [deploy]
+
+jobs:
+  fedoraPackageBuild:
+    runs-on: ubuntu-latest
+    container: fedora:latest
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Install dependencies
+      run: |
+        dnf install -y rpm-build rpmdevtools rpmlint cmake gcc gcc-c++ \
+        openssl-devel bzip2-devel libffi-devel zlib-devel wget make \
+        qt6-qtbase-devel qt6-qttools-devel qt6-qtdeclarative-devel \
+        qt6-qtwebsockets-devel qt6-qtsvg-devel mpv mpv-devel chrpath
+
+    - name: Program build & compile
+      run: |
+         cmake src -B src/build -DCMAKE_BUILD_TYPE=Release -DANILIBERTY_LESS_68_QT=On
+         cmake --build src/build
+
+    - name: Prepare RPM package
+      run: |
+        rpmdev-setuptree
+        cp specs/rpm/SPECS/aniliberty.spec /github/home/rpmbuild/SPECS/
+        cp -R specs/rpm/SOURCES/aniliberty-2.2.34/ /github/home/rpmbuild/SOURCES/
+        chrpath -d src/build/AniLiberty
+        mkdir -p /github/home/rpmbuild/SOURCES/aniliberty-2.2.34/usr/usr/local/bin/
+        cp src/build/AniLiberty /github/home/rpmbuild/SOURCES/aniliberty-2.2.34/usr/usr/local/bin/aniliberty
+        cd /github/home/rpmbuild/SOURCES
+        tar -czf aniliberty-2.2.34.tar.gz aniliberty-2.2.34/
+
+    - name: Build RPM package
+      run: |
+        cd /github/home/rpmbuild/SPECS/
+        rpmbuild -bb aniliberty.spec
+
+    - name: Upload package artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: RPM Package
+        path: /github/home/rpmbuild/RPMS/x86_64/*.rpm
+

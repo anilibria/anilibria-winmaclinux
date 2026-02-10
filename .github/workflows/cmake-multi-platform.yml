@@ -2,10 +2,11 @@ name: Build CMake
 
 on:
   push:
-    branches: [ "deploy" ]
+    branches: [ "master" ]
 
 jobs:
   windows:
+    if: false
     runs-on: windows-latest
     steps:
     - uses: actions/checkout@v4
@@ -54,11 +55,11 @@ jobs:
         rm /usr/local/bin/pydoc3
         rm /usr/local/bin/python3
         rm /usr/local/bin/python3-config
-        rm '/usr/local/bin/idle3.13'
-        rm '/usr/local/bin/pydoc3.13'
-        rm '/usr/local/bin/python3.13'
-        rm '/usr/local/bin/python3.13-config'
-        rm '/usr/local/bin/pip3.13'
+        rm '/usr/local/bin/idle3.14'
+        rm '/usr/local/bin/pydoc3.14'
+        rm '/usr/local/bin/python3.14'
+        rm '/usr/local/bin/python3.14-config'
+        rm '/usr/local/bin/pip3.14'
     - name: install pkg-config
       run: brew list pkg-config || brew install pkg-config
     - name: install mpv
@@ -80,9 +81,7 @@ jobs:
       run: ls AniLiberty.app/Contents/Frameworks/
     - name: patch libraries paths
       run: |
-        cp /opt/homebrew/lib/libsharpyuv.0.dylib AniLiberty.app/Contents/Frameworks/
-        cp /opt/homebrew/lib/libjxl_cms.0.11.dylib AniLiberty.app/Contents/Frameworks/
-        cp /opt/homebrew/opt/python@3.13/Frameworks/Python.framework/Versions/3.13/Python AniLiberty.app/Contents/Frameworks/
+        cp /opt/homebrew/opt/python@3.14/Frameworks/Python.framework/Versions/3.14/Python AniLiberty.app/Contents/Frameworks/
         
         install_name_tool -change /opt/homebrew/Cellar/ffmpeg/8.0.1/lib/libswresample.6.dylib @executable_path/../Frameworks/libswresample.6.dylib AniLiberty.app/Contents/Frameworks/libavcodec.62.dylib
         install_name_tool -change /opt/homebrew/Cellar/ffmpeg/8.0.1/lib/libavutil.60.dylib @executable_path/../Frameworks/libavutil.60.dylib AniLiberty.app/Contents/Frameworks/libavcodec.62.dylib
@@ -108,22 +107,12 @@ jobs:
         install_name_tool -change /opt/homebrew/Cellar/ffmpeg/8.0.1/lib/libswresample.6.dylib @executable_path/../Frameworks/libswresample.6.dylib AniLiberty.app/Contents/Frameworks/libavdevice.62.dylib
         install_name_tool -change /opt/homebrew/Cellar/ffmpeg/8.0.1/lib/libavutil.60.dylib @executable_path/../Frameworks/libavutil.60.dylib AniLiberty.app/Contents/Frameworks/libavdevice.62.dylib
 
-        install_name_tool -change /opt/homebrew/Cellar/brotli/1.1.0/lib/libbrotlicommon.1.dylib @executable_path/../Frameworks/libbrotlicommon.1.dylib AniLiberty.app/Contents/Frameworks/libbrotlidec.1.dylib
-        install_name_tool -change /opt/homebrew/Cellar/brotli/1.1.0/lib/libbrotlicommon.1.dylib @executable_path/../Frameworks/libbrotlicommon.1.dylib AniLiberty.app/Contents/Frameworks/libbrotlienc.1.dylib
-
         install_name_tool -change /opt/homebrew/Cellar/brotli/1.1.0/lib/libbrotlicommon.1.dylib @executable_path/../Frameworks/ AniLiberty.app/Contents/Frameworks/librubberband.3.dylib
         
-        install_name_tool -change /usr/local/opt/little-cms2/lib/liblcms2.2.dylib @executable_path/../Frameworks/liblcms2.2.dylib AniLiberty.app/Contents/Frameworks/libjxl_cms.0.11.dylib
-        install_name_tool -change /usr/local/opt/highway/lib/libhwy.1.dylib @executable_path/../Frameworks/libhwy.1.dylib AniLiberty.app/Contents/Frameworks/libjxl_cms.0.11.dylib
-        
         install_name_tool -change @loader_path/../../../../opt/libsamplerate/lib/libsamplerate.0.dylib @executable_path/../Frameworks/libhwy.1.dylib AniLiberty.app/Contents/Frameworks/librubberband.3.dylib
-        install_name_tool -change /usr/local/opt/python@3.14/Frameworks/Python.framework/Versions/3.14/Python @executable_path/../Frameworks/Python AniLiberty.app/Contents/Frameworks/libvapoursynth-script.0.dylib
-        install_name_tool -change /opt/homebrew/Cellar/nettle/3.10.2/lib/libnettle.8.dylib @executable_path/../Frameworks/libnettle.8.dylib AniLiberty.app/Contents/Frameworks/libhogweed.6.dylib
         
-        install_name_tool -change /opt/homebrew/Cellar/libxcb/1.17.0/lib/libxcb.1.dylib @executable_path/../Frameworks/libxcb.1.dylib AniLiberty.app/Contents/Frameworks/libxcb-shm.0.dylib
-        install_name_tool -change /opt/homebrew/Cellar/libxcb/1.17.0/lib/libxcb.1.dylib @executable_path/../Frameworks/libxcb.1.dylib AniLiberty.app/Contents/Frameworks/libxcb-shape.0.dylib
-        install_name_tool -change /opt/homebrew/Cellar/libxcb/1.17.0/lib/libxcb.1.dylib @executable_path/../Frameworks/libxcb.1.dylib AniLiberty.app/Contents/Frameworks/libxcb-xfixes.0.dylib
-        
+        install_name_tool -change /opt/homebrew/*/Python.framework/Versions/3.14/Python @executable_path/../Frameworks/Python AniLiberty.app/Contents/Frameworks/libvapoursynth-script.0.dylib
+       
         hdiutil create -fs HFS+ -srcfolder AniLiberty.app/ -volname AniLiberty AniLiberty.dmg
     - uses: actions/upload-artifact@v4
       with:
