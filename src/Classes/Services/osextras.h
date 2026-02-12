@@ -74,6 +74,7 @@ public:
     Q_INVOKABLE void synchronizeChanges();
     Q_INVOKABLE void synchronizeLatest();
     Q_INVOKABLE void synchronizeAllReleases();
+    Q_INVOKABLE void synchronizePosters(bool forceAll);
     Q_INVOKABLE void deinitializeTorrentStream() noexcept;
     Q_INVOKABLE void tsClearAll() noexcept;
     Q_INVOKABLE void tsClearOnlyTorrent(const QString& downloadPath) noexcept;
@@ -93,6 +94,8 @@ public slots:
     void synchronizationFinished(bool completed);
     void rountineFinished(bool completed);
     void synchronizationLatestChanges(int32_t percent, int32_t processesReleases);
+    void synchronizationPosterChanges(int32_t percent, int32_t processesReleases);
+    void postersFinished(bool completed);
 
 signals:
     void torrentStreamConnected();

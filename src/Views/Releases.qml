@@ -164,17 +164,24 @@ Page {
                             text: "Синхронизация всех релизов"
                             enabled: osExtras.localCacheCheckerConnected
                             onPressed: {
-                                osExtras.synchronizeLatest();
+                                osExtras.synchronizeAllReleases();
                                 synchronizeMenu.close();
                             }
                         }
-                        /*CommonMenuItem {
-                            text: "Синхронизация постеров"
+                        CommonMenuItem {
+                            text: "Синхронизация постеров с заменой"
                             onPressed: {
-                                osExtras.synchronizeLatest();
+                                osExtras.synchronizePosters(true);
                                 synchronizeMenu.close();
                             }
-                        }*/
+                        }
+                        CommonMenuItem {
+                            text: "Синхронизация постеров только новые"
+                            onPressed: {
+                                osExtras.synchronizePosters(false);
+                                synchronizeMenu.close();
+                            }
+                        }
                     }
                 }
 
