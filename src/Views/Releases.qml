@@ -182,6 +182,19 @@ Page {
                                 synchronizeMenu.close();
                             }
                         }
+                        CommonMenuItem {
+                            text: "Создать шару из кеша"
+                            onPressed: {
+                                createSharePopup.open();
+                                synchronizeMenu.close();
+                            }
+                        }
+                        CommonMenuItem {
+                            text: "Загрузить шару кеша"
+                            onPressed: {
+                                synchronizeMenu.close();
+                            }
+                        }
                     }
                 }
 
@@ -2150,6 +2163,111 @@ Page {
                 width: 100
                 onClicked: {
                     removeAllSeenMark.close();
+                }
+            }
+        }
+    }
+
+    DefaultPopup {
+        id: createSharePopup
+        x: window.width / 2 - createSharePopup.width / 2
+        y: window.height / 2 - createSharePopup.height / 2
+        width: 550
+        height: 220
+        modal: true
+        focus: true
+        closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
+
+        ColumnLayout {
+            width: parent.width
+            spacing: 10
+
+            AccentText {
+                width: createSharePopup.width
+                text: "Путь к папке"
+                fontPointSize: 12
+                font.bold: true
+            }
+
+            Item {
+                width: createSharePopup.width - 30
+                height: 40
+
+                CommonTextField {
+                    id: createSharePopupPath
+                    width: parent.width
+                    placeholderText: "Введите полный путь"
+                }
+            }
+
+            AccentText {
+                width: createSharePopup.width
+                text: "Что войдет в шару:"
+                fontPointSize: 12
+                font.bold: true
+            }
+
+            Row {
+                AccentText {
+                    text: "Релизы"
+                    fontPointSize: 11
+                }
+                CommonSwitch {
+                    id: createSharePopupReleasesSwitch
+                    height: 15
+                }
+                AccentText {
+                    text: "Постеры"
+                    fontPointSize: 11
+                }
+                CommonSwitch {
+                    id: createSharePopupPostersSwitch
+                    height: 15
+                }
+            }
+
+            Item {
+                width: createSharePopup.width - 20
+                height: 40
+
+                RoundedActionButton {
+                    id: torrentStreamSaveButton
+                    anchors.right: torrentStreamCancelButton.left
+                    anchors.rightMargin: 10
+                    anchors.verticalCenter: parent.verticalCenter
+                    text: "Создать"
+                    width: 100
+                    onClicked: {
+                        const isReleses = createSharePopupReleasesSwitch.checked;
+                        const isPosters = createSharePopupPostersSwitch.checked;
+                        const sharePath = createSharePopupPath.text;
+
+                        if (!isReleses && !isPosters) {
+                            notificationViewModel.sendErrorNotification("Выберите как минимум одну вещь которую надо шарить!");
+                            createSharePopup.close();
+                            return;
+                        }
+
+                        if (!sharePath) {
+                            notificationViewModel.sendErrorNotification("Путь для создания шары обязателен!");
+                            createSharePopup.close();
+                            return;
+                        }
+
+                        osExtras.shareCache(sharePath,isPosters, isReleses);
+                        createSharePopup.close();
+                    }
+                }
+
+                RoundedActionButton {
+                    id: torrentStreamCancelButton
+                    anchors.right: parent.right
+                    anchors.verticalCenter: parent.verticalCenter
+                    text: "Отмена"
+                    width: 100
+                    onClicked: {
+                        createSharePopup.close();
+                    }
                 }
             }
         }

@@ -39,6 +39,13 @@ void postersCallBack(bool completed) {
     OsExtras::instance->synchronizationFinished(completed);
 }
 
+void createShareCallBack(bool completed, const char* message) {
+    if (OsExtras::instance == nullptr) return;
+
+    QString qmessage(message);
+    OsExtras::instance->createShareFinished(completed, qmessage);
+}
+
 void latestChangesCallback(int32_t percent, int32_t processesReleases) {
     if (OsExtras::instance == nullptr) return;
 
@@ -228,6 +235,20 @@ void OsExtras::synchronizePosters(bool forceAll)
     checker->synchronizePosters(pathChar.constData(), forceAll, &posterChangesCallback, &postersCallBack);
 }
 
+void OsExtras::shareCache(const QString &path, bool posters, bool releases)
+{
+    if (m_LocalCacheChecker == nullptr) return;
+
+    auto checker = (ImportFunctions*)m_LocalCacheChecker;
+
+    auto cachePath = getCacheOnlyPath();
+    auto cachePathChar = cachePath.toUtf8();
+
+    auto resultPathChar = path.toUtf8();
+
+    checker->shareCache(posters, false, releases, cachePathChar.constData(), resultPathChar, &createShareCallBack);
+}
+
 void OsExtras::deinitializeTorrentStream() noexcept
 {
     if (torrentStreamStop == nullptr) return;
@@ -354,4 +375,10 @@ void OsExtras::postersFinished(bool completed)
 {
     QString message = completed ? "Poster sucessfully synchronized!" : "Poster not synchronized entirely!";
     qDebug() << message;
+}
+
+void OsExtras::createShareFinished(bool completed, const QString &message)
+{
+    QString logMessage = completed ? "Share create sucessfully!" : "Share not created: " + message;
+    qDebug() << logMessage;
 }
