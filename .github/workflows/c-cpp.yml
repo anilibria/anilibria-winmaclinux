@@ -112,7 +112,6 @@ jobs:
       run: ls src/AniLibria.app/Contents/Frameworks/
     - name: patch libraries paths
       run: |
-        cp /usr/local/lib/libjxl_cms.0.11.dylib src/AniLibria.app/Contents/Frameworks/
         cp /usr/local/opt/python@3.14/Frameworks/Python.framework/Versions/3.14/Python src/AniLibria.app/Contents/Frameworks/
       
         arch -x86_64 install_name_tool -change /usr/local/Cellar/ffmpeg/8.0.1/lib/libswresample.6.dylib @executable_path/../Frameworks/libswresample.6.dylib src/AniLibria.app/Contents/Frameworks/libavcodec.62.dylib
