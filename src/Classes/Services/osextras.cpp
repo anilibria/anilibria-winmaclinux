@@ -46,6 +46,13 @@ void createShareCallBack(bool completed, const char* message) {
     OsExtras::instance->createShareFinished(completed, qmessage);
 }
 
+void loadShareCallBack(bool completed, const char* message) {
+    if (OsExtras::instance == nullptr) return;
+
+    QString qmessage(message);
+    OsExtras::instance->loadShareFinished(completed, qmessage);
+}
+
 void latestChangesCallback(int32_t percent, int32_t processesReleases) {
     if (OsExtras::instance == nullptr) return;
 
@@ -249,6 +256,20 @@ void OsExtras::shareCache(const QString &path, bool posters, bool releases)
     checker->shareCache(posters, false, releases, cachePathChar.constData(), resultPathChar, &createShareCallBack);
 }
 
+void OsExtras::loadCache(const QString &path)
+{
+    if (m_LocalCacheChecker == nullptr) return;
+
+    auto checker = (ImportFunctions*)m_LocalCacheChecker;
+
+    auto cachePath = getCacheOnlyPath();
+    auto cachePathChar = cachePath.toUtf8();
+
+    auto resultPathChar = path.toUtf8();
+
+    checker->loadCache(resultPathChar.constData(), cachePathChar.constData(), &loadShareCallBack);
+}
+
 void OsExtras::deinitializeTorrentStream() noexcept
 {
     if (torrentStreamStop == nullptr) return;
@@ -380,5 +401,11 @@ void OsExtras::postersFinished(bool completed)
 void OsExtras::createShareFinished(bool completed, const QString &message)
 {
     QString logMessage = completed ? "Share create sucessfully!" : "Share not created: " + message;
+    qDebug() << logMessage;
+}
+
+void OsExtras::loadShareFinished(bool completed, const QString &message)
+{
+    QString logMessage = completed ? "Share loaded sucessfully!" : "Share not loaded: " + message;
     qDebug() << logMessage;
 }
