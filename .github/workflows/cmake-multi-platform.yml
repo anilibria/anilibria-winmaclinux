@@ -2,7 +2,7 @@ name: Build CMake
 
 on:
   push:
-    branches: [ "master" ]
+    branches: [ "deploy" ]
 
 jobs:
   windows:
