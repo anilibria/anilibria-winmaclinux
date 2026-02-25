@@ -140,12 +140,7 @@ jobs:
 
         arch -x86_64 install_name_tool -change /usr/local/Cellar/brotli/1.1.0/lib/libbrotlicommon.1.dylib @executable_path/../Frameworks/ src/AniLibria.app/Contents/Frameworks/librubberband.3.dylib
         arch -x86_64 install_name_tool -change @loader_path/../../../../opt/libsamplerate/lib/libsamplerate.0.dylib @executable_path/../Frameworks/libhwy.1.dylib src/AniLibria.app/Contents/Frameworks/librubberband.3.dylib
-        arch -x86_64 install_name_tool -change /usr/local/opt/python@3.14/Frameworks/Python.framework/Versions/3.14/Python @executable_path/../Frameworks/Python src/AniLibria.app/Contents/Frameworks/libvapoursynth-script.0.dylib
-        
-        arch -x86_64 install_name_tool -change /usr/local/Cellar/libxcb/1.17.0/lib/libxcb.1.dylib @executable_path/../Frameworks/libxcb.1.dylib src/AniLibria.app/Contents/Frameworks/libxcb-shm.0.dylib
-        arch -x86_64 install_name_tool -change /usr/local/Cellar/libxcb/1.17.0/lib/libxcb.1.dylib @executable_path/../Frameworks/libxcb.1.dylib src/AniLibria.app/Contents/Frameworks/libxcb-shape.0.dylib
-        arch -x86_64 install_name_tool -change /usr/local/Cellar/libxcb/1.17.0/lib/libxcb.1.dylib @executable_path/../Frameworks/libxcb.1.dylib src/AniLibria.app/Contents/Frameworks/libxcb-xfixes.0.dylib      
-
+        arch -x86_64 install_name_tool -change /usr/local/opt/python@3.14/Frameworks/Python.framework/Versions/3.14/Python @executable_path/../Frameworks/Python src/AniLibria.app/Contents/Frameworks/libvapoursynth-script.0.dylib        
     - name: TestRun
       run: |
         open -W src/AniLibria.app --args testrun
