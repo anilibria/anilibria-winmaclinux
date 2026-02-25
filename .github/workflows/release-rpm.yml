@@ -34,7 +34,7 @@ jobs:
         mkdir -p /github/home/rpmbuild/SOURCES/aniliberty-2.2.35/usr/usr/local/bin/
         cp src/build/AniLiberty /github/home/rpmbuild/SOURCES/aniliberty-2.2.35/usr/usr/local/bin/aniliberty
         cd /github/home/rpmbuild/SOURCES
-        tar -czf aniliberty-2.2.35.tar.gz aniliberty/
+        tar -czf aniliberty-2.2.35.tar.gz aniliberty-2.2.35/
         
     - name: Build RPM package
       run: |
