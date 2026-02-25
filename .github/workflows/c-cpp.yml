@@ -114,29 +114,29 @@ jobs:
       run: |
         cp /usr/local/opt/python@3.14/Frameworks/Python.framework/Versions/3.14/Python src/AniLibria.app/Contents/Frameworks/
       
-        arch -x86_64 install_name_tool -change /usr/local/Cellar/ffmpeg/8.0.1/lib/libswresample.6.dylib @executable_path/../Frameworks/libswresample.6.dylib src/AniLibria.app/Contents/Frameworks/libavcodec.62.dylib
-        arch -x86_64 install_name_tool -change /usr/local/Cellar/ffmpeg/8.0.1/lib/libavutil.60.dylib @executable_path/../Frameworks/libavutil.60.dylib src/AniLibria.app/Contents/Frameworks/libavcodec.62.dylib
-        arch -x86_64 install_name_tool -change /usr/local/Cellar/ffmpeg/8.0.1/lib/libswscale.9.dylib @executable_path/../Frameworks/libswscale.9.dylib src/AniLibria.app/Contents/Frameworks/libavfilter.11.dylib
-        arch -x86_64 install_name_tool -change /usr/local/Cellar/ffmpeg/8.0.1/lib/libavutil.60.dylib @executable_path/../Frameworks/libavutil.60.dylib src/AniLibria.app/Contents/Frameworks/libavfilter.11.dylib
-        arch -x86_64 install_name_tool -change /usr/local/Cellar/ffmpeg/8.0.1/lib/libavcodec.62.dylib @executable_path/../Frameworks/libavcodec.62.dylib src/AniLibria.app/Contents/Frameworks/libavfilter.11.dylib
-        arch -x86_64 install_name_tool -change /usr/local/Cellar/ffmpeg/8.0.1/lib/libavformat.62.dylib @executable_path/../Frameworks/libavformat.62.dylib src/AniLibria.app/Contents/Frameworks/libavfilter.11.dylib
-        arch -x86_64 install_name_tool -change /usr/local/Cellar/ffmpeg/8.0.1/lib/libpostproc.58.dylib @executable_path/../Frameworks/libpostproc.58.dylib src/AniLibria.app/Contents/Frameworks/libavfilter.11.dylib
-        arch -x86_64 install_name_tool -change /usr/local/Cellar/ffmpeg/8.0.1/lib/libswresample.6.dylib @executable_path/../Frameworks/libswresample.6.dylib src/AniLibria.app/Contents/Frameworks/libavfilter.11.dylib
+        arch -x86_64 install_name_tool -change /usr/local/Cellar/ffmpeg/8.0.1_4/lib/libswresample.6.dylib @executable_path/../Frameworks/libswresample.6.dylib src/AniLibria.app/Contents/Frameworks/libavcodec.62.dylib
+        arch -x86_64 install_name_tool -change /usr/local/Cellar/ffmpeg/8.0.1_4/lib/libavutil.60.dylib @executable_path/../Frameworks/libavutil.60.dylib src/AniLibria.app/Contents/Frameworks/libavcodec.62.dylib
+        arch -x86_64 install_name_tool -change /usr/local/Cellar/ffmpeg/8.0.1_4/lib/libswscale.9.dylib @executable_path/../Frameworks/libswscale.9.dylib src/AniLibria.app/Contents/Frameworks/libavfilter.11.dylib
+        arch -x86_64 install_name_tool -change /usr/local/Cellar/ffmpeg/8.0.1_4/lib/libavutil.60.dylib @executable_path/../Frameworks/libavutil.60.dylib src/AniLibria.app/Contents/Frameworks/libavfilter.11.dylib
+        arch -x86_64 install_name_tool -change /usr/local/Cellar/ffmpeg/8.0.1_4/lib/libavcodec.62.dylib @executable_path/../Frameworks/libavcodec.62.dylib src/AniLibria.app/Contents/Frameworks/libavfilter.11.dylib
+        arch -x86_64 install_name_tool -change /usr/local/Cellar/ffmpeg/8.0.1_4/lib/libavformat.62.dylib @executable_path/../Frameworks/libavformat.62.dylib src/AniLibria.app/Contents/Frameworks/libavfilter.11.dylib
+        arch -x86_64 install_name_tool -change /usr/local/Cellar/ffmpeg/8.0.1_4/lib/libpostproc.58.dylib @executable_path/../Frameworks/libpostproc.58.dylib src/AniLibria.app/Contents/Frameworks/libavfilter.11.dylib
+        arch -x86_64 install_name_tool -change /usr/local/Cellar/ffmpeg/8.0.1_4/lib/libswresample.6.dylib @executable_path/../Frameworks/libswresample.6.dylib src/AniLibria.app/Contents/Frameworks/libavfilter.11.dylib
         
-        arch -x86_64 install_name_tool -change /usr/local/Cellar/ffmpeg/8.0.1/lib/libavutil.60.dylib @executable_path/../Frameworks/libavutil.60.dylib src/AniLibria.app/Contents/Frameworks/libswresample.6.dylib
-        arch -x86_64 install_name_tool -change /usr/local/Cellar/ffmpeg/8.0.1/lib/libavutil.60.dylib @executable_path/../Frameworks/libavutil.60.dylib src/AniLibria.app/Contents/Frameworks/libswscale.9.dylib
+        arch -x86_64 install_name_tool -change /usr/local/Cellar/ffmpeg/8.0.1_4/lib/libavutil.60.dylib @executable_path/../Frameworks/libavutil.60.dylib src/AniLibria.app/Contents/Frameworks/libswresample.6.dylib
+        arch -x86_64 install_name_tool -change /usr/local/Cellar/ffmpeg/8.0.1_4/lib/libavutil.60.dylib @executable_path/../Frameworks/libavutil.60.dylib src/AniLibria.app/Contents/Frameworks/libswscale.9.dylib
 
-        arch -x86_64 install_name_tool -change /usr/local/Cellar/ffmpeg/8.0.1/lib/libavcodec.62.dylib @executable_path/../Frameworks/libavcodec.62.dylib src/AniLibria.app/Contents/Frameworks/libavformat.62.dylib
-        arch -x86_64 install_name_tool -change /usr/local/Cellar/ffmpeg/8.0.1/lib/libswresample.6.dylib @executable_path/../Frameworks/libswresample.6.dylib src/AniLibria.app/Contents/Frameworks/libavformat.62.dylib
-        arch -x86_64 install_name_tool -change /usr/local/Cellar/ffmpeg/8.0.1/lib/libavutil.60.dylib @executable_path/../Frameworks/libavutil.60.dylib src/AniLibria.app/Contents/Frameworks/libavformat.62.dylib
+        arch -x86_64 install_name_tool -change /usr/local/Cellar/ffmpeg/8.0.1_4/lib/libavcodec.62.dylib @executable_path/../Frameworks/libavcodec.62.dylib src/AniLibria.app/Contents/Frameworks/libavformat.62.dylib
+        arch -x86_64 install_name_tool -change /usr/local/Cellar/ffmpeg/8.0.1_4/lib/libswresample.6.dylib @executable_path/../Frameworks/libswresample.6.dylib src/AniLibria.app/Contents/Frameworks/libavformat.62.dylib
+        arch -x86_64 install_name_tool -change /usr/local/Cellar/ffmpeg/8.0.1_4/lib/libavutil.60.dylib @executable_path/../Frameworks/libavutil.60.dylib src/AniLibria.app/Contents/Frameworks/libavformat.62.dylib
 
-        arch -x86_64 install_name_tool -change /usr/local/Cellar/ffmpeg/8.0.1/lib/libavfilter.11.dylib @executable_path/../Frameworks/libavfilter.11.dylib src/AniLibria.app/Contents/Frameworks/libavdevice.62.dylib
-        arch -x86_64 install_name_tool -change /usr/local/Cellar/ffmpeg/8.0.1/lib/libswscale.9.dylib @executable_path/../Frameworks/libswscale.9.dylib src/AniLibria.app/Contents/Frameworks/libavdevice.62.dylib
-        arch -x86_64 install_name_tool -change /usr/local/Cellar/ffmpeg/8.0.1/lib/libpostproc.58.dylib @executable_path/../Frameworks/libpostproc.58.dylib src/AniLibria.app/Contents/Frameworks/libavdevice.62.dylib
-        arch -x86_64 install_name_tool -change /usr/local/Cellar/ffmpeg/8.0.1/lib/libavformat.62.dylib @executable_path/../Frameworks/libavformat.62.dylib src/AniLibria.app/Contents/Frameworks/libavdevice.62.dylib
-        arch -x86_64 install_name_tool -change /usr/local/Cellar/ffmpeg/8.0.1/lib/libavcodec.62.dylib @executable_path/../Frameworks/libavcodec.62.dylib src/AniLibria.app/Contents/Frameworks/libavdevice.62.dylib
-        arch -x86_64 install_name_tool -change /usr/local/Cellar/ffmpeg/8.0.1/lib/libswresample.6.dylib @executable_path/../Frameworks/libswresample.6.dylib src/AniLibria.app/Contents/Frameworks/libavdevice.62.dylib
-        arch -x86_64 install_name_tool -change /usr/local/Cellar/ffmpeg/8.0.1/lib/libavutil.60.dylib @executable_path/../Frameworks/libavutil.60.dylib src/AniLibria.app/Contents/Frameworks/libavdevice.62.dylib
+        arch -x86_64 install_name_tool -change /usr/local/Cellar/ffmpeg/8.0.1_4/lib/libavfilter.11.dylib @executable_path/../Frameworks/libavfilter.11.dylib src/AniLibria.app/Contents/Frameworks/libavdevice.62.dylib
+        arch -x86_64 install_name_tool -change /usr/local/Cellar/ffmpeg/8.0.1_4/lib/libswscale.9.dylib @executable_path/../Frameworks/libswscale.9.dylib src/AniLibria.app/Contents/Frameworks/libavdevice.62.dylib
+        arch -x86_64 install_name_tool -change /usr/local/Cellar/ffmpeg/8.0.1_4/lib/libpostproc.58.dylib @executable_path/../Frameworks/libpostproc.58.dylib src/AniLibria.app/Contents/Frameworks/libavdevice.62.dylib
+        arch -x86_64 install_name_tool -change /usr/local/Cellar/ffmpeg/8.0.1_4/lib/libavformat.62.dylib @executable_path/../Frameworks/libavformat.62.dylib src/AniLibria.app/Contents/Frameworks/libavdevice.62.dylib
+        arch -x86_64 install_name_tool -change /usr/local/Cellar/ffmpeg/8.0.1_4/lib/libavcodec.62.dylib @executable_path/../Frameworks/libavcodec.62.dylib src/AniLibria.app/Contents/Frameworks/libavdevice.62.dylib
+        arch -x86_64 install_name_tool -change /usr/local/Cellar/ffmpeg/8.0.1_4/lib/libswresample.6.dylib @executable_path/../Frameworks/libswresample.6.dylib src/AniLibria.app/Contents/Frameworks/libavdevice.62.dylib
+        arch -x86_64 install_name_tool -change /usr/local/Cellar/ffmpeg/8.0.1_4/lib/libavutil.60.dylib @executable_path/../Frameworks/libavutil.60.dylib src/AniLibria.app/Contents/Frameworks/libavdevice.62.dylib
 
         arch -x86_64 install_name_tool -change /usr/local/Cellar/brotli/1.1.0/lib/libbrotlicommon.1.dylib @executable_path/../Frameworks/ src/AniLibria.app/Contents/Frameworks/librubberband.3.dylib
         arch -x86_64 install_name_tool -change @loader_path/../../../../opt/libsamplerate/lib/libsamplerate.0.dylib @executable_path/../Frameworks/libhwy.1.dylib src/AniLibria.app/Contents/Frameworks/librubberband.3.dylib
