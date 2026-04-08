@@ -86,6 +86,7 @@ $ flatpak install --user anilibria.flatpak
 [macOS](macosbuild.md)
 [PostmarketOs](postmarketos.md)
 [Void Linux](voidlinux.md)
+[Steam Deck](https://github.com/JerzyEx/anilibria_at_steamdeck)
 
 ### Для сборки необходимо:
 - Минимальная поддерживаемая версия Qt 5.15.2
