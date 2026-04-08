@@ -24,7 +24,7 @@
 class OnlineVideoModel
 {
 private:
-    int m_Id;
+    double m_Id;
     QString m_Title;
     QString m_SD;
     QString m_HD;
@@ -42,6 +42,7 @@ private:
     int m_openingEndSeconds { -1 };
     QString m_rutubeId { "" };
     QString m_description { "" };
+    QString m_uniqueId { "" };
 
 public:
     OnlineVideoModel();
@@ -50,7 +51,7 @@ public:
 
     void writeToJson(QJsonObject &json) const noexcept;
 
-    int id() const { return m_Id; }
+    double id() const { return m_Id; }
     QString title() const { return m_Title; }
     QString sd() noexcept { return m_SD; }
     QString hd() noexcept { return m_HD; }
@@ -68,8 +69,10 @@ public:
     int openingEndSeconds() const noexcept { return m_openingEndSeconds; };
     QString rutubeId() const noexcept { return m_rutubeId; }
     QString description() const noexcept { return m_description; }
+    QString uniqueId() const noexcept { return m_uniqueId; }
 
-    void setId(const int id) noexcept;
+    void setId(const double id) noexcept;
+    void setUniqueId(const QString& uniqueId) noexcept { m_uniqueId = uniqueId; }
     void setTitle(const QString &title) noexcept;
     void setSd(const QString &sd) noexcept;
     void setHd(const QString &hd) noexcept;
@@ -82,7 +85,10 @@ public:
     void setIsGroup(bool isGroup) noexcept;
     void setVideoPoster(const QString& poster) noexcept;
     void setOpeningStartSeconds(int value) noexcept { m_openingStartSeconds = value; }
-    void setOpeningEndSeconds(int value) noexcept { m_openingEndSeconds = value; };
+    void setOpeningEndSeconds(int value) noexcept { m_openingEndSeconds = value; }
+    void setEndingStartSeconds(int value) noexcept { m_endingStartSeconds = value; }
+    void setEndingEndSeconds(int value) noexcept { m_endingEndSeconds = value; }
+    void setDescription(const QString& value) noexcept { m_description = value; }
 
 private:
     QString getProxyUrl(const QString& url);

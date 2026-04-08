@@ -28,21 +28,17 @@ OnlinePlayerWindowViewModel::OnlinePlayerWindowViewModel(QObject *parent) : QObj
 {
     m_supportOutput = m_playerComponent == "Videoplayer/QtPlayer515.qml";
     m_playerComponents.insert(nameVLCPlayer, "Videoplayer/QtVlcPlayer.qml");
-    m_playerComponents.insert(nameQtAvPlayer, "Videoplayer/QtAvPlayer.qml");
+    m_playerComponents.insert(nameMpvPlayer, "Videoplayer/MpvPlayer.qml");
     m_playerComponents.insert("Default", "Videoplayer/QtPlayer515.qml");
-
-    m_playerOutputComponents.insert(nameVLCPlayer, "Videoplayer/QtVlcVideoOutput.qml");
-    m_playerOutputComponents.insert(nameQtAvPlayer, "Videoplayer/QtAvVideoOutput.qml");
-    m_playerOutputComponents.insert("Default", "Videoplayer/QtVideo515Output.qml");
 
     fillSupportedPlayers();
 
     m_selectedPlayer = m_players.first();
     m_playerComponent = m_playerComponents.value(m_selectedPlayer);
-    m_playerOutputComponent = m_playerOutputComponents.value(m_selectedPlayer);
     m_supportOutput = m_playerComponent == "Videoplayer/QtPlayer515.qml";
     m_isHasVlc = m_players.contains(nameVLCPlayer);
-    m_isSelectedVlc = m_isHasVlc;
+    m_isHasMpv = m_players.contains(nameMpvPlayer);
+    fillSelectedPlayer();
 }
 
 void OnlinePlayerWindowViewModel::setPlayerButtonVisible(const bool &playerButtonVisible) noexcept
@@ -106,6 +102,15 @@ void OnlinePlayerWindowViewModel::setStartupPlayer(const QString &startupPlayer)
     }
 }
 
+void OnlinePlayerWindowViewModel::timerEvent(QTimerEvent *event)
+{
+    Q_UNUSED(event);
+
+    if (!m_nextVideoPlayer.isEmpty()) changePlayer(m_nextVideoPlayer);
+
+    killTimer(m_nextVideoPlayerTimer);
+}
+
 void OnlinePlayerWindowViewModel::playbackStateChanged(const bool &isPlaying)
 {
     setPlayerButtonVisible(!isPlaying);
@@ -127,45 +132,56 @@ void OnlinePlayerWindowViewModel::showPanel()
 void OnlinePlayerWindowViewModel::clearCurrentPlayer()
 {
     m_playerComponent = "";
-    m_playerOutputComponent = "";
     emit playerComponentChanged();
-    emit playerOutputComponentChanged();
 }
 
 void OnlinePlayerWindowViewModel::changePlayer(const QString &player)
 {
     clearCurrentPlayer();
 
-    m_isSelectedQtAv = nameQtAvPlayer == player;
     m_isSelectedVlc = nameVLCPlayer == player;
+    m_isSelectedMpv = nameMpvPlayer == player;
     m_selectedPlayer = player;
-    emit isSelectedQtAvChanged();
     emit isSelectedVlcChanged();
     emit selectedPlayerChanged();
+    emit isSelectedMpvChanged();
 
     m_playerComponent = m_playerComponents.value(player);
-    m_playerOutputComponent = m_playerOutputComponents.value(player);
     m_supportOutput = m_playerComponent == "Videoplayer/QtPlayer515.qml";
 
     emit supportOutputChanged();
     emit playerComponentChanged();
-    emit playerOutputComponentChanged();
+}
+
+void OnlinePlayerWindowViewModel::changePlayerWithTimeout(const QString &player)
+{
+    m_nextVideoPlayer = player;
+
+    m_nextVideoPlayerTimer = startTimer(300);
 }
 
 void OnlinePlayerWindowViewModel::fillSupportedPlayers()
 {
     bool isVlc = false;
-    bool isQtAv = false;
+    bool isMpv = false;
 #ifdef USE_VLC_PLAYER
     isVlc = true;
 #endif
-#ifdef USE_QTAV_PLAYER
-    isQtAv = true;
+#ifdef USE_MPV_PLAYER
+    isMpv = true;
 #endif
 
     if (isVlc) m_players.append(nameVLCPlayer);
-    if (isQtAv) m_players.append(nameQtAvPlayer);
+    if (isMpv) m_players.append(nameMpvPlayer);
 #ifndef NO_NEED_STANDART_PLAYER
     m_players.append("Default");
 #endif
+}
+
+void OnlinePlayerWindowViewModel::fillSelectedPlayer()
+{
+    m_isSelectedVlc = nameVLCPlayer == m_selectedPlayer;
+    m_isSelectedMpv = nameMpvPlayer == m_selectedPlayer;
+    emit isSelectedVlcChanged();
+    emit isSelectedMpvChanged();
 }

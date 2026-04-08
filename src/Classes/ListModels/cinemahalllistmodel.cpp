@@ -16,6 +16,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <QJsonDocument>
+#include <QFile>
 #include "cinemahalllistmodel.h"
 #include "../../globalhelpers.h"
 
@@ -84,15 +86,17 @@ void CinemahallListModel::refreshItems() noexcept
 int CinemahallListModel::getReleaseSeenMarkCount(int releaseId) const noexcept
 {
     auto result = 0;
-    QHashIterator<QString, bool> iterator(*m_seenMarks);
-    while(iterator.hasNext()) {
-        iterator.next();
+    auto keys = m_seenMarks->keys();
+    foreach (auto key, keys) {
+        auto item = m_seenMarks->value(key);
+        bool mark = std::get<0>(item);
+        if (!mark) continue;
 
-        QString key = iterator.key();
-        auto id = QString::number(releaseId);
-        if (!key.startsWith(id)) continue;
-
-        result += 1;
+        if (!m_videosMap->contains(key)) continue;
+        auto video = m_videosMap->value(key);
+        if (video->releaseId() == releaseId) {
+            result += 1;
+        }
     }
 
     return result;
@@ -129,10 +133,11 @@ CinemahallListModel::CinemahallListModel(QObject *parent)
     loadItems();
 }
 
-void CinemahallListModel::setup(QSharedPointer<QList<FullReleaseModel *> > releases, QHash<QString, bool>* seenMarks)
+void CinemahallListModel::setup(QSharedPointer<QList<FullReleaseModel *> > releases, QHash<QString, std::tuple<bool, int>>* seenMarks, QMap<QString, ReleaseOnlineVideoModel*>* videosMap)
 {
     m_releases = releases;
     m_seenMarks = seenMarks;
+    m_videosMap = videosMap;
 }
 
 void CinemahallListModel::setDragRelease(const int dragRelease) noexcept
@@ -185,6 +190,8 @@ QString CinemahallListModel::movedPositionPlaceholder() const noexcept
 int CinemahallListModel::rowCount(const QModelIndex &parent) const
 {
     if (parent.isValid()) return 0;
+    if (m_releases->isEmpty()) return 0;
+
     return m_items->size();
 }
 
@@ -385,6 +392,31 @@ void CinemahallListModel::deletedSeenReleases()
     deleteReleases(ids);
 }
 
+void CinemahallListModel::deletedSeenAndFavoritesReleases()
+{
+    QList<int> ids;
+    auto releases = getCinemahallReleases();
+    foreach (auto release, releases) {
+        if (release->countOnlineVideos() == getReleaseSeenMarkCount(release->id())){
+            ids.append(release->id());
+        }
+    }
+    deleteReleases(ids);
+    emit needDeleteFavorites(ids);
+}
+
+void CinemahallListModel::deletedSeenOnlyFromFavorites()
+{
+    QList<int> ids;
+    auto releases = getCinemahallReleases();
+    foreach (auto release, releases) {
+        if (release->countOnlineVideos() == getReleaseSeenMarkCount(release->id())){
+            ids.append(release->id());
+        }
+    }
+    emit needDeleteFavorites(ids);
+}
+
 void CinemahallListModel::moveToTypedNumber()
 {
     auto index = m_movedPositionIndex - 1;
@@ -392,6 +424,11 @@ void CinemahallListModel::moveToTypedNumber()
     if (index == m_openedItemIndex) return;
 
     reorderElements(index, m_openedItemIndex);
+}
+
+void CinemahallListModel::refreshCinemahall()
+{
+    refreshItems();
 }
 
 void CinemahallListModel::itemMenuSelected(const int index)

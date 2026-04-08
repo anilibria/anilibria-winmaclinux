@@ -23,6 +23,7 @@
 #include "../Models/fullreleasemodel.h"
 #include "../Models/usersettingsmodel.h"
 #include "../Models/downloaditemmodel.h"
+#include "../Models/releaseonlinevideomodel.h"
 #include "../Services/offlineimagecacheservice.h"
 
 class LocalStorageService : public QObject
@@ -53,16 +54,9 @@ public:
     void setup(QSharedPointer<QList<FullReleaseModel *>> releases);
     void invalidateReleasePoster(int id);
 
-    Q_INVOKABLE void setVolume(double volume);
-    Q_INVOKABLE void setVideoQuality(int quality);
-    Q_INVOKABLE void setAutoNextVideo(bool autoNextVideo);
-    Q_INVOKABLE void setAutoTopMost(bool autoTopMost);
     Q_INVOKABLE void setTorrentDownloadMode(int torrentDownloadMode);
     Q_INVOKABLE bool isUseTorrentStreamMode();
     Q_INVOKABLE void setNotificationForFavorites(bool notificationForFavorites);
-    Q_INVOKABLE void setJumpMinute(int jumpMinute);
-    Q_INVOKABLE void setJumpSecond(int jumpSecond);
-    Q_INVOKABLE void setShowReleaseInfo(bool showReleaseInfo);
     Q_INVOKABLE void setClearFiltersAfterChangeSection(bool clearFiltersAfterChangeSection);
     Q_INVOKABLE void setCompactMode(bool compactMode);
     Q_INVOKABLE void setHideCinemhallButton(bool hideCinemhallButton);
@@ -78,15 +72,14 @@ public:
 
     Q_INVOKABLE QString getUserSettings();
     Q_INVOKABLE void copyTorrentToFile(QString source, QString target);
-    Q_INVOKABLE QString getReleasePosterPath(int id, QString url);   
-    Q_INVOKABLE QString packAsM3UAndOpen(int id, QString quality);
-    Q_INVOKABLE QString packAsMPCPLAndOpen(int id, QString quality);
-    Q_INVOKABLE QString getReleases(const QList<int>& ids);
+    Q_INVOKABLE QString getReleasePosterPath(int id, QString url);
+    Q_INVOKABLE QString packAsM3UAndOpen(int id, QString quality, const QList<ReleaseOnlineVideoModel*>& videos);
+    Q_INVOKABLE QString packAsMPCPLAndOpen(int id, QString quality, const QList<ReleaseOnlineVideoModel*>& videos);
     Q_INVOKABLE void addDownloadItem(int releaseId, int videoId, int quality);
     Q_INVOKABLE void finishDownloadItem(int releaseId, int videoId, int quality, const QString& downloadedPath);
-    Q_INVOKABLE QList<QString> getDownloadsReleases();
     Q_INVOKABLE QString getDownloads();
     Q_INVOKABLE void clearPostersCache();
+    Q_INVOKABLE void clearRedundantFilesFromCache();
     Q_INVOKABLE void backupCache(const QString& path);
     Q_INVOKABLE void restoreBackupCache(const QString& path);
 

@@ -57,6 +57,7 @@ private:
     QString getYoutubeCachePath() const;
     void saveYoutubeItems(const QString &youtubeItems);
     void readYoutubeItems();
+    void refreshYoutubeItems(const QString& json);
 
 private slots:
     void receiveYoutubeVideos(const QString& data);

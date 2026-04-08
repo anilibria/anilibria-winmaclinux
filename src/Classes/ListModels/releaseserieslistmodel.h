@@ -40,6 +40,7 @@ private:
         ReleaseNumber
     };
     QScopedPointer<QList<FullReleaseModel*>> m_releases { new QList<FullReleaseModel*>() };
+    QList<QVariantMap> m_variantReleases { QList<QVariantMap>() };
     ReleaseLinkedSeries* m_linkedSeries { nullptr };
     int m_releaseId { -1 };
 
@@ -58,7 +59,7 @@ public:
     int releaseId() const noexcept { return m_releaseId; }
     void setReleaseId(int releaseId) noexcept;
 
-    bool isEmpty() const noexcept { return m_releases->isEmpty(); }
+    bool isEmpty() const noexcept { return m_variantReleases.isEmpty(); }
 
 signals:
     void releaseIdChanged();

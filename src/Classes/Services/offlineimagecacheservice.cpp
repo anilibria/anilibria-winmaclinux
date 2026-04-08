@@ -19,6 +19,7 @@
 #include <QHashIterator>
 #include "offlineimagecacheservice.h"
 #include "globalconstants.h"
+#include "globalhelpers.h"
 
 void OfflineImageCacheService::loadCache()
 {
@@ -76,7 +77,7 @@ void OfflineImageCacheService::clearPosterCache()
     while (iterator.hasNext()) {
         iterator.next();
         auto filename = iterator.value();
-        QFile file(filename.replace("file:///", "").replace("file://", ""));
+        QFile file(removeFileProtocol(filename));
         file.remove();
     }
 }

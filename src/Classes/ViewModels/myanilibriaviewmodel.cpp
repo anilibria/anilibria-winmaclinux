@@ -221,6 +221,7 @@ void MyAnilibriaViewModel::refreshAllSectionsModels() noexcept
         auto model = m_sectionModels.value(key);
         model->recalculateItem();
     }
+    m_myList->refresh();
 }
 
 void MyAnilibriaViewModel::readFromCache() noexcept

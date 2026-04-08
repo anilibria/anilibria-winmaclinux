@@ -32,11 +32,15 @@
 #include "../ListModels/releasetorrentcommonlist.h"
 #include "../Models/historymodel.h"
 #include "../Models/changesmodel.h"
-#include "../Services/synchronizationservice.h"
+#include "../Models/releaseonlinevideomodel.h"
+#include "../Models/apitorrentmodel.h"
 #include "../Services/applicationsettings.h"
 #include "../Services/localstorageservice.h"
+#include "../Services/synchronizev2service.h"
+#include "../Models/releaseonlinevideomodel.h"
 #include "releasecustomgroupsviewmodel.h"
 #include "useractivityviewmodel.h"
+#include "../Services/releaselinkedseries.h"
 
 class ReleasesViewModel : public QObject
 {
@@ -59,7 +63,6 @@ class ReleasesViewModel : public QObject
     Q_PROPERTY(bool notificationForFavorites READ notificationForFavorites WRITE setNotificationForFavorites NOTIFY notificationForFavoritesChanged)
     Q_PROPERTY(bool showSidePanel READ showSidePanel WRITE setShowSidePanel NOTIFY showSidePanelChanged)
     Q_PROPERTY(bool selectMode READ selectMode WRITE setSelectMode NOTIFY selectModeChanged)
-    Q_PROPERTY(SynchronizationService* synchronizationService READ synchronizationService WRITE setSynchronizationService NOTIFY synchronizationServiceChanged)
     Q_PROPERTY(ApplicationSettings* applicationSettings READ applicationSettings WRITE setApplicationSettings NOTIFY applicationSettingsChanged)
     Q_PROPERTY(LocalStorageService* localStorage READ localStorage WRITE setLocalStorage NOTIFY localStorageChanged)
     Q_PROPERTY(bool hasCinemahallNotSeenVideos READ hasCinemahallNotSeenVideos NOTIFY hasCinemahallNotSeenVideosChanged)
@@ -90,23 +93,30 @@ class ReleasesViewModel : public QObject
     Q_PROPERTY(int openedReleaseSeenCountVideos READ openedReleaseSeenCountVideos NOTIFY openedReleaseSeenCountVideosChanged)
     Q_PROPERTY(bool openedReleaseInHided READ openedReleaseInHided NOTIFY openedReleaseInHidedChanged)
     Q_PROPERTY(bool openedReleaseInFavorites READ openedReleaseInFavorites NOTIFY openedReleaseInFavoritesChanged)
-    Q_PROPERTY(QString openedReleaseVideos READ openedReleaseVideos NOTIFY openedReleaseVideosChanged)
     Q_PROPERTY(QString openedReleaseAnnounce READ openedReleaseAnnounce NOTIFY openedReleaseAnnounceChanged)
     Q_PROPERTY(bool openedReleaseIsRutube READ openedReleaseIsRutube NOTIFY openedReleaseIsRutubeChanged)
+    Q_PROPERTY(bool openedReleaseInCollections READ openedReleaseInCollections NOTIFY openedReleaseInCollectionsChanged)
     Q_PROPERTY(bool synchronizationEnabled READ synchronizationEnabled WRITE setSynchronizationEnabled NOTIFY synchronizationEnabledChanged)
     Q_PROPERTY(QString newEntities READ newEntities WRITE setNewEntities NOTIFY newEntitiesChanged)
     Q_PROPERTY(bool notCloseReleaseCardAfterWatch READ notCloseReleaseCardAfterWatch WRITE setNotCloseReleaseCardAfterWatch NOTIFY notCloseReleaseCardAfterWatchChanged)
     Q_PROPERTY(QList<int> countSections READ countSections NOTIFY countSectionsChanged)
     Q_PROPERTY(ReleaseCustomGroupsViewModel* customGroups READ customGroups NOTIFY customGroupsChanged)
+    Q_PROPERTY(Synchronizev2Service* synchronizationServicev2 READ synchronizationServicev2 WRITE setSynchronizationServicev2 NOTIFY synchronizationServicev2Changed)
+    Q_PROPERTY(int proxyPort READ proxyPort WRITE setProxyPort NOTIFY proxyPortChanged FINAL)
+    Q_PROPERTY(ReleaseLinkedSeries* releaseLinkedSeries READ releaseLinkedSeries WRITE setReleaseLinkedSeries NOTIFY releaseLinkedSeriesChanged)
+    Q_PROPERTY(QString openedReleseExtensionContent READ openedReleseExtensionContent WRITE setOpenedReleseExtensionContent NOTIFY openedReleseExtensionContentChanged FINAL)
 
 private:
     const QString releasesCacheFileName { "releases.cache" };
+    const QString metadataCacheFileName { "metadata" };
     const QString scheduleCacheFileName { "schedule.cache" };
     const QString favoriteCacheFileName { "favorites.cache" };
     const QString hidedReleasesCacheFileName { "hidedreleases.cache" };
     const QString seenMarkCacheFileName { "seenmark.cache" };
+    const QString extendedSeenMarkCacheFileName { "extendedseenmark.cache" };
     const QString historyCacheFileName { "history.cache" };
     const QString notificationCacheFileName { "notification.cache" };
+    const QString collectionsCacheFileName { "collections.cache" };
     QStringList m_sectionNames;
     ReleaseTorrentsList* m_releaseTorrentsList { new ReleaseTorrentsList(this) };
     UserActivityViewModel* m_userActivity { nullptr };
@@ -115,18 +125,21 @@ private:
     ImageBackgroundViewModel* m_imageBackgroundViewModel { new ImageBackgroundViewModel(this) };
     QSharedPointer<QList<FullReleaseModel*>> m_releases { new QList<FullReleaseModel*>() };
     QScopedPointer<QMap<int, FullReleaseModel*>> m_releasesMap { new QMap<int, FullReleaseModel*>() };
+    QList<ReleaseOnlineVideoModel*> m_onlineVideos { QList<ReleaseOnlineVideoModel*>() };
+    QMap<QString, ReleaseOnlineVideoModel*> m_onlineVideosMap { QMap<QString, ReleaseOnlineVideoModel*>() };
+    QList<ApiTorrentModel*> m_torrentItems { QList<ApiTorrentModel*>() };
+    ReleaseLinkedSeries* m_releaseLinkedSeries { nullptr };
     ReleaseCustomGroupsViewModel* m_customGroups { new ReleaseCustomGroupsViewModel(this) };
     int m_countReleases { 0 };
     int m_countSeens { 0 };
     int m_countFavorites { 0 };
     ReleasesListModel* m_items;
     QMap<int, int>* m_scheduleReleases { new QMap<int, int>() };
-    QVector<int>* m_userFavorites { new QVector<int>() };
-    QVector<int>* m_hiddenReleases { new QVector<int>() };
-    QHash<QString, bool>* m_seenMarks { new QHash<QString, bool>() };
+    QList<int>* m_userFavorites { new QList<int>() };
+    QList<int>* m_hiddenReleases { new QList<int>() };
+    QHash<QString, std::tuple<bool, int>> m_extendedSeenMarks { QHash<QString, std::tuple<bool, int>>() };
     QSharedPointer<QHash<int, HistoryModel*>> m_historyItems { new QHash<int, HistoryModel*>() };
     QSharedPointer<ChangesModel> m_releaseChanges { new ChangesModel() };
-    SynchronizationService* m_synchronizationService { nullptr };
     ApplicationSettings* m_applicationSettings { nullptr };
     LocalStorageService* m_localStorage { nullptr };
     bool m_notificationForFavorites { false };
@@ -141,6 +154,24 @@ private:
     QString m_openedReleaseAnnounce { "" };
     QList<int> m_sectionCounters { QList<int>() };
     QNetworkAccessManager* m_manager { new QNetworkAccessManager(this) };
+    Synchronizev2Service* m_synchronizationServicev2 { nullptr };
+    int m_proxyPort { 0 };
+    QMap<int, int> m_oldReleasesCountVideos { QMap<int, int>() };
+    QMap<int, int> m_oldReleasesCountTorrents { QMap<int, int>() };
+    QMap<int, QString> m_oldReleasesTorrentsSeries { QMap<int, QString>() };
+    QSet<int> m_oldReleasesIds { QSet<int>() };
+    QMap<int, QString> m_collections { QMap<int, QString>() };
+    QString m_openedReleseExtensionContent { "" };
+
+    QList<int> m_myAnilibriaNewInFavorites;
+    QList<int> m_myAnilibriaNewFromStart;
+    QList<int> m_myAnilibriaNewFromLastTwoDays;
+    QList<int> m_myAnilibriaCurrentSeasons;
+    QList<int> m_myAnilibriaAbandonReleases;
+    QList<int> m_myAnilibriaWillWatchReleases;
+    QList<int> m_myAnilibriaNextInReleaseSeries;
+    QList<int> m_myAnilibriaRecommendsForGenres;
+    QList<int> m_myAnilibriaRecommendsForVoices;
 
 public:
     explicit ReleasesViewModel(QObject *parent = nullptr);
@@ -196,9 +227,6 @@ public:
     QString newEntities() const noexcept { return m_newEntities; }
     void setNewEntities(QString newEntities) noexcept;
 
-    SynchronizationService* synchronizationService() const noexcept { return m_synchronizationService; }
-    void setSynchronizationService(SynchronizationService* synchronizationService) noexcept;
-
     ApplicationSettings* applicationSettings() const noexcept { return m_applicationSettings; }
     void setApplicationSettings(ApplicationSettings* applicationSettings) noexcept;
 
@@ -206,6 +234,18 @@ public:
     void setNotCloseReleaseCardAfterWatch(const bool notCloseReleaseCardAfterWatch) noexcept;
 
     ReleaseCustomGroupsViewModel* customGroups() const noexcept { return m_customGroups; }
+
+    Synchronizev2Service* synchronizationServicev2() const noexcept { return m_synchronizationServicev2; }
+    void setSynchronizationServicev2(const Synchronizev2Service* synchronizationServicev2) noexcept;
+
+    int proxyPort() const noexcept { return m_proxyPort; }
+    void setProxyPort(int proxyPort) noexcept;
+
+    ReleaseLinkedSeries* releaseLinkedSeries() const noexcept { return m_releaseLinkedSeries; }
+    void setReleaseLinkedSeries(ReleaseLinkedSeries* releaseLinkedSeries) noexcept;
+
+    QString openedReleseExtensionContent() const noexcept { return m_openedReleseExtensionContent; }
+    void setOpenedReleseExtensionContent(const QString& openedReleseExtensionContent) noexcept;
 
     bool isOpenedCard() const noexcept { return m_openedRelease != nullptr; }
     int openedReleaseId() const noexcept { return m_openedRelease != nullptr ? m_openedRelease->id() : 0; }
@@ -234,12 +274,14 @@ public:
     int openedReleaseSeenCountVideos() const noexcept { return m_openedRelease != nullptr ? m_items->getReleaseSeenMarkCount(m_openedRelease->id()) : 0; }
     bool openedReleaseInHided() const noexcept { return m_openedRelease != nullptr ? m_hiddenReleases->contains(m_openedRelease->id()) : false; }
     bool openedReleaseInFavorites() const noexcept { return m_openedRelease != nullptr ? m_userFavorites->contains(m_openedRelease->id()) : false; }
-    QString openedReleaseVideos() const noexcept { return m_openedRelease != nullptr ? m_openedRelease->videos() : ""; }
     QString openedReleaseAnnounce() const noexcept { return m_openedRelease != nullptr ? m_openedRelease->announce() : ""; }
     bool openedReleaseIsRutube() const noexcept;
+    bool openedReleaseInCollections() const noexcept;
     QStringList getMostPopularGenres() const noexcept;
     QStringList getMostPopularVoices() const noexcept;
     QList<int> countSections() const noexcept { return m_sectionCounters; };
+    void fillMyAnilibriaData() noexcept;
+    void getFilledMyAnilibriaSection(int mode, QList<FullReleaseModel*>* list) noexcept;
     void fillNewInFavorites(QList<FullReleaseModel*>* list) const noexcept;
     void fillNewFromStart(QList<FullReleaseModel*>* list) const noexcept;
     void fillNewFromLastTwoDays(QList<FullReleaseModel*>* list) const noexcept;
@@ -250,16 +292,24 @@ public:
     void fillCurrentSeason(QList<FullReleaseModel*>* list) noexcept;
     void fillRecommendedByVoices(QList<FullReleaseModel*>* list) noexcept;
     void getFavoritesReleases(QList<FullReleaseModel*>* list) const noexcept;
+    void getFavoritesIds(QList<int>* list) const noexcept;
     QString getReleaseCodeFromUrl(const QString& url) const noexcept;
     void fillFullSearch(QList<FullReleaseModel*>& list, const QString& filter) noexcept;
     bool fullSearchCheck(const QString& word, const FullReleaseModel* release) noexcept;
     void iterateOnReleases(std::function<void (FullReleaseModel *)> func) noexcept;
+    QList<ReleaseOnlineVideoModel*> getReleaseVideos(int releaseId) noexcept;
+    QList<ApiTorrentModel*> getReleaseTorrents(int releaseId) noexcept;
+    void getSeenIds(QList<int>* list);
+    void synchronizeCollections(QMap<int, QString>&& items) noexcept;
+    void setReleasesToCollection(QList<int> ids, const QString& collection) noexcept;
+    void removeReleasesFromCollections(QList<int> ids) noexcept;
 
     Q_INVOKABLE void copyToClipboard(const QString& text) const noexcept;
     Q_INVOKABLE void copyImageToClipboard(const QString& imagePath) const;
     Q_INVOKABLE QString getVkontakteCommentPage(const QString& code) const noexcept;
     Q_INVOKABLE void resetAllChanges() noexcept;
     Q_INVOKABLE void selectRelease(int id) noexcept;
+    Q_INVOKABLE void toggleRelease(int id) noexcept;
     Q_INVOKABLE void clearSelectedReleases() noexcept;
     Q_INVOKABLE void addReleaseToFavorites(int id) noexcept;
     Q_INVOKABLE void removeReleaseFromFavorites(int id) noexcept;
@@ -276,12 +326,13 @@ public:
     Q_INVOKABLE void setSeenMarkAllSeries(int id, int countSeries, bool marked);
     Q_INVOKABLE void setSeenMarkAllSeriesSelectedReleases(bool marked);
     Q_INVOKABLE void setSeenMarkForSingleRelease(int id, bool marked);
-    Q_INVOKABLE void setSeenMarkForRelease(int id, int countSeries, bool marked);
+    Q_INVOKABLE void synchronizeSeenMarkForRelease(const QList<QString>& ids, bool marked);
+    Q_INVOKABLE void synchronizeSeenMarkForRelease(int id, int countSeries, bool marked);
+    Q_INVOKABLE void synchronizeSeenMarkForSingleSeria(const QString& id, bool marked);
     Q_INVOKABLE void refreshOpenedReleaseCard();
     Q_INVOKABLE void removeAllSeenMark();
     Q_INVOKABLE void reloadReleases();
     Q_INVOKABLE void setToReleaseHistory(int id, int type) noexcept;
-    Q_INVOKABLE QString getReleaseVideos(int id) const noexcept;
     Q_INVOKABLE QString getReleasePoster(int id) const noexcept;
     Q_INVOKABLE QString getReleaseTitle(int id) const noexcept;
     Q_INVOKABLE void addToHidedReleases(const QList<int>& ids) noexcept;
@@ -289,31 +340,42 @@ public:
     Q_INVOKABLE void removeFromHidedReleases(const QList<int>& ids) noexcept;
     Q_INVOKABLE void removeFromHidedSelectedReleases() noexcept;
     Q_INVOKABLE void removeAllHidedReleases() noexcept;
-    Q_INVOKABLE bool importReleasesFromFile(QString path);
     Q_INVOKABLE void addToCinemahallSelectedReleases();
     Q_INVOKABLE void setupSortingForSection() const noexcept;
-    Q_INVOKABLE bool getSeriaSeenMark(int id, int seriaId) const noexcept;
-    Q_INVOKABLE bool toggleSeenMark(int id, int seriaId) noexcept;
-    Q_INVOKABLE void setSeenMark(int id, int seriaId, bool marked);
-    QHash<QString, bool>* getSeenMarks();
-    void updateAllReleases(const QList<QString> &releases, bool insideData);
+    Q_INVOKABLE bool getSeriaSeenMark(int id, const QString& seriaId) const noexcept;
+    Q_INVOKABLE void toggleSeenMark(int id, const QString& seriaId) noexcept;
+    Q_INVOKABLE void setSeenMark(int id, const QString& seriaId, bool marked);
+    QHash<QString, std::tuple<bool, int>>& getSeenMarks();
+    QMap<QString, ReleaseOnlineVideoModel*>& getVideosMap();
     uint32_t getCountFromChanges(const QList<int> *releases, bool filterByFavorites);
     Q_INVOKABLE void openInExternalPlayer(const QString& url);
     Q_INVOKABLE void prepareTorrentsForListItem(const int id);
-    Q_INVOKABLE void clearDeletedInCacheMarks();
-    Q_INVOKABLE void downloadTorrent(int releaseId, const QString& torrentPath, int port);
+    Q_INVOKABLE QString packAsM3UAndOpen(int id, QString quality);
+    Q_INVOKABLE QString packAsMPCPLAndOpen(int id, QString quality);
+    Q_INVOKABLE void savePreviousReleases(int previousLastTimeStamp);
+    Q_INVOKABLE void refreshApiHost();
+    Q_INVOKABLE void copyOpenedReleaseMagnetTorrent(int identifier) noexcept;
+    Q_INVOKABLE void openOpenedReleaseMagnetTorrent(int identifier) noexcept;
+    Q_INVOKABLE void synchronizeSeens(const QVariantMap items) noexcept;
+    Q_INVOKABLE void synchronizeLocalSeensToExternal() noexcept;
+    Q_INVOKABLE void recheckOpenedReleaseInCollections() noexcept;
+    Q_INVOKABLE QString getReleasePoster(int releaseId) noexcept;
+    Q_INVOKABLE void refreshMyAnilibriaCache() noexcept;
     FullReleaseModel* getReleaseById(int id) const noexcept;
     void resetReleaseChanges(int releaseId) noexcept;
     quint32 m_seedValue { 0 };
 
 private:
+    void setSeenMarkInternal(const QString& id, bool marked);
     void loadReleases();
-    void loadReleasesWithoutReactive();
+    void loadNextReleasesWithoutReactive();
+    void reloadApiHostInItems();
 
     void loadSchedules();
     void saveSchedule(QString json);
 
     void saveFavoritesFromJson(QString data);
+    void saveFavoritesFromArray(const QList<int> ids);
     void saveFavorites();
     void loadFavorites();
     void clearFavorites();
@@ -324,6 +386,9 @@ private:
     void loadSeenMarks();
     void recalculateSeenCounts();
     void saveSeenMarks();
+
+    void loadCollections();
+    void saveCollections();
 
     void loadHistory();
     void saveHistory();
@@ -338,19 +403,14 @@ private:
     QString getMultipleLinks(QString text) const noexcept;
     FullReleaseModel* getReleaseByCode(QString code) const noexcept;
     int randomBetween(int low, int high) const noexcept;
-    void saveReleasesFromMemoryToFile();
-    void mapToFullReleaseModel(QJsonObject &&jsonObject, const bool isFirstStart, QSharedPointer<QSet<int>> hittedIds);
-    void markDeletedReleases(QSharedPointer<QSet<int>> hittedIds);
-    QString videosToJson(QList<OnlineVideoModel> &videos);
-    QString torrentsToJson(QList<ReleaseTorrentModel> &torrents);
     QHash<int, int> getAllSeenMarkCount() noexcept;
 
 private slots:
-    void releasesUpdated();
-    void synchronizedReleases();
     void synchronizedSchedule(const QString& data);
     void userFavoritesReceived(const QString& data);
+    void userFavoritesReceivedV2(const QList<int>& data);
     void cinemahallItemsChanged();
+    void needDeleteFavorites(const QList<int>& ids);
 
 signals:
     void openedCardTorrentsChanged();
@@ -368,7 +428,6 @@ signals:
     void notificationForFavoritesChanged();
     void showSidePanelChanged();
     void selectModeChanged();
-    void synchronizationServiceChanged();
     void applicationSettingsChanged();
     void isOpenedCardChanged();
     void openedReleaseIdChanged();
@@ -402,7 +461,6 @@ signals:
     void openedReleaseInHidedChanged();
     void localStorageChanged();
     void openedReleaseInFavoritesChanged();
-    void openedReleaseVideosChanged();
     void notCloseReleaseCardAfterWatchChanged();
     void cinemahallChanged();
     void itemTorrentsChanged();
@@ -413,6 +471,14 @@ signals:
     void openedReleaseSeenCountVideosChanged();
     void openedReleaseIsRutubeChanged();
     void customGroupsChanged();
+    void synchronizationServicev2Changed();
+    void proxyPortChanged();
+    void releaseLinkedSeriesChanged();
+    void releasesFullyLoaded();
+    void addedSeenMarks(QList<QString> uniqueIds);
+    void removeSeenMarks(QList<QString> uniqueIds);
+    void openedReleaseInCollectionsChanged();
+    void openedReleseExtensionContentChanged();
 
 };
 

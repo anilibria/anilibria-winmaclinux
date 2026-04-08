@@ -1,25 +1,6 @@
-/*
-    AniLibria - desktop client for the website anilibria.tv
-    Copyright (C) 2020 Roman Vladimirov
-
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
-import QtQuick 2.12
-import QtQuick.Controls 2.12
-import QtQuick.Layouts 1.3
-import QtQuick.Dialogs 1.2
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
 import Anilibria.Services 1.0
 import "../Controls"
 
@@ -67,261 +48,243 @@ Page {
                     color: applicationThemeViewModel.pageUpperPanel
                 }
 
-                Flickable {
-                    id: scrollview
+                Item {
                     Layout.fillHeight: true
                     Layout.fillWidth: true
                     Layout.alignment: Qt.AlignJustify
-                    clip: true
-                    contentWidth: parent.width
-                    contentHeight: flickableContent.height
-                    ScrollBar.vertical: ScrollBar {
-                        active: true
+
+                    Image {
+                        id: backgroundFile
+                        asynchronous: true
+                        anchors.fill: parent
+                        visible: applicationThemeViewModel.maintenancePageBackground.activated
+                        fillMode: applicationThemeViewModel.maintenancePageBackground.activated ? applicationThemeViewModel.maintenancePageBackground.imageMode : Image.Pad
+                        source: applicationThemeViewModel.maintenancePageBackground.activated ? applicationThemeViewModel.maintenancePageBackground.url : ''
+                        opacity: applicationThemeViewModel.maintenancePageBackground.activated ? applicationThemeViewModel.maintenancePageBackground.opacity / 100 : 1
+                        horizontalAlignment: applicationThemeViewModel.maintenancePageBackground.activated ? applicationThemeViewModel.maintenancePageBackground.halign : Image.AlignLeft
+                        verticalAlignment: applicationThemeViewModel.maintenancePageBackground.activated ? applicationThemeViewModel.maintenancePageBackground.valign : Image.AlignTop
                     }
 
-                    Rectangle {
-                        id: flickableContent
-                        width: scrollview.width - 10
-                        height: 840
-                        color: "transparent"
-                        border.color: applicationThemeViewModel.colorBorderInPanel
-                        border.width: 1
+                    Flickable {
+                        id: scrollview
+                        anchors.fill: parent
+                        clip: true
+                        contentWidth: parent.width
+                        contentHeight: flickableContent.height
+                        ScrollBar.vertical: ScrollBar {
+                            active: true
+                        }
 
-                        GridLayout {
-                            width: parent.width
-                            columns: 2
+                        Rectangle {
+                            id: flickableContent
+                            width: scrollview.width - 10
+                            height: 840
+                            color: "transparent"
+                            border.color: applicationThemeViewModel.colorBorderInPanel
+                            border.width: 1
 
-                            Item {
-                                width: 220
-                                height: 100
+                            GridLayout {
+                                width: parent.width
+                                columns: 2
 
-                                RoundedActionButton {
-                                    anchors.verticalCenter: parent.verticalCenter
-                                    anchors.left: parent.left
-                                    anchors.leftMargin: 10
-                                    width: parent.width - 10
-                                    text: "Очистить кеш постеров"
-                                    onClicked: {
-                                        localStorage.clearPostersCache();
-                                    }
-                                }
-                            }
+                                Item {
+                                    width: 220
+                                    height: 100
 
-                            Rectangle {
-                                color: "transparent"
-                                Layout.fillWidth: true
-                                Layout.fillHeight: true
-
-                                PlainText {
-                                    fontPointSize: 12
-                                    anchors.verticalCenter: parent.verticalCenter
-                                    anchors.left: parent.left
-                                    width: parent.width
-                                    wrapMode: Text.WordWrap
-                                    text: "Удалить все сохраненные локально сохраненные постеры, после выполнения операции необходимо перезапустить приложение"
-                                }
-                            }
-
-                            Item {
-                                width: 220
-                                height: 100
-
-                                RoundedActionButton {
-                                    anchors.verticalCenter: parent.verticalCenter
-                                    anchors.left: parent.left
-                                    anchors.leftMargin: 10
-                                    width: parent.width - 10
-                                    text: "Импорт релизов из файла"
-                                    onClicked: {
-                                        importReleasesFileDialog.open();
-                                    }
-                                }
-                            }
-
-                            Rectangle {
-                                color: "transparent"
-                                Layout.fillWidth: true
-                                Layout.fillHeight: true
-
-                                PlainText {
-                                    fontPointSize: 12
-                                    anchors.verticalCenter: parent.verticalCenter
-                                    anchors.left: parent.left
-                                    width: parent.width
-                                    wrapMode: Text.WordWrap
-                                    text: "Позволяет импортировать релизы из файла. Импортированные релизы не будут обновляться."
-                                }
-                            }
-
-                            Item {
-                                width: 220
-                                height: 100
-
-                                RoundedActionButton {
-                                    anchors.verticalCenter: parent.verticalCenter
-                                    anchors.left: parent.left
-                                    anchors.leftMargin: 10
-                                    width: parent.width - 10
-                                    text: "Изменить адрес api"
-                                    onClicked: {
-                                        apiAddress.text = apiServiceConfigurator.apiAddress;
-                                        staticAddress.text = apiServiceConfigurator.staticAddress;
-
-                                        apiAddressPopup.open();
-                                    }
-                                }
-                            }
-
-                            Rectangle {
-                                color: "transparent"
-                                Layout.fillWidth: true
-                                Layout.fillHeight: true
-
-                                PlainText {
-                                    fontPointSize: 12
-                                    anchors.verticalCenter: parent.verticalCenter
-                                    anchors.left: parent.left
-                                    width: parent.width
-                                    wrapMode: Text.WordWrap
-                                    text: "Позволяет изменить адрес api а также адрес для статики. Внимание! Стоит пользоваться этим функционалом только если Вы понимаете зачем Вам это нужно, иначе Вы просто сломаете приложение. Изменения вступят в силу после перезапуска приложения."
-                                }
-                            }
-
-                            Item {
-                                width: 220
-                                height: 100
-
-                                RoundedActionButton {
-                                    anchors.verticalCenter: parent.verticalCenter
-                                    anchors.left: parent.left
-                                    anchors.leftMargin: 10
-                                    width: parent.width - 10
-                                    text: "Настроить прокси"
-                                    onClicked: {
-                                        proxyType.currentIndex = 0;
-                                        switch (proxyConfigurator.proxyType) {
-                                            case `SOCKS5`:
-                                                proxyType.currentIndex = 1;
-                                                break;
-                                            case `Http`:
-                                                proxyType.currentIndex = 2;
-                                                break;
+                                    RoundedActionButton {
+                                        anchors.verticalCenter: parent.verticalCenter
+                                        anchors.left: parent.left
+                                        anchors.leftMargin: 10
+                                        width: parent.width - 10
+                                        text: "Очистить кеш постеров"
+                                        onClicked: {
+                                            localStorage.clearPostersCache();
                                         }
-                                        proxyPort.text = proxyConfigurator.port;
-                                        proxyAddress.text = proxyConfigurator.address;
-                                        proxyUsername.text = proxyConfigurator.userName;
-                                        proxyPassword.text = proxyConfigurator.password;
-
-                                        proxyPopup.open();
                                     }
                                 }
-                            }
 
-                            Rectangle {
-                                color: "transparent"
-                                Layout.fillWidth: true
-                                Layout.fillHeight: true
+                                Rectangle {
+                                    color: "transparent"
+                                    Layout.fillWidth: true
+                                    Layout.fillHeight: true
 
-                                PlainText {
-                                    fontPointSize: 12
-                                    anchors.verticalCenter: parent.verticalCenter
-                                    anchors.left: parent.left
-                                    width: parent.width
-                                    wrapMode: Text.WordWrap
-                                    text: "Позволяет указать настройки проксирования запросов для всего приложения."
-                                }
-                            }
-
-                            Item {
-                                width: 220
-                                height: 100
-
-                                RoundedActionButton {
-                                    anchors.verticalCenter: parent.verticalCenter
-                                    anchors.left: parent.left
-                                    anchors.leftMargin: 10
-                                    width: parent.width - 10
-                                    text: "Сбросить удаленные"
-                                    onClicked: {
-                                        releasesViewModel.clearDeletedInCacheMarks();
+                                    PlainText {
+                                        fontPointSize: 12
+                                        anchors.verticalCenter: parent.verticalCenter
+                                        anchors.left: parent.left
+                                        width: parent.width
+                                        wrapMode: Text.WordWrap
+                                        text: "Удалить все сохраненные локально сохраненные постеры, после выполнения операции необходимо перезапустить приложение"
                                     }
                                 }
-                            }
 
-                            Rectangle {
-                                color: "transparent"
-                                Layout.fillWidth: true
-                                Layout.fillHeight: true
+                                Item {
+                                    width: 220
+                                    height: 100
 
-                                PlainText {
-                                    fontPointSize: 12
-                                    anchors.verticalCenter: parent.verticalCenter
-                                    anchors.left: parent.left
-                                    width: parent.width
-                                    wrapMode: Text.WordWrap
-                                    text: "Если Вы столкнулись с проблемой что каких-то релизов нет в приложении но есть на сайте то Вы можете сбросить удаленные релизы."
-                                }
-                            }
-
-                            Item {
-                                width: 220
-                                height: 100
-
-                                RoundedActionButton {
-                                    anchors.verticalCenter: parent.verticalCenter
-                                    anchors.left: parent.left
-                                    anchors.leftMargin: 10
-                                    width: parent.width - 10
-                                    text: "Бэкап кеша приложения"
-                                    onClicked: {
-                                        selectFolderBackupDialog.open();
+                                    RoundedActionButton {
+                                        anchors.verticalCenter: parent.verticalCenter
+                                        anchors.left: parent.left
+                                        anchors.leftMargin: 10
+                                        width: parent.width - 10
+                                        text: "nextAPI"
+                                        onClicked: {
+                                            apiAddressPopup.open();
+                                        }
                                     }
                                 }
-                            }
 
-                            Rectangle {
-                                color: "transparent"
-                                Layout.fillWidth: true
-                                Layout.fillHeight: true
+                                Rectangle {
+                                    color: "transparent"
+                                    Layout.fillWidth: true
+                                    Layout.fillHeight: true
 
-                                PlainText {
-                                    fontPointSize: 12
-                                    anchors.verticalCenter: parent.verticalCenter
-                                    anchors.left: parent.left
-                                    width: parent.width
-                                    wrapMode: Text.WordWrap
-                                    text: "Вы можете сделать бэкап файлов кеша приложения содержащего историю просмотра, кинозал, настройки и многое другое. Очень полезно если Вы хотите переезжать на другую машину или переустанавливать систему на текущей."
-                                }
-                            }
-
-                            Item {
-                                width: 220
-                                height: 100
-
-                                RoundedActionButton {
-                                    anchors.verticalCenter: parent.verticalCenter
-                                    anchors.left: parent.left
-                                    anchors.leftMargin: 10
-                                    width: parent.width - 10
-                                    text: "Восстановить из бэкапа"
-                                    onClicked: {
-                                        selectFolderRestoreDialog.open();
+                                    PlainText {
+                                        fontPointSize: 12
+                                        anchors.verticalCenter: parent.verticalCenter
+                                        anchors.left: parent.left
+                                        width: parent.width
+                                        wrapMode: Text.WordWrap
+                                        text: "Настройка nextAPI и кеш серверов, позволяет менять адреса и проверять их работоспособность."
                                     }
                                 }
-                            }
 
-                            Rectangle {
-                                color: "transparent"
-                                Layout.fillWidth: true
-                                Layout.fillHeight: true
+                                Item {
+                                    width: 220
+                                    height: 100
 
-                                PlainText {
-                                    fontPointSize: 12
-                                    anchors.verticalCenter: parent.verticalCenter
-                                    anchors.left: parent.left
-                                    width: parent.width
-                                    wrapMode: Text.WordWrap
-                                    text: "Вы можете восстановить состояние из созданного ранее бекапа кеша файлов приложения. Очень важно чтобы на момент выполнения синхронизация релизов была завершена иначе кеш может побится! После выполнения перезапустите приложение!"
+                                    RoundedActionButton {
+                                        anchors.verticalCenter: parent.verticalCenter
+                                        anchors.left: parent.left
+                                        anchors.leftMargin: 10
+                                        width: parent.width - 10
+                                        text: "Настроить прокси"
+                                        onClicked: {
+                                            proxyType.currentIndex = 0;
+                                            switch (proxyConfigurator.proxyType) {
+                                                case `SOCKS5`:
+                                                    proxyType.currentIndex = 1;
+                                                    break;
+                                                case `Http`:
+                                                    proxyType.currentIndex = 2;
+                                                    break;
+                                            }
+                                            proxyPort.text = proxyConfigurator.port;
+                                            proxyAddress.text = proxyConfigurator.address;
+                                            proxyUsername.text = proxyConfigurator.userName;
+                                            proxyPassword.text = proxyConfigurator.password;
+
+                                            proxyPopup.open();
+                                        }
+                                    }
+                                }
+
+                                Rectangle {
+                                    color: "transparent"
+                                    Layout.fillWidth: true
+                                    Layout.fillHeight: true
+
+                                    PlainText {
+                                        fontPointSize: 12
+                                        anchors.verticalCenter: parent.verticalCenter
+                                        anchors.left: parent.left
+                                        width: parent.width
+                                        wrapMode: Text.WordWrap
+                                        text: "Позволяет указать настройки проксирования запросов для всего приложения."
+                                    }
+                                }
+
+                                Item {
+                                    width: 220
+                                    height: 100
+
+                                    RoundedActionButton {
+                                        anchors.verticalCenter: parent.verticalCenter
+                                        anchors.left: parent.left
+                                        anchors.leftMargin: 10
+                                        width: parent.width - 10
+                                        text: "Удалить лишнее"
+                                        onClicked: {
+                                            localStorage.clearRedundantFilesFromCache();
+                                        }
+                                    }
+                                }
+
+                                Rectangle {
+                                    color: "transparent"
+                                    Layout.fillWidth: true
+                                    Layout.fillHeight: true
+
+                                    PlainText {
+                                        fontPointSize: 12
+                                        anchors.verticalCenter: parent.verticalCenter
+                                        anchors.left: parent.left
+                                        width: parent.width
+                                        wrapMode: Text.WordWrap
+                                        text: "Удалить из кеша лишние файлы которые могли появиться во время работы приложения, например torrent файлы, m3u файлы и т.п."
+                                    }
+                                }
+
+                                Item {
+                                    width: 220
+                                    height: 100
+
+                                    RoundedActionButton {
+                                        anchors.verticalCenter: parent.verticalCenter
+                                        anchors.left: parent.left
+                                        anchors.leftMargin: 10
+                                        width: parent.width - 10
+                                        text: "Бэкап кеша приложения"
+                                        onClicked: {
+                                            selectFolderBackupDialog.open();
+                                        }
+                                    }
+                                }
+
+                                Rectangle {
+                                    color: "transparent"
+                                    Layout.fillWidth: true
+                                    Layout.fillHeight: true
+
+                                    PlainText {
+                                        fontPointSize: 12
+                                        anchors.verticalCenter: parent.verticalCenter
+                                        anchors.left: parent.left
+                                        width: parent.width
+                                        wrapMode: Text.WordWrap
+                                        text: "Вы можете сделать бэкап файлов кеша приложения содержащего историю просмотра, кинозал, настройки и многое другое. Очень полезно если Вы хотите переезжать на другую машину или переустанавливать систему на текущей."
+                                    }
+                                }
+
+                                Item {
+                                    width: 220
+                                    height: 100
+
+                                    RoundedActionButton {
+                                        anchors.verticalCenter: parent.verticalCenter
+                                        anchors.left: parent.left
+                                        anchors.leftMargin: 10
+                                        width: parent.width - 10
+                                        text: "Восстановить из бэкапа"
+                                        onClicked: {
+                                            selectFolderRestoreDialog.open();
+                                        }
+                                    }
+                                }
+
+                                Rectangle {
+                                    color: "transparent"
+                                    Layout.fillWidth: true
+                                    Layout.fillHeight: true
+
+                                    PlainText {
+                                        fontPointSize: 12
+                                        anchors.verticalCenter: parent.verticalCenter
+                                        anchors.left: parent.left
+                                        width: parent.width
+                                        wrapMode: Text.WordWrap
+                                        text: "Вы можете восстановить состояние из созданного ранее бекапа кеша файлов приложения. Очень важно чтобы на момент выполнения синхронизация релизов была завершена иначе кеш может побится! После выполнения перезапустите приложение!"
+                                    }
                                 }
                             }
                         }
@@ -333,7 +296,7 @@ Page {
                     x: window.width / 2 - apiAddressPopup.width / 2
                     y: window.height / 2 - apiAddressPopup.height / 2
                     width: 450
-                    height: 320
+                    height: 400
                     modal: true
                     focus: true
                     closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
@@ -344,87 +307,169 @@ Page {
 
                         AccentText {
                             width: apiAddressPopup.width
-                            text: "Адрес api"
+                            text: "Адрес nextAPI"
                             fontPointSize: 12
                             font.bold: true
                             elide: Text.ElideRight
                         }
 
                         Rectangle {
+                            color: "transparent"
                             width: apiAddressPopup.width - 30
-                            height: apiAddress.height
-
-                            CommonTextField {
-                                id: apiAddress
-                                width: parent.width
-                                readOnly: serversComboBox.currentIndex > 0
-                                placeholderText: "Введите url"
-                            }
-                        }
-
-
-                        AccentText {
-                            width: apiAddressPopup.width
-                            text: "Адрес статики"
-                            fontPointSize: 12
-                            font.bold: true
-                            elide: Text.ElideRight
-                        }
-
-                        Rectangle {
-                            width: apiAddressPopup.width - 30
-                            height: apiAddress.height
-
-                            CommonTextField {
-                                id: staticAddress
-                                width: parent.width
-                                readOnly: serversComboBox.currentIndex > 0
-                                placeholderText: "Введите url"
-                            }
-                        }
-
-                        AccentText {
-                            width: apiAddressPopup.width
-                            text: "Выбрать сервер"
-                            fontPointSize: 12
-                            font.bold: true
-                            elide: Text.ElideRight
-                        }
-
-                        Rectangle {
-                            width: apiAddressPopup.width - 30
-                            height: apiAddress.height
+                            height: serversComboBox.height
 
                             CommonComboBox {
                                 id: serversComboBox
                                 width: parent.width
                                 model: ListModel {
                                     ListElement {
-                                        text: "Вводом вручную"
+                                        text: "Основной домен"
                                     }
                                     ListElement {
-                                        text: "wwnd"
+                                        text: "Зеркало app"
                                     }
                                     ListElement {
-                                        text: "anilibria.iss.one"
+                                        text: "Зеркало wtf"
+                                    }
+                                    ListElement {
+                                        text: "Основной старый домен"
                                     }
                                 }
 
-                                onActivated: {
-                                    switch (index) {
-                                        case 0:
-                                            apiAddress.text = "";
-                                            staticAddress.text = "";
-                                            break;
-                                        case 1:
-                                            apiAddress.text = "https://wwnd.space/";
-                                            staticAddress.text = "https://static.wwnd.space";
-                                            break;
-                                        case 2:
-                                            apiAddress.text = "https://anilibria.iss.one/";
-                                            staticAddress.text = "https://anilibria.iss.one";
-                                            break;
+
+                                Component.onCompleted: {
+                                    if (userConfigurationViewModel.apiv2host === synchronizationServicev2.mainNextAPIServer) {
+                                        serversComboBox.currentIndex = 0;
                                     }
+                                    if (userConfigurationViewModel.apiv2host === synchronizationServicev2.appMirrorNextAPIServer) {
+                                        serversComboBox.currentIndex = 1;
+                                    }
+                                    if (userConfigurationViewModel.apiv2host === synchronizationServicev2.appMirrorWtfNextAPIServer) {
+                                        serversComboBox.currentIndex = 2;
+                                    }
+                                    if (userConfigurationViewModel.apiv2host === synchronizationServicev2.mainOldNextAPIServer) {
+                                        serversComboBox.currentIndex = 3;
+                                    }
+                                }
+                            }
+                        }
+
+                        AccentText {
+                            width: apiAddressPopup.width
+                            text: localFolder.checked ? "Папка с кешем" : "Адрес кеш сервера"
+                            fontPointSize: 12
+                            font.bold: true
+                            elide: Text.ElideRight
+                        }
+
+                        Rectangle {
+                            color: "transparent"
+                            width: apiAddressPopup.width - 30
+                            height: cacheServersComboBox.height
+
+                            CommonTextField {
+                                id: cacheFolderTextField
+                                visible: localFolder.checked
+                                width: parent.width - 30
+                                placeholderText: "Нажмите на иконку справа для выбора"
+                                readOnly: true
+                                text: userConfigurationViewModel.cacheFolder
+                            }
+
+                            IconButton {
+                                visible: localFolder.checked
+                                anchors.left: cacheFolderTextField.right
+                                anchors.leftMargin: 4
+                                hoverColor: applicationThemeViewModel.currentItems.filterIconButtonHoverColor
+                                iconPath: applicationThemeViewModel.currentItems.iconReleaseCatalogCompilation
+                                iconWidth: 20
+                                iconHeight: 20
+                                width: 30
+                                height: 30
+                                onButtonPressed: {
+                                    selectCacheFolderDialog.open();
+                                }
+
+                                SystemOpenFolderDialog {
+                                    id: selectCacheFolderDialog
+                                    onNeedOpenFolder: {
+                                        if (Qt.platform.os === 'windows') {
+                                            cacheFolderTextField.text = folderUrl.replace("file:///", "");
+                                        } else {
+                                            cacheFolderTextField.text = folderUrl.replace("file://", "");
+                                        }
+                                    }
+                                }
+                            }
+
+                            CommonComboBox {
+                                id: cacheServersComboBox
+                                visible: !localFolder.checked
+                                width: parent.width
+                                model: ListModel {
+                                    ListElement {
+                                        text: "Основной github"
+                                    }
+                                }
+
+                                Component.onCompleted: {
+                                    if (userConfigurationViewModel.cachehost === synchronizationServicev2.mainGithubCacheServer) {
+                                        cacheServersComboBox.currentIndex = 0;
+                                    }
+                                }
+                            }
+                        }
+
+                        AccentText {
+                            width: apiAddressPopup.width
+                            text: "Локальная папка вместо кеш сервера"
+                            fontPointSize: 12
+                            font.bold: true
+                            elide: Text.ElideRight
+                        }
+
+                        Rectangle {
+                            color: "transparent"
+                            width: apiAddressPopup.width - 30
+                            height: localFolder.height - 10
+
+                            CommonSwitch {
+                                id: localFolder
+                                tooltipMessage: "Использовать локальную папку для чтения кеша вместо вебсайта"
+                                checked: userConfigurationViewModel.useCacheFolder
+                            }
+                        }
+
+                        AccentText {
+                            width: apiAddressPopup.width
+                            text: "Использовать сервер видео"
+                            fontPointSize: 12
+                            font.bold: true
+                            elide: Text.ElideRight
+                        }
+
+                        Rectangle {
+                            color: "transparent"
+                            width: apiAddressPopup.width - 30
+                            height: videoServersComboBox.height
+
+                            CommonComboBox {
+                                id: videoServersComboBox
+                                width: parent.width
+                                model: ListModel {
+                                    ListElement {
+                                        text: "Использовать из кеша"
+                                    }
+                                    ListElement {
+                                        text: "Всегда использовать РФ"
+                                    }
+                                    ListElement {
+                                        text: "Всегда использовать вне РФ"
+                                    }
+                                }
+
+                                Component.onCompleted: {
+                                    videoServersComboBox.currentIndex = userConfigurationViewModel.videoServer;
                                 }
                             }
                         }
@@ -432,17 +477,23 @@ Page {
                         Rectangle {
                             color: "transparent"
                             width: apiAddressPopup.width - 20
-                            height: 70
+                            height: 50
 
                             RoundedActionButton {
                                 anchors.right: saveButton.left
                                 anchors.rightMargin: 10
                                 anchors.verticalCenter: parent.verticalCenter
-                                visible: !apiServiceConfigurator.isDefault
-                                text: "Умолчание"
+                                text: "Проверить"
                                 width: 100
                                 onClicked: {
-                                    apiServiceConfigurator.restoreDefault();
+                                    let message = "";
+                                    if (localFolder.checked) {
+                                        message = synchronizationServicev2.checkFolderAvailability(cacheFolderTextField.text);
+                                    } else {
+                                        synchronizationServicev2.checkNetworkAvailability(userConfigurationViewModel.apiv2host + "/api/docs/v1");
+                                    }
+
+                                    if (message) notificationViewModel.sendInfoNotification(message);
 
                                     apiAddressPopup.close();
                                 }
@@ -453,11 +504,34 @@ Page {
                                 anchors.right: cancelButton.left
                                 anchors.rightMargin: 10
                                 anchors.verticalCenter: parent.verticalCenter
-                                enabled: apiAddress.text !== `` && staticAddress.text !== ``
                                 text: "Сохранить"
                                 width: 100
                                 onClicked: {
-                                    apiServiceConfigurator.saveApiConfiguration(apiAddress.text, staticAddress.text);
+                                    switch (cacheServersComboBox.currentIndex) {
+                                        case 0:
+                                            userConfigurationViewModel.cachehost = synchronizationServicev2.mainGithubCacheServer;
+                                            break;
+                                    }
+
+                                    switch (serversComboBox.currentIndex) {
+                                        case 0:
+                                            userConfigurationViewModel.apiv2host = synchronizationServicev2.mainNextAPIServer;
+                                            break;
+                                        case 1:
+                                            userConfigurationViewModel.apiv2host = synchronizationServicev2.appMirrorNextAPIServer;
+                                            break;
+                                        case 2:
+                                            userConfigurationViewModel.apiv2host = synchronizationServicev2.appMirrorWtfNextAPIServer;
+                                            break;
+                                        case 3:
+                                            userConfigurationViewModel.apiv2host = synchronizationServicev2.mainOldNextAPIServer;
+                                            break;
+                                    }
+
+                                    userConfigurationViewModel.useCacheFolder = localFolder.checked;
+                                    userConfigurationViewModel.cacheFolder = cacheFolderTextField.text;
+                                    userConfigurationViewModel.videoServer = videoServersComboBox.currentIndex;
+
 
                                     apiAddressPopup.close();
                                 }
@@ -503,7 +577,7 @@ Page {
                             width: proxyPopup.width - 30
                             height: proxyType.height
 
-                            ComboBox {
+                            CommonComboBox {
                                 id: proxyType
                                 width: parent.width
                                 model: [ "", "SOCKS5", "Http" ]
@@ -655,23 +729,19 @@ Page {
         }
     }
 
-    FileDialog {
+    SystemOpenFolderDialog {
         id: selectFolderBackupDialog
         title: "Выберите папку для создания бэкапа"
-        selectExisting: true
-        selectFolder: true
-        onAccepted: {
-            localStorage.backupCache(selectFolderBackupDialog.fileUrl);
+        onNeedOpenFolder: {
+            localStorage.backupCache(folderUrl);
         }
     }
 
-    FileDialog {
+    SystemOpenFolderDialog {
         id: selectFolderRestoreDialog
         title: "Выберите папку для восстановления из бэкапа"
-        selectExisting: true
-        selectFolder: true
-        onAccepted: {
-            localStorage.restoreBackupCache(selectFolderRestoreDialog.fileUrl);
+        onNeedOpenFolder: {
+            localStorage.restoreBackupCache(folderUrl);
         }
     }
 }

@@ -23,7 +23,8 @@
 #include <QString>
 #include <QQuickStyle>
 #include <QQmlFileSelector>
-#include "Classes/Services/synchronizationservice.h"
+#include <QQuickWindow>
+#include <QDebug>
 #include "Classes/Services/localstorageservice.h"
 #include "Classes/Services/applicationsettings.h"
 #include "Classes/Services/analyticsservice.h"
@@ -61,12 +62,16 @@
 #include "Classes/ListModels/themefieldlistmodel.h"
 #include "Classes/ListModels/localthemeslistmodel.h"
 #include "Classes/ListModels/myanilibriasearchlistmodel.h"
-#include "Classes/ViewModels/torrentnotifierviewmodel.cpp"
+#include "Classes/ViewModels/torrentnotifierviewmodel.h"
 #include "Classes/ViewModels/globaleventtrackerviewmodel.h"
 #include "Classes/ListModels/releaseserieslistmodel.h"
 #include "Classes/ViewModels/externalplayerviewmodel.h"
 #include "Classes/ViewModels/filterdictionariesviewmodel.h"
 #include "Classes/ViewModels/releasecustomgroupsviewmodel.h"
+#include "Classes/ViewModels/applicationsviewmodel.h"
+#include "Classes/ViewModels/extensionsviewmodel.h"
+#include "Classes/Services/synchronizev2service.h"
+#include "Classes/ViewModels/synchronizationhub.h"
 #include "Classes/customstyle.h"
 #ifdef USE_VLC_PLAYER
 #include "vlc-qt/qml/VlcQmlPlayer.h"
@@ -74,46 +79,79 @@
 #include "vlc-qt/core/TrackModel.h"
 #include "vlc-qt/core/Common.h"
 #endif
+#ifdef USE_MPV_PLAYER
+#include "PlayerMpv/mpvobject.h"
+#endif
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+#include <QQuickWindow>
+#endif
+
+void myMessageOutput(QtMsgType type, const QMessageLogContext &context, const QString &msg)
+{
+    Q_UNUSED(context);
+
+    QString txt;
+    switch (type) {
+        case QtDebugMsg:
+        case QtInfoMsg:
+            txt = QString("Common: %1").arg(msg);
+            break;
+        case QtWarningMsg:
+            txt = QString("Warning: %1").arg(msg);
+            break;
+        case QtCriticalMsg:
+            txt = QString("Critical: %1").arg(msg);
+            break;
+        case QtFatalMsg:
+            txt = QString("Fatal: %1").arg(msg);
+            abort();
+    }
+
+    QFile outFile("qt.log");
+    outFile.open(QIODevice::WriteOnly | QIODevice::Append);
+    QTextStream ts(&outFile);
+    ts << txt << Qt::endl;
+}
 
 int main(int argc, char *argv[])
 {
+    auto isNeedLogging = argc == 2 && QString(argv[1]) == "outputlog";
+    if (isNeedLogging) qInstallMessageHandler(myMessageOutput);
+
+    qputenv("QML_DISABLE_DISK_CACHE", "1");
+
+    qDebug() << "Aniliberty application";
+
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+    QQuickWindow::setGraphicsApi(QSGRendererInterface::OpenGL);
+#else
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     QCoreApplication::setAttribute(Qt::AA_ShareOpenGLContexts);
+#endif
 
 #ifdef Q_OS_WIN
-    if (argc == 2 && QString(argv[1]) == "outputlog") {
-        FreeConsole();
-        AllocConsole();
-        AttachConsole(GetCurrentProcessId());
-
-        // reopen the std I/O streams to redirect I/O to the new console
-        FILE *newstdin = nullptr;
-        FILE *newstdout = nullptr;
-        FILE *newstderr = nullptr;
-
-        freopen_s(&newstdin, "CONIN$", "r", stdin);
-        freopen_s(&newstdout, "CONOUT$", "w", stdout);
-        freopen_s(&newstderr, "CONOUT$", "w", stderr);
-    }
+    if (isNeedLogging) freopen("output.log", "w", stdout); //redirect output to file
 #endif
+
+    bool onlyStart = false;
 
     if (argc >= 2) {
         auto parameter = QString(argv[1]);
         if (parameter == "portable" || parameter == "-portable") {
             IsPortable = true;
         }
+        if (parameter == "testrun") onlyStart = true; // there need to be check if
     }
 
     QGuiApplication app(argc, argv);
 
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+    QQuickStyle::setStyle("aniliberty");
+#else
     QQuickStyle::setStyle("CustomStyle");
+#endif
     QQuickStyle::setFallbackStyle("Material");
 
-#if QT_VERSION >= QT_VERSION_CHECK(5, 15, 0)
-    app.setHighDpiScaleFactorRoundingPolicy(Qt::HighDpiScaleFactorRoundingPolicy::PassThrough);
-#endif
-
-    qmlRegisterType<SynchronizationService>("Anilibria.Services", 1, 0, "SynchronizationService");
     qmlRegisterType<LocalStorageService>("Anilibria.Services", 1, 0, "LocalStorage");
     qmlRegisterType<ApplicationSettings>("Anilibria.Services", 1, 0, "ApplicationSettings");    
     qmlRegisterType<AnalyticsService>("Anilibria.Services", 1, 0, "AnalyticsService");
@@ -156,6 +194,10 @@ int main(int argc, char *argv[])
     qmlRegisterType<ExternalPlayerViewModel>("Anilibria.ViewModels", 1, 0 , "ExternalPlayerViewModel");
     qmlRegisterType<FilterDictionariesViewModel>("Anilibria.ViewModels", 1, 0 , "FilterDictionariesViewModel");
     qmlRegisterType<ReleaseCustomGroupsViewModel>("Anilibria.ViewModels", 1, 0 , "ReleaseCustomGroupsViewModel");
+    qmlRegisterType<ApplicationsViewModel>("Anilibria.ViewModels", 1, 0 , "ApplicationsViewModel");
+    qmlRegisterType<ExtensionsViewModel>("Anilibria.ViewModels", 1, 0 , "ExtensionsViewModel");
+    qmlRegisterType<Synchronizev2Service>("Anilibria.Services", 1, 0 , "Synchronizev2Service");
+    qmlRegisterType<SynchronizationHub>("Anilibria.Services", 1, 0 , "SynchronizationHub");
 
     qmlRegisterUncreatableType<CustomStyle>("CustomStyle", 1, 0, "CustomStyle", "CustomStyle is an attached property");
 
@@ -168,6 +210,11 @@ int main(int argc, char *argv[])
 
     qmlRegisterType<VlcQmlPlayer>("VLCQt", 1, 1, "VlcPlayer");
     qmlRegisterType<VlcQmlVideoOutput>("VLCQt", 1, 1, "VlcVideoOutput");
+
+#endif
+
+#ifdef USE_MPV_PLAYER
+    qmlRegisterType<MpvObject>("MpvIntegration", 1, 0 , "MpvObject");
 #endif
 
     QCoreApplication::setOrganizationDomain("anilibria.tv");
@@ -177,14 +224,7 @@ int main(int argc, char *argv[])
     QQmlApplicationEngine engine;    
     engine.rootContext()->setContextProperty("ApplicationVersion", ApplicationVersion);
 
-#if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
-    auto selector = QQmlFileSelector::get(&engine);
-    QStringList qtOldVersionSelector;
-    qtOldVersionSelector.append("qtless515");
-    selector->setExtraSelectors(qtOldVersionSelector);
-#endif
-
-    const QUrl url(QStringLiteral("qrc:/main.qml"));
+    const QUrl url(QStringLiteral("qrc:/Main.qml"));
     QObject::connect(
         &engine,
         &QQmlApplicationEngine::objectCreated,
@@ -194,7 +234,18 @@ int main(int argc, char *argv[])
         },
         Qt::QueuedConnection
     );
+
+#if QT_VERSION >= QT_VERSION_CHECK(6, 5, 0)
+    engine.loadFromModule("aniliberty", "Main");
+#endif
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0) && QT_VERSION < QT_VERSION_CHECK(6, 5, 0)
+    engine.load(QStringLiteral("qrc:/qt/qml/aniliberty/Main.qml"));
+#endif
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
     engine.load(url);
+#endif
+
+    if (onlyStart) return 0; // for this case we need just check if all dependencies correct and don't need to run application
 
     return app.exec();
 }

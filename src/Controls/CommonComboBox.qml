@@ -1,6 +1,6 @@
-import QtQuick 2.12
-import QtQuick.Controls 2.12
-import QtQuick.Controls.Material 2.0
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+//import QtQuick.Controls.Material 2.15
 import CustomStyle 1.0
 
 ComboBox {
@@ -8,6 +8,7 @@ ComboBox {
     property real fontPointSize: 11
     property bool usePropertyKey: false
     font.pointSize: fontPointSize + windowSettings.dpiSeparation
+    font.family: userConfigurationViewModel.textFont
 
     CustomStyle.comboBoxAccent: applicationThemeViewModel.currentItems.colorComboBoxAccent
     CustomStyle.comboBoxHint: applicationThemeViewModel.currentItems.colorComboBoxHint
@@ -26,6 +27,7 @@ ComboBox {
             text: control.usePropertyKey ? (modelData["key"] ? modelData.key : "") : modelData
             color: control.currentIndex === index ? applicationThemeViewModel.currentItems.colorTextFieldAccent : applicationThemeViewModel.currentItems.colorTextFieldForeground
             font.pointSize: fontPointSize + windowSettings.dpiSeparation
+            font.family: userConfigurationViewModel.textFont
             elide: Text.ElideRight
             verticalAlignment: Text.AlignVCenter
         }

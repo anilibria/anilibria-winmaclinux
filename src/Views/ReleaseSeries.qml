@@ -1,24 +1,6 @@
-/*
-    AniLibria - desktop client for the website anilibria.tv
-    Copyright (C) 2021 Roman Vladimirov
-
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
-import QtQuick 2.12
-import QtQuick.Controls 2.12
-import QtQuick.Layouts 1.3
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
 import Anilibria.Services 1.0
 import "../Controls"
 
@@ -32,12 +14,17 @@ Page {
     signal navigateFrom()
     signal navigateTo()
 
-    Rectangle {
-        id: mask
-        width: 180
-        height: 260
-        radius: 10
-        visible: false
+    Image {
+        id: backgroundFile
+        asynchronous: true
+        visible: applicationThemeViewModel.linkedReleasesPageBackground.activated
+        fillMode: applicationThemeViewModel.linkedReleasesPageBackground.activated ? applicationThemeViewModel.linkedReleasesPageBackground.imageMode : Image.Pad
+        source: applicationThemeViewModel.linkedReleasesPageBackground.activated ? applicationThemeViewModel.linkedReleasesPageBackground.url : ''
+        opacity: applicationThemeViewModel.linkedReleasesPageBackground.activated ? applicationThemeViewModel.linkedReleasesPageBackground.opacity / 100 : 1
+        horizontalAlignment: applicationThemeViewModel.linkedReleasesPageBackground.activated ? applicationThemeViewModel.linkedReleasesPageBackground.halign : Image.AlignLeft
+        verticalAlignment: applicationThemeViewModel.linkedReleasesPageBackground.activated ? applicationThemeViewModel.linkedReleasesPageBackground.valign : Image.AlignTop
+        width: root.width
+        height: root.height
     }
 
     RowLayout {
@@ -248,6 +235,13 @@ Page {
                                         text: countInFavorites
                                     }
 
+                                    PlainText {
+                                        Layout.preferredHeight: 20
+                                        Layout.fillWidth: true
+                                        fontPointSize: 9
+                                        text: totalEpisode + (totalSeen > 0 ? "/" + totalSeen : "") + " эпизодов на " + totalTime + ", рейтинг " + totalRating
+                                    }
+
                                     Item {
                                         Layout.fillHeight: true
                                     }
@@ -277,7 +271,6 @@ Page {
                                             width: 300
 
                                             CommonMenuItem {
-                                                enabled: !!window.userModel.login
                                                 text: "Добавить в избранное"
                                                 onPressed: {
                                                     for (const releaseId of releaseIds) {
@@ -288,7 +281,6 @@ Page {
                                                 }
                                             }
                                             CommonMenuItem {
-                                                enabled: !!window.userModel.login
                                                 text: "Удалить из избранного"
                                                 onPressed: {
                                                     for (const releaseId of releaseIds) {

@@ -22,7 +22,9 @@
 #include <QObject>
 #include <QList>
 #include <QSet>
+#include <QSharedPointer>
 #include "../Models/fullreleasemodel.h"
+#include "../Models/releaseonlinevideomodel.h"
 #include "commonmenulistmodel.h"
 
 class CinemahallListModel : public QAbstractListModel
@@ -46,7 +48,8 @@ private:
     QScopedPointer<QSet<int>> m_selectedItems { new QSet<int>() };
     QScopedPointer<QList<int>> m_items { new QList<int>() };
     QScopedPointer<CommonMenuListModel> m_itemMenuList { new CommonMenuListModel() };
-    QHash<QString, bool>* m_seenMarks { nullptr };
+    QHash<QString, std::tuple<bool, int>>* m_seenMarks { nullptr };
+    QMap<QString, ReleaseOnlineVideoModel*>* m_videosMap { nullptr };
     int m_dragRelease { -1 };
     int m_dropRelease { -1 };
     int m_openedItemIndex { -1 };
@@ -72,7 +75,7 @@ private:
 
 public:
     explicit CinemahallListModel(QObject *parent = nullptr);
-    void setup(QSharedPointer<QList<FullReleaseModel*>> releases, QHash<QString, bool>* seenMarks);
+    void setup(QSharedPointer<QList<FullReleaseModel*>> releases, QHash<QString, std::tuple<bool, int>>* seenMarks, QMap<QString, ReleaseOnlineVideoModel*>* videosMap);
     int countCinemahall() const noexcept { return m_items->count(); }
     bool hasItems() const noexcept { return !m_items->isEmpty(); }
 
@@ -115,7 +118,10 @@ public:
     Q_INVOKABLE void selectItem(const int releaseId);
     Q_INVOKABLE void deselectItems();
     Q_INVOKABLE void deletedSeenReleases();
+    Q_INVOKABLE void deletedSeenAndFavoritesReleases();
+    Q_INVOKABLE void deletedSeenOnlyFromFavorites();
     Q_INVOKABLE void moveToTypedNumber();
+    Q_INVOKABLE void refreshCinemahall();
 
 private slots:
     void itemMenuSelected(const int index);
@@ -134,6 +140,7 @@ signals:
     void validMovedPositionChanged();
     void restoreScrollPositionChanged();
     void needRestoreScrollPosition();
+    void needDeleteFavorites(const QList<int>& ids);
 
 };
 

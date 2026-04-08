@@ -1,4 +1,4 @@
-# AniLibria.Qt
+# AniLiberty.Qt
 
 Если Вы найдете ошибки или будут идеи по улучшению приложения то оформляйте ишью в этом репозитории или пишите в [телеграм группе](https://t.me/+Le_oNL4Tw745YWUy), заранее спасибо. Следите за новостями о выпуске новых версий, входящих в них изменений, а также прочих новостей в [телеграм канале](https://t.me/desktopclientanilibria). 
 
@@ -8,7 +8,8 @@
 ## Системные требования:
 
 **Windows** - Windows 7+, с графической картой поддерживающей OpenGL 2.1+  
-**macOS** - macOS 10.13+ (устройства с M1 поддерживаются через Rosetta2)  
+**macOS** - macOS 13+ (устройства с M1 поддерживаются через Rosetta2)  
+для версий младше 13 необходимо [скачать архив](https://github.com/anilibria/anilibria-winmaclinux/releases/download/2.2.28/libmpvmacos.zip) и после установки версии распаковать файлы из архива в папку `<путь где установлено приложение>/AniLibria.app/Contents/Frameworks/`. Если и это не помогло можете скачать приложение IINA и из нее папку Contents/Frameworks в аналогичную в приложении AniLibria.  
 **Linux** - Есть deb пакет, flatpak пакет, aur пакет, сборка из исходников для остальных (информация ниже)
 
 ## Откуда качать приложение?
@@ -22,22 +23,25 @@
 
 Для установки просто качаем релиз и распаковываем, внутри запуcкаем файл Anilibria.exe.  
 Для обновления выполняем ровно тоже действие, старую версию можно будет удалить или сохранить это остается на Ваше усмотрение.  
+На `Windows 7/8` необходимо заменить библиотеку `libmpv-2.dll` на другую которую можно [скачать тут](https://sourceforge.net/projects/mpv-player-windows/files/libmpv/mpv-dev-x86_64-20230917-git-181eddc.7z/download).  
+Если на `Windows 7/8` Вы скачали версию Qt6 Вам надо заменить файлы в папке на [эти](https://github.com/crystalidea/qt6windows7) иначе ничего работать не будет.
 
 ### macOS
 
 Для установки качаем релиз и монтируем диск, далее запускаем приложение AniLibria.  
   
-**Для версий 1.2.11 и старше:**  
 После скачивания необходимо перейти в папку куда Вы скачали файл dmg в терминале и выполнить команду
 ```shell
 xattr -d com.apple.quarantine AniLibria.dmg
 ```
-  
-**Для версий 1.2.10 и младше:**  
-Если у Вас отображается сообщение **Программу AniLibria не удалось открыть так как ее автор является неустановленным разработчиком** то воспользуйтесь следующей [инструкцией](https://support.apple.com/ru-ru/guide/mac-help/mh40616/mac).  
 Для обновления выполняем ровно тоже действие, старую версию можно будет удалить или сохранить это остается на Ваше усмотрение.
 
-### Linux
+## Связанные проекты
+[TorrentStream](https://github.com/trueromanus/TorrentStream) - приложение веб сервер позволяющий скачивать торренты, стримить их а также проксировать видео для плеера  
+[AnilibriaQtInstaller](https://github.com/trueromanus/AnilibriaQtInstaller) - веб инсталлер/апдейтер для приложения  
+[LocalCacheChecker](https://github.com/trueromanus/LocalCacheChecker) - приложение для синхронизации релизов/франшиз/расписания
+
+### Linux (пакеты и сборка из исходников)
 
 Подробные инструкции для пакетов и сборки из исходников ниже.
 
@@ -57,7 +61,7 @@ $ yay -S anilibria-winmaclinux-git
 $ sudo dnf install anilibria-winmaclinux
 ```
 
-### AltLinux
+### ALT Linux
 Вы можете установить anilibria-winmaclinux через любой графический менеджер пакетов или через консоль:
 
 ```console
@@ -71,6 +75,24 @@ $ su - -c 'apt-get install anilibria-winmaclinux'
 $ sudo dpkg -i ~/anilibria_0.0.0_amd64.deb
 $ sudo apt-get install -f
 ```
+
+### NixOS
+Добавить пакет `anilibria-winmaclinux` в список пакетов:
+
+* Общесистемно:
+
+    ```nix
+    environment.systemPackages = with pkgs; [ anilibria-winmaclinux ];
+    ```
+
+* Для определенного пользователя (в примере имя пользователя - bob)
+
+    ```nix
+    users.users.bob.packages = with pkgs; [ anilibria-winmaclinux ];
+    ```
+
+### [Nix](nix.md)
+
 ### Flatpak
 Скачайте flatpack пакет со страницы релиза и выполните следующую команду:
 ```console
@@ -89,20 +111,30 @@ $ flatpak install --user anilibria.flatpak
 [Steam Deck](https://github.com/JerzyEx/anilibria_at_steamdeck)
 
 ### Для сборки необходимо:
-- Минимальная поддерживаемая версия Qt 5.15.2
-- Поддержка C++11 (минимальные версии компиляторов MSVC15, GCC 4.8 или CLANG 3.3)
+Поддерживаются две версии Qt6 и Qt5. Рекомендовано собирать на Qt6 потому что Qt5 скоро перестанет поддерживаться
+- Для Qt6 минимальная поддерживаемая версия 6.4. Для Qt5 минимальная поддерживаемая версия Qt 5.15.2.
+- Для Qt6 минимальная версия C++20. Для Qt5 минимальная версия C++14.
 - Модули Qt - multimedia, graphicaleffects, svg, websocket, particleeffects
-- Для сборки проекта используется qmake
-- Для Windows сборки требуется зависимость libVLC версии 3.0.18 и QtAV
+- Для сборки проекта Qt6 используется cmake, для сборки проекта Qt5 используется qmake.
+- Для сборки требуется зависимость libmpv. Для Qt5 также нужно libVLC версии 3.0.20.
 
 ### Linux
 
 OpenSSL 1.1.1 и старше  
-GStreamer 1.0
+GStreamer 1.10  
+libmpv-2
 
+Для Qt6
+```bash
+cmake -S src -B build
+cmake --build build -t install
+```
+
+Для Qt5
 ```bash
 cd src
 qmake
+make
 sudo make install
 ```
 Для более быстрой сборки рекомендуется использование флага `-jX`, где X - количество парраллельно работающих процессов компиляции. Как правило, указывается количество ядер/потоков, поддерживаемых Вашим процессором.

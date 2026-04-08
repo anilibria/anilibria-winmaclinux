@@ -1,8 +1,6 @@
-import QtQuick 2.12
-import QtQuick.Controls 2.12
-import QtQuick.Layouts 1.3
-import QtQuick.Controls.Styles 1.4
-import QtQuick.Dialogs 1.2
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
 import Anilibria.ListModels 1.0
 import "../Controls"
 
@@ -166,6 +164,60 @@ ColumnLayout {
                             cardFavoritesMenu.close();
                         }
                     }
+                    CommonMenuItem {
+                        text: "Добавить в коллекцию Запланировано"
+                        enabled: !releasesViewModel.openedReleaseInCollections
+                        onPressed: {
+                            synchronizationHub.addReleaseToCollection(releasesViewModel.openedReleaseId, "PLANNED");
+                            releasesViewModel.recheckOpenedReleaseInCollections();
+                            cardFavoritesMenu.close();
+                        }
+                    }
+                    CommonMenuItem {
+                        text: "Добавить в коллекцию Смотрю"
+                        enabled: !releasesViewModel.openedReleaseInCollections
+                        onPressed: {
+                            synchronizationHub.addReleaseToCollection(releasesViewModel.openedReleaseId, "WATCHING");
+                            releasesViewModel.recheckOpenedReleaseInCollections();
+                            cardFavoritesMenu.close();
+                        }
+                    }
+                    CommonMenuItem {
+                        text: "Добавить в коллекцию Просмотрено"
+                        enabled: !releasesViewModel.openedReleaseInCollections
+                        onPressed: {
+                            synchronizationHub.addReleaseToCollection(releasesViewModel.openedReleaseId, "WATCHED");
+                            releasesViewModel.recheckOpenedReleaseInCollections();
+                            cardFavoritesMenu.close();
+                        }
+                    }
+                    CommonMenuItem {
+                        text: "Добавить в коллекцию Отложено"
+                        enabled: !releasesViewModel.openedReleaseInCollections
+                        onPressed: {
+                            synchronizationHub.addReleaseToCollection(releasesViewModel.openedReleaseId, "POSTPONED");
+                            releasesViewModel.recheckOpenedReleaseInCollections();
+                            cardFavoritesMenu.close();
+                        }
+                    }
+                    CommonMenuItem {
+                        text: "Добавить в коллекцию Брошено"
+                        enabled: !releasesViewModel.openedReleaseInCollections
+                        onPressed: {
+                            synchronizationHub.addReleaseToCollection(releasesViewModel.openedReleaseId, "ABANDONED");
+                            releasesViewModel.recheckOpenedReleaseInCollections();
+                            cardFavoritesMenu.close();
+                        }
+                    }
+                    CommonMenuItem {
+                        text: "Удалить из коллекций"
+                        enabled: releasesViewModel.openedReleaseInCollections
+                        onPressed: {
+                            synchronizationHub.deleteReleaseFromCollections(releasesViewModel.openedReleaseId);
+                            releasesViewModel.recheckOpenedReleaseInCollections();
+                            cardFavoritesMenu.close();
+                        }
+                    }
                 }
             }
             IconButton {
@@ -187,21 +239,21 @@ ColumnLayout {
                     CommonMenuItem {
                         text: "Открыть во внешнем плеере в HD качестве"
                         onPressed: {
-                            releasesViewModel.openInExternalPlayer(localStorage.packAsM3UAndOpen(releasesViewModel.openedReleaseId, "hd"));
+                            releasesViewModel.openInExternalPlayer(releasesViewModel.packAsM3UAndOpen(releasesViewModel.openedReleaseId, "hd"));
                             externalPlayerMenu.close();
                         }
                     }
                     CommonMenuItem {
                         text: "Открыть во внешнем плеере в SD качестве"
                         onPressed: {
-                            releasesViewModel.openInExternalPlayer(localStorage.packAsM3UAndOpen(releasesViewModel.openedReleaseId, "sd"));
+                            releasesViewModel.openInExternalPlayer(releasesViewModel.packAsM3UAndOpen(releasesViewModel.openedReleaseId, "sd"));
                             externalPlayerMenu.close();
                         }
                     }
                     CommonMenuItem {
                         text: "Открыть во внешнем плеере в FullHD качестве"
                         onPressed: {
-                            releasesViewModel.openInExternalPlayer(localStorage.packAsM3UAndOpen(releasesViewModel.openedReleaseId, "fullhd"));
+                            releasesViewModel.openInExternalPlayer(releasesViewModel.packAsM3UAndOpen(releasesViewModel.openedReleaseId, "fullhd"));
                             externalPlayerMenu.close();
                         }
                     }
@@ -210,7 +262,7 @@ ColumnLayout {
                         notVisible: Qt.platform.os !== "windows"
                         text: "Открыть в плеере MPC в HD качестве"
                         onPressed: {
-                            releasesViewModel.openInExternalPlayer(localStorage.packAsMPCPLAndOpen(releasesViewModel.openedReleaseId, "hd"));
+                            releasesViewModel.openInExternalPlayer(releasesViewModel.packAsMPCPLAndOpen(releasesViewModel.openedReleaseId, "hd"));
                             externalPlayerMenu.close();
                         }
                     }
@@ -218,7 +270,7 @@ ColumnLayout {
                         notVisible: Qt.platform.os !== "windows"
                         text: "Открыть в плеере MPC в SD качестве"
                         onPressed: {
-                            releasesViewModel.openInExternalPlayer(localStorage.packAsMPCPLAndOpen(releasesViewModel.openedReleaseId, "sd"));
+                            releasesViewModel.openInExternalPlayer(releasesViewModel.packAsMPCPLAndOpen(releasesViewModel.openedReleaseId, "sd"));
                             externalPlayerMenu.close();
                         }
                     }
@@ -226,7 +278,7 @@ ColumnLayout {
                         notVisible: Qt.platform.os !== "windows"
                         text: "Открыть в плеере MPC в FullHD качестве"
                         onPressed: {
-                            releasesViewModel.openInExternalPlayer(localStorage.packAsMPCPLAndOpen(releasesViewModel.openedReleaseId, "fullhd"));
+                            releasesViewModel.openInExternalPlayer(releasesViewModel.packAsMPCPLAndOpen(releasesViewModel.openedReleaseId, "fullhd"));
                             externalPlayerMenu.close();
                         }
                     }
@@ -338,6 +390,47 @@ ColumnLayout {
                     }
                 }
             }
+            IconButton {
+                height: 40
+                width: 40
+                hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
+                iconPath: applicationThemeViewModel.currentItems.iconMagnet
+                iconWidth: 26
+                iconHeight: 26
+                tooltipMessage: "Открыть или скопировать magnet ссылки из торрентов"
+                onButtonPressed: {
+                    magnetLinkMenu.open();
+                }
+
+                CommonMenu {
+                    id: magnetLinkMenu
+                    autoWidth: true
+
+                    Repeater {
+                        model: releasesViewModel.openedCardTorrents
+                        CommonMenuItem {
+                            text: "Копировать magnet ссылку " + quality + " [" + series + "] " + size + " " + timecreation
+                            onPressed: {
+                                releasesViewModel.copyOpenedReleaseMagnetTorrent(identifier);
+                            }
+                        }
+                    }
+
+                    Repeater {
+                        model: releasesViewModel.openedCardTorrents
+                        CommonMenuItem {
+                            text: "Открыть magnet ссылку " + quality + " [" + series + "] " + size + " " + timecreation
+                            onPressed: {
+                                releasesViewModel.openOpenedReleaseMagnetTorrent(identifier);
+                            }
+                        }
+                    }
+
+                    onWidthChanged: {
+                        magnetLinkMenu.x = -magnetLinkMenu.width;
+                    }
+                }
+            }
         }
 
         Flickable {
@@ -346,8 +439,7 @@ ColumnLayout {
             width: parent.width - cardButtons.width
             clip: true
             boundsBehavior: Flickable.StopAtBounds
-            boundsMovement: Flickable.StopAtBounds
-            contentWidth: parent.width - 10
+            contentWidth: mainScrollArea.width - 10
             contentHeight: cardColumn.height
             ScrollBar.vertical: ScrollBar {
                 active: true
@@ -355,6 +447,7 @@ ColumnLayout {
 
             Column {
                 id: cardColumn
+                width: mainScrollArea.contentWidth - 10
 
                 Grid {
                     id: releaseInfo
@@ -574,7 +667,7 @@ ColumnLayout {
                                 anchors.left: parent.left
                                 anchors.leftMargin: 4
                                 onClicked: {
-                                    watchSingleRelease(releasesViewModel.openedReleaseId, releasesViewModel.openedReleaseVideos, -1, releasesViewModel.openedReleasePoster)
+                                    watchSingleRelease(releasesViewModel.openedReleaseId, -1)
 
                                     releasePosterPreview.isVisible = false;
                                 }
@@ -629,22 +722,16 @@ ColumnLayout {
                                 CommonMenu {
                                     id: dowloadTorrent
                                     y: parent.height - parent.height
-                                    width: 380
+                                    autoWidth: true
 
                                     Repeater {
                                         model: releasesViewModel.openedCardTorrents
                                         CommonMenuItem {
-                                            text: "Скачать " + quality + " [" + series + "] " + size
+                                            text: "Скачать " + quality + " [" + series + "] " + size + " " + timecreation
                                             onPressed: {
-                                                const torrentUri = synchronizationService.combineWithWebSiteUrl(url);
-                                                if (localStorage.isUseTorrentStreamMode()) {
-                                                    releasesViewModel.downloadTorrent(releasesViewModel.openedReleaseId, torrentUri, userConfigurationViewModel.playerBuffer);
-                                                } else {
-                                                    synchronizationService.downloadTorrent(torrentUri);
-                                                    userActivityViewModel.addDownloadedTorrentToCounter();
+                                                synchronizationServicev2.downloadTorrent(url, releasesViewModel.openedReleaseId, magnet);
 
-                                                    if (userConfigurationViewModel.markAsReadAfterDownload) setSeenStateForOpenedRelease(true);
-                                                }
+                                                if (userConfigurationViewModel.markAsReadAfterDownload) setSeenStateForOpenedRelease(true);
                                             }
                                         }
                                     }
@@ -666,7 +753,7 @@ ColumnLayout {
                                 text: mainViewModel.isSmallSizeMode ? "См. торрент" : "Смотреть торрент"
                                 textSize: mainViewModel.isSmallSizeMode ? 10 : 11
                                 onClicked: {
-                                    if (!userConfigurationViewModel.playerBuffer) {
+                                    if (!torrentNotifierViewModel.activated) {
                                         torrentStreamInfo.open();
                                         return;
                                     }
@@ -677,31 +764,24 @@ ColumnLayout {
                                 CommonMenu {
                                     id: watchTorrent
                                     y: parent.height - parent.height
-                                    width: 380
+                                    autoWidth: true
 
                                     Repeater {
                                         model: releasesViewModel.openedCardTorrents
                                         CommonMenuItem {
-                                            text: "Смотреть " + quality + " [" + series + "]"
+                                            text: "Смотреть " + quality + " [" + series + "]" + " " + size
                                             onPressed: {
                                                 watchTorrent.close();
 
-                                                // TODO: if already downloaded torrent start watch local file
-
-                                                if (!onlinePlayerWindowViewModel.isHasVlc) {
+                                                if (!onlinePlayerWindowViewModel.isHasVlc && !onlinePlayerWindowViewModel.isHasMpv) {
                                                     vlcInfo.open();
                                                     return;
                                                 }
 
-                                                if (!onlinePlayerWindowViewModel.isSelectedVlc) {
-                                                    onlinePlayerWindowViewModel.changePlayer("VLC");
+                                                if (!userConfigurationViewModel.useTorrentStreamLibrary) {
+                                                    torrentNotifierViewModel.lastRefreshIdentifier = identifier;
+                                                    torrentNotifierViewModel.startGetTorrentData(true);
                                                 }
-
-                                                onlinePlayerViewModel.quickSetupForSingleTorrentRelease(releasesViewModel.openedReleaseId, identifier, userConfigurationViewModel.playerBuffer);
-
-                                                releasePosterPreview.isVisible = false;
-
-                                                mainViewModel.selectPage("videoplayer");
                                             }
                                         }
                                     }
@@ -744,6 +824,23 @@ ColumnLayout {
                                     openCommentsButton.state = mainViewModel.isSmallSizeMode ? "smallsizemode" : "";
                                 }
                             }
+                            RoundedActionButton {
+                                id: openOnSiteButton
+                                textSize: mainViewModel.isSmallSizeMode ? 10 : 11
+                                text: mainViewModel.isSmallSizeMode ? "На сайте" : "Открыть на сайте"
+                                anchors.verticalCenter: parent.verticalCenter
+                                anchors.left: openCommentsButton.right
+                                anchors.leftMargin: 4
+                                onClicked: {
+                                    Qt.openUrlExternally("https://aniliberty.top/anime/releases/release/" + releasesViewModel.openedReleaseCode + "/episodes");
+                                }
+
+                                property bool isNeedSmallMode: mainViewModel.isSmallSizeMode
+
+                                onIsNeedSmallModeChanged: {
+                                    //mainViewModel.state = mainViewModel.isSmallSizeMode ? "smallsizemode" : "";
+                                }
+                            }
                         }
                     }
                 }
@@ -767,6 +864,17 @@ ColumnLayout {
                     }
                 }
 
+                PlainText {
+                    id: extensionContentText
+                    width: mainScrollArea.width - 10
+                    fontPointSize: 10
+                    leftPadding: 8
+                    topPadding: 4
+                    wrapMode: Text.WordWrap
+                    textFormat: Text.RichText
+                    text: releasesViewModel.openedReleseExtensionContent
+                }
+
                 Item {
                     width: mainScrollArea.width
                     height: 30
@@ -786,7 +894,7 @@ ColumnLayout {
                         width: parent.width
                         releaseId: releasesViewModel.openedReleaseId
                         onOpenVideo: {
-                            watchSingleRelease(releasesViewModel.openedReleaseId, releasesViewModel.openedReleaseVideos, videoId, releasesViewModel.openedReleasePoster);
+                            watchSingleRelease(releasesViewModel.openedReleaseId, videoId);
                         }
                     }
                 }
@@ -820,6 +928,17 @@ ColumnLayout {
         }
     }
 
+    Rectangle {
+        color: applicationThemeViewModel.pageBackground
+        opacity: .5
+        visible: torrentNotifierViewModel.needActivateRefreshEvent
+        Layout.fillWidth: true
+        Layout.fillHeight: true
+        MouseArea {
+            anchors.fill: parent
+        }
+    }
+
     MessageModal {
         id: torrentStreamInfo
         header: "Приложение TorrentStream не установлено"
@@ -841,8 +960,8 @@ ColumnLayout {
 
     MessageModal {
         id: vlcInfo
-        header: "Плеер VLC не доступен"
-        message: "Ваша версия собрана без плеера VLC. К сожалению только плеер VLC умеет стримить торренты. Для возможности смотреть торрент необходимо собрать приложение с плеером VLC."
+        header: "Плееры VLC и mpv не доступны"
+        message: "Ваша версия собрана без плееров поддерживающих стриминг торрента - VLC или mpv. Для возможности смотреть торрент необходимо собрать приложение с плеером VLC и/или mpv."
         content: Row {
             spacing: 6
             anchors.right: parent.right
@@ -857,4 +976,7 @@ ColumnLayout {
         }
     }
 
+    onVisibleChanged: {
+        mainScrollArea.contentY = 0;
+    }
 }

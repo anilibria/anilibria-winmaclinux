@@ -20,7 +20,7 @@
 #define FULLRELEASEMODEL_H
 
 #include <QObject>
-#include "releasemodel.h"
+#include <QString>
 
 class FullReleaseModel
 {
@@ -38,15 +38,19 @@ private:
     QString m_Genres;
     QString m_Voices;
     QString m_OriginalName;
-    QString m_Videos;
     int m_CountVideos;
-    QString m_Torrents;
     int m_CountTorrents;
     QString m_Title;
     QString m_Season;
     QString m_Announce;
     int m_Rating;
-    bool m_isDeleted { false };
+    bool m_isOngoing { false };
+    QString m_ageRating { "" };
+    const QString m_isOngoingField { "isOngoing" };
+    const QString m_ageRatingField { "ageRating" };
+    QString m_posterHost { "" };
+    QString m_groupValue { "" };
+    QString m_fullTeam;
 
 public:
     QString title() const { return m_Title; }
@@ -58,7 +62,7 @@ public:
     QString year() const { return m_Year; }
     void setYear(const QString &year) noexcept;
 
-    QString poster() const { return m_Poster; }
+    QString poster() const { return m_posterHost + m_Poster; }
     void setPoster(const QString &poster) noexcept;
 
     QString description() const { return m_Description; }
@@ -71,7 +75,12 @@ public:
     void setGenres(const QString &genres) noexcept;
 
     QString voicers() const { return m_Voices; }
+    QString limitVoicers();
     void setVoicers(const QString &voicers) noexcept;
+
+    QString fullTeam() const { return m_fullTeam; }
+    QString limitFullTeam();
+    void setFullTeam(const QString &fullTeam) noexcept { m_fullTeam = fullTeam; }
 
     QString season() const { return m_Season; }
     void setSeason(const QString &season) noexcept;
@@ -100,24 +109,25 @@ public:
     int rating() const { return m_Rating; }
     void setRating(const int rating) noexcept;
 
-    QString torrents() const { return m_Torrents; }
-    void setTorrents(const QString& torrents) noexcept;
-
-    QString videos() const { return m_Videos; }
-    void setVideos(const QString& videos) noexcept;
-
     int timestamp() const noexcept { return m_Timestamp; }
     void setTimestamp(const int timestamp) noexcept;
 
     QString type() const { return m_Type; }
     void setType(const QString& type) noexcept;
 
-    bool isDeleted() const noexcept { return m_isDeleted; }
-    void setIsDeleted(const bool isDeleted) noexcept;
+    bool isOngoing() const { return m_isOngoing; }
+    void setIsOngoing(bool isOngoing) noexcept { m_isOngoing = isOngoing; }
 
-    void writeToJson(QJsonObject &json) const noexcept;
+    QString ageRating() const { return m_ageRating; }
+    void setAgeRating(const QString& ageRating) noexcept { m_ageRating = ageRating; }
 
-    void readFromJson(QJsonValue &json);
+    QString posterHost() const { return m_posterHost; }
+    void setPosterHost(const QString& posterHost) noexcept { m_posterHost = posterHost; }
+
+    QString groupValue() const noexcept { return  m_groupValue; }
+    void setGroupValue(const QString& groupValue) noexcept { m_groupValue = groupValue; }
+
+    void readFromJson(const QJsonObject &json);
 
     bool operator== (const FullReleaseModel &comparedModel) noexcept;
 

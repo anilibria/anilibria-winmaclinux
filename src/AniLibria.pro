@@ -1,9 +1,16 @@
 QT += quick multimedia network concurrent svg websockets quickcontrols2
-CONFIG += c++11
+CONFIG += c++14
 
 macx {
+    LIBS += -ldl
     QT -= virualkeyboard
     QMAKE_LFLAGS_SONAME = -Wl,-install_name,@rpath/
+    CONFIG += link_pkgconfig
+    PKG_CONFIG = /usr/local/bin/pkg-config
+    PKGCONFIG += mpv
+
+    CONFIG += buildwithmpv
+    DEFINES += USE_MPV_PLAYER
 }
 
 windows {
@@ -12,26 +19,45 @@ windows {
     LIBS += -L$$PWD/vlc-qt/vlc/ -llibvlc
     LIBS += -L$$PWD/vlc-qt/vlc/ -llibvlccore
 
+    LIBS += -L$$PWD/windows-mpv -llibmpv.dll
+
     INCLUDEPATH += $$PWD/vlc-qt/vlc/include
     DEPENDPATH += $$PWD/vlc-qt/vlc/include
+    INCLUDEPATH += $$PWD/windows-mpv
+    DEPENDPATH += $$PWD/windows-mpv
 
     CONFIG += buildwithvlc
-    QT += av
-    DEFINES += USE_QTAV_PLAYER
+    CONFIG += buildwithmpv
     DEFINES += NO_NEED_STANDART_PLAYER
+    DEFINES += USE_MPV_PLAYER
 }
 
-#unix {
-#    LIBS += -lvlc
+unixmpv {
+    CONFIG += link_pkgconfig
+    PKGCONFIG += mpv
+    CONFIG += buildwithmpv
+    QMAKE_CXXFLAGS += $$system(pkg-config --cflags mpv)
+    INCLUDEPATH += $$system(pkg-config --variable=includedir mpv)
+    DEFINES += USE_MPV_PLAYER
+}
 
-#    INCLUDEPATH += /usr/include/
-#    DEPENDPATH += /usr/include/
+unixvlc {
+    CONFIG += link_pkgconfig
+    PKGCONFIG += libvlc
 
-#    INCLUDEPATH += /usr/include/vlc/plugins
-#    DEPENDPATH += /usr/include/vlc/plugins
+    QMAKE_CXXFLAGS += $$system(pkg-config --cflags libvlc)
+    QMAKE_CXXFLAGS += $$system(pkg-config --cflags vlc-plugin)
 
-#    CONFIG += buildwithvlc
-#}
+    DEPENDPATH += $$system(pkg-config --variable=includedir libvlc)
+    DEPENDPATH += $$system(pkg-config --variable=includedir vlc-plugin)/plugins
+
+    CONFIG += buildwithvlc
+}
+
+buildwithmpv {
+    SOURCES += PlayerMpv/mpvobject.cpp
+    HEADERS += PlayerMpv/mpvobject.h
+}
 
 buildwithvlc {
     DEFINES += USE_VLC_PLAYER
@@ -60,16 +86,16 @@ buildwithvlc {
         vlc-qt/core/TrackModel.cpp \
         vlc-qt/core/Video.cpp \
         vlc-qt/core/VideoFrame.cpp \
-        vlc-qt/core/VideoMemoryStream.cpp \
+        #vlc-qt/core/VideoMemoryStream.cpp \
         vlc-qt/core/VideoStream.cpp \
         vlc-qt/core/YUVVideoFrame.cpp \
         vlc-qt/qml/QmlSource.cpp \
-        vlc-qt/qml/QmlVideoObject.cpp \
-        vlc-qt/qml/QmlVideoPlayer.cpp \
+        #vlc-qt/qml/QmlVideoObject.cpp \
+        #vlc-qt/qml/QmlVideoPlayer.cpp \
         vlc-qt/qml/VlcQmlPlayer.cpp \
         vlc-qt/qml/VlcQmlVideoOutput.cpp \
-        vlc-qt/qml/painter/GlPainter.cpp \
-        vlc-qt/qml/painter/GlslPainter.cpp \
+        #vlc-qt/qml/painter/GlPainter.cpp \
+        #vlc-qt/qml/painter/GlslPainter.cpp \
         vlc-qt/qml/rendering/QmlVideoStream.cpp \
         vlc-qt/qml/rendering/VideoMaterial.cpp \
         vlc-qt/qml/rendering/VideoMaterialShader.cpp \
@@ -96,18 +122,18 @@ buildwithvlc {
         vlc-qt/core/Video.h \
         vlc-qt/core/VideoDelegate.h \
         vlc-qt/core/VideoFrame.h \
-        vlc-qt/core/VideoMemoryStream.h \
+        #vlc-qt/core/VideoMemoryStream.h \
         vlc-qt/core/VideoStream.h \
         vlc-qt/core/YUVVideoFrame.h \
         vlc-qt/core/compat/asprintf.h \
         vlc-qt/core/compat/poll.h \
         vlc-qt/qml/QmlSource.h \
-        vlc-qt/qml/QmlVideoObject.h \
-        vlc-qt/qml/QmlVideoPlayer.h \
+        #vlc-qt/qml/QmlVideoObject.h \
+        #vlc-qt/qml/QmlVideoPlayer.h \
         vlc-qt/qml/VlcQmlPlayer.h \
         vlc-qt/qml/VlcQmlVideoOutput.h \
-        vlc-qt/qml/painter/GlPainter.h \
-        vlc-qt/qml/painter/GlslPainter.h \
+        #vlc-qt/qml/painter/GlPainter.h \
+        #vlc-qt/qml/painter/GlslPainter.h \
         vlc-qt/qml/rendering/QmlVideoStream.h \
         vlc-qt/qml/rendering/VideoMaterial.h \
         vlc-qt/qml/rendering/VideoMaterialShader.h \
@@ -115,6 +141,7 @@ buildwithvlc {
 }
 
 unix: {
+    LIBS += -ldl
     QT += dbus
     ENV_PREFIX=$$(PREFIX)
     isEmpty(ENV_PREFIX){
@@ -131,7 +158,7 @@ unix {
     desktop.path = $$PREFIX/share/applications
 
 #Setup icons for following resolutions: 16x16; 32x32; 128x128; 256x256 and 512x512.
-#https://specifications.freedesktop.org/icon-theme-spec/icon-theme-spec-latest.html
+#https://specifications.freedesktop.org/icon-theme/latest/
 
 #16x16
     icon_16.path = $$PREFIX/share/icons/hicolor/16x16/apps
@@ -203,18 +230,20 @@ SOURCES += \
     Classes/ListModels/releasetorrentcommonlist.cpp \
     Classes/ListModels/releasetorrentslist.cpp \
     Classes/ListModels/themefieldlistmodel.cpp \
+    Classes/Models/apitorrentmodel.cpp \
     Classes/Models/changesmodel.cpp \
     Classes/Models/downloadedtorrentmodel.cpp \
     Classes/Models/downloaditemmodel.cpp \
+    Classes/Models/externalapplicationmodel.cpp \
     Classes/Models/externalplaylistvideo.cpp \
     Classes/Models/fullreleasemodel.cpp \
     Classes/Models/historymodel.cpp \
     Classes/Models/mainmenuitemmodel.cpp \
     Classes/Models/notificationmodel.cpp \
     Classes/Models/onlinevideomodel.cpp \
-    Classes/Models/releasemodel.cpp \
+    Classes/Models/pagebackgroundmodel.cpp \
+    Classes/Models/releaseonlinevideomodel.cpp \
     Classes/Models/releaseseriesmodel.cpp \
-    Classes/Models/releasetorrentmodel.cpp \
     Classes/Models/seenmarkmodel.cpp \
     Classes/Models/seenmodel.cpp \
     Classes/Models/themeitemmodel.cpp \
@@ -228,6 +257,7 @@ SOURCES += \
     Classes/Services/anilibriaapiservice.cpp \
     Classes/Services/apiserviceconfigurator.cpp \
     Classes/Services/applicationsettings.cpp \
+    Classes/Services/applicationversionchecker.cpp \
     Classes/Services/downloadmanager.cpp \
     Classes/Services/imageloader.cpp \
     Classes/Services/localstorageservice.cpp \
@@ -235,11 +265,14 @@ SOURCES += \
     Classes/Services/osextras.cpp \
     Classes/Services/proxyconfigurator.cpp \
     Classes/Services/releaselinkedseries.cpp \
-    Classes/Services/synchronizationservice.cpp \
+    Classes/Services/synchronizev2service.cpp \
     Classes/Services/thememanagerservice.cpp \
     Classes/Services/versionchecker.cpp \
+    Classes/ViewModels/applicationsviewmodel.cpp \
     Classes/ViewModels/applicationthemeviewmodel.cpp \
     Classes/ViewModels/authorizationviewmodel.cpp \
+    Classes/ViewModels/extensioninnerobject.cpp \
+    Classes/ViewModels/extensionsviewmodel.cpp \
     Classes/ViewModels/externalplayerviewmodel.cpp \
     Classes/ViewModels/filterdictionariesviewmodel.cpp \
     Classes/ViewModels/globaleventtrackerviewmodel.cpp \
@@ -251,6 +284,7 @@ SOURCES += \
     Classes/ViewModels/onlineplayerwindowviewmodel.cpp \
     Classes/ViewModels/releasecustomgroupsviewmodel.cpp \
     Classes/ViewModels/releasesviewmodel.cpp \
+    Classes/ViewModels/synchronizationhub.cpp \
     Classes/ViewModels/torrentnotifierviewmodel.cpp \
     Classes/ViewModels/useractivityviewmodel.cpp \
     Classes/ViewModels/userconfigurationviewmodel.cpp \
@@ -268,7 +302,7 @@ RC_ICONS = fullsizesicon.ico
 ICON = anilibria.icns
 
 # Additional import path used to resolve QML modules in Qt Creator's code model
-QML_IMPORT_PATH =
+QML_IMPORT_PATH = Views
 
 # Additional import path used to resolve QML modules just for Qt Quick Designer
 QML_DESIGNER_IMPORT_PATH =
@@ -313,18 +347,20 @@ HEADERS += \
     Classes/ListModels/releasetorrentcommonlist.h \
     Classes/ListModels/releasetorrentslist.h \
     Classes/ListModels/themefieldlistmodel.h \
+    Classes/Models/apitorrentmodel.h \
     Classes/Models/changesmodel.h \
     Classes/Models/downloadedtorrentmodel.h \
     Classes/Models/downloaditemmodel.h \
+    Classes/Models/externalapplicationmodel.h \
     Classes/Models/externalplaylistvideo.h \
     Classes/Models/fullreleasemodel.h \
     Classes/Models/historymodel.h \
     Classes/Models/mainmenuitemmodel.h \
     Classes/Models/notificationmodel.h \
     Classes/Models/onlinevideomodel.h \
-    Classes/Models/releasemodel.h \
+    Classes/Models/pagebackgroundmodel.h \
+    Classes/Models/releaseonlinevideomodel.h \
     Classes/Models/releaseseriesmodel.h \
-    Classes/Models/releasetorrentmodel.h \
     Classes/Models/seenmarkmodel.h \
     Classes/Models/seenmodel.h \
     Classes/Models/themeitemmodel.h \
@@ -338,19 +374,24 @@ HEADERS += \
     Classes/Services/anilibriaapiservice.h \
     Classes/Services/apiserviceconfigurator.h \
     Classes/Services/applicationsettings.h \
+    Classes/Services/applicationversionchecker.h \
     Classes/Services/downloadmanager.h \
     Classes/Services/imageloader.h \
+    Classes/Services/localcachechecker.h \
     Classes/Services/localstorageservice.h \
     Classes/Services/offlineimagecacheservice.h \
     Classes/Services/osextras.h \
     Classes/Services/proxyconfigurator.h \
     Classes/Services/releaselinkedseries.h \
-    Classes/Services/synchronizationservice.h \
+    Classes/Services/synchronizev2service.h \
     Classes/Services/thememanagerservice.h \
     Classes/Services/versionchecker.h \
     Classes/ListModels/alphabetlistmodel.h \
+    Classes/ViewModels/applicationsviewmodel.h \
     Classes/ViewModels/applicationthemeviewmodel.h \
     Classes/ViewModels/authorizationviewmodel.h \
+    Classes/ViewModels/extensioninnerobject.h \
+    Classes/ViewModels/extensionsviewmodel.h \
     Classes/ViewModels/externalplayerviewmodel.h \
     Classes/ViewModels/filterdictionariesviewmodel.h \
     Classes/ViewModels/globaleventtrackerviewmodel.h \
@@ -362,6 +403,7 @@ HEADERS += \
     Classes/ViewModels/onlineplayerwindowviewmodel.h \
     Classes/ViewModels/releasecustomgroupsviewmodel.h \
     Classes/ViewModels/releasesviewmodel.h \
+    Classes/ViewModels/synchronizationhub.h \
     Classes/ViewModels/torrentnotifierviewmodel.h \
     Classes/ViewModels/useractivityviewmodel.h \
     Classes/ViewModels/userconfigurationviewmodel.h \

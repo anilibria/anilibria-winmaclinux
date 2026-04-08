@@ -1,7 +1,6 @@
-import QtQuick 2.12
-import QtQuick.Controls 2.12
-import QtQuick.Layouts 1.3
-import QtQuick.Dialogs 1.3
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
 import "../Controls"
 
 Page {
@@ -161,6 +160,19 @@ Page {
                 Layout.fillHeight: true
                 Layout.fillWidth: true
 
+                Image {
+                    id: backgroundFile
+                    asynchronous: true
+                    visible: applicationThemeViewModel.themeManagerPageBackground.activated
+                    fillMode: applicationThemeViewModel.themeManagerPageBackground.activated ? applicationThemeViewModel.themeManagerPageBackground.imageMode : Image.Pad
+                    source: applicationThemeViewModel.themeManagerPageBackground.activated ? applicationThemeViewModel.themeManagerPageBackground.url : ''
+                    opacity: applicationThemeViewModel.themeManagerPageBackground.activated ? applicationThemeViewModel.themeManagerPageBackground.opacity / 100 : 1
+                    horizontalAlignment: applicationThemeViewModel.themeManagerPageBackground.activated ? applicationThemeViewModel.themeManagerPageBackground.halign : Image.AlignLeft
+                    verticalAlignment: applicationThemeViewModel.themeManagerPageBackground.activated ? applicationThemeViewModel.themeManagerPageBackground.valign : Image.AlignTop
+                    width: parent.width
+                    height: parent.height
+                }
+
                 Item {
                     visible: applicationThemeViewModel.selectedMenuItem === 0
                     anchors.fill: parent
@@ -178,7 +190,7 @@ Page {
                             textSize: 10
                             text: "Импорт темы из файла"
                             onClicked: {
-                                openThemeToFileDialog.open();
+                                //openThemeToFileDialog.open();
                             }
                         }
                     }
@@ -192,6 +204,7 @@ Page {
                         anchors.right: parent.right
                         anchors.bottom: parent.bottom
                         model: applicationThemeViewModel.localThemes
+                        interactive: userConfigurationViewModel.usingScrollAcceleration
                         delegate: Item {
                             width: localThemes.width
                             height: 100
@@ -281,6 +294,7 @@ Page {
                         visible: !applicationThemeViewModel.service.loading && !applicationThemeViewModel.externalThemes.listIsEmpty
                         anchors.fill: parent
                         model: applicationThemeViewModel.externalThemes
+                        interactive: userConfigurationViewModel.usingScrollAcceleration
                         delegate: Item {
                             width: externalThemes.width
                             height: 200
@@ -549,6 +563,7 @@ Page {
                             }
 
                             CommonTextField {
+                                id: searchTextField
                                 anchors.left: parent.left
                                 anchors.leftMargin: 10
                                 anchors.verticalCenter: parent.verticalCenter                                
@@ -557,6 +572,35 @@ Page {
                                 placeholderText: "Фильтр для полей"
                                 onTextChanged: {
                                     applicationThemeViewModel.fieldList.filter = text;
+                                }
+                            }
+                            RoundedActionButton {
+                                anchors.left: searchTextField.right
+                                anchors.leftMargin: 4
+                                anchors.verticalCenter: parent.verticalCenter
+                                text: "..."
+                                onClicked: {
+                                    multipleOperationsMenu.open();
+                                }
+
+                                CommonMenu {
+                                    id: multipleOperationsMenu
+                                    autoWidth: true
+
+                                    CommonMenuItem {
+                                        text: "Убрать перекрытие со всех полей"
+                                        onClicked: {
+                                            applicationThemeViewModel.fieldList.undefineAllFields();
+                                            multipleOperationsMenu.close();
+                                        }
+                                    }
+                                    CommonMenuItem {
+                                        text: "Убрать перекрытие с отфильтрованных полей"
+                                        onClicked: {
+                                            applicationThemeViewModel.fieldList.undefineSelectedFields();
+                                            multipleOperationsMenu.close();
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -799,8 +843,8 @@ Page {
                                             iconPath: applicationThemeViewModel.currentItems.iconMainMenuThemeManager
                                             tooltipMessage: "Выбрать файл изображения для иконки"
                                             onButtonPressed: {
-                                                openIconFileDialog.selectedIconIndex = identifier;
-                                                openIconFileDialog.open();
+                                                /*openIconFileDialog.selectedIconIndex = identifier;
+                                                openIconFileDialog.open();*/
                                             }
                                         }
 
@@ -822,6 +866,27 @@ Page {
                                                 height: 28
                                                 mipmap: true
                                                 source: valueTextField.text.length && fieldType === 'icon' ? valueTextField.text : applicationThemeViewModel.currentItems.iconMainMenuThemeManager
+                                            }
+                                        }
+
+                                        Item {
+                                            id: backgroundsContainer
+                                            anchors.left: selectIconFromFileButton.right
+                                            anchors.leftMargin: 10
+                                            anchors.verticalCenter: parent.verticalCenter
+                                            visible: fieldType === 'backgrounds'
+                                            width: 100
+                                            height: 30
+
+                                            RoundedActionButton {
+                                                visible: isDefined
+                                                width: parent.width
+                                                text: "Выбрать"
+                                                onClicked: {
+                                                    applicationThemeViewModel.fieldList.selectedIndex = identifier;
+                                                    backgroundImagePopup.pagesData = fieldValue;
+                                                    backgroundImagePopup.open();
+                                                }
                                             }
                                         }
 
@@ -866,8 +931,8 @@ Page {
                                                 anchors.fill: parent
                                                 onPressed: {
                                                     applicationThemeViewModel.fieldList.selectedIndex = identifier;
-                                                    colorDialog.color = fieldValue;
-                                                    colorDialog.visible = true;
+                                                    colorDialog.selectedColor = fieldValue;
+                                                    colorDialog.open();
                                                 }
                                             }
                                         }
@@ -966,47 +1031,45 @@ Page {
         }
     }
 
-    FileDialog {
+    /*SystemOpenFileDialog {
         id: openThemeToFileDialog
-        selectExisting: true
+        title: "Open theme from file"
         nameFilters: ["Theme files (*.theme)"]
-        onAccepted: {
-            applicationThemeViewModel.importThemeFromFile(openThemeToFileDialog.fileUrl);
+        onNeedOpenFile: {
+            applicationThemeViewModel.importThemeFromFile(fileUrl);
         }
-    }
+    }*/
 
-    FileDialog {
+    SystemSaveFileDialog {
         id: saveThemeToFileDialog
-        selectExisting: false
         nameFilters: ["Theme files (*.theme)"]
-        onAccepted: {
-            applicationThemeViewModel.fieldList.saveThemeToFile(saveThemeToFileDialog.fileUrl);
+        onNeedSaveFile: {
+            applicationThemeViewModel.fieldList.saveThemeToFile(fileUrl);
         }
     }
 
-    FileDialog {
+    /*SystemOpenFileDialog {
         id: openIconFileDialog
-        selectExisting: true
         nameFilters: ["Image files (*.jpg *.jpeg *.gif *.svg *.png)"]
 
         property int selectedIconIndex
 
-        onAccepted: {
+        onNeedOpenFile: {
             applicationThemeViewModel.fieldList.addIconFromFile(
-                openIconFileDialog.fileUrl,
+                fileUrl,
                 openIconFileDialog.selectedIconIndex
             );
         }
-    }
+    }*/
 
-    ColorDialog {
+    SystemColorDialog {
         id: colorDialog
         title: "Выберите цвет из палитры"
         showAlphaChannel: true
-        onAccepted: {
-            applicationThemeViewModel.fieldList.setValueToItem(colorDialog.color);
+        onColorSelected: {
+            applicationThemeViewModel.fieldList.setValueToItem(color);
         }
-        onRejected: {
+        onCancelDialog: {
             applicationThemeViewModel.fieldList.selectedIndex = -1;
         }
     }
@@ -1029,6 +1092,17 @@ Page {
         }
     }
 
+    BackgroundImagePopup {
+        id: backgroundImagePopup
+        x: root.width / 2 - (backgroundImagePopup.width / 2)
+        y: root.height / 2  - (backgroundImagePopup.height / 2)
+        modal: true
+        focus: true
+        closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
+        onSavedData: {
+            applicationThemeViewModel.fieldList.setValueToItem(backgroundImagePopup.pagesData);
+        }
+    }
 
     Connections {
         target: applicationThemeViewModel.fieldList

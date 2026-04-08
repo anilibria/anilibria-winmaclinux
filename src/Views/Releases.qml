@@ -1,26 +1,6 @@
-/*
-    AniLibria - desktop client for the website anilibria.tv
-    Copyright (C) 2020 Roman Vladimirov
-
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
-import QtQuick 2.12
-import QtQuick.Controls 2.12
-import QtQuick.Layouts 1.3
-import QtQuick.Controls.Styles 1.4
-import QtQuick.Dialogs 1.2
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
 import Anilibria.ListModels 1.0
 import "../Controls"
 
@@ -40,15 +20,15 @@ Page {
     property bool toggler: false
     property alias backgroundImageWidth: itemsContainer.width
     property alias backgroundImageHeight: itemsContainer.height
+    property var backgroundImageObject
+    property bool hasBackgroundImageObject
 
     signal navigateFrom()
-    signal watchSingleRelease(int releaseId, string videos, int startSeria, string poster)
+    signal watchSingleRelease(int releaseId, int startSeria)
     signal refreshReleases()
     signal refreshFavorites()
     signal refreshReleaseSchedules()
     signal navigateTo()
-    signal watchCinemahall()
-    signal watchMultipleReleases()
 
     Keys.onPressed: {
         if (event.key === Qt.Key_Escape) {
@@ -61,6 +41,23 @@ Page {
         }
         if (event.key === Qt.Key_Home) {
             if (compactModeSwitch.checked && !releasesViewModel.synchronizationEnabled) showPanelInCompactModeButton.clicked();
+        }
+        if (event.key === Qt.Key_PageUp && !releasesViewModel.isOpenedCard) {
+            let originalContentY = scrollview.contentY;
+            if (originalContentY > 0) {
+                let newContentY = originalContentY - 100;
+                if (newContentY < 0) newContentY = 0;
+
+                scrollview.contentY = newContentY;
+            }
+        }
+        if (event.key === Qt.Key_PageDown && !releasesViewModel.isOpenedCard) {
+            let originalContentY = scrollview.contentY;
+            if (originalContentY < scrollview.contentHeight) {
+                let newContentY = originalContentY + 100;
+                if (newContentY > scrollview.contentHeight) newContentY = scrollview.contentHeight;
+                scrollview.contentY = newContentY;
+            }
         }
     }
 
@@ -121,10 +118,84 @@ Page {
                     iconHeight: 34
                     tooltipMessage: "Выполнить синхронизацию релизов"
                     onButtonPressed: {
-                        if (releasesViewModel.synchronizationEnabled) return;
+                        synchronizationServicev2.synchronizeFullCache();
+                    }
+                    onRightButtonPressed: {
+                        synchronizeMenu.open();
+                    }
 
-                        releasesViewModel.synchronizationEnabled = true;
-                        synchronizationService.synchronizeReleases(1);
+                    CommonMenu {
+                        id: synchronizeMenu
+                        y: parent.height
+                        autoWidth: true
+
+                        CommonMenuItem {
+                            text: "Принудительная синхронизация"
+                            onPressed: {
+                                synchronizationServicev2.synchronizeFullCacheForce();
+                                synchronizeMenu.close();
+                            }
+                        }
+                        CommonMenuItem {
+                            text: "Синхронизация типов"
+                            enabled: osExtras.localCacheCheckerConnected
+                            onPressed: {
+                                osExtras.synchronizeRoutine();
+                                synchronizeMenu.close();
+                            }
+                        }
+                        CommonMenuItem {
+                            text: "Синхронизация последних изменений"
+                            enabled: osExtras.localCacheCheckerConnected
+                            onPressed: {
+                                osExtras.synchronizeChanges();
+                                synchronizeMenu.close();
+                            }
+                        }
+                        CommonMenuItem {
+                            text: "Синхронизация последних релизов"
+                            enabled: osExtras.localCacheCheckerConnected
+                            onPressed: {
+                                osExtras.synchronizeLatest();
+                                synchronizeMenu.close();
+                            }
+                        }
+                        CommonMenuItem {
+                            text: "Синхронизация всех релизов"
+                            enabled: osExtras.localCacheCheckerConnected
+                            onPressed: {
+                                osExtras.synchronizeAllReleases();
+                                synchronizeMenu.close();
+                            }
+                        }
+                        CommonMenuItem {
+                            text: "Синхронизация постеров с заменой"
+                            onPressed: {
+                                osExtras.synchronizePosters(true);
+                                synchronizeMenu.close();
+                            }
+                        }
+                        CommonMenuItem {
+                            text: "Синхронизация постеров только новые"
+                            onPressed: {
+                                osExtras.synchronizePosters(false);
+                                synchronizeMenu.close();
+                            }
+                        }
+                        CommonMenuItem {
+                            text: "Создать шару из кеша"
+                            onPressed: {
+                                createSharePopup.open();
+                                synchronizeMenu.close();
+                            }
+                        }
+                        CommonMenuItem {
+                            text: "Загрузить шару кеша"
+                            onPressed: {
+                                loadSharePopup.open();
+                                synchronizeMenu.close();
+                            }
+                        }
                     }
                 }
 
@@ -155,6 +226,54 @@ Page {
                             enabled: releasesViewModel.items.isHasSelectRelease
                             onPressed: {
                                 releasesViewModel.removeSelectedReleaseFromFavorites();
+                                favoriteMenu.close();
+                            }
+                        }
+                        CommonMenuItem {
+                            text: "Добавить в коллекцию Запланировано"
+                            enabled: releasesViewModel.items.isHasSelectRelease
+                            onPressed: {
+                                synchronizationHub.addSelectedReleasesToCollection("PLANNED");
+                                favoriteMenu.close();
+                            }
+                        }
+                        CommonMenuItem {
+                            text: "Добавить в коллекцию Смотрю"
+                            enabled: releasesViewModel.items.isHasSelectRelease
+                            onPressed: {
+                                synchronizationHub.addSelectedReleasesToCollection("WATCHING");
+                                favoriteMenu.close();
+                            }
+                        }
+                        CommonMenuItem {
+                            text: "Добавить в коллекцию Просмотрено"
+                            enabled: releasesViewModel.items.isHasSelectRelease
+                            onPressed: {
+                                synchronizationHub.addSelectedReleasesToCollection("WATCHED");
+                                favoriteMenu.close();
+                            }
+                        }
+                        CommonMenuItem {
+                            text: "Добавить в коллекцию Отложено"
+                            enabled: releasesViewModel.items.isHasSelectRelease
+                            onPressed: {
+                                synchronizationHub.addSelectedReleasesToCollection("POSTPONED");
+                                favoriteMenu.close();
+                            }
+                        }
+                        CommonMenuItem {
+                            text: "Добавить в коллекцию Брошено"
+                            enabled: releasesViewModel.items.isHasSelectRelease
+                            onPressed: {
+                                synchronizationHub.addSelectedReleasesToCollection("ABANDONED");
+                                favoriteMenu.close();
+                            }
+                        }
+                        CommonMenuItem {
+                            text: "Удалить из коллекций"
+                            enabled: releasesViewModel.items.isHasSelectRelease
+                            onPressed: {
+                                synchronizationHub.deleteSelectedReleasesFromCollections();
                                 favoriteMenu.close();
                             }
                         }
@@ -255,7 +374,8 @@ Page {
                             text: "Смотреть кинозал"
                             onPressed: {
                                 if (releasesViewModel.cinemahall.hasItems) {
-                                    watchCinemahall();
+                                    mainViewModel.selectPage("videoplayer");
+                                    onlinePlayerViewModel.setupForCinemahall();
                                 } else {
                                     notHaveCinemahallReleasesMessagePopup.open();
                                 }
@@ -315,12 +435,15 @@ Page {
                     }
                 }
                 LeftPanelIconButton {
-                    iconPath: applicationThemeViewModel.currentItems.iconReleaseCatalogSearch
+                    iconPath: releasesViewModel.items.hasFilters ?
+                        applicationThemeViewModel.currentItems.iconReleaseCatalogSearchFounded :
+                        applicationThemeViewModel.currentItems.iconReleaseCatalogSearch
                     iconWidth: 29
                     iconHeight: 29
                     showCrossIcon: page.showButtonVisibleChanger && page.hideFilterButton
                     visible: page.showButtonVisibleChanger || !page.hideFilterButton
-                    tooltipMessage: "Добавить фильтры по дополнительным полям релиза таким как жанры озвучка и т.п."
+                    enablePulseAnimation: releasesViewModel.items.hasFilters
+                    tooltipMessage: "Добавить фильтры по дополнительным полям релиза таким как жанры команда и т.п."
                     onButtonPressed: {
                         if (page.showButtonVisibleChanger) {
                             page.hideFilterButton = !page.hideFilterButton;
@@ -328,22 +451,6 @@ Page {
                         } else {
                             filtersPopup.open();
                         }
-                    }
-
-                    Rectangle {
-                        id: filtersExistsMark
-                        visible: descriptionSearchField.text || typeSearchField.text || genresSearchField.text ||
-                                 voicesSearchField.text || yearsSearchField.text || seasonesSearchField.text ||
-                                 statusesSearchField.text || favoriteMarkSearchField.currentIndex > 0 || seenMarkSearchField.currentIndex > 0 ||
-                                 releaseSeriesFilterField.checked || scheduleDayFilterField.text
-                        anchors.top: parent.top
-                        anchors.right: parent.right
-                        anchors.rightMargin: 6
-                        anchors.topMargin: 10
-                        color: "#4ca2c2"
-                        width: 16
-                        height: 16
-                        radius: 12
                     }
 
                     DefaultPopup {
@@ -489,13 +596,13 @@ Page {
                                 anchors.top: genresSearchField.bottom
                                 anchors.rightMargin: 10
                                 fontPointSize: 11
-                                text: qsTr("Озвучка")
+                                text: qsTr("Команда")
                             }
                             CommonTextField {
                                 id: voicesSearchField
                                 width: parent.width * 0.7
                                 anchors.top: labelVoicesSearchField.bottom
-                                placeholderText: "Вводите войсеров через запятую"
+                                placeholderText: "Вводите людей через запятую"
                                 onTextChanged: {
                                     releasesViewModel.items.voicesFilter = text;
                                 }
@@ -1015,7 +1122,7 @@ Page {
                     DefaultPopup {
                         id: releaseSettingsPopup
                         x: 40
-                        y: -480
+                        y: -200
                         width: 720
                         height: 470
                         modal: true
@@ -1105,8 +1212,21 @@ Page {
                                     anchors.rightMargin: 20
                                     text: "Выбрать"
                                     onClicked: {
-                                        openScriptFileDialog.open();
+                                        //openScriptFileDialog.open();
                                     }
+                                }
+                            }
+
+                            PlainText {
+                                fontPointSize: 11
+                                text: "Отображать всю команду"
+                            }
+                            CommonSwitch {
+                                tooltipMessage: "Если настройка включена то в карточке и списке отображается вся команда если нет то только войсеры"
+                                checked: userConfigurationViewModel.showFullTeam
+                                onCheckedChanged: {
+                                    userConfigurationViewModel.showFullTeam = checked;
+                                    releasesViewModel.items.refresh();
                                 }
                             }
                         }
@@ -1126,9 +1246,12 @@ Page {
                                 id: downloadTorrentMode
                                 currentIndex: 0
                                 width: 350
-                                model: ["Открыть в торрент клиенте", "Сохранить файл", "Использовать TorrentStream"]
+                                model: ["Открыть в торрент клиенте", "Сохранить файл", "Использовать TorrentStream", "Открыть magnet"]
                                 onCurrentIndexChanged: {
-                                    localStorage.setTorrentDownloadMode(downloadTorrentMode.currentIndex);
+                                    userConfigurationViewModel.torrentDownloadMode = downloadTorrentMode.currentIndex;
+                                }
+                                Component.onCompleted: {
+                                    downloadTorrentMode.currentIndex = userConfigurationViewModel.torrentDownloadMode;
                                 }
                             }
 
@@ -1174,14 +1297,6 @@ Page {
                             }
 
                             RoundedActionButton {
-                                text: "Настроить фон"
-                                onClicked: {
-                                    releaseSettingsPopup.close();
-                                    backgroundImagePopup.open();
-                                }
-                            }
-
-                            RoundedActionButton {
                                 buttonEnabled: userConfigurationViewModel.startPage !==  "release"
                                 text: "Сделать страницу стартовой"
                                 onClicked: {
@@ -1189,12 +1304,6 @@ Page {
                                 }
                             }
                         }
-                    }
-
-                    BackgroundImagePopup {
-                        id: backgroundImagePopup
-                        x: 40
-                        y: -390
                     }
                 }
 
@@ -1254,14 +1363,14 @@ Page {
                 PlainText {
                     anchors.verticalCenter: parent.verticalCenter
                     anchors.horizontalCenter: parent.horizontalCenter
-                    visible: releasesViewModel.synchronizationEnabled
+                    visible: synchronizationServicev2.synchronizeCacheActived
                     fontPointSize: mainViewModel.isSmallSizeMode ? 10 : 12
                     text: "Выполняется синхронизация..."
                 }
 
                 RoundedActionButton {
                     id: showPanelInCompactModeButton
-                    visible: compactModeSwitch.checked && !releasesViewModel.synchronizationEnabled
+                    visible: compactModeSwitch.checked && !synchronizationServicev2.synchronizeCacheActived
                     text: releasesViewModel.showSidePanel ? "Скрыть панель" : "Показать панель"
                     anchors.verticalCenter: parent.verticalCenter
                     anchors.horizontalCenter: parent.horizontalCenter
@@ -1274,7 +1383,7 @@ Page {
                 RoundedActionButton {
                     id: setToStartedSectionButton
                     visible: page.startedSection !== releasesViewModel.items.section
-                    text: "Сделать стартовым"
+                    text: mainViewModel.isSmallSizeMode ? "Сделать ст. рз." : "Сделать стартовый раздел"
                     textSize: !mainViewModel.isSmallSizeMode ? 11 : 10
                     anchors.verticalCenter: parent.verticalCenter
                     anchors.right: displaySection.left
@@ -1385,9 +1494,49 @@ Page {
                         FilterPanelIconButton {
                             visible: !mainViewModel.isSmallSizeMode
                             iconPath: applicationThemeViewModel.currentItems.iconFavorites
-                            tooltipMessage: "Избранное"
+                            tooltipMessage: "Избранное  "
                             onButtonPressed: {
                                 changeSection(1);
+                            }
+                            onRightButtonPressed: {
+                                favoritesMenuSections.open();
+                            }
+
+                            CommonMenu {
+                                id: favoritesMenuSections
+                                autoWidth: true
+                                y: parent.height
+
+                                CommonMenuItem {
+                                    text: releasesViewModel.sectionNames[25]
+                                    onPressed: {
+                                        page.changeSection(25);
+                                    }
+                                }
+                                CommonMenuItem {
+                                    text: releasesViewModel.sectionNames[26]
+                                    onPressed: {
+                                        page.changeSection(26);
+                                    }
+                                }
+                                CommonMenuItem {
+                                    text: releasesViewModel.sectionNames[27]
+                                    onPressed: {
+                                        page.changeSection(27);
+                                    }
+                                }
+                                CommonMenuItem {
+                                    text: releasesViewModel.sectionNames[28]
+                                    onPressed: {
+                                        page.changeSection(28);
+                                    }
+                                }
+                                CommonMenuItem {
+                                    text: releasesViewModel.sectionNames[29]
+                                    onPressed: {
+                                        page.changeSection(29);
+                                    }
+                                }
                             }
                         }
                         FilterPanelIconButton {
@@ -1602,10 +1751,14 @@ Page {
 
                         FilterPanelIconButton {
                             visible: !mainViewModel.isSmallSizeMode
-                            iconPath: applicationThemeViewModel.currentItems.iconCustomGroup
+                            iconPath: releasesViewModel.customGroups.hasGroupsSelected ?
+                                applicationThemeViewModel.currentItems.iconCustomGroupFounded :
+                                applicationThemeViewModel.currentItems.iconCustomGroup
                             iconWidth: 24
                             iconHeight: 24
+                            enablePulseAnimation: releasesViewModel.customGroups.hasGroupsSelected
                             tooltipMessage: "Управление пользовательскими группами"
+
                             onButtonPressed: {
                                 releasesViewModel.customGroups.visible = true;
                             }
@@ -1615,7 +1768,7 @@ Page {
 
                 CommonComboBox {
                     id: sortingComboBox
-                    visible: window.width > 970
+                    visible: window.width > 1060
                     width: 160
                     height: parent.height + 2
                     fontPointSize: 9
@@ -1674,13 +1827,26 @@ Page {
 
                 FilterPanelIconButton {
                     id: sortingDirectionButton
+                    visible: !mainViewModel.isSmallSizeMode
                     anchors.verticalCenter: parent.verticalCenter
-                    anchors.right: parent.right
-                    anchors.rightMargin: 14
+                    anchors.right: groupingButton.left
+                    anchors.rightMargin: 2
                     iconPath: releasesViewModel.items.sortingDescending ? applicationThemeViewModel.currentItems.iconReleaseCatalogSortDesc : applicationThemeViewModel.currentItems.iconReleaseCatalogSortAsc
                     tooltipMessage: "Направление сортировки списка"
                     onButtonPressed: {
                         releasesViewModel.items.sortingDescending = !releasesViewModel.items.sortingDescending;
+                        releasesViewModel.items.refresh();
+                    }
+                }
+                FilterPanelIconButton {
+                    id: groupingButton
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.right: parent.right
+                    anchors.rightMargin: 12
+                    iconPath: releasesViewModel.items.grouping ? applicationThemeViewModel.currentItems.iconEnableGrouping : applicationThemeViewModel.currentItems.iconDisableGrouping
+                    tooltipMessage: releasesViewModel.items.grouping ? "Выключить группировку по полю сортировки" : "Включить группировку по полю сортировки"
+                    onButtonPressed: {
+                        releasesViewModel.items.grouping = !releasesViewModel.items.grouping;
                         releasesViewModel.items.refresh();
                     }
                 }
@@ -1695,14 +1861,14 @@ Page {
                 Image {
                     id: backgroundFile
                     asynchronous: true
-                    visible: releasesViewModel.imageBackgroundViewModel.isHasImage
-                    fillMode: releasesViewModel.imageBackgroundViewModel.imageMode
-                    source: releasesViewModel.imageBackgroundViewModel.processedImagePath
-                    opacity: releasesViewModel.imageBackgroundViewModel.opacity / 100
-                    width: releasesViewModel.imageBackgroundViewModel.imageWidth
-                    height: releasesViewModel.imageBackgroundViewModel.imageHeight
-                    x: releasesViewModel.imageBackgroundViewModel.imageX
-                    y: releasesViewModel.imageBackgroundViewModel.imageY
+                    visible: applicationThemeViewModel.releasesPageBackground.activated
+                    fillMode: applicationThemeViewModel.releasesPageBackground.activated ? applicationThemeViewModel.releasesPageBackground.imageMode : Image.Pad
+                    source: applicationThemeViewModel.releasesPageBackground.activated ? applicationThemeViewModel.releasesPageBackground.url : ''
+                    opacity: applicationThemeViewModel.releasesPageBackground.activated ? applicationThemeViewModel.releasesPageBackground.opacity / 100 : 1
+                    horizontalAlignment: applicationThemeViewModel.releasesPageBackground.activated ? applicationThemeViewModel.releasesPageBackground.halign : Image.AlignLeft
+                    verticalAlignment: applicationThemeViewModel.releasesPageBackground.activated ? applicationThemeViewModel.releasesPageBackground.valign : Image.AlignTop
+                    width: page.width
+                    height: page.height
                 }
 
                 MouseArea {
@@ -1740,14 +1906,14 @@ Page {
                     cellHeight: 290
                     delegate: releaseDelegate
                     model: releasesViewModel.items
-                    flickDeceleration: userConfigurationViewModel.usingScrollAcceleration ? 1000 : 10000
+                    interactive: userConfigurationViewModel.usingScrollAcceleration
                     clip: true
                     ScrollBar.vertical: ScrollBar {
                         active: true
                         onPositionChanged: {
                             if (position < -0.0008 && !releasesViewModel.synchronizationEnabled) {
                                 releasesViewModel.synchronizationEnabled = true;
-                                synchronizationService.synchronizeReleases(1);
+                                synchronizationServicev2.synchronizeFullCache();
                             }
                         }
                     }
@@ -1755,9 +1921,11 @@ Page {
                     Component {
                         id: releaseDelegate
                         Rectangle {
+                            id: itemRoot
                             color: "transparent"
                             width: scrollview.cellWidth
                             height: scrollview.cellHeight
+                            objectName: groupValue
 
                             ReleaseItem {
                                 anchors.centerIn: parent
@@ -1765,7 +1933,7 @@ Page {
                                 onLeftClicked: {
                                     if (releasesViewModel.isOpenedCard) return;
 
-                                    releasesViewModel.selectRelease(id);
+                                    releasesViewModel.toggleRelease(id);
                                 }
                                 onRightClicked: {
                                     multupleMode.checked = !multupleMode.checked;
@@ -1779,14 +1947,54 @@ Page {
                                     releasesViewModel.clearSelectedReleases();
                                 }
                                 onWatchRelease: {
-                                    page.watchSingleRelease(id, videos, -1, poster);
+                                    page.watchSingleRelease(id, -1);
                                 }
                             }
                         }
                     }
 
-                    Component.onCompleted: {
-                        scrollview.maximumFlickVelocity = scrollview.maximumFlickVelocity - 1050;
+                    onContentYChanged: {
+                        if (!releasesViewModel.items.grouping) return;
+
+                        if (scrollview.contentItem.children.length === 0) return;
+
+                        const countElements = scrollview.contentItem.children.length;
+                        const limitUp = scrollview.contentY + scrollview.height;
+                        for (let i = 0; i < countElements; i++) {
+                            const element = scrollview.contentItem.children[i];
+                            const bottomPosition = element.y + element.height;
+                            if (bottomPosition >= scrollview.contentY && bottomPosition <= limitUp) {
+                                currentGroupValueText.text = element.objectName;
+                                break;
+                            }
+                        }
+                    }
+                }
+
+                Item {
+                    visible: scrollview.contentY > 0 && currentGroupValueText.text.length > 0
+                    anchors.left: itemsContainer.left
+                    anchors.leftMargin: 4
+                    anchors.top: itemsContainer.top
+                    anchors.topMargin: 4
+                    width: currentGroupValueText.width + 12
+                    height: 24
+
+                    Rectangle {
+                        anchors.fill: parent
+                        color: applicationThemeViewModel.pageUpperPanel
+                        radius: 8
+                        border.color: applicationThemeViewModel.posterBorder
+                        border.width: 1
+                    }
+
+                    PlainText {
+                        id: currentGroupValueText
+                        anchors.left: parent.left
+                        anchors.leftMargin: 6
+                        anchors.bottom: parent.bottom
+                        anchors.verticalCenter: parent.verticalCenter
+                        fontPointSize: 14
                     }
                 }
             }
@@ -1809,7 +2017,10 @@ Page {
             anchors.left: parent.left
             opacity: 0.8
             onClicked: {
-                watchMultipleReleases();
+                const releaseIds = releasesViewModel.items.selectedIds();
+                releasesViewModel.clearSelectedReleases();
+                onlinePlayerViewModel.quickSetupForMultipleRelease(releaseIds);
+                mainViewModel.selectPage("videoplayer");
             }
         }
 
@@ -1958,6 +2169,182 @@ Page {
         }
     }
 
+    DefaultPopup {
+        id: createSharePopup
+        x: window.width / 2 - createSharePopup.width / 2
+        y: window.height / 2 - createSharePopup.height / 2
+        width: 550
+        height: 200
+        modal: true
+        focus: true
+        closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
+
+        ColumnLayout {
+            width: parent.width
+            spacing: 10
+
+            AccentText {
+                width: createSharePopup.width
+                text: "Путь к папке"
+                fontPointSize: 12
+                font.bold: true
+            }
+
+            Item {
+                width: createSharePopup.width - 30
+                height: 40
+
+                CommonTextField {
+                    id: createSharePopupPath
+                    width: parent.width
+                    placeholderText: "Введите полный путь"
+                }
+            }
+
+            AccentText {
+                width: createSharePopup.width
+                text: "Что войдет в шару:"
+                fontPointSize: 12
+                font.bold: true
+            }
+
+            Row {
+                AccentText {
+                    text: "Релизы"
+                    fontPointSize: 11
+                }
+                CommonSwitch {
+                    id: createSharePopupReleasesSwitch
+                    height: 15
+                }
+                AccentText {
+                    text: "Постеры"
+                    fontPointSize: 11
+                }
+                CommonSwitch {
+                    id: createSharePopupPostersSwitch
+                    height: 15
+                }
+            }
+
+            Item {
+                width: createSharePopup.width - 20
+                height: 40
+
+                RoundedActionButton {
+                    id: torrentStreamSaveButton
+                    anchors.right: torrentStreamCancelButton.left
+                    anchors.rightMargin: 10
+                    anchors.verticalCenter: parent.verticalCenter
+                    text: "Создать"
+                    width: 100
+                    onClicked: {
+                        const isReleses = createSharePopupReleasesSwitch.checked;
+                        const isPosters = createSharePopupPostersSwitch.checked;
+                        const sharePath = createSharePopupPath.text;
+
+                        if (!isReleses && !isPosters) {
+                            notificationViewModel.sendErrorNotification("Выберите как минимум одну вещь которую надо шарить!");
+                            createSharePopup.close();
+                            return;
+                        }
+
+                        if (!sharePath) {
+                            notificationViewModel.sendErrorNotification("Путь для создания шары обязателен!");
+                            createSharePopup.close();
+                            return;
+                        }
+
+                        osExtras.shareCache(sharePath,isPosters, isReleses);
+                        createSharePopup.close();
+                    }
+                }
+
+                RoundedActionButton {
+                    id: torrentStreamCancelButton
+                    anchors.right: parent.right
+                    anchors.verticalCenter: parent.verticalCenter
+                    text: "Отмена"
+                    width: 100
+                    onClicked: {
+                        createSharePopup.close();
+                    }
+                }
+            }
+        }
+    }
+
+    DefaultPopup {
+        id: loadSharePopup
+        x: window.width / 2 - createSharePopup.width / 2
+        y: window.height / 2 - createSharePopup.height / 2
+        width: 550
+        height: 180
+        modal: true
+        focus: true
+        closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
+
+        ColumnLayout {
+            width: parent.width
+            spacing: 10
+
+            AccentText {
+                width: loadSharePopup.width
+                text: "Путь к файлу"
+                fontPointSize: 12
+                font.bold: true
+            }
+
+            Item {
+                width: loadSharePopup.width - 30
+                height: 40
+
+                CommonTextField {
+                    id: loadSharePopupPath
+                    width: parent.width
+                    placeholderText: "Введите полный путь к файлу шары"
+                }
+            }
+
+            Item {
+                width: loadSharePopup.width - 20
+                height: 40
+
+                RoundedActionButton {
+                    id: loadSharePopupSaveButton
+                    anchors.right: torrentStreamCancelButton.left
+                    anchors.rightMargin: 10
+                    anchors.verticalCenter: parent.verticalCenter
+                    text: "Загрузить"
+                    width: 100
+                    onClicked: {
+                        const sharePath = loadSharePopupPath.text;
+
+                        if (!sharePath) {
+                            notificationViewModel.sendErrorNotification("Путь к файлу шары обязателен!");
+                            createSharePopup.close();
+                            return;
+                        }
+
+                        osExtras.loadCache(sharePath);
+                        loadSharePopup.close();
+                    }
+                }
+
+                RoundedActionButton {
+                    id: loadSharePopupCancelButton
+                    anchors.right: parent.right
+                    anchors.verticalCenter: parent.verticalCenter
+                    text: "Отмена"
+                    width: 100
+                    onClicked: {
+                        loadSharePopup.close();
+                    }
+                }
+            }
+        }
+    }
+
     function setSeenStateForOpenedRelease(newState) {
         releasesViewModel.setSeenMarkAllSeries(releasesViewModel.openedReleaseId, releasesViewModel.openedReleaseCountVideos, newState);
         releasesViewModel.refreshOpenedReleaseCard();
@@ -1968,6 +2355,7 @@ Page {
         releasesViewModel.setSeenMarkAllSeriesSelectedReleases(newState);
         releasesViewModel.items.refreshSelectedItems();
         releasesViewModel.clearSelectedReleases();
+        releasesViewModel.cinemahall.refreshCinemahall();
         seenMarkMenuPanel.close();
     }
 
@@ -2005,20 +2393,17 @@ Page {
         releasesViewModel.items.refresh();
     }
 
-    FileDialog {
+    /*SystemOpenFileDialog {
         id: openScriptFileDialog
         title: "Выбрать файл скрипта для раздела Свой скрипт"
-        selectExisting: true
         nameFilters: [ "Файлы скрипта (*.ajs)", "Image files (*.jpg *.png)" ]
-        onAccepted: {
-            userConfigurationViewModel.customScriptFile = openScriptFileDialog.fileUrl;
+        onNeedOpenFile: {
+            userConfigurationViewModel.customScriptFile = fileUrl;
         }
-    }
-
+    }*/
 
     Component.onCompleted: {
         const userSettings = JSON.parse(localStorage.getUserSettings());
-        downloadTorrentMode.currentIndex = userSettings.torrentDownloadMode;
         notificationForFavorites.checked = userSettings.notificationForFavorites;
         releasesViewModel.items.filterByFavorites = notificationForFavorites.checked;
         clearFilterAfterChangeSectionSwitch.checked = userSettings.clearFiltersAfterChangeSection;

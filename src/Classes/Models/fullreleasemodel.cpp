@@ -20,7 +20,6 @@
 #include <QJsonObject>
 #include <QJsonDocument>
 #include "fullreleasemodel.h"
-#include "globalconstants.h"
 
 void FullReleaseModel::setTitle(const QString &title) noexcept
 {
@@ -39,11 +38,7 @@ void FullReleaseModel::setYear(const QString &year) noexcept
 
 void FullReleaseModel::setPoster(const QString &poster) noexcept
 {
-    if (poster.contains("https://")) {
-        m_Poster = poster;
-    } else {
-        m_Poster = AnilibriaImagesPath + poster;
-    }
+    m_Poster = poster;
 }
 
 void FullReleaseModel::setDescription(const QString &description) noexcept
@@ -61,9 +56,25 @@ void FullReleaseModel::setGenres(const QString &genres) noexcept
     m_Genres = genres;
 }
 
+QString FullReleaseModel::limitVoicers()
+{
+    auto voices = m_Voices.split(", ");
+    if (voices.size() > 7) return voices.mid(0, 7).join(", ") + " +" + QString::number(voices.size() - 7);
+
+    return m_Voices;
+}
+
 void FullReleaseModel::setVoicers(const QString &voicers) noexcept
 {
     m_Voices = voicers;
+}
+
+QString FullReleaseModel::limitFullTeam()
+{
+    auto team = m_fullTeam.split(", ");
+    if (team.size() > 7) return team.mid(0, 7).join(", ") + " +" + QString::number(team.size() - 7);
+
+    return m_fullTeam;
 }
 
 void FullReleaseModel::setSeason(const QString &season) noexcept
@@ -111,16 +122,6 @@ void FullReleaseModel::setRating(const int rating) noexcept
     m_Rating = rating;
 }
 
-void FullReleaseModel::setTorrents(const QString &torrents) noexcept
-{
-    m_Torrents = torrents;
-}
-
-void FullReleaseModel::setVideos(const QString &videos) noexcept
-{
-    m_Videos = videos;
-}
-
 void FullReleaseModel::setTimestamp(const int timestamp) noexcept
 {
     m_Timestamp = timestamp;
@@ -131,37 +132,7 @@ void FullReleaseModel::setType(const QString &type) noexcept
     m_Type = type;
 }
 
-void FullReleaseModel::setIsDeleted(const bool isDeleted) noexcept
-{
-    m_isDeleted = isDeleted;
-}
-
-void FullReleaseModel::writeToJson(QJsonObject &json) const noexcept
-{
-    json["id"] = m_Id;
-    json["title"] = m_Title;
-    json["code"] = m_Code;
-    json["originalName"] = m_OriginalName;
-    json["rating"] = m_Rating;
-    json["series"] = m_Series;
-    json["status"] = m_Status;
-    json["type"] = m_Type;
-    json["timestamp"] = m_Timestamp;
-    json["year"] = m_Year;
-    json["season"] = m_Season;
-    json["countTorrents"] = m_CountTorrents;
-    json["countVideos"] = m_CountVideos;
-    json["description"] = m_Description;
-    json["announce"] = m_Announce;
-    json["genres"] = m_Genres;
-    json["poster"] = m_Poster;
-    json["voices"] = m_Voices;
-    json["torrents"] = m_Torrents;
-    json["videos"] = m_Videos;
-    json["isDeleted"] = m_isDeleted;
-}
-
-void FullReleaseModel::readFromJson(QJsonValue &json)
+void FullReleaseModel::readFromJson(const QJsonObject &json)
 {
     setId(json["id"].toInt());
     setTitle(json["title"].toString());
@@ -181,9 +152,9 @@ void FullReleaseModel::readFromJson(QJsonValue &json)
     setGenres(json["genres"].toString());
     setPoster(json["poster"].toString());
     setVoicers(json["voices"].toString());
-    setTorrents(json["torrents"].toString());
-    setVideos(json["videos"].toString());
-    setIsDeleted(json["isDeleted"].toBool());
+    setFullTeam(json["team"].toString());
+    setIsOngoing(json[m_isOngoingField].toBool());
+    setAgeRating(json[m_ageRatingField].toString());
 }
 bool FullReleaseModel::operator== (const FullReleaseModel &comparedModel) noexcept
 {

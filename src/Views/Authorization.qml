@@ -1,25 +1,7 @@
-/*
-    AniLibria - desktop client for the website anilibria.tv
-    Copyright (C) 2020 Roman Vladimirov
-
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
-import QtQuick 2.12
-import QtQuick.Controls 2.12
-import QtQuick.Layouts 1.3
-import QtQuick.Controls.Material 2.0
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
+import QtQuick.Controls.Material 2.15
 import "../Controls"
 
 Page {
@@ -57,8 +39,8 @@ Page {
                 color: applicationThemeViewModel.panelBackground
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.horizontalCenter: parent.horizontalCenter
-                width: 400
-                height: 280
+                width: 450
+                height: 200
 
                 ColumnLayout {
                     id: authForm
@@ -67,6 +49,7 @@ Page {
                     CommonTextField {
                         id: emailTextBox
                         Layout.fillWidth: true
+                        Layout.topMargin: 8
                         placeholderText: "Логин"
                         text: authorizationViewModel.login
                         onTextChanged: {
@@ -76,6 +59,7 @@ Page {
                     CommonTextField {
                         id: passwordTextBox
                         Layout.fillWidth: true
+                        Layout.topMargin: 8
                         echoMode: "PasswordEchoOnEdit"
                         placeholderText: "Пароль"
                         text: authorizationViewModel.password
@@ -83,25 +67,73 @@ Page {
                             authorizationViewModel.password = text;
                         }
                     }
-                    CommonTextField {
-                        id: fa2codeTextBox
+                    Item {
                         Layout.fillWidth: true
-                        placeholderText: "2fa код (оставить пустым если не настроено)"
-                        text: authorizationViewModel.twoFactorCode
-                        onTextChanged: {
-                            authorizationViewModel.twoFactorCode = text;
-                        }
+                        Layout.fillHeight: true
                     }
                     Item {
                         Layout.fillWidth: true
                         height: 40
-                        AccentText {
-                            text: authorizationViewModel.errorMessage
-                            fontPointSize: 10
+
+                        IconButton {
+                            id: vkButton
                             anchors.left: parent.left
-                            anchors.leftMargin: 10
-                            anchors.verticalCenter: parent.verticalCenter
-                            wrapMode: Text.WordWrap
+                            anchors.leftMargin: 1
+                            hoverColor: applicationThemeViewModel.currentItems.filterIconButtonHoverColor
+                            iconPath: applicationThemeViewModel.currentItems.iconAuthorizationVk
+                            height: 34
+                            width: 40
+                            iconWidth: 20
+                            iconHeight: 20
+                            tooltipMessage: "Авторизация через ВКонтакте"
+                            onButtonPressed: {
+                                synchronizationServicev2.authorizeSocial("vk");
+                            }
+                        }
+                        IconButton {
+                            id: googleButton
+                            anchors.left: vkButton.right
+                            anchors.leftMargin: 2
+                            hoverColor: applicationThemeViewModel.currentItems.filterIconButtonHoverColor
+                            iconPath: applicationThemeViewModel.currentItems.iconAuthorizationGoogle
+                            height: 34
+                            width: 40
+                            iconWidth: 20
+                            iconHeight: 20
+                            tooltipMessage: "Авторизация через Google"
+                            onButtonPressed: {
+                                synchronizationServicev2.authorizeSocial("google");
+                            }
+                        }
+                        IconButton {
+                            id: patreonButton
+                            anchors.left: googleButton.right
+                            anchors.leftMargin: 1
+                            hoverColor: applicationThemeViewModel.currentItems.filterIconButtonHoverColor
+                            iconPath: applicationThemeViewModel.currentItems.iconAuthorizationPatreon
+                            height: 34
+                            width: 40
+                            iconWidth: 20
+                            iconHeight: 20
+                            tooltipMessage: "Авторизация через Patreon"
+                            onButtonPressed: {
+                                synchronizationServicev2.authorizeSocial("patreon");
+                            }
+                        }
+                        IconButton {
+                            id: discordButton
+                            anchors.left: patreonButton.right
+                            anchors.leftMargin: 1
+                            hoverColor: applicationThemeViewModel.currentItems.filterIconButtonHoverColor
+                            iconPath: applicationThemeViewModel.currentItems.iconAuthorizationDiscord
+                            height: 34
+                            width: 40
+                            iconWidth: 20
+                            iconHeight: 20
+                            tooltipMessage: "Авторизация через Discord"
+                            onButtonPressed: {
+                                synchronizationServicev2.authorizeSocial("discord");
+                            }
                         }
 
                         RoundedActionButton {
@@ -110,7 +142,7 @@ Page {
                             anchors.rightMargin: 10
                             text: "Войти"
                             onClicked: {
-                                authorizationViewModel.signin();
+                                synchronizationServicev2.authorize(authorizationViewModel.login, authorizationViewModel.password);
                             }
                         }
 
@@ -129,4 +161,38 @@ Page {
         }
     }
 
+    Item {
+        visible: synchronizationServicev2.isSocialAuthentification
+        anchors.fill: parent
+
+        MouseArea {
+            anchors.fill: parent
+            onPressed: {
+                mouse.accepted = true;
+            }
+        }
+
+        Rectangle {
+            anchors.fill: parent
+            color: "black"
+            opacity: .5
+        }
+
+        Rectangle {
+            width: 80
+            height: 80
+            color: "white"
+            radius: 20
+            opacity: 0.8
+            anchors.centerIn: parent
+        }
+
+        AnimatedImage {
+            id: spinner
+            anchors.centerIn: parent
+            paused: !synchronizationServicev2.isSocialAuthentification
+            playing: synchronizationServicev2.isSocialAuthentification
+            source: synchronizationServicev2.isSocialAuthentification ? "../Assets/Icons/spinner.gif" : ""
+        }
+    }
 }

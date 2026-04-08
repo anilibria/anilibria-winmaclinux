@@ -20,23 +20,21 @@
 #include <QDebug>
 #include <QVector>
 #include <QRegularExpression>
-#include <QtConcurrent>
 #include <QFuture>
 #include <QMap>
 #include <QSet>
 #include <QJsonDocument>
 #include <QJsonArray>
 #include <QJsonObject>
+#include <QtConcurrent/QtConcurrent>
+#include <QDir>
+#include <QStandardPaths>
 #include "releaselinkedseries.h"
 #include "globalconstants.h"
 
 ReleaseLinkedSeries::ReleaseLinkedSeries(QObject *parent) : QAbstractListModel(parent)
 {
     createCacheFileIfNotExists();
-    loadSeries();
-
-    auto watcher = m_cacheUpdateWatcher.get();
-    connect(watcher, &QFutureWatcher<bool>::finished, this, &ReleaseLinkedSeries::cacheUpdated);
 }
 
 int ReleaseLinkedSeries::rowCount(const QModelIndex &parent) const
@@ -60,36 +58,19 @@ QVariant ReleaseLinkedSeries::data(const QModelIndex &index, int role) const
             return QVariant(element->countReleases());
         }
         case FirstThreeNamesRole: {
-            if (element->titles()->count() > 2) {
-                QStringList titleList;
-                int iterator = 0;
-                foreach (auto title, *element->titles()) {
-                    if (iterator == 3) break;
-
-                    titleList.append(title);
-                }
-                return QVariant(titleList.join(", "));
-            }
-            return element->titles()->join(", ");
+            return QVariant(element->title());
         }
         case ReleaseIds: {
             return QVariant(*series.at(index.row())->releaseIds());
         }
-        case Posters: {
-            return QVariant(*series.at(index.row())->posters());
-        }
         case FirstPosterRole: {
-            return QVariant(element->posters()->first().toString());
+            return QVariant(element->firstPoster());
         }
         case SecondPosterRole: {
-            return QVariant(element->posters()->at(1).toString());
+            return QVariant(element->secondPoster());
         }
         case ThirdPosterRole: {
-            if (element->posters()->length() > 2) {
-                return QVariant(QVariant(element->posters()->at(2).toString()));
-            } else {
-                return QVariant("");
-            }
+            return QVariant(element->thirdPoster());
         }
         case OtherReleasesRole: {
             auto count = element->countReleases();
@@ -120,6 +101,18 @@ QVariant ReleaseLinkedSeries::data(const QModelIndex &index, int role) const
         case IdentifierRole: {
             return QVariant(m_series.indexOf(element));
         }
+        case TotalTimeRole: {
+            return QVariant(element->totalSecondsDisplay());
+        }
+        case TotalEpisodesRole: {
+            return QVariant(element->totalEpisodes());
+        }
+        case TotalRatingRole: {
+            return QVariant(element->totalRating());
+        }
+        case TotalSeenRole: {
+            return QVariant(element->countSeens());
+        }
     }
 
     return QVariant();
@@ -139,10 +132,6 @@ QHash<int, QByteArray> ReleaseLinkedSeries::roleNames() const
         {
             ReleaseIds,
             "releaseIds"
-        },
-        {
-            Posters,
-            "posters"
         },
         {
             FirstPosterRole,
@@ -171,16 +160,32 @@ QHash<int, QByteArray> ReleaseLinkedSeries::roleNames() const
         {
             IdentifierRole,
             "identifier"
+        },
+        {
+            TotalTimeRole,
+            "totalTime"
+        },
+        {
+            TotalEpisodesRole,
+            "totalEpisode"
+        },
+        {
+            TotalRatingRole,
+            "totalRating"
+        },
+        {
+            TotalSeenRole,
+            "totalSeen"
         }
     };
 }
 
-void ReleaseLinkedSeries::setup(QSharedPointer<QList<FullReleaseModel *> > releases, QVector<int>* userFavorites)
+void ReleaseLinkedSeries::setup(QSharedPointer<QList<FullReleaseModel *> > releases, QList<int>* userFavorites, QList<ApiTorrentModel*>* torrents, std::function<QMap<int,int>(QList<int>&)> getReleaseCountSeen)
 {
     m_releases = releases;
     m_userFavorites = userFavorites;
-
-    if (m_releases != nullptr) refreshDataFromReleases();
+    m_torrents = torrents;
+    m_getReleaseCountSeen = getReleaseCountSeen;
 }
 
 void ReleaseLinkedSeries::setNameFilter(const QString& nameFilter) noexcept
@@ -211,6 +216,16 @@ void ReleaseLinkedSeries::setSortingDirection(bool sortingDirection) noexcept
 
     sortNonFiltered();
     filterSeries();
+}
+
+void ReleaseLinkedSeries::setApiv2host(const QString &apiv2host) noexcept
+{
+    if (m_apiv2host == apiv2host) return;
+
+    m_apiv2host = apiv2host;
+    emit apiv2hostChanged();
+
+    refreshSeries();
 }
 
 QSharedPointer<QList<int>> ReleaseLinkedSeries::getAllLinkedReleases() const noexcept
@@ -258,8 +273,20 @@ int ReleaseLinkedSeries::getSortedOrder(int id) const noexcept
     return 0;
 }
 
-void ReleaseLinkedSeries::fillReleaseSeries(QList<FullReleaseModel *> *list, const int id) noexcept
+QString ReleaseLinkedSeries::getFranchiseTitle(int id) const noexcept
 {
+    foreach (auto item, m_series) {
+        if (!item->releaseIds()->contains(id)) continue;
+
+        return item->title();
+    }
+
+    return "";
+}
+
+QList<QVariantMap> ReleaseLinkedSeries::fillReleaseSeries(const int id) noexcept
+{
+    QList<QVariantMap> result;
     auto iterator = std::find_if(
         m_series.cbegin(),
         m_series.cend(),
@@ -268,22 +295,28 @@ void ReleaseLinkedSeries::fillReleaseSeries(QList<FullReleaseModel *> *list, con
         }
     );
 
-    if (iterator == m_series.cend()) return;
+    if (iterator == m_series.cend()) return result;
 
     auto item = *iterator;
     auto idsCollection = item->releaseIds();
-
-    for (auto i = 0; i < idsCollection->count(); i++) {
-        list->append(nullptr);
+    QMap<int, FullReleaseModel*> releaseMap;
+    foreach(auto release, *m_releases) {
+        releaseMap.insert(release->id(), release);
     }
 
-    foreach (auto release, *m_releases) {
-        auto releaseId = release->id();
-        if (idsCollection->contains(releaseId)) {
-            auto releaseIndex = idsCollection->indexOf(releaseId);
-            (*list)[releaseIndex] = release;
-        }
+    foreach (auto releaseSeries, *idsCollection) {
+        auto releaseId = releaseSeries.toInt();
+        if (!releaseMap.contains(releaseId)) continue;
+
+        auto release = releaseMap.value(releaseId);
+        QVariantMap map;
+        map["id"] = release->id();
+        map["title"] = release->title();
+        map["poster"] = release->poster();
+        result.append(map);
     }
+
+    return result;
 }
 
 int ReleaseLinkedSeries::getNextLinkedRelease(const int currentRelease)
@@ -300,31 +333,15 @@ int ReleaseLinkedSeries::getNextLinkedRelease(const int currentRelease)
 
 void ReleaseLinkedSeries::refreshSeries()
 {
-    QFuture<bool> future = QtConcurrent::run(
-        [=] {
-            QMap<QString, FullReleaseModel*> releases;
-            foreach (auto release, *m_releases) {
-                releases.insert(release->code(), release);
-            }
+    beginResetModel();
 
-            while (m_series.count()) delete m_series.takeLast();
+    loadSeries();
 
-            m_series.clear();
-            m_series.squeeze();
+    refreshDataFromReleases();
 
-            foreach (auto release, releases) {
-                auto description = release->description();
-                processReleasesFromDescription(description, releases, release->id(), release->title(), release->poster(), release->genres());
-            }
+    endResetModel();
 
-            releases.clear();
-
-            saveSeries();
-
-            return true;
-        }
-    );
-    m_cacheUpdateWatcher->setFuture(future);
+    filterSeries();
 }
 
 bool ReleaseLinkedSeries::isReleaseInSeries(int id)
@@ -461,6 +478,7 @@ void ReleaseLinkedSeries::loadSeries()
     foreach (auto item, jsonArray) {
         auto seriaModel = new ReleaseSeriesModel();
         seriaModel->readFromJson(item.toObject());
+        seriaModel->setPosterHost(m_apiv2host);
 
         m_series.append(seriaModel);
     }
@@ -485,7 +503,7 @@ void ReleaseLinkedSeries::processReleasesFromDescription(const QString& descript
     int watchOrderIndex = description.indexOf(startToken);
     if (watchOrderIndex == -1) return;
 
-    auto cuttedDescription = description.midRef(watchOrderIndex + startToken.length());
+    auto cuttedDescription = description.mid(watchOrderIndex + startToken.length());
     auto parts = cuttedDescription.split("#").mid(1);
 
     static QRegularExpression linkRegexp(R"(\/release\/(.*)\.html)");
@@ -505,7 +523,7 @@ void ReleaseLinkedSeries::processReleasesFromDescription(const QString& descript
     auto series = new ReleaseSeriesModel();
 
     foreach (auto part, parts) {
-        auto partString = part.toString();
+        auto partString = part;
 
         auto match = linkRegexp.match(partString);
 
@@ -551,27 +569,6 @@ void ReleaseLinkedSeries::processReleasesFromDescription(const QString& descript
     if (series->countReleases() >= 2) m_series.append(series);
 }
 
-void ReleaseLinkedSeries::saveSeries()
-{
-    QJsonArray seriesArray;
-
-    foreach (auto series, m_series) {
-        QJsonObject jsonObject;
-        series->writeToJson(jsonObject);
-        seriesArray.append(jsonObject);
-    }
-
-    QJsonDocument document(seriesArray);
-
-    QFile file(getSeriesCachePath());
-    if (!file.open(QFile::WriteOnly | QFile::Text)) {
-        qInfo() << "Can't write series file!";
-        return;
-    }
-    file.write(document.toJson());
-    file.close();
-}
-
 void ReleaseLinkedSeries::sortNonFiltered()
 {
     auto sortingField = m_sortingField;
@@ -611,9 +608,26 @@ void ReleaseLinkedSeries::sortNonFiltered()
 
 void ReleaseLinkedSeries::refreshDataFromReleases()
 {
-    QMap<int, FullReleaseModel*> m_releasesMap;
+    QSet<int> releaseIds;
+    foreach (auto serie, m_series) {
+        foreach (auto innerId, *serie->releaseIds()) {
+            releaseIds.insert(innerId.toInt());
+        }
+    }
+
+    auto listReleaseIds = releaseIds.values();
+    auto seens = m_getReleaseCountSeen(listReleaseIds);
+
+    QMap<int, QVariantMap> m_releasesMap;
     foreach (auto release, *m_releases){
-        m_releasesMap.insert(release->id(), release);
+        if (!releaseIds.contains(release->id())) continue;
+
+        QVariantMap map;
+        map["year"] = release->year();
+        map["season"] = release->season();
+        map["rating"] = release->rating();
+        map["genres"] = release->genres();
+        m_releasesMap.insert(release->id(), map);
     }
 
     QStringList years;
@@ -625,18 +639,24 @@ void ReleaseLinkedSeries::refreshDataFromReleases()
         years.clear();
         seasons.clear();
 
+        int countSeens = 0;
         auto ids = series->releaseIds();
         foreach (auto id, *ids) {
             auto identifier = id.toInt();
             if (!m_releasesMap.contains(identifier)) continue;
             auto release = m_releasesMap[identifier];
 
-            rating += release->rating();
-            if (!years.contains(release->year())) years.append(release->year());
-            if (!seasons.contains(release->season())) seasons.append(release->season());
-            seeds += getSeeders(release);
+            rating += release["rating"].toInt();
+            if (!years.contains(release["year"].toString())) years.append(release["year"].toString());
+            if (!seasons.contains(release["season"].toString())) seasons.append(release["season"].toString());
+
+            foreach (auto genre, release["genres"].toString().split(",")) {
+                series->appendGenre(genre.trimmed());
+            }
+            if (seens.contains(identifier)) countSeens += seens.value(identifier);
         }
 
+        series->setCountSeens(countSeens);
         series->setSumOfRatings(rating);
         series->setSumOfSeeds(seeds);
         std::sort(
@@ -645,14 +665,14 @@ void ReleaseLinkedSeries::refreshDataFromReleases()
             [](const QString& left, const QString& right) {
                 return left < right;
             }
-        );
+            );
         std::sort(
             seasons.begin(),
             seasons.end(),
             [](const QString& left, const QString& right) {
                 return left < right;
             }
-        );
+            );
         auto yearsString = years.join(", ");
         auto seasonsString = seasons.join(", ");
         series->setYears(yearsString);
@@ -660,26 +680,8 @@ void ReleaseLinkedSeries::refreshDataFromReleases()
     }
 }
 
-int ReleaseLinkedSeries::getSeeders(FullReleaseModel *release)
-{
-    auto result = 0;
-    auto document = QJsonDocument::fromJson(release->torrents().toUtf8());
-    auto array = document.array();
-    foreach (auto item, array) {
-        if (!item.isObject()) continue;
-        auto object = item.toObject();
-        if (!object.contains("seeders")) continue;
-
-        result += object["seeders"].toInt();
-    }
-
-    return result;
-}
-
 void ReleaseLinkedSeries::cacheUpdated()
 {
-    if (!m_cacheUpdateWatcher->result()) return;
-
     refreshDataFromReleases();
 
     sortNonFiltered();

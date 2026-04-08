@@ -54,21 +54,26 @@ class ReleasesListModel : public QAbstractListModel
     Q_PROPERTY(bool isHasReleases READ isHasReleases NOTIFY isHasReleasesChanged)
     Q_PROPERTY(bool isHasSelectRelease READ isHasSelectRelease NOTIFY isHasSelectReleaseChanged)
     Q_PROPERTY(int countFilteredReleases READ countFilteredReleases NOTIFY countFilteredReleasesChanged)
-    Q_PROPERTY(ReleaseLinkedSeries* releaseLinkedSeries READ releaseLinkedSeries WRITE setReleaseLinkedSeries NOTIFY releaseLinkedSeriesChanged)
     Q_PROPERTY(QString scheduleDayFilter READ scheduleDayFilter WRITE setScheduleDayFilter NOTIFY scheduleDayFilterChanged)
     Q_PROPERTY(bool filterByFavorites READ filterByFavorites WRITE setFilterByFavorites NOTIFY filterByFavoritesChanged)
     Q_PROPERTY(QString scriptFilePath READ scriptFilePath WRITE setScriptFilePath NOTIFY scriptFilePathChanged)
+    Q_PROPERTY(bool hasFilters READ hasFilters NOTIFY hasFiltersChanged)
+    Q_PROPERTY(bool grouping READ grouping WRITE setGrouping NOTIFY groupingChanged)
+    Q_PROPERTY(bool showFullTeam READ showFullTeam WRITE setShowFullTeam NOTIFY showFullTeamChanged FINAL)
 
 private:
     const QString winterValue { "зима" };
     const QString autumnValue { "осень" };
     const QString springValue { "весна" };
     const QString summerValue { "лето" };
+    const QString releaseIsFinished = "озвучка завершена";
     QSharedPointer<QList<FullReleaseModel*>> m_releases;
-    QScopedPointer<QList<FullReleaseModel*>> m_filteredReleases { new QList<FullReleaseModel*>() };
-    QVector<int>* m_userFavorites { nullptr };
-    QHash<QString, bool>* m_seenMarkModels { nullptr };
-    QVector<int>* m_hiddenReleases { nullptr };
+    QList<FullReleaseModel*> m_filteredReleases { QList<FullReleaseModel*>() };
+    QList<int>* m_userFavorites { nullptr };
+    QHash<QString, std::tuple<bool, int>>* m_seenMarkModels { nullptr };
+    QMap<QString, ReleaseOnlineVideoModel*>* m_videosMap { nullptr };
+    QMap<int, QString>* m_collections  { nullptr };
+    QList<int>* m_hiddenReleases { nullptr };
     QSharedPointer<ChangesModel> m_changesModel { nullptr };
     QMap<int, int>* m_scheduleReleases { nullptr };
     QSharedPointer<QHash<int, HistoryModel*>> m_historyModels { nullptr };
@@ -97,7 +102,10 @@ private:
     QString m_scheduleDayFilter { "" };
     QJSEngine* m_engine { new QJSEngine(this) };
     QString m_scriptFilePath { "" };
+    bool m_grouping { false };
     QSharedPointer<QSet<int>> m_selectedReleases { new QSet<int>() };
+    QSet<int> m_startInGroups { QSet<int>() };
+    bool m_showFullTeam { false };
     enum FullReleaseRoles {
         ReleaseIdRole = Qt::UserRole + 1,
         TitleRole,
@@ -117,7 +125,9 @@ private:
         InFavoritesRole,
         SelectedRole,
         InScheduleRole,
-        ScheduledDayRole
+        ScheduledDayRole,
+        StartInGroupRole,
+        GroupRole
     };
 
     enum FilterSortingField {
@@ -139,7 +149,8 @@ private:
 public:
     explicit ReleasesListModel(QObject *parent = nullptr);
 
-    void setup(QSharedPointer<QList<FullReleaseModel*>> releases, QMap<int, int>* schedules, QVector<int>* userFavorites, QVector<int>* hidedReleases, QHash<QString, bool>* seenMarks, QSharedPointer<QHash<int, HistoryModel*>> historyItems, QSharedPointer<ChangesModel> changes, QSharedPointer<CinemahallListModel> cinemahall, ReleaseCustomGroupsViewModel* customGroups);
+    void setup(QSharedPointer<QList<FullReleaseModel*>> releases, QMap<int, int>* schedules, QList<int>* userFavorites, QList<int>* hidedReleases, QHash<QString, std::tuple<bool, int>>* seenMarks, QSharedPointer<QHash<int, HistoryModel*>> historyItems, QSharedPointer<ChangesModel> changes, QSharedPointer<CinemahallListModel> cinemahall, ReleaseCustomGroupsViewModel* customGroups, QMap<QString, ReleaseOnlineVideoModel*>* videosMap, QMap<int, QString>* collections);
+    void setupLinkedSeries(ReleaseLinkedSeries* releaseLinkedSeries) noexcept;
 
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
 
@@ -203,24 +214,31 @@ public:
 
     void refreshItem(int id);
     int getReleaseSeenMarkCount(int releaseId) const noexcept;
+    QMap<int,int> getReleasesSeenMarkCount(QList<int> releaseIds) const noexcept;
 
     bool isHasSelectRelease() const noexcept { return !m_selectedReleases->isEmpty(); }
-    int countFilteredReleases() const noexcept { return m_filteredReleases->count(); }
+    int countFilteredReleases() const noexcept { return m_filteredReleases.count(); }
 
     bool hasReleaseSeriesFilter() const noexcept { return m_hasReleaseSeriesFilter; }
     void setHasReleaseSeriesFilter(bool hasReleaseSeriesFilter) noexcept;
-
-    ReleaseLinkedSeries* releaseLinkedSeries() const noexcept { return m_releaseLinkedSeries; }
-    void setReleaseLinkedSeries(ReleaseLinkedSeries* releaseLinkedSeries) noexcept;
 
     QString scheduleDayFilter() const noexcept { return m_scheduleDayFilter; }
     void setScheduleDayFilter(const QString& scheduleDayFilter) noexcept;
 
     QString getScheduleDay(int dayNumber) const noexcept;
+    QString getScheduleShortDay(int dayNumber) const noexcept;
     int getScheduleDayNumber(const QString& day) const noexcept;
 
     bool filterByFavorites() const noexcept { return m_filterByFavorites; }
     void setFilterByFavorites(bool filterByFavorites) noexcept;
+
+    bool hasFilters() const noexcept;
+
+    bool grouping() const noexcept { return m_grouping; }
+    void setGrouping(bool grouping) noexcept;
+
+    bool showFullTeam() const noexcept { return m_showFullTeam; }
+    void setShowFullTeam(bool showFullTeam) noexcept;
 
     int getReleaseIdByIndex(int index) noexcept;
 
@@ -232,10 +250,12 @@ public:
 
     Q_INVOKABLE void refresh();
     Q_INVOKABLE void selectItem(int id);
+    Q_INVOKABLE void toggleItem(int id);
     Q_INVOKABLE void deselectItem(int id);
     Q_INVOKABLE void clearSelected();
     Q_INVOKABLE void refreshSingleItem(int id);
     Q_INVOKABLE void refreshSelectedItems();
+    Q_INVOKABLE QVariantList selectedIds();
 
 private:
     void removeTrimsInStringCollection(QStringList& list);
@@ -244,6 +264,8 @@ private:
     QHash<int, int>&& getAllSeenMarkCount(QHash<int, int>&& result) noexcept;
     void sortingFilteringReleases(QHash<int, int>&& seenMarks);
     void refreshFilteredReleaseById(int id);
+    QString getGroupByRelease(const FullReleaseModel* model, const QHash<int, int>& seens);
+    QString getGroupForRating(int rating);
 
 
 signals:
@@ -272,6 +294,9 @@ signals:
     void filterByFavoritesChanged();
     void scriptFilePathChanged();
     void scriptError(const QString& message);
+    void hasFiltersChanged();
+    void groupingChanged();
+    void showFullTeamChanged();
 
 };
 

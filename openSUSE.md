@@ -17,20 +17,31 @@ git clone https://github.com/anilibria/anilibria-winmaclinux.git
 cd anilibria-winmaclinux/src/
 ```
 
-**Этап 2. Формируем make-файл**
-
-Сначала проверяем данные зависимости:
+**Этап 2. Устанавливаем зависимости**
 ```shell
 sudo zypper install libqt5-qtbase-common-devel libqt5-qtmultimedia-devel libqt5-qtsvg-devel libqt5-qtwebsockets-devel libQt5QuickControls2-devel
 ```
-Zypper должен подцепить все неупомянутые в команде нужные пакеты. Затем пробуем:
+
+Для сборки с VLC нужно доустановить (возможно, ещё нужен пакет `libvlc5`):
+```shell
+sudo zypper install vlc-devel pkg-config
+```
+Zypper должен подцепить все неупомянутые в команде нужные пакеты.
+
+**Этап 3. Настройка сборки**
+Для сборки с VLC:
+```shell
+qmake-qt5 CONFIG+=unixvlc
+```
+
+Без VLC:
 ```shell
 qmake-qt5
 ```
 Если нет вывода в консоль, это успех. Если пишет `Project ERROR: Unknown module(s) in QT: ...`, то ищем в zypper соответствующие пакеты.
 
 
-**Этап 3. Выполняем сборку**
+**Этап 4. Выполняем сборку и установку**
 
 Проверяем данные зависимости:
 ```shell
@@ -39,56 +50,22 @@ sudo zypper install libQt5Concurrent-devel libQt5DBus-devel
 
 Пробуем компилировать:
 ```shell
+make
 sudo make install
 ```
 или, если хотим выделить X потоков процессора:
 ```shell
+make
 sudo make install -jX
 ```
 В случае ошибки в процессе ищем созвучный ей пакет.
-
-
-**Этап 4 (опциональный). Сборка с плеером VLC**
-
-Проверяем зависимости (возможно, ещё нужен пакет `libvlc5`)
-```shell
-sudo zypper install vlc-devel
-```
-Необходимо заменить в файле src/AniLibria.pro следующие строчки
-```shell
-#unix {
-#    LIBS += -lvlc
-
-#    INCLUDEPATH += /usr/include/
-#    DEPENDPATH += /usr/include/
-
-#    INCLUDEPATH += /usr/include/vlc/plugins
-#    DEPENDPATH += /usr/include/vlc/plugins
-
-#    CONFIG += buildwithvlc
-#}
-```
-на эти
-```shell
-unix {
-    LIBS += -lvlc
-
-    INCLUDEPATH += /usr/include/
-    DEPENDPATH += /usr/include/
-
-    INCLUDEPATH += /usr/include/vlc/plugins
-    DEPENDPATH += /usr/include/vlc/plugins
-
-    CONFIG += buildwithvlc
-}
-```
 
 **Необязательный последний этап**
 
 После всех манипуляций можно удалить папку со скачанным репозиторием. Например, командами
 ```shell
 cd ~
-sudo rm -rf anilibria/
+rm -rf anilibria/
 ```
 Также, командой `make clean` можно очистить только объектные (промежуточные) файлы компиляции.
 

@@ -31,8 +31,9 @@
 #include <QJsonObject>
 #include <QJsonValue>
 #include "../Models/onlinevideomodel.h"
-#include "../Models/releasetorrentmodel.h"
+#include "../Models/apitorrentmodel.h"
 #include "../ViewModels/releasesviewmodel.h"
+#include "../ViewModels/torrentnotifierviewmodel.h"
 
 class OnlinePlayerVideoList : public QAbstractListModel
 {
@@ -45,6 +46,7 @@ private:
     ReleasesViewModel* m_releaseViewModel { nullptr };
     int m_openingStart { -1 };
     int m_openingEnd { -1 };
+    int m_endingStart { -1 };
 
     enum PlayListRoles {
         IdRole = Qt::UserRole + 1,
@@ -65,6 +67,7 @@ private:
         EndingEndRole,
         OpeningStartRole,
         OpeningEndRole,
+        UniqueIdentifierRole
     };
 
 public:
@@ -81,8 +84,8 @@ public:
     OnlineVideoModel* getFirstReleaseWithPredicate(std::function<bool(OnlineVideoModel*)> callback, bool isEndDirection = false) const noexcept;
 
     void setVideosFromDownloadedTorrent(const QStringList& files, int releaseId, const QString& poster) noexcept;
-    void setVideosFromSingleTorrent(const ReleaseTorrentModel& torrent, int releaseId, const QString& poster, int port) noexcept;
-    void setVideosFromSingleList(const QString& json, int releaseId, const QString& poster) noexcept;
+    void setVideosFromSingleTorrent(const ApiTorrentModel& torrent, int releaseId, const QString& poster, int port, const TorrentNotifierViewModel* torrentStream) noexcept;
+    void setVideosFromSingleList(int releaseId) noexcept;
     void setVideosFromCinemahall(QList<FullReleaseModel*>&& releases) noexcept;
     void selectVideo(int releaseId, int videoId) noexcept;
     int getVideoIndex(OnlineVideoModel* video) noexcept;
@@ -90,9 +93,11 @@ public:
     void setup(ReleasesViewModel* releaseViewModel);
     void refreshSingleVideo(int releaseId, int videoId) noexcept;
     bool isPositionInOpening(int position) const noexcept;
+    bool isPositionReachEnding(int position) const noexcept;
+    bool hasEnding() const noexcept;
 
 private:
-    QVector<OnlineVideoModel*> fillVideosFrom(const QJsonArray& array, int releaseId, const QString& poster);
+    QVector<OnlineVideoModel*> fillVideosFrom(const QList<ReleaseOnlineVideoModel *>& videos, int releaseId, const QString& poster);
 
 signals:    
 

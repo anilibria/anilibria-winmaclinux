@@ -55,6 +55,8 @@ class VlcQmlPlayer : public VlcQmlSource
     Q_PROPERTY(qreal playbackRate READ playbackRate WRITE setPlaybackRate NOTIFY playbackRateChanged)
     Q_PROPERTY(bool muted READ muted WRITE setMuted NOTIFY mutedChanged)
     Q_PROPERTY(int playbackState READ playbackState NOTIFY playbackStateChanged)
+    Q_PROPERTY(int selectedSubtitleTrack READ selectedSubtitleTrack WRITE setSelectedSubtitleTrack NOTIFY selectedSubtitleTrackChanged)
+    Q_PROPERTY(int selectedAudioTrack READ selectedAudioTrack WRITE setSelectedAudioTrack NOTIFY selectedAudioTrackChanged)
 
 private:
     VlcInstance *_instance;
@@ -80,6 +82,9 @@ private:
 
     QStringList _audioPreferredLanguages;
     QStringList _subtitlePreferredLanguages;
+
+    int m_selectedSubtitleTrack { 0 };
+    int m_selectedAudioTrack { 0 };
 
 public:
     explicit VlcQmlPlayer(QObject *parent = 0);
@@ -140,6 +145,12 @@ public:
     bool muted() const noexcept;
     void setMuted(bool muted) noexcept;
 
+    int selectedSubtitleTrack() const noexcept { return m_selectedSubtitleTrack; }
+    void setSelectedSubtitleTrack(int selectedSubtitleTrack);
+
+    int selectedAudioTrack() const noexcept { return m_selectedAudioTrack; }
+    void setSelectedAudioTrack(int selectedAudioTrack);
+
     Q_INVOKABLE void seek(qint64 time);
     Q_INVOKABLE void pause();
     Q_INVOKABLE void play();
@@ -184,6 +195,9 @@ signals:
     void mutedChanged();
     void playbackStateChanged();
     void earlyEnded(int time);
+    void selectedSubtitleTrackChanged();
+    void selectedAudioTrackChanged();
+    void voutLoaded();
 };
 
 #endif // VLCQT_QMLPLAYER_H_

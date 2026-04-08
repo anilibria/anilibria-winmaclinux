@@ -6,18 +6,14 @@
 * Установить git (возможно через [home brew](https://brew.sh/) с помощью команды `brew install git`)
 * Установить xcode (через AppStore) последней версии и обновлять когда будут выходить новые версии
 * Установить [Qt Creator](https://www.qt.io/download-qt-installer). Требуется регистрация аккаунта и VPN если Вы из России, далее необходимо выбрать Kit 6.2.3 64bit ARM
-* Скачать [MDK-SDK](https://sourceforge.net/projects/mdk-sdk/files/nightly/)
 
 ## Подготовка проекта
 * Создайте себе папку для работы например `mkdir ~/anilibria`
 * Перейдите в нее `cd ~/anilibria`
 * Извлеките репозиторий `git clone https://github.com/anilibria/anilibria-winmaclinux.git`
-* Перейдите в ветку для шестой версии `git checkout qt6`
-* Создайте папку `mdk-sdk` на одном уровне с папкой `src` и распакуйте архив с MDK-SDK в эту папку
-* Скопируйте библиотеку `sudo cp -r mdk-sdk/lib/mdk.framework /Library/Frameworks`
 
 ## Сборка проекта
-* Запустите `Qt Creator` и выберите `Файл`-> `Открыть файл или проект` далее выберите файл путь (из примера ~/anilibria/anilibria-winmaclinux/src/AniLibria.pro)
+* Запустите `Qt Creator` и выберите `Файл`-> `Открыть файл или проект` далее выберите файл путь (из примера ~/anilibria/anilibria-winmaclinux/src/CMakeLists.txt)
 * Выберите проект `6.2.3 64bit` когда Вам предложат
 * Далее перейдите в режим `Release` слева внизу будет кнопка Anilibria и экранчик внизу, нажмите ее и нажмите на Выпуск/Release
 * Нажмите на кнопку с молотком она самая нижняя под кнопкой из предыдущего пункта
@@ -36,6 +32,40 @@
 * Раскроется пункт `Закрытый ключ` нажмите ПКМ на нем и далее `Свойства`
 * Выберите вкладку `Доступ` и жмакните на `Разрешить всем программам получать доступ к этому объекту`
 * Далее преезагрузите компьютер
+
+## libmpv
+Если надо добавить плеер mpv необходимо вначале установить brew.
+Далее выполнить команду:
+```shell
+brew install mpv
+```
+Необходимо узнать зависимости файла:
+```shell
+dyld_info -dependents libmpv.2.dylib
+```
+Далее необходимо скопировать файлы:
+```shell
+cp /usr/local/opt/mpv/lib/libmpv.2.dylib
+cp /usr/local/opt/jpeg-turbo/lib/libjpeg.8.dylib
+cp /usr/local/opt/libass/lib/libass.9.dylib
+cp /usr/local/opt/ffmpeg/lib/libavcodec.61.dylib
+cp /usr/local/opt/ffmpeg/lib/libavfilter.10.dylib
+cp /usr/local/opt/ffmpeg/lib/libavformat.61.dylib
+cp /usr/local/opt/ffmpeg/lib/libavutil.59.dylib
+cp /usr/local/opt/ffmpeg/lib/libswresample.5.dylib
+cp /usr/local/opt/ffmpeg/lib/libswscale.8.dylib
+cp /usr/local/opt/libplacebo/lib/libplacebo.338.dylib
+cp /usr/local/opt/mujs/lib/libmujs.dylib
+cp /usr/local/opt/little-cms2/lib/libcms2.2.dylib
+cp /usr/local/opt/libarchive/lib/libarchive.13.dylib
+cp /usr/local/opt/ffmpeg/lib/libavdevice.61.dylib
+cp /usr/local/opt/libbluray/lib/libbluray.2.dylib
+cp /usr/local/opt/luajit/lib/libluajit-5.1.2.dylib
+cp /usr/local/opt/rubberband/lib/librubberband.2.dylib
+cp /usr/local/opt/uchardet/lib/libuchardet.0.dylib
+cp /usr/local/opt/vapoursynth/lib/libvapoursynth-script.0.dylib
+cp /usr/local/opt/zimg/lib/libzimg.2.dylib
+```
 
 ## Деплой проекта
 * Вам необходимо собрать проект в release моде из раздела `Сборка проекта`

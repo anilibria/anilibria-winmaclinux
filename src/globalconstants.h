@@ -27,11 +27,10 @@ extern QString AnilibriaApiPath;
 
 extern bool IsPortable;
 
-const QString ApplicationVersion = "1.2.12";
+extern QString ApplicationVersion;
 
-const int HistoryReleaseCardMode = 0;
-
-const int HistoryWatchReleaseCardMode = 1;
+extern int HistoryReleaseCardMode;
+extern int HistoryWatchReleaseCardMode;
 
 extern QString StatisticsSectionId;
 extern QString NewInFavoritesSectionId;
@@ -152,6 +151,7 @@ extern QString iconMainMenuThemeManagerField;
 extern QString iconMainMenuYoutubeField;
 extern QString iconMainMenuTorrentStreamField;
 extern QString iconMainMenuAuthorizationField;
+extern QString iconMainMenuApplicationsField;
 extern QString iconLeftHalfScreenField;
 extern QString iconRightHalfScreenField;
 extern QString iconMinimizeWindowField;
@@ -228,32 +228,40 @@ extern QString colorSwitchDisabledTrackField;
 extern QString colorSwitchCheckedHandleField;
 extern QString colorSwitchUncheckedHandleField;
 extern QString colorSwitchDisabledHandleField;
-
 extern QString colorTextFieldAccentField;
 extern QString colorTextFieldForegroundField;
 extern QString colorTextFieldHintField;
 extern QString colorTextFieldHighlightField;
 extern QString colorTextFieldTextField;
-
 extern QString colorMenuDialogBackgroundField;
 extern QString colorMenuOverlayBackgroundField;
 extern QString colorMenuForegroundField;
 extern QString colorMenuItemHintField;
 extern QString colorMenuRippleField;
 extern QString colorMenuHighlightField;
-
 extern QString iconLogoutField;
 extern QString colorDrawerDividerColorField;
 extern QString colorDrawerDimColorField;
 extern QString colorDrawerDialogColorField;
-
 extern QString iconDisabledNotificationsField;
 extern QString iconDisabledCinemahallField;
-
 extern QString colorComboBoxAccentField;
 extern QString colorComboBoxHintField;
 extern QString colorComboBoxBackgroundField;
 extern QString iconCustomGroupField;
 extern QString iconEditField;
+extern QString iconReleaseCatalogSearchFoundedField;
+extern QString iconCustomGroupFoundedField;
+extern QString iconAuthorizationVkField;
+extern QString iconAuthorizationGoogleField;
+extern QString iconAuthorizationPatreonField;
+extern QString iconAuthorizationDiscordField;
+extern QString iconContextMenuField;
+extern QString iconMainMenuExtensionsField;
+extern QString iconMagnetField;
+extern QString iconDisableGroupingField;
+extern QString iconEnableGroupingField;
+extern QString iconSubtitlesPopupField;
+extern QString backgroundsPagesField;
 
 #endif // GLOBALCONSTANTS_H

@@ -18,6 +18,7 @@
 
 #include "onlineplayervideolist.h"
 #include "../../globalconstants.h"
+
 #include <QtGlobal>
 
 OnlinePlayerVideoList::OnlinePlayerVideoList(QObject *parent) : QAbstractListModel(parent),
@@ -69,7 +70,7 @@ QVariant OnlinePlayerVideoList::data(const QModelIndex &index, int role) const
             return QVariant(video->releasePoster());
         }
         case IsSeenRole: {
-            return QVariant(m_releaseViewModel->getSeriaSeenMark(video->releaseId(), video->order()));
+            return QVariant(m_releaseViewModel->getSeriaSeenMark(video->releaseId(), video->uniqueId()));
         }
         case IsGroupRole: {
             return QVariant(video->isGroup());
@@ -94,6 +95,9 @@ QVariant OnlinePlayerVideoList::data(const QModelIndex &index, int role) const
         }
         case OpeningEndRole: {
             return QVariant(video->openingEndSeconds());
+        }
+        case UniqueIdentifierRole: {
+            return QVariant(video->uniqueId());
         }
     }
 
@@ -174,6 +178,10 @@ QHash<int, QByteArray> OnlinePlayerVideoList::roleNames() const
         {
             OpeningEndRole,
             "openingEnd"
+        },
+        {
+            UniqueIdentifierRole,
+            "uniqueIdentifier"
         }
     };
 }
@@ -231,10 +239,8 @@ void OnlinePlayerVideoList::setVideosFromDownloadedTorrent(const QStringList &fi
         return;
     }
 
-    auto document = QJsonDocument::fromJson(release->videos().toUtf8());
-    auto videosArray = document.array();
-
-    auto videos = fillVideosFrom(videosArray, releaseId, poster);
+    auto releaseVideos = m_releaseViewModel->getReleaseVideos(releaseId);
+    auto videos = fillVideosFrom(releaseVideos, releaseId, poster);
 
     int iterator = 0;
     foreach (auto file, files) {
@@ -253,8 +259,12 @@ void OnlinePlayerVideoList::setVideosFromDownloadedTorrent(const QStringList &fi
         videoModel->setIsGroup(false);
         videoModel->setTitle("Файл торрента " + QString::number(iterator + 1));
         if (iterator < videos.count()) {
-            videoModel->setOpeningEndSeconds(videos.value(iterator)->openingEndSeconds());
-            videoModel->setOpeningStartSeconds(videos.value(iterator)->openingStartSeconds());
+            auto currentVideo = videos.value(iterator);
+            videoModel->setOpeningEndSeconds(currentVideo->openingEndSeconds());
+            videoModel->setOpeningStartSeconds(currentVideo->openingStartSeconds());
+            videoModel->setEndingEndSeconds(currentVideo->endingEndSeconds());
+            videoModel->setEndingStartSeconds(currentVideo->endingStartSeconds());
+            videoModel->setUniqueId(currentVideo->uniqueId());
         }
         m_videos->append(videoModel);
         iterator++;
@@ -263,7 +273,7 @@ void OnlinePlayerVideoList::setVideosFromDownloadedTorrent(const QStringList &fi
     endResetModel();
 }
 
-void OnlinePlayerVideoList::setVideosFromSingleTorrent(const ReleaseTorrentModel& torrent, int releaseId, const QString &poster, int port) noexcept
+void OnlinePlayerVideoList::setVideosFromSingleTorrent(const ApiTorrentModel& torrent, int releaseId, const QString &poster, int port, const TorrentNotifierViewModel* torrentStream) noexcept
 {
     beginResetModel();
 
@@ -276,9 +286,9 @@ void OnlinePlayerVideoList::setVideosFromSingleTorrent(const ReleaseTorrentModel
     }
 
     auto countSeries = 0;
-    auto series = torrent.series();
+    auto series = torrent.description();
     if (series.indexOf("-") > -1) {
-        auto parts = series.splitRef("-");
+        auto parts = series.split("-");
         auto start = parts[0].toInt();
         auto end = parts[1].toInt();
 
@@ -287,14 +297,18 @@ void OnlinePlayerVideoList::setVideosFromSingleTorrent(const ReleaseTorrentModel
         countSeries = series.toInt();
     }
 
-    auto document = QJsonDocument::fromJson(release->videos().toUtf8());
-    auto videosArray = document.array();
-
-    auto videos = fillVideosFrom(videosArray, releaseId, poster);
+    auto releaseVideos = m_releaseViewModel->getReleaseVideos(releaseId);
+    auto videos = fillVideosFrom(releaseVideos, releaseId, release->poster());
 
     for (auto i = 0; i < countSeries; i++) {
         auto videoModel = new OnlineVideoModel();
-        auto url = "http://localhost:" + QString::number(port) + "/online?id=" + QString::number(releaseId) + "&index=" + QString::number(i) + "&path=" + AnilibriaImagesPath + torrent.url();
+        auto downloadedPath = torrentStream->getDownloadedPath(torrent.torrentHost() + torrent.torrentPath(), i);
+        QString url = "";
+        if (downloadedPath.isEmpty()) {
+            url = "http://localhost:" + QString::number(port) + "/online?id=" + QString::number(releaseId) + "&index=" + QString::number(i) + "&path=" + torrent.torrentHost() + torrent.torrentPath();
+        } else {
+            url = addFileProtocol(downloadedPath);
+        }
         videoModel->setFullHd(url);
         videoModel->setHd(url);
         videoModel->setSd(url);
@@ -304,8 +318,12 @@ void OnlinePlayerVideoList::setVideosFromSingleTorrent(const ReleaseTorrentModel
         videoModel->setIsGroup(false);
         videoModel->setTitle("Файл " + QString::number(i + 1));
         if (i < videos.count()) {
-            videoModel->setOpeningEndSeconds(videos.value(i)->openingEndSeconds());
-            videoModel->setOpeningStartSeconds(videos.value(i)->openingStartSeconds());
+            auto currentVideo = videos.value(i);
+            videoModel->setOpeningEndSeconds(currentVideo->openingEndSeconds());
+            videoModel->setOpeningStartSeconds(currentVideo->openingStartSeconds());
+            videoModel->setEndingEndSeconds(currentVideo->endingEndSeconds());
+            videoModel->setEndingStartSeconds(currentVideo->endingStartSeconds());
+            videoModel->setUniqueId(currentVideo->uniqueId());
         }
         m_videos->append(videoModel);
     }
@@ -313,16 +331,17 @@ void OnlinePlayerVideoList::setVideosFromSingleTorrent(const ReleaseTorrentModel
     endResetModel();
 }
 
-void OnlinePlayerVideoList::setVideosFromSingleList(const QString &json, int releaseId, const QString& poster) noexcept
+void OnlinePlayerVideoList::setVideosFromSingleList(int releaseId) noexcept
 {
     beginResetModel();
 
+    auto apiVideos = m_releaseViewModel->getReleaseVideos(releaseId);
+    auto release = m_releaseViewModel->getReleaseById(releaseId);
+    auto releasePoster = release != nullptr ? release->poster() : "";
+
     m_videos->clear();
 
-    auto document = QJsonDocument::fromJson(json.toUtf8());
-    auto videosArray = document.array();
-
-    m_videos->append(fillVideosFrom(videosArray, releaseId, poster));
+    m_videos->append(fillVideosFrom(apiVideos, releaseId, releasePoster));
 
     endResetModel();
 }
@@ -343,11 +362,10 @@ void OnlinePlayerVideoList::setVideosFromCinemahall(QList<FullReleaseModel*>&& r
     m_videos->clear();
 
     foreach (auto release, releases) {
-        auto document = QJsonDocument::fromJson(release->videos().toUtf8());
-        auto videosArray = document.array();
+        auto videos = m_releaseViewModel->getReleaseVideos(release->id());
 
-        std::sort(videosArray.begin(), videosArray.end(), [](const QJsonValue &left, const QJsonValue &right) {
-            return left.toObject()["id"].toInt() < right.toObject()["id"].toInt();
+        std::sort(videos.begin(), videos.end(), [](const ReleaseOnlineVideoModel* left, const ReleaseOnlineVideoModel* right) {
+            return left->order() < right->order();
         });
 
         auto groupModel = new OnlineVideoModel();
@@ -355,16 +373,9 @@ void OnlinePlayerVideoList::setVideosFromCinemahall(QList<FullReleaseModel*>&& r
         groupModel->setIsGroup(true);
         m_videos->append(groupModel);
 
-        int index = -1;
-        foreach (auto video, videosArray) {
-            auto videoModel = new OnlineVideoModel();
-            videoModel->readFromApiModel(video.toObject());
-            videoModel->setReleaseId(release->id());
-            videoModel->setReleasePoster(release->poster());
-            videoModel->setIsGroup(false);
-            index += 1;
-            videoModel->setOrder(index);
-            m_videos->append(videoModel);
+        auto releaseVideos = fillVideosFrom(videos, release->id(), release->poster());
+        foreach (auto releaseVideo, releaseVideos) {
+            m_videos->append(releaseVideo);
         }
     }
 
@@ -399,6 +410,7 @@ void OnlinePlayerVideoList::selectVideo(int releaseId, int videoId) noexcept
 
     m_openingStart = (*newSelected)->openingStartSeconds();
     m_openingEnd = (*newSelected)->openingEndSeconds();
+    m_endingStart = (*newSelected)->endingStartSeconds();
 
     m_selectedReleaseId = releaseId;
     m_selectedVideoId = videoId;
@@ -466,15 +478,42 @@ bool OnlinePlayerVideoList::isPositionInOpening(int position) const noexcept
     return position >= m_openingStart && position < m_openingEnd;
 }
 
-QVector<OnlineVideoModel*> OnlinePlayerVideoList::fillVideosFrom(const QJsonArray& array, int releaseId, const QString& poster)
+bool OnlinePlayerVideoList::isPositionReachEnding(int position) const noexcept
+{
+    if (m_endingStart == -1) return false;
+
+    return position >= m_endingStart;
+}
+
+bool OnlinePlayerVideoList::hasEnding() const noexcept
+{
+    return m_endingStart > 1;
+}
+
+QVector<OnlineVideoModel*> OnlinePlayerVideoList::fillVideosFrom(const QList<ReleaseOnlineVideoModel *>& videos, int releaseId, const QString& poster)
 {
     QVector<OnlineVideoModel*> result;
 
-    foreach (auto video, array) {
+    foreach (auto video, videos) {
         auto videoModel = new OnlineVideoModel();
-        videoModel->readFromApiModel(video.toObject());
         videoModel->setReleaseId(releaseId);
+        videoModel->setDescription(video->description());
+        videoModel->setFullHd(video->fullhd());
+        videoModel->setHd(video->hd());
+        videoModel->setSd(video->sd());
+        videoModel->setOrder(video->order());
+        videoModel->setTitle(video->title());
+        videoModel->setId(video->number());
+
+        videoModel->setOpeningStartSeconds(video->openingStartSeconds());
+        videoModel->setOpeningEndSeconds(video->openingEndSeconds());
+
+        videoModel->setEndingStartSeconds(video->endingStartSeconds());
+        videoModel->setEndingEndSeconds(video->endingEndSeconds());
+
+        videoModel->setVideoPoster(video->videoPoster());
         videoModel->setReleasePoster(poster);
+        videoModel->setUniqueId(video->uniqueId());
         videoModel->setIsGroup(false);
         result.append(videoModel);
     }
@@ -483,7 +522,7 @@ QVector<OnlineVideoModel*> OnlinePlayerVideoList::fillVideosFrom(const QJsonArra
         result.begin(),
         result.end(),
         [](const OnlineVideoModel* first, const OnlineVideoModel* second) {
-            return first->id() < second->id();
+            return first->order() < second->order();
         }
     );
 

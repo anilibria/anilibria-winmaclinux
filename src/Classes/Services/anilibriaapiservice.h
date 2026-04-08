@@ -49,7 +49,6 @@ public:
     void performAddFavorite(QString token, int id);
     void performRemoveFavorite(QString token, int id);
     void removeMultiFavorites(QString token, QString ids);
-    void downloadTorrent(QString path);
     QList<QString> getPages() const noexcept { return m_pages; };
 
 signals:

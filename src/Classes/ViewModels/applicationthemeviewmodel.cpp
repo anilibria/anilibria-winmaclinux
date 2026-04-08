@@ -28,6 +28,11 @@
 ApplicationThemeViewModel::ApplicationThemeViewModel(QObject *parent)
     : QObject{parent}
 {
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+    QString resourcePrefix = "qrc:/qt/qml/aniliberty/Assets";
+#else
+    QString resourcePrefix = "qrc:/Assets";
+#endif
     auto lightTheme = new QMap<QString, QString>();
     lightTheme->insert(plainTextColorField, "black");
     lightTheme->insert(headerTextColorField, "#a32727");
@@ -97,91 +102,105 @@ ApplicationThemeViewModel::ApplicationThemeViewModel(QObject *parent)
     lightTheme->insert(colorComboBoxAccentField, "#f44336");
     lightTheme->insert(colorComboBoxHintField, "#60000000");
     lightTheme->insert(colorComboBoxBackgroundField, "#ffffff");
-    lightTheme->insert(iconMainMenuField, "qrc:/Assets/Icons/coloreddrawer.svg");
-    lightTheme->insert(iconMainMenuReleasesField, "qrc:/Assets/Icons/catalogmenu.svg");
-    lightTheme->insert(iconMainMenuCinemahallField, "qrc:/Assets/Icons/cinemahallmenu.svg");
-    lightTheme->insert(iconMainMenuReleasesSeriesField, "qrc:/Assets/Icons/seriesmenu.svg");
-    lightTheme->insert(iconMainMenuMaintenanceField, "qrc:/Assets/Icons/maintenance.svg");
-    lightTheme->insert(iconMainMenuMyAnilibriaField, "qrc:/Assets/Icons/house.svg");
-    lightTheme->insert(iconMainMenuVideoplayerField, "qrc:/Assets/Icons/videoplayermenu.svg");
-    lightTheme->insert(iconMainMenuDonateField, "qrc:/Assets/Icons/donate.svg");
-    lightTheme->insert(iconMainMenuThemeManagerField, "qrc:/Assets/Icons/themes.svg");
-    lightTheme->insert(iconMainMenuYoutubeField, "qrc:/Assets/Icons/youtube.svg");
-    lightTheme->insert(iconMainMenuTorrentStreamField, "qrc:/Assets/Icons/utorrent.svg");
-    lightTheme->insert(iconMainMenuAuthorizationField, "qrc:/Assets/Icons/user.svg");
-    lightTheme->insert(iconLeftHalfScreenField, "qrc:/Assets/Icons/coloredleftmenu.svg");
-    lightTheme->insert(iconRightHalfScreenField, "qrc:/Assets/Icons/coloredrightmenu.svg");
-    lightTheme->insert(iconMinimizeWindowField, "qrc:/Assets/Icons/grayedleftmenu.svg");
-    lightTheme->insert(iconMaximizeWindowField, "qrc:/Assets/Icons/grayedrightmenu.svg");
-    lightTheme->insert(iconNormalWindowField, "qrc:/Assets/Icons/gofromfullscreen.svg");
-    lightTheme->insert(iconCloseWindowField, "qrc:/Assets/Icons/coloredclosewindow.svg");
-    lightTheme->insert(iconFavoritesField, "qrc:/Assets/Icons/ratingcolor.svg");
-    lightTheme->insert(iconSeenField, "qrc:/Assets/Icons/coloredeye.svg");
-    lightTheme->insert(iconInfoField, "qrc:/Assets/Icons/information.svg");
-    lightTheme->insert(iconClearTextControlField, "qrc:/Assets/Icons/closewindow.svg");
-    lightTheme->insert(iconBackToTopField, "qrc:/Assets/Icons/arrowup.svg");
-    lightTheme->insert(iconReleaseCatalogSynchronizationField, "qrc:/Assets/Icons/coloredrefresh.svg");
-    lightTheme->insert(iconReleaseCatalogSearchField, "qrc:/Assets/Icons/search.svg");
-    lightTheme->insert(iconReleaseCatalogNotificationField, "qrc:/Assets/Icons/coloredbell.svg");
-    lightTheme->insert(iconReleaseCatalogRandomField, "qrc:/Assets/Icons/coloreddice.svg");
-    lightTheme->insert(iconReleaseCatalogSettingsField, "qrc:/Assets/Icons/coloredsettings.svg");
-    lightTheme->insert(iconReleaseCatalogHidedButtonsField, "qrc:/Assets/Icons/hidebuttonmenu.svg");
-    lightTheme->insert(iconReleaseCatalogOnlineField, "qrc:/Assets/Icons/online.svg");
-    lightTheme->insert(iconReleaseCatalogTorrentField, "qrc:/Assets/Icons/utorrent.svg");
-    lightTheme->insert(iconReleaseCatalogScheduleField, "qrc:/Assets/Icons/calendarcolor.svg");
-    lightTheme->insert(iconReleaseCatalogHistoryField, "qrc:/Assets/Icons/history.svg");
-    lightTheme->insert(iconReleaseCatalogAlphabetField, "qrc:/Assets/Icons/alphabet.svg");
-    lightTheme->insert(iconReleaseCatalogAllReleasesField, "qrc:/Assets/Icons/allreleases.svg");
-    lightTheme->insert(iconReleaseCatalogCompilationField, "qrc:/Assets/Icons/listcustom.svg");
-    lightTheme->insert(iconReleaseCatalogSortAscField, "qrc:/Assets/Icons/sortascending.svg");
-    lightTheme->insert(iconReleaseCatalogSortDescField, "qrc:/Assets/Icons/sortdescending.svg");
-    lightTheme->insert(iconReleaseCardListMenuField, "qrc:/Assets/Icons/allreleases.svg");
-    lightTheme->insert(iconReleaseCardCloseField, "qrc:/Assets/Icons/coloredclosewindow.svg");
-    lightTheme->insert(iconReleaseCardCopyField, "qrc:/Assets/Icons/copy.svg");
-    lightTheme->insert(iconReleaseCardExternalField, "qrc:/Assets/Icons/external.svg");
-    lightTheme->insert(iconNavigationButtonLeftField, "qrc:/Assets/Icons/leftscroll.svg");
-    lightTheme->insert(iconNavigationButtonRightField, "qrc:/Assets/Icons/rightscroll.svg");
-    lightTheme->insert(iconMyAnilibriaButtonSortUpField, "qrc:/Assets/Icons/coloredsortup.svg");
-    lightTheme->insert(iconMyAnilibriaButtonSortBottomField, "qrc:/Assets/Icons/coloredsortdown.svg");
-    lightTheme->insert(iconMyAnilibriaButtonPlusField, "qrc:/Assets/Icons/plus.svg");
-    lightTheme->insert(iconMyAnilibriaButtonMinusField, "qrc:/Assets/Icons/minus.svg");
-    lightTheme->insert(iconMyAnilibriaButtonSortSectionsField, "qrc:/Assets/Icons/videos.svg");
-    lightTheme->insert(iconDeleteItemField, "qrc:/Assets/Icons/delete.svg");
-    lightTheme->insert(iconDownloadThemeField, "qrc:/Assets/Icons/downloadtheme.svg");
-    lightTheme->insert(iconEditThemeFieldPlusField, "qrc:/Assets/Icons/plus.svg");
-    lightTheme->insert(iconEmptyField, "qrc:/Assets/Icons/emptybox.svg");
-    lightTheme->insert(iconEditField, "qrc:/Assets/Icons/colorededit.svg");
-    lightTheme->insert(iconPlayerFullscreenField, "qrc:/Assets/Icons/videoplayer/fullscreen.svg");
-    lightTheme->insert(iconPlayerCropModeField, "qrc:/Assets/Icons/videoplayer/resize.svg");
-    lightTheme->insert(iconPlayerSettingsField, "qrc:/Assets/Icons/videoplayer/settings.svg");
-    lightTheme->insert(iconPlayerRemoteField, "qrc:/Assets/Icons/videoplayer/network.svg");
-    lightTheme->insert(iconPlayerTopMostField, "qrc:/Assets/Icons/videoplayer/topmost.svg");
-    lightTheme->insert(iconPlayerRefreshField, "qrc:/Assets/Icons/videoplayer/reload.svg");
-    lightTheme->insert(iconPlayerInfoField, "qrc:/Assets/Icons/videoplayer/info.svg");
-    lightTheme->insert(iconPlayerMuteField, "qrc:/Assets/Icons/videoplayer/muteon.svg");
-    lightTheme->insert(iconPlayerUnMuteField, "qrc:/Assets/Icons/videoplayer/muteoff.svg");
-    lightTheme->insert(iconPlayerSeenField, "qrc:/Assets/Icons/videoplayer/seenmarkselected.svg");
-    lightTheme->insert(iconPlayerUnseenField, "qrc:/Assets/Icons/videoplayer/seenmark.svg");
-    lightTheme->insert(iconPlayerExternalField, "qrc:/Assets/Icons/videoplayer/externalplayer.svg");
-    lightTheme->insert(iconPlayerPlayField, "qrc:/Assets/Icons/videoplayer/play.svg");
-    lightTheme->insert(iconPlayerPauseField, "qrc:/Assets/Icons/videoplayer/pause.svg");
-    lightTheme->insert(iconPlayerJumpLeftField, "qrc:/Assets/Icons/videoplayer/leftjump.svg");
-    lightTheme->insert(iconPlayerJumpRightField, "qrc:/Assets/Icons/videoplayer/rightjump.svg");
-    lightTheme->insert(iconPlayerNextSeriaField, "qrc:/Assets/Icons/videoplayer/nextseria.svg");
-    lightTheme->insert(iconPlayerPreviousSeriaField, "qrc:/Assets/Icons/videoplayer/previousseria.svg");
-    lightTheme->insert(iconPlayerDrawerField, "qrc:/Assets/Icons/videoplayer/menu.svg");
-    lightTheme->insert(iconNotificationField, "qrc:/Assets/Icons/notification/notification.svg");
-    lightTheme->insert(iconNotificationSelectedField, "qrc:/Assets/Icons/notification/notificationselected.svg");
-    lightTheme->insert(iconDisabledNotificationsField, "qrc:/Assets/Icons/coloredbell.svg");
-    lightTheme->insert(iconDisabledCinemahallField, "qrc:/Assets/Icons/cinemahallmenu.svg");
-    lightTheme->insert(iconLogoutField, "qrc:/Assets/Icons/logout.svg");
+    lightTheme->insert(iconMainMenuField, resourcePrefix + "/Icons/coloreddrawer.svg");
+    lightTheme->insert(iconMainMenuReleasesField, resourcePrefix + "/Icons/catalogmenu.svg");
+    lightTheme->insert(iconMainMenuCinemahallField, resourcePrefix + "/Icons/cinemahallmenu.svg");
+    lightTheme->insert(iconMainMenuReleasesSeriesField, resourcePrefix + "/Icons/seriesmenu.svg");
+    lightTheme->insert(iconMainMenuMaintenanceField, resourcePrefix + "/Icons/maintenance.svg");
+    lightTheme->insert(iconMainMenuMyAnilibriaField, resourcePrefix + "/Icons/house.svg");
+    lightTheme->insert(iconMainMenuVideoplayerField, resourcePrefix + "/Icons/videoplayermenu.svg");
+    lightTheme->insert(iconMainMenuDonateField, resourcePrefix + "/Icons/donate.svg");
+    lightTheme->insert(iconMainMenuThemeManagerField, resourcePrefix + "/Icons/themes.svg");
+    lightTheme->insert(iconMainMenuYoutubeField, resourcePrefix + "/Icons/youtube.svg");
+    lightTheme->insert(iconMainMenuTorrentStreamField, resourcePrefix + "/Icons/utorrent.svg");
+    lightTheme->insert(iconMainMenuAuthorizationField, resourcePrefix + "/Icons/user.svg");
+    lightTheme->insert(iconLeftHalfScreenField, resourcePrefix + "/Icons/coloredleftmenu.svg");
+    lightTheme->insert(iconRightHalfScreenField, resourcePrefix + "/Icons/coloredrightmenu.svg");
+    lightTheme->insert(iconMinimizeWindowField, resourcePrefix + "/Icons/grayedleftmenu.svg");
+    lightTheme->insert(iconMaximizeWindowField, resourcePrefix + "/Icons/grayedrightmenu.svg");
+    lightTheme->insert(iconNormalWindowField, resourcePrefix + "/Icons/gofromfullscreen.svg");
+    lightTheme->insert(iconCloseWindowField, resourcePrefix + "/Icons/coloredclosewindow.svg");
+    lightTheme->insert(iconFavoritesField, resourcePrefix + "/Icons/ratingcolor.svg");
+    lightTheme->insert(iconSeenField, resourcePrefix + "/Icons/coloredeye.svg");
+    lightTheme->insert(iconInfoField, resourcePrefix + "/Icons/information.svg");
+    lightTheme->insert(iconClearTextControlField, resourcePrefix + "/Icons/closewindow.svg");
+    lightTheme->insert(iconBackToTopField, resourcePrefix + "/Icons/arrowup.svg");
+    lightTheme->insert(iconReleaseCatalogSynchronizationField, resourcePrefix + "/Icons/coloredrefresh.svg");
+    lightTheme->insert(iconReleaseCatalogSearchField, resourcePrefix + "/Icons/search.svg");
+    lightTheme->insert(iconReleaseCatalogNotificationField, resourcePrefix + "/Icons/coloredbell.svg");
+    lightTheme->insert(iconReleaseCatalogRandomField, resourcePrefix + "/Icons/coloreddice.svg");
+    lightTheme->insert(iconReleaseCatalogSettingsField, resourcePrefix + "/Icons/coloredsettings.svg");
+    lightTheme->insert(iconReleaseCatalogHidedButtonsField, resourcePrefix + "/Icons/hidebuttonmenu.svg");
+    lightTheme->insert(iconReleaseCatalogOnlineField, resourcePrefix + "/Icons/online.svg");
+    lightTheme->insert(iconReleaseCatalogTorrentField, resourcePrefix + "/Icons/utorrent.svg");
+    lightTheme->insert(iconReleaseCatalogScheduleField, resourcePrefix + "/Icons/calendarcolor.svg");
+    lightTheme->insert(iconReleaseCatalogHistoryField, resourcePrefix + "/Icons/history.svg");
+    lightTheme->insert(iconReleaseCatalogAlphabetField, resourcePrefix + "/Icons/alphabet.svg");
+    lightTheme->insert(iconReleaseCatalogAllReleasesField, resourcePrefix + "/Icons/allreleases.svg");
+    lightTheme->insert(iconReleaseCatalogCompilationField, resourcePrefix + "/Icons/listcustom.svg");
+    lightTheme->insert(iconReleaseCatalogSortAscField, resourcePrefix + "/Icons/sortascending.svg");
+    lightTheme->insert(iconReleaseCatalogSortDescField, resourcePrefix + "/Icons/sortdescending.svg");
+    lightTheme->insert(iconReleaseCardListMenuField, resourcePrefix + "/Icons/allreleases.svg");
+    lightTheme->insert(iconReleaseCardCloseField, resourcePrefix + "/Icons/coloredclosewindow.svg");
+    lightTheme->insert(iconReleaseCardCopyField, resourcePrefix + "/Icons/copy.svg");
+    lightTheme->insert(iconReleaseCardExternalField, resourcePrefix + "/Icons/external.svg");
+    lightTheme->insert(iconNavigationButtonLeftField, resourcePrefix + "/Icons/leftscroll.svg");
+    lightTheme->insert(iconNavigationButtonRightField, resourcePrefix + "/Icons/rightscroll.svg");
+    lightTheme->insert(iconMyAnilibriaButtonSortUpField, resourcePrefix + "/Icons/coloredsortup.svg");
+    lightTheme->insert(iconMyAnilibriaButtonSortBottomField, resourcePrefix + "/Icons/coloredsortdown.svg");
+    lightTheme->insert(iconMyAnilibriaButtonPlusField, resourcePrefix + "/Icons/plus.svg");
+    lightTheme->insert(iconMyAnilibriaButtonMinusField, resourcePrefix + "/Icons/minus.svg");
+    lightTheme->insert(iconMyAnilibriaButtonSortSectionsField, resourcePrefix + "/Icons/videos.svg");
+    lightTheme->insert(iconDeleteItemField, resourcePrefix + "/Icons/delete.svg");
+    lightTheme->insert(iconDownloadThemeField, resourcePrefix + "/Icons/downloadtheme.svg");
+    lightTheme->insert(iconEditThemeFieldPlusField, resourcePrefix + "/Icons/plus.svg");
+    lightTheme->insert(iconEmptyField, resourcePrefix + "/Icons/emptybox.svg");
+    lightTheme->insert(iconEditField, resourcePrefix + "/Icons/colorededit.svg");
+    lightTheme->insert(iconPlayerFullscreenField, resourcePrefix + "/Icons/videoplayer/fullscreen.svg");
+    lightTheme->insert(iconPlayerCropModeField, resourcePrefix + "/Icons/videoplayer/resize.svg");
+    lightTheme->insert(iconPlayerSettingsField, resourcePrefix + "/Icons/videoplayer/settings.svg");
+    lightTheme->insert(iconPlayerRemoteField, resourcePrefix + "/Icons/videoplayer/network.svg");
+    lightTheme->insert(iconPlayerTopMostField, resourcePrefix + "/Icons/videoplayer/topmost.svg");
+    lightTheme->insert(iconPlayerRefreshField, resourcePrefix + "/Icons/videoplayer/reload.svg");
+    lightTheme->insert(iconPlayerInfoField, resourcePrefix + "/Icons/videoplayer/info.svg");
+    lightTheme->insert(iconPlayerMuteField, resourcePrefix + "/Icons/videoplayer/muteon.svg");
+    lightTheme->insert(iconPlayerUnMuteField, resourcePrefix + "/Icons/videoplayer/muteoff.svg");
+    lightTheme->insert(iconPlayerSeenField, resourcePrefix + "/Icons/videoplayer/seenmarkselected.svg");
+    lightTheme->insert(iconPlayerUnseenField, resourcePrefix + "/Icons/videoplayer/seenmark.svg");
+    lightTheme->insert(iconPlayerExternalField, resourcePrefix + "/Icons/videoplayer/externalplayer.svg");
+    lightTheme->insert(iconPlayerPlayField, resourcePrefix + "/Icons/videoplayer/play.svg");
+    lightTheme->insert(iconPlayerPauseField, resourcePrefix + "/Icons/videoplayer/pause.svg");
+    lightTheme->insert(iconPlayerJumpLeftField, resourcePrefix + "/Icons/videoplayer/leftjump.svg");
+    lightTheme->insert(iconPlayerJumpRightField, resourcePrefix + "/Icons/videoplayer/rightjump.svg");
+    lightTheme->insert(iconPlayerNextSeriaField, resourcePrefix + "/Icons/videoplayer/nextseria.svg");
+    lightTheme->insert(iconPlayerPreviousSeriaField, resourcePrefix + "/Icons/videoplayer/previousseria.svg");
+    lightTheme->insert(iconPlayerDrawerField, resourcePrefix + "/Icons/videoplayer/menu.svg");
+    lightTheme->insert(iconNotificationField, resourcePrefix + "/Icons/notification/notification.svg");
+    lightTheme->insert(iconNotificationSelectedField, resourcePrefix + "/Icons/notification/notificationselected.svg");
+    lightTheme->insert(iconDisabledNotificationsField, resourcePrefix + "/Icons/coloredbell.svg");
+    lightTheme->insert(iconDisabledCinemahallField, resourcePrefix + "/Icons/cinemahallmenu.svg");
+    lightTheme->insert(iconLogoutField, resourcePrefix + "/Icons/logout.svg");
     lightTheme->insert(colorTooltipTextField, "white");
     lightTheme->insert(colorSeenReleaseItemTextField, "green");
     lightTheme->insert(colorDrawerDividerColorField, "#1e000000");
     lightTheme->insert(colorDrawerDimColorField, "#99303030");
     lightTheme->insert(colorDrawerDialogColorField, "#ffffff");
+    lightTheme->insert(iconCustomGroupField, resourcePrefix + "/Icons/releases/customgroup.svg");
+    lightTheme->insert(iconReleaseCatalogSearchFoundedField, resourcePrefix + "/Icons/search.svg");
+    lightTheme->insert(iconCustomGroupFoundedField, resourcePrefix + "/Icons/releases/customgroup.svg");
+    lightTheme->insert(iconMainMenuApplicationsField, resourcePrefix + "/Icons/applications.svg");
+    lightTheme->insert(iconAuthorizationVkField, resourcePrefix + "/Icons/authorization/vk.svg");
+    lightTheme->insert(iconAuthorizationGoogleField, resourcePrefix + "/Icons/authorization/google.svg");
+    lightTheme->insert(iconAuthorizationPatreonField, resourcePrefix + "/Icons/authorization/patreon.svg");
+    lightTheme->insert(iconAuthorizationDiscordField, resourcePrefix + "/Icons/authorization/discord.svg");
+    lightTheme->insert(iconContextMenuField, resourcePrefix + "/Icons/contextmenu.svg");
+    lightTheme->insert(iconMainMenuExtensionsField, resourcePrefix + "/Icons/extensions.svg");
+    lightTheme->insert(iconMagnetField, resourcePrefix + "/Icons/releases/magnet.svg");
+    lightTheme->insert(iconDisableGroupingField, resourcePrefix + "/Icons/releases/disablegrouping.svg");
+    lightTheme->insert(iconEnableGroupingField, resourcePrefix + "/Icons/releases/enablegrouping.svg");
 
-    lightTheme->insert(iconCustomGroupField, "qrc:/Assets/Icons/releases/customgroup.svg");
+    lightTheme->insert(iconSubtitlesPopupField, resourcePrefix + "/Icons/videoplayer/subtitles.svg");
+    lightTheme->insert(backgroundsPagesField, "{}");
 
     lightTheme->insert(basedOnThemeField, m_lightTheme);
     lightTheme->insert(externalIdField, "");
@@ -253,96 +272,110 @@ ApplicationThemeViewModel::ApplicationThemeViewModel(QObject *parent)
     darkTheme->insert(colorMenuItemHintField, "#4cffffff");
     darkTheme->insert(colorMenuRippleField, "#20ffffff");
     darkTheme->insert(colorMenuHighlightField, "#1effffff");
-
     darkTheme->insert(colorComboBoxAccentField, "#f44336");
     darkTheme->insert(colorComboBoxHintField, "#4cffffff");
     darkTheme->insert(colorComboBoxBackgroundField, "#424242");
-
-    darkTheme->insert(iconMainMenuField, "qrc:/Assets/Icons/coloreddrawer.svg");
-    darkTheme->insert(iconMainMenuReleasesField, "qrc:/Assets/Icons/catalogmenu.svg");
-    darkTheme->insert(iconMainMenuCinemahallField, "qrc:/Assets/Icons/cinemahallmenu.svg");
-    darkTheme->insert(iconMainMenuReleasesSeriesField, "qrc:/Assets/Icons/seriesmenu.svg");
-    darkTheme->insert(iconMainMenuMaintenanceField, "qrc:/Assets/Icons/maintenance.svg");
-    darkTheme->insert(iconMainMenuMyAnilibriaField, "qrc:/Assets/Icons/house.svg");
-    darkTheme->insert(iconMainMenuVideoplayerField, "qrc:/Assets/Icons/videoplayermenu.svg");
-    darkTheme->insert(iconMainMenuDonateField, "qrc:/Assets/Icons/donate.svg");
-    darkTheme->insert(iconMainMenuThemeManagerField, "qrc:/Assets/Icons/themes.svg");
-    darkTheme->insert(iconMainMenuYoutubeField, "qrc:/Assets/Icons/youtube.svg");
-    darkTheme->insert(iconMainMenuTorrentStreamField, "qrc:/Assets/Icons/utorrent.svg");
-    darkTheme->insert(iconMainMenuAuthorizationField, "qrc:/Assets/Icons/user.svg");
-    darkTheme->insert(iconLeftHalfScreenField, "qrc:/Assets/Icons/coloredleftmenu.svg");
-    darkTheme->insert(iconRightHalfScreenField, "qrc:/Assets/Icons/coloredrightmenu.svg");
-    darkTheme->insert(iconMinimizeWindowField, "qrc:/Assets/Icons/grayedleftmenu.svg");
-    darkTheme->insert(iconMaximizeWindowField, "qrc:/Assets/Icons/grayedrightmenu.svg");
-    darkTheme->insert(iconNormalWindowField, "qrc:/Assets/Icons/gofromfullscreen.svg");
-    darkTheme->insert(iconCloseWindowField, "qrc:/Assets/Icons/coloredclosewindow.svg");
-    darkTheme->insert(iconFavoritesField, "qrc:/Assets/Icons/ratingcolor.svg");
-    darkTheme->insert(iconSeenField, "qrc:/Assets/Icons/coloredeye.svg");
-    darkTheme->insert(iconInfoField, "qrc:/Assets/Icons/information.svg");
-    darkTheme->insert(iconClearTextControlField, "qrc:/Assets/Icons/closewindowwhite.svg");
-    darkTheme->insert(iconBackToTopField, "qrc:/Assets/Icons/darkarrowup.svg");
-    darkTheme->insert(iconReleaseCatalogSynchronizationField, "qrc:/Assets/Icons/coloredrefresh.svg");
-    darkTheme->insert(iconReleaseCatalogSearchField, "qrc:/Assets/Icons/search.svg");
-    darkTheme->insert(iconReleaseCatalogNotificationField, "qrc:/Assets/Icons/coloredbell.svg");
-    darkTheme->insert(iconReleaseCatalogRandomField, "qrc:/Assets/Icons/coloreddice.svg");
-    darkTheme->insert(iconReleaseCatalogSettingsField, "qrc:/Assets/Icons/coloredsettings.svg");
-    darkTheme->insert(iconReleaseCatalogHidedButtonsField, "qrc:/Assets/Icons/hidebuttonmenu.svg");
-    darkTheme->insert(iconReleaseCatalogOnlineField, "qrc:/Assets/Icons/online.svg");
-    darkTheme->insert(iconReleaseCatalogTorrentField, "qrc:/Assets/Icons/utorrent.svg");
-    darkTheme->insert(iconReleaseCatalogScheduleField, "qrc:/Assets/Icons/calendarcolor.svg");
-    darkTheme->insert(iconReleaseCatalogHistoryField, "qrc:/Assets/Icons/history.svg");
-    darkTheme->insert(iconReleaseCatalogAlphabetField, "qrc:/Assets/Icons/alphabet.svg");
-    darkTheme->insert(iconReleaseCatalogAllReleasesField, "qrc:/Assets/Icons/allreleases.svg");
-    darkTheme->insert(iconReleaseCatalogCompilationField, "qrc:/Assets/Icons/listcustom.svg");
-    darkTheme->insert(iconReleaseCatalogSortAscField, "qrc:/Assets/Icons/darksortascending.svg");
-    darkTheme->insert(iconReleaseCatalogSortDescField, "qrc:/Assets/Icons/darksortdescending.svg");
-    darkTheme->insert(iconReleaseCardListMenuField, "qrc:/Assets/Icons/allreleases.svg");
-    darkTheme->insert(iconReleaseCardCloseField, "qrc:/Assets/Icons/coloredclosewindow.svg");
-    darkTheme->insert(iconReleaseCardCopyField, "qrc:/Assets/Icons/copy.svg");
-    darkTheme->insert(iconReleaseCardExternalField, "qrc:/Assets/Icons/external.svg");
-    darkTheme->insert(iconNavigationButtonLeftField, "qrc:/Assets/Icons/leftscroll.svg");
-    darkTheme->insert(iconNavigationButtonRightField, "qrc:/Assets/Icons/rightscroll.svg");
-    darkTheme->insert(iconMyAnilibriaButtonSortUpField, "qrc:/Assets/Icons/coloredsortup.svg");
-    darkTheme->insert(iconMyAnilibriaButtonSortBottomField, "qrc:/Assets/Icons/coloredsortdown.svg");
-    darkTheme->insert(iconMyAnilibriaButtonPlusField, "qrc:/Assets/Icons/plus.svg");
-    darkTheme->insert(iconMyAnilibriaButtonMinusField, "qrc:/Assets/Icons/minus.svg");
-    darkTheme->insert(iconMyAnilibriaButtonSortSectionsField, "qrc:/Assets/Icons/videos.svg");
-    darkTheme->insert(iconDeleteItemField, "qrc:/Assets/Icons/delete.svg");
-    darkTheme->insert(iconDownloadThemeField, "qrc:/Assets/Icons/downloadtheme.svg");
-    darkTheme->insert(iconEditThemeFieldPlusField, "qrc:/Assets/Icons/plus.svg");
-    darkTheme->insert(iconEmptyField, "qrc:/Assets/Icons/emptybox.svg");
-    darkTheme->insert(iconEditField, "qrc:/Assets/Icons/colorededit.svg");
-    darkTheme->insert(iconPlayerFullscreenField, "qrc:/Assets/Icons/videoplayer/darkfullscreen.svg");
-    darkTheme->insert(iconPlayerCropModeField, "qrc:/Assets/Icons/videoplayer/darkresize.svg");
-    darkTheme->insert(iconPlayerSettingsField, "qrc:/Assets/Icons/videoplayer/darksettings.svg");
-    darkTheme->insert(iconPlayerRemoteField, "qrc:/Assets/Icons/videoplayer/darknetwork.svg");
-    darkTheme->insert(iconPlayerTopMostField, "qrc:/Assets/Icons/videoplayer/darktopmost.svg");
-    darkTheme->insert(iconPlayerRefreshField, "qrc:/Assets/Icons/videoplayer/darkreload.svg");
-    darkTheme->insert(iconPlayerInfoField, "qrc:/Assets/Icons/videoplayer/darkinfo.svg");
-    darkTheme->insert(iconPlayerMuteField, "qrc:/Assets/Icons/videoplayer/darkmuteon.svg");
-    darkTheme->insert(iconPlayerUnMuteField, "qrc:/Assets/Icons/videoplayer/darkmuteoff.svg");
-    darkTheme->insert(iconPlayerSeenField, "qrc:/Assets/Icons/videoplayer/seenmarkselected.svg");
-    darkTheme->insert(iconPlayerUnseenField, "qrc:/Assets/Icons/videoplayer/darkseenmark.svg");
-    darkTheme->insert(iconPlayerExternalField, "qrc:/Assets/Icons/videoplayer/darkexternalplayer.svg");
-    darkTheme->insert(iconPlayerPlayField, "qrc:/Assets/Icons/videoplayer/darkplay.svg");
-    darkTheme->insert(iconPlayerPauseField, "qrc:/Assets/Icons/videoplayer/darkpause.svg");
-    darkTheme->insert(iconPlayerJumpLeftField, "qrc:/Assets/Icons/videoplayer/darkleftjump.svg");
-    darkTheme->insert(iconPlayerJumpRightField, "qrc:/Assets/Icons/videoplayer/darkrightjump.svg");
-    darkTheme->insert(iconPlayerNextSeriaField, "qrc:/Assets/Icons/videoplayer/darknextseria.svg");
-    darkTheme->insert(iconPlayerPreviousSeriaField, "qrc:/Assets/Icons/videoplayer/darkpreviousseria.svg");
-    darkTheme->insert(iconPlayerDrawerField, "qrc:/Assets/Icons/videoplayer/darkmenu.svg");
-    darkTheme->insert(iconNotificationField, "qrc:/Assets/Icons/notification/darknotification.svg");
-    darkTheme->insert(iconNotificationSelectedField, "qrc:/Assets/Icons/notification/notificationselected.svg");
-    darkTheme->insert(iconLogoutField, "qrc:/Assets/Icons/logout.svg");
+    darkTheme->insert(iconMainMenuField, resourcePrefix + "/Icons/coloreddrawer.svg");
+    darkTheme->insert(iconMainMenuReleasesField, resourcePrefix + "/Icons/catalogmenu.svg");
+    darkTheme->insert(iconMainMenuCinemahallField, resourcePrefix + "/Icons/cinemahallmenu.svg");
+    darkTheme->insert(iconMainMenuReleasesSeriesField, resourcePrefix + "/Icons/seriesmenu.svg");
+    darkTheme->insert(iconMainMenuMaintenanceField, resourcePrefix + "/Icons/maintenance.svg");
+    darkTheme->insert(iconMainMenuMyAnilibriaField, resourcePrefix + "/Icons/house.svg");
+    darkTheme->insert(iconMainMenuVideoplayerField, resourcePrefix + "/Icons/videoplayermenu.svg");
+    darkTheme->insert(iconMainMenuDonateField, resourcePrefix + "/Icons/donate.svg");
+    darkTheme->insert(iconMainMenuThemeManagerField, resourcePrefix + "/Icons/themes.svg");
+    darkTheme->insert(iconMainMenuYoutubeField, resourcePrefix + "/Icons/youtube.svg");
+    darkTheme->insert(iconMainMenuTorrentStreamField, resourcePrefix + "/Icons/utorrent.svg");
+    darkTheme->insert(iconMainMenuAuthorizationField, resourcePrefix + "/Icons/user.svg");
+    darkTheme->insert(iconLeftHalfScreenField, resourcePrefix + "/Icons/coloredleftmenu.svg");
+    darkTheme->insert(iconRightHalfScreenField, resourcePrefix + "/Icons/coloredrightmenu.svg");
+    darkTheme->insert(iconMinimizeWindowField, resourcePrefix + "/Icons/grayedleftmenu.svg");
+    darkTheme->insert(iconMaximizeWindowField, resourcePrefix + "/Icons/grayedrightmenu.svg");
+    darkTheme->insert(iconNormalWindowField, resourcePrefix + "/Icons/gofromfullscreen.svg");
+    darkTheme->insert(iconCloseWindowField, resourcePrefix + "/Icons/coloredclosewindow.svg");
+    darkTheme->insert(iconFavoritesField, resourcePrefix + "/Icons/ratingcolor.svg");
+    darkTheme->insert(iconSeenField, resourcePrefix + "/Icons/coloredeye.svg");
+    darkTheme->insert(iconInfoField, resourcePrefix + "/Icons/information.svg");
+    darkTheme->insert(iconClearTextControlField, resourcePrefix + "/Icons/closewindowwhite.svg");
+    darkTheme->insert(iconBackToTopField, resourcePrefix + "/Icons/darkarrowup.svg");
+    darkTheme->insert(iconReleaseCatalogSynchronizationField, resourcePrefix + "/Icons/coloredrefresh.svg");
+    darkTheme->insert(iconReleaseCatalogSearchField, resourcePrefix + "/Icons/search.svg");
+    darkTheme->insert(iconReleaseCatalogNotificationField, resourcePrefix + "/Icons/coloredbell.svg");
+    darkTheme->insert(iconReleaseCatalogRandomField, resourcePrefix + "/Icons/coloreddice.svg");
+    darkTheme->insert(iconReleaseCatalogSettingsField, resourcePrefix + "/Icons/coloredsettings.svg");
+    darkTheme->insert(iconReleaseCatalogHidedButtonsField, resourcePrefix + "/Icons/hidebuttonmenu.svg");
+    darkTheme->insert(iconReleaseCatalogOnlineField, resourcePrefix + "/Icons/online.svg");
+    darkTheme->insert(iconReleaseCatalogTorrentField, resourcePrefix + "/Icons/utorrent.svg");
+    darkTheme->insert(iconReleaseCatalogScheduleField, resourcePrefix + "/Icons/calendarcolor.svg");
+    darkTheme->insert(iconReleaseCatalogHistoryField, resourcePrefix + "/Icons/history.svg");
+    darkTheme->insert(iconReleaseCatalogAlphabetField, resourcePrefix + "/Icons/alphabet.svg");
+    darkTheme->insert(iconReleaseCatalogAllReleasesField, resourcePrefix + "/Icons/allreleases.svg");
+    darkTheme->insert(iconReleaseCatalogCompilationField, resourcePrefix + "/Icons/listcustom.svg");
+    darkTheme->insert(iconReleaseCatalogSortAscField, resourcePrefix + "/Icons/darksortascending.svg");
+    darkTheme->insert(iconReleaseCatalogSortDescField, resourcePrefix + "/Icons/darksortdescending.svg");
+    darkTheme->insert(iconReleaseCardListMenuField, resourcePrefix + "/Icons/allreleases.svg");
+    darkTheme->insert(iconReleaseCardCloseField, resourcePrefix + "/Icons/coloredclosewindow.svg");
+    darkTheme->insert(iconReleaseCardCopyField, resourcePrefix + "/Icons/copy.svg");
+    darkTheme->insert(iconReleaseCardExternalField, resourcePrefix + "/Icons/external.svg");
+    darkTheme->insert(iconNavigationButtonLeftField, resourcePrefix + "/Icons/leftscroll.svg");
+    darkTheme->insert(iconNavigationButtonRightField, resourcePrefix + "/Icons/rightscroll.svg");
+    darkTheme->insert(iconMyAnilibriaButtonSortUpField, resourcePrefix + "/Icons/coloredsortup.svg");
+    darkTheme->insert(iconMyAnilibriaButtonSortBottomField, resourcePrefix + "/Icons/coloredsortdown.svg");
+    darkTheme->insert(iconMyAnilibriaButtonPlusField, resourcePrefix + "/Icons/plus.svg");
+    darkTheme->insert(iconMyAnilibriaButtonMinusField, resourcePrefix + "/Icons/minus.svg");
+    darkTheme->insert(iconMyAnilibriaButtonSortSectionsField, resourcePrefix + "/Icons/videos.svg");
+    darkTheme->insert(iconDeleteItemField, resourcePrefix + "/Icons/delete.svg");
+    darkTheme->insert(iconDownloadThemeField, resourcePrefix + "/Icons/downloadtheme.svg");
+    darkTheme->insert(iconEditThemeFieldPlusField, resourcePrefix + "/Icons/plus.svg");
+    darkTheme->insert(iconEmptyField, resourcePrefix + "/Icons/emptybox.svg");
+    darkTheme->insert(iconEditField, resourcePrefix + "/Icons/colorededit.svg");
+    darkTheme->insert(iconPlayerFullscreenField, resourcePrefix + "/Icons/videoplayer/darkfullscreen.svg");
+    darkTheme->insert(iconPlayerCropModeField, resourcePrefix + "/Icons/videoplayer/darkresize.svg");
+    darkTheme->insert(iconPlayerSettingsField, resourcePrefix + "/Icons/videoplayer/darksettings.svg");
+    darkTheme->insert(iconPlayerRemoteField, resourcePrefix + "/Icons/videoplayer/darknetwork.svg");
+    darkTheme->insert(iconPlayerTopMostField, resourcePrefix + "/Icons/videoplayer/darktopmost.svg");
+    darkTheme->insert(iconPlayerRefreshField, resourcePrefix + "/Icons/videoplayer/darkreload.svg");
+    darkTheme->insert(iconPlayerInfoField, resourcePrefix + "/Icons/videoplayer/darkinfo.svg");
+    darkTheme->insert(iconPlayerMuteField, resourcePrefix + "/Icons/videoplayer/darkmuteon.svg");
+    darkTheme->insert(iconPlayerUnMuteField, resourcePrefix + "/Icons/videoplayer/darkmuteoff.svg");
+    darkTheme->insert(iconPlayerSeenField, resourcePrefix + "/Icons/videoplayer/seenmarkselected.svg");
+    darkTheme->insert(iconPlayerUnseenField, resourcePrefix + "/Icons/videoplayer/darkseenmark.svg");
+    darkTheme->insert(iconPlayerExternalField, resourcePrefix + "/Icons/videoplayer/darkexternalplayer.svg");
+    darkTheme->insert(iconPlayerPlayField, resourcePrefix + "/Icons/videoplayer/darkplay.svg");
+    darkTheme->insert(iconPlayerPauseField, resourcePrefix + "/Icons/videoplayer/darkpause.svg");
+    darkTheme->insert(iconPlayerJumpLeftField, resourcePrefix + "/Icons/videoplayer/darkleftjump.svg");
+    darkTheme->insert(iconPlayerJumpRightField, resourcePrefix + "/Icons/videoplayer/darkrightjump.svg");
+    darkTheme->insert(iconPlayerNextSeriaField, resourcePrefix + "/Icons/videoplayer/darknextseria.svg");
+    darkTheme->insert(iconPlayerPreviousSeriaField, resourcePrefix + "/Icons/videoplayer/darkpreviousseria.svg");
+    darkTheme->insert(iconPlayerDrawerField, resourcePrefix + "/Icons/videoplayer/darkmenu.svg");
+    darkTheme->insert(iconNotificationField, resourcePrefix + "/Icons/notification/darknotification.svg");
+    darkTheme->insert(iconNotificationSelectedField, resourcePrefix + "/Icons/notification/notificationselected.svg");
+    darkTheme->insert(iconLogoutField, resourcePrefix + "/Icons/logout.svg");
     darkTheme->insert(colorTooltipTextField, "white");
     darkTheme->insert(colorSeenReleaseItemTextField, "green");
     darkTheme->insert(colorDrawerDividerColorField, "#1effffff");
     darkTheme->insert(colorDrawerDimColorField, "#99fafafa");
     darkTheme->insert(colorDrawerDialogColorField, "#424242");
-    darkTheme->insert(iconDisabledNotificationsField, "qrc:/Assets/Icons/coloredbell.svg");
-    darkTheme->insert(iconDisabledCinemahallField, "qrc:/Assets/Icons/cinemahallmenu.svg");
+    darkTheme->insert(iconDisabledNotificationsField, resourcePrefix + "/Icons/coloredbell.svg");
+    darkTheme->insert(iconDisabledCinemahallField, resourcePrefix + "/Icons/cinemahallmenu.svg");
+    darkTheme->insert(iconCustomGroupField, resourcePrefix + "/Icons/releases/customgroup.svg");
+    darkTheme->insert(iconReleaseCatalogSearchFoundedField, resourcePrefix + "/Icons/search.svg");
+    darkTheme->insert(iconCustomGroupFoundedField, resourcePrefix + "/Icons/releases/customgroup.svg");
+    darkTheme->insert(iconMainMenuApplicationsField, resourcePrefix + "/Icons/applications.svg");
+    darkTheme->insert(iconAuthorizationVkField, resourcePrefix + "/Icons/authorization/vk.svg");
+    darkTheme->insert(iconAuthorizationGoogleField, resourcePrefix + "/Icons/authorization/google.svg");
+    darkTheme->insert(iconAuthorizationPatreonField, resourcePrefix + "/Icons/authorization/patreon.svg");
+    darkTheme->insert(iconAuthorizationDiscordField, resourcePrefix + "/Icons/authorization/discord.svg");
+    darkTheme->insert(iconContextMenuField, resourcePrefix + "/Icons/contextmenu.svg");
+    darkTheme->insert(iconMagnetField, resourcePrefix + "/Icons/releases/magnet.svg");
+    darkTheme->insert(iconMainMenuExtensionsField, resourcePrefix + "/Icons/extensions.svg");
 
-    darkTheme->insert(iconCustomGroupField, "qrc:/Assets/Icons/releases/customgroup.svg");
+    darkTheme->insert(iconDisableGroupingField, resourcePrefix + "/Icons/releases/disablegrouping.svg");
+    darkTheme->insert(iconEnableGroupingField, resourcePrefix + "/Icons/releases/enablegrouping.svg");
+
+    darkTheme->insert(iconSubtitlesPopupField, resourcePrefix + "/Icons/videoplayer/darksubtitles.svg");
+
+    darkTheme->insert(backgroundsPagesField, "{}");
 
     darkTheme->insert(basedOnThemeField, m_darkTheme);
     darkTheme->insert(externalIdField, "");
@@ -399,7 +432,6 @@ ApplicationThemeViewModel::ApplicationThemeViewModel(QObject *parent)
     m_fields.append(colorPosterFilterField);
     m_fields.append(colorPopupBackgroundField);
     m_fields.append(colorPopupBackgroundShadowField);
-
     m_fields.append(colorSwitchHighlightedRippleField);
     m_fields.append(colorSwitchRippleField);
     m_fields.append(colorSwitchCheckedTrackField);
@@ -422,11 +454,9 @@ ApplicationThemeViewModel::ApplicationThemeViewModel(QObject *parent)
     m_fields.append(colorDrawerDividerColorField);
     m_fields.append(colorDrawerDimColorField);
     m_fields.append(colorDrawerDialogColorField);
-
     m_fields.append(colorComboBoxAccentField);
     m_fields.append(colorComboBoxHintField);
     m_fields.append(colorComboBoxBackgroundField);
-
     m_fields.append(iconMainMenuField);
     m_fields.append(iconMainMenuReleasesField);
     m_fields.append(iconMainMenuCinemahallField);
@@ -439,6 +469,7 @@ ApplicationThemeViewModel::ApplicationThemeViewModel(QObject *parent)
     m_fields.append(iconMainMenuYoutubeField);
     m_fields.append(iconMainMenuTorrentStreamField);
     m_fields.append(iconMainMenuAuthorizationField);
+    m_fields.append(iconMainMenuApplicationsField);
     m_fields.append(iconLeftHalfScreenField);
     m_fields.append(iconRightHalfScreenField);
     m_fields.append(iconMinimizeWindowField);
@@ -505,6 +536,19 @@ ApplicationThemeViewModel::ApplicationThemeViewModel(QObject *parent)
     m_fields.append(iconDisabledNotificationsField);
     m_fields.append(iconDisabledCinemahallField);
     m_fields.append(iconCustomGroupField);
+    m_fields.append(iconReleaseCatalogSearchFoundedField);
+    m_fields.append(iconCustomGroupFoundedField);
+    m_fields.append(iconAuthorizationVkField);
+    m_fields.append(iconAuthorizationGoogleField);
+    m_fields.append(iconAuthorizationPatreonField);
+    m_fields.append(iconAuthorizationDiscordField);
+    m_fields.append(iconContextMenuField);
+    m_fields.append(iconMainMenuExtensionsField);
+    m_fields.append(iconMagnetField);
+    m_fields.append(iconDisableGroupingField);
+    m_fields.append(iconEnableGroupingField);
+    m_fields.append(iconSubtitlesPopupField);
+    m_fields.append(backgroundsPagesField);
 
     m_fields.append(iconLogoutField);
     m_fields.append(externalIdField);
@@ -521,6 +565,7 @@ ApplicationThemeViewModel::ApplicationThemeViewModel(QObject *parent)
     connect(m_service, &ThemeManagerService::themesLoaded, this, &ApplicationThemeViewModel::themesLoaded);
     connect(m_service, &ThemeManagerService::themeLoaded, this, &ApplicationThemeViewModel::themeLoaded);
 
+    m_releasesPageBackground["activated"] = false;
     setCurrentItems();
 }
 
@@ -578,15 +623,124 @@ QVariantMap ApplicationThemeViewModel::previewItems() const noexcept
 
 void ApplicationThemeViewModel::setCurrentItems() noexcept
 {
-    m_currentItems.clear();
-
     auto theme = m_themes.value(m_selectedTheme);
 
     foreach (auto field, m_fields) {
-        m_currentItems.insert(field, theme->value(field));
+        if (field == backgroundsPagesField) continue; // omit background because it will be filled below
+
+        if (m_currentItems->contains(field)) {
+            m_currentItems->insert(field, theme->value(field));
+        } else {
+            (*m_currentItems)[field] = theme->value(field);
+        }
     }
 
     emit currentItemsChanged();
+
+    if (theme->contains(backgroundsPagesField)) {
+        auto json = theme->value(backgroundsPagesField);
+        if (json.isEmpty()) return;
+
+        m_releasesPageBackground = QVariantMap();
+        m_releasesPageBackground["activated"] = false;
+
+        m_videoPlayerPageBackground = QVariantMap();
+        m_videoPlayerPageBackground["activated"] = false;
+
+        m_myAnilibriaPageBackground = QVariantMap();
+        m_myAnilibriaPageBackground["activated"] = false;
+
+        m_cinemahallPageBackground = QVariantMap();
+        m_cinemahallPageBackground["activated"] = false;
+
+        m_linkedReleasesPageBackground = QVariantMap();
+        m_linkedReleasesPageBackground["activated"] = false;
+
+        m_torrentStreamPageBackground = QVariantMap();
+        m_torrentStreamPageBackground["activated"] = false;
+
+        m_themeManagerPageBackground = QVariantMap();
+        m_themeManagerPageBackground["activated"] = false;
+
+        m_maintenancePageBackground = QVariantMap();
+        m_maintenancePageBackground["activated"] = false;
+
+        m_applicationsPageBackground = QVariantMap();
+        m_applicationsPageBackground["activated"] = false;
+
+        m_extensionsPageBackground = QVariantMap();
+        m_extensionsPageBackground["activated"] = false;
+
+        try {
+            auto document = QJsonDocument::fromJson(json.toUtf8());
+            auto object = document.object();
+            foreach (auto key, object.keys()) {
+                if (key == "0") {
+                    auto item = object.value(key).toObject();
+                    auto map = fillBackgroundTheme(item);
+                    m_releasesPageBackground = map;
+                }
+                if (key == "1") {
+                    auto item = object.value(key).toObject();
+                    auto map = fillBackgroundTheme(item);
+                    m_videoPlayerPageBackground = map;
+                }
+                if (key == "2") {
+                    auto item = object.value(key).toObject();
+                    auto map = fillBackgroundTheme(item);
+                    m_myAnilibriaPageBackground = map;
+                }
+                if (key == "3") {
+                    auto item = object.value(key).toObject();
+                    auto map = fillBackgroundTheme(item);
+                    m_cinemahallPageBackground = map;
+                }
+                if (key == "4") {
+                    auto item = object.value(key).toObject();
+                    auto map = fillBackgroundTheme(item);
+                    m_linkedReleasesPageBackground = map;
+                }
+                if (key == "5") {
+                    auto item = object.value(key).toObject();
+                    auto map = fillBackgroundTheme(item);
+                    m_torrentStreamPageBackground = map;
+                }
+                if (key == "6") {
+                    auto item = object.value(key).toObject();
+                    auto map = fillBackgroundTheme(item);
+                    m_themeManagerPageBackground = map;
+                }
+                if (key == "8") {
+                    auto item = object.value(key).toObject();
+                    auto map = fillBackgroundTheme(item);
+                    m_maintenancePageBackground = map;
+                }
+                if (key == "9") {
+                    auto item = object.value(key).toObject();
+                    auto map = fillBackgroundTheme(item);
+                    m_applicationsPageBackground = map;
+                }
+                if (key == "10") {
+                    auto item = object.value(key).toObject();
+                    auto map = fillBackgroundTheme(item);
+                    m_extensionsPageBackground = map;
+                }
+            }
+        } catch(...) {
+            qDebug() << "Couldn't load theme backgrounds!";
+        }
+
+        emit releasesPageBackgroundChanged();
+        emit videoPlayerPageBackgroundChanged();
+        emit myAnilibriaPageBackgroundChanged();
+        emit cinemahallPageBackgroundChanged();
+        emit linkedReleasesPageBackgroundChanged();
+        emit torrentStreamPageBackgroundChanged();
+        emit themeManagerPageBackgroundChanged();
+        emit maintenancePageBackgroundChanged();
+        emit applicationsPageBackgroundChanged();
+        emit extensionsPageBackgroundChanged();
+    }
 }
 
 void ApplicationThemeViewModel::setNotAddCopyToName(bool notAddCopyToName) noexcept
@@ -847,7 +1001,7 @@ void ApplicationThemeViewModel::readCacheFile()
     }
 
     setSelectedTheme(selectedTheme);
-    if (m_currentItems.isEmpty()) setCurrentItems();
+    if (m_currentItems->isEmpty()) setCurrentItems();
 
     m_externalIds->clear();
     QMapIterator<QString, QMap<QString, QString>*> iterator(m_themes);
@@ -931,6 +1085,44 @@ void ApplicationThemeViewModel::emitAllFields()
     emit colorMaterialTextChanged();
     emit colorBackgroundNavigationButtonChanged();
     emit colorPageIndexTextChanged();
+
+
+}
+
+QVariantMap ApplicationThemeViewModel::fillBackgroundTheme(QJsonObject object)
+{
+    QVariantMap map;
+    map["url"] = object.value("url").toString();
+    map["imageMode"] = object.value("im").toInt();
+    map["alignmentMode"] = object.value("al").toInt();
+    map["opacity"] = object.value("op").toVariant();
+    auto alignMode = object.value("al").toInt();
+    map["halign"] = 1;
+    map["valign"] = 32;
+    switch (alignMode) {
+    case 1:
+        map["halign"] = 1;
+        map["valign"] = 32;
+        break;
+    case 2:
+        map["halign"] = 2;
+        map["valign"] = 32;
+        break;
+    case 3:
+        map["halign"] = 1;
+        map["valign"] = 64;
+        break;
+    case 4:
+        map["halign"] = 2;
+        map["valign"] = 64;
+        break;
+    case 5:
+        map["halign"] = 4;
+        map["valign"] = 128;
+        break;
+    }
+    map["activated"] = true;
+    return map;
 }
 
 void ApplicationThemeViewModel::themesLoaded()

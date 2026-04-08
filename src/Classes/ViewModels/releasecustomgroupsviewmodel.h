@@ -17,6 +17,7 @@ class ReleaseCustomGroupsViewModel : public QObject
     Q_PROPERTY(QVariantList releaseNotUsedGroups READ releaseNotUsedGroups NOTIFY releaseNotUsedGroupsChanged)
     Q_PROPERTY(QVariantList releaseUsedGroups READ releaseUsedGroups NOTIFY releaseUsedGroupsChanged)
     Q_PROPERTY(QString releaseGroupsLink READ releaseGroupsLink NOTIFY releaseGroupsLinkChanged)
+    Q_PROPERTY(bool hasGroupsSelected READ hasGroupsSelected NOTIFY hasGroupsSelectedChanged)
 
 private:
     const QString groupsCacheFileName { "groups.cache" };
@@ -49,6 +50,7 @@ public:
 
     QVariantList releaseNotUsedGroups() const noexcept { return m_releaseNotUsedGroups; }
     QVariantList releaseUsedGroups() const noexcept { return m_releaseUsedGroups; }
+    bool hasGroupsSelected() const noexcept { return !m_selectedGroups.isEmpty(); }
 
     Q_INVOKABLE void saveGroup(const QString& name) noexcept;
     Q_INVOKABLE void addReleaseIdToGroup(int index, int releaseId) noexcept;
@@ -77,6 +79,7 @@ signals:
     void releaseNotUsedGroupsChanged();
     void releaseUsedGroupsChanged();
     void releaseGroupsLinkChanged();
+    void hasGroupsSelectedChanged();
 
 };
 

@@ -20,7 +20,8 @@
 #define RELEASETORRENTSLIST_H
 
 #include <QObject>
-#include "../Models/releasetorrentmodel.h"
+#include <QAbstractListModel>
+#include "../Models/apitorrentmodel.h"
 
 class ReleaseTorrentsList : public QAbstractListModel
 {
@@ -34,8 +35,10 @@ private:
         SeriesRole,
         UrlRole,
         IdentifierRole,
+        TimeCreationRole,
+        MagnetRole
     };
-    QList<ReleaseTorrentModel*>* m_torrents { new QList<ReleaseTorrentModel*>() };
+    QList<ApiTorrentModel*>* m_torrents { new QList<ApiTorrentModel*>() };
 
 public:
     explicit ReleaseTorrentsList(QObject *parent = nullptr);
@@ -44,7 +47,9 @@ public:
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
     QHash<int,QByteArray> roleNames() const override;
 
-    Q_INVOKABLE void loadTorrentsFromJson(const QString& json);
+    QString getMagnetLink(int identifier) const noexcept;
+
+    Q_INVOKABLE void loadTorrentsFromJson(const QList<ApiTorrentModel*>& torrents);
 
 private:
     QString getReadableSize(long long size) const noexcept;

@@ -22,6 +22,7 @@
 #include <QStandardPaths>
 #include <QJsonDocument>
 #include <QJsonArray>
+#include <QJsonObject>
 #include <QUuid>
 #include <QDesktopServices>
 #include "../../globalhelpers.h"
@@ -54,10 +55,6 @@ OnlinePlayerViewModel::OnlinePlayerViewModel(QObject *parent) : QObject(parent),
     m_videoVolumeChangedCommand("volumechanged"),
     m_videoPlaybackCommand("playbackchanged"),
     m_seenModels(new QHash<int, SeenModel*>()),
-    m_navigateReleaseId(0),
-    m_customPlaylistPosition(-1),
-    m_navigateVideos(""),
-    m_navigatePoster(""),
     m_videoPosition(0),
     m_videoDuration(0),
     m_sendVolumeToRemote(false),
@@ -147,19 +144,40 @@ void OnlinePlayerViewModel::setDisplayEndVideoPosition(const QString &displayEnd
 
 void OnlinePlayerViewModel::setVideoSource(const QString &videoSource)
 {
-    if (videoSource == "") return;
+    if (m_videoSource == videoSource) return;
 
-    auto isLocalFile = videoSource.startsWith("file://");
-    auto source = !isLocalFile && m_needProxified && m_proxyPort > 0 ? QString("http://localhost:") + QString::number(m_proxyPort) + "/proxyvideolist?path=" + videoSource : videoSource;
-    if (m_videoSource == source) return;
+    QString innerVideoSource = videoSource;
+    //need to override server
+    if (m_videoServerOverride > 0) {
+        switch (m_videoServerOverride) {
+            case 1: // in RF
+                innerVideoSource = innerVideoSource.replace("cache.libria.fun", "cache-rfn.libria.fun");
+                break;
+            case 2: // not in RF
+                innerVideoSource = innerVideoSource.replace("cache-rfn.libria.fun", "cache.libria.fun");
+                break;
+        }
+    }
+
+    qDebug() << "setVideoSource: " << innerVideoSource;
 
     m_endSkipOpening = false;
     emit endSkipOpeningChanged();
 
-    m_videoSource = source;
+    m_videoSource = m_videoSourceProxy + innerVideoSource;
     emit videoSourceChanged();
 
-    m_remotePlayer->broadcastCommand(m_videoSourceChangedCommand, videoSource);
+    m_remotePlayer->broadcastCommand(m_videoSourceChangedCommand, innerVideoSource);
+
+    // reset duration and position to zero
+    m_videoPosition = 0;
+    m_videoDuration = 0;
+    m_displayVideoPosition = "00:00:00";
+    m_displayEndVideoPosition = "00:00:00";
+    emit videoPositionChanged();
+    emit videoDurationChanged();
+    emit displayVideoPositionChanged();
+    emit displayEndVideoPositionChanged();
 }
 
 void OnlinePlayerViewModel::setReleasePoster(const QString &releasePoster) noexcept
@@ -180,10 +198,17 @@ void OnlinePlayerViewModel::setIsFullHdAllowed(bool isFullHdAllowed) noexcept
 
 void OnlinePlayerViewModel::setSelectedVideo(int selectedVideo) noexcept
 {
+    qDebug() << "setSelectedVideo: " << selectedVideo;
     if (m_selectedVideo == selectedVideo) return;
 
     m_selectedVideo = selectedVideo;
     emit selectedVideoChanged();
+}
+
+void OnlinePlayerViewModel::setSelectedVideoId(const QString &selectedVideoId) noexcept
+{
+    m_selectedVideoId = selectedVideoId;
+    emit selectedVideoIdChanged();
 }
 
 void OnlinePlayerViewModel::setPositionIterator(int positionIterator) noexcept
@@ -241,44 +266,12 @@ void OnlinePlayerViewModel::setVolumeSlider(int volumeSlider) noexcept
     emit volumeSliderChanged();
 }
 
-void OnlinePlayerViewModel::setPlayerPlaybackState(int playerPlaybackState) noexcept
+void OnlinePlayerViewModel::setPlayerPlaybackState(const QString& playerPlaybackState) noexcept
 {
     if (m_playerPlaybackState == playerPlaybackState) return;
 
     m_playerPlaybackState = playerPlaybackState;
     emit playerPlaybackStateChanged();
-}
-
-void OnlinePlayerViewModel::setNavigateReleaseId(int navigateReleaseId) noexcept
-{
-    if (m_navigateReleaseId == navigateReleaseId) return;
-
-    m_navigateReleaseId = navigateReleaseId;
-    emit navigateReleaseIdChanged();
-}
-
-void OnlinePlayerViewModel::setCustomPlaylistPosition(int customPlaylistPosition) noexcept
-{
-    if (m_customPlaylistPosition == customPlaylistPosition) return;
-
-    m_customPlaylistPosition = customPlaylistPosition;
-    emit customPlaylistPositionChanged();
-}
-
-void OnlinePlayerViewModel::setNavigateVideos(const QString &navigateVideos)
-{
-    if (m_navigateVideos == navigateVideos) return;
-
-    m_navigateVideos = navigateVideos;
-    emit navigateVideosChanged();
-}
-
-void OnlinePlayerViewModel::setNavigatePoster(const QString &navigatePoster) noexcept
-{
-    if (m_navigatePoster == navigatePoster) return;
-
-    m_navigatePoster = navigatePoster;
-    emit navigatePosterChanged();
 }
 
 void OnlinePlayerViewModel::setVideoPosition(int position) noexcept
@@ -393,6 +386,7 @@ void OnlinePlayerViewModel::setNeedProxified(bool needProxified) noexcept
 
     m_needProxified = needProxified;
     emit needProxifiedChanged();
+    refreshVideoSourceProxy(m_videoSource);
 }
 
 void OnlinePlayerViewModel::setProxyPort(int proxyPort) noexcept
@@ -401,6 +395,7 @@ void OnlinePlayerViewModel::setProxyPort(int proxyPort) noexcept
 
     m_proxyPort = proxyPort;
     emit proxyPortChanged();
+    refreshVideoSourceProxy(m_videoSource);
 }
 
 void OnlinePlayerViewModel::setMuted(bool muted) noexcept
@@ -411,8 +406,74 @@ void OnlinePlayerViewModel::setMuted(bool muted) noexcept
     emit mutedChanged();
 }
 
+void OnlinePlayerViewModel::setNeedProxyFallback(bool needProxyFallback) noexcept
+{
+    if (m_needProxyFallback == needProxyFallback) return;
+
+    m_needProxyFallback = needProxyFallback;
+    emit needProxyFallbackChanged();
+}
+
+void OnlinePlayerViewModel::setVideoServerOverride(int videoServerOverride) noexcept
+{
+    if (m_videoServerOverride == videoServerOverride) return;
+
+    m_videoServerOverride = videoServerOverride;
+    emit videoServerOverrideChanged();
+}
+
+void OnlinePlayerViewModel::setIsMaximized(bool isMaximized) noexcept
+{
+    if (m_isMaximized == isMaximized) return;
+
+    m_isMaximized = isMaximized;
+    emit isMaximizedChanged();
+}
+
+void OnlinePlayerViewModel::setTorrentStream(const TorrentNotifierViewModel *torrentStream) noexcept
+{
+    if (m_torrentStream == torrentStream) return;
+
+    m_torrentStream = const_cast<TorrentNotifierViewModel *>(torrentStream);
+    emit torrentStreamChanged();
+}
+
+void OnlinePlayerViewModel::setRestoreVideoMode(int restoreVideoMode) noexcept
+{
+    if (m_restoreVideoMode == restoreVideoMode) return;
+
+    m_restoreVideoMode = restoreVideoMode;
+    emit restoreVideoModeChanged();
+}
+
+void OnlinePlayerViewModel::setReachEnding(bool reachEnding) noexcept
+{
+    if (m_reachEnding == reachEnding) return;
+
+    m_reachEnding = reachEnding;
+    emit reachEndingChanged();
+}
+
+void OnlinePlayerViewModel::setShowEmbeddedVideoWindow(bool showEmbeddedVideoWindow) noexcept
+{
+    if (m_showEmbeddedVideoWindow == showEmbeddedVideoWindow) return;
+
+    m_showEmbeddedVideoWindow = showEmbeddedVideoWindow;
+    emit showEmbeddedVideoWindowChanged();
+}
+
+void OnlinePlayerViewModel::setShowEmbeddedVideoWindowPanel(bool showEmbeddedVideoWindowPanel) noexcept
+{
+    if (m_showEmbeddedVideoWindowPanel == showEmbeddedVideoWindowPanel) return;
+
+    m_showEmbeddedVideoWindowPanel = showEmbeddedVideoWindowPanel;
+    emit showEmbeddedVideoWindowPanelChanged();
+}
+
 void OnlinePlayerViewModel::toggleFullScreen()
 {
+    if (!m_isFullScreen) m_wasMaximized = m_isMaximized;
+
     setIsFullScreen(!m_isFullScreen);
 }
 
@@ -441,6 +502,19 @@ void OnlinePlayerViewModel::changeVideoPosition(int duration, int position) noex
 
     setVideoPosition(position);
     setVideoDuration(duration);
+
+    if (m_reachEnding) return;
+
+    if (m_videos->hasEnding()) {
+        setReachEnding(m_videos->isPositionReachEnding(positionInSeconds));
+    } else {
+        if (duration > 0 && position > 0) {
+            double positionDouble = static_cast<double>(position);
+            double durationDouble = static_cast<double>(duration);
+            auto positionPercent = (positionDouble / durationDouble) * 100;
+            if (positionPercent >= 90) setReachEnding(true);
+        }
+    }
 }
 
 QString OnlinePlayerViewModel::checkExistingVideoQuality(int index)
@@ -453,6 +527,8 @@ QString OnlinePlayerViewModel::checkExistingVideoQuality(int index)
 
 void OnlinePlayerViewModel::nextVideo()
 {
+    if (m_selectedRelease == -1) return;
+
     setShowNextPosterRelease(false);
     setSeenMarkedAtEnd(false);
     setRestorePosition(0);
@@ -465,6 +541,7 @@ void OnlinePlayerViewModel::nextVideo()
         if (nextVideo == nullptr) return;
 
         setSelectedVideo(nextVideo->order());
+        setSelectedVideoId(nextVideo->uniqueId());
         video = nextVideo;
     } else {
         if (!m_isMultipleRelease) {
@@ -473,6 +550,7 @@ void OnlinePlayerViewModel::nextVideo()
             setSelectedVideo(m_selectedVideo + 1);
 
             video = m_videos->getVideoAtIndex(m_selectedVideo);
+            setSelectedVideoId(video->uniqueId());
         } else {
             auto selectedRelease = m_selectedRelease;
             auto selectedVideo = m_selectedVideo;
@@ -491,7 +569,7 @@ void OnlinePlayerViewModel::nextVideo()
             if (video->isGroup()) video = m_videos->getVideoAtIndex(currentIndex + 1);
 
             setSelectedVideo(video->order());
-
+            setSelectedVideoId(video->uniqueId());
         }
     }
 
@@ -504,6 +582,7 @@ void OnlinePlayerViewModel::nextVideo()
 
     m_videos->selectVideo(m_selectedRelease, m_selectedVideo);
 
+    if (m_reachEnding) setReachEnding(false);
     if (!m_isCinemahall) emit needScrollSeriaPosition();
 }
 
@@ -516,11 +595,11 @@ void OnlinePlayerViewModel::previousVideo()
     setIsFromNavigated(false);
 
     OnlineVideoModel* video;
-
     if (m_isCinemahall) {
         auto previousVideo = previousNotSeenVideo();
         if (previousVideo) {
             setSelectedVideo(previousVideo->order());
+            setSelectedVideoId(previousVideo->uniqueId());
             video = previousVideo;
         } else {
             return;
@@ -530,6 +609,7 @@ void OnlinePlayerViewModel::previousVideo()
         if (!m_isMultipleRelease) {
             setSelectedVideo(m_selectedVideo - 1);
             video = m_videos->getVideoAtIndex(m_selectedVideo);
+            setSelectedVideoId(video->uniqueId());
         } else {
             auto selectedRelease = m_selectedRelease;
             auto selectedVideo = m_selectedVideo;
@@ -551,7 +631,7 @@ void OnlinePlayerViewModel::previousVideo()
             }
 
             setSelectedVideo(video->order());
-
+            setSelectedVideoId(video->uniqueId());
         }
     }
 
@@ -564,6 +644,7 @@ void OnlinePlayerViewModel::previousVideo()
 
     m_videos->selectVideo(m_selectedRelease, m_selectedVideo);
 
+    if (m_reachEnding) setReachEnding(false);
     if (!m_isCinemahall) emit needScrollSeriaPosition();
 }
 
@@ -632,80 +713,60 @@ void OnlinePlayerViewModel::setVideoSeens(int id, int videoId, double videoPosit
 
 void OnlinePlayerViewModel::quickSetupForSingleRelease(int releaseId, int customPosition)
 {
-    setShowNextPosterRelease(false);
-    setSeenMarkedAtEnd(false);
-    setIsCinemahall(false);
-    setIsMultipleRelease(false);
+    preparePlayerForNewMode("");
 
     auto release = m_releasesViewModel->getReleaseById(releaseId);
-    m_navigateReleaseId = releaseId;
-    m_navigatePoster = release->poster();
-    m_navigateVideos = release->videos();
-    m_customPlaylistPosition = customPosition;
+    auto poster = release->poster();
 
     QDateTime timestamp;
-    timestamp.setTime_t(release->timestamp());
+    timestamp.setSecsSinceEpoch(release->timestamp());
     auto year = timestamp.date().year();
     m_isReleaseLess2022 = year > 0 && year < 2022;
 
-    m_videos->setVideosFromSingleList(m_navigateVideos, m_navigateReleaseId, m_navigatePoster);
+    m_videos->setVideosFromSingleList(releaseId);
 
-    setReleasePoster(m_navigatePoster);
-    setSelectedRelease(m_navigateReleaseId);
+    setReleasePoster(poster);
+    setSelectedRelease(releaseId);
 
     int videoIndex = 0;
-    if (m_seenModels->contains(m_navigateReleaseId)) {
-        auto model = m_seenModels->value(m_navigateReleaseId);
+    if (m_seenModels->contains(releaseId)) {
+        auto model = m_seenModels->value(releaseId);
         videoIndex = model->videoId();
     }
 
-    if (m_customPlaylistPosition > -1) videoIndex = m_customPlaylistPosition;
+    // check if have watched videos behind current
+    if (m_restoreVideoMode == 1) {
+        auto newVideoIndex = findNextNotWatchVideo(releaseId, videoIndex);
+        if (newVideoIndex != videoIndex) videoIndex = newVideoIndex;
+    }
+
+    if (customPosition > -1) videoIndex = customPosition;
 
     auto firstVideo = m_videos->getVideoAtIndex(videoIndex);
 
-    setSelectedVideo(firstVideo->order());
-    setIsFullHdAllowed(!firstVideo->fullhd().isEmpty());
-    setVideoSource(getVideoFromQuality(firstVideo));
-    setRutubeIdentifier(firstVideo);
-
-    m_videos->selectVideo(m_selectedRelease, m_selectedVideo);
-
-    emit refreshSeenMarks();
-    emit playInPlayer();
-    emit saveToWatchHistory(m_navigateReleaseId);
-    emit needScrollSeriaPosition();
-    emit isReleaseLess2022Changed();
-    m_releasesViewModel->resetReleaseChanges(m_selectedRelease);
+    preparePlayerForNewRelease(firstVideo);
 }
 
 void OnlinePlayerViewModel::quickSetupForSingleTorrentRelease(int releaseId, int index, int port)
 {
+    preparePlayerForNewMode(m_streamingTorrentMode);
+
     auto release = m_releasesViewModel->getReleaseById(releaseId);
-    m_navigateReleaseId = releaseId;
-    m_navigatePoster = release->poster();
-    m_navigateVideos = "";
-    m_customPlaylistPosition = -1;
 
-    auto torents = release->torrents();
+    auto torrents = m_releasesViewModel->getReleaseTorrents(releaseId);
 
-    auto document = QJsonDocument::fromJson(torents.toUtf8());
-    auto torrentsArray = document.array();
+    if (index >= torrents.count()) return;
 
-    if (index >= torrentsArray.count()) return;
+    auto torrentItem = torrents[index];
 
-    auto torrentItem = torrentsArray[index];
+    m_videos->setVideosFromSingleTorrent(*torrentItem, releaseId, release->poster(), port, m_torrentStream);
 
-    ReleaseTorrentModel torrent;
-    torrent.readFromApiModel(torrentItem.toObject());
-
-    m_videos->setVideosFromSingleTorrent(torrent, releaseId, release->poster(), port);
-
-    setReleasePoster(m_navigatePoster);
-    setSelectedRelease(m_navigateReleaseId);
+    setReleasePoster(release->poster());
+    setSelectedRelease(releaseId);
 
     int videoIndex = 0;
-    if (m_seenModels->contains(m_navigateReleaseId)) {
-        auto model = m_seenModels->value(m_navigateReleaseId);
+    if (m_seenModels->contains(releaseId)) {
+        auto model = m_seenModels->value(releaseId);
         videoIndex = model->videoId();
     }
 
@@ -713,22 +774,13 @@ void OnlinePlayerViewModel::quickSetupForSingleTorrentRelease(int releaseId, int
 
     if (firstVideo == nullptr) firstVideo = m_videos->getVideoAtIndex(0);
 
-    setSelectedVideo(firstVideo->order());
-    setIsFullHdAllowed(!firstVideo->fullhd().isEmpty());
-    setVideoSource(getVideoFromQuality(firstVideo));
-    setRutubeIdentifier(firstVideo);
-
-    m_videos->selectVideo(m_selectedRelease, m_selectedVideo);
-
-    emit refreshSeenMarks();
-    emit playInPlayer();
-    emit saveToWatchHistory(m_navigateReleaseId);
-    emit needScrollSeriaPosition();
-    m_releasesViewModel->resetReleaseChanges(m_selectedRelease);
+    preparePlayerForNewRelease(firstVideo);
 }
 
 void OnlinePlayerViewModel::quickSetupForMultipleRelease(const QList<int> releaseIds)
 {
+    preparePlayerForNewMode(m_multipleReleasesMode);
+
     QList<FullReleaseModel*> releases;
     foreach (auto releaseId, releaseIds) {
         releases.append(m_releasesViewModel->getReleaseById(releaseId));
@@ -750,24 +802,13 @@ void OnlinePlayerViewModel::quickSetupForMultipleRelease(const QList<int> releas
 
     setSelectedRelease(video->releaseId());
     setReleasePoster(video->releasePoster());
-    setSelectedVideo(video->order());
-    setIsFullHdAllowed(!video->fullhd().isEmpty());
-    setVideoSource(getVideoFromQuality(video));
-    setRutubeIdentifier(video);
-    m_videos->selectVideo(m_selectedRelease, m_selectedVideo);
 
-    emit refreshSeenMarks();
-    emit playInPlayer();
-    emit needScrollSeriaPosition();
-    emit saveToWatchHistory(video->releaseId());
+    preparePlayerForNewRelease(video);
 }
 
 void OnlinePlayerViewModel::quickSetupForFavoritesCinemahall()
 {
-    setSeenMarkedAtEnd(false);
-    setShowNextPosterRelease(false);
-    setIsCinemahall(true);
-    setIsMultipleRelease(false);
+    preparePlayerForNewMode(m_cinemahallMode);
 
     QList<FullReleaseModel*> fullReleases;
     m_releasesViewModel->getFavoritesReleases(&fullReleases);
@@ -780,7 +821,7 @@ void OnlinePlayerViewModel::quickSetupForFavoritesCinemahall()
         [seenMarks](OnlineVideoModel* video) {
             if (video->isGroup()) return false;
 
-            return !seenMarks->contains(QString::number(video->releaseId()) + "." + QString::number(video->order()));
+            return !seenMarks.contains(video->uniqueId());
         }
     );
 
@@ -792,102 +833,13 @@ void OnlinePlayerViewModel::quickSetupForFavoritesCinemahall()
 
     setSelectedRelease(video->releaseId());
     setReleasePoster(video->releasePoster());
-    setSelectedVideo(video->order());
-    setIsFullHdAllowed(!video->fullhd().isEmpty());
-    setVideoSource(getVideoFromQuality(video));
-    setRutubeIdentifier(video);
-    m_videos->selectVideo(m_selectedRelease, m_selectedVideo);
-    emit playInPlayer();
-    emit needScrollSeriaPosition();
-    emit saveToWatchHistory(video->releaseId());
-}
 
-void OnlinePlayerViewModel::setupForSingleRelease()
-{
-    setShowNextPosterRelease(false);
-    setSeenMarkedAtEnd(false);
-    setIsCinemahall(false);
-    setIsMultipleRelease(false);
-
-    m_videos->setVideosFromSingleList(m_navigateVideos, m_navigateReleaseId, m_navigatePoster);
-
-    setReleasePoster(m_navigatePoster);
-    setSelectedRelease(m_navigateReleaseId);
-
-    int videoIndex = 0;
-    if (m_seenModels->contains(m_navigateReleaseId)) {
-        auto model = m_seenModels->value(m_navigateReleaseId);
-        videoIndex = model->videoId();
-    }
-
-    if (m_customPlaylistPosition > -1) videoIndex = m_customPlaylistPosition;
-
-    auto firstVideo = m_videos->getVideoAtIndex(videoIndex);
-
-    setSelectedVideo(firstVideo->order());
-    setIsFullHdAllowed(!firstVideo->fullhd().isEmpty());
-    setVideoSource(getVideoFromQuality(firstVideo));
-    setRutubeIdentifier(firstVideo);
-
-    m_videos->selectVideo(m_selectedRelease, m_selectedVideo);
-
-    emit refreshSeenMarks();
-    emit playInPlayer();
-    emit saveToWatchHistory(m_navigateReleaseId);
-    emit needScrollSeriaPosition();
-
-    m_releasesViewModel->resetReleaseChanges(m_selectedRelease);
-}
-
-void OnlinePlayerViewModel::setupForMultipleRelease()
-{
-    auto selectedReleases = m_releasesViewModel->items()->getSelectedReleases();
-
-    QList<FullReleaseModel*> releases;
-
-    foreach (auto selectedRelease, *selectedReleases) {
-        releases.append(m_releasesViewModel->getReleaseById(selectedRelease));
-    }
-    foreach (auto fullRelease, releases) m_releasesViewModel->resetReleaseChanges(fullRelease->id());
-    setSeenMarkedAtEnd(false);
-    setShowNextPosterRelease(false);
-    setIsCinemahall(false);
-    setIsMultipleRelease(true);
-
-    m_videos->setVideosFromCinemahall(std::move(releases));
-
-    auto video = m_videos->getFirstReleaseWithPredicate(
-        [](OnlineVideoModel* video) {
-            return !video->isGroup();
-        }
-    );
-
-    if (video == nullptr) {
-        setVideoSource("");
-        clearRutubeIdentifier();
-        return;
-    }
-
-    setSelectedRelease(video->releaseId());
-    setReleasePoster(video->releasePoster());
-    setSelectedVideo(video->order());
-    setIsFullHdAllowed(!video->fullhd().isEmpty());
-    setVideoSource(getVideoFromQuality(video));
-    setRutubeIdentifier(video);
-    m_videos->selectVideo(m_selectedRelease, m_selectedVideo);
-
-    emit refreshSeenMarks();
-    emit playInPlayer();
-    emit needScrollSeriaPosition();
-    emit saveToWatchHistory(video->releaseId());
+    preparePlayerForNewRelease(video);
 }
 
 void OnlinePlayerViewModel::setupForCinemahall()
 {
-    setSeenMarkedAtEnd(false);
-    setShowNextPosterRelease(false);
-    setIsCinemahall(true);
-    setIsMultipleRelease(false);
+    preparePlayerForNewMode(m_cinemahallMode);
 
     auto fullReleases = m_releasesViewModel->cinemahall()->getCinemahallReleases();
     foreach (auto fullRelease, fullReleases) m_releasesViewModel->resetReleaseChanges(fullRelease->id());
@@ -899,7 +851,7 @@ void OnlinePlayerViewModel::setupForCinemahall()
         [seenMarks](OnlineVideoModel* video) {
             if (video->isGroup()) return false;
 
-            return !seenMarks->contains(QString::number(video->releaseId()) + "." + QString::number(video->order()));
+            return !seenMarks.contains(video->uniqueId());
         }
     );
 
@@ -911,46 +863,32 @@ void OnlinePlayerViewModel::setupForCinemahall()
 
     setSelectedRelease(video->releaseId());
     setReleasePoster(video->releasePoster());
-    setSelectedVideo(video->order());
-    setIsFullHdAllowed(!video->fullhd().isEmpty());
-    setVideoSource(getVideoFromQuality(video));
-    setRutubeIdentifier(video);
-    m_videos->selectVideo(m_selectedRelease, m_selectedVideo);
-    emit playInPlayer();
-    emit needScrollSeriaPosition();
-    emit saveToWatchHistory(video->releaseId());
+
+    preparePlayerForNewRelease(video);
 }
 
-QString OnlinePlayerViewModel::getReleasesSeenMarks(QList<int> ids)
+void OnlinePlayerViewModel::quickSetupForSingleDownloadedTorrent(const QStringList &files, int releaseId) noexcept
 {
-    QJsonObject result;
-    QHashIterator<QString, bool> iterator(*m_releasesViewModel->getSeenMarks());
+    preparePlayerForNewMode(m_streamingTorrentMode);
 
-    while(iterator.hasNext()) {
-        auto seenMark = iterator.next();
-        auto key = seenMark.key();
-        auto parts = key.split(".");
-        auto releaseId = parts.at(0).toInt();
-        auto releseIdString = QString::number(releaseId);
-        auto videoId = parts.at(1).toInt();
+    auto release = m_releasesViewModel->getReleaseById(releaseId);
 
-        if (!ids.contains(releaseId)) continue;
+    m_videos->setVideosFromDownloadedTorrent(files, releaseId, release->poster());
 
-        if (result.contains(releseIdString)) {
-            auto releaseObject = result.value(releseIdString);
-            auto object = releaseObject.toObject();
-            auto key = QString::number(videoId);
-            object.insert(key, QJsonValue(true));
-            result[releseIdString] = object;
-        } else {
-            QJsonObject releaseSeens;
-            releaseSeens.insert(QString::number(videoId), QJsonValue(true));
-            result.insert(releseIdString, releaseSeens);
-        }
+    setReleasePoster(release->poster());
+    setSelectedRelease(releaseId);
+
+    int videoIndex = 0;
+    if (m_seenModels->contains(releaseId)) {
+        auto model = m_seenModels->value(releaseId);
+        videoIndex = model->videoId();
     }
 
-    QJsonDocument document(result);
-    return document.toJson();
+    auto firstVideo = m_videos->getVideoAtIndex(videoIndex);
+
+    if (firstVideo == nullptr) firstVideo = m_videos->getVideoAtIndex(0);
+
+    preparePlayerForNewRelease(firstVideo);
 }
 
 void OnlinePlayerViewModel::selectVideo(int releaseId, int videoId)
@@ -958,6 +896,7 @@ void OnlinePlayerViewModel::selectVideo(int releaseId, int videoId)
     setShowNextPosterRelease(false);
     setSeenMarkedAtEnd(false);
     setSelectedVideo(videoId);
+
     setSelectedRelease(releaseId);
     setIsFromNavigated(false);
 
@@ -966,6 +905,7 @@ void OnlinePlayerViewModel::selectVideo(int releaseId, int videoId)
             return video->releaseId() == releaseId && video->order() == videoId;
         }
     );
+    setSelectedVideoId(video->uniqueId());
 
     setIsFullHdAllowed(!video->fullhd().isEmpty());
     setVideoSource(getVideoFromQuality(video));
@@ -974,6 +914,8 @@ void OnlinePlayerViewModel::selectVideo(int releaseId, int videoId)
 
     m_videos->selectVideo(releaseId, videoId);
 
+    if (m_reachEnding) setReachEnding(false);
+    if (m_displaySkipOpening) setDisplaySkipOpening(false);
     emit playInPlayer();
 }
 
@@ -1068,6 +1010,11 @@ void OnlinePlayerViewModel::reloadCurrentVideo() noexcept
     setRestorePosition(m_videoPosition);
     auto videoSource = m_videoSource;
     setVideoSource("");
+    if (videoSource.startsWith("http://localhost:")) {
+        auto index = videoSource.indexOf("path=") + 5;
+        videoSource = videoSource.mid(index);
+    }
+
     setVideoSource(videoSource);
 }
 
@@ -1083,43 +1030,6 @@ void OnlinePlayerViewModel::openVideoInExternalPlayer(const QString& path) noexc
     manager->get(request);
 }
 
-void OnlinePlayerViewModel::quickSetupForSingleDownloadedTorrent(const QStringList &files, int releaseId) noexcept
-{
-    auto release = m_releasesViewModel->getReleaseById(releaseId);
-    m_navigateReleaseId = releaseId;
-    m_navigatePoster = release->poster();
-    m_navigateVideos = "";
-    m_customPlaylistPosition = -1;
-
-    m_videos->setVideosFromDownloadedTorrent(files, releaseId, release->poster());
-
-    setReleasePoster(m_navigatePoster);
-    setSelectedRelease(m_navigateReleaseId);
-
-    int videoIndex = 0;
-    if (m_seenModels->contains(m_navigateReleaseId)) {
-        auto model = m_seenModels->value(m_navigateReleaseId);
-        videoIndex = model->videoId();
-    }
-
-    auto firstVideo = m_videos->getVideoAtIndex(videoIndex);
-
-    if (firstVideo == nullptr) firstVideo = m_videos->getVideoAtIndex(0);
-
-    setSelectedVideo(firstVideo->order());
-    setIsFullHdAllowed(!firstVideo->fullhd().isEmpty());
-    setVideoSource(getVideoFromQuality(firstVideo));
-    setRutubeIdentifier(firstVideo);
-
-    m_videos->selectVideo(m_selectedRelease, m_selectedVideo);
-
-    emit refreshSeenMarks();
-    emit playInPlayer();
-    emit saveToWatchHistory(m_navigateReleaseId);
-    emit needScrollSeriaPosition();
-    m_releasesViewModel->resetReleaseChanges(m_selectedRelease);
-}
-
 bool OnlinePlayerViewModel::releaseHasVideos(int releaseId) noexcept
 {
     auto release = m_releasesViewModel->getReleaseById(releaseId);
@@ -1133,7 +1043,33 @@ bool OnlinePlayerViewModel::releaseIsRutube(int releaseId) noexcept
     auto release = m_releasesViewModel->getReleaseById(releaseId);
     if (release == nullptr) return false;
 
-    return isRutubeHasVideos(release->videos());
+    //TODO: remake on new model
+    return false;
+}
+
+void OnlinePlayerViewModel::restoreLastRelease() noexcept
+{
+    if (!m_firstRun) return;
+
+    m_firstRun = false;
+
+    auto lastSeenReleaseId = getLastVideoSeen();
+    if (lastSeenReleaseId == 0) return;
+
+    quickSetupForSingleRelease(lastSeenReleaseId);
+}
+
+void OnlinePlayerViewModel::clearPanelTimer() noexcept
+{
+    m_panelTimerCounter = 0;
+}
+
+void OnlinePlayerViewModel::increasePanelTimer() noexcept
+{
+    m_panelTimerCounter++;
+    if (m_panelTimerCounter > 15) {
+        emit hidePanelIfItVisible();
+    }
 }
 
 void OnlinePlayerViewModel::saveVideoSeens()
@@ -1196,13 +1132,13 @@ QString OnlinePlayerViewModel::getVideoFromQuality(OnlineVideoModel *video)
         return video->fullhd();
     }
 
-    if (!video->sd().isEmpty()) {
-        setVideoQuality("sd");
-        return video->sd();
-    }
     if (!video->hd().isEmpty()) {
         setVideoQuality("hd");
         return video->hd();
+    }
+    if (!video->sd().isEmpty()) {
+        setVideoQuality("sd");
+        return video->sd();
     }
     if (!video->fullhd().isEmpty()) {
         setVideoQuality("fullhd");
@@ -1233,8 +1169,7 @@ OnlineVideoModel* OnlinePlayerViewModel::nextNotSeenVideo()
             if (videoIndex <= currentIndex) return false;
             if (video->isGroup()) return false;
 
-            auto key = QString::number(video->releaseId()) + "." + QString::number(video->order());
-            if (seenMarks->contains(key)) return false;
+            if (seenMarks.contains(video->uniqueId())) return false;
 
             return true;
         }
@@ -1265,8 +1200,7 @@ OnlineVideoModel *OnlinePlayerViewModel::previousNotSeenVideo()
             auto videoIndex = videos->getVideoIndex(video);
             if (videoIndex >= currentIndex) return false;
 
-            auto key = QString::number(video->releaseId()) + "." + QString::number(video->order());
-            if (seenMarks->contains(key)) return false;
+            if (seenMarks.contains(video->uniqueId())) return false;
 
             return true;
         },
@@ -1297,7 +1231,7 @@ void OnlinePlayerViewModel::receiveCommand(const unsigned int id, const QString 
     }
     if (command == "getcurrentplayback" && m_sendPlaybackToRemoteSwitch){
         qDebug() << "m_playerPlaybackState: " << m_playerPlaybackState;
-        if (m_playerPlaybackState == 3) m_remotePlayer->sendCommandToUser(id, m_videoPlaybackCommand, "pause");
+        if (m_playerPlaybackState == "3") m_remotePlayer->sendCommandToUser(id, m_videoPlaybackCommand, "pause");
     }
 }
 
@@ -1315,7 +1249,8 @@ void OnlinePlayerViewModel::loadSeens()
 
     foreach (auto item, jsonSeens) {
         SeenModel* seenModel = new SeenModel();
-        seenModel->readFromJson(item);
+        auto object = item.toObject();
+        seenModel->readFromJson(object);
         if (!m_seenModels->contains(seenModel->id())) {
             m_seenModels->insert(seenModel->id(), seenModel);
         }
@@ -1350,6 +1285,94 @@ void OnlinePlayerViewModel::setRutubeIdentifier(const OnlineVideoModel *video) n
 void OnlinePlayerViewModel::clearRutubeIdentifier() noexcept
 {
     setRutubeVideoId("");
+}
+
+int OnlinePlayerViewModel::findNextNotWatchVideo(int releaseId, int videoIndex) noexcept
+{
+    auto videos = m_releasesViewModel->getReleaseVideos(releaseId);
+    auto seenModels = m_releasesViewModel->getSeenMarks();
+    auto videosCount = videos.count();
+    auto isEndVideo = videoIndex == videosCount - 1;
+    if (isEndVideo) return videoIndex;
+
+    std::sort(
+        videos.begin(),
+        videos.end(),
+        [](ReleaseOnlineVideoModel * left, ReleaseOnlineVideoModel * right) {
+            return left->order() < right->order();
+        }
+    );
+
+    for (int i = videoIndex; i < videosCount; i++) {
+        auto unique = videos.value(i)->uniqueId();
+        //first not watched video
+        if (!seenModels.contains(unique)) return i;
+
+        auto seenMark = seenModels.value(unique);
+        auto isSeen = std::get<0>(seenMark);
+        auto seenTime = std::get<1>(seenMark);
+        //if not seen and time greather zero
+        if (!isSeen && seenTime > 0) return i;
+    }
+
+    return videoIndex;
+}
+
+void OnlinePlayerViewModel::refreshVideoSourceProxy(const QString& newVideoSource) noexcept
+{
+    if (newVideoSource.isEmpty()) {
+        m_videoSourceProxy = "";
+        return;
+    }
+
+    if (newVideoSource.startsWith("file://") && !m_videoSourceProxy.isEmpty()) {
+        m_videoSourceProxy = "";
+        return;
+    }
+
+    if (m_isStreamingTorrents) {
+        m_videoSourceProxy = "";
+        return;
+    }
+
+    if (m_needProxified && m_proxyPort > 0) {
+        auto needFallback = m_needProxyFallback ? "fallback=true&" : "";
+        m_videoSourceProxy = QString("http://localhost:") + QString::number(m_proxyPort) + "/proxyvideolist?" + needFallback + "path=";
+        return;
+    }
+
+    m_videoSourceProxy = "";
+}
+
+void OnlinePlayerViewModel::preparePlayerForNewMode(const QString& mode)
+{
+    m_firstRun = false;
+    setShowNextPosterRelease(false);
+    setSeenMarkedAtEnd(false);
+    setReachEnding(false);
+    setIsCinemahall(mode == m_cinemahallMode);
+    setIsMultipleRelease(mode == m_multipleReleasesMode);
+    m_isStreamingTorrents = mode == m_streamingTorrentMode;
+}
+
+void OnlinePlayerViewModel::preparePlayerForNewRelease(OnlineVideoModel* video)
+{
+    setSelectedVideo(video->order());
+    setSelectedVideoId(video->uniqueId());
+    setIsFullHdAllowed(!video->fullhd().isEmpty());
+    auto videoSource = getVideoFromQuality(video);
+    refreshVideoSourceProxy(videoSource);
+    setVideoSource(videoSource);
+    setRutubeIdentifier(video);
+
+    m_videos->selectVideo(m_selectedRelease, m_selectedVideo);
+
+    emit refreshSeenMarks();
+    emit playInPlayer();
+    emit saveToWatchHistory(m_selectedRelease);
+    emit needScrollSeriaPosition();
+    emit isReleaseLess2022Changed();
+    m_releasesViewModel->resetReleaseChanges(m_selectedRelease);
 }
 
 void OnlinePlayerViewModel::downloadPlaylist(QNetworkReply * reply)

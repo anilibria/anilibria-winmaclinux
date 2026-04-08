@@ -19,9 +19,17 @@
 #include "applicationsettings.h"
 #include <QCoreApplication>
 
+#ifdef Q_OS_LINUX
+#include <QStandardPaths>
+#endif
+
 ApplicationSettings::ApplicationSettings(QObject *parent) : QObject(parent)
 {
-    m_Settings = new QSettings;
+#ifdef Q_OS_LINUX
+    m_Settings = new QSettings(QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation) + "/AnilibriaDesktopClient.conf", QSettings::IniFormat, this);
+#else
+    m_Settings = new QSettings();
+#endif
 }
 
 QString ApplicationSettings::userToken()

@@ -16,7 +16,6 @@ class MainViewModel : public QObject
     Q_PROPERTY(QString currentPageDisplayName READ currentPageDisplayName WRITE setCurrentPageDisplayName NOTIFY currentPageDisplayNameChanged)
     Q_PROPERTY(bool isReleasesPageVisible READ isReleasesPageVisible NOTIFY isReleasesPageVisibleChanged)
     Q_PROPERTY(bool isOnlinePlayerPageVisible READ isOnlinePlayerPageVisible NOTIFY isOnlinePlayerPageVisibleChanged)
-    Q_PROPERTY(bool isYoutubePageVisible READ isYoutubePageVisible NOTIFY isYoutubePageVisibleChanged)
     Q_PROPERTY(bool isAboutPageVisible READ isAboutPageVisible NOTIFY isAboutPageVisibleChanged)
     Q_PROPERTY(bool isCinemahallPageVisible READ isCinemahallPageVisible NOTIFY isCinemahallPageVisibleChanged)
     Q_PROPERTY(bool isDownloadPageVisible READ isDownloadPageVisible NOTIFY isDownloadPageVisibleChanged)
@@ -27,6 +26,8 @@ class MainViewModel : public QObject
     Q_PROPERTY(bool isThemeManagerVisible READ isThemeManagerVisible NOTIFY isThemeManagerVisibleChanged)
     Q_PROPERTY(bool isSmallSizeMode READ isSmallSizeMode WRITE setIsSmallSizeMode NOTIFY isSmallSizeModeChanged)
     Q_PROPERTY(bool isTorrentStreamPageVisible READ isTorrentStreamPageVisible NOTIFY isTorrentStreamPageVisibleChanged)
+    Q_PROPERTY(bool isApplicationsPageVisible READ isApplicationsPageVisible NOTIFY isApplicationsPageVisibleChanged)
+    Q_PROPERTY(bool isExtensionsPageVisible READ isExtensionsPageVisible NOTIFY isExtensionsPageVisibleChanged)
     Q_PROPERTY(bool hasBackHistory READ hasBackHistory NOTIFY hasBackHistoryChanged)
     Q_PROPERTY(bool hasForwardHistory READ hasForwardHistory NOTIFY hasForwardHistoryChanged)
     Q_PROPERTY(QString startPage READ startPage WRITE setStartPage NOTIFY startPageChanged)
@@ -36,6 +37,8 @@ class MainViewModel : public QObject
     Q_PROPERTY(QVariantList otherLeftToolbar  READ otherLeftToolbar NOTIFY otherLeftToolbarChanged)
     Q_PROPERTY(QString dropIndex READ dropIndex WRITE setDropIndex NOTIFY dropIndexChanged)
     Q_PROPERTY(QString dragIndex READ dragIndex WRITE setDragIndex NOTIFY dragIndexChanged)
+    Q_PROPERTY(QString globalTextFont READ globalTextFont WRITE setGlobalTextFont NOTIFY globalTextFontChanged)
+    Q_PROPERTY(QStringList fontFamilies READ fontFamilies NOTIFY fontFamiliesChanged FINAL)
 
 private:
     MainMenuListModel* m_mainMenuListModel { new MainMenuListModel(this) };
@@ -54,8 +57,10 @@ private:
     QVariantList m_leftToolbar { QVariantList() };
     bool m_editLeftToolbar { false };
     QVariantList m_otherLeftToolbar { QVariantList() };
-    QString m_dropIndex { -1 };
-    QString m_dragIndex { -1 };
+    QString m_dropIndex { "" };
+    QString m_dragIndex { "" };
+    QString m_globalTextFont { "" };
+    QStringList m_fontFamilies { QStringList() };
     const QString addItemButton { "additem" };
     const QString removeItemButton { "removeitem" };
 
@@ -83,7 +88,6 @@ public:
 
     bool isReleasesPageVisible() const noexcept { return m_currentPageId == "release"; }
     bool isOnlinePlayerPageVisible() const noexcept { return m_currentPageId == "videoplayer"; }
-    bool isYoutubePageVisible() const noexcept { return m_currentPageId == "youtube"; }
     bool isAboutPageVisible() const noexcept { return m_currentPageId == "about"; }
     bool isCinemahallPageVisible() const noexcept { return m_currentPageId == "cinemahall"; }
     bool isDownloadPageVisible() const noexcept { return m_currentPageId == "download"; }
@@ -93,6 +97,8 @@ public:
     bool isAuthorizationPageVisible() const noexcept { return m_currentPageId == "authorization"; }
     bool isThemeManagerVisible() const noexcept { return m_currentPageId == "thememanager"; }
     bool isTorrentStreamPageVisible() const noexcept { return m_currentPageId == "torrentstream"; }
+    bool isApplicationsPageVisible() const noexcept { return m_currentPageId == "applications"; }
+    bool isExtensionsPageVisible() const noexcept { return m_currentPageId == "extensions"; }
     QVariantList leftToolbar() const noexcept { return m_leftToolbar; }
     bool editLeftToolbar() const noexcept { return m_editLeftToolbar; }
     QVariantList otherLeftToolbar() const noexcept { return m_otherLeftToolbar; }
@@ -107,6 +113,11 @@ public:
 
     QString dragIndex() const noexcept { return m_dragIndex; }
     void setDragIndex(const QString& dragIndex) noexcept;
+
+    QString globalTextFont() const noexcept { return m_globalTextFont; }
+    void setGlobalTextFont(const QString& globalTextFont) noexcept;
+
+    QStringList fontFamilies() const noexcept { return m_fontFamilies; }
 
     Q_INVOKABLE void selectPage(const QString& pageId) noexcept;
     Q_INVOKABLE void backToPage() noexcept;
@@ -136,7 +147,6 @@ signals:
     void currentPageDisplayNameChanged();
     void isReleasesPageVisibleChanged();
     void isOnlinePlayerPageVisibleChanged();
-    void isYoutubePageVisibleChanged();
     void isCinemahallPageVisibleChanged();
     void isAboutPageVisibleChanged();
     void isDownloadPageVisibleChanged();
@@ -158,11 +168,17 @@ signals:
     void changeReleasesParameters(QString parameters);
     void releasesSeriesPageToNavigated();
     void changeReleaseSeriesParameters(QString parameters);
+    void changeExtensionsParameters(QString parameters);
+    void changeTorrentStreamParameters(QString parameters);
     void leftToolbarChanged();
     void editLeftToolbarChanged();
     void otherLeftToolbarChanged();
     void dropIndexChanged();
     void dragIndexChanged();
+    void globalTextFontChanged();
+    void fontFamiliesChanged();
+    void isApplicationsPageVisibleChanged();
+    void isExtensionsPageVisibleChanged();
 
 };
 

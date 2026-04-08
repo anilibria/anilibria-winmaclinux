@@ -1,24 +1,6 @@
-/*
-    AniLibria - desktop client for the website anilibria.tv
-    Copyright (C) 2020 Roman Vladimirov
-
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
-import QtQuick 2.12
-import QtQuick.Layouts 1.3
-import QtQuick.Controls 2.12
+import QtQuick 2.15
+import QtQuick.Layouts 1.15
+import QtQuick.Controls 2.15
 import "../Controls"
 
 Item {
@@ -34,7 +16,7 @@ Item {
     signal rightClicked()
     signal addToFavorite(int id)
     signal removeFromFavorite(int id)
-    signal watchRelease(int id, string videos, string poster)
+    signal watchRelease(int id)
 
     Rectangle {
         visible: !releaseItem.isCompactReleaseMode
@@ -107,11 +89,40 @@ Item {
             rightPadding: 4
 
             CorneredImage {
+                id: itemPosterImage
                 visible: !isCompactReleaseMode
                 width: 182
                 height: 272
                 posterSource: releaseItem.posterPath
                 emptyBorderBackground: applicationThemeViewModel.currentItems.panelBackground
+
+                Item {
+                    visible: startInGroup
+                    anchors.right: itemPosterImage.left
+                    anchors.top: itemPosterImage.top
+                    width: groupHeaderText.width + 12
+                    height: 20
+                    rotation: 270
+                    transformOrigin: Item.Right
+
+                    Rectangle {
+                        anchors.fill: parent
+                        color: applicationThemeViewModel.pageUpperPanel
+                        radius: 8
+                        border.color: applicationThemeViewModel.posterBorder
+                        border.width: 1
+                    }
+
+                    PlainText {
+                        id: groupHeaderText
+                        anchors.left: parent.left
+                        anchors.leftMargin: 6
+                        anchors.bottom: parent.bottom
+                        anchors.verticalCenter: parent.verticalCenter
+                        text: groupValue
+                        fontPointSize: 10
+                    }
+                }
             }
 
             Item {
@@ -135,13 +146,15 @@ Item {
 
                 AccentText {
                     fontPointSize: 10
+                    width: parent.width - 40
+                    height: parent.height
+                    anchors.left: parent.left
+                    anchors.leftMargin: 10
                     horizontalAlignment: Text.AlignHCenter
-                    verticalAlignment: Text.AlignVCenter
-                    width: parent.width
-                    leftPadding: 8
-                    topPadding: 6
-                    wrapMode: Text.WordWrap
+                    topPadding: 2
+                    wrapMode: Text.Wrap
                     maximumLineCount: 2
+                    elide: Text.ElideRight
                     text: title
                 }
             }
@@ -157,14 +170,14 @@ Item {
                     id: gridItemtextContainer
                     AccentText {
                         enabled: false
-                        textFormat: Text.RichText
                         fontPointSize: 12
                         width: 280
                         leftPadding: 8
                         topPadding: 6
-                        wrapMode: Text.WordWrap
+                        wrapMode: Text.Wrap
                         maximumLineCount: 3
-                        text: qsTr(title)
+                        elide: Text.ElideRight
+                        text: title
                     }
                     PlainText {
                         enabled: false
@@ -207,7 +220,7 @@ Item {
                         width: 280
                         wrapMode: Text.WordWrap
                         maximumLineCount: 2
-                        text: qsTr("<b>Озвучка:</b> ") + voices
+                        text: qsTr("<b>Команда:</b> ") + voices
                     }
                     Row {
                         visible: id > -1
@@ -235,7 +248,7 @@ Item {
                                     anchors.fill: parent
                                     hoverEnabled: true
                                     onPressed: {
-                                        releaseItem.watchRelease(id, videos, poster);
+                                        releaseItem.watchRelease(id);
                                     }
                                     onEntered: {
                                         onlineRectangle.color = applicationThemeViewModel.panelBackgroundShadow;
@@ -313,17 +326,16 @@ Item {
 
                                     CommonMenu {
                                         id: torrentsMenu
-                                        width: 320
+                                        autoWidth: true
 
                                         Repeater {
                                             model: releasesViewModel.itemTorrents
                                             delegate: CommonMenuItem {
-                                                text: "Скачать " + quality + " [" + series + "] " + size
+                                                text: "Скачать " + quality + " [" + series + "] " + size + " " + timecreation
                                                 onPressed: {
-                                                    releasesViewModel.itemTorrents.downloadTorrent(currentIndex);
+                                                    synchronizationServicev2.downloadTorrent(url, torrentMenuContainer.torrentReleaseId, magnet);
                                                     torrentsMenu.close();
 
-                                                    userActivityViewModel.addDownloadedTorrentToCounter();
                                                     if (userConfigurationViewModel.markAsReadAfterDownload) {
                                                         releasesViewModel.setSeenMarkForSingleRelease(torrentMenuContainer.torrentReleaseId, true);
                                                     }
@@ -343,19 +355,6 @@ Item {
                             rightPadding: 8
                             fontPointSize: 12
                             text: '' + countTorrents
-                        }
-                        TooltipedImage {
-                            visible: inSchedule
-                            source: applicationThemeViewModel.currentItems.iconReleaseCatalogSchedule
-                            width: 22
-                            height: 22
-                        }
-                        PlainText {
-                            visible: inSchedule
-                            leftPadding: 8
-                            topPadding: 1
-                            fontPointSize: 11
-                            text: scheduledDay
                         }
                     }
                 }
@@ -401,6 +400,20 @@ Item {
                                 rightPadding: 4
                                 fontPointSize: 12
                                 text: rating
+                            }
+
+                            TooltipedImage {
+                                visible: inSchedule
+                                source: applicationThemeViewModel.currentItems.iconReleaseCatalogSchedule
+                                width: 22
+                                height: 22
+                            }
+                            PlainText {
+                                visible: inSchedule
+                                leftPadding: 8
+                                topPadding: 1
+                                fontPointSize: 11
+                                text: scheduledDay
                             }
                         }
 

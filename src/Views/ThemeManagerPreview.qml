@@ -1,7 +1,7 @@
-import QtQuick 2.12
-import QtQuick.Controls 2.12
-import QtQuick.Controls.Material 2.0
-import QtQuick.Layouts 1.12
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtQuick.Controls.Material 2.15
+import QtQuick.Layouts 1.15
 import CustomStyle 1.0
 import "../Controls"
 
@@ -602,6 +602,28 @@ ApplicationWindow {
                                 anchors.left: textField.right
                                 anchors.leftMargin: 10
                                 width: 200
+                                CustomStyle.comboBoxAccent: applicationThemeViewModel.previewItems.colorComboBoxAccent
+                                CustomStyle.comboBoxHint: applicationThemeViewModel.previewItems.colorComboBoxHint
+                                CustomStyle.comboBoxBackgroundColor: applicationThemeViewModel.previewItems.colorComboBoxBackground
+                                CustomStyle.popupBackgroundColor: applicationThemeViewModel.previewItems.colorPopupBackground
+                                CustomStyle.backgroundDimColor: applicationThemeViewModel.previewItems.colorPopupBackgroundShadow
+                                CustomStyle.textFieldAccent: applicationThemeViewModel.previewItems.colorTextFieldAccent
+                                CustomStyle.textFieldForeground: applicationThemeViewModel.previewItems.colorTextFieldForeground
+                                CustomStyle.textFieldHint: applicationThemeViewModel.previewItems.colorTextFieldHint
+                                CustomStyle.textFieldHighlight: applicationThemeViewModel.previewItems.colorTextFieldHighlight
+                                CustomStyle.textFieldText: applicationThemeViewModel.previewItems.colorTextFieldText
+                                delegate: ItemDelegate {
+                                    width: remotePlayerPortComboBox.width
+                                    contentItem: Text {
+                                        text: remotePlayerPortComboBox.usePropertyKey ? (modelData["key"] ? modelData.key : "") : modelData
+                                        color: remotePlayerPortComboBox.currentIndex === index ? applicationThemeViewModel.currentItems.colorTextFieldAccent : applicationThemeViewModel.currentItems.colorTextFieldForeground
+                                        font.pointSize: 10
+                                        font.family: userConfigurationViewModel.textFont
+                                        elide: Text.ElideRight
+                                        verticalAlignment: Text.AlignVCenter
+                                    }
+                                    highlighted: remotePlayerPortComboBox.highlightedIndex === index
+                                }
                                 model: ListModel {
                                     ListElement {
                                         text: "Пункт 1"

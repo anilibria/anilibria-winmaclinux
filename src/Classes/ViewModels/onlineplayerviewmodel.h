@@ -27,6 +27,7 @@
 #include "../RemotePlayer/remoteplayer.h"
 #include "../Models/seenmodel.h"
 #include "../ViewModels/releasesviewmodel.h"
+#include "torrentnotifierviewmodel.h"
 
 class OnlinePlayerViewModel : public QObject
 {
@@ -46,6 +47,7 @@ class OnlinePlayerViewModel : public QObject
     Q_PROPERTY(QString releasePoster READ releasePoster WRITE setReleasePoster NOTIFY releasePosterChanged)
     Q_PROPERTY(bool isFullHdAllowed READ isFullHdAllowed WRITE setIsFullHdAllowed NOTIFY isFullHdAllowedChanged)
     Q_PROPERTY(int selectedVideo READ selectedVideo WRITE setSelectedVideo NOTIFY selectedVideoChanged)
+    Q_PROPERTY(QString selectedVideoId READ selectedVideoId NOTIFY selectedVideoIdChanged)
     Q_PROPERTY(int positionIterator READ positionIterator WRITE setPositionIterator NOTIFY positionIteratorChanged)
     Q_PROPERTY(int lastMovedPosition READ lastMovedPosition WRITE setLastMovedPosition NOTIFY lastMovedPositionChanged)
     Q_PROPERTY(int restorePosition READ restorePosition WRITE setRestorePosition NOTIFY restorePositionChanged)
@@ -55,11 +57,7 @@ class OnlinePlayerViewModel : public QObject
     Q_PROPERTY(RemotePlayer* remotePlayer READ remotePlayer NOTIFY remotePlayerChanged)
     Q_PROPERTY(bool sendPlaybackToRemoteSwitch READ sendPlaybackToRemoteSwitch WRITE setSendPlaybackToRemoteSwitch NOTIFY sendPlaybackToRemoteSwitchChanged)
     Q_PROPERTY(int volumeSlider READ volumeSlider WRITE setVolumeSlider NOTIFY volumeSliderChanged)
-    Q_PROPERTY(int playerPlaybackState READ playerPlaybackState WRITE setPlayerPlaybackState NOTIFY playerPlaybackStateChanged)
-    Q_PROPERTY(int navigateReleaseId READ navigateReleaseId WRITE setNavigateReleaseId NOTIFY navigateReleaseIdChanged)
-    Q_PROPERTY(int customPlaylistPosition READ customPlaylistPosition WRITE setCustomPlaylistPosition NOTIFY customPlaylistPositionChanged)
-    Q_PROPERTY(QString navigateVideos READ navigateVideos WRITE setNavigateVideos NOTIFY navigateVideosChanged)
-    Q_PROPERTY(QString navigatePoster READ navigatePoster WRITE setNavigatePoster NOTIFY navigatePosterChanged)
+    Q_PROPERTY(QString playerPlaybackState READ playerPlaybackState WRITE setPlayerPlaybackState NOTIFY playerPlaybackStateChanged)
     Q_PROPERTY(int videoPosition READ videoPosition WRITE setVideoPosition NOTIFY videoPositionChanged)
     Q_PROPERTY(int videoDuration READ videoDuration WRITE setVideoDuration NOTIFY videoDurationChanged)
     Q_PROPERTY(bool sendVolumeToRemote READ sendVolumeToRemote WRITE setSendVolumeToRemote NOTIFY sendVolumeToRemoteChanged)
@@ -71,15 +69,25 @@ class OnlinePlayerViewModel : public QObject
     Q_PROPERTY(bool seenMarkedAtEnd READ seenMarkedAtEnd WRITE setSeenMarkedAtEnd NOTIFY seenMarkedAtEndChanged)
     Q_PROPERTY(bool displaySkipOpening READ displaySkipOpening WRITE setDisplaySkipOpening NOTIFY displaySkipOpeningChanged)
     Q_PROPERTY(bool endSkipOpening READ endSkipOpening NOTIFY endSkipOpeningChanged)
+    Q_PROPERTY(bool reachEnding READ reachEnding NOTIFY reachEndingChanged FINAL)
     Q_PROPERTY(QString rutubeVideoId READ rutubeVideoId WRITE setRutubeVideoId NOTIFY rutubeVideoIdChanged)
     Q_PROPERTY(bool showedDropWarning READ showedDropWarning WRITE setShowedDropWarning NOTIFY showedDropWarningChanged)
     Q_PROPERTY(bool isReleaseLess2022 READ isReleaseLess2022 NOTIFY isReleaseLess2022Changed)
     Q_PROPERTY(bool needProxified READ needProxified WRITE setNeedProxified NOTIFY needProxifiedChanged)
     Q_PROPERTY(int proxyPort READ proxyPort WRITE setProxyPort NOTIFY proxyPortChanged)
     Q_PROPERTY(bool muted READ muted WRITE setMuted NOTIFY mutedChanged)
+    Q_PROPERTY(bool needProxyFallback READ needProxyFallback WRITE setNeedProxyFallback NOTIFY needProxyFallbackChanged FINAL)
+    Q_PROPERTY(int videoServerOverride READ videoServerOverride WRITE setVideoServerOverride NOTIFY videoServerOverrideChanged FINAL)
+    Q_PROPERTY(bool isMaximized READ isMaximized WRITE setIsMaximized NOTIFY isMaximizedChanged FINAL)
+    Q_PROPERTY(bool wasMaximized READ wasMaximized NOTIFY wasMaximizedChanged FINAL)
+    Q_PROPERTY(TorrentNotifierViewModel* torrentStream READ torrentStream WRITE setTorrentStream NOTIFY torrentStreamChanged FINAL)
+    Q_PROPERTY(int restoreVideoMode READ restoreVideoMode WRITE setRestoreVideoMode NOTIFY restoreVideoModeChanged FINAL)
+    Q_PROPERTY(bool showEmbeddedVideoWindow READ showEmbeddedVideoWindow WRITE setShowEmbeddedVideoWindow NOTIFY showEmbeddedVideoWindowChanged FINAL)
+    Q_PROPERTY(bool showEmbeddedVideoWindowPanel READ showEmbeddedVideoWindowPanel WRITE setShowEmbeddedVideoWindowPanel NOTIFY showEmbeddedVideoWindowPanelChanged FINAL)
 
 private:
     bool m_isFullScreen;
+    bool m_firstRun { true };
     qreal m_playbackRate;
     bool m_isBuffering;
     QString m_videoQuality;
@@ -89,10 +97,12 @@ private:
     QList<int>* m_jumpMinutes;
     QList<int>* m_jumpSeconds;
     OnlinePlayerVideoList* m_videos;
-    QString m_videoSource;
+    QString m_videoSource { "" };
+    QString m_videoSourceProxy { "" };
     QString m_releasePoster;
     bool m_isFullHdAllowed;
     int m_selectedVideo;
+    QString m_selectedVideoId;
     int m_positionIterator;
     int m_lastMovedPosition;
     int m_restorePosition;
@@ -107,12 +117,8 @@ private:
     QString m_videoPlaybackCommand;
     bool m_sendPlaybackToRemoteSwitch;
     int m_volumeSlider;
-    int m_playerPlaybackState;
+    QString m_playerPlaybackState;
     QHash<int, SeenModel*>* m_seenModels;
-    int m_navigateReleaseId;
-    int m_customPlaylistPosition;
-    QString m_navigateVideos;
-    QString m_navigatePoster;
     int m_videoPosition;
     int m_videoDuration;
     bool m_sendVolumeToRemote;
@@ -131,6 +137,20 @@ private:
     int m_proxyPort { -1 };
     bool m_muted { false };
     bool m_endSkipOpening { false };
+    bool m_needProxyFallback { false };
+    int m_panelTimerCounter { 0 };
+    bool m_isStreamingTorrents { false };
+    TorrentNotifierViewModel* m_torrentStream { nullptr };
+    int m_videoServerOverride { 0 };
+    bool m_isMaximized { false };
+    bool m_wasMaximized { false };
+    int m_restoreVideoMode { 0 };
+    bool m_reachEnding { false };
+    bool m_showEmbeddedVideoWindow { false };
+    bool m_showEmbeddedVideoWindowPanel { false };
+    const QString m_cinemahallMode { "cinamehall" };
+    const QString m_multipleReleasesMode { "multiplereleases" };
+    const QString m_streamingTorrentMode { "streamingtorrent" };
 
 public:
     explicit OnlinePlayerViewModel(QObject *parent = nullptr);
@@ -174,6 +194,9 @@ public:
     int selectedVideo() const { return m_selectedVideo; }
     void setSelectedVideo(int selectedVideo) noexcept;
 
+    QString selectedVideoId() const { return m_selectedVideoId; }
+    void setSelectedVideoId(const QString& selectedVideoId) noexcept;
+
     int positionIterator() const { return m_positionIterator; }
     void setPositionIterator(int positionIterator) noexcept;
 
@@ -199,20 +222,8 @@ public:
     int volumeSlider() const { return m_volumeSlider; }
     void setVolumeSlider(int volumeSlider) noexcept;
 
-    int playerPlaybackState() const { return m_playerPlaybackState; }
-    void setPlayerPlaybackState(int playerPlaybackState) noexcept;
-
-    int navigateReleaseId() const { return m_navigateReleaseId; }
-    void setNavigateReleaseId(int navigateReleaseId) noexcept;
-
-    int customPlaylistPosition() const { return m_customPlaylistPosition; }
-    void setCustomPlaylistPosition(int customPlaylistPosition) noexcept;
-
-    QString navigateVideos() const { return m_navigateVideos; }
-    void setNavigateVideos(const QString& navigateVideos);
-
-    QString navigatePoster() const { return m_navigatePoster; }
-    void setNavigatePoster(const QString& navigatePoster) noexcept;
+    QString playerPlaybackState() const { return m_playerPlaybackState; }
+    void setPlayerPlaybackState(const QString& playerPlaybackState) noexcept;
 
     int videoPosition() const { return m_videoPosition; }
     void setVideoPosition(int position) noexcept;
@@ -263,7 +274,33 @@ public:
     bool muted() const noexcept { return m_muted; }
     void setMuted(bool muted) noexcept;
 
+    bool needProxyFallback() const noexcept { return m_needProxyFallback; }
+    void setNeedProxyFallback(bool needProxyFallback) noexcept;
+
+    int videoServerOverride() const noexcept { return m_videoServerOverride; }
+    void setVideoServerOverride(int videoServerOverride) noexcept;
+
+    bool isMaximized() const noexcept { return m_isMaximized; }
+    void setIsMaximized(bool isMaximized) noexcept;
+
+    bool wasMaximized() const noexcept { return m_wasMaximized; }
+
+    TorrentNotifierViewModel* torrentStream() const noexcept { return m_torrentStream; }
+    void setTorrentStream(const TorrentNotifierViewModel* torrentStream) noexcept;
+
+    int restoreVideoMode() const noexcept { return m_restoreVideoMode; }
+    void setRestoreVideoMode(int restoreVideoMode) noexcept;
+
     bool endSkipOpening() const noexcept { return m_endSkipOpening; }
+
+    bool reachEnding() const noexcept { return m_reachEnding; }
+    void setReachEnding(bool reachEnding) noexcept;
+
+    bool showEmbeddedVideoWindow() const noexcept { return m_showEmbeddedVideoWindow; }
+    void setShowEmbeddedVideoWindow(bool showEmbeddedVideoWindow) noexcept;
+
+    bool showEmbeddedVideoWindowPanel() const noexcept { return m_showEmbeddedVideoWindowPanel; }
+    void setShowEmbeddedVideoWindowPanel(bool showEmbeddedVideoWindowPanel) noexcept;
 
     Q_INVOKABLE void toggleFullScreen();
     Q_INVOKABLE void changeVideoPosition(int duration, int position) noexcept;
@@ -278,10 +315,8 @@ public:
     Q_INVOKABLE void quickSetupForSingleTorrentRelease(int releaseId, int index, int port);
     Q_INVOKABLE void quickSetupForMultipleRelease(QList<int> releaseIds);
     Q_INVOKABLE void quickSetupForFavoritesCinemahall();
-    Q_INVOKABLE void setupForSingleRelease();
-    Q_INVOKABLE void setupForMultipleRelease();
     Q_INVOKABLE void setupForCinemahall();
-    Q_INVOKABLE QString getReleasesSeenMarks(QList<int> ids);
+    Q_INVOKABLE void quickSetupForSingleDownloadedTorrent(const QStringList& files, int releaseId) noexcept;
     Q_INVOKABLE void selectVideo(int releaseId, int videoId);
     Q_INVOKABLE void changeVideoQuality(const QString& quality) noexcept;
     Q_INVOKABLE void setVideoSpeed(double speed) noexcept;
@@ -295,9 +330,11 @@ public:
     Q_INVOKABLE int skipOpening() noexcept;
     Q_INVOKABLE void reloadCurrentVideo() noexcept;
     Q_INVOKABLE void openVideoInExternalPlayer(const QString& path) noexcept;
-    Q_INVOKABLE void quickSetupForSingleDownloadedTorrent(const QStringList& files, int releaseId) noexcept;
     Q_INVOKABLE bool releaseHasVideos(int releaseId) noexcept;
     Q_INVOKABLE bool releaseIsRutube(int releaseId) noexcept;
+    Q_INVOKABLE void restoreLastRelease() noexcept;
+    Q_INVOKABLE void clearPanelTimer() noexcept;    
+    Q_INVOKABLE void increasePanelTimer() noexcept;
 
 private:
     void saveVideoSeens();
@@ -314,6 +351,10 @@ private:
     void receiveCountUsers();
     void setRutubeIdentifier(const OnlineVideoModel* video) noexcept;
     void clearRutubeIdentifier() noexcept;
+    int findNextNotWatchVideo(int releaseId, int videoIndex) noexcept;
+    void refreshVideoSourceProxy(const QString& newVideoSource) noexcept;
+    void preparePlayerForNewMode(const QString& mode);
+    void preparePlayerForNewRelease(OnlineVideoModel* video);
 
 private slots:
     void downloadPlaylist(QNetworkReply *reply);
@@ -344,11 +385,9 @@ signals:
     void volumeSliderChanged();
     void playerPlaybackStateChanged();
     void needScrollSeriaPosition();
-    void navigateReleaseIdChanged();
-    void customPlaylistPositionChanged();
     void navigateVideosChanged();
-    void navigatePosterChanged();
     void playInPlayer();
+    void pauseInPlayer();
     void saveToWatchHistory(int releaseId);
     void recalculateSeenCounts();
     void remotePlayerStartedChanged();
@@ -374,6 +413,17 @@ signals:
     void proxyPortChanged();
     void mutedChanged();
     void endSkipOpeningChanged();
+    void needProxyFallbackChanged();
+    void hidePanelIfItVisible();
+    void torrentStreamChanged();
+    void videoServerOverrideChanged();
+    void selectedVideoIdChanged();
+    void isMaximizedChanged();
+    void wasMaximizedChanged();
+    void restoreVideoModeChanged();
+    void reachEndingChanged();
+    void showEmbeddedVideoWindowChanged();
+    void showEmbeddedVideoWindowPanelChanged();
 
 };
 

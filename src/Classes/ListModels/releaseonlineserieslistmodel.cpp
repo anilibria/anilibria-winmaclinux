@@ -19,7 +19,6 @@
 #include <QJsonDocument>
 #include <QTime>
 #include "releaseonlineserieslistmodel.h"
-#include "../../globalconstants.h"
 
 ReleaseOnlineSeriesListModel::ReleaseOnlineSeriesListModel(QObject *parent)
     : QAbstractListModel{parent}
@@ -49,7 +48,7 @@ QVariant ReleaseOnlineSeriesListModel::data(const QModelIndex &index, int role) 
 
     switch (role) {
         case IdRole: {
-            return QVariant(onlineVideo->id());
+            return QVariant(onlineVideo->number());
         }
         case IndexRole: {
             return QVariant(onlineVideo->order());
@@ -58,14 +57,14 @@ QVariant ReleaseOnlineSeriesListModel::data(const QModelIndex &index, int role) 
             if (isEmptyPoster) {
                 return QVariant("qrc:///Assets/Icons/broken.svg");
             } else {
-                return QVariant(AnilibriaImagesPath + onlineVideo->videoPoster());
+                return QVariant(onlineVideo->videoPoster());
             }
         }
         case IsEmptyPosterRole: {
             return QVariant(isEmptyPoster);
         }
         case IsSeensRole: {
-            return QVariant(m_releases->getSeriaSeenMark(m_releaseId, onlineVideo->order()));
+            return QVariant(m_releases->getSeriaSeenMark(m_releaseId, onlineVideo->uniqueId()));
         }
         case IsCurrentVideoRole: {
             return QVariant(videoId == onlineVideo->order());
@@ -75,6 +74,9 @@ QVariant ReleaseOnlineSeriesListModel::data(const QModelIndex &index, int role) 
         }
         case DescriptionRole: {
             return onlineVideo->description();
+        }
+        case UniqueIdRole: {
+            return QVariant(onlineVideo->uniqueId());
         }
     }
 
@@ -115,6 +117,10 @@ QHash<int, QByteArray> ReleaseOnlineSeriesListModel::roleNames() const
         {
             DescriptionRole,
             "description"
+        },
+        {
+            UniqueIdRole,
+            "uniqueId"
         }
     };
 }
@@ -138,7 +144,7 @@ void ReleaseOnlineSeriesListModel::setReleaseId(int releaseId) noexcept
     auto videoId = std::get<0>(seens);
 
     foreach (auto item, m_items) {
-        auto index = item->id() - 1;
+        auto index = item->order();
         if (videoId == index) {
             m_selectedVideoIndex = index;
             break;
@@ -178,20 +184,14 @@ void ReleaseOnlineSeriesListModel::refresh()
     }
 
     auto videos = m_releases->getReleaseVideos(m_releaseId);
-    auto document = QJsonDocument::fromJson(videos.toUtf8());
-    auto videosArray = document.array();
 
-    foreach (auto video, videosArray) {
-        auto videoModel = new OnlineVideoModel();
-        videoModel->readFromApiModel(video.toObject());
-        m_items.append(videoModel);
-    }
+    m_items.append(videos);
 
     std::sort(
         m_items.begin(),
         m_items.end(),
-        [](const OnlineVideoModel* first, const OnlineVideoModel* second) {
-            return first->id() < second->id();
+        [](const ReleaseOnlineVideoModel* first, const ReleaseOnlineVideoModel* second) {
+            return first->order() < second->order();
         }
     );
 

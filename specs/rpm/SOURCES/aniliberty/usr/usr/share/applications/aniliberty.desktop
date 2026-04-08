@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=AniLiberty
+Exec=/usr/local/bin/aniliberty
+Comment=AniLiberty desktop client
+Icon=aniliberty
+Type=Application
+Terminal=false
+StartupNotify=false
+Encoding=UTF-8
+Categories=Video;Application;

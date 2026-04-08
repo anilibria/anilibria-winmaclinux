@@ -1,0 +1,119 @@
+name: Build CMake
+
+on:
+  push:
+    branches: [ "deploy" ]
+
+jobs:
+  windows:
+    runs-on: windows-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Configure MSVC
+      uses: ilammy/msvc-dev-cmd@v1.13.0
+      with:
+        arch: x64
+        spectre: true
+    - name: Install Qt
+      uses: jurplel/install-qt-action@v4
+      with:
+        version: 6.8.3
+        modules: qtscxml qt5compat qtimageformats qtwebsockets
+    - name: configure cmake
+      run: cmake -S src -B .
+    - name: build cmake
+      run: cmake --build . --config Release --parallel -- /p:CL_MPcount=8 
+    - name: make deploy
+      run: |
+        windeployqt --no-translations -qmldir=src Release
+    - name: remove redundant files
+      run: |
+        Remove-Item -Path "Release/AniLiberty.exp"
+        Remove-Item -Path "Release/AniLiberty.lib"
+        Remove-Item -Path "Release/qmltooling" -Force -Recurse
+    - name: download libmpv
+      run: |
+        Invoke-WebRequest -Uri "https://github.com/anilibria/anilibria-winmaclinux/releases/download/2.2.28/libmpv-2.dll" -OutFile "libmpv-2.dll"
+        Copy-Item -Path "libmpv-2.dll" -Destination "Release"
+    - name: compress archive
+      run: Compress-Archive -Path "Release/*" -DestinationPath "aniliberty_win.zip"
+    - uses: actions/upload-artifact@v4
+      with:
+        name: windows
+        path: aniliberty_win.zip
+  macosbuild:
+    runs-on: macos-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Set up Homebrew
+      run: /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+    - name: Fix brew issue
+      run: |
+        rm /usr/local/bin/2to3
+        rm /usr/local/bin/idle3
+        rm /usr/local/bin/pydoc3
+        rm /usr/local/bin/python3
+        rm /usr/local/bin/python3-config
+        rm '/usr/local/bin/idle3.14'
+        rm '/usr/local/bin/pydoc3.14'
+        rm '/usr/local/bin/python3.14'
+        rm '/usr/local/bin/python3.14-config'
+        rm '/usr/local/bin/pip3.14'
+    - name: install pkg-config
+      run: brew list pkg-config || brew install pkg-config
+    - name: install mpv
+      run: brew install mpv
+    - name: Install Qt dependencies
+      uses: jurplel/install-qt-action@v4
+      with:
+        version: '6.8.3'
+        target: 'desktop'
+        arch: 'clang_64'
+        modules: 'qtimageformats qtwebsockets'
+    - name: configure
+      run: cmake -S src -B .
+    - name: run cmake
+      run: cmake --build . --config Release --parallel 8
+    - name: Run MacDeployQt
+      run: macdeployqt AniLiberty.app -appstore-compliant -qmldir=.
+    - name: show all libraries in app folder
+      run: ls AniLiberty.app/Contents/Frameworks/
+    - name: patch libraries paths
+      run: |
+        cp /opt/homebrew/opt/python@3.14/Frameworks/Python.framework/Versions/3.14/Python AniLiberty.app/Contents/Frameworks/
+        
+        install_name_tool -change /opt/homebrew/Cellar/ffmpeg/8.0.1/lib/libswresample.6.dylib @executable_path/../Frameworks/libswresample.6.dylib AniLiberty.app/Contents/Frameworks/libavcodec.62.dylib
+        install_name_tool -change /opt/homebrew/Cellar/ffmpeg/8.0.1/lib/libavutil.60.dylib @executable_path/../Frameworks/libavutil.60.dylib AniLiberty.app/Contents/Frameworks/libavcodec.62.dylib
+        install_name_tool -change /opt/homebrew/Cellar/ffmpeg/8.0.1/lib/libswscale.9.dylib @executable_path/../Frameworks/libswscale.9.dylib AniLiberty.app/Contents/Frameworks/libavfilter.11.dylib
+        install_name_tool -change /opt/homebrew/Cellar/ffmpeg/8.0.1/lib/libavutil.60.dylib @executable_path/../Frameworks/libavutil.60.dylib AniLiberty.app/Contents/Frameworks/libavfilter.11.dylib
+        install_name_tool -change /opt/homebrew/Cellar/ffmpeg/8.0.1/lib/libavcodec.62.dylib @executable_path/../Frameworks/libavcodec.62.dylib AniLiberty.app/Contents/Frameworks/libavfilter.11.dylib
+        install_name_tool -change /opt/homebrew/Cellar/ffmpeg/8.0.1/lib/libavformat.62.dylib @executable_path/../Frameworks/libavformat.62.dylib AniLiberty.app/Contents/Frameworks/libavfilter.11.dylib
+        install_name_tool -change /opt/homebrew/Cellar/ffmpeg/8.0.1/lib/libpostproc.58.dylib @executable_path/../Frameworks/libpostproc.58.dylib AniLiberty.app/Contents/Frameworks/libavfilter.11.dylib
+        install_name_tool -change /opt/homebrew/Cellar/ffmpeg/8.0.1/lib/libswresample.6.dylib @executable_path/../Frameworks/libswresample.6.dylib AniLiberty.app/Contents/Frameworks/libavfilter.11.dylib
+        
+        install_name_tool -change /opt/homebrew/Cellar/ffmpeg/8.0.1/lib/libavutil.60.dylib @executable_path/../Frameworks/libavutil.60.dylib AniLiberty.app/Contents/Frameworks/libswresample.6.dylib
+        install_name_tool -change /opt/homebrew/Cellar/ffmpeg/8.0.1/lib/libavutil.60.dylib @executable_path/../Frameworks/libavutil.60.dylib AniLiberty.app/Contents/Frameworks/libswscale.9.dylib
+
+        install_name_tool -change /opt/homebrew/Cellar/ffmpeg/8.0.1/lib/libavcodec.62.dylib @executable_path/../Frameworks/libavcodec.62.dylib AniLiberty.app/Contents/Frameworks/libavformat.62.dylib
+        install_name_tool -change /opt/homebrew/Cellar/ffmpeg/8.0.1/lib/libswresample.6.dylib @executable_path/../Frameworks/libswresample.6.dylib AniLiberty.app/Contents/Frameworks/libavformat.62.dylib
+        install_name_tool -change /opt/homebrew/Cellar/ffmpeg/8.0.1/lib/libavutil.60.dylib @executable_path/../Frameworks/libavutil.60.dylib AniLiberty.app/Contents/Frameworks/libavformat.62.dylib
+
+        install_name_tool -change /opt/homebrew/Cellar/ffmpeg/8.0.1/lib/libavfilter.11.dylib @executable_path/../Frameworks/libavfilter.11.dylib AniLiberty.app/Contents/Frameworks/libavdevice.62.dylib
+        install_name_tool -change /opt/homebrew/Cellar/ffmpeg/8.0.1/lib/libswscale.9.dylib @executable_path/../Frameworks/libswscale.9.dylib AniLiberty.app/Contents/Frameworks/libavdevice.62.dylib
+        install_name_tool -change /opt/homebrew/Cellar/ffmpeg/8.0.1/lib/libpostproc.58.dylib @executable_path/../Frameworks/libpostproc.58.dylib AniLiberty.app/Contents/Frameworks/libavdevice.62.dylib
+        install_name_tool -change /opt/homebrew/Cellar/ffmpeg/8.0.1/lib/libavformat.62.dylib @executable_path/../Frameworks/libavformat.62.dylib AniLiberty.app/Contents/Frameworks/libavdevice.62.dylib
+        install_name_tool -change /opt/homebrew/Cellar/ffmpeg/8.0.1/lib/libavcodec.62.dylib @executable_path/../Frameworks/libavcodec.62.dylib AniLiberty.app/Contents/Frameworks/libavdevice.62.dylib
+        install_name_tool -change /opt/homebrew/Cellar/ffmpeg/8.0.1/lib/libswresample.6.dylib @executable_path/../Frameworks/libswresample.6.dylib AniLiberty.app/Contents/Frameworks/libavdevice.62.dylib
+        install_name_tool -change /opt/homebrew/Cellar/ffmpeg/8.0.1/lib/libavutil.60.dylib @executable_path/../Frameworks/libavutil.60.dylib AniLiberty.app/Contents/Frameworks/libavdevice.62.dylib
+
+        install_name_tool -change /opt/homebrew/Cellar/brotli/1.1.0/lib/libbrotlicommon.1.dylib @executable_path/../Frameworks/ AniLiberty.app/Contents/Frameworks/librubberband.3.dylib
+        
+        install_name_tool -change @loader_path/../../../../opt/libsamplerate/lib/libsamplerate.0.dylib @executable_path/../Frameworks/libhwy.1.dylib AniLiberty.app/Contents/Frameworks/librubberband.3.dylib
+        
+        install_name_tool -change /opt/homebrew/*/Python.framework/Versions/3.14/Python @executable_path/../Frameworks/Python AniLiberty.app/Contents/Frameworks/libvapoursynth-script.0.dylib
+       
+        hdiutil create -fs HFS+ -srcfolder AniLiberty.app/ -volname AniLiberty AniLiberty.dmg
+    - uses: actions/upload-artifact@v4
+      with:
+        name: macos
+        path: AniLiberty.dmg

@@ -1,45 +1,24 @@
-/*
-    AniLibria - desktop client for the website anilibria.tv
-    Copyright (C) 2020 Roman Vladimirov
-
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
-import QtQuick 2.12
-import QtQuick.Controls 2.12
-import QtQuick.Layouts 1.3
-import QtMultimedia 5.12
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
 import "../Controls"
 import "Videoplayer"
 
 Page {
     id: _page
-    property var seenVideo: ({})
-    property var seenMarks: ({})
     property var videoPlayerSource
     property var videoOutputSource
-    property var lastPlayerPosition
+    property var videoOrigin
 
     signal navigateFrom()
-    signal setReleaseVideo()
-    signal setCinemahallVideo()
     signal navigateTo()
     signal returnToReleasesPage()
     signal windowNotActived()
     signal playInPlayer()
     signal stopInPlayer()
+    signal pauseInPlayer()
     signal playerCreated()
+    signal needHidePlayer()
 
     onPlayInPlayer: {
         playerLoader.item.play();
@@ -49,12 +28,16 @@ Page {
         playerLoader.item.stop();
     }
 
+    onPauseInPlayer: {
+        playerLoader.item.pause();
+    }
+
     function togglePlayback() {
-        if (playerLoader.item.playbackState === MediaPlayer.PlayingState) {
+        if (playerLoader.item.isPlaying) {
             playerLoader.item.pause();
             return;
         }
-        if (playerLoader.item.playbackState === MediaPlayer.PausedState || playerLoader.item.playbackState === MediaPlayer.StoppedState) {
+        if (playerLoader.item.isPaused || playerLoader.item.isStopped) {
             playerLoader.item.play();
         }
     }
@@ -79,41 +62,40 @@ Page {
             onlinePlayerViewModel.toggleFullScreen();
         }
         if (event.key === Qt.Key_Up || event.key === Qt.Key_VolumeUp) {
-            if (playerLoader.item.volume < 1) playerLoader.item.volume += .1;
-            if (playerLoader.item.volume > 1) playerLoader.item.volume = 1;
+            let upPosition = playerLoader.item.volume + 10;
+            if (upPosition > 100) upPosition = 100;
+            playerLoader.item.volume = upPosition;
 
-            volumeSlider.value = playerLoader.item.volume * 100;
+            volumeSlider.value = playerLoader.item.volume;
         }
         if (event.key === Qt.Key_Down || event.key === Qt.Key_VolumeDown) {
-            let newVolume = playerLoader.item.volume;
-            if (newVolume > 0) newVolume -= .1;
-            if (newVolume < 0) newVolume = 0;
+            let downPosition = playerLoader.item.volume - 10;
+            if (downPosition < 0) downPosition = 0;
+            playerLoader.item.volume = downPosition;
 
-            playerLoader.item.volume = newVolume;
-
-            volumeSlider.value = playerLoader.item.volume * 100;
+            volumeSlider.value = playerLoader.item.volume;
         }
         if (event.key === Qt.Key_M || event.key === 1068 || event.key === Qt.Key_VolumeMute) playerLoader.item.muted = !playerLoader.item.muted;
-        if ((event.key === Qt.Key_T || event.key === 1045) && !autoTopMost.checked) windowSettings.toggleStayOnTopMode();
+        if ((event.key === Qt.Key_T || event.key === 1045)) windowSettings.toggleStayOnTopMode();
         if (event.key === Qt.Key_Left) playerLoader.item.seek(onlinePlayerViewModel.jumpInPlayer(jumpMinuteComboBox.currentIndex, jumpSecondComboBox.currentIndex, true));
         if (event.key === Qt.Key_Right) playerLoader.item.seek(onlinePlayerViewModel.jumpInPlayer(jumpMinuteComboBox.currentIndex, jumpSecondComboBox.currentIndex, false));
-        if (event.key === Qt.Key_Home && !autoTopMost.checked) windowSettings.setStayOnTop();
-        if (event.key === Qt.Key_End && !autoTopMost.checked) windowSettings.unsetStayOnTop();
+        if (event.key === Qt.Key_Home) windowSettings.setStayOnTop();
+        if (event.key === Qt.Key_End) windowSettings.unsetStayOnTop();
         if (event.key === Qt.Key_Play) playerLoader.item.play();
         if (event.key === Qt.Key_MediaPause) playerLoader.item.pause();
         if (event.key === Qt.Key_MediaTogglePlayPause) togglePlayback();
     }
 
-    onWindowNotActived: {
-        if (!playerTimer.running) playerTimer.restart();
+    onNeedHidePlayer: {
+        _page.setControlVisible(false);
     }
 
     onNavigateFrom: {
         windowSettings.unsetStayOnTop();
         onlinePlayerViewModel.isFullScreen = false;
         const enableVideoPreview = !onlinePlayerWindowViewModel.isStandartPlayer || (onlinePlayerWindowViewModel.isStandartPlayer && onlinePlayerWindowViewModel.isQt515);
-        if (enableVideoPreview && playerLoader.item.playbackState === MediaPlayer.PlayingState && showVideoPreview.checked) {
-            onlinePlayerWindow.showWindow();
+        if (enableVideoPreview && playerLoader.item.isPlaying && userConfigurationViewModel.showVideoPreview) {
+            onlinePlayerViewModel.showEmbeddedVideoWindow = true;
         } else {
             playerLoader.item.pause();
         }
@@ -121,85 +103,64 @@ Page {
 
     onNavigateTo: {
         _page.forceActiveFocus();
-        if (onlinePlayerWindowViewModel.opened) onlinePlayerWindow.hideWindow(false);
+        if (onlinePlayerViewModel.showEmbeddedVideoWindow) onlinePlayerViewModel.showEmbeddedVideoWindow = false;
         onlinePlayerViewModel.isFromNavigated = true;
-        const userSettings = JSON.parse(localStorage.getUserSettings());
-        playerLoader.item.volume = userSettings.volume;
-        autoNextVideo.checked = userSettings.autoNextVideo;
-        autoTopMost.checked = userSettings.autoTopMost;
-        jumpMinuteComboBox.currentIndex = onlinePlayerViewModel.jumpMinutes.indexOf(userSettings.jumpMinute);
-        jumpSecondComboBox.currentIndex = onlinePlayerViewModel.jumpSeconds.indexOf(userSettings.jumpSecond);
-        showReleaseInfo.checked = userSettings.showReleaseInfo;
+        playerLoader.item.volume = userConfigurationViewModel.playerVolume;
+        jumpMinuteComboBox.currentIndex = onlinePlayerViewModel.jumpMinutes.indexOf(userConfigurationViewModel.playerJumpMinute);
+        jumpSecondComboBox.currentIndex = onlinePlayerViewModel.jumpSeconds.indexOf(userConfigurationViewModel.playerJumpSecond);
         remotePlayerPortComboBox.currentIndex = onlinePlayerViewModel.ports.indexOf(userConfigurationViewModel.remotePort);
-        showVideoPreview.checked = userSettings.showVideoPreview;
 
-        if (autoTopMost.checked && playerLoader.item.playbackState === MediaPlayer.PlayingState) windowSettings.setStayOnTop();
-        switch (userSettings.quality) {
-            case 0:
-                onlinePlayerViewModel.videoQuality = "sd";
-                break;
-            case 1:
-                onlinePlayerViewModel.videoQuality = "hd";
-                break;
-            case 2:
-                onlinePlayerViewModel.videoQuality = "fullhd";
-                break;
-        }
-
-        if (!onlinePlayerViewModel.navigateReleaseId && !onlinePlayerViewModel.isCinemahall) {
-            const lastSeenReleaseId = onlinePlayerViewModel.getLastVideoSeen();
-            if (lastSeenReleaseId === 0) return;
-
-            onlinePlayerViewModel.quickSetupForSingleRelease(lastSeenReleaseId);
-        }
-
+        onlinePlayerViewModel.restoreLastRelease();
     }
 
     anchors.fill: parent
 
-    background: Rectangle {
-        color: "black"
-    }
-
-    Timer {
-        id: playerTimer
-        interval: 2000
-        running: false
-        repeat: true
-        onTriggered: _page.setControlVisible(false)
+    background: Item {
+        Rectangle {
+            anchors.fill: parent
+            color: "black"
+        }
+        Image {
+            id: backgroundFile
+            asynchronous: true
+            anchors.fill: parent
+            visible: applicationThemeViewModel.videoPlayerPageBackground.activated
+            fillMode: applicationThemeViewModel.videoPlayerPageBackground.activated ? applicationThemeViewModel.videoPlayerPageBackground.imageMode : Image.Pad
+            source: applicationThemeViewModel.videoPlayerPageBackground.activated ? applicationThemeViewModel.videoPlayerPageBackground.url : ''
+            opacity: applicationThemeViewModel.videoPlayerPageBackground.activated ? applicationThemeViewModel.videoPlayerPageBackground.opacity / 100 : 1
+            horizontalAlignment: applicationThemeViewModel.videoPlayerPageBackground.activated ? applicationThemeViewModel.videoPlayerPageBackground.halign : Image.AlignLeft
+            verticalAlignment: applicationThemeViewModel.videoPlayerPageBackground.activated ? applicationThemeViewModel.videoPlayerPageBackground.valign : Image.AlignTop
+        }
     }
 
     MouseArea {
         id: mainPlayerMouseArea
         anchors.fill: parent
+        acceptedButtons: Qt.LeftButton | Qt.RightButton
         hoverEnabled: true
         onClicked: {
-            if (playerLoader.item.playbackState === MediaPlayer.PlayingState) {
-                if (controlPanel.opacity !== 1)playerTimer.restart();
+            if (mouse.button === Qt.LeftButton && playerLoader.item.isPlaying) {
                 _page.setControlVisible(!(controlPanel.opacity === 1));
+            }
+            if (mouse.button === Qt.RightButton && playerLoader.item.isPlaying) {
+                onlinePlayerViewModel.clearPanelTimer();
+                _page.setControlVisible(true);
+            }
+            if (mouse.button === Qt.RightButton) {
+                togglePlayback();
             }
         }
         onDoubleClicked: {
             onlinePlayerViewModel.toggleFullScreen();
         }
         onPositionChanged: {
-            if (!(playerLoader.item.playbackState === MediaPlayer.PlayingState)) {
+            if (!(playerLoader.item.isPlaying)) {
                 if (controlPanel.opacity === 0) _page.setControlVisible(true);
                 return;
             }
 
+            onlinePlayerViewModel.clearPanelTimer();
             _page.setControlVisible(true);
-            const x = mouse.x;
-            const y = mouse.y;
-            onlinePlayerViewModel.lastMouseYPosition = y;
-            if (y > _page.height - controlPanel.height) {
-                playerTimer.stop();
-            } else {
-                playerTimer.restart();
-            }
-        }
-        onExited: {
-            if (_page.height - onlinePlayerViewModel.lastMouseYPosition < 10) if (!playerTimer.running) playerTimer.restart();
         }
     }
 
@@ -211,121 +172,92 @@ Page {
             if (playerLoader.source) {
                 _page.videoPlayerSource = playerLoader.item.videoPlayerSource;
                 _page.videoOutputSource = playerLoader.item.videoOutputSource;
+                _page.videoOrigin = playerLoader.item;
 
                 playerCreated();
 
                 playerLoader.item.source = Qt.binding(function() { return onlinePlayerViewModel.videoSource; });
                 playerLoader.item.playbackRate = Qt.binding(function() { return onlinePlayerViewModel.playbackRate; });
 
-                playerLoader.item.playbackStateChanged.connect(loaderPlaybackStateChanged);
-                playerLoader.item.volumeChanged.connect(loaderVolumeChanged);
-                playerLoader.item.statusChanged.connect(loaderStatusChanged);
-                playerLoader.item.positionChanged.connect(loaderPositionChanged);
+                playerLoader.item.playerPlaybackStateChanged.connect(loaderPlaybackStateChanged);
+                playerLoader.item.playerVolumeChanged.connect(loaderVolumeChanged);
+                playerLoader.item.playerStatusChanged.connect(loaderStatusChanged);
+                playerLoader.item.playerPositionChanged.connect(loaderPositionChanged);
 
-                const loadedVolumeState = onlinePlayerViewModel.volumeSlider / 100;
+                const loadedVolumeState = onlinePlayerViewModel.volumeSlider;
                 if (loadedVolumeState >= 0) playerLoader.item.volume = loadedVolumeState;
                 playerLoader.item.muted = onlinePlayerViewModel.muted;
-                if (userConfigurationViewModel.isCroppedPlayer) playerLoader.item.fillMode = VideoOutput.PreserveAspectCrop;
             }
         }
 
-        function loaderPlaybackStateChanged() {
-            onlinePlayerViewModel.playerPlaybackState = playerLoader.item.playbackState;
+        function loaderPlaybackStateChanged(currentMode) {
+            onlinePlayerViewModel.playerPlaybackState = currentMode;
             const playbackState = onlinePlayerViewModel.playerPlaybackState;
-            if (playbackState === MediaPlayer.PlayingState && autoTopMost.checked) {
-                windowSettings.setStayOnTop();
-            } else {
-                if (autoTopMost.checked) windowSettings.unsetStayOnTop();
-            }
-
-            releasePosterArea.visible = showReleaseInfo.checked && playbackState !== MediaPlayer.PlayingState;
-            playButton.visible = playbackState === MediaPlayer.PausedState || playbackState === MediaPlayer.StoppedState;
-            pauseButton.visible = playbackState === MediaPlayer.PlayingState;
-            if (playbackState === MediaPlayer.PlayingState) {
-                playerTimer.start();
-            } else {
-                playerTimer.stop();
+            releasePosterArea.visible = showReleaseInfo.checked && playbackState !== "play";
+            playButton.visible = playbackState === "pause" || playbackState === "stop";
+            pauseButton.visible = playbackState === "play";
+            if (playbackState !== "play") {
+                onlinePlayerViewModel.clearPanelTimer();
                 _page.setControlVisible(true);
             }
 
             if (!sendPlaybackToRemoteSwitch.checked) return;
 
-            if (playbackState === MediaPlayer.PlayingState) onlinePlayerViewModel.broadcastPlaybackState("play");
-            if (playbackState === MediaPlayer.PausedState) onlinePlayerViewModel.broadcastPlaybackState("pause");
+            if (playbackState === "play") onlinePlayerViewModel.broadcastPlaybackState("play");
+            if (playbackState === "pause") onlinePlayerViewModel.broadcastPlaybackState("pause");
         }
 
-        function loaderVolumeChanged() {
-            volumeSlider.value = playerLoader.item.volume * 100;
+        function loaderVolumeChanged(value) {
+            volumeSlider.value = value;
             onlinePlayerViewModel.volumeSlider = volumeSlider.value;
             if (userConfigurationViewModel.sendVolumeToRemote) onlinePlayerViewModel.broadcastVolume(onlinePlayerViewModel.volumeSlider);
         }
 
-        function loaderStatusChanged() {
-            const status = playerLoader.item.status;
-            if (status === MediaPlayer.Loading) onlinePlayerViewModel.isBuffering = true;
+        function loaderStatusChanged(value) {
+            const status = value;
 
-            if (status === MediaPlayer.EndOfMedia && autoNextVideo.checked) onlinePlayerViewModel.nextVideo();
+            if (status === "loading") onlinePlayerViewModel.isBuffering = true;
 
-            if (status === MediaPlayer.InvalidMedia) {
+            if (status === "endofmedia" && autoNextVideo.checked) onlinePlayerViewModel.nextVideo();
+
+            if (status === "invalid") {
                 console.log("InvalidMedia")
             }
 
-            if (status === MediaPlayer.Buffering) onlinePlayerViewModel.isBuffering = true;
+            if (status === "buffering") onlinePlayerViewModel.isBuffering = true;
 
-            if (status === MediaPlayer.Buffered) {
+            if (status === "buffered") {
                 onlinePlayerViewModel.isBuffering = false;
                 if (onlinePlayerViewModel.restorePosition > 0){
                     playerLoader.item.seek(onlinePlayerViewModel.restorePosition);
-                    console.log('playerLoader.item.seek(onlinePlayerViewModel.restorePosition);')
                     if (playerLoader.item.position >= onlinePlayerViewModel.restorePosition) onlinePlayerViewModel.restorePosition = 0;
                 } else {
                     if (onlinePlayerViewModel.isFromNavigated) {
                         onlinePlayerViewModel.isFromNavigated = false;
-
                         const videoPosition = onlinePlayerViewModel.getCurrentVideoSeenVideoPosition();
+                        console.log("buffered " + videoPosition);
                         if (videoPosition > 0) {
                             playerLoader.item.seek(videoPosition);
-                            console.log('playerLoader.item.seek(videoPosition);')
                         }
                     }
                 }
             }
         }
 
-        function loaderPositionChanged() {
-            const position = playerLoader.item.position;
-            const duration = playerLoader.item.duration;
-            const playBackState = playerLoader.item.playbackState;
-            const status = playerLoader.item.status;
+        function loaderPositionChanged(isBuffered, position, duration) {
+            const isPlaying = playerLoader.item.isPlaying;
 
             if (!playerLocation.pressed && onlinePlayerViewModel.lastMovedPosition === 0) playerLocation.value = position;
 
             onlinePlayerViewModel.changeVideoPosition(duration, position);
 
-            if (onlinePlayerViewModel.positionIterator < 20 && playBackState === MediaPlayer.PlayingState && status === MediaPlayer.Buffered) onlinePlayerViewModel.positionIterator++;
+            if (onlinePlayerViewModel.positionIterator < 20 && isPlaying && isBuffered) onlinePlayerViewModel.positionIterator++;
+
+            if (isPlaying && isBuffered) onlinePlayerViewModel.increasePanelTimer();
 
             if (onlinePlayerViewModel.positionIterator >= 20) {
                 onlinePlayerViewModel.positionIterator = 0;
                 onlinePlayerViewModel.setVideoSeens(onlinePlayerViewModel.selectedRelease, onlinePlayerViewModel.selectedVideo, position);
-            }
-
-            if (!releasesViewModel.getSeriaSeenMark(onlinePlayerViewModel.selectedRelease, onlinePlayerViewModel.selectedVideo)) {
-                if (duration > 0 && position > 0) {
-                    const positionPercent = position / duration * 100;
-                    if (positionPercent >= 90 && !onlinePlayerViewModel.seenMarkedAtEnd) {
-                        releasesViewModel.setSeenMark(onlinePlayerViewModel.selectedRelease, onlinePlayerViewModel.selectedVideo, true);
-                        onlinePlayerViewModel.seenMarkedAtEnd = true;
-                        onlinePlayerViewModel.refreshSingleVideo(onlinePlayerViewModel.selectedRelease, onlinePlayerViewModel.selectedVideo);
-                        releasesViewModel.items.refreshSingleItem(onlinePlayerViewModel.selectedRelease);
-                        if (onlinePlayerViewModel.isLastSeriaIsSingleRelease()) {
-                            const nextReleaseId = releaseLinkedSeries.getNextLinkedRelease(onlinePlayerViewModel.selectedRelease);
-                            if (nextReleaseId > 0) {
-                                onlinePlayerViewModel.showNextPosterRelease = true;
-                                onlinePlayerViewModel.nextReleasePoster = releasesViewModel.getReleasePoster(nextReleaseId);
-                            }
-                        }
-                    }
-                }
             }
         }
     }
@@ -334,156 +266,147 @@ Page {
         id: seriesPopup
         width: 230
         y: userConfigurationViewModel.fixedControlPanel ? fullHeight / 2 - (height / 2) : 0
-        height: itemsContent.height > panelHeight ? panelHeight : itemsContent.height
+        height: serieScrollContainer.contentHeight > panelHeight ? panelHeight : serieScrollContainer.contentHeight
         color: "transparent"
 
         property int fullHeight: _page.height - controlPanel.height
         property int panelHeight: userConfigurationViewModel.fixedControlPanel ? fullHeight / 2 : fullHeight - 20
 
-        Flickable {
+        ListView {
             id: serieScrollContainer
             width: seriesPopup.width
             height: seriesPopup.height
-            contentWidth: seriesPopup.width
-            contentHeight: itemsContent.height
             clip: true
-
             ScrollBar.vertical: ScrollBar {
                 active: true
             }
+            model: onlinePlayerViewModel.videos
+            delegate: Rectangle {
+                height: isGroup ? 70 : 40
+                width: seriesPopup.width
+                color: selectedVideo ? applicationThemeViewModel.playlistSelectedBackground : applicationThemeViewModel.playlistBackground
+                MouseArea {
+                    anchors.fill: parent
+                    hoverEnabled: true
+                    onEntered: {
+                        onlinePlayerViewModel.clearPanelTimer();
+                    }
+                    onClicked: {
+                        if (isGroup) return;
 
-            Column {
-                id: itemsContent
-                Repeater {
-                    model: onlinePlayerViewModel.videos
-                    delegate: Row {
-                        Rectangle {
-                            height: isGroup ? 70 : 40
-                            width: seriesPopup.width
-                            color: selectedVideo ? applicationThemeViewModel.playlistSelectedBackground : applicationThemeViewModel.playlistBackground
-                            MouseArea {
-                                anchors.fill: parent
-                                hoverEnabled: true
-                                onEntered: {
-                                    if (playerTimer.running) playerTimer.stop();
-                                }
-                                onClicked: {
-                                    if (isGroup) return;
+                        onlinePlayerViewModel.selectVideo(releaseId, order);
+                    }
+                }
+                PlainText {
+                    visible: !isGroup
+                    color: selectedVideo ? applicationThemeViewModel.playlistSelectedText : applicationThemeViewModel.playlistText
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.left: parent.left
+                    anchors.leftMargin: 10
+                    fontPointSize: 9
+                    text: title
+                }
 
-                                    onlinePlayerViewModel.selectVideo(releaseId, order);
+                Rectangle {
+                    color: "transparent"
+                    anchors.fill: parent
+                    anchors.leftMargin: 10
+                    anchors.rightMargin: 10
+
+                    PlainText {
+                        visible: isGroup
+                        color: selectedVideo ? applicationThemeViewModel.playlistSelectedText : applicationThemeViewModel.playlistText
+                        text: title
+                        width: parent.width
+                        anchors.verticalCenter: parent.verticalCenter
+                        maximumLineCount: 3
+                        font.bold: true
+                        elide: Text.ElideRight
+                        wrapMode: Text.WordWrap
+                        fontPointSize: 9
+                    }
+                }
+
+                Row {
+                    width: 62
+                    spacing: 0
+                    anchors.right: parent.right
+                    anchors.rightMargin: 24
+
+                    IconButton {
+                        height: 36
+                        width: 36
+                        visible: !isGroup
+                        hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
+                        iconPath: isSeen ? applicationThemeViewModel.currentItems.iconPlayerSeen : applicationThemeViewModel.currentItems.iconPlayerUnseen
+                        iconWidth: 22
+                        iconHeight: 22
+                        onButtonPressed: {
+                            releasesViewModel.toggleSeenMark(releaseId, uniqueIdentifier);
+                            onlinePlayerViewModel.refreshSingleVideo(releaseId, order);
+                            releasesViewModel.items.refreshSingleItem(releaseId);
+                        }
+                    }
+
+                    IconButton {
+                        height: 36
+                        width: 36
+                        visible: !isGroup
+                        hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
+                        iconPath: applicationThemeViewModel.currentItems.iconPlayerExternal
+                        iconWidth: 22
+                        iconHeight: 22
+                        onButtonPressed: {
+                            externalMenu.open();
+                        }
+
+                        CommonMenu {
+                            id: externalMenu
+                            y: parent.y
+                            width: 300
+
+                            CommonMenuItem {
+                                text: "Открыть в браузере"
+                                onPressed: {
+                                    let video;
+                                    switch (onlinePlayerViewModel.videoQuality) {
+                                        case "fullhd":
+                                            video = fullhd;
+                                            break;
+                                        case "hd":
+                                            video = hd;
+                                            break;
+                                        case "sd":
+                                            video = sd;
+                                            break;
+                                    }
+                                    if (!video) return;
+
+                                    Qt.openUrlExternally("https://anilibria.github.io/anilibria-win/videotester.html?video=" + video.replace("https://", ""));
+
+                                    externalMenu.close();
                                 }
                             }
-                            Text {
-                                visible: !isGroup
-                                color: selectedVideo ? applicationThemeViewModel.playlistSelectedText : applicationThemeViewModel.playlistText
-                                anchors.verticalCenter: parent.verticalCenter
-                                anchors.left: parent.left
-                                anchors.leftMargin: 10
-                                text: title
-                            }
-
-                            Rectangle {
-                                color: "transparent"
-                                anchors.fill: parent
-                                anchors.leftMargin: 10
-                                anchors.rightMargin: 10
-
-                                Text {
-                                    visible: isGroup
-                                    color: selectedVideo ? applicationThemeViewModel.playlistSelectedText : applicationThemeViewModel.playlistText
-                                    text: title
-                                    width: parent.width
-                                    anchors.verticalCenter: parent.verticalCenter
-                                    maximumLineCount: 3
-                                    font.bold: true
-                                    elide: Text.ElideRight
-                                    wrapMode: Text.WordWrap
-                                }
-                            }
-
-                            Row {
-                                width: 62
-                                spacing: 0
-                                anchors.right: parent.right
-                                anchors.rightMargin: 24
-
-                                IconButton {
-                                    height: 36
-                                    width: 36
-                                    visible: !isGroup
-                                    hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
-                                    iconPath: isSeen ? applicationThemeViewModel.currentItems.iconPlayerSeen : applicationThemeViewModel.currentItems.iconPlayerUnseen
-                                    iconWidth: 22
-                                    iconHeight: 22
-                                    onButtonPressed: {
-                                        releasesViewModel.toggleSeenMark(releaseId, order);
-                                        onlinePlayerViewModel.refreshSingleVideo(releaseId, order);
-                                        releasesViewModel.items.refreshSingleItem(releaseId);
+                            CommonMenuItem {
+                                text: "Открыть во внешнем плеере"
+                                onPressed: {
+                                    let video;
+                                    switch (onlinePlayerViewModel.videoQuality) {
+                                        case "fullhd":
+                                            video = fullhd;
+                                            break;
+                                        case "hd":
+                                            video = hd;
+                                            break;
+                                        case "sd":
+                                            video = sd;
+                                            break;
                                     }
-                                }
+                                    if (!video) return;
 
-                                IconButton {
-                                    height: 36
-                                    width: 36
-                                    visible: !isGroup
-                                    hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
-                                    iconPath: applicationThemeViewModel.currentItems.iconPlayerExternal
-                                    iconWidth: 22
-                                    iconHeight: 22
-                                    onButtonPressed: {
-                                        externalMenu.open();
-                                    }
+                                    onlinePlayerViewModel.openVideoInExternalPlayer(video);
 
-                                    CommonMenu {
-                                        id: externalMenu
-                                        y: parent.y
-                                        width: 300
-
-                                        CommonMenuItem {
-                                            text: "Открыть в браузере"
-                                            onPressed: {
-                                                let video;
-                                                switch (onlinePlayerViewModel.videoQuality) {
-                                                    case "fullhd":
-                                                        video = fullhd;
-                                                        break;
-                                                    case "hd":
-                                                        video = hd;
-                                                        break;
-                                                    case "sd":
-                                                        video = sd;
-                                                        break;
-                                                }
-                                                if (!video) return;
-
-                                                Qt.openUrlExternally("https://anilibria.github.io/anilibria-win/videotester.html?video=" + video.replace("https://", ""));
-
-                                                externalMenu.close();
-                                            }
-                                        }
-                                        CommonMenuItem {
-                                            text: "Открыть во внешнем плеере"
-                                            onPressed: {
-                                                let video;
-                                                switch (onlinePlayerViewModel.videoQuality) {
-                                                    case "fullhd":
-                                                        video = fullhd;
-                                                        break;
-                                                    case "hd":
-                                                        video = hd;
-                                                        break;
-                                                    case "sd":
-                                                        video = sd;
-                                                        break;
-                                                }
-                                                if (!video) return;
-
-                                                onlinePlayerViewModel.openVideoInExternalPlayer(video);
-
-                                                externalMenu.close();
-                                            }
-                                        }
-                                    }
+                                    externalMenu.close();
                                 }
                             }
                         }
@@ -494,6 +417,16 @@ Page {
 
         Behavior on opacity {
             NumberAnimation { duration: 200 }
+        }
+
+        MouseArea {
+            acceptedButtons: Qt.NoButton
+            hoverEnabled: true
+
+            onPositionChanged: {
+                onlinePlayerViewModel.clearPanelTimer();
+                _page.setControlVisible(true);
+            }
         }
     }
 
@@ -507,6 +440,15 @@ Page {
             id: controlPanelBackground
             anchors.fill: parent
             color: applicationThemeViewModel.currentItems.playerControlBackground
+        }
+
+        MouseArea {
+            anchors.fill: parent
+            acceptedButtons: Qt.NoButton
+            hoverEnabled: true
+            onEntered: {
+                onlinePlayerViewModel.clearPanelTimer();
+            }
         }
 
         Column {
@@ -524,7 +466,6 @@ Page {
                 onPressedChanged: {
                     if (!pressed && onlinePlayerViewModel.lastMovedPosition > 0) {
                         playerLoader.item.seek(onlinePlayerViewModel.lastMovedPosition);
-                        console.log('playerLoader.item.seek(onlinePlayerViewModel.lastMovedPosition);');
                         onlinePlayerViewModel.lastMovedPosition = 0;
                         onlinePlayerViewModel.broadcastVideoPosition(onlinePlayerViewModel.lastMovedPosition.toString() + `/` + playerLoader.item.duration.toString());                        
                     }
@@ -548,8 +489,17 @@ Page {
                 width: controlPanel.width
 
                 PlainText {
+                    id: videoPositionText
                     text: onlinePlayerViewModel.displayVideoPosition
                     fontPointSize: 10
+                }
+
+                AccentText {
+                    visible: onlinePlayerViewModel.needProxified
+                    anchors.left: videoPositionText.right
+                    anchors.leftMargin: 10
+                    fontPointSize: 10
+                    text: "Проксируется"
                 }
 
                 Row {
@@ -557,7 +507,7 @@ Page {
                     anchors.horizontalCenter: parent.horizontalCenter
 
                     ToggleButton {
-                        height: 20
+                        height: 28
                         width: userConfigurationViewModel.hidedQuality && !isChecked ? 0 : 60
                         text: "1080p"
                         visible: onlinePlayerViewModel.videoDuration > 0 && onlinePlayerViewModel.isFullHdAllowed && !(userConfigurationViewModel.hidedQuality && !isChecked)
@@ -565,14 +515,14 @@ Page {
                         onButtonClicked: {
                             onlinePlayerViewModel.restorePosition = playerLoader.item.position;
                             onlinePlayerViewModel.changeVideoQuality(`fullhd`);
-                            localStorage.setVideoQuality(2);
+                            userConfigurationViewModel.playerQuality = `fullhd`;
                         }
                         onButtonAlreadyClicked: {
                             userConfigurationViewModel.hidedQuality = !userConfigurationViewModel.hidedQuality;
                         }
                     }
                     ToggleButton {
-                        height: 20
+                        height: 28
                         width: userConfigurationViewModel.hidedQuality && !isChecked ? 0 : 60
                         visible: onlinePlayerViewModel.videoDuration > 0 && !(userConfigurationViewModel.hidedQuality && !isChecked)
                         text: "720p"
@@ -580,14 +530,14 @@ Page {
                         onButtonClicked: {
                             onlinePlayerViewModel.restorePosition = playerLoader.item.position;
                             onlinePlayerViewModel.changeVideoQuality(`hd`);
-                            localStorage.setVideoQuality(1);
+                            userConfigurationViewModel.playerQuality = `hd`;
                         }
                         onButtonAlreadyClicked: {
                             userConfigurationViewModel.hidedQuality = !userConfigurationViewModel.hidedQuality;
                         }
                     }
                     ToggleButton {
-                        height: 20
+                        height: 28
                         width: userConfigurationViewModel.hidedQuality && !isChecked ? 0 : 60
                         visible: onlinePlayerViewModel.videoDuration > 0 && !(userConfigurationViewModel.hidedQuality && !isChecked)
                         text: "480p"
@@ -595,7 +545,7 @@ Page {
                         onButtonClicked: {
                             onlinePlayerViewModel.restorePosition = playerLoader.item.position;
                             onlinePlayerViewModel.changeVideoQuality(`sd`);
-                            localStorage.setVideoQuality(0);
+                            userConfigurationViewModel.playerQuality = `sd`;
                         }
                         onButtonAlreadyClicked: {
                             userConfigurationViewModel.hidedQuality = !userConfigurationViewModel.hidedQuality;
@@ -603,7 +553,7 @@ Page {
                     }
                     Rectangle {
                         width: 20
-                        height: 20
+                        height: 28
                         visible: onlinePlayerViewModel.videoDuration > 0
                         color: "transparent"
                         PlainText {
@@ -613,7 +563,7 @@ Page {
                         }
                     }
                     ToggleButton {
-                        height: 20
+                        height: 28
                         width: userConfigurationViewModel.hidedSpeed && !isChecked ? 0 : 40
                         visible: onlinePlayerViewModel.videoDuration > 0 && !(userConfigurationViewModel.hidedSpeed && !isChecked)
                         text: "x0.25"
@@ -626,7 +576,7 @@ Page {
                         }
                     }
                     ToggleButton {
-                        height: 20
+                        height: 28
                         width: userConfigurationViewModel.hidedSpeed && !isChecked ? 0 : 40
                         visible: onlinePlayerViewModel.videoDuration > 0 && !(userConfigurationViewModel.hidedSpeed && !isChecked)
                         text: "x0.5"
@@ -639,7 +589,7 @@ Page {
                         }
                     }
                     ToggleButton {
-                        height: 20
+                        height: 28
                         width: userConfigurationViewModel.hidedSpeed && !isChecked ? 0 : 40
                         visible: onlinePlayerViewModel.videoDuration > 0 && !(userConfigurationViewModel.hidedSpeed && !isChecked)
                         text: "x0.75"
@@ -652,7 +602,7 @@ Page {
                         }
                     }
                     ToggleButton {
-                        height: 20
+                        height: 28
                         width: userConfigurationViewModel.hidedSpeed && !isChecked ? 0 : 40
                         visible: onlinePlayerViewModel.videoDuration > 0 && !(userConfigurationViewModel.hidedSpeed && !isChecked)
                         text: "x1"
@@ -665,7 +615,7 @@ Page {
                         }
                     }
                     ToggleButton {
-                        height: 20
+                        height: 28
                         width: userConfigurationViewModel.hidedSpeed && !isChecked ? 0 : 40
                         visible: onlinePlayerViewModel.videoDuration > 0 && !(userConfigurationViewModel.hidedSpeed && !isChecked)
                         text: "x1.25"
@@ -678,7 +628,7 @@ Page {
                         }
                     }
                     ToggleButton {
-                        height: 20
+                        height: 28
                         width: userConfigurationViewModel.hidedSpeed && !isChecked ? 0 : 40
                         visible: onlinePlayerViewModel.videoDuration > 0 && !(userConfigurationViewModel.hidedSpeed && !isChecked)
                         text: "x1.5"
@@ -691,7 +641,7 @@ Page {
                         }
                     }
                     ToggleButton {
-                        height: 20
+                        height: 28
                         width: userConfigurationViewModel.hidedSpeed && !isChecked ? 0 : 40
                         visible: onlinePlayerViewModel.videoDuration > 0 && !(userConfigurationViewModel.hidedSpeed && !isChecked)
                         text: "x1.75"
@@ -704,7 +654,7 @@ Page {
                         }
                     }
                     ToggleButton {
-                        height: 20
+                        height: 28
                         width: userConfigurationViewModel.hidedSpeed && !isChecked ? 0 : 40
                         visible: onlinePlayerViewModel.videoDuration > 0 && !(userConfigurationViewModel.hidedSpeed && !isChecked)
                         text: "x2"
@@ -717,7 +667,7 @@ Page {
                         }
                     }
                     ToggleButton {
-                        height: 20
+                        height: 28
                         width: userConfigurationViewModel.hidedSpeed && !isChecked ? 0 : 40
                         visible: onlinePlayerViewModel.videoDuration > 0 && !(userConfigurationViewModel.hidedSpeed && !isChecked)
                         text: "x3"
@@ -769,13 +719,78 @@ Page {
                         to: 100
                         onPressedChanged: {
                             if (!pressed) {
-                                localStorage.setVolume(playerLoader.item.volume);
+                                userConfigurationViewModel.playerVolume = playerLoader.item.volume;
                             }
                             controlPanel.forceActiveFocus();
                         }
                         onMoved: {
-                            playerLoader.item.volume = value / 100;
+                            playerLoader.item.volume = Math.round(value);
                             if (playerLoader.item.muted) playerLoader.item.muted = false;
+                        }
+                    }
+                    IconButton {
+                        id: tracksButton
+                        visible: !mainViewModel.isSmallSizeMode
+                        width: 40
+                        height: 40
+                        hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
+                        iconPath: applicationThemeViewModel.currentItems.iconSubtitlesPopup
+                        iconWidth: 24
+                        iconHeight: 24
+                        onButtonPressed: {
+                            tracksPopup.open();
+                        }
+
+                        DefaultPopup {
+                            id: tracksPopup
+                            y: -tracksPopup.height
+                            width: 300
+                            height: tracksColumn.implicitHeight
+                            modal: true
+                            closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
+
+                            Column {
+                                id: tracksColumn
+                                anchors.fill: parent
+                                spacing: 2
+
+                                PlainText {
+                                    id: subtitlesText
+                                    text: "Субтитры"
+                                    fontPointSize: 11
+                                }
+
+                                CommonComboBox {
+                                    id: subtitlesComboBox
+                                    width: tracksColumn.width - 4
+                                    currentIndex: playerLoader.item.selectedSubtitle
+                                    model: playerLoader.item.subtitles
+                                    onActivated: {
+                                        playerLoader.item.selectedSubtitle = subtitlesComboBox.currentIndex;
+                                    }
+                                }
+
+                                PlainText {
+                                    id: audiosText
+                                    text: "Аудио"
+                                    fontPointSize: 11
+                                }
+
+                                CommonComboBox {
+                                    id: audiosComboBox
+                                    width: tracksColumn.width - 4
+                                    currentIndex: playerLoader.item.selectedAudio
+                                    model: playerLoader.item.audios
+                                    onActivated: {
+                                        playerLoader.item.selectedAudio = audiosComboBox.currentIndex;
+                                    }
+                                }
+
+                                PlainText {
+                                    text: " "
+                                    fontPointSize: 9
+                                }
+                            }
                         }
                     }
                     IconButton {
@@ -918,7 +933,6 @@ Page {
                         id: reloadButton
                         width: 40
                         height: 40
-                        visible: !autoTopMost.checked
                         hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
                         iconPath: applicationThemeViewModel.currentItems.iconPlayerRefresh
                         iconWidth: 29
@@ -933,7 +947,7 @@ Page {
                         id: topmostButton
                         width: 40
                         height: 40
-                        visible: !autoTopMost.checked && !mainViewModel.isSmallSizeMode
+                        visible: !mainViewModel.isSmallSizeMode
                         hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
                         iconPath: applicationThemeViewModel.currentItems.iconPlayerTopMost
                         iconWidth: 29
@@ -1073,10 +1087,10 @@ Page {
 
                         DefaultPopup {
                             id: optionsPopup
-                            x: optionsButton.width - 610
-                            y: optionsButton.height - 510
+                            x: -leftColumn.implicitWidth
+                            y: -(leftColumn.implicitHeight + 20)
                             width: 600
-                            height: 500
+                            height: leftColumn.implicitHeight + 20
 
                             modal: true
                             focus: true
@@ -1111,7 +1125,7 @@ Page {
                                             }
                                         }
                                         onActivated: {
-                                            localStorage.setJumpMinute(onlinePlayerViewModel.jumpMinutes[index]);
+                                            userConfigurationViewModel.playerJumpMinute = onlinePlayerViewModel.jumpMinutes[index];
                                         }
                                     }
                                     CommonComboBox {
@@ -1142,7 +1156,7 @@ Page {
                                         }
 
                                         onActivated: {
-                                            localStorage.setJumpSecond(onlinePlayerViewModel.jumpSeconds[index]);
+                                            userConfigurationViewModel.playerJumpSecond = onlinePlayerViewModel.jumpSeconds[index];
                                         }
                                     }
                                 }
@@ -1155,22 +1169,9 @@ Page {
 
                                 CommonSwitch {
                                     id: autoNextVideo
+                                    checked: userConfigurationViewModel.autoNextVideo
                                     onCheckedChanged: {
-                                        localStorage.setAutoNextVideo(checked);
-                                    }
-                                }
-
-                                PlainText {
-                                    width: leftColumn.width - 20
-                                    fontPointSize: 10
-                                    text: "Автопереход в режим поверх всех окон"
-                                }
-
-                                CommonSwitch {
-                                    id: autoTopMost
-                                    onCheckedChanged: {
-                                        localStorage.setAutoTopMost(checked);
-                                        if (!checked) windowSettings.unsetStayOnTop()
+                                        userConfigurationViewModel.autoNextVideo = checked;
                                     }
                                 }
 
@@ -1182,8 +1183,9 @@ Page {
 
                                 CommonSwitch {
                                     id: showReleaseInfo
+                                    checked: userConfigurationViewModel.showReleaseInfo
                                     onCheckedChanged: {
-                                        localStorage.setShowReleaseInfo(checked);
+                                        userConfigurationViewModel.showReleaseInfo = checked;
                                         if (!checked) releasePosterArea.visible = false;
                                     }
                                 }
@@ -1196,8 +1198,9 @@ Page {
 
                                 CommonSwitch {
                                     id: showVideoPreview
+                                    checked: userConfigurationViewModel.showVideoPreview
                                     onCheckedChanged: {
-                                        localStorage.setShowVideoPreview(checked);
+                                        userConfigurationViewModel.showVideoPreview = checked;
                                     }
                                 }
 
@@ -1223,6 +1226,29 @@ Page {
                                     Component.onCompleted: {
                                         value = userConfigurationViewModel.opacityPlayerPanel;
                                         controlPanelBackground.opacity = value / 100;
+                                    }
+                                }
+
+                                PlainText {
+                                    width: leftColumn.width
+                                    fontPointSize: 10
+                                    text: "Восстановить видео"
+                                }
+                                CommonComboBox {
+                                    id: videoRestoreComboBox
+                                    Layout.column: 0
+                                    width: leftColumn.width - 20
+                                    model: ListModel {
+                                        ListElement {
+                                            text: "из локальных отметок"
+                                        }
+                                        ListElement {
+                                            text: "из отметки просмотрено и времени"
+                                        }
+                                    }
+                                    currentIndex: userConfigurationViewModel.restoreVideoMode
+                                    onActivated: {
+                                        userConfigurationViewModel.restoreVideoMode = index;
                                     }
                                 }
                             }
@@ -1282,10 +1308,16 @@ Page {
 
                                     onActivated: {
                                         optionsPopup.close();
-                                        onlinePlayerViewModel.restorePosition = onlinePlayerViewModel.videoPosition;
+
                                         const newPlayer = onlinePlayerWindowViewModel.players[currentIndex];
-                                        onlinePlayerWindowViewModel.changePlayer(newPlayer);
+                                        if (newPlayer === onlinePlayerWindowViewModel.selectedPlayer) return;
+
+                                        playerLoader.item.pause();
+
+                                        onlinePlayerViewModel.restorePosition = onlinePlayerViewModel.videoPosition;
                                         if (userConfigurationViewModel.needSavePlayer) userConfigurationViewModel.lastSelectedPlayer = newPlayer;
+
+                                        onlinePlayerWindowViewModel.changePlayerWithTimeout(newPlayer);
                                     }
 
                                     Connections {
@@ -1317,6 +1349,19 @@ Page {
                                         }
                                     }
                                 }
+
+                                PlainText {
+                                    width: rightColumn.width - 20
+                                    fontPointSize: 10
+                                    text: "Автопропуск эндинга"
+                                }
+                                CommonSwitch {
+                                    id: autoSkipEndingSwitch
+                                    checked: userConfigurationViewModel.autoSkipEnding
+                                    onCheckedChanged: {
+                                        userConfigurationViewModel.autoSkipEnding = checked;
+                                    }
+                                }
                             }
                         }
                     }
@@ -1331,15 +1376,10 @@ Page {
                         iconHeight: 29
                         tooltipMessage: "Включить режим обрезки видео потока"
                         onButtonPressed: {
-                            switch (playerLoader.item.fillMode) {
-                                case VideoOutput.PreserveAspectFit:
-                                    playerLoader.item.fillMode = VideoOutput.PreserveAspectCrop;
-                                    userConfigurationViewModel.isCroppedPlayer = true;
-                                    break;
-                                case VideoOutput.PreserveAspectCrop:
-                                    playerLoader.item.fillMode = VideoOutput.PreserveAspectFit;
-                                    userConfigurationViewModel.isCroppedPlayer = false;
-                                    break;
+                            if (playerLoader.item.isCropped) {
+                                playerLoader.item.defaultModeOutput();
+                            } else {
+                                playerLoader.item.cropModeOutput();
                             }
                         }
                     }
@@ -1366,14 +1406,6 @@ Page {
     }
 
     Rectangle {
-        id: mask
-        width: 180
-        height: 260
-        radius: 10
-        visible: false
-    }
-
-    Rectangle {
         id: skipOpening
         visible: onlinePlayerViewModel.displaySkipOpening && !userConfigurationViewModel.hideSkipOpening
         anchors.bottom: controlPanel.top
@@ -1397,9 +1429,40 @@ Page {
             anchors.fill: parent
             onPressed: {
                 const position = onlinePlayerViewModel.skipOpening();
-                if (onlinePlayerViewModel.restorePosition != 0) onlinePlayerViewModel.restorePosition = 0;
+                if (onlinePlayerViewModel.restorePosition !== 0) onlinePlayerViewModel.restorePosition = 0;
                 if (onlinePlayerViewModel.isFromNavigated) onlinePlayerViewModel.isFromNavigated = false;
                 playerLoader.item.seek(position);
+            }
+        }
+    }
+
+    Rectangle {
+        id: skipEnding
+        visible: onlinePlayerViewModel.reachEnding
+        anchors.bottom: controlPanel.top
+        anchors.right: controlPanel.right
+        anchors.rightMargin: onlinePlayerViewModel.showNextPosterRelease ? 230 : 10
+        anchors.bottomMargin: 4
+        width: 200
+        height: 40
+        color: applicationThemeViewModel.playerControlBackground
+        border.width: 1
+        border.color: applicationThemeViewModel.plainTextColor
+
+        PlainText {
+            anchors.centerIn: parent
+            fontPointSize: 12
+            text: "Пропустить эндинг"
+        }
+
+        MouseArea {
+            enabled: skipEnding.visible
+            anchors.fill: parent
+            onPressed: {
+                if (onlinePlayerViewModel.restorePosition !== 0) onlinePlayerViewModel.restorePosition = 0;
+                if (onlinePlayerViewModel.isFromNavigated) onlinePlayerViewModel.isFromNavigated = false;
+
+                onlinePlayerViewModel.nextVideo();
             }
         }
     }
@@ -1410,11 +1473,27 @@ Page {
             if (userConfigurationViewModel.autoSkipOpening) {
                 if (onlinePlayerViewModel.displaySkipOpening && !onlinePlayerViewModel.endSkipOpening) {
                     const position = onlinePlayerViewModel.skipOpening();
-                    if (onlinePlayerViewModel.restorePosition != 0) onlinePlayerViewModel.restorePosition = 0;
+                    if (onlinePlayerViewModel.restorePosition !== 0) onlinePlayerViewModel.restorePosition = 0;
                     if (onlinePlayerViewModel.isFromNavigated) onlinePlayerViewModel.isFromNavigated = false;
                     playerLoader.item.seek(position);
                     notificationViewModel.sendInfoNotification(`Произошел автоматический пропуск опенинга`);
                 }
+            }
+        }
+    }
+
+    Connections {
+        target: onlinePlayerViewModel
+        function onReachEndingChanged() {
+            if (!onlinePlayerViewModel.reachEnding) return;
+
+            if (userConfigurationViewModel.autoSkipEnding) {
+                if (onlinePlayerViewModel.restorePosition !== 0) onlinePlayerViewModel.restorePosition = 0;
+                if (onlinePlayerViewModel.isFromNavigated) onlinePlayerViewModel.isFromNavigated = false;
+
+                onlinePlayerViewModel.nextVideo();
+
+                notificationViewModel.sendInfoNotification(`Произошел автоматический пропуск эндинга`);
             }
         }
     }
@@ -1459,12 +1538,7 @@ Page {
             onPressed: {
                 const nextReleaseId = releaseLinkedSeries.getNextLinkedRelease(onlinePlayerViewModel.selectedRelease);
                 if (nextReleaseId > 0) {
-                    onlinePlayerViewModel.customPlaylistPosition = -1;
-                    onlinePlayerViewModel.navigateReleaseId = nextReleaseId;
-                    onlinePlayerViewModel.navigateVideos = releasesViewModel.getReleaseVideos(nextReleaseId);
-                    onlinePlayerViewModel.navigatePoster = releasesViewModel.getReleasePoster(nextReleaseId);
-
-                    onlinePlayerViewModel.setupForSingleRelease();
+                    onlinePlayerViewModel.quickSetupForSingleRelease(nextReleaseId, -1);
                 }
             }
         }
@@ -1514,10 +1588,7 @@ Page {
     }
 
     function setSerieScrollPosition() {
-        let newPosition = onlinePlayerViewModel.selectedVideo * 40 - serieScrollContainer.height;
-        newPosition += 40;
-        if (newPosition < 0) newPosition = 0;
-        serieScrollContainer.contentY = newPosition;
+        serieScrollContainer.positionViewAtIndex(onlinePlayerViewModel.selectedVideo, ListView.Contain);
     }
 
     function setControlVisible(visible) {
@@ -1533,6 +1604,7 @@ Page {
     }
 
     Component.onCompleted: {
-        volumeSlider.value = playerLoader.item.volume * 100;
+        volumeSlider.value = playerLoader.item.volume;
+        onlinePlayerViewModel.videoQuality = userConfigurationViewModel.playerQuality;
     }
 }

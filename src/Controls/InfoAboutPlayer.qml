@@ -1,4 +1,4 @@
-import QtQuick 2.12
+import QtQuick 2.15
 
 Item {
     id: root
@@ -24,7 +24,7 @@ Item {
         horizontalAlignment: Text.AlignHCenter
         fontPointSize: 10
         text: "<b>Релизы озвученные младше 2022 года могут содержать микродропы при воспроизведении на плеере VLC</b><br />" +
-            (Qt.platform.os === 'windows' ? "Чтобы решить эту проблему Вы можете смотреть на плеере QtAv с включенным проксированием на странице TorrentStream." :
+            (Qt.platform.os === 'windows' ? "Чтобы решить эту проблему Вы можете смотреть на плеере mpv с включенным проксированием на странице TorrentStream." :
                 "Чтобы решить эту проблему Вы можете смотреть на плеере Default или Default classic.")
     }
 

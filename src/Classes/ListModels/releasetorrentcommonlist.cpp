@@ -1,7 +1,9 @@
 #include <QUrl>
+#include <QFile>
 #include <QDesktopServices>
+#include <QStandardPaths>
 #include "releasetorrentcommonlist.h"
-#include "../../globalconstants.h"
+#include "../../globalhelpers.h"
 
 ReleaseTorrentCommonList::ReleaseTorrentCommonList(QObject *parent)
     : QAbstractListModel{parent}
@@ -30,16 +32,28 @@ QVariant ReleaseTorrentCommonList::data(const QModelIndex &index, int role) cons
             return QVariant(getReadableSize(torrent->size()));
         }
         case QualityRole: {
-            return QVariant(torrent->quality());
+            return QVariant(torrent->quality() + " " + torrent->codec());
         }
         case SeriesRole: {
-            return QVariant(torrent->series());
+            return QVariant(torrent->description());
         }
         case UrlRole: {
-            return QVariant(torrent->url());
+            return QVariant(torrent->torrentHost() + torrent->torrentPath());
         }
         case IndexRole: {
             return QVariant(index.row());
+        }
+        case TimeCreationRole: {
+            QDateTime timestamp;
+            timestamp.setSecsSinceEpoch(torrent->created());
+            auto date = timestamp.date();
+            auto dateAsString = getLeadingZeroDigit(date.day()) + "." + getLeadingZeroDigit(date.month()) + "." + getLeadingZeroDigit(date.year());
+            auto time = timestamp.time();
+            auto timeAsString = getLeadingZeroDigit(time.hour()) + ":" + getLeadingZeroDigit(time.minute());
+            return QVariant(dateAsString + " " + timeAsString);
+        }
+        case MagnetUrlRole: {
+            return QVariant(torrent->magnet());
         }
     }
 
@@ -72,38 +86,40 @@ QHash<int, QByteArray> ReleaseTorrentCommonList::roleNames() const
         {
             IndexRole,
             "currentIndex"
+        },
+        {
+            TimeCreationRole,
+            "timecreation"
+        },
+        {
+            MagnetUrlRole,
+            "magnet"
         }
     };
 }
 
-void ReleaseTorrentCommonList::loadFromJson(const QString &json)
+void ReleaseTorrentCommonList::loadFromJson(const QList<ApiTorrentModel *> &torrents)
 {
     beginResetModel();
 
     m_torrents->clear();
 
-    if (json.isEmpty()) return;
+    if (torrents.isEmpty()) return;
 
-    auto jsonDocument = QJsonDocument::fromJson(json.toUtf8());
-    auto jsonArray = jsonDocument.array();
-    foreach (auto item, jsonArray) {
-        auto torrent = new ReleaseTorrentModel();
-        torrent->readFromApiModel(item.toObject());
-        m_torrents->append(torrent);
+    foreach (auto item, torrents) {
+        m_torrents->append(item);
     }
 
     endResetModel();
 }
 
-void ReleaseTorrentCommonList::downloadTorrent(const int index)
+QString ReleaseTorrentCommonList::getDownloadPath(int index)
 {
     auto torrent = m_torrents->at(index);
-    QNetworkRequest request(QUrl(AnilibriaImagesPath + torrent->url()));
-
-    m_networkManager->get(request);
+    return torrent->torrentPath();
 }
 
-QString ReleaseTorrentCommonList::getReadableSize(long long size) const noexcept
+QString ReleaseTorrentCommonList::getReadableSize(int64_t size) const noexcept
 {
     QList<QString> sizes;
     sizes.append("B");

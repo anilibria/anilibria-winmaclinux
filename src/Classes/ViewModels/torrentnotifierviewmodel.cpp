@@ -34,6 +34,7 @@ TorrentNotifierViewModel::TorrentNotifierViewModel(QObject *parent)
     connect(m_webSocket,&QWebSocket::textMessageReceived, this, &TorrentNotifierViewModel::messageReceived);
     connect(m_webSocket,&QWebSocket::connected, this, &TorrentNotifierViewModel::socketConnected);
     connect(m_webSocket,&QWebSocket::disconnected, this, &TorrentNotifierViewModel::socketDisconnected);
+    connect(m_webSocket,QOverload<QAbstractSocket::SocketError>::of(&QWebSocket::error), this, &TorrentNotifierViewModel::errorSocket);
     connect(m_manager,&QNetworkAccessManager::finished, this, &TorrentNotifierViewModel::requestResponse);
 }
 
@@ -69,9 +70,46 @@ void TorrentNotifierViewModel::setReleasesViewModel(const ReleasesViewModel *vie
     emit releasesViewModelChanged();
 }
 
+QString TorrentNotifierViewModel::getDownloadedPath(const QString &url, int fileIndex) const noexcept
+{
+    auto iterator = std::find_if(
+        m_downloadedTorrents->cbegin(),
+        m_downloadedTorrents->cend(),
+        [url](const DownloadedTorrentModel* downloadedTorrent) {
+            return downloadedTorrent->downloadPath() == url;
+        }
+    );
+    if (iterator == m_downloadedTorrents->cend()) return "";
+
+    auto item = *iterator;
+    return item->getDownloadedFile(fileIndex);
+}
+
+void TorrentNotifierViewModel::setLastRefreshIdentifier(int lastRefreshIdentifier) noexcept
+{
+    if (m_lastRefreshIdentifier == lastRefreshIdentifier) return;
+
+    m_lastRefreshIdentifier = lastRefreshIdentifier;
+    emit lastRefreshIdentifierChanged();
+}
+
 void TorrentNotifierViewModel::startGetNotifiers()
 {
     m_webSocket->open(QUrl("ws://localhost:" + QString::number(m_port) + "/ws"));
+}
+
+void TorrentNotifierViewModel::setConnectionStarted()
+{
+    m_activated = true;
+    emit activatedChanged();
+
+    qInfo() << "TorrentStream library loaded";
+
+    if (m_removeAllData && !m_dataRemoved) {
+        m_dataRemoved = true;
+        clearAllData();
+        qInfo() << "TorrentStream clear downloaded data";
+    }
 }
 
 void TorrentNotifierViewModel::closeConnectionsAndApplication()
@@ -115,8 +153,10 @@ void TorrentNotifierViewModel::tryStartTorrentStreamApplication()
     }
 }
 
-void TorrentNotifierViewModel::startGetTorrentData()
+void TorrentNotifierViewModel::startGetTorrentData(bool needNotify)
 {
+    m_needActivateRefreshEvent = needNotify;
+    emit needActivateRefreshEventChanged();
     getTorrentData();
 }
 
@@ -150,12 +190,188 @@ void TorrentNotifierViewModel::clearTorrentAndData(const QString &path) noexcept
     m_manager->get(request);
 }
 
+void TorrentNotifierViewModel::removeRedundant() noexcept
+{
+    QList<QString> needRemoveTorrents;
+    QMap<int, int> torrentCountSeries;
+    auto index = 0;
+    foreach (auto torrent, *m_downloadedTorrents) {
+        auto releaseId = torrent->releaseId();
+        if (torrentCountSeries.contains(releaseId)) {
+            auto oldItemIndex = torrentCountSeries.value(releaseId);
+            auto oldItem = m_downloadedTorrents->value(oldItemIndex);
+            if (oldItem->countFiles() < torrent->countFiles()) {
+                needRemoveTorrents.append(oldItem->downloadPath());
+                torrentCountSeries[releaseId] = index;
+            } else {
+                needRemoveTorrents.append(torrent->downloadPath());
+            }
+        } else {
+            torrentCountSeries.insert(releaseId, index);
+        }
+        index++;
+    }
+    torrentCountSeries.clear();
+
+    foreach (auto torrentPath, needRemoveTorrents) {
+        clearOnlyTorrent(torrentPath);
+    }
+}
+
+void TorrentNotifierViewModel::showCard(int index) noexcept
+{
+    if (index >= m_downloadedTorrents->count()) return;
+
+    auto torrent = m_downloadedTorrents->at(index);
+    m_cardTorrent = torrent;
+    m_cardTorrentFiles.clear();
+    auto files = torrent->getOriginalFiles();
+
+    auto videos = m_releasesViewModel->getReleaseVideos(m_cardTorrent->releaseId());
+
+    int iterator = 0;
+    foreach (auto file, files) {
+        bool isDownloaded = std::get<0>(file);
+        int percent = std::get<1>(file);
+        int size = std::get<3>(file);
+        QString path = std::get<2>(file);
+
+        QFileInfo fileInfo(path);
+
+        QVariantMap map;
+        map["isdownloaded"] = isDownloaded ? "Полностью скачан" : (percent == 0 ? "Не скачан" : "Частично скачан");
+        map["size"] = getReadableSize(size);
+        map["filename"] = fileInfo.fileName();
+        map["percent"] = percent;
+        map["fullpath"] = path;
+        auto currentVideoIterator = std::find_if(
+            videos.begin(),
+            videos.end(),
+            [iterator](const ReleaseOnlineVideoModel* video) {
+                return video->order() == iterator;
+            }
+        );
+        QString posterPath = "";
+        if (currentVideoIterator != videos.end()) {
+            posterPath = (*currentVideoIterator)->videoPoster();
+        }
+        map["poster"] = posterPath;
+
+        QString videoDescription = "";
+        if (currentVideoIterator != videos.end()) {
+            videoDescription = (*currentVideoIterator)->description();
+        }
+        map["description"] = videoDescription;
+
+        m_cardTorrentFiles.append(map);
+        iterator++;
+    }
+
+    m_isCardShowed = true;
+    emit isCardShowedChanged();
+    emit cardReleaseIdChanged();
+    emit cardReleaseNameChanged();
+    emit cardDownloadStatusChanged();
+    emit cardTorrentFilesChanged();
+    emit cardDownloadSizeChanged();
+    emit cardDownloadFileStatusChanged();
+}
+
+void TorrentNotifierViewModel::closeCard() noexcept
+{
+    m_cardTorrentFiles.clear();
+
+    m_isCardShowed = false;
+    emit isCardShowedChanged();
+}
+
+void TorrentNotifierViewModel::setTorrents(const QString &json) noexcept
+{
+    setTorrentsFromJson(json);
+}
+
+
 void TorrentNotifierViewModel::getTorrentData() const noexcept
 {
     QUrl url("http://localhost:" + QString::number(m_port) + "/torrents");
     QNetworkRequest request(url);
     auto reply = m_manager->get(request);
     reply->setProperty("responsecode", "torrentsData");
+}
+
+QString TorrentNotifierViewModel::getReadableSize(int64_t size) const noexcept
+{
+    QList<QString> sizes;
+    sizes.append("B");
+    sizes.append("KB");
+    sizes.append("MB");
+    sizes.append("GB");
+    sizes.append("TB");
+
+    int order = 0;
+    while (size >= 1024 && order < 4) {
+        order++;
+        size = size / 1024;
+    }
+
+    auto stringSize = QString::number(size);
+    QString result;
+    result.append(stringSize);
+    result.append(" ");
+    result.append(sizes[order]);
+    return result;
+}
+
+QString TorrentNotifierViewModel::getCardDownloadFileStatus() const noexcept
+{
+    if (m_cardTorrent == nullptr) return "";
+
+    auto countFiles = m_cardTorrent->countFiles();
+    auto countDownloadedFiles = m_cardTorrent->countDownloadedFiles();
+
+    return QString("Скачано файлов ") + QString::number(countDownloadedFiles) + " из " + QString::number(countFiles);
+}
+
+void TorrentNotifierViewModel::setTorrentsFromJson(const QString &json) noexcept
+{
+    foreach (auto downloadedTorrent, *m_downloadedTorrents) downloadedTorrent->resetData();
+    m_downloadedTorrents->clear();
+
+    auto jsonDocument = QJsonDocument::fromJson(json.toUtf8());
+    auto array = jsonDocument.array();
+
+    foreach (auto item, array) {
+        auto torrentItem = item.toObject();
+        auto releaseId = torrentItem.value("identifier").toInt();
+        if (releaseId == 0) continue;
+        auto releaseItem = m_releasesViewModel->getReleaseById(releaseId);
+        if (releaseItem == nullptr) continue;
+
+        auto downloadedItem = new DownloadedTorrentModel();
+        downloadedItem->setReleaseId(releaseId);
+        downloadedItem->setDownloadPath(torrentItem.value("downloadPath").toString());
+        downloadedItem->setAllDownloaded(torrentItem.value("allDownloaded").toBool());
+        auto files = torrentItem.value("files").toArray();
+        foreach (auto file, files) {
+            auto fileObject = file.toObject();
+            auto size = 0;
+            if (fileObject.contains("size")) size = fileObject.value("size").toInt();
+
+            downloadedItem->addFile(
+                fileObject.value("isDownloaded").toBool(),
+                fileObject.value("percentComplete").toInt(),
+                fileObject.value("downloadedPath").toString(),
+                size
+                );
+        }
+        downloadedItem->setTitle(releaseItem->title());
+        downloadedItem->setPoster(releaseItem->poster());
+        //TODO: torrent title
+        //downloadedItem->setTorrentPoster(releaseItem->torrents())
+        m_downloadedTorrents->append(downloadedItem);
+    }
+
+    m_torrents->refresh();
 }
 
 void TorrentNotifierViewModel::triggerNotifier()
@@ -172,7 +388,7 @@ void TorrentNotifierViewModel::messageReceived(const QString &message)
     auto firstSeparator = message.indexOf(":");
     if (firstSeparator == -1) return;
 
-    auto response = message.midRef(0, firstSeparator);
+    auto response = message.mid(0, firstSeparator);
 
     if (response == "ds") {
         auto document = QJsonDocument::fromJson(message.mid(3).toUtf8());
@@ -220,8 +436,20 @@ void TorrentNotifierViewModel::socketDisconnected()
     qInfo() << "TorrentStream socket disconnected";
 }
 
+void TorrentNotifierViewModel::errorSocket(QAbstractSocket::SocketError error)
+{
+    Q_UNUSED(error);
+    if (m_howMuchTimesTryConnect < 5) {
+        m_howMuchTimesTryConnect += 1;
+        QTimer::singleShot(1000 * m_howMuchTimesTryConnect, this, &TorrentNotifierViewModel::makeConnectToNotifiers);
+    }
+}
+
 void TorrentNotifierViewModel::requestResponse(QNetworkReply *reply)
 {
+    auto isNeedNotify = m_needActivateRefreshEvent;
+    m_needActivateRefreshEvent = false;
+    emit needActivateRefreshEventChanged();
     if (m_releasesViewModel == nullptr) return;
     if (m_downloadedTorrents == nullptr) return;
 
@@ -231,41 +459,13 @@ void TorrentNotifierViewModel::requestResponse(QNetworkReply *reply)
     auto response = responseCode.toString();
 
     if (response == "torrentsData") {
-        foreach (auto downloadedTorrent, *m_downloadedTorrents) downloadedTorrent->resetData();
-        m_downloadedTorrents->clear();
+        setTorrentsFromJson(reply->readAll());
 
-        auto json = reply->readAll();
-
-        auto jsonDocument = QJsonDocument::fromJson(json);
-        auto array = jsonDocument.array();
-        foreach (auto item, array) {
-            auto torrentItem = item.toObject();
-            auto releaseId = torrentItem.value("identifier").toInt();
-            if (releaseId == 0) continue;
-            auto releaseItem = m_releasesViewModel->getReleaseById(releaseId);
-            if (releaseItem == nullptr) continue;
-
-            auto downloadedItem = new DownloadedTorrentModel();
-            downloadedItem->setReleaseId(releaseId);
-            downloadedItem->setDownloadPath(torrentItem.value("downloadPath").toString());
-            downloadedItem->setAllDownloaded(torrentItem.value("allDownloaded").toBool());
-            auto files = torrentItem.value("files").toArray();
-            foreach (auto file, files) {
-                auto fileObject = file.toObject();
-                downloadedItem->addFile(
-                    fileObject.value("isDownloaded").toBool(),
-                    fileObject.value("percentComplete").toInt(),
-                    fileObject.value("downloadedPath").toString()
-                );
-            }
-            downloadedItem->setTitle(releaseItem->title());
-            downloadedItem->setPoster(releaseItem->poster());
-            //TODO: torrent title
-            //downloadedItem->setTorrentPoster(releaseItem->torrents())
-            m_downloadedTorrents->append(downloadedItem);
-        }
-
-        m_torrents->refresh();
+        if (isNeedNotify) emit torrentsRefreshed();
     }
 }
 
+void TorrentNotifierViewModel::makeConnectToNotifiers()
+{
+    startGetNotifiers();
+}

@@ -1,6 +1,6 @@
-import QtQuick 2.12
-import QtQuick.Controls 2.12
-import QtQuick.Layouts 1.3
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
 import "../Controls"
 
 Page {
@@ -44,7 +44,7 @@ Page {
                         PlainText {
                             anchors.verticalCenter: parent.verticalCenter
                             anchors.horizontalCenter: parent.horizontalCenter
-                            visible: releasesViewModel.synchronizationEnabled
+                            visible: synchronizationServicev2.synchronizeCacheActived
                             fontPointSize: 12
                             text: "Выполняется синхронизация..."
                         }
@@ -87,6 +87,22 @@ Page {
                                 onButtonPressed: {
                                     filterTextField.text = "";
                                 }
+                            }
+                        }
+
+                        IconButton {
+                            id: refreshButton
+                            anchors.right: openAllButton.left
+                            height: 45
+                            width: 40
+                            hoverColor: applicationThemeViewModel.filterIconButtonHoverColor
+                            iconPath: applicationThemeViewModel.currentItems.iconReleaseCatalogSynchronization
+                            iconWidth: 28
+                            iconHeight: 28
+                            tooltipMessage: "Обновить"
+                            onButtonPressed: {
+                                releasesViewModel.refreshMyAnilibriaCache();
+                                myAnilibriaViewModel.refreshAllSectionsModels();
                             }
                         }
 
@@ -152,9 +168,10 @@ Page {
                                         width: allSectionList.width
                                         height: 40
 
-                                        CheckBox {
+                                        CommonSwitch {
+                                            id: sectionSwitch
+                                            anchors.verticalCenter: parent.verticalCenter
                                             checked: sectionSelected
-                                            text: sectionTitle
                                             onCheckedChanged: {
                                                 if (checked) {
                                                     myAnilibriaViewModel.selectSection(sectionId)
@@ -162,6 +179,14 @@ Page {
                                                     myAnilibriaViewModel.deselectSection(sectionId)
                                                 }
                                             }
+                                        }
+                                        PlainText {
+                                            id: labelOrAndGenresSearchField
+                                            anchors.verticalCenter: parent.verticalCenter
+                                            anchors.left: sectionSwitch.right
+                                            anchors.leftMargin: 2
+                                            fontPointSize: 10
+                                            text: sectionTitle
                                         }
                                     }
                                     ScrollBar.vertical: ScrollBar {
@@ -172,19 +197,36 @@ Page {
                         }
                     }
 
-                    ListView {
-                        id: scrollview
+                    Item {
                         Layout.fillHeight: true
                         Layout.fillWidth: true
-                        clip: true
-                        model: myAnilibriaViewModel.myList
-                        delegate: Component {
-                            Loader {
-                                source: "./MyAnilibria/" + componentId + ".qml"
-                            }
+
+                        Image {
+                            id: backgroundFile
+                            asynchronous: true
+                            visible: applicationThemeViewModel.myAnilibriaPageBackground.activated
+                            fillMode: applicationThemeViewModel.myAnilibriaPageBackground.activated ? applicationThemeViewModel.myAnilibriaPageBackground.imageMode : Image.Pad
+                            source: applicationThemeViewModel.myAnilibriaPageBackground.activated ? applicationThemeViewModel.myAnilibriaPageBackground.url : ''
+                            opacity: applicationThemeViewModel.myAnilibriaPageBackground.activated ? applicationThemeViewModel.myAnilibriaPageBackground.opacity / 100 : 1
+                            horizontalAlignment: applicationThemeViewModel.myAnilibriaPageBackground.activated ? applicationThemeViewModel.myAnilibriaPageBackground.halign : Image.AlignLeft
+                            verticalAlignment: applicationThemeViewModel.myAnilibriaPageBackground.activated ? applicationThemeViewModel.myAnilibriaPageBackground.valign : Image.AlignTop
+                            width: myAnilibriaPage.width
+                            height: myAnilibriaPage.height
                         }
-                        ScrollBar.vertical: ScrollBar {
-                            active: true
+
+                        ListView {
+                            id: scrollview
+                            anchors.fill: parent
+                            clip: true
+                            model: myAnilibriaViewModel.myList
+                            delegate: Component {
+                                Loader {
+                                    source: "./MyAnilibria/" + componentId + ".qml"
+                                }
+                            }
+                            ScrollBar.vertical: ScrollBar {
+                                active: true
+                            }
                         }
                     }
                 }

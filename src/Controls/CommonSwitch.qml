@@ -1,5 +1,5 @@
-import QtQuick 2.12
-import QtQuick.Controls 2.12
+import QtQuick 2.15
+import QtQuick.Controls 2.15
 import CustomStyle 1.0
 
 Switch {
@@ -15,7 +15,7 @@ Switch {
     CustomStyle.switchDisabledHandle: applicationThemeViewModel.currentItems.colorSwitchDisabledHandle
 
     ToolTip {
-        delay: 2000
+        delay: 1000
         visible: hovered && tooltipMessage
         text: tooltipMessage
         CustomStyle.tooltipColor: applicationThemeViewModel.currentItems.colorTooltipBackground

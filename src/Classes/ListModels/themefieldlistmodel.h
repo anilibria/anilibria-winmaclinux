@@ -98,6 +98,8 @@ public:
     Q_INVOKABLE void toggleDefinedField(int itemIndex) noexcept;
     Q_INVOKABLE void saveThemeToFile(const QString& path) noexcept;
     Q_INVOKABLE void addIconFromFile(const QString& path, int itemIndex) noexcept;
+    Q_INVOKABLE void undefineAllFields() noexcept;
+    Q_INVOKABLE void undefineSelectedFields() noexcept;
 
 private:
     void refreshRowByField(const QString& field) noexcept;

@@ -19,6 +19,8 @@
 #include <QFile>
 #include <QJsonDocument>
 #include <QJsonObject>
+#include <QFont>
+#include <QGuiApplication>
 #include "userconfigurationviewmodel.h"
 #include "../../globalhelpers.h"
 
@@ -321,6 +323,202 @@ void UserConfigurationViewModel::setUsingVideoProxyVLC(bool usingVideoProxyVLC) 
     emit usingVideoProxyVLCChanged();
 }
 
+void UserConfigurationViewModel::setTextFont(const QString& textFont) noexcept
+{
+    if (m_textFont == textFont) return;
+
+    m_textFont = textFont;
+    emit textFontChanged();
+
+    changeFont(m_textFont);
+}
+
+void UserConfigurationViewModel::setUsingStrongProxy(bool usingStrongProxy) noexcept
+{
+    if (m_usingStrongProxy == usingStrongProxy) return;
+
+    m_usingStrongProxy = usingStrongProxy;
+    emit usingStrongProxyChanged();
+}
+
+void UserConfigurationViewModel::setUsingVideoProxyMPV(bool usingVideoProxyMPV) noexcept
+{
+    if (m_usingVideoProxyMPV == usingVideoProxyMPV) return;
+
+    m_usingVideoProxyMPV = usingVideoProxyMPV;
+    emit usingVideoProxyMPVChanged();
+}
+
+void UserConfigurationViewModel::setShowVideoPreview(bool showVideoPreview) noexcept
+{
+    if (m_showVideoPreview == showVideoPreview) return;
+
+    m_showVideoPreview = showVideoPreview;
+    emit showVideoPreviewChanged();
+}
+
+void UserConfigurationViewModel::setShowReleaseInfo(bool showReleaseInfo) noexcept
+{
+    if (m_showReleaseInfo == showReleaseInfo) return;
+
+    m_showReleaseInfo = showReleaseInfo;
+    emit showReleaseInfoChanged();
+}
+
+void UserConfigurationViewModel::setAutoNextVideo(bool autoNextVideo) noexcept
+{
+    if (m_autoNextVideo == autoNextVideo) return;
+
+    m_autoNextVideo = autoNextVideo;
+    emit autoNextVideoChanged();
+}
+
+void UserConfigurationViewModel::setAutoPlayerTopMost(bool autoPlayerTopMost) noexcept
+{
+    if (m_autoPlayerTopMost == autoPlayerTopMost) return;
+
+    m_autoPlayerTopMost = autoPlayerTopMost;
+    emit autoPlayerTopMostChanged();
+}
+
+void UserConfigurationViewModel::setApiv2host(QString apiv2host) noexcept
+{
+    if (m_apiv2host == apiv2host) return;
+
+    m_apiv2host = apiv2host;
+    emit apiv2hostChanged();
+}
+
+void UserConfigurationViewModel::setV2token(const QString &v2token) noexcept
+{
+    if (m_v2token == v2token) return;
+
+    m_v2token = v2token;
+    emit v2tokenChanged();
+}
+
+void UserConfigurationViewModel::setTorrentDownloadMode(int torrentDownloadMode) noexcept
+{
+    if (m_torrentDownloadMode == torrentDownloadMode) return;
+
+    m_torrentDownloadMode = torrentDownloadMode;
+    emit torrentDownloadModeChanged();
+}
+
+void UserConfigurationViewModel::setCachehost(const QString& cachehost) noexcept
+{
+    if (m_cachehost == cachehost) return;
+
+    m_cachehost = cachehost;
+    emit cachehostChanged();
+}
+
+void UserConfigurationViewModel::setUseCacheFolder(bool useCacheFolder) noexcept
+{
+    if (m_useCacheFolder == useCacheFolder) return;
+
+    m_useCacheFolder = useCacheFolder;
+    emit useCacheFolderChanged();
+}
+
+void UserConfigurationViewModel::setCacheFolder(const QString &cacheFolder) noexcept
+{
+    if (m_cacheFolder == cacheFolder) return;
+
+    m_cacheFolder = cacheFolder;
+    emit cacheFolderChanged();
+}
+
+void UserConfigurationViewModel::setVideoServer(int videoServer) noexcept
+{
+    if (m_videoServer == videoServer) return;
+
+    m_videoServer = videoServer;
+    emit videoServerChanged();
+}
+
+void UserConfigurationViewModel::setRestoreVideoMode(int restoreVideoMode) noexcept
+{
+    if (m_restoreVideoMode == restoreVideoMode) return;
+
+    m_restoreVideoMode = restoreVideoMode;
+    emit restoreVideoModeChanged();
+}
+
+void UserConfigurationViewModel::setAutoSkipEnding(bool autoSkipEnding) noexcept
+{
+    if (m_autoSkipEnding == autoSkipEnding) return;
+
+    m_autoSkipEnding = autoSkipEnding;
+    emit autoSkipEndingChanged();
+}
+
+void UserConfigurationViewModel::setShowFullTeam(bool showFullTeam) noexcept
+{
+    if (m_showFullTeam == showFullTeam) return;
+
+    m_showFullTeam = showFullTeam;
+    emit showFullTeamChanged();
+}
+
+void UserConfigurationViewModel::setUseTorrentStreamLibrary(bool useTorrentStreamLibrary) noexcept
+{
+    if (m_useTorrentStreamLibrary == useTorrentStreamLibrary) return;
+
+    m_useTorrentStreamLibrary = useTorrentStreamLibrary;
+    emit useTorrentStreamLibraryChanged();
+}
+
+void UserConfigurationViewModel::setTorrentStreamUI(bool torrentStreamUI) noexcept
+{
+    if (m_torrentStreamUI == torrentStreamUI) return;
+
+    m_torrentStreamUI = torrentStreamUI;
+    emit torrentStreamUIChanged();
+}
+
+void UserConfigurationViewModel::setPathToTSContent(QString pathToTSContent) noexcept
+{
+    if (m_pathToTSContent == pathToTSContent) return;
+
+    m_pathToTSContent = pathToTSContent;
+    emit pathToTSContentChanged();
+}
+
+void UserConfigurationViewModel::setPlayerVolume(double playerVolume) noexcept
+{
+    if (playerVolume < 0) playerVolume = 0;
+
+    if (m_playerVolume == playerVolume) return;
+
+    m_playerVolume = playerVolume;
+    emit playerVolumeChanged();
+}
+
+void UserConfigurationViewModel::setPlayerQuality(const QString& playerQuality) noexcept
+{
+    if (m_playerQuality == playerQuality) return;
+
+    m_playerQuality = playerQuality;
+    emit playerQualityChanged();
+}
+
+void UserConfigurationViewModel::setPlayerJumpMinute(int playerJumpMinute) noexcept
+{
+    if (m_playerJumpMinute == playerJumpMinute) return;
+
+    m_playerJumpMinute = playerJumpMinute;
+    emit playerJumpMinuteChanged();
+}
+
+void UserConfigurationViewModel::setPlayerJumpSecond(int playerJumpSecond) noexcept
+{
+    if (m_playerJumpSecond == playerJumpSecond) return;
+
+    m_playerJumpSecond = playerJumpSecond;
+    emit playerJumpSecondChanged();
+}
+
 void UserConfigurationViewModel::refreshConfiguration() noexcept
 {
     readSettingsFromFile();
@@ -350,6 +548,25 @@ void UserConfigurationViewModel::refreshConfiguration() noexcept
     emit customScriptFileChanged();
     emit usingVideoProxyChanged();
     emit usingVideoProxyVLCChanged();
+    emit textFontChanged();
+    emit autoNextVideoChanged();
+    emit autoPlayerTopMostChanged();
+    emit apiv2hostChanged();
+    emit v2tokenChanged();
+    emit torrentDownloadModeChanged();
+    emit cachehostChanged();
+    emit useCacheFolderChanged();
+    emit cacheFolderChanged();
+    emit videoServerChanged();
+    emit restoreVideoModeChanged();
+    emit autoSkipEndingChanged();
+    emit useTorrentStreamLibraryChanged();
+    emit torrentStreamUIChanged();
+    emit pathToTSContentChanged();
+    emit playerVolumeChanged();
+    emit playerQualityChanged();
+    emit playerJumpMinuteChanged();
+    emit playerJumpSecondChanged();
 }
 
 void UserConfigurationViewModel::saveSettingsToFile()
@@ -391,6 +608,30 @@ void UserConfigurationViewModel::saveSettingsToFile()
     object[m_sendVolumeToRemoteField] = m_sendVolumeToRemote;
     object[m_sendPlaybackToRemoteField] = m_sendPlaybackToRemote;
     object[m_usingVideoProxyVLCField] = m_usingVideoProxyVLC;
+    object[m_textFontField] = m_textFont;
+    object[m_usingStrongProxyField] = m_usingStrongProxy;
+    object[m_usingVideoProxyMPVField] = m_usingVideoProxyMPV;
+    object[m_showVideoPreviewField] = m_showVideoPreview;
+    object[m_showReleaseInfoField] = m_showReleaseInfo;
+    object[m_autoNextVideoField] = m_autoNextVideo;
+    object[m_autoPlayerTopMostField] = m_autoPlayerTopMost;
+    object[m_apiv2hostField] = m_apiv2host;
+    object[m_v2tokenField] = m_v2token;
+    object[m_torrentDownloadModeField] = m_torrentDownloadMode;
+    object[m_cachehostField] = m_cachehost;
+    object[m_useCacheFolderField] = m_useCacheFolder;
+    object[m_cacheFolderField] = m_cacheFolder;
+    object[m_videoServerField] = m_videoServer;
+    object[m_restoreVideoModeField] = m_restoreVideoMode;
+    object[m_autoSkipEndingField] = m_autoSkipEnding;
+    object[m_showFullTeamField] = m_showFullTeam;
+    object[m_useTorrentStreamLibraryField] = m_useTorrentStreamLibrary;
+    object[m_torrentStreamUIField] = m_torrentStreamUI;
+    object[m_pathToTSContentField] = m_pathToTSContent;
+    object[m_playerVolumeField] = m_playerVolume;
+    object[m_playerQualityField] = m_playerQuality;
+    object[m_playerJumpMinuteField] = m_playerJumpMinute;
+    object[m_playerJumpSecondField] = m_playerJumpSecond;
 
     QFile file(getCachePath(m_cacheFileName));
     file.open(QFile::WriteOnly | QFile::Text);
@@ -443,4 +684,37 @@ void UserConfigurationViewModel::readSettingsFromFile()
     m_sendVolumeToRemote = object.contains(m_sendVolumeToRemoteField) ? object[m_sendVolumeToRemoteField].toBool() : true;
     m_sendPlaybackToRemote = object.contains(m_sendPlaybackToRemoteField) ? object[m_sendPlaybackToRemoteField].toBool() : false;
     m_usingVideoProxyVLC = object.contains(m_usingVideoProxyVLCField) ? object[m_usingVideoProxyVLCField].toBool() : false;
+    m_textFont = object.contains(m_textFontField) ? object[m_textFontField].toString() : "Default";
+    m_usingStrongProxy = object.contains(m_usingStrongProxyField) ? object[m_usingStrongProxyField].toBool() : true;
+    m_usingVideoProxyMPV = object.contains(m_usingVideoProxyMPVField) ? object[m_usingVideoProxyMPVField].toBool() : true;
+    m_showVideoPreview = object.contains(m_showVideoPreviewField) ? object[m_showVideoPreviewField].toBool() : false;
+    m_showReleaseInfo = object.contains(m_showReleaseInfoField) ? object[m_showReleaseInfoField].toBool() : true;
+    m_autoNextVideo = object.contains(m_autoNextVideoField) ? object[m_autoNextVideoField].toBool() : true;
+    m_autoPlayerTopMost = object.contains(m_autoPlayerTopMostField) ? object[m_autoPlayerTopMostField].toBool() : false;
+    m_apiv2host = object.contains(m_apiv2hostField) ? object[m_apiv2hostField].toString() : "https://anilibria.top";
+    m_v2token = object.contains(m_v2tokenField) ? object[m_v2tokenField].toString() : "";
+    m_torrentDownloadMode = object.contains(m_torrentDownloadModeField) ? object[m_torrentDownloadModeField].toInt() : 0;
+    m_cachehost = object.contains(m_cachehostField) ? object[m_cachehostField].toString() : "https://raw.githubusercontent.com/trueromanus/LocalCacheChecker/main/cache";
+    m_useCacheFolder = object.contains(m_useCacheFolderField) ? object[m_useCacheFolderField].toBool() : false;
+    m_cacheFolder = object.contains(m_cacheFolderField) ? object[m_cacheFolderField].toString() : "";
+    m_videoServer = object.contains(m_videoServerField) ? object[m_videoServerField].toInt() : 0;
+    m_restoreVideoMode = object.contains(m_restoreVideoModeField) ? object[m_restoreVideoModeField].toInt() : 0;
+    m_autoSkipEnding = object.contains(m_autoSkipEndingField) ? object[m_autoSkipEndingField].toBool() : false;
+    m_showFullTeam = object.contains(m_showFullTeamField) ? object[m_showFullTeamField].toBool() : true;
+    m_useTorrentStreamLibrary = object.contains(m_useTorrentStreamLibraryField) ? object[m_useTorrentStreamLibraryField].toBool() : false;
+    m_torrentStreamUI = object.contains(m_torrentStreamUIField) ? object[m_torrentStreamUIField].toBool() : false;
+    m_pathToTSContent = object.contains(m_pathToTSContentField) ? object[m_pathToTSContentField].toString() : "";
+    m_playerVolume = object.contains(m_playerVolumeField) ? object[m_playerVolumeField].toInt() : 80;
+    m_playerQuality = object.contains(m_playerQualityField) ? object[m_playerQualityField].toString() : "hd";
+    m_playerJumpMinute = object.contains(m_playerJumpMinuteField) ? object[m_playerJumpMinuteField].toInt() : 1;
+    m_playerJumpSecond = object.contains(m_playerJumpSecondField) ? object[m_playerJumpSecondField].toInt() : 0;
+
+    if (m_textFont != "Default") changeFont(m_textFont);
+}
+
+void UserConfigurationViewModel::changeFont(const QString &family)
+{
+    auto instance = QGuiApplication::instance();
+    auto guiInstance = static_cast<QGuiApplication*>(instance);
+    guiInstance->setFont(QFont(family));
 }

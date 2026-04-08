@@ -61,6 +61,30 @@ class UserConfigurationViewModel : public QObject
     Q_PROPERTY(int remotePort READ remotePort WRITE setRemotePort NOTIFY remotePortChanged)
     Q_PROPERTY(bool sendVolumeToRemote READ sendVolumeToRemote WRITE setSendVolumeToRemote NOTIFY sendVolumeToRemoteChanged)
     Q_PROPERTY(bool sendPlaybackToRemote READ sendPlaybackToRemote WRITE setSendPlaybackToRemote NOTIFY sendPlaybackToRemoteChanged)
+    Q_PROPERTY(QString textFont READ textFont WRITE setTextFont NOTIFY textFontChanged)
+    Q_PROPERTY(bool usingStrongProxy READ usingStrongProxy WRITE setUsingStrongProxy NOTIFY usingStrongProxyChanged FINAL)
+    Q_PROPERTY(bool usingVideoProxyMPV READ usingVideoProxyMPV WRITE setUsingVideoProxyMPV NOTIFY usingVideoProxyMPVChanged)
+    Q_PROPERTY(bool showVideoPreview READ showVideoPreview WRITE setShowVideoPreview NOTIFY showVideoPreviewChanged FINAL)
+    Q_PROPERTY(bool showReleaseInfo READ showReleaseInfo WRITE setShowReleaseInfo NOTIFY showReleaseInfoChanged FINAL)
+    Q_PROPERTY(bool autoNextVideo READ autoNextVideo WRITE setAutoNextVideo NOTIFY autoNextVideoChanged FINAL)
+    Q_PROPERTY(bool autoPlayerTopMost READ autoPlayerTopMost WRITE setAutoPlayerTopMost NOTIFY autoPlayerTopMostChanged FINAL)
+    Q_PROPERTY(QString apiv2host READ apiv2host WRITE setApiv2host NOTIFY apiv2hostChanged FINAL)
+    Q_PROPERTY(QString v2token READ v2token WRITE setV2token NOTIFY v2tokenChanged FINAL)
+    Q_PROPERTY(int torrentDownloadMode READ torrentDownloadMode WRITE setTorrentDownloadMode NOTIFY torrentDownloadModeChanged FINAL)
+    Q_PROPERTY(QString cachehost READ cachehost WRITE setCachehost NOTIFY cachehostChanged FINAL)
+    Q_PROPERTY(bool useCacheFolder READ useCacheFolder WRITE setUseCacheFolder NOTIFY useCacheFolderChanged FINAL)
+    Q_PROPERTY(QString cacheFolder READ cacheFolder WRITE setCacheFolder NOTIFY cacheFolderChanged FINAL)
+    Q_PROPERTY(int videoServer READ videoServer WRITE setVideoServer NOTIFY videoServerChanged FINAL)
+    Q_PROPERTY(int restoreVideoMode READ restoreVideoMode WRITE setRestoreVideoMode NOTIFY restoreVideoModeChanged FINAL)
+    Q_PROPERTY(bool autoSkipEnding READ autoSkipEnding WRITE setAutoSkipEnding NOTIFY autoSkipEndingChanged FINAL)
+    Q_PROPERTY(bool showFullTeam READ showFullTeam WRITE setShowFullTeam NOTIFY showFullTeamChanged FINAL)
+    Q_PROPERTY(bool useTorrentStreamLibrary READ useTorrentStreamLibrary WRITE setUseTorrentStreamLibrary NOTIFY useTorrentStreamLibraryChanged FINAL)
+    Q_PROPERTY(bool torrentStreamUI READ torrentStreamUI WRITE setTorrentStreamUI NOTIFY torrentStreamUIChanged FINAL)
+    Q_PROPERTY(QString pathToTSContent READ pathToTSContent WRITE setPathToTSContent NOTIFY pathToTSContentChanged FINAL)
+    Q_PROPERTY(double playerVolume READ playerVolume WRITE setPlayerVolume NOTIFY playerVolumeChanged FINAL)
+    Q_PROPERTY(QString playerQuality READ playerQuality WRITE setPlayerQuality NOTIFY playerQualityChanged FINAL)
+    Q_PROPERTY(int playerJumpMinute READ playerJumpMinute WRITE setPlayerJumpMinute NOTIFY playerJumpMinuteChanged FINAL)
+    Q_PROPERTY(int playerJumpSecond READ playerJumpSecond WRITE setPlayerJumpSecond NOTIFY playerJumpSecondChanged FINAL)
 
 private:
     QString m_cacheFileName { "userconfiguration.cache" };
@@ -100,6 +124,30 @@ private:
     const QString m_sendVolumeToRemoteField { "sendVolumeToRemote" };
     const QString m_sendPlaybackToRemoteField { "sendPlaybackToRemote" };
     const QString m_usingVideoProxyVLCField { "usingVideoProxyVLC" };
+    const QString m_textFontField { "textFont" };
+    const QString m_usingStrongProxyField { "usingStrongProxy" };
+    const QString m_usingVideoProxyMPVField { "usingVideoProxyMPV" };
+    const QString m_showVideoPreviewField { "showVideoPreview" };
+    const QString m_showReleaseInfoField { "showReleaseInfo" };
+    const QString m_autoNextVideoField { "autoNextVideo" };
+    const QString m_autoPlayerTopMostField { "autoPlayerTopMost" };
+    const QString m_apiv2hostField { "apiv2host" };
+    const QString m_v2tokenField { "v2token" };
+    const QString m_torrentDownloadModeField { "torrentDownloadMode" };
+    const QString m_cachehostField { "cachehost" };
+    const QString m_useCacheFolderField { "useCacheFolder" };
+    const QString m_cacheFolderField { "cacheFolder" };
+    const QString m_videoServerField { "videoServer" };
+    const QString m_restoreVideoModeField { "restoreVideoMode" };
+    const QString m_autoSkipEndingField { "autoSkipEnding" };
+    const QString m_showFullTeamField { "showFullTeam" };
+    const QString m_useTorrentStreamLibraryField { "useTorrentStreamLibrary" };
+    const QString m_torrentStreamUIField { "torrentStreamUI" };
+    const QString m_pathToTSContentField { "pathToTSContent" };
+    const QString m_playerVolumeField { "playerVolume" };
+    const QString m_playerQualityField { "playerQuality" };
+    const QString m_playerJumpMinuteField { "playerJumpMinute" };
+    const QString m_playerJumpSecondField { "playerJumpSecond" };
     int m_opacityPlayerPanel { 50 };
     bool m_notCloseReleaseCardAfterWatch { false };
     bool m_usingScrollAcceleration { true };
@@ -136,6 +184,30 @@ private:
     bool m_sendVolumeToRemote { false };
     bool m_sendPlaybackToRemote { false };
     bool m_usingVideoProxyVLC { false };
+    QString m_textFont { "" };
+    bool m_usingStrongProxy { false };
+    bool m_usingVideoProxyMPV { false };
+    bool m_showVideoPreview { false };
+    bool m_showReleaseInfo { false };
+    bool m_autoNextVideo { false };
+    bool m_autoPlayerTopMost { false };
+    QString m_apiv2host { "" };
+    QString m_v2token { "" };
+    int m_torrentDownloadMode { 0 };
+    QString m_cachehost { "" };
+    bool m_useCacheFolder { false };
+    QString m_cacheFolder { "" };
+    int m_videoServer { 0 };
+    int m_restoreVideoMode { 0 };
+    bool m_autoSkipEnding { false };
+    bool m_showFullTeam { false };
+    bool m_useTorrentStreamLibrary { false };
+    bool m_torrentStreamUI { false };
+    QString m_pathToTSContent { "" };
+    double m_playerVolume { 0 };
+    QString m_playerQuality { "" };
+    int m_playerJumpMinute { 0 };
+    int m_playerJumpSecond { 0 };
 
 public:
     explicit UserConfigurationViewModel(QObject *parent = nullptr);
@@ -248,11 +320,84 @@ public:
     bool usingVideoProxyVLC() const noexcept { return m_usingVideoProxyVLC; }
     void setUsingVideoProxyVLC(bool usingVideoProxyVLC) noexcept;
 
+    QString textFont() const noexcept { return m_textFont; }
+    void setTextFont(const QString& textFont) noexcept;
+
+    bool usingStrongProxy() const noexcept { return m_usingStrongProxy; }
+    void setUsingStrongProxy(bool usingStrongProxy) noexcept;
+
+    bool usingVideoProxyMPV() const noexcept { return m_usingVideoProxyMPV; }
+    void setUsingVideoProxyMPV(bool usingVideoProxyMPV) noexcept;
+
+    bool showVideoPreview() const noexcept { return m_showVideoPreview; }
+    void setShowVideoPreview(bool showVideoPreview) noexcept;
+
+    bool showReleaseInfo() const noexcept { return m_showReleaseInfo; }
+    void setShowReleaseInfo(bool showReleaseInfo) noexcept;
+
+    bool autoNextVideo() const noexcept { return m_autoNextVideo; }
+    void setAutoNextVideo(bool autoNextVideo) noexcept;
+
+    bool autoPlayerTopMost() const noexcept { return m_autoPlayerTopMost; }
+    void setAutoPlayerTopMost(bool autoPlayerTopMost) noexcept;
+
+    QString apiv2host() const noexcept { return m_apiv2host; }
+    void setApiv2host(QString apiv2host) noexcept;
+
+    QString v2token() const noexcept { return m_v2token; }
+    void setV2token(const QString& v2token) noexcept;
+
+    int torrentDownloadMode() const noexcept { return m_torrentDownloadMode; }
+    void setTorrentDownloadMode(int torrentDownloadMode) noexcept;
+
+    QString cachehost() const noexcept { return m_cachehost; }
+    void setCachehost(const QString& cachehost) noexcept;
+
+    bool useCacheFolder() const noexcept { return m_useCacheFolder; }
+    void setUseCacheFolder(bool useCacheFolder) noexcept;
+
+    QString cacheFolder() const noexcept { return m_cacheFolder; }
+    void setCacheFolder(const QString& cacheFolder) noexcept;
+
+    int videoServer() const noexcept { return m_videoServer; }
+    void setVideoServer(int videoServer) noexcept;
+
+    int restoreVideoMode() const noexcept { return m_restoreVideoMode; }
+    void setRestoreVideoMode(int restoreVideoMode) noexcept;
+
+    bool autoSkipEnding() const noexcept { return m_autoSkipEnding; }
+    void setAutoSkipEnding(bool autoSkipEnding) noexcept;
+
+    bool showFullTeam() const noexcept { return m_showFullTeam; }
+    void setShowFullTeam(bool showFullTeam) noexcept;
+
+    bool useTorrentStreamLibrary() const noexcept { return m_useTorrentStreamLibrary; }
+    void setUseTorrentStreamLibrary(bool useTorrentStreamLibrary) noexcept;
+
+    bool torrentStreamUI() const noexcept { return m_torrentStreamUI; }
+    void setTorrentStreamUI(bool torrentStreamUI) noexcept;
+
+    QString pathToTSContent() const noexcept { return m_pathToTSContent; }
+    void setPathToTSContent(QString pathToTSContent) noexcept;
+
+    double playerVolume() const noexcept { return m_playerVolume; }
+    void setPlayerVolume(double playerVolume) noexcept;
+
+    QString playerQuality() const noexcept { return m_playerQuality; }
+    void setPlayerQuality(const QString& playerQuality) noexcept;
+
+    int playerJumpMinute() const noexcept { return m_playerJumpMinute; }
+    void setPlayerJumpMinute(int playerJumpMinute) noexcept;
+
+    int playerJumpSecond() const noexcept { return m_playerJumpSecond; }
+    void setPlayerJumpSecond(int playerJumpSecond) noexcept;
+
     Q_INVOKABLE void refreshConfiguration() noexcept;
     Q_INVOKABLE void saveSettingsToFile();
 
 private:
     void readSettingsFromFile();
+    void changeFont(const QString& family);
 
 signals:
     void opacityPlayerPanelChanged();
@@ -291,7 +436,30 @@ signals:
     void sendVolumeToRemoteChanged();
     void sendPlaybackToRemoteChanged();
     void usingVideoProxyVLCChanged();
-
+    void textFontChanged();
+    void usingStrongProxyChanged();
+    void usingVideoProxyMPVChanged();
+    void showVideoPreviewChanged();
+    void showReleaseInfoChanged();
+    void autoNextVideoChanged();
+    void autoPlayerTopMostChanged();
+    void apiv2hostChanged();
+    void v2tokenChanged();
+    void torrentDownloadModeChanged();
+    void cachehostChanged();
+    void useCacheFolderChanged();
+    void cacheFolderChanged();
+    void videoServerChanged();
+    void restoreVideoModeChanged();
+    void autoSkipEndingChanged();
+    void showFullTeamChanged();
+    void useTorrentStreamLibraryChanged();
+    void torrentStreamUIChanged();
+    void pathToTSContentChanged();
+    void playerVolumeChanged();
+    void playerQualityChanged();
+    void playerJumpMinuteChanged();
+    void playerJumpSecondChanged();
 };
 
 #endif // USERCONFIGURATIONVIEWMODEL_H

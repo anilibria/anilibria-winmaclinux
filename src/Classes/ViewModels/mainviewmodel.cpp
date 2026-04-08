@@ -1,5 +1,6 @@
 #include <QDesktopServices>
 #include <QUrl>
+#include <QFontDatabase>
 #include "mainviewmodel.h"
 #include "../../globalhelpers.h"
 
@@ -11,7 +12,6 @@ MainViewModel::MainViewModel(QObject *parent) : QObject(parent)
     m_displayNames->insert("release", "Каталог релизов");
     m_displayNames->insert("videoplayer", "Видеоплеер");
     m_displayNames->insert("myanilibria", "Моя Анилибрия");
-    m_displayNames->insert("youtube", "Youtube");
     m_displayNames->insert("about", "О Программе");
     m_displayNames->insert("cinemahall", "Кинозал");
     m_displayNames->insert("maintenance", "Обслуживание");
@@ -19,6 +19,8 @@ MainViewModel::MainViewModel(QObject *parent) : QObject(parent)
     m_displayNames->insert("thememanager", "Менеджер Тем");
     m_displayNames->insert("authorization", "Авторизация");
     m_displayNames->insert("torrentstream", "TorrentStream");
+    m_displayNames->insert("applications", "Приложения");
+    m_displayNames->insert("extensions", "Расширения");
 
     createIfNotExistsFile(getCachePath(toolbarItemCacheFileName), "[\"release\",\"videoplayer\",\"cinemahall\",\"releaseseries\",\"myanilibria\"]");
 
@@ -27,6 +29,10 @@ MainViewModel::MainViewModel(QObject *parent) : QObject(parent)
     m_currentPageDisplayName = m_displayNames->value(m_currentPageId);
 
     m_historyPosition = 0;
+
+    QFontDatabase database;
+    m_fontFamilies.append("Default");
+    m_fontFamilies.append(database.families(QFontDatabase::Cyrillic));
 }
 
 void MainViewModel::setNotVisibleSignin(bool notVisibleSignin)
@@ -101,6 +107,14 @@ void MainViewModel::setDragIndex(const QString& dragIndex) noexcept
     emit dragIndexChanged();
 }
 
+void MainViewModel::setGlobalTextFont(const QString &globalTextFont) noexcept
+{
+    if (m_globalTextFont == globalTextFont) return;
+
+    m_globalTextFont = globalTextFont;
+    emit globalTextFontChanged();
+}
+
 void MainViewModel::selectPage(const QString& pageId) noexcept
 {
     auto pageIdentifier = QString(pageId);
@@ -127,6 +141,8 @@ void MainViewModel::selectPage(const QString& pageId) noexcept
     m_pageParameters = parameters;
     if (pageIdentifier == "release") emit changeReleasesParameters(m_pageParameters);
     if (pageIdentifier == "releaseseries") emit changeReleaseSeriesParameters(m_pageParameters);
+    if (pageIdentifier == "extensions") emit changeExtensionsParameters(m_pageParameters);
+    if (pageIdentifier == "torrentstream") emit changeTorrentStreamParameters(m_pageParameters);
 
     m_analyticsService->sendView("page", "view", "%2F" + pageIdentifier);
 }
@@ -250,7 +266,6 @@ void MainViewModel::refreshPageVisible() noexcept
 {
     emit isReleasesPageVisibleChanged();
     emit isOnlinePlayerPageVisibleChanged();
-    emit isYoutubePageVisibleChanged();
     emit isAboutPageVisibleChanged();
     emit isCinemahallPageVisibleChanged();
     emit isDownloadPageVisibleChanged();
@@ -260,6 +275,8 @@ void MainViewModel::refreshPageVisible() noexcept
     emit isMyAnilibriaPageVisibleChanged();
     emit isThemeManagerVisibleChanged();
     emit isTorrentStreamPageVisibleChanged();
+    emit isApplicationsPageVisibleChanged();
+    emit isExtensionsPageVisibleChanged();
 }
 
 void MainViewModel::selectToPage(const QString &pageId)
@@ -301,6 +318,18 @@ void MainViewModel::selectToPage(const QString &pageId)
         if (m_pageParameters != parameters) {
             m_pageParameters = parameters;
             emit changeReleaseSeriesParameters(m_pageParameters);
+        }
+    }
+    if (pageIdentifier == "extensions") {
+        if (m_pageParameters != parameters) {
+            m_pageParameters = parameters;
+            emit changeExtensionsParameters(m_pageParameters);
+        }
+    }
+    if (pageIdentifier == "torrentstream") {
+        if (m_pageParameters != parameters) {
+            m_pageParameters = parameters;
+            emit changeTorrentStreamParameters(m_pageParameters);
         }
     }
 }
@@ -374,5 +403,5 @@ void MainViewModel::selectedItemInMainMenu(QString pageName)
         return;
     }
 
-    QDesktopServices::openUrl(QUrl("https://www.anilibria.tv/pages/donate.php"));
+    QDesktopServices::openUrl(QUrl("https://aniliberty.top/support"));
 }

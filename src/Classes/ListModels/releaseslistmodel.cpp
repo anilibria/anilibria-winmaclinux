@@ -16,6 +16,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <QFile>
 #include "releaseslistmodel.h"
 
 const int FavoriteSection = 1;
@@ -41,6 +42,11 @@ const int AddedToCinemahall = 21;
 const int CurrentSeasonSection = 22;
 const int NotCurrentSeasonSection = 23;
 const int CustomScriptSection = 24;
+const int PlannedCollectionSection = 25;
+const int WatchCollectionSection = 26;
+const int WatchedCollectionSection = 27;
+const int PostponedSection = 28;
+const int AbandonedSection = 29;
 
 const int winter = 0;
 const int autumn = 1;
@@ -51,7 +57,7 @@ ReleasesListModel::ReleasesListModel(QObject *parent) : QAbstractListModel(paren
 {
 }
 
-void ReleasesListModel::setup(QSharedPointer<QList<FullReleaseModel *>> releases, QMap<int, int> *schedules, QVector<int> *userFavorites, QVector<int> *hidedReleases, QHash<QString, bool> *seenMarks, QSharedPointer<QHash<int, HistoryModel *>> historyItems, QSharedPointer<ChangesModel> changes, QSharedPointer<CinemahallListModel> cinemahall, ReleaseCustomGroupsViewModel* customGroups)
+void ReleasesListModel::setup(QSharedPointer<QList<FullReleaseModel *>> releases, QMap<int, int> *schedules, QList<int> *userFavorites, QList<int> *hidedReleases, QHash<QString, std::tuple<bool, int>>* seenMarks, QSharedPointer<QHash<int, HistoryModel *>> historyItems, QSharedPointer<ChangesModel> changes, QSharedPointer<CinemahallListModel> cinemahall, ReleaseCustomGroupsViewModel* customGroups, QMap<QString, ReleaseOnlineVideoModel*>* videosMap, QMap<int, QString>* collections)
 {
     m_releases = releases;
     m_scheduleReleases = schedules;
@@ -62,20 +68,27 @@ void ReleasesListModel::setup(QSharedPointer<QList<FullReleaseModel *>> releases
     m_changesModel = changes;
     m_cinemahall = cinemahall;
     m_customGroups = customGroups;
+    m_videosMap = videosMap;
+    m_collections = collections;
+}
+
+void ReleasesListModel::setupLinkedSeries(ReleaseLinkedSeries *releaseLinkedSeries) noexcept
+{
+    m_releaseLinkedSeries = releaseLinkedSeries;
 }
 
 int ReleasesListModel::rowCount(const QModelIndex &parent) const
 {
     if (parent.isValid()) return 0;
 
-    return m_filteredReleases->size();
+    return m_filteredReleases.size();
 }
 
 QVariant ReleasesListModel::data(const QModelIndex &index, int role) const
 {
     if (!index.isValid()) return QVariant();
 
-    auto release = m_filteredReleases->at(index.row());
+    auto release = m_filteredReleases.at(index.row());
     if (release == nullptr) return QVariant();
 
     switch (role) {
@@ -95,7 +108,7 @@ QVariant ReleasesListModel::data(const QModelIndex &index, int role) const
             return QVariant(release->year());
         }
         case TypeRole: {
-            return QVariant(release->type());
+            return QVariant(release->type() + " " + release->series());
         }
         case GenresRole: {
             return QVariant(release->genres());
@@ -115,14 +128,11 @@ QVariant ReleasesListModel::data(const QModelIndex &index, int role) const
         case CountTorrentRole: {
             return QVariant(release->countTorrents());
         }
-        case VideosRole: {
-            return QVariant(release->videos());
-        }
         case InFavoritesRole: {
             return QVariant(m_userFavorites->contains(release->id()));
         }
         case VoicesRole: {
-            return QVariant(release->voicers());
+            return QVariant(m_showFullTeam ? release->limitFullTeam() : release->limitVoicers());
         }
         case RatingRole: {
             return QVariant(release->rating());
@@ -134,7 +144,19 @@ QVariant ReleasesListModel::data(const QModelIndex &index, int role) const
             return QVariant(m_scheduleReleases->contains(release->id()));
         }
         case ScheduledDayRole: {
-            return m_scheduleReleases->contains(release->id()) ? QVariant(getScheduleDay(m_scheduleReleases->value(release->id()))) : QVariant("");
+            return m_scheduleReleases->contains(release->id()) ? QVariant(getScheduleShortDay(m_scheduleReleases->value(release->id()))) : QVariant("");
+        }
+        case StartInGroupRole: {
+            return QVariant(m_startInGroups.contains(release->id()));
+        }
+        case GroupRole: {
+            auto groupValue = release->groupValue();
+            if (groupValue.contains(".")) {
+                auto index = groupValue.indexOf(".") + 1;
+                return QVariant(groupValue.mid(index));
+            } else {
+                return QVariant(release->groupValue());
+            }
         }
     }
 
@@ -197,10 +219,6 @@ QHash<int, QByteArray> ReleasesListModel::roleNames() const
             "countTorrents"
         },
         {
-            VideosRole,
-            "videos"
-        },
-        {
             RatingRole,
             "rating"
         },
@@ -219,6 +237,14 @@ QHash<int, QByteArray> ReleasesListModel::roleNames() const
         {
             ScheduledDayRole,
             "scheduledDay"
+        },
+        {
+            StartInGroupRole,
+            "startInGroup"
+        },
+        {
+            GroupRole,
+            "groupValue"
         }
     };
 }
@@ -237,6 +263,7 @@ void ReleasesListModel::setDescriptionFilter(const QString &descriptionFilter) n
 
     m_descriptionFilter = descriptionFilter;
     emit descriptionFilterChanged();
+    emit hasFiltersChanged();
 }
 
 void ReleasesListModel::setTypeFilter(const QString &typeFilter) noexcept
@@ -245,6 +272,7 @@ void ReleasesListModel::setTypeFilter(const QString &typeFilter) noexcept
 
     m_typeFilter = typeFilter;
     emit typeFilterChanged();
+    emit hasFiltersChanged();
 }
 
 void ReleasesListModel::setYearsFilter(const QString &yearsFilter) noexcept
@@ -253,6 +281,7 @@ void ReleasesListModel::setYearsFilter(const QString &yearsFilter) noexcept
 
     m_yearsFilter = yearsFilter;
     emit yearsFilterChanged();
+    emit hasFiltersChanged();
 }
 
 void ReleasesListModel::setStatusesFilter(const QString &statusesFilter) noexcept
@@ -261,6 +290,7 @@ void ReleasesListModel::setStatusesFilter(const QString &statusesFilter) noexcep
 
     m_statusesFilter = statusesFilter;
     emit statusesFilterChanged();
+    emit hasFiltersChanged();
 }
 
 void ReleasesListModel::setSeasonesFilter(const QString &seasonesFilter) noexcept
@@ -269,6 +299,7 @@ void ReleasesListModel::setSeasonesFilter(const QString &seasonesFilter) noexcep
 
     m_seasonesFilter = seasonesFilter;
     emit seasonesFilterChanged();
+    emit hasFiltersChanged();
 }
 
 void ReleasesListModel::setGenresFilter(const QString &genresFilter) noexcept
@@ -277,6 +308,7 @@ void ReleasesListModel::setGenresFilter(const QString &genresFilter) noexcept
 
     m_genresFilter = genresFilter;
     emit genresFilterChanged();
+    emit hasFiltersChanged();
 }
 
 void ReleasesListModel::setGenresFilterOr(bool genresFilterOr) noexcept
@@ -293,6 +325,7 @@ void ReleasesListModel::setVoicesFilter(const QString &voicesFilter) noexcept
 
     m_voicesFilter = voicesFilter;
     emit voicesFilterChanged();
+    emit hasFiltersChanged();
 }
 
 void ReleasesListModel::setVoicesFilterOr(bool voicesFilterOr) noexcept
@@ -317,6 +350,7 @@ void ReleasesListModel::setFavoriteMarkFilter(int favoriteMarkFilter) noexcept
 
     m_favoriteMarkFilter = favoriteMarkFilter;
     emit favoriteMarkFilterChanged();
+    emit hasFiltersChanged();
 }
 
 void ReleasesListModel::setSeenMarkFilter(int seenMarkFilter) noexcept
@@ -325,6 +359,7 @@ void ReleasesListModel::setSeenMarkFilter(int seenMarkFilter) noexcept
 
     m_seenMarkFilter = seenMarkFilter;
     emit seenMarkFilterChanged();
+    emit hasFiltersChanged();
 }
 
 void ReleasesListModel::setSection(int section) noexcept
@@ -374,11 +409,45 @@ void ReleasesListModel::refreshItem(int id)
 
 int ReleasesListModel::getReleaseSeenMarkCount(int releaseId) const noexcept
 {
+    auto result = 0;
     auto keys = m_seenMarkModels->keys();
-    auto key = QString::number(releaseId) + ".";
-    return std::count_if(keys.cbegin(), keys.cend(), [key](const QString& item) {
-       return item.startsWith(key);
-    });
+    foreach (auto key, keys) {
+        auto item = m_seenMarkModels->value(key);
+        bool mark = std::get<0>(item);
+        if (!mark) continue;
+
+        if (!m_videosMap->contains(key)) continue;
+        auto video = m_videosMap->value(key);
+        if (video->releaseId() == releaseId) {
+            result += 1;
+        }
+    }
+
+    return result;
+}
+
+QMap<int,int> ReleasesListModel::getReleasesSeenMarkCount(QList<int> releaseIds) const noexcept
+{
+    QMap<int,int> countSeens;
+    foreach (auto releaseId, releaseIds) {
+        countSeens.insert(releaseId, 0);
+    }
+
+    auto keys = m_seenMarkModels->keys();
+    foreach (auto key, keys) {
+        auto item = m_seenMarkModels->value(key);
+        bool mark = std::get<0>(item);
+        if (!mark) continue;
+
+        if (!m_videosMap->contains(key)) continue;
+        auto video = m_videosMap->value(key);
+        auto releaseId = video->releaseId();
+        if (releaseIds.contains(releaseId)) {
+            countSeens[releaseId] += 1;
+        }
+    }
+
+    return countSeens;
 }
 
 void ReleasesListModel::setHasReleaseSeriesFilter(bool hasReleaseSeriesFilter) noexcept
@@ -387,16 +456,7 @@ void ReleasesListModel::setHasReleaseSeriesFilter(bool hasReleaseSeriesFilter) n
 
     m_hasReleaseSeriesFilter = hasReleaseSeriesFilter;
     emit hasReleaseSeriesFilterChanged();
-}
-
-void ReleasesListModel::setReleaseLinkedSeries(ReleaseLinkedSeries *releaseLinkedSeries) noexcept
-{
-    if (m_releaseLinkedSeries == releaseLinkedSeries) return;
-
-    m_releaseLinkedSeries = releaseLinkedSeries;
-    emit releaseLinkedSeriesChanged();
-
-    m_releaseLinkedSeries->setup(m_releases, m_userFavorites);
+    emit hasFiltersChanged();
 }
 
 void ReleasesListModel::setScheduleDayFilter(const QString &scheduleDayFilter) noexcept
@@ -405,6 +465,7 @@ void ReleasesListModel::setScheduleDayFilter(const QString &scheduleDayFilter) n
 
     m_scheduleDayFilter = scheduleDayFilter;
     emit scheduleDayFilterChanged();
+    emit hasFiltersChanged();
 }
 
 QString ReleasesListModel::getScheduleDay(int dayNumber) const noexcept
@@ -417,6 +478,20 @@ QString ReleasesListModel::getScheduleDay(int dayNumber) const noexcept
         case 5: return QString("пятница");
         case 6: return QString("суббота");
         case 7: return QString("воскресенье");
+        default: return "";
+    }
+}
+
+QString ReleasesListModel::getScheduleShortDay(int dayNumber) const noexcept
+{
+    switch (dayNumber){
+        case 1: return QString("пн");
+        case 2: return QString("вт");
+        case 3: return QString("ср");
+        case 4: return QString("чт");
+        case 5: return QString("пт");
+        case 6: return QString("сб");
+        case 7: return QString("вс");
         default: return "";
     }
 }
@@ -443,11 +518,36 @@ void ReleasesListModel::setFilterByFavorites(bool filterByFavorites) noexcept
     emit filterByFavoritesChanged();
 }
 
+bool ReleasesListModel::hasFilters() const noexcept
+{
+    return !m_descriptionFilter.isEmpty() || !m_genresFilter.isEmpty() ||
+        !m_typeFilter.isEmpty() || !m_voicesFilter.isEmpty() ||
+        !m_yearsFilter.isEmpty() || !m_seasonesFilter.isEmpty() ||
+        !m_statusesFilter.isEmpty() || !m_scheduleDayFilter.isEmpty() ||
+        m_hasReleaseSeriesFilter || m_favoriteMarkFilter > 0 || m_seenMarkFilter > 0;
+}
+
+void ReleasesListModel::setGrouping(bool grouping) noexcept
+{
+    if (m_grouping == grouping) return;
+
+    m_grouping = grouping;
+    emit groupingChanged();
+}
+
+void ReleasesListModel::setShowFullTeam(bool showFullTeam) noexcept
+{
+    if (m_showFullTeam == showFullTeam) return;
+
+    m_showFullTeam = showFullTeam;
+    emit showFullTeamChanged();
+}
+
 int ReleasesListModel::getReleaseIdByIndex(int index) noexcept
 {
-    if (index >= m_filteredReleases->count()) return -1;
+    if (index >= m_filteredReleases.count()) return -1;
 
-    auto release = m_filteredReleases->at(index);
+    auto release = m_filteredReleases.at(index);
     return release->id();
 }
 
@@ -503,7 +603,8 @@ void ReleasesListModel::refresh()
 {
     beginResetModel();
 
-    m_filteredReleases->clear();
+    m_filteredReleases.clear();
+    m_startInGroups.clear();
 
     auto currentYear = QString::number(QDate::currentDate().year());
     auto currentSeason = getCurrentSeason();
@@ -554,7 +655,17 @@ void ReleasesListModel::refresh()
     bool isShowedScriptError = false;
 
     foreach (auto release, *m_releases) {
+        auto collectionValue = m_collections->contains(release->id()) ? m_collections->value(release->id()) : "";
+
         if (m_hiddenReleases->contains(release->id()) && m_section != HiddenReleasesSection) continue;
+        if (m_grouping) {
+            auto group = getGroupByRelease(release, seenMarks);
+            if (group.isEmpty()) continue;
+
+            release->setGroupValue(group);
+        } else {
+            release->setGroupValue("");
+        }
         if (!m_titleFilter.isEmpty()) {
             auto filteredTitle = m_titleFilter.toLower().replace("ё", "е").trimmed();
             auto inTitle = release->title().toLower().replace("ё", "е").contains(filteredTitle);
@@ -602,7 +713,7 @@ void ReleasesListModel::refresh()
 
         //voices
         if (!voicesFilter.isEmpty()) {
-            QStringList releaseVoicesList = release->voicers().split(",");
+            QStringList releaseVoicesList = m_showFullTeam ? release->fullTeam().split(",") : release->voicers().split(",");
             if (m_voicesFilterOr) {
                 if (!checkAllCondition(voicesFilter, releaseVoicesList)) continue;
             } else {
@@ -684,23 +795,29 @@ void ReleasesListModel::refresh()
 
         if (m_section == WithinSeriesSection && linkedReleases != nullptr && !(linkedReleases->contains(release->id()))) continue;
 
-        if (m_section == MostPopular2021Section && !(release->status().toLower() == "завершен")) continue;
+        if (m_section == MostPopular2021Section && !(release->status().toLower() == releaseIsFinished)) continue;
 
-        if (m_section == MostPopular2022Section && !(release->year() == "2022" && release->rating() > 0)) continue;
+        if (m_section == MostPopular2022Section && !(release->year() == currentYear && release->rating() > 0)) continue;
 
         if (m_section == AddedToCinemahall && !(m_cinemahall->isReleaseInCinemahall(release->id()))) continue;
 
         if (m_section == HiddenReleasesSection && !m_hiddenReleases->contains(release->id())) continue;
 
-        if (m_section == FinishedSeenSection && !(isAllSeens && release->status().toLower() == "завершен")) continue;
+        if (m_section == FinishedSeenSection && !(isAllSeens && release->status().toLower() == releaseIsFinished)) continue;
 
-        if (m_section == NotFinishedSeenSection && !(isAllSeens && release->status().toLower() != "завершен")) continue;
+        if (m_section == NotFinishedSeenSection && !(isAllSeens && release->status().toLower() != releaseIsFinished)) continue;
 
         if (m_section == CurrentSeasonSection &&
             !(release->year() == currentYear && release->status().toLower() == "в работе" && release->season() == currentSeason)) continue;
 
         if (m_section == NotCurrentSeasonSection &&
             !((release->year() != currentYear || (release->year() == currentYear && release->season() != currentSeason)) && release->status().toLower() == "в работе")) continue;
+
+        if (m_section == PlannedCollectionSection && collectionValue != "PLANNED") continue;
+        if (m_section == WatchCollectionSection && collectionValue != "WATCHING") continue;
+        if (m_section == WatchedCollectionSection && collectionValue != "WATCHED") continue;
+        if (m_section == PostponedSection && collectionValue != "POSTPONED") continue;
+        if (m_section == AbandonedSection && collectionValue != "ABANDONED") continue;
 
         if (m_section == CustomScriptSection) {
             if (filterScript.isEmpty()) continue;
@@ -743,20 +860,43 @@ void ReleasesListModel::refresh()
 
         if (!m_customGroups->releaseInFilter(release->id())) continue;
 
-        m_filteredReleases->append(release);
+        m_filteredReleases.append(release);
     }
 
     sortingFilteringReleases(std::move(seenMarks));
 
+    if (m_grouping) {
+        QString currentGroup = "";
+        foreach (auto filteredRelease, m_filteredReleases) {
+            auto groupValue = filteredRelease->groupValue();
+            if (currentGroup != groupValue) {
+                m_startInGroups.insert(filteredRelease->id());
+                currentGroup = groupValue;
+            }
+        }
+    }
+
     endResetModel();
 
-    setIsHasReleases(m_filteredReleases->count() > 0);
+    setIsHasReleases(m_filteredReleases.count() > 0);
     emit countFilteredReleasesChanged();
 }
 
 void ReleasesListModel::selectItem(int id)
 {
     m_selectedReleases->insert(id);
+
+    refreshFilteredReleaseById(id);
+    emit isHasSelectReleaseChanged();
+}
+
+void ReleasesListModel::toggleItem(int id)
+{
+    if (m_selectedReleases->contains(id)) {
+        m_selectedReleases->remove(id);
+    } else {
+        m_selectedReleases->insert(id);
+    }
 
     refreshFilteredReleaseById(id);
     emit isHasSelectReleaseChanged();
@@ -796,6 +936,16 @@ void ReleasesListModel::refreshSelectedItems()
     }
 }
 
+QVariantList ReleasesListModel::selectedIds()
+{
+    QVariantList result;
+    foreach (auto selectedRelease, *m_selectedReleases) {
+        result.append(selectedRelease);
+    }
+
+    return result;
+}
+
 void ReleasesListModel::removeTrimsInStringCollection(QStringList &list)
 {
     for (auto i = 0; i < list.count();i++) {
@@ -827,13 +977,15 @@ bool ReleasesListModel::checkAllCondition(const QStringList &source, const QStri
 
 QHash<int, int> &&ReleasesListModel::getAllSeenMarkCount(QHash<int, int>&& result) noexcept
 {
-    QHashIterator<QString, bool> iterator(*m_seenMarkModels);
-    while(iterator.hasNext()) {
-        iterator.next();
+    auto keys = m_seenMarkModels->keys();
+    foreach (auto key, keys) {
+        auto item = m_seenMarkModels->value(key);
+        bool mark = std::get<0>(item);
+        if (!mark) continue;
 
-        QString key = iterator.key();
-        auto keyParts = key.split(".");
-        auto releaseId = keyParts.first().toInt();
+        if (!m_videosMap->contains(key)) continue;
+        auto video = m_videosMap->value(key);
+        auto releaseId = video->releaseId();
         if (!result.contains(releaseId)) {
             result[releaseId] = 1;
         } else {
@@ -915,6 +1067,42 @@ static bool compareSeasonDescending(const FullReleaseModel* first, const FullRel
 
 void ReleasesListModel::sortingFilteringReleases(QHash<int, int>&& seenMarks)
 {
+    auto sortingField = m_sortingField;
+    std::function<bool (const FullReleaseModel*, const FullReleaseModel*)> groupValueComparer = [sortingField](const FullReleaseModel* first, const FullReleaseModel* second) {
+        if (first->groupValue() == second->groupValue()) {
+            //extra sorting inside each groups
+            switch (sortingField) {
+                case ReleaseTitle:
+                    return compareName(first, second);
+                case ReleaseRating:
+                    return compareRating(first, second);
+                case ReleaseOriginalName:
+                    return compareOriginalName(first, second);
+                case ReleaseSeason:
+                    return compareSeason(first, second);
+            }
+        }
+        return first->groupValue() < second->groupValue();
+    };
+
+    std::function<bool (const FullReleaseModel*, const FullReleaseModel*)> groupValueDescendingComparer = [sortingField](const FullReleaseModel* first, const FullReleaseModel* second) {
+        if (first->groupValue() == second->groupValue()) {
+            //extra sorting inside each groups
+            switch (sortingField) {
+                case ReleaseTitle:
+                    return compareNameDescending(first, second);
+                case ReleaseRating:
+                    return compareRatingDescending(first, second);
+                case ReleaseOriginalName:
+                    return compareOriginalNameDescending(first, second);
+                case ReleaseSeason:
+                    return compareSeasonDescending(first, second);
+            }
+        }
+
+        return first->groupValue() > second->groupValue();
+    };
+
     std::function<bool (const FullReleaseModel*, const FullReleaseModel*)> scheduleComparer = [this](const FullReleaseModel* first, const FullReleaseModel* second) {
         auto firstId = first->id();
         auto firstScheduled = m_scheduleReleases->contains(firstId) ? m_scheduleReleases->value(firstId) : 9;
@@ -1062,45 +1250,50 @@ void ReleasesListModel::sortingFilteringReleases(QHash<int, int>&& seenMarks)
         return leftOrder > rightOrder;
     };
 
+    if (m_grouping) {
+        std::sort(m_filteredReleases.begin(), m_filteredReleases.end(), m_sortingDescending ? groupValueDescendingComparer : groupValueComparer);
+        return;
+    }
+
     switch (m_sortingField) {
         case ReleaseTimestamp:
-            std::sort(m_filteredReleases->begin(), m_filteredReleases->end(), m_sortingDescending ? compareTimeStampDescending : compareTimeStamp);
+            std::sort(m_filteredReleases.begin(), m_filteredReleases.end(), m_sortingDescending ? compareTimeStampDescending : compareTimeStamp);
             break;
         case ReleaseScheduleDay:
-            std::sort(m_filteredReleases->begin(), m_filteredReleases->end(), m_sortingDescending ? scheduleDescendingComparer : scheduleComparer);
+            std::sort(m_filteredReleases.begin(), m_filteredReleases.end(), m_sortingDescending ? scheduleDescendingComparer : scheduleComparer);
             break;
         case ReleaseTitle:
-            std::sort(m_filteredReleases->begin(), m_filteredReleases->end(), m_sortingDescending ? compareNameDescending : compareName);
+            std::sort(m_filteredReleases.begin(), m_filteredReleases.end(), m_sortingDescending ? compareNameDescending : compareName);
             break;
         case ReleaseYear:
-            std::sort(m_filteredReleases->begin(), m_filteredReleases->end(), m_sortingDescending ? compareYearDescending : compareYear);
+            std::sort(m_filteredReleases.begin(), m_filteredReleases.end(), m_sortingDescending ? compareYearDescending : compareYear);
             break;
         case ReleaseRating:
-            std::sort(m_filteredReleases->begin(), m_filteredReleases->end(), m_sortingDescending ? compareRatingDescending : compareRating);
+            std::sort(m_filteredReleases.begin(), m_filteredReleases.end(), m_sortingDescending ? compareRatingDescending : compareRating);
             break;
         case ReleaseStatus:
-            std::sort(m_filteredReleases->begin(), m_filteredReleases->end(), m_sortingDescending ? compareStatusDescending : compareStatus);
+            std::sort(m_filteredReleases.begin(), m_filteredReleases.end(), m_sortingDescending ? compareStatusDescending : compareStatus);
             break;
         case ReleaseOriginalName:
-            std::sort(m_filteredReleases->begin(), m_filteredReleases->end(), m_sortingDescending ? compareOriginalNameDescending : compareOriginalName);
+            std::sort(m_filteredReleases.begin(), m_filteredReleases.end(), m_sortingDescending ? compareOriginalNameDescending : compareOriginalName);
             break;
         case ReleaseHistory:
-            std::sort(m_filteredReleases->begin(), m_filteredReleases->end(), m_sortingDescending ? historyDescendingComparer : historyComparer);
+            std::sort(m_filteredReleases.begin(), m_filteredReleases.end(), m_sortingDescending ? historyDescendingComparer : historyComparer);
             break;
         case ReleaseWatchHistory:
-            std::sort(m_filteredReleases->begin(), m_filteredReleases->end(), m_sortingDescending ? watchHistoryDescendingComparer : watchHistoryComparer);
+            std::sort(m_filteredReleases.begin(), m_filteredReleases.end(), m_sortingDescending ? watchHistoryDescendingComparer : watchHistoryComparer);
             break;
         case ReleaseSeason:
-            std::sort(m_filteredReleases->begin(), m_filteredReleases->end(), m_sortingDescending ? compareSeasonDescending : compareSeason);
+            std::sort(m_filteredReleases.begin(), m_filteredReleases.end(), m_sortingDescending ? compareSeasonDescending : compareSeason);
             break;
         case ReleaseFavoriteMark:
-            std::sort(m_filteredReleases->begin(), m_filteredReleases->end(), m_sortingDescending ? favoriteComparer : favoriteDescendingComparer);
+            std::sort(m_filteredReleases.begin(), m_filteredReleases.end(), m_sortingDescending ? favoriteComparer : favoriteDescendingComparer);
             break;
         case ReleaseSeenMark:
-            std::sort(m_filteredReleases->begin(), m_filteredReleases->end(), m_sortingDescending ? seenComparer : seenDescendingComparer);
+            std::sort(m_filteredReleases.begin(), m_filteredReleases.end(), m_sortingDescending ? seenComparer : seenDescendingComparer);
             break;
         case ReleaseSeriesMark: {
-            std::sort(m_filteredReleases->begin(), m_filteredReleases->end(), m_sortingDescending ? releaseSeriesComparer : releaseSeriesDescendingComparer);
+            std::sort(m_filteredReleases.begin(), m_filteredReleases.end(), m_sortingDescending ? releaseSeriesComparer : releaseSeriesDescendingComparer);
             break;
         }
     }
@@ -1110,16 +1303,71 @@ void ReleasesListModel::sortingFilteringReleases(QHash<int, int>&& seenMarks)
 void ReleasesListModel::refreshFilteredReleaseById(int id)
 {
     auto iterator = std::find_if(
-        m_filteredReleases->begin(),
-        m_filteredReleases->end(),
+        m_filteredReleases.begin(),
+        m_filteredReleases.end(),
         [id](FullReleaseModel* item)
         {
             return item->id() == id;
         }
     );
 
-    if(iterator == m_filteredReleases->end()) return;
+    if(iterator == m_filteredReleases.end()) return;
 
-    int itemIndex = m_filteredReleases->indexOf(*iterator);
+    int itemIndex = m_filteredReleases.indexOf(*iterator);
     emit dataChanged(index(itemIndex), index(itemIndex));
+}
+
+QString ReleasesListModel::getGroupByRelease(const FullReleaseModel* model, const QHash<int, int>& seens)
+{
+    if (m_sortingField == ReleaseTimestamp || m_sortingField == ReleaseHistory || m_sortingField == ReleaseWatchHistory) return "";
+
+    if (m_sortingField == ReleaseYear) return model->year();
+    if (m_sortingField == ReleaseRating) return getGroupForRating(model->rating());
+    if (m_sortingField == ReleaseStatus) return model->status();
+    if (m_sortingField == ReleaseSeason) return model->season().toLower();
+
+    if (m_sortingField == ReleaseTitle) {
+        auto title = model->title().toUpper();
+        if (title.isEmpty()) return "";
+
+        auto firstChar = QString(title[0]) + " символ";
+        return QString(firstChar);
+    }
+
+    if (m_sortingField == ReleaseOriginalName) {
+        auto title = model->originalName().toUpper();
+        if (title.isEmpty()) return "";
+
+        auto firstChar = QString(title[0]) + " символ";
+        return QString(firstChar);
+    }
+
+    auto releaseId = model->id();
+
+    if (m_sortingField == ReleaseScheduleDay) {
+
+        auto isSchedule = m_scheduleReleases->contains(releaseId);
+        auto dayInSchedule = m_scheduleReleases->value(releaseId);
+        return isSchedule ? QString::number(dayInSchedule) + "." + getScheduleDay(dayInSchedule) : "";
+    }
+
+    if (m_sortingField == ReleaseFavoriteMark) return m_userFavorites->contains(releaseId) ? "В избранном" : "Не в избранном";
+    if (m_sortingField == ReleaseSeriesMark) return m_releaseLinkedSeries != nullptr ? m_releaseLinkedSeries->getFranchiseTitle(releaseId) : "";
+    if (m_sortingField == ReleaseSeenMark) {
+        auto countSeens = seens.contains(releaseId) ? seens.value(releaseId) : 0;
+        if (countSeens == model->countOnlineVideos()) return "Просмотрено";
+        return countSeens > 0 ? "Просматривается" : "Не просмотрено";
+    }
+
+    return "";
+}
+
+QString ReleasesListModel::getGroupForRating(int rating)
+{
+    if (rating < 100) return "0+";
+    if (rating < 1000) return "100+";
+    if (rating < 10000) return "1000+";
+    if (rating < 20000) return "10000+";
+    if (rating < 30000) return "20000+";
+    return "30000+";
 }

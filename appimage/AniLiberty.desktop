@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=AniLiberty
+Comment=AniLiberty desktop client
+Exec=AniLiberty
+Icon=AniLiberty
+Type=Application
+Terminal=false
+Categories=Qt;AudioVideo;Player;
+Keywords=anime;

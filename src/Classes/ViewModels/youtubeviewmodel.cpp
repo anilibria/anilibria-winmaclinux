@@ -136,9 +136,16 @@ void YoutubeViewModel::readYoutubeItems()
 
     beginResetModel();
 
+    refreshYoutubeItems(jsonData);
+
+    endResetModel();
+}
+
+void YoutubeViewModel::refreshYoutubeItems(const QString& json)
+{
     m_youtubeVideos->clear();
 
-    auto jsonDocument = QJsonDocument::fromJson(jsonData);
+    auto jsonDocument = QJsonDocument::fromJson(json.toUtf8());
     auto rootObject = jsonDocument.object();
     if (!rootObject.contains("data")) return;
 
@@ -148,13 +155,12 @@ void YoutubeViewModel::readYoutubeItems()
     auto items = dataObject["items"].toArray();
 
     foreach (auto item, items) {
+        auto object = item.toObject();
         auto model = new YoutubeVideoModel();
-        model->readFromJson(item);
+        model->readFromJson(object);
 
         m_youtubeVideos->append(model);
     }
-
-    endResetModel();
 }
 
 void YoutubeViewModel::receiveYoutubeVideos(const QString &data)

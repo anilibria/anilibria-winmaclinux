@@ -19,6 +19,7 @@
 #include <QJsonDocument>
 #include <QJsonArray>
 #include "releasetorrentslist.h"
+#include "../../globalhelpers.h"
 
 ReleaseTorrentsList::ReleaseTorrentsList(QObject *parent) : QAbstractListModel(parent)
 {
@@ -46,16 +47,28 @@ QVariant ReleaseTorrentsList::data(const QModelIndex &index, int role) const
             return QVariant(getReadableSize(torrent->size()));
         }
         case QualityRole: {
-            return QVariant(torrent->quality());
+            return QVariant(torrent->quality() + " " + torrent->codec());
         }
         case SeriesRole: {
-            return QVariant(torrent->series());
+            return QVariant(torrent->description());
         }
         case UrlRole: {
-            return QVariant(torrent->url());
+            return QVariant(torrent->torrentHost() + torrent->torrentPath());
         }
         case IdentifierRole: {
             return QVariant(index.row());
+        }
+        case TimeCreationRole: {
+            QDateTime timestamp;
+            timestamp.setSecsSinceEpoch(torrent->created());
+            auto date = timestamp.date();
+            auto dateAsString = getLeadingZeroDigit(date.day()) + "." + getLeadingZeroDigit(date.month()) + "." + getLeadingZeroDigit(date.year());
+            auto time = timestamp.time();
+            auto timeAsString = getLeadingZeroDigit(time.hour()) + ":" + getLeadingZeroDigit(time.minute());
+            return QVariant(dateAsString + " " + timeAsString);
+        }
+        case MagnetRole: {
+            return QVariant(torrent->magnet());
         }
     }
 
@@ -88,25 +101,32 @@ QHash<int, QByteArray> ReleaseTorrentsList::roleNames() const
         {
             IdentifierRole,
             "identifier"
+        },
+        {
+            TimeCreationRole,
+            "timecreation"
+        },
+        {
+            MagnetRole,
+            "magnet"
         }
     };
 }
 
-void ReleaseTorrentsList::loadTorrentsFromJson(const QString &json)
+QString ReleaseTorrentsList::getMagnetLink(int identifier) const noexcept
+{
+    if (identifier >= m_torrents->size()) return "";
+
+    return m_torrents->value(identifier)->magnet();
+}
+
+void ReleaseTorrentsList::loadTorrentsFromJson(const QList<ApiTorrentModel*>& torrents)
 {
     beginResetModel();
 
     m_torrents->clear();
 
-    if (json.isEmpty()) return;
-
-    auto jsonDocument = QJsonDocument::fromJson(json.toUtf8());
-    auto jsonArray = jsonDocument.array();
-    foreach (auto item, jsonArray) {
-        auto torrent = new ReleaseTorrentModel();
-        torrent->readFromApiModel(item.toObject());
-        m_torrents->append(torrent);
-    }
+    m_torrents->append(torrents);
 
     endResetModel();
 }

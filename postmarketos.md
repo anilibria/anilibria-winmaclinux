@@ -5,8 +5,8 @@
 
 **Этап 1. Устанавливаем зависимости необходимые для сборки**
 ```shell
-sudo apk add qt5-qtbase-devel qt5-qtwebview-devel qt5-qtwebengine-devel qt5-qtmultimedia-devel qt5-qtsvg-devel qt5-qtwebsockets-devel qt5-qtdeclarative-devel qt5-qtquickcontrols2-devel qt5-qtquickcontrols 
-sudo apk add vlc vlc-qt vlc-dev g++ make git 
+sudo apk add cmake ninja git qt6-qttools qt6-qtbase-dev qt6-qtdeclarative-dev qt6-qtwebengine-dev qt6-qtsvg-dev qt6-qtmultimedia-dev mpv-dev qt6-qtshadertools-dev qt6-qtdeclarative-private-dev
+sudo apk add mpv-dev g++ make git pkgconf
 ```
 **Этап 2. Создаем папку для проекта, переходим в нее и извлекаем исходники (предполагается что Вы находитесь в домашней папке)**
 ```shell
@@ -15,69 +15,33 @@ cd anilibria/
 git clone https://github.com/anilibria/anilibria-winmaclinux.git
 cd anilibria-winmaclinux/src/
 ```
-**Этап 3. Редактируем файлы для мобильной адаптации**
 
-Необходимо заменить в файле src/main.qml следующие строчки:
+**Этап 3. Настройка сборки**
+
 ```shell
-ApplicationWindow {
-    id: window
-    visible: true
-    width: 800
-    height: 600
-```
-на эти
-```shell
-ApplicationWindow {
-    id: window
-    visible: true
-    width: 300
-    height: 300
+cmake -S src -B build -DCMAKE_BUILD_TYPE=Release -DANILIBERTY_LESS_68_QT=On
 ```
 
-Так же заменить в файле src/AniLibria.pro следующие строчки:
+**Этап 4. Выполняем сборку и установку**
 ```shell
-#unix {
-#    LIBS += -lvlc
-
-#    INCLUDEPATH += /usr/include/
-#    DEPENDPATH += /usr/include/
-
-#    INCLUDEPATH += /usr/include/vlc/plugins
-#    DEPENDPATH += /usr/include/vlc/plugins
-
-#    CONFIG += buildwithvlc
-#}
-```
-на эти
-```shell
-unix {
-    LIBS += -lvlc
-
-    INCLUDEPATH += /usr/include/
-    DEPENDPATH += /usr/include/
-
-    INCLUDEPATH += /usr/include/vlc/plugins
-    DEPENDPATH += /usr/include/vlc/plugins
-
-    CONFIG += buildwithvlc
-}
-```
-**Этап 4. Выполняем сборку**
-```shell
-qmake-qt5
-sudo make install
+sudo cmake --build build --target install
 ```
 
 **Необязательный последний этап. После всех манипуляций можно удалить созданную папку командой**
 ```shell
 cd ~
-sudo rm -rf anilibria/
+rm -rf anilibria/
 ```
 
+### TorrentStream
+Воизбежание проскоков видео, рекомендуюется скачать и настроить [TorrentStream](https://github.com/trueromanus/TorrentStream)
 
+Для этого, скачайте последнюю версию из [releases](https://github.com/trueromanus/TorrentStream/releases), разместите файл в удобной для Вас дерриктории, зайдите в приложение AniLibria и во вкладке TorrentStream укажите путь до файла.
 
 ### Как найти приложение?
 Приложение будет доступно из меню по имени AniLibria.
 
 ### Как обновить приложение?
 Для того чтобы обновить приложение можно выполнить шаги начиная с этапа 2. Первый этап в таком случае выполнять не надо!
+
+

@@ -21,6 +21,10 @@
 QString AnilibriaImagesPath = "https://anilibriaqt.anilib.top";
 QString AnilibriaApiPath = "https://anilibriaqt.anilib.top/";
 bool IsPortable = false;
+QString ApplicationVersion = "2.2.35";
+
+int HistoryReleaseCardMode = 0;
+int HistoryWatchReleaseCardMode = 1;
 
 QString StatisticsSectionId = "statistics";
 QString NewInFavoritesSectionId = "newinfavorites";
@@ -95,6 +99,7 @@ QString iconMainMenuDonateField = "iconMainMenuDonate";
 QString iconMainMenuThemeManagerField = "iconMainMenuThemeManager";
 QString iconMainMenuYoutubeField = "iconMainMenuYoutube";
 QString iconMainMenuTorrentStreamField = "iconMainMenuTorrentStream";
+QString iconMainMenuApplicationsField = "iconMainMenuApplications";
 QString iconLeftHalfScreenField = "iconLeftHalfScreen";
 QString iconRightHalfScreenField = "iconRightHalfScreen";
 QString iconMinimizeWindowField = "iconMinimizeWindow";
@@ -200,3 +205,19 @@ QString colorComboBoxBackgroundField = "colorComboBoxBackground";
 
 QString iconCustomGroupField = "iconCustomGroup";
 QString iconEditField = "iconEdit";
+QString iconReleaseCatalogSearchFoundedField = "iconReleaseCatalogSearchFounded";
+QString iconCustomGroupFoundedField = "iconCustomGroupFounded";
+QString iconAuthorizationVkField = "iconAuthorizationVk";
+QString iconAuthorizationGoogleField = "iconAuthorizationGoogle";
+QString iconAuthorizationPatreonField = "iconAuthorizationPatreon";
+QString iconAuthorizationDiscordField = "iconAuthorizationDiscord";
+QString iconContextMenuField = "iconContextMenu";
+QString iconMainMenuExtensionsField = "iconMainMenuExtensions";
+QString iconMagnetField = "iconMagnet";
+
+QString iconDisableGroupingField = "iconDisableGrouping";
+QString iconEnableGroupingField = "iconEnableGrouping";
+
+QString iconSubtitlesPopupField = "iconSubtitlesPopup";
+
+QString backgroundsPagesField = "backgroundsPages";
