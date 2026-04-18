@@ -102,12 +102,12 @@ $ flatpak install --user anilibria.flatpak
 
 ### Готовые инструкции для сборки под дистрибутивы:
 
-[Ubuntu/Linux Mint 23+](https://github.com/anilibria/anilibria-winmaclinux/blob/master/linuxmint20.md)  
-[openSUSE](https://github.com/anilibria/anilibria-winmaclinux/blob/master/openSUSE.md)  
-[Fedora](https://github.com/anilibria/anilibria-winmaclinux/blob/master/fedora.md)  
-[macOS](https://github.com/anilibria/anilibria-winmaclinux/blob/master/macosbuild.md)  
-[PostmarketOs](https://github.com/anilibria/anilibria-winmaclinux/blob/master/postmarketos.md)  
-[Void Linux](https://github.com/anilibria/anilibria-winmaclinux/blob/master/voidlinux.md)  
+[Ubuntu/Linux Mint 20](linuxmint20.md)  
+[openSUSE](openSUSE.md)  
+[Fedora](fedora.md)  
+[macOS](macosbuild.md)  
+[PostmarketOs](postmarketos.md)  
+[Void Linux](voidlinux.md)  
 [Steam Deck](https://github.com/JerzyEx/anilibria_at_steamdeck)
 
 ### Для сборки необходимо:
