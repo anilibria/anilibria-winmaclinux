@@ -229,7 +229,7 @@ void OsExtras::synchronizeAllReleases()
     auto path = getCacheOnlyPath();
     auto checker = (ImportFunctions*)m_LocalCacheChecker;
     auto pathChar = path.toUtf8();
-    checker->synchronizeLatestReleases(50, 80, pathChar.constData(), &latestChangesCallback, &releasesCallBack);
+    checker->synchronizeFullQuickReleases(50, pathChar.constData(), &latestChangesCallback, &releasesCallBack);
 }
 
 void OsExtras::synchronizePosters(bool forceAll)
