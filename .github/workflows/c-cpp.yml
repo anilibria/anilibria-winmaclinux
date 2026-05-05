@@ -134,7 +134,7 @@ jobs:
         hdiutil create -fs HFS+ -srcfolder AniLiberty.app/ -volname AniLiberty AniLiberty.dmg
     - name: TestRun
       run: |
-        open -W src/AniLiberty.app --args testrun
+        open -W AniLiberty.app --args testrun
         log show --predicate 'process == "AniLiberty"' --last 1h        
     - uses: actions/upload-artifact@v4
       with:
