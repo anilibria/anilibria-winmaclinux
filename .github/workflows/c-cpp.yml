@@ -80,7 +80,7 @@ jobs:
     - uses: actions/checkout@v4
     - uses: gerlero/brew-install@v1
       with:
-        packages: pkg-config, mpv
+        packages: pkgconf, mpv
     - name: Install Qt dependencies
       uses: jurplel/install-qt-action@v4
       with:
