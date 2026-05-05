@@ -8,7 +8,6 @@ on:
 
 jobs:
   ubuntuBuild:
-    if: false
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
@@ -30,51 +29,6 @@ jobs:
       run: cmake -S src -B build
     - name: build cmake
       run: cmake --build build -j$(nproc)
-    - name: test dir
-      run: |
-        ls ../Qt/6.9.*/gcc_64/qml
-    - name: prepare AppDir
-      run: |
-          [ -d "AppDir" ] && rm -rf "AppDir"
-          patchelf --set-rpath '$ORIGIN/usr/lib' build/AniLiberty
-          mkdir -p AppDir/usr/bin
-          mkdir -p AppDir/usr/lib/plugins
-          cp build/AniLiberty AppDir/usr/bin/
-          cp appimage/AniLiberty.desktop AppDir/AniLiberty.desktop
-          cp appimage/AniLiberty.png AppDir/AniLiberty.png
-          chmod +x appimage/AppRun
-          cp appimage/AppRun AppDir/AppRun          
-          cp -r ../Qt/6.9.*/gcc_64/plugins/designer AppDir/usr/lib/plugins
-          cp -r ../Qt/6.9.*/gcc_64/plugins/generic AppDir/usr/lib/plugins
-          cp -r ../Qt/6.9.*/gcc_64/plugins/platforms AppDir/usr/lib/plugins
-          cp -r ../Qt/6.9.*/gcc_64/plugins/imageformats AppDir/usr/lib/plugins
-          cp -r ../Qt/6.9.*/gcc_64/plugins/iconengines AppDir/usr/lib/plugins
-          cp -r ../Qt/6.9.*/gcc_64/plugins/platformthemes AppDir/usr/lib/plugins
-          cp -r ../Qt/6.9.*/gcc_64/plugins/qmlls AppDir/usr/lib/plugins
-          cp -r ../Qt/6.9.*/gcc_64/plugins/tls AppDir/usr/lib/plugins
-          cp -r ../Qt/6.9.*/gcc_64/plugins/qmllint AppDir/usr/lib/plugins
-          cp -r ../Qt/6.9.*/gcc_64/plugins/wayland-graphics-integration-client AppDir/usr/lib/plugins
-          cp -r ../Qt/6.9.*/gcc_64/plugins/wayland-decoration-client AppDir/usr/lib/plugins
-          cp -r ../Qt/6.9.*/gcc_64/plugins/wayland-shell-integration AppDir/usr/lib/plugins
-          cp -r ../Qt/6.9.*/gcc_64/plugins/xcbglintegrations AppDir/usr/lib/plugins
-          cp -r ../Qt/6.9.*/gcc_64/plugins/egldeviceintegrations AppDir/usr/lib/plugins
-          cp -r ../Qt/6.9.*/gcc_64/plugins/platforminputcontexts AppDir/usr/lib/plugins
-          cp -r ../Qt/6.9.*/gcc_64/plugins/networkinformation AppDir/usr/lib/plugins
-          cp -r ../Qt/6.9.*/gcc_64/qml/QML AppDir/usr/lib/qml
-          cp -r ../Qt/6.9.*/gcc_64/qml/Qt AppDir/usr/lib/qml
-          cp -r ../Qt/6.9.*/gcc_64/qml/QtQml AppDir/usr/lib/qml
-          cp -r ../Qt/6.9.*/gcc_64/qml/QtQuick AppDir/usr/lib/qml
-          cp -r ../Qt/6.9.*/gcc_64/qml/QtWayland AppDir/usr/lib/qml
-          python3 appimagedeps.py
-    - name: Download and use appimagetool
-      run: |
-        wget -q -O appimagetool https://github.com/AppImage/appimagetool/releases/download/continuous/appimagetool-x86_64.AppImage
-        chmod +x appimagetool
-        ./appimagetool AppDir/
-    - uses: actions/upload-artifact@v4
-      with:
-        name: deb-package
-        path: AniLiberty-x86_64.AppImage
   macosbuild:
     runs-on: macos-latest
     steps:
@@ -135,7 +89,7 @@ jobs:
     - name: TestRun
       run: |
         open -W AniLiberty.app --args testrun
-        log show --predicate 'process == "AniLiberty"' --last 1h        
+        log show --predicate 'process == "AniLiberty"' --last 1h
     - uses: actions/upload-artifact@v4
       with:
         name: macos
