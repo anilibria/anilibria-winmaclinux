@@ -28,7 +28,7 @@ jobs:
     - name: Copy program to deb-package
       run: sudo cp src/build/AniLiberty specs/deb/usr/bin/aniliberty
 
-    - name: Build deb-package v2.2.34
+    - name: Build deb-package
       run: sudo dpkg-deb --build specs/deb/ aniliberty-amd64.deb
 
     - name: Upload package artifact

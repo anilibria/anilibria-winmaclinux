@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.16)
 
-project(AniLiberty VERSION 2.2.35 LANGUAGES CXX)
+project(AniLiberty VERSION 2.2.36 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 

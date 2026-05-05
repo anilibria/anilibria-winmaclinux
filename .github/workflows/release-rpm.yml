@@ -28,13 +28,13 @@ jobs:
         rpmdev-setuptree
         ls specs/rpm/SOURCES/
         cp specs/rpm/SPECS/aniliberty.spec /github/home/rpmbuild/SPECS/
-        mv specs/rpm/SOURCES/aniliberty specs/rpm/SOURCES/aniliberty-2.2.35
-        cp -R specs/rpm/SOURCES/aniliberty-2.2.35/ /github/home/rpmbuild/SOURCES/
+        mv specs/rpm/SOURCES/aniliberty specs/rpm/SOURCES/aniliberty-2.2.36
+        cp -R specs/rpm/SOURCES/aniliberty-2.2.36/ /github/home/rpmbuild/SOURCES/
         chrpath -d src/build/AniLiberty
-        mkdir -p /github/home/rpmbuild/SOURCES/aniliberty-2.2.35/usr/usr/local/bin/
-        cp src/build/AniLiberty /github/home/rpmbuild/SOURCES/aniliberty-2.2.35/usr/usr/local/bin/aniliberty
+        mkdir -p /github/home/rpmbuild/SOURCES/aniliberty-2.2.36/usr/usr/local/bin/
+        cp src/build/AniLiberty /github/home/rpmbuild/SOURCES/aniliberty-2.2.36/usr/usr/local/bin/aniliberty
         cd /github/home/rpmbuild/SOURCES
-        tar -czf aniliberty-2.2.35.tar.gz aniliberty-2.2.35/
+        tar -czf aniliberty-2.2.36.tar.gz aniliberty-2.2.36/
         
     - name: Build RPM package
       run: |
