@@ -78,24 +78,9 @@ jobs:
     runs-on: macos-14
     steps:
     - uses: actions/checkout@v4
-    - name: Set up Homebrew
-      run: arch -x86_64 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-    - name: Fix brew issue
-      run: |
-        arch -x86_64 rm /usr/local/bin/2to3
-        arch -x86_64 rm /usr/local/bin/idle3
-        arch -x86_64 rm /usr/local/bin/pydoc3
-        arch -x86_64 rm /usr/local/bin/python3
-        arch -x86_64 rm /usr/local/bin/python3-config
-        arch -x86_64 rm '/usr/local/bin/idle3.14'
-        arch -x86_64 rm '/usr/local/bin/pydoc3.14'
-        arch -x86_64 rm '/usr/local/bin/python3.14'
-        arch -x86_64 rm '/usr/local/bin/python3.14-config'
-        arch -x86_64 rm '/usr/local/bin/pip3.14'
-    - name: install pkg-config
-      run: arch -x86_64 /usr/local/bin/brew install pkg-config
-    - name: install mpv
-      run: arch -x86_64 /usr/local/bin/brew install mpv --formula
+    - uses: gerlero/brew-install@v1
+      with:
+        packages: pkg-config, mpv
     - name: Install Qt dependencies
       uses: jurplel/install-qt-action@v4
       with:
