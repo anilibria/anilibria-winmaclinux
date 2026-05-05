@@ -90,7 +90,7 @@ jobs:
       run: |
         open -W AniLiberty.app --args testrun
         log show --predicate 'process == "AniLiberty"' --last 1h
-    - uses: actions/upload-artifact@v4
+    - uses: actions/upload-artifact@v6
       with:
         name: macos
         path: AniLiberty.dmg
