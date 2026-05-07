@@ -10,7 +10,7 @@ jobs:
   ubuntuBuild:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
     - name: apt-update
       run: sudo apt-get update -qq
     - name: apt get dependencies
@@ -32,7 +32,7 @@ jobs:
   macosbuild:
     runs-on: macos-latest
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
     - uses: gerlero/brew-install@v1.1.2
       with:
         packages: pkgconf mpv
@@ -90,7 +90,7 @@ jobs:
       run: |
         open -W AniLiberty.app --args testrun
         log show --predicate 'process == "AniLiberty"' --last 1h
-    - uses: actions/upload-artifact@v4
+    - uses: actions/upload-artifact@v6
       with:
         name: macos
         path: AniLiberty.dmg
