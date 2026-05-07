@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.16)
 
-project(AniLiberty VERSION 2.2.29 LANGUAGES CXX)
+project(AniLiberty VERSION 2.2.36 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
@@ -411,6 +411,7 @@ qt_add_qml_module(AniLiberty
         Assets/Icons/videoplayer/seenmarkselected.svg
         Assets/Icons/videoplayer/subtitles.svg
         Assets/Icons/videoplayer/topmost.svg
+        QML_FILES Controls/InfoAboutSynchronization.qml
 )
 
 set_target_properties(AniLiberty PROPERTIES

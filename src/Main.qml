@@ -1669,6 +1669,12 @@ ApplicationWindow {
         anchors.bottomMargin: 80
     }
 
+    InfoAboutSynchronization {
+        anchors.bottom: parent.bottom
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.bottomMargin: 10
+    }
+
     Item {
         id: assetsLocation
         property string backgroundsPath: applicationsViewModel.pathToBackgroundsFolder

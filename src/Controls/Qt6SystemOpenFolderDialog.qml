@@ -15,7 +15,7 @@ Item {
     FolderDialog {
         id: folderDialog
         onSelectedFolderChanged: {
-            root.needOpenFolder(selectFolderDialog.selectedFolder);
+            root.needOpenFolder(folderDialog.selectedFolder);
         }
     }
 }

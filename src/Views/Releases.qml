@@ -2194,10 +2194,36 @@ Page {
                 width: createSharePopup.width - 30
                 height: 40
 
-                CommonTextField {
-                    id: createSharePopupPath
-                    width: parent.width
-                    placeholderText: "Введите полный путь"
+                RowLayout {
+                    anchors.fill: parent
+                    spacing: 0
+
+                    CommonTextField {
+                        id: createSharePopupPath
+                        width: parent.width
+                        placeholderText: "Введите полный путь"
+                        Layout.fillWidth: true
+                    }
+
+                    IconButton {
+                        hoverColor: applicationThemeViewModel.currentItems.filterIconButtonHoverColor
+                        iconPath: applicationThemeViewModel.currentItems.iconReleaseCatalogCompilation
+                        iconWidth: 20
+                        iconHeight: 20
+                        width: 30
+                        height: 30
+                        onButtonPressed: {
+                            selectCacheFolderDialog.open();
+                        }
+
+                        SystemOpenFolderDialog {
+                            id: selectCacheFolderDialog
+                            title: "Выберите папку для шары"
+                            onNeedOpenFolder: {
+                                createSharePopupPath.text = folderUrl;
+                            }
+                        }
+                    }
                 }
             }
 
@@ -2299,10 +2325,36 @@ Page {
                 width: loadSharePopup.width - 30
                 height: 40
 
-                CommonTextField {
-                    id: loadSharePopupPath
-                    width: parent.width
-                    placeholderText: "Введите полный путь к файлу шары"
+                RowLayout {
+                    anchors.fill: parent
+                    spacing: 0
+
+                    CommonTextField {
+                        id: loadSharePopupPath
+                        width: parent.width
+                        placeholderText: "Введите полный путь к файлу шары"
+                        Layout.fillWidth: true
+                    }
+
+                    IconButton {
+                        hoverColor: applicationThemeViewModel.currentItems.filterIconButtonHoverColor
+                        iconPath: applicationThemeViewModel.currentItems.iconReleaseCatalogCompilation
+                        iconWidth: 20
+                        iconHeight: 20
+                        width: 30
+                        height: 30
+                        onButtonPressed: {
+                            selectCacheFolderShareDialog.open();
+                        }
+
+                        SystemOpenFolderDialog {
+                            id: selectCacheFolderShareDialog
+                            title: "Выберите папку для шары"
+                            onNeedOpenFolder: {
+                                loadSharePopupPath.text = folderUrl;
+                            }
+                        }
+                    }
                 }
             }
 
