@@ -374,6 +374,11 @@ void OsExtras::synchronizationFinished(bool completed)
     if (completed && m_synchronizationReleases > 0) emit needReloadReleases();
 
     emit releasesSynchronized(completed ? "Релизы успешно синхронизированы" : "Не удалось синхронизировать релизы!");
+
+    m_synchronizationStarted = false;
+    m_synchronizationPercent = 0;
+    emit synchronizationStartedChanged();
+    emit synchronizationPercentChanged();
 }
 
 void OsExtras::rountineFinished(bool completed)
@@ -385,6 +390,14 @@ void OsExtras::synchronizationLatestChanges(int32_t percent, int32_t processesRe
 {
     qDebug() << "Latest changes process: " << percent << "%, releases processed " << processesReleases;
     m_synchronizationReleases = processesReleases;
+
+    if (!m_synchronizationStarted) {
+        m_synchronizationStarted = true;
+        emit synchronizationStartedChanged();
+    }
+
+    m_synchronizationPercent = percent;
+    emit synchronizationPercentChanged();
 }
 
 void OsExtras::synchronizationPosterChanges(int32_t percent, int32_t processesReleases)

@@ -411,6 +411,7 @@ qt_add_qml_module(AniLiberty
         Assets/Icons/videoplayer/seenmarkselected.svg
         Assets/Icons/videoplayer/subtitles.svg
         Assets/Icons/videoplayer/topmost.svg
+        QML_FILES Controls/InfoAboutSynchronization.qml
 )
 
 set_target_properties(AniLiberty PROPERTIES

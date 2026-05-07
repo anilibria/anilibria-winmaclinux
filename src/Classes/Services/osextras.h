@@ -20,6 +20,8 @@ class OsExtras : public QObject
     Q_OBJECT
 
     Q_PROPERTY(bool localCacheCheckerConnected READ localCacheCheckerConnected NOTIFY localCacheCheckerConnectedChanged FINAL)
+    Q_PROPERTY(bool synchronizationStarted READ synchronizationStarted NOTIFY synchronizationStartedChanged FINAL)
+    Q_PROPERTY(int synchronizationPercent READ synchronizationPercent NOTIFY synchronizationPercentChanged FINAL)
 
 private:
     typedef int (CORECLR_DELEGATE_CALLTYPE* torrentstreaminitializemethod)(int port, wchar_t* downloadPath, wchar_t* listenAddress, bool showui, connectedCallback callback);
@@ -53,12 +55,20 @@ private:
 
     bool m_localCacheCheckerConnected { false };
 
+    bool m_synchronizationStarted { false };
+
+    int m_synchronizationPercent { 0 };
+
     bool localCacheCheckerConnected() const noexcept { return m_localCacheCheckerConnected; }
 
 public:
     explicit OsExtras(QObject *parent = nullptr);
 
     static OsExtras* instance;
+
+    bool synchronizationStarted() { return m_synchronizationStarted; }
+
+    int synchronizationPercent() { return m_synchronizationPercent; }
 
 #ifdef Q_OS_LINUX
     QStringList m_dbusServices { QStringList() };
@@ -110,6 +120,8 @@ signals:
     void localCacheCheckerConnectedChanged();
     void routineSynchronized(const QString& message);
     void releasesSynchronized(const QString& message);
+    void synchronizationStartedChanged();
+    void synchronizationPercentChanged();
 };
 
 static void CORECLR_DELEGATE_CALLTYPE callbackConnectedExternal() {
