@@ -2,7 +2,7 @@ name: Fedora package build
 
 on:
   push:
-    branches: [deploy]
+    branches: [master]
 
 jobs:
   fedoraPackageBuild:
