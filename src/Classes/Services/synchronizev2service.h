@@ -19,6 +19,7 @@ class Synchronizev2Service : public QObject
     Q_PROPERTY(bool synchronizeCacheActived READ synchronizeCacheActived NOTIFY synchronizeCacheActivedChanged FINAL)
     Q_PROPERTY(int torrentStreamPort READ torrentStreamPort WRITE setTorrentStreamPort NOTIFY torrentStreamPortChanged FINAL)
     Q_PROPERTY(QString mainGithubCacheServer READ mainGithubCacheServer NOTIFY mainGithubCacheServerChanged FINAL)
+    Q_PROPERTY(QString gitlabCacheserver READ gitlabCacheserver NOTIFY gitlabCacheserverChanged FINAL)
     Q_PROPERTY(QString mainNextAPIServer READ mainNextAPIServer NOTIFY mainNextAPIServerChanged FINAL)
     Q_PROPERTY(QString mainOldNextAPIServer READ mainOldNextAPIServer NOTIFY mainOldNextAPIServerChanged FINAL)
     Q_PROPERTY(QString appMirrorNextAPIServer READ appMirrorNextAPIServer NOTIFY appMirrorNextAPIServerChanged FINAL)
@@ -132,6 +133,8 @@ public:
     bool synchronizeCacheActived() const noexcept { return m_synchronizeCacheActived; }
 
     QString mainGithubCacheServer() const noexcept { return "https://raw.githubusercontent.com/trueromanus/LocalCacheChecker/main/cache"; }
+
+    QString gitlabCacheserver() const noexcept { return "https://gitlab.com/trueromanus/LocalCacheChecker/-/raw/main/cache"; }
 
     QString mainNextAPIServer() const noexcept { return "https://aniliberty.top"; }
 
@@ -278,6 +281,7 @@ signals:
     void tsWasFirstlyInstalled();
     void mainOldNextAPIServerChanged();
     void pathToLCCLibraryChanged();
+    void gitlabCacheserverChanged();
 
 };
 

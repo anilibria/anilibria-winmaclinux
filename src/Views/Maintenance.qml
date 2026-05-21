@@ -410,14 +410,21 @@ Page {
                                     ListElement {
                                         text: "Основной github"
                                     }
+                                    ListElement {
+                                        text: "Зеркало gitlab"
+                                    }
                                 }
 
                                 Component.onCompleted: {
                                     if (userConfigurationViewModel.cachehost === synchronizationServicev2.mainGithubCacheServer) {
                                         cacheServersComboBox.currentIndex = 0;
                                     }
+                                    if (userConfigurationViewModel.cachehost === synchronizationServicev2.gitlabCacheserver) {
+                                        cacheServersComboBox.currentIndex = 1;
+                                    }
                                 }
                             }
+
                         }
 
                         AccentText {
