@@ -410,9 +410,9 @@ Page {
                                     ListElement {
                                         text: "Основной github"
                                     }
-                                    ListElement {
+                                    /*ListElement {
                                         text: "Зеркало gitlab"
-                                    }
+                                    }*/
                                 }
 
                                 Component.onCompleted: {
