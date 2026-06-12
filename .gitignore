@@ -86,3 +86,6 @@ Cargo.lock
 src/AniLiberty
 
 *.ini
+/unfolded/app/Aniliberty.Unfolded/bin/Debug/net10.0
+/unfolded/app/Aniliberty.Unfolded/obj
+/unfolded/experiment
