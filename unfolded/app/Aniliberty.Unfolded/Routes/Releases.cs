@@ -27,11 +27,15 @@ namespace Aniliberty.Unfolded.Routes
 		internal static async Task Initialize()
 		{
 			var path = GlobalConfig.PathToCache();
-			if (!File.Exists(Path.Combine(path, "types.json"))) return; // mean no cache need to first synchronized
+			if (!File.Exists(Path.Combine(path, "types.cache"))) return; // mean no cache need to first synchronized
 
 			m_types = await Synchronize.ReadTypes(path);
-			var metadata = await Synchronize.ReadMetadata(path);
-			await ReadReleases(metadata, path);
+
+			if (Synchronize.MetadataExists(path))
+			{
+				var metadata = await Synchronize.ReadMetadata(path);
+				await ReadReleases(metadata, path);
+			}
 		}
 
 		internal static IResult Release(int id)

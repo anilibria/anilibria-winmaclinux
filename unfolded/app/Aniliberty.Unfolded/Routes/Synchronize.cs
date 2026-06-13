@@ -14,7 +14,6 @@ namespace Aniliberty.Unfolded.Routes
 		public static void RegisterRoutes(WebApplication app)
 		{
 			app.MapGet("/sync/full", ([FromServices] IHttpClientFactory clientFactory) => Full(clientFactory));
-			//app.MapGet("/videoproxy/part", ([FromQuery] string path) => VideoPart(path));
 		}
 
 		public static async Task<IResult> Full(IHttpClientFactory clientFactory)
@@ -58,6 +57,10 @@ namespace Aniliberty.Unfolded.Routes
 			}
 
 			if (!allReleases.Any()) return;
+
+			allReleases = allReleases
+				.Where(a => a.Episodes.Any() || a.Torrents.Any()) // stay only there where have episodes or torrents
+				.ToList();
 
 			var lastTimestamp = DateTimeOffset.Parse(allReleases.Where(a => a.FreshAt != null).OrderByDescending(a => a.FreshAt).First().FreshAt).ToUnixTimeSeconds();
 
@@ -164,6 +167,12 @@ namespace Aniliberty.Unfolded.Routes
 			Console.WriteLine($"Types saved!");
 		}
 
+		internal static bool MetadataExists(string folderToSaveCacheFiles)
+		{
+			var metadataPath = Path.Combine(folderToSaveCacheFiles, "metadata");
+			return File.Exists(metadataPath);
+		}
+
 		internal static async Task<MetadataModel> ReadMetadata(string folderToSaveCacheFiles)
 		{
 			var metadataPath = Path.Combine(folderToSaveCacheFiles, "metadata");
@@ -171,6 +180,7 @@ namespace Aniliberty.Unfolded.Routes
 			{
 				var errorMessage = $"Metadata file is not exists!";
 				Console.WriteLine(errorMessage);
+				throw new Exception(errorMessage);
 			}
 
 			var metadata = DeserializeFromJson<MetadataModel>(await File.ReadAllTextAsync(metadataPath));
