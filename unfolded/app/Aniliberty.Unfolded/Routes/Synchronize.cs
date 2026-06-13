@@ -22,14 +22,14 @@ namespace Aniliberty.Unfolded.Routes
 			httpClient.Timeout = TimeSpan.FromSeconds(20);
 			var cacheFolder = GlobalConfig.PathToCache();
 
-			if (IsEmptyCache(cacheFolder)) await SaveTypes(httpClient, cacheFolder);
+			if (IsEmptyTypes(cacheFolder)) await SaveTypes(httpClient, cacheFolder);
 
 			await SaveFullReleases(httpClient, cacheFolder);
 
 			return Results.Ok();
 		}
 
-		static bool IsEmptyCache(string folderToSaveCacheFiles) => !File.Exists(Path.Combine(folderToSaveCacheFiles, "types.cache"));
+		static bool IsEmptyTypes(string folderToSaveCacheFiles) => !File.Exists(Path.Combine(folderToSaveCacheFiles, "types.cache"));
 
 		static public async Task SaveFullReleases(HttpClient httpClient, string folderToSaveCacheFiles)
 		{
