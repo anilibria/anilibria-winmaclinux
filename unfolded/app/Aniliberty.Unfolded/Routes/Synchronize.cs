@@ -85,17 +85,17 @@ namespace Aniliberty.Unfolded.Routes
 					OriginalName = fullRelease.Name.English,
 					Title = fullRelease.Name.Main,
 					Rating = fullRelease.AddedInUsersFavorites ?? 0,
-					Year = fullRelease.Year.ToString(),
+					Year = fullRelease.Year,
 					Season = types.Seasons.FirstOrDefault(a => a.Value == fullRelease.Season.Value)?.Description ?? "Не указано",
 					Status = fullRelease.IsInProduction ? "Сейчас в озвучке" : "Озвучка завершена",
-					Series = fullRelease.EpisodesAreUnknown ? "?" : $"({fullRelease.EpisodesTotal ?? 0})",
+					Series = fullRelease.EpisodesAreUnknown ? -1 : fullRelease.EpisodesTotal ?? 0,
 					Poster = fullRelease.Poster.Src,
 					Type = types.Types.FirstOrDefault(a => a.Value == fullRelease.Type.Value)?.Description ?? fullRelease.Type.Value,
-					Genres = string.Join(", ", fullRelease.Genres.Select(a => types.Genres.FirstOrDefault(b => b.Id == a.Id)?.Name ?? "").Where(a => !string.IsNullOrEmpty(a))),
+					Genres = fullRelease.Genres.Select(a => types.Genres.FirstOrDefault(b => b.Id == a.Id)?.Name ?? "").Where(a => !string.IsNullOrEmpty(a)),
 					IsOngoing = fullRelease.IsOngoing,
 					AgeRating = types.AgeRatings.FirstOrDefault(a => a.Value == fullRelease.AgeRating.Value)?.Description ?? fullRelease.AgeRating.Value,
-					Voices = fullRelease.Members != null ? string.Join(", ", fullRelease.Members.Where(a => a.Role.Value == "voicing").Select(a => a.Nickname)) : "",
-					Team = fullRelease.Members != null ? string.Join(", ", fullRelease.Members.OrderByDescending(a => a.Role.Value).Select(a => a.Nickname)) : ""
+					Voices = fullRelease.Members != null ? fullRelease.Members.Where(a => a.Role.Value == "voicing").Select(a => a.Nickname) : [],
+					Team = fullRelease.Members != null ? fullRelease.Members.OrderByDescending(a => a.Role.Value).Select(a => a.Nickname) : []
 				});
 
 				// torrents

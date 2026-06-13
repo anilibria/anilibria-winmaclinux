@@ -16,8 +16,6 @@ namespace Aniliberty.Unfolded.Routes
 
 		static List<ReleaseTorrentSaveModel> m_torrents = [];
 
-		static TypesResultModel m_types = new();
-
 		public static void RegisterRoutes(WebApplication app)
 		{
 			app.MapGet("/releases/release", ([FromQuery] int id) => Release(id));
@@ -28,8 +26,6 @@ namespace Aniliberty.Unfolded.Routes
 		{
 			var path = GlobalConfig.PathToCache();
 			if (!File.Exists(Path.Combine(path, "types.cache"))) return; // mean no cache need to first synchronized
-
-			m_types = await Synchronize.ReadTypes(path);
 
 			if (Synchronize.MetadataExists(path))
 			{

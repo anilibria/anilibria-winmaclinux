@@ -1,51 +1,51 @@
 ﻿namespace Aniliberty.Unfolded.Models.Releases
 {
 
-    public record ReleaseSaveModel
-    {
+	public record ReleaseSaveModel
+	{
 
-        public string Announce { get; init; } = "";
+		public string Announce { get; init; } = "";
 
-        public string Code { get; init; } = "";
+		public string Code { get; init; } = "";
 
-        public int CountTorrents { get; init; }
+		public int CountTorrents { get; init; }
 
-        public int CountVideos { get; init; }
+		public int CountVideos { get; init; }
 
-        public string Description { get; init; } = "";
+		public string Description { get; init; } = "";
 
-        public string Genres { get; init; } = ""; // Need to remake
+		public IEnumerable<string> Genres { get; init; } = Enumerable.Empty<string>();
 
-        public int Id { get; init; }
+		public int Id { get; init; }
 
-        public string OriginalName { get; init; } = "";
+		public string OriginalName { get; init; } = "";
 
-        public string Poster { get; init; } = "";
+		public string Poster { get; init; } = "";
 
-        public int Rating { get; init; }
+		public int Rating { get; init; }
 
-        public string Season { get; init; } = ""; // need to remake on int
+		public string Season { get; init; } = ""; // need to remake on int
 
-        public string Series { get; init; } = ""; // need to remake on int
+		public int Series { get; init; }
 
-        public string Status { get; init; } = ""; // need to remake on int
+		public string Status { get; init; } = ""; // need to remake on int
 
-        public long Timestamp { get; init; }
+		public long Timestamp { get; init; }
 
-        public string Title { get; init; } = "";
+		public string Title { get; init; } = "";
 
-        public string Type { get; init; } = "";  // need to remake on int
+		public string Type { get; init; } = "";  // need to remake on int
 
-        public string Voices { get; init; } = "";  // need to remake on int
+		public IEnumerable<string> Voices { get; init; } = Enumerable.Empty<string>();
 
-        public string Team { get; init; } = "";
+		public IEnumerable<string> Team { get; init; } = Enumerable.Empty<string>();
 
-        public string Year { get; init; } = "";
+		public int Year { get; init; }
 
-        public bool IsOngoing { get; init; }
+		public bool IsOngoing { get; init; }
 
-        public string AgeRating { get; init; } = "";
+		public string AgeRating { get; init; } = "";
 
-    }
+	}
 
 }
