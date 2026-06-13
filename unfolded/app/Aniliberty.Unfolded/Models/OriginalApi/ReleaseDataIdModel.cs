@@ -1,11 +1,14 @@
-﻿namespace Aniliberty.Unfolded.Models.OriginalApi
+﻿using System.Text.Json.Serialization;
+
+namespace Aniliberty.Unfolded.Models.OriginalApi
 {
 
-    internal class ReleaseDataIdModel
-    {
+	internal class ReleaseDataIdModel
+	{
 
-        public int Id { get; init; }
+		[JsonPropertyName("id")]
+		public int Id { get; init; }
 
-    }
+	}
 
 }

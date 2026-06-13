@@ -3,18 +3,20 @@
 namespace Aniliberty.Unfolded.Models.OriginalApi
 {
 
-    internal record StringValueItem
-    {
+	internal record StringValueItem
+	{
 
+		[JsonPropertyName("value")]
+		public string Value { get; set; } = "";
 
-        public string Value { get; set; } = "";
+		[JsonPropertyName("description")]
+		[JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+		public string Description { get; set; } = "";
 
-        [JsonIgnore ( Condition = JsonIgnoreCondition.WhenWritingDefault )]
-        public string Description { get; set; } = "";
+		[JsonPropertyName("label")]
+		[JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+		public string Label { get; set; } = "";
 
-        [JsonIgnore ( Condition = JsonIgnoreCondition.WhenWritingDefault )]
-        public string Label { get; set; } = "";
-
-    }
+	}
 
 }

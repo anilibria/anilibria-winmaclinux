@@ -1,13 +1,17 @@
-﻿namespace Aniliberty.Unfolded.Models.OriginalApi
+﻿using System.Text.Json.Serialization;
+
+namespace Aniliberty.Unfolded.Models.OriginalApi
 {
 
-    public record ReleaseDataModelGenre
-    {
+	public record ReleaseDataModelGenre
+	{
 
-        public int Id { get; init; }
+		[JsonPropertyName("id")]
+		public int Id { get; init; }
 
-        public int TotalReleases { get; init; }
+		[JsonPropertyName("total_releases")]
+		public int TotalReleases { get; init; }
 
-    }
+	}
 
 }

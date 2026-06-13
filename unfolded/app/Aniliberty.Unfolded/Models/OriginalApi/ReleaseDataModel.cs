@@ -1,50 +1,73 @@
-﻿namespace Aniliberty.Unfolded.Models.OriginalApi
+﻿using System.Text.Json.Serialization;
+
+namespace Aniliberty.Unfolded.Models.OriginalApi
 {
 
     public record ReleaseDataModel
     {
 
+        [JsonPropertyName("id")]
         public int Id { get; init; }
 
-        public int Year { get; init; }
+		[JsonPropertyName("year")]
+		public int Year { get; init; }
 
-        public string Alias { get; init; } = "";
+		[JsonPropertyName("alias")]
+		public string Alias { get; init; } = "";
 
-        public string FreshAt { get; init; } = "";
+		[JsonPropertyName("fresh_at")]
+		public string FreshAt { get; init; } = "";
 
-        public bool IsOngoing { get; init; }
+		[JsonPropertyName("is_ongoing")]
+		public bool IsOngoing { get; init; }
 
-        public string Description { get; init; } = "";
+		[JsonPropertyName("description")]
+		public string Description { get; init; } = "";
 
-        public int? EpisodesTotal { get; init; } = null;
+		[JsonPropertyName("episodes_total")]
+		public int? EpisodesTotal { get; init; } = null;
 
-        public bool EpisodesAreUnknown { get; init; }
+		[JsonPropertyName("episodes_are_unknown")]
+		public bool EpisodesAreUnknown { get; init; }
 
-        public bool IsBlockedByCopyrights { get; init; }
+		[JsonPropertyName("is_blocked_by_copyrights")]
+		public bool IsBlockedByCopyrights { get; init; }
 
-        public bool IsBlockedByGeo { get; init; }
+		[JsonPropertyName("is_blocked_by_geo")]
+		public bool IsBlockedByGeo { get; init; }
 
-        public int? AverageDurationOfEpisode { get; init; } = null;
+		[JsonPropertyName("average_duration_of_episode")]
+		public int? AverageDurationOfEpisode { get; init; } = null;
 
-        public int? AddedInUsersFavorites { get; init; } = null;
+		[JsonPropertyName("added_in_users_favorites")]
+		public int? AddedInUsersFavorites { get; init; } = null;
 
-        public bool IsInProduction { get; init; }
+		[JsonPropertyName("is_in_production")]
+		public bool IsInProduction { get; init; }
 
-        public string? Notification { get; set; }
+		[JsonPropertyName("notification")]
+		public string? Notification { get; set; }
 
-        public ReleaseDataTypeModel Type { get; init; } = new ReleaseDataTypeModel();
+		[JsonPropertyName("type")]
+		public ReleaseDataTypeModel Type { get; init; } = new ReleaseDataTypeModel();
 
-        public ReleaseDataNameModel Name { get; init; } = new ReleaseDataNameModel();
+		[JsonPropertyName("name")]
+		public ReleaseDataNameModel Name { get; init; } = new ReleaseDataNameModel();
 
-        public ReleaseDataSeasonModel Season { get; init; } = new ReleaseDataSeasonModel();
+		[JsonPropertyName("season")]
+		public ReleaseDataSeasonModel Season { get; init; } = new ReleaseDataSeasonModel();
 
-        public ReleaseDataModelPoster Poster { get; init; } = new ReleaseDataModelPoster();
+		[JsonPropertyName("poster")]
+		public ReleaseDataModelPoster Poster { get; init; } = new ReleaseDataModelPoster();
 
-        public ReleaseDataModelAgeRating AgeRating { get; init; } = new ReleaseDataModelAgeRating();
+		[JsonPropertyName("age_rating")]
+		public ReleaseDataModelAgeRating AgeRating { get; init; } = new ReleaseDataModelAgeRating();
 
-        public ReleaseDataModelPublishDay PublishDay { get; init; } = new ReleaseDataModelPublishDay();
+		[JsonPropertyName("publich_day")]
+		public ReleaseDataModelPublishDay PublishDay { get; init; } = new ReleaseDataModelPublishDay();
 
-        public IEnumerable<ReleaseDataModelGenre> Genres { get; init; } = [];
+		[JsonPropertyName("genres")]
+		public IEnumerable<ReleaseDataModelGenre> Genres { get; init; } = [];
 
     }
 

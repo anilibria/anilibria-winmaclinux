@@ -1,4 +1,5 @@
-﻿using Aniliberty.Unfolded.Helpers;
+﻿using Aniliberty.Unfolded.Configuration;
+using Aniliberty.Unfolded.Helpers;
 using Aniliberty.Unfolded.Models.OriginalApi;
 using Aniliberty.Unfolded.Models.Releases;
 using Microsoft.AspNetCore.Mvc;
@@ -12,38 +13,38 @@ namespace Aniliberty.Unfolded.Routes
 
 		public static void RegisterRoutes(WebApplication app)
 		{
-			app.MapGet("/sync/full", ([FromQuery] string path, [FromServices] IHttpClientFactory clientFactory) => Full(path, clientFactory));
+			app.MapGet("/sync/full", ([FromServices] IHttpClientFactory clientFactory) => Full(clientFactory));
 			//app.MapGet("/videoproxy/part", ([FromQuery] string path) => VideoPart(path));
 		}
 
-		public static async Task<IResult> Full(string path, IHttpClientFactory clientFactory)
+		public static async Task<IResult> Full(IHttpClientFactory clientFactory)
 		{
-			if (string.IsNullOrEmpty(path)) return Results.BadRequest();
-
 			var httpClient = clientFactory.CreateClient();
+			httpClient.Timeout = TimeSpan.FromSeconds(20);
+			var cacheFolder = GlobalConfig.PathToCache();
 
-			await SaveFullReleases(httpClient, "");
+			if (IsEmptyCache(cacheFolder)) await SaveTypes(httpClient, cacheFolder);
+
+			await SaveFullReleases(httpClient, cacheFolder);
 
 			return Results.Ok();
 		}
 
+		static bool IsEmptyCache(string folderToSaveCacheFiles) => !File.Exists(Path.Combine(folderToSaveCacheFiles, "types.cache"));
+
 		static public async Task SaveFullReleases(HttpClient httpClient, string folderToSaveCacheFiles)
 		{
-			var types = await ReadTypes(folderToSaveCacheFiles);
-			var metadata = await ReadMetadata(folderToSaveCacheFiles);
-			if (metadata == null) return;
-
 			var totalPages = 300;
 
 			var allReleases = new List<ReleaseDataFullModel>();
 
-			for (var i = 1; i < 300; i++)
+			for (var i = 1; i < totalPages; i++)
 			{
 				Console.WriteLine($"Try to get page {i}");
 				var page = await OriginalApiMaker.GetPageIds(i, httpClient, 50);
 				if (totalPages == 300)
 				{
-					totalPages = page.Meta.Pagination.TotalPages;
+					totalPages = page.Meta.Pagination.TotalPages + 1;
 					Console.WriteLine("Total pages: " + totalPages);
 				}
 
@@ -59,6 +60,8 @@ namespace Aniliberty.Unfolded.Routes
 			if (!allReleases.Any()) return;
 
 			var lastTimestamp = DateTimeOffset.Parse(allReleases.Where(a => a.FreshAt != null).OrderByDescending(a => a.FreshAt).First().FreshAt).ToUnixTimeSeconds();
+
+			var types = await ReadTypes(folderToSaveCacheFiles);
 
 			var result = new List<ReleaseSaveModel>();
 			var resultTorrents = new List<ReleaseTorrentSaveModel>();
@@ -129,16 +132,47 @@ namespace Aniliberty.Unfolded.Routes
 			await SaveLoadedItemsToFiles(folderToSaveCacheFiles, result, resultTorrents, resultVideos, lastTimestamp);
 		}
 
+		public static async Task SaveTypes(HttpClient httpClient, string folderToSaveCacheFiles)
+		{
+			Console.WriteLine("Start synchronized types...");
+
+			var ageRatings = await OriginalApiMaker.GetAgeRatings(httpClient);
+			var genres = await OriginalApiMaker.GetGenres(httpClient);
+			var seasons = await OriginalApiMaker.GetSeasons(httpClient);
+			var types = await OriginalApiMaker.GetTypes(httpClient);
+
+			Console.WriteLine($"Received {ageRatings.Count()} ratings items");
+			Console.WriteLine($"Received {genres.Count()} genres items");
+			Console.WriteLine($"Received {seasons.Count()} seasons items");
+			Console.WriteLine($"Received {types.Count()} types items");
+
+			var result = new TypesResultModel
+			{
+				AgeRatings = ageRatings,
+				Genres = genres,
+				Seasons = seasons,
+				Types = types
+			};
+
+			var jsonContent = SerializeToJson(result);
+
+			var path = Path.Combine(folderToSaveCacheFiles, "types.cache");
+			Console.WriteLine($"Saving to file {Path.GetFullPath(path)} items");
+
+			await File.WriteAllTextAsync(path, jsonContent);
+
+			Console.WriteLine($"Types saved!");
+		}
+
 		internal static async Task<MetadataModel> ReadMetadata(string folderToSaveCacheFiles)
 		{
 			var metadataPath = Path.Combine(folderToSaveCacheFiles, "metadata");
-
 			if (!File.Exists(metadataPath))
 			{
 				var errorMessage = $"Metadata file is not exists!";
 				Console.WriteLine(errorMessage);
-				throw new Exception(errorMessage);
 			}
+
 			var metadata = DeserializeFromJson<MetadataModel>(await File.ReadAllTextAsync(metadataPath));
 			if (metadata == null)
 			{
@@ -152,17 +186,17 @@ namespace Aniliberty.Unfolded.Routes
 
 		internal static async Task<TypesResultModel> ReadTypes(string folderToSaveCacheFiles)
 		{
-			var pathToTypes = Path.Combine(folderToSaveCacheFiles, "types.json");
+			var pathToTypes = Path.Combine(folderToSaveCacheFiles, "types.cache");
 			if (!File.Exists(pathToTypes))
 			{
-				var errorMessage = $"File types.json not found by path {Path.GetFullPath(pathToTypes)}. You need synchronize types, please add -types or -all parameters to command!";
+				var errorMessage = $"File types.json not found by path {Path.GetFullPath(pathToTypes)}.";
 				Console.WriteLine(errorMessage);
 				throw new Exception(errorMessage);
 			}
 			var types = DeserializeFromJson<TypesResultModel>(await File.ReadAllTextAsync(pathToTypes));
 			if (types == null)
 			{
-				var errorMessage = $"Content of types.json is corrupt. You need synchronize types, please add -types or -all parameters to command!";
+				var errorMessage = $"Content of types.json is corrupt.";
 				Console.WriteLine(errorMessage);
 				throw new Exception(errorMessage);
 			}

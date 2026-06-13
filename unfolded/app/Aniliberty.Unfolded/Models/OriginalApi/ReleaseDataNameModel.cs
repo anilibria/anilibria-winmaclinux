@@ -1,15 +1,20 @@
-﻿namespace Aniliberty.Unfolded.Models.OriginalApi
+﻿using System.Text.Json.Serialization;
+
+namespace Aniliberty.Unfolded.Models.OriginalApi
 {
 
-    public record ReleaseDataNameModel
-    {
+	public record ReleaseDataNameModel
+	{
 
-        public string Main { get; init; } = "";
+		[JsonPropertyName("main")]
+		public string Main { get; init; } = "";
 
-        public string English { get; init; } = "";
+		[JsonPropertyName("english")]
+		public string English { get; init; } = "";
 
-        public string Alternative { get; init; } = "";
+		[JsonPropertyName("alternative")]
+		public string Alternative { get; init; } = "";
 
-    }
+	}
 
 }

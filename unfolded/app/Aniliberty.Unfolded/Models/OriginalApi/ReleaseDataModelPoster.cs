@@ -2,14 +2,18 @@
 
 namespace Aniliberty.Unfolded.Models.OriginalApi
 {
-    public record ReleaseDataModelPoster
-    {
 
-        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-        public string Src { get; init; } = "";
+	public record ReleaseDataModelPoster
+	{
 
-        [JsonIgnore]
-        public string Thumbnail { get; init; } = "";
+		[JsonPropertyName("src")]
+		[JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+		public string Src { get; init; } = "";
 
-    }
+		[JsonIgnore]
+		[JsonPropertyName("thumbnail")]
+		public string Thumbnail { get; init; } = "";
+
+	}
+
 }

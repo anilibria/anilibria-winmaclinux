@@ -1,12 +1,16 @@
-﻿namespace Aniliberty.Unfolded.Models.OriginalApi
+﻿using System.Text.Json.Serialization;
+
+namespace Aniliberty.Unfolded.Models.OriginalApi
 {
 
     internal record ReleaseMemberModel
     {
 
-        public string Nickname { get; set; } = "";
+		[JsonPropertyName("nickname")]
+		public string Nickname { get; set; } = "";
 
-        public StringValueItem Role { get; set; } = new StringValueItem();
+		[JsonPropertyName("role")]
+		public StringValueItem Role { get; set; } = new StringValueItem();
 
     }
 

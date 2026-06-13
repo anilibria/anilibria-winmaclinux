@@ -1,11 +1,14 @@
-﻿namespace Aniliberty.Unfolded.Models.OriginalApi
+﻿using System.Text.Json.Serialization;
+
+namespace Aniliberty.Unfolded.Models.OriginalApi
 {
 
-    public record ReleaseDataTypeModel
-    {
+	public record ReleaseDataTypeModel
+	{
 
-        public string Value { get; init; } = "";
+		[JsonPropertyName("value")]
+		public string Value { get; init; } = "";
 
-    }
+	}
 
 }

@@ -1,19 +1,26 @@
-﻿namespace Aniliberty.Unfolded.Models.OriginalApi
+﻿using System.Text.Json.Serialization;
+
+namespace Aniliberty.Unfolded.Models.OriginalApi
 {
 
-    internal class ReleasePaginationModel
-    {
+	internal class ReleasePaginationModel
+	{
 
-        public int Total { get; set; }
+		[JsonPropertyName("total")]
+		public int Total { get; set; }
 
-        public int Count { get; set; }
+		[JsonPropertyName("count")]
+		public int Count { get; set; }
 
-        public int PerPage { get; set; }
+		[JsonPropertyName("per_page")]
+		public int PerPage { get; set; }
 
-        public int CurrentPage { get; set; }
+		[JsonPropertyName("current_page")]
+		public int CurrentPage { get; set; }
 
-        public int TotalPages { get; set; }
+		[JsonPropertyName("total_pages")]
+		public int TotalPages { get; set; }
 
-    }
+	}
 
 }

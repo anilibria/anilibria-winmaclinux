@@ -1,28 +1,44 @@
-﻿namespace Aniliberty.Unfolded.Models.OriginalApi {
+﻿using System.Text.Json.Serialization;
 
-    internal record ReleaseTorrentModel {
+namespace Aniliberty.Unfolded.Models.OriginalApi
+{
 
-        public string Hash { get; init; } = "";
+	internal record ReleaseTorrentModel
+	{
 
-        public int Id { get; init; }
+		[JsonPropertyName("hash")]
+		public string Hash { get; init; } = "";
 
-        public string Magnet { get; init; } = "";
+		[JsonPropertyName("id")]
+		public int Id { get; init; }
 
-        public string Filename { get; init; } = "";
+		[JsonPropertyName("marnet")]
+		public string Magnet { get; init; } = "";
 
-        public string Description { get; init; } = "";
+		[JsonPropertyName("filename")]
+		public string Filename { get; init; } = "";
 
-        public StringValueItem Quality { get; init; } = new StringValueItem ();
+		[JsonPropertyName("description")]
+		public string Description { get; init; } = "";
 
-        public StringValueItem Codec { get; init; } = new StringValueItem ();
+		[JsonPropertyName("quality")]
+		public StringValueItem Quality { get; init; } = new StringValueItem();
 
-        public StringValueItem Type { get; init; } = new StringValueItem ();
+		[JsonPropertyName("codec")]
+		public StringValueItem Codec { get; init; } = new StringValueItem();
 
-        public long Size { get; init; }
+		[JsonPropertyName("type")]
+		public StringValueItem Type { get; init; } = new StringValueItem();
 
-        public int Seeders { get; init; }
+		[JsonPropertyName("size")]
+		public long Size { get; init; }
 
-        public string UpdatedAt { get; init; } = "";
+		[JsonPropertyName("seeders")]
+		public int Seeders { get; init; }
 
-    }
+		[JsonPropertyName("updated_at")]
+		public string UpdatedAt { get; init; } = "";
+
+	}
+
 }

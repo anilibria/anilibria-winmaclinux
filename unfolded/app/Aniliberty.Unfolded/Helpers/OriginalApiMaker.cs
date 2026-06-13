@@ -17,10 +17,6 @@ namespace Aniliberty.Unfolded.Helpers
 			dictionary["f[sorting]"] = "FRESH_AT_DESC";
 			dictionary["include"] = "id";
 
-			var serializeOptions = new JsonSerializerOptions
-			{
-				PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower
-			};
 			HttpResponseMessage pageContent;
 			try
 			{
@@ -96,10 +92,6 @@ namespace Aniliberty.Unfolded.Helpers
 
 		private static async Task<T> PerformRequest<T>(HttpClient httpClient, string url, string requestName)
 		{
-			var serializeOptions = new JsonSerializerOptions
-			{
-				PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower
-			};
 			HttpResponseMessage pageContent;
 			try
 			{

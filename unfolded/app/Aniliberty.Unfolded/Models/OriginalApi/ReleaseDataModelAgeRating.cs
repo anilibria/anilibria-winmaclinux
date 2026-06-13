@@ -1,11 +1,14 @@
-﻿namespace Aniliberty.Unfolded.Models.OriginalApi
+﻿using System.Text.Json.Serialization;
+
+namespace Aniliberty.Unfolded.Models.OriginalApi
 {
 
-    public class ReleaseDataModelAgeRating
-    {
+	public class ReleaseDataModelAgeRating
+	{
 
-        public string Value { get; set; } = "";
+		[JsonPropertyName("value")]
+		public string Value { get; set; } = "";
 
-    }
+	}
 
 }
