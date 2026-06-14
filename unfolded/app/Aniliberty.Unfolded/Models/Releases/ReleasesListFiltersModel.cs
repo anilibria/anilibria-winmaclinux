@@ -38,13 +38,15 @@
 
 		public bool PartOfReleases { get; init; }
 
-		public ReleasesListFiltersModelSeenStatus SeenStatus { get; set; }
+		public ReleasesListFiltersModelSeenStatus SeenStatus { get; init; }
 
-		public ReleasesListFiltersModelSortingField SortingField { get; set; }
+		public ReleasesListFiltersModelSortingField SortingField { get; init; }
 
-		public bool SortingDescending { get; set; }
+		public bool SortingDescending { get; init; }
 
-		public ReleasesListFiltersSection Section { get; set; }
+		public ReleasesListFiltersSection Section { get; init; }
+
+		public int Page { get; init; }
 
 	}
 

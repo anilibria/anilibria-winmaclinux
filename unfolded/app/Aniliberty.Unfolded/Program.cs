@@ -1,5 +1,6 @@
 using Aniliberty.Unfolded.Configuration;
 using Aniliberty.Unfolded.Routes;
+using Microsoft.Extensions.FileProviders;
 
 namespace Aniliberty.Unfolded
 {
@@ -21,6 +22,15 @@ namespace Aniliberty.Unfolded
 			var app = builder.Build();
 
 			app.MapOpenApi();
+
+			app.UseStaticFiles(
+				new StaticFileOptions
+				{
+					ServeUnknownFileTypes = true,
+					FileProvider = new PhysicalFileProvider(Path.Combine(builder.Environment.ContentRootPath, "HTMLPages")),
+					RequestPath = new PathString("/static")
+				}
+			);
 
 			/*Todo[] sampleTodos =
 			[
@@ -50,7 +60,7 @@ namespace Aniliberty.Unfolded
 			Releases.RegisterRoutes(app);
 			VideoProxy.RegisterRoutes(app);
 
-			GlobalConfig.OpenUrl();
+			//GlobalConfig.OpenUrl();
 
 			app.Run();
 		}

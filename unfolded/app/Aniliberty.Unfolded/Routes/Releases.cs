@@ -16,6 +16,12 @@ namespace Aniliberty.Unfolded.Routes
 
 		static List<ReleaseTorrentSaveModel> m_torrents = [];
 
+		static HashSet<int> m_favorites = new HashSet<int>();
+
+		static List<int> m_openHistory = new List<int>();
+
+		static List<int> m_seenHistory = new List<int>();
+
 		public static void RegisterRoutes(WebApplication app)
 		{
 			app.MapGet("/releases/release", ([FromQuery] int id) => Release(id));
@@ -25,7 +31,7 @@ namespace Aniliberty.Unfolded.Routes
 		internal static async Task Initialize()
 		{
 			var path = GlobalConfig.PathToCache();
-			if (!File.Exists(Path.Combine(path, "types.cache"))) return; // mean no cache need to first synchronized
+			if (Synchronize.IsEmptyTypes(GlobalConfig.PathToCache())) return; // mean no cache need to first synchronized
 
 			if (Synchronize.MetadataExists(path))
 			{
@@ -43,7 +49,36 @@ namespace Aniliberty.Unfolded.Routes
 
 		internal static IResult List(ReleasesListFiltersModel model)
 		{
+			var filteredItems = FilterReleases(model);
+
 			return Results.NotFound();
+		}
+
+		private static object FilterReleases(ReleasesListFiltersModel model)
+		{
+			return m_releases
+				.Where(
+					a =>
+					{
+						if (!FilterBySection(model.Section, a)) return false;
+
+						return true;
+					}
+				)
+				.ToList();
+		}
+
+		private static bool FilterBySection(ReleasesListFiltersSection section, ReleaseSaveModel release)
+		{
+			switch (section)
+			{
+				case ReleasesListFiltersSection.All: return true;
+				case ReleasesListFiltersSection.Favorites: return m_favorites.Contains(release.Id);
+				case ReleasesListFiltersSection.Schedule: return release.PublishDay is not null;
+				case ReleasesListFiltersSection.OpenHistory: return m_openHistory.Contains(release.Id);
+				case ReleasesListFiltersSection.SeenHistory: return m_seenHistory.Contains(release.Id);
+				default: throw new NotSupportedException("Section not supported!");
+			}
 		}
 
 		static async Task ReadReleases(MetadataModel metadata, string folderToSaveCacheFiles)

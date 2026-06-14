@@ -29,7 +29,7 @@ namespace Aniliberty.Unfolded.Routes
 			return Results.Ok();
 		}
 
-		static bool IsEmptyTypes(string folderToSaveCacheFiles) => !File.Exists(Path.Combine(folderToSaveCacheFiles, "types.cache"));
+		public static bool IsEmptyTypes(string folderToSaveCacheFiles) => !File.Exists(Path.Combine(folderToSaveCacheFiles, "types.cache"));
 
 		static public async Task SaveFullReleases(HttpClient httpClient, string folderToSaveCacheFiles)
 		{
@@ -95,7 +95,8 @@ namespace Aniliberty.Unfolded.Routes
 					IsOngoing = fullRelease.IsOngoing,
 					AgeRating = types.AgeRatings.FirstOrDefault(a => a.Value == fullRelease.AgeRating.Value)?.Description ?? fullRelease.AgeRating.Value,
 					Voices = fullRelease.Members != null ? fullRelease.Members.Where(a => a.Role.Value == "voicing").Select(a => a.Nickname) : [],
-					Team = fullRelease.Members != null ? fullRelease.Members.OrderByDescending(a => a.Role.Value).Select(a => a.Nickname) : []
+					Team = fullRelease.Members != null ? fullRelease.Members.OrderByDescending(a => a.Role.Value).Select(a => a.Nickname) : [],
+					PublishDay = fullRelease.PublishDay?.Value
 				});
 
 				// torrents

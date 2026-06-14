@@ -46,6 +46,8 @@
 
 		public string AgeRating { get; init; } = "";
 
+		public int? PublishDay { get; set; }
+
 	}
 
 }
