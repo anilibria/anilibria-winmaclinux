@@ -1,3 +1,4 @@
+using Aniliberty.Unfolded.Models.MainMenus;
 using Aniliberty.Unfolded.Models.OriginalApi;
 using Aniliberty.Unfolded.Models.Releases;
 using System.Text.Json.Serialization;
@@ -19,6 +20,8 @@ namespace Aniliberty.Unfolded
 	[JsonSerializable(typeof(IEnumerable<FranchiseModel>))]
 	[JsonSerializable(typeof(FranchiseReleasesModel))]
 	[JsonSerializable(typeof(ReleaseDataFullCollectionModel))]
+	[JsonSerializable(typeof(MainMenuUserModel))]
+	[JsonSerializable(typeof(IEnumerable<MainMenuModel>))]
 	internal partial class AppJsonSerializerContext : JsonSerializerContext
 	{
 

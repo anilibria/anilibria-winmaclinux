@@ -1,24 +1,30 @@
 ﻿<!DOCTYPE html>
 <html>
 <head>
-    <meta charset="utf-8" />
-    <title>Каталог релизов</title>
+	<meta charset="utf-8" />
+	<title>Каталог релизов</title>
 </head>
 <body>
-    <div id="app">{{ message }}</div>
+	<div id="app">
+		<div v-for="item in mainMenu">
+			<span>{{item.name}}</span>
+		</div>
+	</div>
 
-    <script type="module">
-        import { createApp, ref } from './vue.global.js'
+	<script type="module">
+		import { createApp, ref } from './vue.global.js'
 		import { getRelasesPage } from './unfoldapi.js'
+		import { getMainMenu } from './mainmenu.js'
 
-        createApp({
-            setup() {
-                const message = ref('Hello Vue!')
-                return {
-                    message
-                }
-            }
-        }).mount('#app')
-    </script>
+		createApp({
+			setup() {
+				const mainMenu = ref(getMainMenu());
+
+				return {
+					mainMenu
+				}
+			}
+		}).mount('#app')
+	</script>
 </body>
 </html>
