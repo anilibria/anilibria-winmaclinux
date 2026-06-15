@@ -19,37 +19,42 @@ namespace Aniliberty.Unfolded.Routes
 					new MainMenuModel
 					{
 						Name = "Каталог релизов",
-						Icon = ""
+						Icon = "releases"
 					},
 					new MainMenuModel
 					{
 						Name = "Видеоплеер",
-						Icon = ""
+						Icon = "videoplayer"
 					},
 					new MainMenuModel
 					{
-						Name = "Моя Анилибрия",
-						Icon = ""
+						Name = "Подборки",
+						Icon = "mypage"
 					},
 					new MainMenuModel
 					{
 						Name = "Кинозал",
-						Icon = ""
+						Icon = "cinemahall"
 					},
 					new MainMenuModel
 					{
 						Name = "Связанные релизы",
-						Icon = ""
+						Icon = "series"
 					},
 					new MainMenuModel
 					{
 						Name = "Torrent клиент",
-						Icon = ""
+						Icon = "torrent"
+					},
+					new MainMenuModel
+					{
+						Name = "Обслуживание",
+						Icon = "maintenance"
 					},
 					new MainMenuModel
 					{
 						Name = "Авторизация",
-						Icon = ""
+						Icon = "authorization"
 					}
 				]
 		);
