@@ -7,6 +7,10 @@
 	background: linear-gradient(to bottom, var(--main-menu-background-step1) 0%,var(--main-menu-background-step2) 30%,var(--main-menu-background-step3) 50%,var(--main-menu-background-step4) 70%,var(--main-menu-background-step5) 100%);
 	display: flex;
 	flex-direction: column;
+	animation: main-menu-fadein 0.5s ease forwards;
+	transform: translateX(-300px);
+	visibility: hidden;
+	transition: all 0.3s ease-in-out;
 
 	.main-menu-item {
 		display: flex;

@@ -6,76 +6,45 @@
 	<meta name="color-scheme" content="light dark">
 	<title>Каталог релизов</title>
 	<style>
-		@import url('https://fonts.googleapis.com/css2?family=Google+Sans:ital,opsz,wght@0,17..18,400..700;1,17..18,400..700&display=swap');
-
-		:root {
-			color-scheme: light dark;
-			--main-menu-background-step1: light-dark(#920710, #1a1a1a);
-			--main-menu-background-step2: light-dark(#aa0813, #1f1f1f);
-			--main-menu-background-step3: light-dark(#c30916, #2e2e2e);
-			--main-menu-background-step4: light-dark(#aa0813, #404040);
-			--main-menu-background-step5: light-dark(#920710, #454341);
-			--main-menu-item-hovered: light-dark(rgba(0, 0, 0, 0.3), rgb(255, 255, 255, 0.3));
-			--main-menu-item-text: light-dark(white, white);
-			--main-menu-logo-text: light-dark(white, white);
-			--main-menu-logo: url('/static/icons/logo/default.svg');
-		}
-
-		@media (prefers-color-scheme: dark) {
-			:root {
-				--main-menu-logo: url('/static/icons/logo/dark.svg');
-			}
-		}
-
-		:root[data-theme="light"] {
-			color-scheme: light;
-		}
-
-		:root[data-theme="dark"] {
-			color-scheme: dark;
-		}
 	</style>
+	<link rel="stylesheet" href="main.css">
 	<link rel="stylesheet" href="mainmenu.css">
+	<link rel="stylesheet" href="pagestructure.css">
 </head>
 <body>
 	<div id="app">
-		<div class="main-menu">
-			<div v-if="userData.name" class="main-menu-user">
-				<img :src="userData.avatar" />
-				<span>Вы авторизованы как:<br>{{userData.name}}</span>
-				<img src="/static/icons/mainmenu/logout.svg" width="30" height="30" />
-			</div>
-			<div class="main-menu-items">
-				<div v-for="item in mainMenu">
-					<div class="main-menu-item">
-						<img width="30" height="30" :src="'/static/icons/mainmenu/' + item.icon + '.svg'" />
-						<span>{{item.name}}</span>
-					</div>
-				</div>
-			</div>
-			<div class="main-menu-logo">
-				<div class="icon"></div>
-				<span class="version">Aniliberty.Unfolded<br>версия 0.0.0</span>
-			</div>
-		</div>
+		<page-header
+			v-model:main-menu-visible="mainMenuVisible"
+			title="Каталог релизов">
+		</page-header>
+
+		<page-drawer :main-menu-visible="mainMenuVisible"></page-drawer>
 	</div>
 
 	<script type="module">
 		import { createApp, ref } from './vue.global.js'
 		import { getRelasesPage } from './unfoldapi.js'
-		import { getMainMenu, getUserData } from './mainmenu.js'
+		import Drawer from './components/Drawer.js'
+		import PageHeader from './components/PageHeader.js'
 
-		createApp({
+		console.log(Drawer)
+
+		const app = createApp({
+			components: {
+				'page-drawer': Drawer,
+				'page-header': PageHeader
+			},
 			setup() {
-				const mainMenu = ref(getMainMenu());
-				const userData = ref(getUserData());
+				const mainMenuVisible = ref(false);
 
 				return {
-					mainMenu,
-					userData
+					mainMenuVisible,
+					history
 				}
 			}
-		}).mount('#app')
+		});
+
+		app.mount('#app')
 	</script>
 </body>
 </html>

@@ -1,0 +1,36 @@
+﻿@import url('https://fonts.googleapis.com/css2?family=Google+Sans:ital,opsz,wght@0,17..18,400..700;1,17..18,400..700&display=swap');
+
+body {
+    margin: 0;
+}
+
+:root {
+    color-scheme: light dark;
+    --main-menu-background-step1: light-dark(#920710, #1a1a1a);
+    --main-menu-background-step2: light-dark(#aa0813, #1f1f1f);
+    --main-menu-background-step3: light-dark(#c30916, #2e2e2e);
+    --main-menu-background-step4: light-dark(#aa0813, #404040);
+    --main-menu-background-step5: light-dark(#920710, #454341);
+    --main-menu-item-hovered: light-dark(rgba(0, 0, 0, 0.3), rgb(255, 255, 255, 0.3));
+    --main-menu-item-text: light-dark(white, white);
+    --main-menu-logo-text: light-dark(white, white);
+    --main-menu-logo: url('/static/icons/logo/default.svg');
+    --page-background: light-dark(#D3D3D3, #1f1f1f);
+    --page-header-background: light-dark(#f2f2f2, #474747);
+    --icon-button-hovered: light-dark(white, #737373);
+    --page-header-text: light-dark(#a32727, white);
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --main-menu-logo: url('/static/icons/logo/dark.svg');
+    }
+}
+
+:root[data-theme="light"] {
+    color-scheme: light;
+}
+
+:root[data-theme="dark"] {
+    color-scheme: dark;
+}
