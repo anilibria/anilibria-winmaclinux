@@ -17,6 +17,8 @@ body {
     --main-menu-logo: url('/static/icons/logo/default.svg');
     --page-background: light-dark(#D3D3D3, #1f1f1f);
     --page-header-background: light-dark(#f2f2f2, #474747);
+    --page-subheader-background: light-dark(#f2f2f2, #474747);
+    --page-leftpanel-background: light-dark(#9e2323, #262626);
     --icon-button-hovered: light-dark(white, #737373);
     --page-header-text: light-dark(#a32727, white);
 }
@@ -33,4 +35,59 @@ body {
 
 :root[data-theme="dark"] {
     color-scheme: dark;
+}
+
+.flex-row {
+    display: flex;
+    flex-direction: row;
+}
+
+.flex-base-center {
+    align-items: center;
+}
+
+.flex-other-center {
+    justify-content: center;
+}
+
+/* Simple select style */
+
+.simple-select-container {
+    position: relative;
+}
+
+.simple-select {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    width: 100%;
+    padding: 4px 40px 4px 6px;
+    font-family: "Google Sans", sans-serif;
+    font-size: 13px;
+    color: #333333;
+    cursor: pointer;
+    background-color: #ffffff;
+    border: 1px solid #cccccc;
+    border-radius: 6px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 100 100'%3E%3Cpolygon points='10,20 90,20 50,80' fill='%23000000' /%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-size: 12px;
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+
+    &:hover {
+        border-color: #999999;
+    }
+
+    &:focus {
+        border-color: #0066cc;
+        box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.2);
+        outline: none;
+    }
+
+    &:disabled {
+        background-color: #f5f5f5;
+        color: #999999;
+        cursor: not-allowed;
+    }
 }

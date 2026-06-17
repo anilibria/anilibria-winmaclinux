@@ -18,6 +18,25 @@
 			title="Каталог релизов">
 		</page-header>
 
+		<div class="page-content-with-panel">
+			<div class="left-panel">
+				
+			</div>
+			<div class="right-content">
+				<div class="page-subheader page-line-pair">
+					<div>Множественный выбор</div>
+					<div></div>
+					<div class="flex-row flex-base-center" style="margin-right: 4px;">
+						<simple-select
+							v-model:item="sectionSelected"
+							:options="sections"
+							style="width: 180px;">
+						</simple-select>
+					</div>
+				</div>
+			</div>
+		</div>
+
 		<page-drawer
 			v-model:main-menu-visible="mainMenuVisible">
 		</page-drawer>
@@ -28,18 +47,41 @@
 		import { getRelasesPage } from './unfoldapi.js'
 		import Drawer from './components/Drawer.js'
 		import PageHeader from './components/PageHeader.js'
+		import SimpleSelect from './components/SimpleSelect.js'
 
 		const app = createApp({
 			components: {
 				'page-drawer': Drawer,
-				'page-header': PageHeader
+				'page-header': PageHeader,
+				'simple-select': SimpleSelect,
 			},
 			setup() {
 				const mainMenuVisible = ref(false);
+				const sectionSelected = ref(1);
+
+				const sections = [
+					{
+						title: "Все релизы",
+						id: 1
+					},
+					{
+						title: "Избранное",
+						id: 2
+					},
+					{
+						title: "Расписание",
+						id: 3
+					},
+					{
+						title: "Уведомления",
+						id: 4
+					},
+				];
 
 				return {
 					mainMenuVisible,
-					history
+					sectionSelected,
+					sections
 				}
 			}
 		});
