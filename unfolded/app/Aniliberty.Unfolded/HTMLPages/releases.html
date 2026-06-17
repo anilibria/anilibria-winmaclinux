@@ -18,7 +18,9 @@
 			title="Каталог релизов">
 		</page-header>
 
-		<page-drawer :main-menu-visible="mainMenuVisible"></page-drawer>
+		<page-drawer
+			v-model:main-menu-visible="mainMenuVisible">
+		</page-drawer>
 	</div>
 
 	<script type="module">
@@ -26,8 +28,6 @@
 		import { getRelasesPage } from './unfoldapi.js'
 		import Drawer from './components/Drawer.js'
 		import PageHeader from './components/PageHeader.js'
-
-		console.log(Drawer)
 
 		const app = createApp({
 			components: {
