@@ -24,7 +24,12 @@
 			</div>
 			<div class="right-content">
 				<div class="page-subheader page-line-pair">
-					<div>Множественный выбор</div>
+					<div class="flex-row flex-base-center" style="margin: 0 0 0 4px;">
+						<simple-select v-model:item="sectionSelected"
+							:options="sections"
+							style="width: 180px;">
+						</simple-select>
+					</div>
 					<div></div>
 					<div class="flex-row flex-base-center" style="margin-right: 4px;">
 						<simple-select
@@ -58,6 +63,7 @@
 			setup() {
 				const mainMenuVisible = ref(false);
 				const sectionSelected = ref(1);
+				const subSectionSelected = ref(null);
 
 				const sections = [
 					{
@@ -76,6 +82,63 @@
 						title: "Уведомления",
 						id: 4
 					},
+				];
+
+				const notificationSections = [
+					{
+						title: "Новые релизы",
+						id: 1
+					},
+					{
+						title: "Релизы с новыми сериями",
+						id: 2
+					},
+					{
+						title: "Релизы с новыми торрентами",
+						id: 3
+					},
+					{
+						title: "Релизы с обновленными торрентами",
+						id: 4
+					},
+				];
+
+				const historySections = [
+					{
+						title: "История",
+						id: 1
+					},
+					{
+						title: "История просмотра",
+						id: 2
+					}
+				];
+
+				const seenMarkSections = [
+					{
+						title: "Просмотренные",
+						id: 1
+					},
+					{
+						title: "Просматриваемые",
+						id: 2
+					},
+					{
+						title: "Не просмотренные",
+						id: 2
+					},
+					{
+						title: "Скрытые релизы",
+						id: 2
+					},
+					{
+						title: "Просмотренные до конца",
+						id: 2
+					},
+					{
+						title: "Просмотренные не до конца",
+						id: 2
+					}
 				];
 
 				return {
