@@ -15,8 +15,7 @@ jobs:
       uses: actions/checkout@v5
 
     - name: Set version from tag
-      run: |
-        echo "VERSION=$(echo "${{ github.ref_name }}" >> $GITHUB_ENV
+      run: echo "VERSION=${{ github.ref_name }}" >> $GITHUB_ENV
 
     - name: Install dependencies
       run: |
