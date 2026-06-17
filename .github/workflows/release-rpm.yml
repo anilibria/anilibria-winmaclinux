@@ -17,17 +17,17 @@ jobs:
     - name: Set version from tag
       run: echo "VERSION=${{ github.ref_name }}" >> $GITHUB_ENV
 
-    - name: Install dependencies
+    - name: Install libraries
       run: |
         dnf install -y rpm-build rpmdevtools rpmlint cmake gcc gcc-c++ \
         openssl-devel bzip2-devel libffi-devel zlib-devel wget make \
         qt6-qtbase-devel qt6-qttools-devel qt6-qtdeclarative-devel \
         qt6-qtwebsockets-devel qt6-qtsvg-devel mpv mpv-devel chrpath
 
-    - name: Program build & compile
+    - name: Program build
       run: |
-         cmake src -B src/build -DCMAKE_BUILD_TYPE=Release -DANILIBERTY_LESS_68_QT=On
-         cmake --build src/build
+        cmake src -B src/build -DCMAKE_BUILD_TYPE=Release -DANILIBERTY_LESS_68_QT=On
+        cmake --build src/build
 
     - name: Prepare RPM package
       run: |
@@ -47,8 +47,13 @@ jobs:
         cd /github/home/rpmbuild/SPECS/
         rpmbuild -bb --define "version ${{ env.VERSION }}" aniliberty.spec
 
+    - name: Rename RPM to custom format
+      run: |
+        ORIGINAL_RPM=$(ls /github/home/rpmbuild/RPMS/x86_64/*.rpm | head -n 1)
+        mv "$ORIGINAL_RPM" "/github/home/rpmbuild/RPMS/x86_64/aniliberty_${{ env.VERSION }}_x86_64.rpm"
+
     - name: Upload package artifact
       uses: actions/upload-artifact@v5
       with:
-        name: RPM Package-${{ env.VERSION }}
+        name: aniliberty-rpm
         path: /github/home/rpmbuild/RPMS/x86_64/*.rpm
