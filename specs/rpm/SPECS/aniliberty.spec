@@ -1,7 +1,7 @@
 Name:           aniliberty
-Version:        2.2.36
+Version:        %{version}
 Release:        1%{?dist}
-Packager:	https://github.com/anilibria
+Packager:	      https://github.com/anilibria
 Summary:        AniLiberty.Qt cross platform desktop client
 
 License:        GPL-3.0
@@ -12,6 +12,7 @@ Requires:       mpv-libs, qt6-qtbase, qt6-qtdeclarative, qt6-qtwebsockets, qt6-q
 Requires:       libxkbcommon, qt6-qtquickcontrols2
 BuildArch:      x86_64
 
+%global __requires_exclude ^libQt6.*\\(Qt_.*_PRIVATE_API\\)\\(64bit\\)$
 %global debug_package %{nil}
 
 %description
@@ -43,9 +44,8 @@ cp -rp %{_builddir}/%{name}-%{version}/* %{buildroot}/
 /usr/share/doc/aniliberty/copyright
 
 %changelog
-* %(date "+%a %b %d %Y") - 2.2.35
-- Исправлен пункт "Синхронизация всех релизов" на странице Каталог релизов
-- Добавлен пункт "Синхронизация постеров с заменой" на странице Каталог релизов
-- Добавлен пункт "Синхронизация постеров только новые" на странице Каталог релизов
-- Добавлен пункт "Создать шару из кеша" на странице Каталог релизов
-- Добавлен пункт "Загрузить шару кеша" на странице Каталог релизов
+* %(date "+%a %b %d %Y") - %{version}
+- Изменен метод полной синхронизации на новый более быстрый
+- Исправлена ошибка во всех диалогах выбора папок для Qt6
+- Добавлены кнопки выбора папок для создания шары и импорта шары
+- Добавлено информационная плашка для информирования о ходе ручной синхронизации
