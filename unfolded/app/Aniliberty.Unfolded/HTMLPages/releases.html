@@ -18,8 +18,47 @@
 		</page-header>
 
 		<div class="page-content-with-panel">
-			<div class="left-panel">
-
+			<div class="left-panel flex-column">
+				<div
+					class="simple-panel-icon-button"
+					title="Выполнить синхронизация релизов">
+					<img :src="'/static/icons/releases/synchronization.svg'" width="30" height="30" />
+				</div>
+				<div
+					class="simple-panel-icon-button"
+					title="Добавить/удалить релизы в/из избранного">
+					<img :src="'/static/icons/releases/favorite.svg'" width="30" height="30" />
+				</div>
+				<div
+					class="simple-panel-icon-button"
+					title="Отметить релизы как просмотренные">
+					<img :src="'/static/icons/releases/seen.svg'" width="30" height="30" />
+				</div>
+				<div
+					class="simple-panel-icon-button"
+					title="Добавлять/удалять релизы в/из кинозала">
+					<img :src="'/static/icons/mainmenu/cinemahall.svg'" width="30" height="30" />
+				</div>
+				<div
+					class="simple-panel-icon-button"
+					title="Добавить фильтры для фильтрации по разным полям релиза">
+					<img :src="'/static/icons/releases/search.svg'" width="30" height="30" />
+				</div>
+				<div
+					class="simple-panel-icon-button"
+					title="Посмотреть уведомления о непросмотренных изменениях">
+					<img :src="'/static/icons/releases/notifications.svg'" width="30" height="30" />
+				</div>
+				<div
+					class="simple-panel-icon-button"
+					title="Открыть карточку релиза выбранного случайным образом">
+					<img :src="'/static/icons/releases/random.svg'" width="30" height="30" />
+				</div>
+				<div
+					class="simple-panel-icon-button"
+					title="Настройка страницы Каталог релизов">
+					<img :src="'/static/icons/commonbuttons/settings.svg'" width="30" height="30" />
+				</div>
 			</div>
 			<div class="right-content">
 				<div class="page-subheader page-line-pair">
@@ -56,7 +95,7 @@
 							style="width: 170px; margin-right: 2px;">
 						</simple-select>
 						<div
-							class="icon-button"
+							class="simple-icon-button"
 							title="Направление сортировки поиска"
 							@click="sortDescending = !sortDescending">
 							<img :src="'/static/icons/releases/' + (sortDescending ? 'sortdescending' : 'sortascending') + '.svg'" width="20" height="20" />
