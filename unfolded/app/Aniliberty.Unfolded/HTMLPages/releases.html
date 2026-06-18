@@ -46,7 +46,9 @@
 							@selected="subSectionSelected = -1;">
 						</simple-select>
 					</div>
-					<div></div>
+					<div class="flex-row flex-base-center flex-other-center">
+						<input v-model="nameFilter" type="text" class="simple-input" placeholder="Введите название релиза" />
+					</div>
 					<div class="flex-row flex-base-center" style="margin-right: 4px;">
 						<simple-select
 							v-model:item="sortingField"
@@ -87,6 +89,7 @@
 				const subSectionSelected = ref(-1);
 				const sortingField = ref(0);
 				const sortDescending = ref(false);
+				const nameFilter = ref("");
 
 				const sections = [
 					{
@@ -276,7 +279,8 @@
 					seenMarkSections,
 					sortingFields,
 					sortingField,
-					sortDescending
+					sortDescending,
+					nameFilter
 				}
 			}
 		});

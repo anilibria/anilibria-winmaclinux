@@ -91,3 +91,34 @@ body {
         cursor: not-allowed;
     }
 }
+
+/* Simple text input style */
+
+.simple-input {
+    padding: 4px 6px;
+    box-sizing: border-box;
+    font-family: "Google Sans", sans-serif;
+    font-size: 13px;
+    color: #333333;
+
+    background-color: #ffffff;
+    border: 1px solid #cccccc;
+    border-radius: 6px;
+
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+
+    &:focus {
+        outline: none;
+        border-color: #0066cc;
+        box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.25);
+    }
+    &:disabled {
+        background-color: #f5f5f5;
+        color: #999999;
+        cursor: not-allowed;
+    }
+    &::placeholder {
+        color: #888888;
+        opacity: 1;
+    }
+}
