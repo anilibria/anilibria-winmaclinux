@@ -38,6 +38,19 @@
     background-color: var(--page-header-background);
     height: 38px;
     width: 100%;
+
+    .icon-button {
+        width: 38px;
+        height: 100%;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
+
+        &:hover {
+            background-color: var(--icon-button-hovered);
+        }
+    }
 }
 
 .page-content-with-panel {

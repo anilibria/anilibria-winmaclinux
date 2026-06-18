@@ -53,6 +53,8 @@
 	public enum ReleasesListFiltersSection
 	{
 
+		// Base items
+
 		All = 0,
 
 		Favorites = 1,
@@ -61,41 +63,47 @@
 
 		Schedule = 3,
 
-		OpenHistory = 4,
+		Alphabet = 4,
 
-		SeenHistory = 5,
+		Groups = 5,
 
-		Alphabet = 6,
+		History = 6,
 
-		Groups = 7,
+		Seens = 7,
 
-		Seens = 8,
+		// Sub items
 
-		SeenNow = 9,
+		OpenHistory = 40,
 
-		NotSeen = 10,
+		SeenHistory = 41,
 
-		Hided = 11,
+		Seen = 42,
 
-		SeenToEnd = 12,
+		SeenNow = 43,
 
-		SeenNotToEnd = 13,
+		NotSeen = 44,
 
-		Films = 50,
+		Hided = 45,
 
-		MostPopular = 51,
+		SeenToEnd = 46,
 
-		PartOfRelease = 52,
+		SeenNotToEnd = 47,
 
-		Completed = 53,
+		Films = 48,
 
-		PopulInCurrentYear = 54,
+		MostPopular = 49,
 
-		InCinemaHall = 55,
+		PartOfRelease = 50,
 
-		CurrentSeason = 56,
+		Completed = 51,
 
-		NotCurrentSeason = 57,
+		PopulInCurrentYear = 52,
+
+		InCinemaHall = 53,
+
+		CurrentSeason = 54,
+
+		NotCurrentSeason = 55,
 
 	};
 

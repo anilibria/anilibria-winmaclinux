@@ -13,37 +13,58 @@
 </head>
 <body>
 	<div id="app">
-		<page-header
-			v-model:main-menu-visible="mainMenuVisible"
-			title="Каталог релизов">
+		<page-header v-model:main-menu-visible="mainMenuVisible"
+					 title="Каталог релизов">
 		</page-header>
 
 		<div class="page-content-with-panel">
 			<div class="left-panel">
-				
+
 			</div>
 			<div class="right-content">
 				<div class="page-subheader page-line-pair">
 					<div class="flex-row flex-base-center" style="margin: 0 0 0 4px;">
 						<simple-select v-model:item="sectionSelected"
 							:options="sections"
-							style="width: 180px;">
+							style="width: 130px;"
+							@selected="subSectionSelected = -1;">
+						</simple-select>
+						<div style="width: 4px;"></div>
+						<simple-select v-if="sectionSelected === 6" v-model:item="subSectionSelected"
+							:options="historySections"
+							style="width: 170px;"
+							@selected="subSectionSelected = -1;">
+						</simple-select>
+						<simple-select v-if="sectionSelected === 7" v-model:item="subSectionSelected"
+							:options="seenMarkSections"
+							style="width: 225px;"
+							@selected="subSectionSelected = -1;">
+						</simple-select>
+						<simple-select v-if="sectionSelected === 8" v-model:item="subSectionSelected"
+							:options="setsSections"
+							style="width: 220px;"
+							@selected="subSectionSelected = -1;">
 						</simple-select>
 					</div>
 					<div></div>
 					<div class="flex-row flex-base-center" style="margin-right: 4px;">
 						<simple-select
-							v-model:item="sectionSelected"
-							:options="sections"
-							style="width: 180px;">
+							v-model:item="sortingField"
+							:options="sortingFields"
+							style="width: 170px; margin-right: 2px;">
 						</simple-select>
+						<div
+							class="icon-button"
+							title="Направление сортировки поиска"
+							@click="sortDescending = !sortDescending">
+							<img :src="'/static/icons/releases/' + (sortDescending ? 'sortdescending' : 'sortascending') + '.svg'" width="20" height="20" />
+						</div>
 					</div>
 				</div>
 			</div>
 		</div>
 
-		<page-drawer
-			v-model:main-menu-visible="mainMenuVisible">
+		<page-drawer v-model:main-menu-visible="mainMenuVisible">
 		</page-drawer>
 	</div>
 
@@ -62,16 +83,22 @@
 			},
 			setup() {
 				const mainMenuVisible = ref(false);
-				const sectionSelected = ref(1);
-				const subSectionSelected = ref(null);
+				const sectionSelected = ref(0);
+				const subSectionSelected = ref(-1);
+				const sortingField = ref(0);
+				const sortDescending = ref(false);
 
 				const sections = [
 					{
 						title: "Все релизы",
-						id: 1
+						id: 0
 					},
 					{
 						title: "Избранное",
+						id: 1
+					},
+					{
+						title: "Уведомления",
 						id: 2
 					},
 					{
@@ -79,72 +106,177 @@
 						id: 3
 					},
 					{
-						title: "Уведомления",
+						title: "Алфавит",
 						id: 4
 					},
-				];
-
-				const notificationSections = [
 					{
-						title: "Новые релизы",
-						id: 1
+						title: "История",
+						id: 6
 					},
 					{
-						title: "Релизы с новыми сериями",
-						id: 2
+						title: "Группы",
+						id: 5
 					},
 					{
-						title: "Релизы с новыми торрентами",
-						id: 3
+						title: "Просмотр",
+						id: 7
 					},
 					{
-						title: "Релизы с обновленными торрентами",
-						id: 4
-					},
+						title: "Подборки",
+						id: 8
+					}
 				];
 
 				const historySections = [
 					{
+						title: "Не выбрано",
+						id: -1
+					},
+					{
 						title: "История",
-						id: 1
+						id: 40
 					},
 					{
 						title: "История просмотра",
-						id: 2
+						id: 41
 					}
 				];
 
 				const seenMarkSections = [
 					{
+						title: "Не выбрано",
+						id: -1
+					},
+					{
 						title: "Просмотренные",
-						id: 1
+						id: 42
 					},
 					{
 						title: "Просматриваемые",
-						id: 2
+						id: 43
 					},
 					{
 						title: "Не просмотренные",
-						id: 2
+						id: 44
 					},
 					{
 						title: "Скрытые релизы",
-						id: 2
+						id: 45
 					},
 					{
 						title: "Просмотренные до конца",
-						id: 2
+						id: 46
 					},
 					{
 						title: "Просмотренные не до конца",
+						id: 47
+					}
+				];
+
+				const setsSections = [
+					{
+						title: "Не выбрано",
+						id: -1
+					},
+					{
+						title: "Фильмы",
+						id: 48
+					},
+					{
+						title: "Самые популярные",
+						id: 49
+					},
+					{
+						title: "Часть серии",
+						id: 50
+					},
+					{
+						title: "Завершенные",
+						id: 51
+					},
+					{
+						title: "Популярное в текущем году",
+						id: 52
+					},
+					{
+						title: "В кинозале",
+						id: 53
+					},
+					{
+						title: "Текущий сезон",
+						id: 54
+					},
+					{
+						title: "Не текущий сезон",
+						id: 55
+					}
+				];
+
+				const sortingFields = [
+					{
+						title: "Обновлению",
+						id: 0
+					},
+					{
+						title: "Расписанию",
+						id: 1
+					},
+					{
+						title: "Имени",
 						id: 2
+					},
+					{
+						title: "Году",
+						id: 3
+					},
+					{
+						title: "Рейтингу",
+						id: 4
+					},
+					{
+						title: "Статусу",
+						id: 5
+					},
+					{
+						title: "Ориг. имени",
+						id: 6
+					},
+					{
+						title: "Истории открытия",
+						id: 7
+					},
+					{
+						title: "Истории просмотра",
+						id: 8
+					},
+					{
+						title: "Сезону",
+						id: 9
+					},
+					{
+						title: "Избранности",
+						id: 10
+					},
+					{
+						title: "Просмотренности",
+						id: 11
+					},
+					{
+						title: "Части серии",
+						id: 12
 					}
 				];
 
 				return {
 					mainMenuVisible,
 					sectionSelected,
-					sections
+					sections,
+					historySections,
+					setsSections,
+					seenMarkSections,
+					sortingFields,
+					sortingField,
+					sortDescending
 				}
 			}
 		});
