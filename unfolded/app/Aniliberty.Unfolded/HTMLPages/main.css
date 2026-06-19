@@ -2,6 +2,7 @@
 
 body {
     margin: 0;
+    font-family: "Google Sans", sans-serif;
 }
 
 :root {
@@ -11,7 +12,7 @@ body {
     --main-menu-background-step3: light-dark(#c30916, #2e2e2e);
     --main-menu-background-step4: light-dark(#aa0813, #404040);
     --main-menu-background-step5: light-dark(#920710, #454341);
-    --main-menu-item-hovered: light-dark(rgba(0, 0, 0, 0.3), rgb(255, 255, 255, 0.3));
+    --main-menu-item-hovered: light-dark(rgba(0, 0, 0, 0.3), rgba(255, 255, 255, 0.3));
     --main-menu-item-text: light-dark(white, white);
     --main-menu-logo-text: light-dark(white, white);
     --main-menu-logo: url('/static/icons/logo/default.svg');
@@ -21,6 +22,9 @@ body {
     --page-leftpanel-background: light-dark(#9e2323, #262626);
     --icon-button-hovered: light-dark(white, #737373);
     --page-header-text: light-dark(#a32727, white);
+    --release-item-background: light-dark(#f2f2f2, #474747);
+    --release-item-background-shadow: light-dark(rgba(120, 128, 128, 0.5), rgba(120, 89, 89, 0.5));
+    --release-item-poster-border: light-dark(#adadad, #adadad);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -54,6 +58,17 @@ body {
 .flex-other-center {
     justify-content: center;
 }
+
+.flex-1 {
+    flex: 1;
+}
+.gap-2 {
+    gap: 2px;
+}
+.gap-4 {
+    gap: 4px;
+}
+
 
 /* Simple icon button */
 
@@ -96,7 +111,6 @@ body {
     -moz-appearance: none;
     width: 100%;
     padding: 4px 40px 4px 6px;
-    font-family: "Google Sans", sans-serif;
     font-size: 13px;
     color: #333333;
     cursor: pointer;
@@ -131,7 +145,6 @@ body {
 .simple-input {
     padding: 4px 6px;
     box-sizing: border-box;
-    font-family: "Google Sans", sans-serif;
     font-size: 13px;
     color: #333333;
 

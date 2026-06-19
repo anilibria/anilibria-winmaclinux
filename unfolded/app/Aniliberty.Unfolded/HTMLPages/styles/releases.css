@@ -1,0 +1,45 @@
+﻿.releases-release-item {
+    background-color: var(--release-item-background);
+    width: 480px;
+    height: 280px;
+    border-radius: 10px;
+    box-shadow: 2px 2px var(--release-item-background-shadow);
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+
+    .poster {
+        margin-left: 4px;
+        width: 180px;
+        height: 270px;
+        border-color: var(--release-item-poster-border);
+        border-width: 2px;
+        border-style: solid;
+        border-radius: 4px;
+    }
+
+    .information {
+        height: 100%;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        margin-left: 10px;
+    }
+
+    .header-text {
+        font-size: 16px;
+        text-wrap: balance;
+        color: var(--page-header-text);
+    }
+
+    .normal-text {
+        font-size: 14px;
+        text-wrap: balance;
+    }
+
+    .digit-text {
+        font-size: 15px;
+        text-wrap: balance;
+    }
+
+}

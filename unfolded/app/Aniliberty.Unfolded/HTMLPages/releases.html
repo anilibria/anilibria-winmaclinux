@@ -10,6 +10,7 @@
 	<link rel="stylesheet" href="main.css">
 	<link rel="stylesheet" href="mainmenu.css">
 	<link rel="stylesheet" href="pagestructure.css">
+	<link rel="stylesheet" href="styles/releases.css">
 </head>
 <body>
 	<div id="app">
@@ -99,6 +100,32 @@
 							title="Направление сортировки поиска"
 							@click="sortDescending = !sortDescending">
 							<img :src="'/static/icons/releases/' + (sortDescending ? 'sortdescending' : 'sortascending') + '.svg'" width="20" height="20" />
+						</div>
+					</div>
+				</div>
+				<div>
+					<div style="margin: 30px;" class="releases-release-item">
+						<img
+							class="poster"
+							src="https://anilibria.top/storage/releases/posters/10284/OgaLrGL3z9xM1aMW2E4Zsr6YbeNSNdLY.jpg"
+						/>
+						<div class="information">
+							<span class="header-text" style="margin-top: 2px;">Где те девушки, что были бы добры к отаку</span>
+							<span class="normal-text">Сейчас в озвучке - Весна 2026</span>
+							<span class="normal-text">ТВ 12 - Комедия, Сейнен, Школа, Романтика</span>
+							<span class="normal-text"><b>Команда:</b> Lalala, Lalala, Lalala, Lalala, Lalala, Lalala, Lalala, Lalala</span>
+							<div class="flex-row flex-base-center gap-4">
+								<img src="/static/icons/releases/online.svg" width="20" height="20" />
+								<span class="digit-text">1000/1000</span>
+								<img src="/static/icons/mainmenu/torrent.svg" width="20" height="20" />
+								<span class="digit-text">10</span>
+								<img src="/static/icons/releases/favorite.svg" width="20" height="20" />
+								<span class="digit-text">100000</span>
+								<img src="/static/icons/releases/scheduleday.svg" width="20" height="20" />
+								<span class="digit-text">ср</span>
+							</div>
+							<div class="flex-1"></div>
+							<span class="header-text">В Избранном</span>
 						</div>
 					</div>
 				</div>
