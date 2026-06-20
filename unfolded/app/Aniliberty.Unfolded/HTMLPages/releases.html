@@ -15,7 +15,7 @@
 <body>
 	<div id="app">
 		<page-header v-model:main-menu-visible="mainMenuVisible"
-					 title="Каталог релизов">
+			title="Каталог релизов">
 		</page-header>
 
 		<div class="page-content-with-panel">
@@ -156,6 +156,10 @@
 				const sortingField = ref(0);
 				const sortDescending = ref(false);
 				const nameFilter = ref("");
+				const releasesGroups = ref([]);
+				const releasesCount = ref(0);
+				let relasesInGroup = 1;
+				const widthItem = 480;
 
 				const sections = [
 					{
@@ -335,6 +339,64 @@
 						id: 12
 					}
 				];
+
+				function recalculateReleaseGroups(releases) {
+					relasesInGroup = Math.floor(window.innerWidth / widthItem);
+					if (relasesInGroup === 0) relasesInGroup = 1;
+					releasesCount.value = releases.length;
+
+					const result = [];
+					let iterator = 0;
+					let currentGroup = [];
+					for (const release of releases) {
+						if (iterator === relasesInGroup) {
+							result.push(currentGroup);
+							currentGroup = [];
+							iterator = 0;
+						}
+						currentGroup.push(release);
+						iterator++;
+					}
+					releases.push(currentGroup);
+
+					releasesGroups.value = releases;
+				}
+
+				async function loadReleases() {
+					const releases = await getRelasesPage(
+						{
+							filter: "",
+							type: "",
+							description: "",
+							voices: [],
+							voicesOr: null,
+							genres: [],
+							genresOr: null,
+							years: [],
+							yearsOr: null,
+							seasons: [],
+							seasonsOr: null,
+							statuses: [],
+							statusesOr: null,
+							scheduleDays: [],
+							scheduleDaysOr: null,
+							inFavorites: null,
+							partOfReleases: null,
+							seenStatus: null,
+							sortingField: null,
+							sortingDescending: null,
+							section: 0
+						}
+					);
+					if (!releases) {
+						// Show empty message
+						return;
+					}
+
+					recalculateReleaseGroups(releases);
+				}
+
+				loadReleases();
 
 				return {
 					mainMenuVisible,

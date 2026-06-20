@@ -4,49 +4,47 @@
 	internal record ReleasesListFiltersModel
 	{
 
-		public string Filter { get; init; } = "";
+		public string? Filter { get; init; } = "";
 
-		public string Type { get; init; } = "";
+		public string? Type { get; init; } = "";
 
-		public string Description { get; init; } = "";
+		public string? Description { get; init; } = "";
 
-		public IEnumerable<string> Voices { get; init; } = [];
+		public IEnumerable<string>? Voices { get; init; } = [];
 
-		public bool VoicesOr { get; set; }
+		public bool? VoicesOr { get; set; }
 
-		public IEnumerable<string> Genres { get; init; } = [];
+		public IEnumerable<string>? Genres { get; init; } = [];
 
-		public bool GenresOr { get; set; }
+		public bool? GenresOr { get; set; }
 
-		public IEnumerable<int> Years { get; init; } = [];
+		public IEnumerable<int>? Years { get; init; } = [];
 
-		public bool YearsOr { get; set; }
+		public bool? YearsOr { get; set; }
 
-		public IEnumerable<string> Seasons { get; init; } = [];
+		public IEnumerable<string>? Seasons { get; init; } = [];
 
-		public bool SeasonsOr { get; set; }
+		public bool? SeasonsOr { get; set; }
 
-		public IEnumerable<string> Statuses { get; init; } = [];
+		public IEnumerable<string>? Statuses { get; init; } = [];
 
-		public bool StatusesOr { get; set; }
+		public bool? StatusesOr { get; set; }
 
-		public IEnumerable<string> ScheduleDays { get; init; } = [];
+		public IEnumerable<string>? ScheduleDays { get; init; } = [];
 
-		public bool ScheduleDaysOr { get; set; }
+		public bool? ScheduleDaysOr { get; set; }
 
 		public bool? InFavorites { get; init; } = null;
 
-		public bool PartOfReleases { get; init; }
+		public bool? PartOfReleases { get; init; }
 
-		public ReleasesListFiltersModelSeenStatus SeenStatus { get; init; }
+		public ReleasesListFiltersModelSeenStatus? SeenStatus { get; init; }
 
-		public ReleasesListFiltersModelSortingField SortingField { get; init; }
+		public ReleasesListFiltersModelSortingField? SortingField { get; init; }
 
-		public bool SortingDescending { get; init; }
+		public bool? SortingDescending { get; init; }
 
 		public ReleasesListFiltersSection Section { get; init; }
-
-		public int Page { get; init; }
 
 	}
 

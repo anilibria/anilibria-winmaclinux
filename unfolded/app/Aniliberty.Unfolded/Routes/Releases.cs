@@ -18,6 +18,8 @@ namespace Aniliberty.Unfolded.Routes
 
 		static HashSet<int> m_favorites = new HashSet<int>();
 
+		static HashSet<int> m_hidedReleases = new HashSet<int>();
+
 		static List<int> m_openHistory = new List<int>();
 
 		static List<int> m_seenHistory = new List<int>();
@@ -51,10 +53,10 @@ namespace Aniliberty.Unfolded.Routes
 		{
 			var filteredItems = FilterReleases(model);
 
-			return Results.NotFound();
+			return Results.Json(filteredItems, AppJsonSerializerContext.Default);
 		}
 
-		private static object FilterReleases(ReleasesListFiltersModel model)
+		private static IEnumerable<ReleaseSaveModel> FilterReleases(ReleasesListFiltersModel model)
 		{
 			return m_releases
 				.Where(
@@ -70,6 +72,8 @@ namespace Aniliberty.Unfolded.Routes
 
 		private static bool FilterBySection(ReleasesListFiltersSection section, ReleaseSaveModel release)
 		{
+			if (m_hidedReleases.Contains(release.Id)) return false;
+
 			switch (section)
 			{
 				case ReleasesListFiltersSection.All: return true;
