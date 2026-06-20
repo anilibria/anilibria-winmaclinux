@@ -93,39 +93,42 @@
 						<simple-select
 							v-model:item="sortingField"
 							:options="sortingFields"
-							style="width: 170px; margin-right: 2px;">
+							style="width: 170px; margin-right: 2px;"
+							@selected="loadReleases()">
 						</simple-select>
 						<div
 							class="simple-icon-button"
 							title="Направление сортировки поиска"
-							@click="sortDescending = !sortDescending">
+							@click="sortDescending = !sortDescending;loadReleases();">
 							<img :src="'/static/icons/releases/' + (sortDescending ? 'sortdescending' : 'sortascending') + '.svg'" width="20" height="20" />
 						</div>
 					</div>
 				</div>
-				<div>
-					<div style="margin: 30px;" class="releases-release-item">
-						<img
-							class="poster"
-							src="https://anilibria.top/storage/releases/posters/10284/OgaLrGL3z9xM1aMW2E4Zsr6YbeNSNdLY.jpg"
-						/>
-						<div class="information">
-							<span class="header-text" style="margin-top: 2px;">Где те девушки, что были бы добры к отаку</span>
-							<span class="normal-text">Сейчас в озвучке - Весна 2026</span>
-							<span class="normal-text">ТВ 12 - Комедия, Сейнен, Школа, Романтика</span>
-							<span class="normal-text"><b>Команда:</b> Lalala, Lalala, Lalala, Lalala, Lalala, Lalala, Lalala, Lalala</span>
-							<div class="flex-row flex-base-center gap-4">
-								<img src="/static/icons/releases/online.svg" width="20" height="20" />
-								<span class="digit-text">1000/1000</span>
-								<img src="/static/icons/mainmenu/torrent.svg" width="20" height="20" />
-								<span class="digit-text">10</span>
-								<img src="/static/icons/releases/favorite.svg" width="20" height="20" />
-								<span class="digit-text">100000</span>
-								<img src="/static/icons/releases/scheduleday.svg" width="20" height="20" />
-								<span class="digit-text">ср</span>
+				<div class="releases-releases-container">
+					<div class="releases-release-item-group" v-for="releasesGroup in releasesGroups">
+						<div class="releases-release-item" v-for="release in releasesGroup.releases">
+							<img
+								class="poster"
+								:src="'https://anilibria.top/' + release.poster"
+							/>
+							<div class="information">
+								<span class="header-text" style="margin-top: 2px;">{{ release.title }}</span>
+								<span class="normal-text">{{ release.status }} - {{ release.season }} {{ release.year }}</span>
+								<span class="normal-text">{{ release.type }} {{ release.series }} - {{ release.genres ? release.genres.join(', ') : '' }}</span>
+								<span class="normal-text"><b>Команда:</b> {{ release.voices ? release.voices.join(', ') : '' }}</span>
+								<span class="digit-text flex-row flex-base-center gap-4">
+									<img src="/static/icons/releases/online.svg" width="20" height="20" />
+									<span>{{ release.countVideos }}/0</span>
+									<img src="/static/icons/mainmenu/torrent.svg" width="20" height="20" />
+									<span>{{ release.countTorrents }}</span>
+									<img src="/static/icons/releases/favorite.svg" width="20" height="20" />
+									<span>{{ release.rating }}</span>
+									<img src="/static/icons/releases/scheduleday.svg" width="20" height="20" />
+									<span>ср</span>
+								</span>
+								<div class="flex-1"></div>
+								<span class="header-text">В Избранном</span>
 							</div>
-							<div class="flex-1"></div>
-							<span class="header-text">В Избранном</span>
 						</div>
 					</div>
 				</div>
@@ -154,12 +157,13 @@
 				const sectionSelected = ref(0);
 				const subSectionSelected = ref(-1);
 				const sortingField = ref(0);
-				const sortDescending = ref(false);
+				const sortDescending = ref(true);
 				const nameFilter = ref("");
 				const releasesGroups = ref([]);
 				const releasesCount = ref(0);
 				let relasesInGroup = 1;
-				const widthItem = 480;
+				const widthItem = 480 + 10; // 10 is a gap width
+				const leftPanelWidth = 40;
 
 				const sections = [
 					{
@@ -341,7 +345,7 @@
 				];
 
 				function recalculateReleaseGroups(releases) {
-					relasesInGroup = Math.floor(window.innerWidth / widthItem);
+					relasesInGroup = Math.floor((window.innerWidth - leftPanelWidth) / widthItem);
 					if (relasesInGroup === 0) relasesInGroup = 1;
 					releasesCount.value = releases.length;
 
@@ -350,16 +354,16 @@
 					let currentGroup = [];
 					for (const release of releases) {
 						if (iterator === relasesInGroup) {
-							result.push(currentGroup);
+							result.push({ releases: [...currentGroup] });
 							currentGroup = [];
 							iterator = 0;
 						}
 						currentGroup.push(release);
 						iterator++;
 					}
-					releases.push(currentGroup);
+					result.push({ releases: currentGroup });
 
-					releasesGroups.value = releases;
+					releasesGroups.value = result;
 				}
 
 				async function loadReleases() {
@@ -383,9 +387,9 @@
 							inFavorites: null,
 							partOfReleases: null,
 							seenStatus: null,
-							sortingField: null,
-							sortingDescending: null,
-							section: 0
+							sortingField: sortingField.value,
+							sortingDescending: sortDescending.value,
+							section: sectionSelected.value
 						}
 					);
 					if (!releases) {
@@ -408,7 +412,9 @@
 					sortingFields,
 					sortingField,
 					sortDescending,
-					nameFilter
+					nameFilter,
+					releasesGroups,
+					loadReleases
 				}
 			}
 		});

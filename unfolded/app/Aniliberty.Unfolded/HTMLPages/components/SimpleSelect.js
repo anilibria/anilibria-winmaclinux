@@ -19,7 +19,7 @@ export default {
 			selectValue,
 			(newValue) => {
 				context.emit('update:item', newValue);
-				context.emit('selected');
+				context.emit('selected', newValue);
 			}
 		);
 

@@ -1,7 +1,6 @@
 using Aniliberty.Unfolded.Configuration;
 using Aniliberty.Unfolded.Routes;
 using Microsoft.Extensions.FileProviders;
-
 namespace Aniliberty.Unfolded
 {
 	public class Program

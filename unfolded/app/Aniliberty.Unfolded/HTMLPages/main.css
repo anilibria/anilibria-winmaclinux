@@ -1,5 +1,10 @@
 ﻿@import url('https://fonts.googleapis.com/css2?family=Google+Sans:ital,opsz,wght@0,17..18,400..700;1,17..18,400..700&display=swap');
 
+html, body {
+    overflow: hidden;
+    height: 100%;
+}
+
 body {
     margin: 0;
     font-family: "Google Sans", sans-serif;
@@ -15,6 +20,7 @@ body {
     --main-menu-item-hovered: light-dark(rgba(0, 0, 0, 0.3), rgba(255, 255, 255, 0.3));
     --main-menu-item-text: light-dark(white, white);
     --main-menu-logo-text: light-dark(white, white);
+    --main-menu-black-wall: light-dark(rgba(0,0,0,0.5), rgba(256,256,256,0.5));
     --main-menu-logo: url('/static/icons/logo/default.svg');
     --page-background: light-dark(#D3D3D3, #1f1f1f);
     --page-header-background: light-dark(#f2f2f2, #474747);

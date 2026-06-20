@@ -80,7 +80,7 @@ namespace Aniliberty.Unfolded.Routes
 					Code = fullRelease.Alias,
 					CountVideos = fullRelease.Episodes?.Count() ?? 0,
 					CountTorrents = fullRelease.Torrents?.Count() ?? 0,
-					Description = fullRelease.Description,
+					Description = fullRelease.Description ?? "",
 					Timestamp = ParseDateTimeOffset(fullRelease.FreshAt),
 					OriginalName = fullRelease.Name.English,
 					Title = fullRelease.Name.Main,
@@ -89,7 +89,7 @@ namespace Aniliberty.Unfolded.Routes
 					Season = types.Seasons.FirstOrDefault(a => a.Value == fullRelease.Season.Value)?.Description ?? "Не указано",
 					Status = fullRelease.IsInProduction ? "Сейчас в озвучке" : "Озвучка завершена",
 					Series = fullRelease.EpisodesAreUnknown ? -1 : fullRelease.EpisodesTotal ?? 0,
-					Poster = fullRelease.Poster.Src,
+					Poster = fullRelease.Poster?.Src ?? "",
 					Type = types.Types.FirstOrDefault(a => a.Value == fullRelease.Type.Value)?.Description ?? fullRelease.Type.Value,
 					Genres = fullRelease.Genres.Select(a => types.Genres.FirstOrDefault(b => b.Id == a.Id)?.Name ?? "").Where(a => !string.IsNullOrEmpty(a)),
 					IsOngoing = fullRelease.IsOngoing,
@@ -229,9 +229,6 @@ namespace Aniliberty.Unfolded.Routes
 			}
 		}
 
-		//fix domain and language issues
-		static string RemakeDomain(string url) => url.Replace("cache.libria.fun", "cache-rfn.libria.fun").Replace("countryIso=US", "countryIso=RU");
-
 		static void RemapEpisodes(IEnumerable<ReleaseEpisodeModel> episodes)
 		{
 			foreach (var collection in episodes)
@@ -241,9 +238,9 @@ namespace Aniliberty.Unfolded.Routes
 					collection.Preview = collection.Preview with { Thumbnail = "" };
 				}
 
-				if (!string.IsNullOrEmpty(collection.Hls720)) collection.Hls720 = RemakeDomain(collection.Hls720);
-				if (!string.IsNullOrEmpty(collection.Hls1080)) collection.Hls1080 = RemakeDomain(collection.Hls1080);
-				if (!string.IsNullOrEmpty(collection.Hls480)) collection.Hls480 = RemakeDomain(collection.Hls480);
+				if (!string.IsNullOrEmpty(collection.Hls720)) collection.Hls720 = collection.Hls720;
+				if (!string.IsNullOrEmpty(collection.Hls1080)) collection.Hls1080 = collection.Hls1080;
+				if (!string.IsNullOrEmpty(collection.Hls480)) collection.Hls480 = collection.Hls480;
 			}
 
 			//reorder episodes from zero
