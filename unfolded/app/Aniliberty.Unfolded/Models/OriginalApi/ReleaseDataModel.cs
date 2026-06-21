@@ -63,7 +63,7 @@ namespace Aniliberty.Unfolded.Models.OriginalApi
 		[JsonPropertyName("age_rating")]
 		public ReleaseDataModelAgeRating AgeRating { get; init; } = new ReleaseDataModelAgeRating();
 
-		[JsonPropertyName("publich_day")]
+		[JsonPropertyName("publish_day")]
 		public ReleaseDataModelPublishDay PublishDay { get; init; } = new ReleaseDataModelPublishDay();
 
 		[JsonPropertyName("genres")]

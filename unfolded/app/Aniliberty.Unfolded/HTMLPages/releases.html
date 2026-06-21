@@ -5,8 +5,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<meta name="color-scheme" content="light dark">
 	<title>Каталог релизов</title>
-	<style>
-	</style>
+	<link rel="icon" type="image/x-icon" href="/static/icons/logo/default.svg">
 	<link rel="stylesheet" href="main.css">
 	<link rel="stylesheet" href="mainmenu.css">
 	<link rel="stylesheet" href="pagestructure.css">
@@ -67,7 +66,7 @@
 						<simple-select v-model:item="sectionSelected"
 							:options="sections"
 							style="width: 130px;"
-							@selected="subSectionSelected = -1;">
+							@selected="sectionChanged($event)">
 						</simple-select>
 						<div style="width: 4px;"></div>
 						<simple-select v-if="sectionSelected === 6" v-model:item="subSectionSelected"
@@ -112,9 +111,9 @@
 								:src="'https://anilibria.top/' + release.poster"
 							/>
 							<div class="information">
-								<span class="header-text" style="margin-top: 2px;">{{ release.title }}</span>
-								<span class="normal-text">{{ release.status }} - {{ release.season }} {{ release.year }}</span>
-								<span class="normal-text">{{ release.type }} {{ release.series }} - {{ release.genres ? release.genres.join(', ') : '' }}</span>
+								<span class="header-text" style="margin-top: 10px;">{{ release.title }}</span>
+								<span class="normal-text">{{ release.status }} {{ release.season ? '-' + release.season : '' }} {{ release.year }}</span>
+								<span class="normal-text">{{ release.type }} {{ release.series }} {{ release.genres ? '-' + release.genres.join(', ') : '' }}</span>
 								<span class="normal-text"><b>Команда:</b> {{ release.voices ? release.voices.join(', ') : '' }}</span>
 								<span class="digit-text flex-row flex-base-center gap-4">
 									<img src="/static/icons/releases/online.svg" width="20" height="20" />
@@ -127,7 +126,7 @@
 									<span>ср</span>
 								</span>
 								<div class="flex-1"></div>
-								<span class="header-text">В Избранном</span>
+								<span class="header-text" style="margin-bottom: 4px;">В Избранном</span>
 							</div>
 						</div>
 					</div>
@@ -141,7 +140,7 @@
 
 	<script type="module">
 		import { createApp, ref } from './vue.global.js'
-		import { getRelasesPage } from './unfoldapi.js'
+		import { getRelasesByFilter } from './unfoldapi.js'
 		import Drawer from './components/Drawer.js'
 		import PageHeader from './components/PageHeader.js'
 		import SimpleSelect from './components/SimpleSelect.js'
@@ -341,7 +340,11 @@
 					{
 						title: "Части серии",
 						id: 12
-					}
+					},
+					{
+						title: "Истории",
+						id: 13
+					},
 				];
 
 				function recalculateReleaseGroups(releases) {
@@ -366,8 +369,33 @@
 					releasesGroups.value = result;
 				}
 
+				function sectionChanged(newValue) {
+					subSectionSelected.value = -1;
+					switch (newValue) {
+						case 0: // all
+						case 1: // favorite
+						case 2: // notification
+						case 4: // aphabet
+						case 7: // seen
+						case 8: // collections
+							sortingField.value = 0;
+							sortDescending.value = true;
+							break;
+						case 3: // schedule
+							sortingField.value = 1;
+							sortDescending.value = false;
+							break;
+						case 6: // history
+							sortingField.value = 13;
+							sortDescending.value = false;
+							break;
+					}
+
+					loadReleases();
+				}
+
 				async function loadReleases() {
-					const releases = await getRelasesPage(
+					const releases = await getRelasesByFilter(
 						{
 							filter: "",
 							type: "",
@@ -414,7 +442,8 @@
 					sortDescending,
 					nameFilter,
 					releasesGroups,
-					loadReleases
+					loadReleases,
+					sectionChanged
 				}
 			}
 		});

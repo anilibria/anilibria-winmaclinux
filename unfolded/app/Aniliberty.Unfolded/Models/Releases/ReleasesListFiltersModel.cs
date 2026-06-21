@@ -134,6 +134,8 @@
 
 		ReleaseSeries = 12,
 
+		History = 13,
+
 	};
 
 	public enum ReleasesListFiltersModelSeenStatus

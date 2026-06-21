@@ -23,6 +23,9 @@ namespace Aniliberty.Unfolded
 	[JsonSerializable(typeof(MainMenuUserModel))]
 	[JsonSerializable(typeof(IEnumerable<MainMenuModel>))]
 	[JsonSerializable(typeof(IEnumerable<ReleaseSaveModel>))]
+	[JsonSerializable(typeof(UserProfileModel))]
+	[JsonSerializable(typeof(IEnumerable<int>))]
+	[JsonSerializable(typeof(IEnumerable<IEnumerable<object>>))]
 	[JsonSourceGenerationOptions(PropertyNamingPolicy = JsonKnownNamingPolicy.CamelCase)]
 	internal partial class AppJsonSerializerContext : JsonSerializerContext
 	{

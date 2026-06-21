@@ -89,6 +89,7 @@ namespace Aniliberty.Unfolded.Routes
 				case ReleasesListFiltersModelSortingField.Favorite: return releases;
 				case ReleasesListFiltersModelSortingField.SeenMark: return releases;
 				case ReleasesListFiltersModelSortingField.Year: return model.SortingDescending == true ? releases.OrderByDescending(a => a.Year) : releases.OrderBy(a => a.Year);
+				case ReleasesListFiltersModelSortingField.History: return releases;
 				default: throw new Exception("Not supported sorting field!");
 			}
 		}

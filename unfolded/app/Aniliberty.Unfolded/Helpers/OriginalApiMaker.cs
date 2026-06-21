@@ -1,5 +1,7 @@
 ﻿using Aniliberty.Unfolded.Models.OriginalApi;
+using System.Net.Http.Headers;
 using System.Text.Json;
+using System.Text.Json.Serialization.Metadata;
 
 namespace Aniliberty.Unfolded.Helpers
 {
@@ -90,6 +92,21 @@ namespace Aniliberty.Unfolded.Helpers
 			return await PerformRequest<ReleaseDataFullCollectionModel>(httpClient, $"{ApiDomain}/api/v1/anime/releases/list/?ids={string.Join(',', releasesId)}&page=1&limit=50", "releases with full data");
 		}
 
+		static public async Task<UserProfileModel> GetUserData(HttpClient httpClient, string token)
+		{
+			return await PerformRequestWithAuthorization<UserProfileModel>(httpClient, $"{ApiDomain}/api/v1/accounts/users/me/profile", "user profile", token);
+		}
+
+		static public async Task<IEnumerable<int>> GetUserFavorites(HttpClient httpClient, string token)
+		{
+			return await PerformRequestWithAuthorization<IEnumerable<int>>(httpClient, $"{ApiDomain}/api/v1/accounts/users/me/favorites/ids", "user favorites", token);
+		}
+
+		static public async Task<IEnumerable<IEnumerable<object>>> GetUserSeens(HttpClient httpClient, string token)
+		{
+			return await PerformRequestWithAuthorization<IEnumerable<IEnumerable<object>>>(httpClient, $"{ApiDomain}/api/v1/accounts/users/me/views/timecodes", "user seen marks", token);
+		}
+
 		private static async Task<T> PerformRequest<T>(HttpClient httpClient, string url, string requestName)
 		{
 			HttpResponseMessage pageContent;
@@ -117,6 +134,70 @@ namespace Aniliberty.Unfolded.Helpers
 			var content = (T?)JsonSerializer.Deserialize(jsonContent, typeof(T), AppJsonSerializerContext.Default);
 			return content == null ? throw new Exception($"Can't serialize response for {requestName}") : content;
 		}
+
+		private static async Task<T> PerformRequestWithAuthorization<T>(HttpClient httpClient, string url, string requestName, string token)
+		{
+			HttpRequestMessage message = new HttpRequestMessage(HttpMethod.Get, url);
+			message.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+			HttpResponseMessage pageContent;
+			try
+			{
+				pageContent = await httpClient.SendAsync(message);
+			}
+			catch (Exception ex)
+			{
+				throw new Exception($"Can't make HTTP request for {requestName} ({url})", ex);
+			}
+			if (pageContent == null) throw new Exception($"Can't read content for {requestName}");
+
+			string jsonContent;
+			try
+			{
+				jsonContent = await pageContent.Content.ReadAsStringAsync();
+			}
+			catch (Exception ex)
+			{
+				throw new Exception($"Can't read content for {requestName}", ex);
+			}
+			if (string.IsNullOrEmpty(jsonContent)) throw new Exception($"JSON content for {requestName} is empty!");
+
+			var content = (T?)JsonSerializer.Deserialize(jsonContent, typeof(T), AppJsonSerializerContext.Default);
+			return content == null ? throw new Exception($"Can't serialize response for {requestName}") : content;
+		}
+
+		private static async Task<T> PerformPostRequestWithAuthorization<T, TModel>(HttpClient httpClient, string url, string requestName, string token, TModel model, JsonTypeInfo<TModel> typeInfo)
+		{
+			var message = new HttpRequestMessage(HttpMethod.Post, url);
+			message.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
+			message.Content = JsonContent.Create(model, typeInfo);
+
+			HttpResponseMessage pageContent;
+			try
+			{
+				pageContent = await httpClient.SendAsync(message);
+			}
+			catch (Exception ex)
+			{
+				throw new Exception($"Can't make HTTP request for {requestName} ({url})", ex);
+			}
+			if (pageContent == null) throw new Exception($"Can't read content for {requestName}");
+
+			string jsonContent;
+			try
+			{
+				jsonContent = await pageContent.Content.ReadAsStringAsync();
+			}
+			catch (Exception ex)
+			{
+				throw new Exception($"Can't read content for {requestName}", ex);
+			}
+			if (string.IsNullOrEmpty(jsonContent)) throw new Exception($"JSON content for {requestName} is empty!");
+
+			var content = (T?)JsonSerializer.Deserialize(jsonContent, typeof(T), AppJsonSerializerContext.Default);
+			return content == null ? throw new Exception($"Can't serialize response for {requestName}") : content;
+		}
+
 
 		public static async Task DownloadPoster(HttpClient httpClient, string url, string path)
 		{

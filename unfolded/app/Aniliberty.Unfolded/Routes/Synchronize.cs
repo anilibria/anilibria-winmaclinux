@@ -14,6 +14,7 @@ namespace Aniliberty.Unfolded.Routes
 		public static void RegisterRoutes(WebApplication app)
 		{
 			app.MapGet("/sync/full", ([FromServices] IHttpClientFactory clientFactory) => Full(clientFactory));
+			app.MapGet("/sync/user", ([FromServices] IHttpClientFactory clientFactory, HttpContext context) => User(clientFactory, context));
 		}
 
 		public static async Task<IResult> Full(IHttpClientFactory clientFactory)
@@ -27,6 +28,22 @@ namespace Aniliberty.Unfolded.Routes
 			await SaveFullReleases(httpClient, cacheFolder);
 
 			return Results.Ok();
+		}
+
+		public static async Task<IResult> User(IHttpClientFactory clientFactory, HttpContext context)
+		{
+			var token = context.Request.Cookies?.FirstOrDefault(a => a.Key == "uft").Value ?? null;
+			if (token == null) return Results.Unauthorized();
+
+			var httpClient = clientFactory.CreateClient();
+			httpClient.Timeout = TimeSpan.FromSeconds(20);
+
+			var userData = await OriginalApiMaker.GetUserData(httpClient, token);
+			var favorites = await OriginalApiMaker.GetUserFavorites(httpClient, token);
+			var seens = await OriginalApiMaker.GetUserSeens(httpClient, token);
+
+
+			return Results.NoContent();
 		}
 
 		public static bool IsEmptyTypes(string folderToSaveCacheFiles) => !File.Exists(Path.Combine(folderToSaveCacheFiles, "types.cache"));

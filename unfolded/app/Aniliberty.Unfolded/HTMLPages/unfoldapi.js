@@ -3,7 +3,7 @@ function paramsToQuery(params) {
     return new URLSearchParams(params).toString();
 }
 
-export async function getRelasesPage(model) {
+export async function getRelasesByFilter(model) {
     const response = await fetch(
         '/releases/list',
         {
@@ -15,4 +15,12 @@ export async function getRelasesPage(model) {
         }
     );
     return await response.json();
+};
+
+export async function synchronizeReleases() {
+    await fetch('/sync/full');
+};
+
+export async function synchronizeUser() {
+    await fetch('/sync/user');
 };
