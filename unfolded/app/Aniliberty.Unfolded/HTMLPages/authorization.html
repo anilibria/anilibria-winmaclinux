@@ -1,0 +1,77 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta name="color-scheme" content="light dark">
+	<title>Авторизация</title>
+	<link rel="icon" type="image/x-icon" href="/static/icons/logo/default.svg">
+	<link rel="stylesheet" href="main.css">
+	<link rel="stylesheet" href="mainmenu.css">
+	<link rel="stylesheet" href="pagestructure.css">
+	<link rel="stylesheet" href="styles/authorization.css">
+</head>
+<body>
+	<div id="app">
+		<page-header v-model:main-menu-visible="mainMenuVisible"
+			title="Авторизация">
+		</page-header>
+
+		<div class="authorization-page-container">
+			<div class="page-panel">
+				<input v-model="login" type="text" class="simple-input" style="margin-top: 14px;" placeholder="Логин" />
+				<input v-model="password" type="text" class="simple-input" placeholder="Пароль" />
+				<div class="flex-1"></div>
+				<div class="button-panel">
+					<div></div>
+					<div class="flex-1"></div>
+					<a class="default-link" style="margin-right: 4px; font-size: 12px;" href="https://aniliberty.top/app/auth/login">Регистрация через сайт</a>
+					<div class="action-button" style="width: 60px;" @click="loginpass()">Войти</div>
+				</div>
+			</div>
+		</div>
+
+		<page-drawer v-model:main-menu-visible="mainMenuVisible">
+		</page-drawer>
+	</div>
+
+	<script type="module">
+		import { createApp, ref } from './vue.global.js'
+		import { authorizationByLoginPass } from './unfoldapi.js'
+		import Drawer from './components/Drawer.js'
+		import PageHeader from './components/PageHeader.js'
+
+		const app = createApp({
+			components: {
+				'page-drawer': Drawer,
+				'page-header': PageHeader
+			},
+			setup() {
+				const mainMenuVisible = ref(false);
+				const login = ref('');
+				const password = ref('');
+
+				async function loginpass() {
+					if (!login.value) return;
+					if (!password.value) return;
+
+					const result = await authorizationByLoginPass(login.value, password.value);
+					if (result == "success") {
+						window.location.href = "/releases.html";
+						return;
+					}
+				}
+
+				return {
+					mainMenuVisible,
+					login,
+					password,
+					loginpass
+				}
+			}
+		});
+
+		app.mount('#app')
+	</script>
+</body>
+</html>

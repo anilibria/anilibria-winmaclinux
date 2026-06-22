@@ -16,6 +16,8 @@ namespace Aniliberty.Unfolded.Routes
 
 		static List<ReleaseTorrentSaveModel> m_torrents = [];
 
+		static HashSet<string> m_seenEpisodes = [];
+
 		static HashSet<int> m_favorites = new HashSet<int>();
 
 		static HashSet<int> m_hidedReleases = new HashSet<int>();
@@ -28,6 +30,7 @@ namespace Aniliberty.Unfolded.Routes
 		{
 			app.MapGet("/releases/release", ([FromQuery] int id) => Release(id));
 			app.MapPost("/releases/list", ([FromBody] ReleasesListFiltersModel model) => List(model));
+			app.MapGet("/releases/marks", ([FromQuery] int id) => Release(id));
 		}
 
 		internal static async Task Initialize()
@@ -42,6 +45,24 @@ namespace Aniliberty.Unfolded.Routes
 			}
 		}
 
+		internal static void SaveUserData(IEnumerable<int> favorites, IEnumerable<IEnumerable<object>> seenMarks)
+		{
+			foreach (var favorite in favorites) m_favorites.Add(favorite);
+
+			foreach (var seenMark in seenMarks)
+			{
+				if (seenMark.Count() < 3) continue;
+
+				var identifier = seenMark.ElementAt(0).ToString();
+				//var time = Convert.ToInt64(seenMark.ElementAt(1)); not sure it need
+				var status = (bool)seenMark.ElementAt(2);
+
+				if (status == true) m_seenEpisodes.Add(identifier ?? "");
+			}
+
+			//TODO: save to disk
+		}
+
 		internal static IResult Release(int id)
 		{
 			if (m_releasesMap.ContainsKey(id)) return Results.Json(m_releasesMap[id], AppJsonSerializerContext.Default);
@@ -54,6 +75,30 @@ namespace Aniliberty.Unfolded.Routes
 			var filteredItems = FilterReleases(model);
 
 			return Results.Json(filteredItems, AppJsonSerializerContext.Default);
+		}
+
+		internal static IResult Marks(ReleasesListFiltersModel model)
+		{
+			Dictionary<int, int> releaseSeries = new Dictionary<int, int>();
+			var fullReleaseSeens = new HashSet<int>();
+			foreach (var releaseEpisodes in m_episodes)
+			{
+				if (!m_releasesMap.ContainsKey(releaseEpisodes.ReleaseId)) continue;
+
+				var release = m_releasesMap[releaseEpisodes.ReleaseId];
+
+				var countSeens = releaseEpisodes.Items.Count(a => m_seenEpisodes.Contains(a.Id));
+				releaseSeries.Add(releaseEpisodes.ReleaseId, countSeens);
+				if (countSeens >= release.CountVideos) fullReleaseSeens.Add(releaseEpisodes.ReleaseId);
+			}
+			var result = new MarksModel
+			{
+				Favorites = m_favorites,
+				SeenSeries = releaseSeries,
+				FullSeenReleases = fullReleaseSeens
+			};
+
+			return Results.Json(result, AppJsonSerializerContext.Default);
 		}
 
 		private static IEnumerable<ReleaseSaveModel> FilterReleases(ReleasesListFiltersModel model)

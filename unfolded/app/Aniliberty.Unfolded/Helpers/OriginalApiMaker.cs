@@ -107,6 +107,16 @@ namespace Aniliberty.Unfolded.Helpers
 			return await PerformRequestWithAuthorization<IEnumerable<IEnumerable<object>>>(httpClient, $"{ApiDomain}/api/v1/accounts/users/me/views/timecodes", "user seen marks", token);
 		}
 
+		static public async Task<LoginPassAuthResponseModel> AuthorizeByLoginPass(HttpClient httpClient, string login, string password)
+		{
+			var model = new LoginPassAuthModel
+			{
+				Login = login,
+				Password = password
+			};
+			return await PerformPostRequest<LoginPassAuthResponseModel, LoginPassAuthModel>(httpClient, $"{ApiDomain}/api/v1/accounts/users/auth/login", "authorize by loginpass", model, AppJsonSerializerContext.Default.LoginPassAuthModel);
+		}
+
 		private static async Task<T> PerformRequest<T>(HttpClient httpClient, string url, string requestName)
 		{
 			HttpResponseMessage pageContent;
@@ -166,10 +176,10 @@ namespace Aniliberty.Unfolded.Helpers
 			return content == null ? throw new Exception($"Can't serialize response for {requestName}") : content;
 		}
 
-		private static async Task<T> PerformPostRequestWithAuthorization<T, TModel>(HttpClient httpClient, string url, string requestName, string token, TModel model, JsonTypeInfo<TModel> typeInfo)
+		private static async Task<T> PerformPostRequest<T, TModel>(HttpClient httpClient, string url, string requestName, TModel model, JsonTypeInfo<TModel> typeInfo, string? token = default)
 		{
 			var message = new HttpRequestMessage(HttpMethod.Post, url);
-			message.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
+			if (!string.IsNullOrEmpty(token)) message.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
 			message.Content = JsonContent.Create(model, typeInfo);
 
 			HttpResponseMessage pageContent;
@@ -197,7 +207,6 @@ namespace Aniliberty.Unfolded.Helpers
 			var content = (T?)JsonSerializer.Deserialize(jsonContent, typeof(T), AppJsonSerializerContext.Default);
 			return content == null ? throw new Exception($"Can't serialize response for {requestName}") : content;
 		}
-
 
 		public static async Task DownloadPoster(HttpClient httpClient, string url, string path)
 		{

@@ -42,6 +42,8 @@ namespace Aniliberty.Unfolded.Routes
 			var favorites = await OriginalApiMaker.GetUserFavorites(httpClient, token);
 			var seens = await OriginalApiMaker.GetUserSeens(httpClient, token);
 
+			MainMenu.SetUser(userData.nickname, userData.Avatar?.Preview ?? "");
+			Releases.SaveUserData(favorites, seens);
 
 			return Results.NoContent();
 		}

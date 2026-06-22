@@ -24,3 +24,17 @@ export async function synchronizeReleases() {
 export async function synchronizeUser() {
     await fetch('/sync/user');
 };
+
+export async function authorizationByLoginPass(login, password) {
+    const response = await fetch(
+        '/auth/login?username=' + login,
+        {
+            method: "POST",
+            body: JSON.stringify(password),
+            headers: {
+                "Content-Type": "application/json"
+            }
+        }
+    );
+    return await response.text();
+};

@@ -31,6 +31,11 @@ body {
     --release-item-background: light-dark(#f2f2f2, #474747);
     --release-item-background-shadow: light-dark(rgba(120, 128, 128, 0.5), rgba(120, 89, 89, 0.5));
     --release-item-poster-border: light-dark(#adadad, #adadad);
+    --panel-background: light-dark(#f2f2f2, #474747);
+    --action-button-background: light-dark(#b32121, white);
+    --action-button-color: light-dark(white, black);
+    --action-button-hover: light-dark(#881919, lightgray);
+    --linked-text-color: light-dark(#b32121, white);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -173,5 +178,41 @@ body {
     &::placeholder {
         color: #888888;
         opacity: 1;
+    }
+}
+
+/* Action BUtton style */
+
+.action-button {
+    all: unset;
+    cursor: pointer;
+    background-color: var(--action-button-background);
+    color: var(--action-button-color);
+    border-radius: 10px;
+    font-size: 15px;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+
+    &:hover {
+        background-color: var(--action-button-hover);
+    }
+}
+
+.default-link {
+    display: inline;
+    text-decoration: underline;
+    cursor: pointer;
+
+    &:link {
+        color: var(--linked-text-color);
+    }
+
+    &:visited {
+        color: var(--linked-text-color);
+    }
+
+    &:active {
+        color: var(--linked-text-color);
     }
 }

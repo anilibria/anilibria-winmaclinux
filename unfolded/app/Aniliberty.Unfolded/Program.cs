@@ -59,6 +59,7 @@ namespace Aniliberty.Unfolded
 			Releases.RegisterRoutes(app);
 			VideoProxy.RegisterRoutes(app);
 			MainMenu.RegisterRoutes(app);
+			Authorize.RegisterRoutes(app);
 
 			//GlobalConfig.OpenUrl();
 

@@ -1,0 +1,27 @@
+﻿.authorization-page-container {
+    width: 100%;
+    height: calc(100vh - 38px);
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+
+    .page-panel {
+        width: 450px;
+        height: 200px;
+        border-radius: 6px;
+        background-color: var(--panel-background);
+        display: flex;
+        flex-direction: column;
+        gap: 18px;
+        padding: 8px;
+    }
+
+    .button-panel {
+        height: 38px;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 4px;
+    }
+}
