@@ -25,7 +25,7 @@
 				<div class="button-panel">
 					<div></div>
 					<div class="flex-1"></div>
-					<a class="default-link" style="margin-right: 4px; font-size: 12px;" href="https://aniliberty.top/app/auth/login">Регистрация через сайт</a>
+					<a class="default-link" style="margin-right: 4px; font-size: 13px;" href="https://www.anilibria.top/app/auth/registration/newRegistration" target="_blank">Регистрация через сайт</a>
 					<div class="action-button" style="width: 60px;" @click="loginpass()">Войти</div>
 				</div>
 			</div>
@@ -55,9 +55,10 @@
 					if (!login.value) return;
 					if (!password.value) return;
 
+					debugger
 					const result = await authorizationByLoginPass(login.value, password.value);
-					if (result == "success") {
-						window.location.href = "/releases.html";
+					if (result === "success") {
+						window.location.href = "releases.html";
 						return;
 					}
 				}

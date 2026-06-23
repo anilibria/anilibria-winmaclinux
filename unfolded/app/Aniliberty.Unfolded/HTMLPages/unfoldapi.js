@@ -36,5 +36,7 @@ export async function authorizationByLoginPass(login, password) {
             }
         }
     );
-    return await response.text();
+    //if (!response.ok) throw new Error(`HTTP error, status = ${response.status}`);
+
+    return await response.json();
 };

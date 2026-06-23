@@ -5,10 +5,15 @@
     flex-direction: row;
     justify-content: center;
     align-items: center;
+    background-image: url('/static/backgrounds/authorization.jpg');
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+    background-color: black;
 
     .page-panel {
         width: 450px;
-        height: 200px;
+        height: 194px;
         border-radius: 6px;
         background-color: var(--panel-background);
         display: flex;

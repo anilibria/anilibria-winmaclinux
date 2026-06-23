@@ -1,3 +1,4 @@
+using Aniliberty.Unfolded.Models.CacheModels;
 using Aniliberty.Unfolded.Models.MainMenus;
 using Aniliberty.Unfolded.Models.OriginalApi;
 using Aniliberty.Unfolded.Models.Releases;
@@ -29,6 +30,7 @@ namespace Aniliberty.Unfolded
 	[JsonSerializable(typeof(MarksModel))]
 	[JsonSerializable(typeof(LoginPassAuthModel))]
 	[JsonSerializable(typeof(LoginPassAuthResponseModel))]
+	[JsonSerializable(typeof(UserCollections))]
 	[JsonSourceGenerationOptions(PropertyNamingPolicy = JsonKnownNamingPolicy.CamelCase)]
 	internal partial class AppJsonSerializerContext : JsonSerializerContext
 	{

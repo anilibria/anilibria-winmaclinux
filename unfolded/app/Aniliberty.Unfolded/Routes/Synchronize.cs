@@ -32,7 +32,7 @@ namespace Aniliberty.Unfolded.Routes
 
 		public static async Task<IResult> User(IHttpClientFactory clientFactory, HttpContext context)
 		{
-			var token = context.Request.Cookies?.FirstOrDefault(a => a.Key == "uft").Value ?? null;
+			var token = context.Request.Cookies?.FirstOrDefault(a => a.Key == Authorize.CookieName).Value ?? null;
 			if (token == null) return Results.Unauthorized();
 
 			var httpClient = clientFactory.CreateClient();
@@ -43,9 +43,9 @@ namespace Aniliberty.Unfolded.Routes
 			var seens = await OriginalApiMaker.GetUserSeens(httpClient, token);
 
 			MainMenu.SetUser(userData.nickname, userData.Avatar?.Preview ?? "");
-			Releases.SaveUserData(favorites, seens);
+			await Releases.SaveUserData(favorites, seens);
 
-			return Results.NoContent();
+			return Results.Ok();
 		}
 
 		public static bool IsEmptyTypes(string folderToSaveCacheFiles) => !File.Exists(Path.Combine(folderToSaveCacheFiles, "types.cache"));

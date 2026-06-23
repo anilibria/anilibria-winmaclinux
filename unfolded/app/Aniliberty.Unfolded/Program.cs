@@ -17,6 +17,10 @@ namespace Aniliberty.Unfolded
 			// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 			builder.Services.AddOpenApi();
 			builder.Services.AddHttpClient();
+			builder.Services.AddResponseCompression(options =>
+			{
+				options.EnableForHttps = true;
+			});
 
 			var app = builder.Build();
 
@@ -30,6 +34,8 @@ namespace Aniliberty.Unfolded
 					RequestPath = new PathString("/static")
 				}
 			);
+
+			app.UseResponseCompression();
 
 			/*Todo[] sampleTodos =
 			[

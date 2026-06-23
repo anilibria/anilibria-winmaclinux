@@ -1,7 +1,9 @@
 ﻿using Aniliberty.Unfolded.Configuration;
 using Aniliberty.Unfolded.Helpers;
+using Aniliberty.Unfolded.Models.CacheModels;
 using Aniliberty.Unfolded.Models.Releases;
 using Microsoft.AspNetCore.Mvc;
+using static Aniliberty.Unfolded.Helpers.JsonHelpers;
 
 namespace Aniliberty.Unfolded.Routes
 {
@@ -20,6 +22,8 @@ namespace Aniliberty.Unfolded.Routes
 
 		static HashSet<int> m_favorites = new HashSet<int>();
 
+		static HashSet<int> m_localFavorites = new HashSet<int>();
+
 		static HashSet<int> m_hidedReleases = new HashSet<int>();
 
 		static List<int> m_openHistory = new List<int>();
@@ -35,17 +39,34 @@ namespace Aniliberty.Unfolded.Routes
 
 		internal static async Task Initialize()
 		{
+			Console.WriteLine("Initialize Releases...");
+
 			var path = GlobalConfig.PathToCache();
-			if (Synchronize.IsEmptyTypes(GlobalConfig.PathToCache())) return; // mean no cache need to first synchronized
+			if (Synchronize.IsEmptyTypes(GlobalConfig.PathToCache()))
+			{
+				Console.WriteLine("Types file not found, no need to do anything else.");
+				return; // mean no cache need to first synchronized
+			}
 
 			if (Synchronize.MetadataExists(path))
 			{
+				Console.WriteLine("Reading metadata...");
 				var metadata = await Synchronize.ReadMetadata(path);
 				await ReadReleases(metadata, path);
 			}
+
+			var userDataPath = Path.Combine(path, "userdata.cache");
+			if (File.Exists(userDataPath))
+			{
+				Console.WriteLine("User Data...");
+				var content = await File.ReadAllTextAsync(userDataPath);
+				var userCollections = DeserializeFromJson<UserCollections>(content);
+			}
+
+			Console.WriteLine("Initialize Releases completed!");
 		}
 
-		internal static void SaveUserData(IEnumerable<int> favorites, IEnumerable<IEnumerable<object>> seenMarks)
+		internal static async Task SaveUserData(IEnumerable<int> favorites, IEnumerable<IEnumerable<object>> seenMarks)
 		{
 			foreach (var favorite in favorites) m_favorites.Add(favorite);
 
@@ -55,12 +76,18 @@ namespace Aniliberty.Unfolded.Routes
 
 				var identifier = seenMark.ElementAt(0).ToString();
 				//var time = Convert.ToInt64(seenMark.ElementAt(1)); not sure it need
-				var status = (bool)seenMark.ElementAt(2);
+				var status = seenMark.ElementAt(2)?.ToString()?.ToLowerInvariant() == "true";
 
 				if (status == true) m_seenEpisodes.Add(identifier ?? "");
 			}
 
-			//TODO: save to disk
+			var saveModel = new UserCollections
+			{
+				CloudFavorites = favorites,
+				LocalFavorites = m_localFavorites,
+				SeenEpisodes = m_seenEpisodes
+			};
+			await File.WriteAllTextAsync(Path.Combine(GlobalConfig.PathToCache(), "userdata.cache"), SerializeToJson(saveModel));
 		}
 
 		internal static IResult Release(int id)
@@ -88,8 +115,14 @@ namespace Aniliberty.Unfolded.Routes
 				var release = m_releasesMap[releaseEpisodes.ReleaseId];
 
 				var countSeens = releaseEpisodes.Items.Count(a => m_seenEpisodes.Contains(a.Id));
-				releaseSeries.Add(releaseEpisodes.ReleaseId, countSeens);
-				if (countSeens >= release.CountVideos) fullReleaseSeens.Add(releaseEpisodes.ReleaseId);
+				if (countSeens >= release.CountVideos)
+				{
+					fullReleaseSeens.Add(releaseEpisodes.ReleaseId);
+				}
+				else
+				{
+					releaseSeries.Add(releaseEpisodes.ReleaseId, countSeens);
+				}
 			}
 			var result = new MarksModel
 			{
