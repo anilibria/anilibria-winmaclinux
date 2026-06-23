@@ -29,4 +29,17 @@
         align-items: center;
         gap: 4px;
     }
+
+    .social-icons {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 20px;
+        margin-left: 8px;
+
+        > img {
+            width: 20px;
+            height: 20px;
+        }
+    }
 }

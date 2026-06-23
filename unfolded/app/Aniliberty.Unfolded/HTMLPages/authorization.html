@@ -23,7 +23,12 @@
 				<input v-model="password" type="text" class="simple-input" placeholder="Пароль" />
 				<div class="flex-1"></div>
 				<div class="button-panel">
-					<div></div>
+					<div class="social-icons">
+						<img src="/static/icons/authorization/vk.svg" />
+						<img src="/static/icons/authorization/google.svg" />
+						<img src="/static/icons/authorization/patreon.svg" />
+						<img src="/static/icons/authorization/discord.svg" />
+					</div>
 					<div class="flex-1"></div>
 					<a class="default-link" style="margin-right: 4px; font-size: 13px;" href="https://www.anilibria.top/app/auth/registration/newRegistration" target="_blank">Регистрация через сайт</a>
 					<div class="action-button" style="width: 60px;" @click="loginpass()">Войти</div>
@@ -55,7 +60,6 @@
 					if (!login.value) return;
 					if (!password.value) return;
 
-					debugger
 					const result = await authorizationByLoginPass(login.value, password.value);
 					if (result === "success") {
 						window.location.href = "releases.html";
