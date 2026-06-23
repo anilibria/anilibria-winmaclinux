@@ -56,7 +56,7 @@ namespace Aniliberty.Unfolded
 					: TypedResults.NotFound())
 				.WithName("GetTodoById");*/
 			//app.MapGet("/releases/release", ([FromQuery] int id) => Release(id));
-			app.MapGet("/", () => Results.Content("Lalala"));
+			app.MapGet("/", () => Results.Redirect("/static/releases.html"));
 
 			GlobalConfig.Initialize(app);
 			await Releases.Initialize();

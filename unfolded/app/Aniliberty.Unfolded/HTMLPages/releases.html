@@ -140,7 +140,7 @@
 
 	<script type="module">
 		import { createApp, ref } from './vue.global.js'
-		import { getRelasesByFilter } from './unfoldapi.js'
+		import { getRelasesByFilter, getUserMarks } from './unfoldapi.js'
 		import Drawer from './components/Drawer.js'
 		import PageHeader from './components/PageHeader.js'
 		import SimpleSelect from './components/SimpleSelect.js'
@@ -163,6 +163,7 @@
 				let relasesInGroup = 1;
 				const widthItem = 480 + 10; // 10 is a gap width
 				const leftPanelWidth = 40;
+				const userMarks = ref({});
 
 				const sections = [
 					{
@@ -428,7 +429,12 @@
 					recalculateReleaseGroups(releases);
 				}
 
-				loadReleases();
+				async function loadAllData() {
+					userMarks.value = await getUserMarks();
+					await loadReleases();
+				}
+
+				loadAllData();
 
 				return {
 					mainMenuVisible,

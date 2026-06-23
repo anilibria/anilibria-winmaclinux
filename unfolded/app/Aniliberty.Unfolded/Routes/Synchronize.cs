@@ -11,6 +11,8 @@ namespace Aniliberty.Unfolded.Routes
 	public static class Synchronize
 	{
 
+		private static bool m_synchronizationStarted = false;
+
 		public static void RegisterRoutes(WebApplication app)
 		{
 			app.MapGet("/sync/full", ([FromServices] IHttpClientFactory clientFactory) => Full(clientFactory));
@@ -19,13 +21,24 @@ namespace Aniliberty.Unfolded.Routes
 
 		public static async Task<IResult> Full(IHttpClientFactory clientFactory)
 		{
-			var httpClient = clientFactory.CreateClient();
-			httpClient.Timeout = TimeSpan.FromSeconds(20);
-			var cacheFolder = GlobalConfig.PathToCache();
+			var newSyncValue = true;
+			var snapshotValue = m_synchronizationStarted;
+			var originalSyncValue = Interlocked.CompareExchange(ref m_synchronizationStarted, newSyncValue, false);
+			if (originalSyncValue == true) return Results.Conflict();
 
-			if (IsEmptyTypes(cacheFolder)) await SaveTypes(httpClient, cacheFolder);
+			try
+			{
+				var httpClient = clientFactory.CreateClient();
+				httpClient.Timeout = TimeSpan.FromSeconds(20);
+				var cacheFolder = GlobalConfig.PathToCache();
 
-			await SaveFullReleases(httpClient, cacheFolder);
+				if (IsEmptyTypes(cacheFolder)) await SaveTypes(httpClient, cacheFolder);
+
+				await SaveFullReleases(httpClient, cacheFolder);
+			} finally
+			{
+				m_synchronizationStarted = false;
+			}
 
 			return Results.Ok();
 		}

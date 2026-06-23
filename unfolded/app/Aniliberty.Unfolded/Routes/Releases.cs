@@ -34,7 +34,7 @@ namespace Aniliberty.Unfolded.Routes
 		{
 			app.MapGet("/releases/release", ([FromQuery] int id) => Release(id));
 			app.MapPost("/releases/list", ([FromBody] ReleasesListFiltersModel model) => List(model));
-			app.MapGet("/releases/marks", ([FromQuery] int id) => Release(id));
+			app.MapGet("/releases/marks", () => Marks());
 		}
 
 		internal static async Task Initialize()
@@ -104,7 +104,7 @@ namespace Aniliberty.Unfolded.Routes
 			return Results.Json(filteredItems, AppJsonSerializerContext.Default);
 		}
 
-		internal static IResult Marks(ReleasesListFiltersModel model)
+		internal static IResult Marks()
 		{
 			Dictionary<int, int> releaseSeries = new Dictionary<int, int>();
 			var fullReleaseSeens = new HashSet<int>();
