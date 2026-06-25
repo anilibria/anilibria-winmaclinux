@@ -25,16 +25,19 @@
 					<img :src="'/static/icons/releases/synchronization.svg'" width="30" height="30" />
 				</div>
 				<div
+					v-if="selectedReleases.length > 0"
 					class="simple-panel-icon-button"
 					title="Добавить/удалить релизы в/из избранного">
 					<img :src="'/static/icons/releases/favorite.svg'" width="30" height="30" />
 				</div>
 				<div
+					v-if="selectedReleases.length"
 					class="simple-panel-icon-button"
 					title="Отметить релизы как просмотренные">
 					<img :src="'/static/icons/releases/seen.svg'" width="30" height="30" />
 				</div>
 				<div
+					v-if="selectedReleases.length"
 					class="simple-panel-icon-button"
 					title="Добавлять/удалять релизы в/из кинозала">
 					<img :src="'/static/icons/mainmenu/cinemahall.svg'" width="30" height="30" />
@@ -103,9 +106,13 @@
 						</div>
 					</div>
 				</div>
-				<div class="releases-releases-container">
+				<div ref="releasesContainer" class="releases-releases-container" @click.right.prevent="toggleSelectionMode()">
 					<div class="releases-release-item-group" v-for="releasesGroup in releasesGroups">
-						<div class="releases-release-item" v-for="release in releasesGroup.releases">
+						<div
+							class="releases-release-item"
+							:class="{'releases-release-teim-selected': selectionModeEnabled && selectedReleases.includes(release.id) }"
+							v-for="release in releasesGroup.releases"
+							@click.prevent="toggleSelectionRelease(release.id)">
 							<img
 								class="poster"
 								:src="'https://anilibria.top/' + release.poster"
@@ -126,7 +133,17 @@
 									<span>ср</span>
 								</span>
 								<div class="flex-1"></div>
-								<span class="header-text" style="margin-bottom: 4px;">В Избранном</span>
+								<div class="flex-row flex-base-center">
+									<span class="header-text" style="margin-bottom: 4px;">{{ userMarks.favorites.includes(release.id) ? 'В Избранном' : '' }}</span>
+									<div class="flex-1"></div>
+									<img
+										v-if="selectionModeEnabled && selectedReleases.includes(release.id)"
+										style="margin-right: 4px; margin-bottom: 4px;"
+										src="/static/icons/releases/selecteditem.svg"
+										width="24"
+										height="24"
+									/>
+								</div>
 							</div>
 						</div>
 					</div>
@@ -134,12 +151,16 @@
 			</div>
 		</div>
 
+		<div class="releases-selection-helper">
+			{{ selectionModeEnabled ? 'Нажмите ЛКМ для выделения релизов, ПКМ для выхода' : 'Нажмите ПКМ для перехода в режим выделения' }}
+		</div>
+
 		<page-drawer v-model:main-menu-visible="mainMenuVisible">
 		</page-drawer>
 	</div>
 
 	<script type="module">
-		import { createApp, ref, watch } from './vue.global.js'
+		import { createApp, ref, watch, useTemplateRef } from './vue.global.js'
 		import { getRelasesByFilter, getUserMarks } from './unfoldapi.js'
 		import Drawer from './components/Drawer.js'
 		import PageHeader from './components/PageHeader.js'
@@ -163,7 +184,10 @@
 				let relasesInGroup = 1;
 				const widthItem = 480 + 10; // 10 is a gap width
 				const leftPanelWidth = 40;
-				const userMarks = ref({});
+				const userMarks = ref({ favorites: [], fullSeenReleases: [], seenSeries: {} });
+				const selectionModeEnabled = ref(false);
+				const selectedReleases = ref([]);
+				const releasesContainer = useTemplateRef('releasesContainer');
 				let currentTimer = -1;
 
 				const sections = [
@@ -349,9 +373,14 @@
 					},
 				];
 
-				function recalculateReleaseGroups(releases) {
+				function getReleasesGroupCount() {
 					relasesInGroup = Math.floor((window.innerWidth - leftPanelWidth) / widthItem);
-					if (relasesInGroup === 0) relasesInGroup = 1;
+					if (relasesInGroup === 0) return 1;
+					return relasesInGroup;
+				}
+
+				function recalculateReleaseGroups(releases) {
+					relasesInGroup = getReleasesGroupCount();
 					releasesCount.value = releases.length;
 
 					const result = [];
@@ -372,6 +401,9 @@
 				}
 
 				function sectionChanged(newValue) {
+					disableSelectionMode();
+					releasesContainer.value.scrollTo({ top: 0, behavior: "instant" });
+
 					subSectionSelected.value = -1;
 					switch (newValue) {
 						case 0: // all
@@ -430,10 +462,37 @@
 					recalculateReleaseGroups(releases);
 				}
 
+				function toggleSelectionMode() {
+					selectedReleases.value = [];
+					selectionModeEnabled.value = !selectionModeEnabled.value;
+				}
+
+				function disableSelectionMode() {
+					selectedReleases.value = [];
+					selectionModeEnabled.value = false;
+				}
+
+				function toggleSelectionRelease(id) {
+					if (selectedReleases.value.includes(id)) {
+						selectedReleases.value = selectedReleases.value.filter(a => a !== id);
+					} else {
+						selectedReleases.value.push(id);
+					}
+				}
+
 				async function loadAllData() {
 					userMarks.value = await getUserMarks();
 					await loadReleases();
 				}
+
+				window.addEventListener('resize', () => {
+					const newRelasesInGroup = getReleasesGroupCount();
+					if (newRelasesInGroup !== relasesInGroup.value) {
+						const allReleases = releasesGroups.value.map(a => a.releases).flat()
+						releasesGroups.value = [];
+						recalculateReleaseGroups(allReleases);
+					}
+				});
 
 				loadAllData();
 
@@ -459,7 +518,12 @@
 					nameFilter,
 					releasesGroups,
 					loadReleases,
-					sectionChanged
+					sectionChanged,
+					userMarks,
+					selectionModeEnabled,
+					toggleSelectionMode,
+					selectedReleases,
+					toggleSelectionRelease
 				}
 			}
 		});

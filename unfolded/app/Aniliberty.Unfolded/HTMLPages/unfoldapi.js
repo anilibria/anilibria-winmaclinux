@@ -18,7 +18,8 @@ export async function getRelasesByFilter(model) {
 };
 
 export async function getUserMarks() {
-    await fetch('/releases/marks');
+    const response = await fetch('/releases/marks');
+    return await response.json();
 };
 
 export async function synchronizeReleases() {

@@ -42,7 +42,10 @@
         font-size: 15px;
         text-wrap: balance;
     }
+}
 
+.releases-release-teim-selected {
+    box-shadow: 2px 2px var(--releases-item-selected-background);
 }
 
 .releases-release-item-group {
@@ -59,4 +62,20 @@
     width: 100%;
     height: calc(100vh - 38px - 40px); /* 38 upper panel and 40 subheader */
     overflow: auto;
+}
+
+.releases-selection-helper {
+    font-size: 15px;
+    font-weight: bold;
+    opacity: .5;
+    width: 240px;
+    height: 80px;
+    position: absolute;
+    right: 20px;
+    bottom: 10px;
+    -webkit-user-select: none;
+    user-select: none;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    pointer-events: none;
+    text-align: right;
 }

@@ -36,6 +36,7 @@ body {
     --action-button-color: light-dark(white, black);
     --action-button-hover: light-dark(#881919, lightgray);
     --linked-text-color: light-dark(#b32121, white);
+    --releases-item-selected-background: light-dark(red, white);
 }
 
 @media (prefers-color-scheme: dark) {
