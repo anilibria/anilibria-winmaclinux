@@ -1,4 +1,5 @@
-﻿import { ref } from '/static/vue.global.js'
+﻿import { ref, onMounted } from '/static/vue.global.js'
+import { synchronizeFirstStart, synchronizeUser, synchronizeReleases } from '/static/unfoldapi.js'
 
 export default {
 	props: ['mainMenuVisible', 'title'],
@@ -18,6 +19,15 @@ export default {
 		</div>
 	`,
 	setup(props) {
+
+		onMounted(async () => {
+			const firstStart = await synchronizeFirstStart();
+			if (firstStart) {
+				await synchronizeUser();
+				await synchronizeReleases();
+			}
+		});
+
 		return {
 			history
 		};

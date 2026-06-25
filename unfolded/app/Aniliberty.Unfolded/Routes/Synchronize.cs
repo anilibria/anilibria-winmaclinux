@@ -11,12 +11,15 @@ namespace Aniliberty.Unfolded.Routes
 	public static class Synchronize
 	{
 
+		private static bool m_firstlyStarted = true;
+
 		private static bool m_synchronizationStarted = false;
 
 		public static void RegisterRoutes(WebApplication app)
 		{
 			app.MapGet("/sync/full", ([FromServices] IHttpClientFactory clientFactory) => Full(clientFactory));
 			app.MapGet("/sync/user", ([FromServices] IHttpClientFactory clientFactory, HttpContext context) => User(clientFactory, context));
+			app.MapGet("/sync/firststart", () => Results.Content(m_firstlyStarted ? "true" : "false"));
 		}
 
 		public static async Task<IResult> Full(IHttpClientFactory clientFactory)
@@ -35,6 +38,7 @@ namespace Aniliberty.Unfolded.Routes
 				if (IsEmptyTypes(cacheFolder)) await SaveTypes(httpClient, cacheFolder);
 
 				await SaveFullReleases(httpClient, cacheFolder);
+				await Releases.ReadReleases();
 			} finally
 			{
 				m_synchronizationStarted = false;
@@ -45,6 +49,8 @@ namespace Aniliberty.Unfolded.Routes
 
 		public static async Task<IResult> User(IHttpClientFactory clientFactory, HttpContext context)
 		{
+			if (m_firstlyStarted) m_firstlyStarted = false;
+
 			var token = context.Request.Cookies?.FirstOrDefault(a => a.Key == Authorize.CookieName).Value ?? null;
 			if (token == null) return Results.Unauthorized();
 

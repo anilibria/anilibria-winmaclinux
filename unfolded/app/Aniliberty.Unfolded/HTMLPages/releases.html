@@ -112,8 +112,8 @@
 							/>
 							<div class="information">
 								<span class="header-text" style="margin-top: 10px;">{{ release.title }}</span>
-								<span class="normal-text">{{ release.status }} {{ release.season ? '-' + release.season : '' }} {{ release.year }}</span>
-								<span class="normal-text">{{ release.type }} {{ release.series }} {{ release.genres ? '-' + release.genres.join(', ') : '' }}</span>
+								<span class="normal-text">{{ release.status }} {{ release.season ? '- ' + release.season : '' }} {{ release.year }}</span>
+								<span class="normal-text">{{ release.type }} {{ release.series }} {{ release.genres ? '- ' + release.genres.join(', ') : '' }}</span>
 								<span class="normal-text"><b>Команда:</b> {{ release.voices ? release.voices.join(', ') : '' }}</span>
 								<span class="digit-text flex-row flex-base-center gap-4">
 									<img src="/static/icons/releases/online.svg" width="20" height="20" />
@@ -139,7 +139,7 @@
 	</div>
 
 	<script type="module">
-		import { createApp, ref } from './vue.global.js'
+		import { createApp, ref, watch } from './vue.global.js'
 		import { getRelasesByFilter, getUserMarks } from './unfoldapi.js'
 		import Drawer from './components/Drawer.js'
 		import PageHeader from './components/PageHeader.js'
@@ -164,6 +164,7 @@
 				const widthItem = 480 + 10; // 10 is a gap width
 				const leftPanelWidth = 40;
 				const userMarks = ref({});
+				let currentTimer = -1;
 
 				const sections = [
 					{
@@ -398,7 +399,7 @@
 				async function loadReleases() {
 					const releases = await getRelasesByFilter(
 						{
-							filter: "",
+							filter: nameFilter.value,
 							type: "",
 							description: "",
 							voices: [],
@@ -435,6 +436,15 @@
 				}
 
 				loadAllData();
+
+				watch(
+					nameFilter,
+					(newValue) => {
+						if (currentTimer !== -1) clearTimeout(currentTimer);
+
+						currentTimer = setTimeout(() => { loadReleases() }, 1000);
+					}
+				);
 
 				return {
 					mainMenuVisible,

@@ -29,6 +29,11 @@ export async function synchronizeUser() {
     await fetch('/sync/user');
 };
 
+export async function synchronizeFirstStart() {
+    const response = await fetch('/sync/firststart');
+    return response.json();
+};
+
 export async function authorizationByLoginPass(login, password) {
     const response = await fetch(
         '/auth/login?username=' + login,

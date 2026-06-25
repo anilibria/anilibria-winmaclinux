@@ -48,12 +48,7 @@ namespace Aniliberty.Unfolded.Routes
 				return; // mean no cache need to first synchronized
 			}
 
-			if (Synchronize.MetadataExists(path))
-			{
-				Console.WriteLine("Reading metadata...");
-				var metadata = await Synchronize.ReadMetadata(path);
-				await ReadReleases(metadata, path);
-			}
+			await ReadReleases();
 
 			var userDataPath = Path.Combine(path, "userdata.cache");
 			if (File.Exists(userDataPath))
@@ -64,6 +59,17 @@ namespace Aniliberty.Unfolded.Routes
 			}
 
 			Console.WriteLine("Initialize Releases completed!");
+		}
+
+		internal static async Task ReadReleases()
+		{
+			var path = GlobalConfig.PathToCache();
+			if (Synchronize.MetadataExists(path))
+			{
+				Console.WriteLine("Reading metadata...");
+				var metadata = await Synchronize.ReadMetadata(path);
+				await ReadReleases(metadata, path);
+			}
 		}
 
 		internal static async Task SaveUserData(IEnumerable<int> favorites, IEnumerable<IEnumerable<object>> seenMarks)
@@ -141,6 +147,12 @@ namespace Aniliberty.Unfolded.Routes
 				.Where(
 					a =>
 					{
+						if (!string.IsNullOrEmpty(model.Filter) &&
+							!(a.Title.ToLowerInvariant().Contains(model.Filter) || a.OriginalName.ToLowerInvariant().Contains(model.Filter)))
+						{
+							return false;
+						}
+
 						if (!FilterBySection(model.Section, a)) return false;
 
 						return true;
