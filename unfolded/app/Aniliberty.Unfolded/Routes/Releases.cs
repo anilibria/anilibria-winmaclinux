@@ -30,6 +30,8 @@ namespace Aniliberty.Unfolded.Routes
 
 		static List<int> m_seenHistory = new List<int>();
 
+		static List<int> m_notificationReleases = new List<int>();
+
 		public static void RegisterRoutes(WebApplication app)
 		{
 			app.MapGet("/releases/release", ([FromQuery] int id) => Release(id));
@@ -70,6 +72,46 @@ namespace Aniliberty.Unfolded.Routes
 				var metadata = await Synchronize.ReadMetadata(path);
 				await ReadReleases(metadata, path);
 			}
+		}
+
+		internal static void CheckNotifications(IEnumerable<ReleaseForCompare> newReleases)
+		{
+			if (!m_releases.Any()) return;
+
+			var torrentMap = m_torrents.ToLookup(a => a.ReleaseId, a => a.Size);
+			var currentReleases = m_releases
+				.Select(a => new ReleaseForCompare { Id = a.Id, CountVideos = a.CountVideos, TorrentsSize = torrentMap[a.Id].Any() ? torrentMap[a.Id].Sum() : 0 })
+				.ToDictionary(a => a.Id);
+
+			var countNewReleases = 0;
+			var countReleasesSeries = 0;
+			var countReleasesTorrents = 0;
+			foreach (var newRelease in newReleases)
+			{
+				if (!currentReleases.ContainsKey(newRelease.Id))
+				{
+					m_notificationReleases.Add(newRelease.Id);
+					countNewReleases++;
+					continue;
+				}
+
+				var currentRelease = currentReleases[newRelease.Id];
+				if (currentRelease.CountVideos < newRelease.CountVideos)
+				{
+					m_notificationReleases.Add(newRelease.Id);
+					countReleasesSeries++;
+				}
+				if (currentRelease.TorrentsSize != newRelease.TorrentsSize)
+				{
+					m_notificationReleases.Add(newRelease.Id);
+					countReleasesTorrents++;
+				}
+			}
+
+			var messages = new List<string>();
+			if (countNewReleases > 0) messages.Add($"Новых релизов {countNewReleases}");
+			if (countReleasesSeries > 0) messages.Add($"Новые серии в релизах {countReleasesSeries}");
+			if (countReleasesTorrents > 0) messages.Add($"Обновленные торренты в релизах {countReleasesTorrents}");
 		}
 
 		internal static async Task SaveUserData(IEnumerable<int> favorites, IEnumerable<IEnumerable<object>> seenMarks)
@@ -142,6 +184,17 @@ namespace Aniliberty.Unfolded.Routes
 
 		private static IEnumerable<ReleaseSaveModel> FilterReleases(ReleasesListFiltersModel model)
 		{
+			var seenEpisodes = new Dictionary<int, int>();
+			foreach (var releaseEpisodes in m_episodes)
+			{
+				if (!m_releasesMap.ContainsKey(releaseEpisodes.ReleaseId)) continue;
+
+				var release = m_releasesMap[releaseEpisodes.ReleaseId];
+
+				var countSeens = releaseEpisodes.Items.Count(a => m_seenEpisodes.Contains(a.Id));
+				seenEpisodes.Add(releaseEpisodes.ReleaseId, countSeens);
+			}
+
 			return SortingReleases(
 				m_releases
 				.Where(
@@ -153,7 +206,7 @@ namespace Aniliberty.Unfolded.Routes
 							return false;
 						}
 
-						if (!FilterBySection(model.Section, a)) return false;
+						if (!FilterBySection(model.Section, a, seenEpisodes)) return false;
 
 						return true;
 					}
@@ -184,7 +237,7 @@ namespace Aniliberty.Unfolded.Routes
 			}
 		}
 
-		private static bool FilterBySection(ReleasesListFiltersSection section, ReleaseSaveModel release)
+		private static bool FilterBySection(ReleasesListFiltersSection section, ReleaseSaveModel release, Dictionary<int, int> seens)
 		{
 			if (m_hidedReleases.Contains(release.Id)) return false;
 
@@ -193,8 +246,11 @@ namespace Aniliberty.Unfolded.Routes
 				case ReleasesListFiltersSection.All: return true;
 				case ReleasesListFiltersSection.Favorites: return m_favorites.Contains(release.Id);
 				case ReleasesListFiltersSection.Schedule: return release.PublishDay is not null;
+				case ReleasesListFiltersSection.History: return m_openHistory.Contains(release.Id) || m_seenHistory.Contains(release.Id);
 				case ReleasesListFiltersSection.OpenHistory: return m_openHistory.Contains(release.Id);
 				case ReleasesListFiltersSection.SeenHistory: return m_seenHistory.Contains(release.Id);
+				case ReleasesListFiltersSection.Notifications: return m_notificationReleases.Contains(release.Id);
+				case ReleasesListFiltersSection.Seens: return seens.Keys.Contains(release.Id);
 				default: throw new NotSupportedException("Section not supported!");
 			}
 		}

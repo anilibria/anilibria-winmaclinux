@@ -17,12 +17,12 @@ namespace Aniliberty.Unfolded.Routes
 
 		public static void RegisterRoutes(WebApplication app)
 		{
-			app.MapGet("/sync/full", ([FromServices] IHttpClientFactory clientFactory) => Full(clientFactory));
+			app.MapGet("/sync/full", ([FromServices] IHttpClientFactory clientFactory, [FromQuery] bool checkLatest = true) => Full(clientFactory, checkLatest));
 			app.MapGet("/sync/user", ([FromServices] IHttpClientFactory clientFactory, HttpContext context) => User(clientFactory, context));
 			app.MapGet("/sync/firststart", () => Results.Content(m_firstlyStarted ? "true" : "false"));
 		}
 
-		public static async Task<IResult> Full(IHttpClientFactory clientFactory)
+		public static async Task<IResult> Full(IHttpClientFactory clientFactory, bool checkLatest)
 		{
 			var newSyncValue = true;
 			var snapshotValue = m_synchronizationStarted;
@@ -37,7 +37,7 @@ namespace Aniliberty.Unfolded.Routes
 
 				if (IsEmptyTypes(cacheFolder)) await SaveTypes(httpClient, cacheFolder);
 
-				await SaveFullReleases(httpClient, cacheFolder);
+				await SaveFullReleases(httpClient, cacheFolder, checkLatest);
 				await Releases.ReadReleases();
 			} finally
 			{
@@ -69,11 +69,32 @@ namespace Aniliberty.Unfolded.Routes
 
 		public static bool IsEmptyTypes(string folderToSaveCacheFiles) => !File.Exists(Path.Combine(folderToSaveCacheFiles, "types.cache"));
 
-		static public async Task SaveFullReleases(HttpClient httpClient, string folderToSaveCacheFiles)
+		internal static long ConvertApiDateToUnixTimeStamp(string value)
 		{
+			try
+			{
+				return DateTimeOffset.Parse(value).ToUnixTimeSeconds();
+			} catch
+			{
+				return -1;
+			}
+		}
+
+		static public async Task SaveFullReleases(HttpClient httpClient, string folderToSaveCacheFiles, bool checkLatest)
+		{
+			long currentLastTimeStamp = -1;
+			var metadataPath = Path.Combine(folderToSaveCacheFiles, "metadata");
+			if (File.Exists(metadataPath))
+			{
+				var metadata = DeserializeFromJson<MetadataModel>(await File.ReadAllTextAsync(metadataPath));
+				if (metadata != null) currentLastTimeStamp = metadata.LastReleaseTimeStamp;
+			}
+
 			var totalPages = 300;
 
 			var allReleases = new List<ReleaseDataFullModel>();
+
+			var allUpToDate = false;
 
 			for (var i = 1; i < totalPages; i++)
 			{
@@ -91,7 +112,19 @@ namespace Aniliberty.Unfolded.Routes
 
 				allReleases.AddRange((await OriginalApiMaker.GetReleasesInnerCollections(httpClient, ids)).Data);
 
+				if (checkLatest && i == 1 && ConvertApiDateToUnixTimeStamp(allReleases.Where(a => a.FreshAt != null).OrderByDescending(a => a.FreshAt).First().FreshAt) == currentLastTimeStamp)
+				{
+					allUpToDate = true;
+					break;
+				}
+
 				if (i % 2 == 0) await Task.Delay(500);
+			}
+
+			if (allUpToDate)
+			{
+				Console.WriteLine("No need to synchronize releases all is up to date!");
+				return;
 			}
 
 			if (!allReleases.Any()) return;
@@ -170,6 +203,11 @@ namespace Aniliberty.Unfolded.Routes
 				}
 			}
 
+			var torrentsMap = resultTorrents.ToLookup(a => a.ReleaseId, a => a.Size);
+			var newReleases = result
+				.Select(a => new ReleaseForCompare { Id = a.Id, CountVideos = a.CountVideos, TorrentsSize = torrentsMap[a.Id].Any() ? torrentsMap[a.Id].Sum() : 0 })
+				.ToArray();
+			Releases.CheckNotifications(newReleases);
 
 			await SaveLoadedItemsToFiles(folderToSaveCacheFiles, result, resultTorrents, resultVideos, lastTimestamp);
 		}
