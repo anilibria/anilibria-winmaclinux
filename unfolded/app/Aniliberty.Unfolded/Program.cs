@@ -66,6 +66,7 @@ namespace Aniliberty.Unfolded
 			VideoProxy.RegisterRoutes(app);
 			MainMenu.RegisterRoutes(app);
 			Authorize.RegisterRoutes(app);
+			WebSocketHub.RegisterRoutes(app);
 
 			//GlobalConfig.OpenUrl();
 
