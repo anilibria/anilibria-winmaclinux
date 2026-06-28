@@ -15,6 +15,10 @@ namespace Aniliberty.Unfolded.Routes
 
 		private static bool m_synchronizationStarted = false;
 
+		private const string SynchronizedCommand = "sync";
+
+		private const string SynchronizedCommandCompleted = "completed";
+
 		public static void RegisterRoutes(WebApplication app)
 		{
 			app.MapGet("/sync/full", ([FromServices] IHttpClientFactory clientFactory, [FromQuery] bool checkLatest = true) => Full(clientFactory, checkLatest));
@@ -87,7 +91,7 @@ namespace Aniliberty.Unfolded.Routes
 
 		static public async Task SaveFullReleases(HttpClient httpClient, string folderToSaveCacheFiles, bool checkLatest)
 		{
-			await WebSocketHub.SendMessage("sync", "started");
+			await WebSocketHub.SendMessage(SynchronizedCommand, "started");
 
 			long currentLastTimeStamp = -1;
 			var metadataPath = Path.Combine(folderToSaveCacheFiles, "metadata");
@@ -127,12 +131,13 @@ namespace Aniliberty.Unfolded.Routes
 
 				if (i % 2 == 0) await Task.Delay(500);
 
-				await WebSocketHub.SendMessage("sync", "percent" + ((float)i / (float)totalPages) * 100);
+				await WebSocketHub.SendMessage(SynchronizedCommand, "percent" + ((float)i / (float)totalPages) * 100);
 			}
 
 			if (allUpToDate)
 			{
 				Console.WriteLine("No need to synchronize releases all is up to date!");
+				await WebSocketHub.SendMessage(SynchronizedCommand, SynchronizedCommandCompleted);
 				return;
 			}
 
@@ -214,7 +219,7 @@ namespace Aniliberty.Unfolded.Routes
 
 			await SaveLoadedItemsToFiles(folderToSaveCacheFiles, result, resultTorrents, resultVideos, lastTimestamp);
 
-			await WebSocketHub.SendMessage("sync", "completed");
+			await WebSocketHub.SendMessage(SynchronizedCommand, SynchronizedCommandCompleted);
 
 			//check notifications
 			var torrentsMap = resultTorrents.ToLookup(a => a.ReleaseId, a => a.Size);
