@@ -24,6 +24,7 @@ namespace Aniliberty.Unfolded
 
 			var app = builder.Build();
 
+			app.UseWebSockets();
 			app.MapOpenApi();
 
 			app.UseStaticFiles(

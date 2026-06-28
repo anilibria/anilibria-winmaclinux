@@ -3,6 +3,7 @@ using Aniliberty.Unfolded.Helpers;
 using Aniliberty.Unfolded.Models.CacheModels;
 using Aniliberty.Unfolded.Models.Releases;
 using Microsoft.AspNetCore.Mvc;
+using System.Text;
 using static Aniliberty.Unfolded.Helpers.JsonHelpers;
 
 namespace Aniliberty.Unfolded.Routes
@@ -74,7 +75,7 @@ namespace Aniliberty.Unfolded.Routes
 			}
 		}
 
-		internal static void CheckNotifications(IEnumerable<ReleaseForCompare> newReleases)
+		internal static async Task CheckNotifications(IEnumerable<ReleaseForCompare> newReleases)
 		{
 			if (!m_releases.Any()) return;
 
@@ -108,10 +109,12 @@ namespace Aniliberty.Unfolded.Routes
 				}
 			}
 
-			var messages = new List<string>();
-			if (countNewReleases > 0) messages.Add($"Новых релизов {countNewReleases}");
-			if (countReleasesSeries > 0) messages.Add($"Новые серии в релизах {countReleasesSeries}");
-			if (countReleasesTorrents > 0) messages.Add($"Обновленные торренты в релизах {countReleasesTorrents}");
+			var messages = new StringBuilder();
+			if (countNewReleases > 0) messages.Append($"Новых релизов {countNewReleases} ");
+			if (countReleasesSeries > 0) messages.Append($"Новые серии в релизах {countReleasesSeries} ");
+			if (countReleasesTorrents > 0) messages.Append($"Обновленные торренты в релизах {countReleasesTorrents}");
+
+			await WebSocketHub.SendMessage("ntc", messages.ToString());
 		}
 
 		internal static async Task SaveUserData(IEnumerable<int> favorites, IEnumerable<IEnumerable<object>> seenMarks)

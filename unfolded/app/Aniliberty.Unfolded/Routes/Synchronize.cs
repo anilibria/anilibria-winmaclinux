@@ -39,9 +39,11 @@ namespace Aniliberty.Unfolded.Routes
 
 				await SaveFullReleases(httpClient, cacheFolder, checkLatest);
 				await Releases.ReadReleases();
-			} finally
+			}
+			finally
 			{
 				m_synchronizationStarted = false;
+				await WebSocketHub.SendMessage("sync", "failed");
 			}
 
 			return Results.Ok();
@@ -64,6 +66,8 @@ namespace Aniliberty.Unfolded.Routes
 			MainMenu.SetUser(userData.nickname, userData.Avatar?.Preview ?? "");
 			await Releases.SaveUserData(favorites, seens);
 
+			await WebSocketHub.SendMessage("user", "opened");
+
 			return Results.Ok();
 		}
 
@@ -74,7 +78,8 @@ namespace Aniliberty.Unfolded.Routes
 			try
 			{
 				return DateTimeOffset.Parse(value).ToUnixTimeSeconds();
-			} catch
+			}
+			catch
 			{
 				return -1;
 			}
@@ -82,6 +87,8 @@ namespace Aniliberty.Unfolded.Routes
 
 		static public async Task SaveFullReleases(HttpClient httpClient, string folderToSaveCacheFiles, bool checkLatest)
 		{
+			await WebSocketHub.SendMessage("sync", "started");
+
 			long currentLastTimeStamp = -1;
 			var metadataPath = Path.Combine(folderToSaveCacheFiles, "metadata");
 			if (File.Exists(metadataPath))
@@ -119,6 +126,8 @@ namespace Aniliberty.Unfolded.Routes
 				}
 
 				if (i % 2 == 0) await Task.Delay(500);
+
+				await WebSocketHub.SendMessage("sync", "percent" + ((float)i / (float)totalPages) * 100);
 			}
 
 			if (allUpToDate)
@@ -203,13 +212,16 @@ namespace Aniliberty.Unfolded.Routes
 				}
 			}
 
+			await SaveLoadedItemsToFiles(folderToSaveCacheFiles, result, resultTorrents, resultVideos, lastTimestamp);
+
+			await WebSocketHub.SendMessage("sync", "completed");
+
+			//check notifications
 			var torrentsMap = resultTorrents.ToLookup(a => a.ReleaseId, a => a.Size);
 			var newReleases = result
 				.Select(a => new ReleaseForCompare { Id = a.Id, CountVideos = a.CountVideos, TorrentsSize = torrentsMap[a.Id].Any() ? torrentsMap[a.Id].Sum() : 0 })
 				.ToArray();
-			Releases.CheckNotifications(newReleases);
-
-			await SaveLoadedItemsToFiles(folderToSaveCacheFiles, result, resultTorrents, resultVideos, lastTimestamp);
+			await Releases.CheckNotifications(newReleases);
 		}
 
 		public static async Task SaveTypes(HttpClient httpClient, string folderToSaveCacheFiles)

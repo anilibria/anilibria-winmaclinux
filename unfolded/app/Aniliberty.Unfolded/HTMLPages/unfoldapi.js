@@ -1,4 +1,59 @@
 ﻿
+// WebSocket hub
+const webSocketHubObserver = {
+    notification: function (type, message) {
+    },
+    user: function (message) {
+    },
+    synchronization: function (message) {
+    }
+};
+
+const mainSocket = new WebSocket('ws://localhost:' + window.location.port + '/wshub/start');
+mainSocket.onopen = (event) => {
+    console.log('WebSocket successfully connected!');
+};
+mainSocket.onmessage = (event) => {
+    const data = event.data;
+    if (!data) return;
+
+    const parts = data.split(':');
+    if (parts.length < 2) return;
+
+    const command = parts[0];
+    const message = parts[1];
+
+    switch (command) {
+        case "ntc": // notification common
+            webSocketHubObserver.notification("common", message);
+            break;
+        case "nte": // notification error
+            webSocketHubObserver.notification("error", message);
+            break;
+        case "user": // events related to user account
+            webSocketHubObserver.user(message);
+            break;
+        case "sync": // events related to synchronization
+            webSocketHubObserver.synchronization(message);
+            break;
+    }
+};
+mainSocket.onclose = (event) => {
+};
+mainSocket.onerror = (error) => {
+    console.error(error);
+};
+
+export function webSocketObserver() {
+    return webSocketHubObserver;
+}
+
+export function sendWebSocketHubCommand(command, message) {
+    if (mainSocket.readyState !== WebSocket.OPEN) return;
+
+    mainSocket.send(command + ':' + message);
+}
+
 function paramsToQuery(params) {
     return new URLSearchParams(params).toString();
 }

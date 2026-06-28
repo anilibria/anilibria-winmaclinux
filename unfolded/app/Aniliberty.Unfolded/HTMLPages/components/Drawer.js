@@ -1,5 +1,6 @@
 ﻿import { ref } from '/static/vue.global.js'
-import { getMainMenu, getUserData } from '/static/mainmenu.js'
+import { getMainMenu, getUserData, refreshMainMenu } from '/static/mainmenu.js'
+import { webSocketObserver } from '/static/unfoldapi.js'
 
 export default {
 	props: ['mainMenuVisible'],
@@ -13,7 +14,7 @@ export default {
 				<img src="/static/icons/mainmenu/logout.svg" width="30" height="30" />
 			</div>
 			<div class="main-menu-items">
-				<div v-for="item in mainMenu">
+				<div v-for="item in mainMenu" @click="openOption('/' + item.icon + '.html')">
 					<div class="main-menu-item">
 						<img width="30" height="30" :src="'/static/icons/mainmenu/' + item.icon + '.svg'" />
 						<span>{{item.name}}</span>
@@ -30,10 +31,25 @@ export default {
 	setup(props) {
 		const mainMenu = ref(getMainMenu());
 		const userData = ref(getUserData());
+		async function userEvent(message) {
+			if (message === 'opened') {
+				console.info('User completed, need refresh menu');
+				await refreshMainMenu();
+				mainMenu.value = getMainMenu();
+				userData.value = getUserData();
+			}
+		}
+
+		function openOption(url) {
+			window.location.href = url;
+		}
+
+		webSocketObserver().user = userEvent;
 
 		return {
 			mainMenu,
-			userData
+			userData,
+			openOption
 		};
 	}
 };
