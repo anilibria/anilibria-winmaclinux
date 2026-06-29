@@ -112,7 +112,9 @@
 							class="releases-release-item"
 							:class="{'releases-release-teim-selected': selectionModeEnabled && selectedReleases.includes(release.id) }"
 							v-for="release in releasesGroup.releases"
-							@click.prevent="toggleSelectionRelease(release.id)">
+							:key="release.id"
+							@click.prevent="toggleSelectionRelease(release.id)"
+							:title="release.description">
 							<img
 								class="poster"
 								:src="'https://anilibria.top/' + release.poster"
