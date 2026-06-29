@@ -36,7 +36,9 @@ body {
     --action-button-color: light-dark(white, black);
     --action-button-hover: light-dark(#881919, lightgray);
     --linked-text-color: light-dark(#b32121, white);
+    --common-text-color: light-dark(black, white);
     --releases-item-selected-background: light-dark(red, white);
+    --error-background-color: light-dark(red, red);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -221,5 +223,56 @@ body {
 
     &:active {
         color: var(--linked-text-color);
+    }
+}
+
+/* Simple popup style */
+
+.simple-popup-container {
+    position: relative;
+    display: inline-block;
+}
+
+.simple-popup-box {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: -100%;
+    transform: translateX(-50%);
+    width: 250px;
+    height: 200px;
+    padding: 2px;
+    color: var(--common-text-color);
+    border-radius: 10px;
+    background-color: var(--release-item-background);
+    box-shadow: 2px 2px var(--release-item-background-shadow);
+    z-index: 1000;
+}
+
+.simple-popup-container:hover .simple-popup-box {
+    display: flex;
+}
+
+/* Notification messages container */
+
+.notification-list-container {
+    flex-direction: column;
+    gap: 4px;
+    overflow-y: auto;
+
+    .common-notification {
+        border-color: var(--release-item-background-shadow);
+        border-radius: 8px;
+        border-style: solid;
+        border-width: 1px;
+        padding: 4px;
+    }
+
+    .error-notification {
+        border-color: var(--error-background-color);
+        border-radius: 8px;
+        border-style: solid;
+        border-width: 1px;
+        padding: 4px;
     }
 }

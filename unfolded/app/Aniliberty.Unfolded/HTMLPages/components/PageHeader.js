@@ -10,10 +10,15 @@ export default {
 				<img src="/static/icons/commonbuttons/opendrawer.svg" width="20" height="20" />
 			</div>
 			<div class="page-header">{{title}}</div>
-			<div v-if="receivedNotifications.length" class="icon-button" title="Уведомления">
+			<div v-if="receivedNotifications.length" class="icon-button simple-popup-container" title="Уведомления">
 				<img :src="'/static/icons/releases/notifications.svg'" width="20" height="20" />
+				<div class="simple-popup-box notification-list-container">
+					<div v-for="notification in receivedNotifications" :class="{'common-notification': notification.type !== 'error', 'error-notification': notification.type === 'error'}">
+						{{ notification.message }}
+					</div>
+				</div>
 			</div>
-			<div v-if="synchronizationRunned" class="icon-button" :title="Cинхронизация...{synchronizationPercent}%">
+			<div v-if="synchronizationRunned" class="icon-button" :title="'Cинхронизация...' + synchronizationPercent + '%'">
 				<img :src="'/static/icons/releases/synchronization.svg'" width="20" height="20" />
 			</div>
 			<div class="icon-button" title="Полезные ссылки">
@@ -25,7 +30,7 @@ export default {
 		</div>
 	`,
 	setup(props) {
-		const receivedNotifications = [];
+		const receivedNotifications = ref([]);
 		const synchronizationRunned = ref(false);
 		const synchronizationPercent = ref(0);
 
@@ -38,13 +43,18 @@ export default {
 				synchronizationRunned.value = false;
 				return;
 			}
+			if (message === 'uptodate') {
+				synchronizationRunned.value = false;
+				notificationHandler('common', 'Нет новых данных для синхронизации!');
+				return;
+			}
 			if (message.indexOf('percent') === 0) {
 				synchronizationPercent.value = parseInt(message.replace('percent', ''));
 			}
 		}
 
 		function notificationHandler(type, message) {
-			receivedNotifications.push({ type, message });
+			receivedNotifications.value.unshift({ type, message });
 		}
 
 		webSocketObserver().synchronization = synchronizedHandler;

@@ -19,6 +19,8 @@ namespace Aniliberty.Unfolded.Routes
 
 		private const string SynchronizedCommandCompleted = "completed";
 
+		private const string SynchronizedCommandUpToDate = "uptodate";
+
 		public static void RegisterRoutes(WebApplication app)
 		{
 			app.MapGet("/sync/full", ([FromServices] IHttpClientFactory clientFactory, [FromQuery] bool checkLatest = true) => Full(clientFactory, checkLatest));
@@ -137,7 +139,7 @@ namespace Aniliberty.Unfolded.Routes
 			if (allUpToDate)
 			{
 				Console.WriteLine("No need to synchronize releases all is up to date!");
-				await WebSocketHub.SendMessage(SynchronizedCommand, SynchronizedCommandCompleted);
+				await WebSocketHub.SendMessage(SynchronizedCommand, SynchronizedCommandUpToDate);
 				return;
 			}
 
