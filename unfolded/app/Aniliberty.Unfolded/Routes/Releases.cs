@@ -38,6 +38,7 @@ namespace Aniliberty.Unfolded.Routes
 			app.MapGet("/releases/release", ([FromQuery] int id) => Release(id));
 			app.MapPost("/releases/list", ([FromBody] ReleasesListFiltersModel model) => List(model));
 			app.MapGet("/releases/marks", () => Marks());
+			app.MapGet("/releases/episodes", (int releaseId) => Episodes(releaseId));
 		}
 
 		internal static async Task Initialize()
@@ -296,6 +297,38 @@ namespace Aniliberty.Unfolded.Routes
 			if (deserializedTorrens != null) m_torrents.AddRange(deserializedTorrens);
 
 			m_releasesMap = m_releases.ToDictionary(a => a.Id);
+		}
+
+		internal static IResult Episodes(int releaseId)
+		{
+			var episodes = m_episodes
+				.FirstOrDefault(a => a.ReleaseId == releaseId);
+			if (episodes != null)
+			{
+				return Results.Json(
+					episodes.Items.Select(a => new ReleaseDisplayEpisodeModel
+					{
+						Id = a.Id,
+						Name = a.Name,
+						NameEnglish = a.NameEnglish,
+						Hls1080 = a.Hls1080,
+						Hls480 = a.Hls480,
+						Hls720 = a.Hls720,
+						Ordinal = a.Ordinal,
+						Preview = a.Preview.Src,
+						RutubeId = a.RutubeId,
+						YoutubeId = a.YoutubeId,
+						SortOrder = a.SortOrder,
+						OpeningEnd = a.Opening.Stop,
+						OpeningStart = a.Opening.Start,
+						EndingEnd = a.Ending.Stop,
+						EndingStart = a.Ending.Start
+					}),
+					AppJsonSerializerContext.Default
+				);
+			}
+
+			return Results.Json(new List<ReleaseDisplayEpisodeModel>(), AppJsonSerializerContext.Default);
 		}
 
 	}

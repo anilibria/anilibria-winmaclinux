@@ -77,6 +77,11 @@ export async function getUserMarks() {
     return await response.json();
 };
 
+export async function getReleaseEpisodes(releaseId) {
+    const response = await fetch('/releases/episodes?releaseId=' + releaseId);
+    return await response.json();
+};
+
 export async function synchronizeReleases() {
     await fetch('/sync/full');
 };

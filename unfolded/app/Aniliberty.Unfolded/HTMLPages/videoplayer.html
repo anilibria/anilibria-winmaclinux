@@ -1,0 +1,127 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta name="color-scheme" content="light dark">
+	<title>Видеоплеер</title>
+	<link rel="icon" type="image/x-icon" href="/static/icons/logo/default.svg">
+	<link rel="stylesheet" href="main.css">
+	<link rel="stylesheet" href="mainmenu.css">
+	<link rel="stylesheet" href="pagestructure.css">
+	<link rel="stylesheet" href="libs/plyr.css">
+	<link rel="stylesheet" href="styles/videoplayer.css">
+	<script src="libs/hls.min.js"></script>
+	<script src="libs/plyr.js"></script>
+</head>
+<body>
+	<div id="app">
+		<page-header v-model:main-menu-visible="mainMenuVisible"
+			title="Видеоплеер">
+		</page-header>
+
+		<div class="page-content-with-panel">
+			<div class="left-panel flex-column">
+				<div
+					class="simple-panel-icon-button"
+					title="Настройка страницы Видеоплеер">
+					<img :src="'/static/icons/commonbuttons/settings.svg'" width="30" height="30" />
+				</div>
+			</div>
+			<div class="right-content">
+				<div class="videoplayer-container">
+					<video ref="video" playsinline controls data-poster="/path/to/poster.jpg">
+					</video>
+				</div>
+			</div>
+		</div>
+
+		<page-drawer v-model:main-menu-visible="mainMenuVisible">
+		</page-drawer>
+	</div>
+
+	<script type="module">
+		import { createApp, ref, onMounted, useTemplateRef } from './vue.global.js'
+		import { getReleaseEpisodes } from './unfoldapi.js'
+		import Drawer from './components/Drawer.js'
+		import PageHeader from './components/PageHeader.js'
+
+		const app = createApp({
+			components: {
+				'page-drawer': Drawer,
+				'page-header': PageHeader
+			},
+			setup() {
+				const mainMenuVisible = ref(false);
+				const video = useTemplateRef('video');
+				const prefferedQuality = ref(['hls1080', 'hls720', 'hls480']);
+				let hlsSource = ref(null);
+				const hlsSupported = ref(Hls.isSupported());
+				const episodes = ref([]);
+				const selectedEpisode = ref();
+				const selectedQuality = ref();
+
+				async function getSource() {
+					const urlParams = new URLSearchParams(window.location.search);
+					const mode = urlParams.get('mode');
+					//TODO: force open episode
+					//
+					if (mode === `release`) {
+						const id = urlParams.get('id');
+						episodes.value = await getReleaseEpisodes(parseInt(id));
+						const episode = urlParams.get('episode');
+						if (episode) {
+							selectedEpisode.value = episode;
+						} else {
+							selectedEpisode.value = episodes.value[0].id;
+						}
+					}
+				}
+
+				function openEpisode(id) {
+					const episode = episodes.value.find(a => a.id === id);
+					selectedEpisode.value = episode;
+
+					for (const quality of prefferedQuality.value) {
+						if (episode[quality]) {
+							selectedQuality.value = quality;
+							return episode[quality];
+						}
+					}
+				}
+
+				onMounted(async () => {
+					if (!hlsSupported.value) {
+						//TODO: show message
+						return;
+					}
+					await getSource();
+
+					const player = new Plyr(video.value, {});
+					player.on('languagechange', () => {
+						if (!hlsSource.value) return;
+
+						setTimeout(() => hlsSource.value.subtitleTrack = player.currentTrack, 50);
+					});
+
+					const videoSource = openEpisode(selectedEpisode.value);
+
+					const hls = new Hls();
+					hls.loadSource(videoSource);
+					hls.attachMedia(video.value);
+					hls.subtitleDisplay = true;
+					hlsSource.value = hls;
+				});
+
+				return {
+					mainMenuVisible,
+					hlsSupported,
+					episodes
+				}
+			}
+		});
+
+		app.mount('#app')
+	</script>
+</body>
+</html>

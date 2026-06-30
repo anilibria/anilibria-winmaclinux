@@ -31,6 +31,7 @@ namespace Aniliberty.Unfolded
 	[JsonSerializable(typeof(LoginPassAuthModel))]
 	[JsonSerializable(typeof(LoginPassAuthResponseModel))]
 	[JsonSerializable(typeof(UserCollections))]
+	[JsonSerializable(typeof(IEnumerable<ReleaseDisplayEpisodeModel>))]
 	[JsonSourceGenerationOptions(PropertyNamingPolicy = JsonKnownNamingPolicy.CamelCase)]
 	internal partial class AppJsonSerializerContext : JsonSerializerContext
 	{

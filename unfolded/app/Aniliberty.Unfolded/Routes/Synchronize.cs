@@ -26,6 +26,7 @@ namespace Aniliberty.Unfolded.Routes
 			app.MapGet("/sync/full", ([FromServices] IHttpClientFactory clientFactory, [FromQuery] bool checkLatest = true) => Full(clientFactory, checkLatest));
 			app.MapGet("/sync/user", ([FromServices] IHttpClientFactory clientFactory, HttpContext context) => User(clientFactory, context));
 			app.MapGet("/sync/firststart", () => Results.Content(m_firstlyStarted ? "true" : "false"));
+			app.MapGet("/sync/status", () => Results.Content(m_synchronizationStarted ? "true" : "false"));
 		}
 
 		public static async Task<IResult> Full(IHttpClientFactory clientFactory, bool checkLatest)
