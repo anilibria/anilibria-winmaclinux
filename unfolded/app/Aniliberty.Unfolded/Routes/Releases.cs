@@ -172,7 +172,7 @@ namespace Aniliberty.Unfolded.Routes
 				}
 				else
 				{
-					releaseSeries.Add(releaseEpisodes.ReleaseId, countSeens);
+					if (countSeens > 0) releaseSeries.Add(releaseEpisodes.ReleaseId, countSeens);
 				}
 			}
 			var result = new MarksModel

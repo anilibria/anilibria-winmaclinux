@@ -126,13 +126,13 @@
 								<span class="normal-text"><b>Команда:</b> {{ release.voices ? release.voices.join(', ') : '' }}</span>
 								<span class="digit-text flex-row flex-base-center gap-4">
 									<img src="/static/icons/releases/online.svg" width="20" height="20" />
-									<span>{{ release.countVideos }}/0</span>
+									<span>{{ release.countVideos }}{{ userMarks.fullSeenReleases.includes(release.id) ? '/' + release.countVideos : (userMarks.seenSeries[release.id] ? '/' + userMarks.seenSeries[release.id] : '' ) }}</span>
 									<img src="/static/icons/mainmenu/torrent.svg" width="20" height="20" />
 									<span>{{ release.countTorrents }}</span>
 									<img src="/static/icons/releases/favorite.svg" width="20" height="20" />
 									<span>{{ release.rating }}</span>
-									<img src="/static/icons/releases/scheduleday.svg" width="20" height="20" />
-									<span>ср</span>
+									<img v-if="release.publishDay" src="/static/icons/releases/scheduleday.svg" width="20" height="20" />
+									<span v-if="release.publishDay">{{ getPublishDay(release.publishDay) }}</span>
 								</span>
 								<div class="flex-1"></div>
 								<div class="flex-row flex-base-center">
@@ -487,6 +487,19 @@
 					await loadReleases();
 				}
 
+				function getPublishDay(value) {
+					switch (value) {
+						case 1: return 'пн';
+						case 2: return 'вт';
+						case 3: return 'ср';
+						case 4: return 'чт';
+						case 5: return 'пт';
+						case 6: return 'сб';
+						case 7: return 'вс';
+						default: return '';
+					}
+				}
+
 				window.addEventListener('resize', () => {
 					const newRelasesInGroup = getReleasesGroupCount();
 					if (newRelasesInGroup !== relasesInGroup.value) {
@@ -525,7 +538,8 @@
 					selectionModeEnabled,
 					toggleSelectionMode,
 					selectedReleases,
-					toggleSelectionRelease
+					toggleSelectionRelease,
+					getPublishDay
 				}
 			}
 		});
