@@ -184,7 +184,7 @@ namespace Aniliberty.Unfolded.Routes
 					AgeRating = types.AgeRatings.FirstOrDefault(a => a.Value == fullRelease.AgeRating.Value)?.Description ?? fullRelease.AgeRating.Value,
 					Voices = fullRelease.Members != null ? fullRelease.Members.Where(a => a.Role.Value == "voicing").Select(a => a.Nickname) : [],
 					Team = fullRelease.Members != null ? fullRelease.Members.OrderByDescending(a => a.Role.Value).Select(a => a.Nickname) : [],
-					PublishDay = fullRelease.PublishDay?.Value
+					PublishDay = fullRelease.IsInProduction ? fullRelease.PublishDay?.Value : null
 				});
 
 				// torrents
