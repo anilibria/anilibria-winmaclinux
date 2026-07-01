@@ -1,5 +1,5 @@
 ﻿import { ref, onMounted } from '/static/vue.global.js'
-import { synchronizeFirstStart, synchronizeUser, synchronizeReleases, webSocketObserver } from '/static/unfoldapi.js'
+import { synchronizeFirstStart, synchronizeUser, synchronizeReleases, webSocketObserver, synchronizeStatus } from '/static/unfoldapi.js'
 
 export default {
 	props: ['mainMenuVisible', 'title'],
@@ -61,6 +61,9 @@ export default {
 		webSocketObserver().notification = notificationHandler;
 
 		onMounted(async () => {
+			const synchronizedStarted = await synchronizeStatus();
+			if (synchronizedStarted) synchronizationRunned.value = true;
+
 			const firstStart = await synchronizeFirstStart();
 			if (firstStart) {
 				await synchronizeUser();

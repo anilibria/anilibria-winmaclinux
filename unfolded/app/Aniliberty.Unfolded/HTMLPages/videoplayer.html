@@ -30,7 +30,7 @@
 			</div>
 			<div class="right-content">
 				<div class="videoplayer-container">
-					<video ref="video" playsinline controls data-poster="/path/to/poster.jpg">
+					<video ref="video" playsinline controls :data-poster="poster">
 					</video>
 				</div>
 			</div>
@@ -60,12 +60,11 @@
 				const episodes = ref([]);
 				const selectedEpisode = ref();
 				const selectedQuality = ref();
+				const poster = ref(null);
 
 				async function getSource() {
 					const urlParams = new URLSearchParams(window.location.search);
 					const mode = urlParams.get('mode');
-					//TODO: force open episode
-					//
 					if (mode === `release`) {
 						const id = urlParams.get('id');
 						episodes.value = await getReleaseEpisodes(parseInt(id));
@@ -75,6 +74,7 @@
 						} else {
 							selectedEpisode.value = episodes.value[0].id;
 						}
+						//TODO: open last episode in release
 					}
 				}
 

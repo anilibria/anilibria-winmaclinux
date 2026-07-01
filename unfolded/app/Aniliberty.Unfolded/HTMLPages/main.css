@@ -239,9 +239,6 @@ body {
     top: 100%;
     left: -100%;
     transform: translateX(-50%);
-    width: 250px;
-    height: 200px;
-    padding: 2px;
     color: var(--common-text-color);
     border-radius: 10px;
     background-color: var(--release-item-background);
@@ -259,6 +256,9 @@ body {
     flex-direction: column;
     gap: 4px;
     overflow-y: auto;
+    width: 250px;
+    max-height: 200px;
+    padding: 2px;
 
     .common-notification {
         border-color: var(--release-item-background-shadow);

@@ -6,6 +6,12 @@
     justify-content: center;
     align-items: center;
     background-color: black;
+
+    .play-list {
+        position: relative;
+        width: 100px;
+
+    }
 }
 
 /* Change plyr styles */

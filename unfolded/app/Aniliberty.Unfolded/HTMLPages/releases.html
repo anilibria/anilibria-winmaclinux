@@ -125,7 +125,7 @@
 								<span class="normal-text">{{ release.type }} {{ release.series }} {{ release.genres ? '- ' + release.genres.join(', ') : '' }}</span>
 								<span class="normal-text"><b>Команда:</b> {{ release.voices ? release.voices.join(', ') : '' }}</span>
 								<span class="digit-text flex-row flex-base-center gap-4">
-									<img src="/static/icons/releases/online.svg" width="20" height="20" />
+									<img src="/static/icons/releases/online.svg" width="20" height="20" @click.prevent="openInVideoPlayer(release.id)" />
 									<span>{{ release.countVideos }}{{ userMarks.fullSeenReleases.includes(release.id) ? '/' + release.countVideos : (userMarks.seenSeries[release.id] ? '/' + userMarks.seenSeries[release.id] : '' ) }}</span>
 									<img src="/static/icons/mainmenu/torrent.svg" width="20" height="20" />
 									<span>{{ release.countTorrents }}</span>
@@ -475,6 +475,8 @@
 				}
 
 				function toggleSelectionRelease(id) {
+					if (!selectionModeEnabled.value) return;
+
 					if (selectedReleases.value.includes(id)) {
 						selectedReleases.value = selectedReleases.value.filter(a => a !== id);
 					} else {
@@ -498,6 +500,10 @@
 						case 7: return 'вс';
 						default: return '';
 					}
+				}
+
+				function openInVideoPlayer(id) {
+					window.location.href = '/static/videoplayer.html?mode=release&id=' + id;
 				}
 
 				window.addEventListener('resize', () => {
@@ -539,7 +545,8 @@
 					toggleSelectionMode,
 					selectedReleases,
 					toggleSelectionRelease,
-					getPublishDay
+					getPublishDay,
+					openInVideoPlayer
 				}
 			}
 		});

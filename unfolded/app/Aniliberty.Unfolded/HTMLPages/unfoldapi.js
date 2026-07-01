@@ -95,6 +95,11 @@ export async function synchronizeFirstStart() {
     return response.json();
 };
 
+export async function synchronizeStatus() {
+    const response = await fetch('/sync/status');
+    return response.json();
+};
+
 export async function authorizationByLoginPass(login, password) {
     const response = await fetch(
         '/auth/login?username=' + login,
