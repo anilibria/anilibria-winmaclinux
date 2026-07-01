@@ -39,6 +39,11 @@ body {
     --common-text-color: light-dark(black, white);
     --releases-item-selected-background: light-dark(red, white);
     --error-background-color: light-dark(red, red);
+    --dialog-background-color: light-dark(#ffffff, #424242);
+    --dialog-background-shadow-color: light-dark(#303030, #fafafa);
+    --middle-font-size: 13px;
+    --middle-plus-font-size: 14px;
+    --large-font-size: 15px;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -69,6 +74,22 @@ body {
     align-items: center;
 }
 
+.flex-base-start {
+    align-items: flex-start;
+}
+
+.flex-base-end {
+    align-items: flex-end;
+}
+
+.flex-other-start {
+    justify-content: flex-start;
+}
+
+.flex-other-end {
+    justify-content: flex-end;
+}
+
 .flex-other-center {
     justify-content: center;
 }
@@ -81,6 +102,9 @@ body {
 }
 .gap-4 {
     gap: 4px;
+}
+.gap-8 {
+    gap: 8px;
 }
 
 
@@ -196,8 +220,8 @@ body {
     display: flex;
     flex-direction: row;
     justify-content: center;
-    padding-left: 3px;
-    padding-right: 3px;
+    padding-left: 8px;
+    padding-right: 8px;
     padding-top: 2px;
     padding-bottom: 2px;
 
@@ -274,5 +298,27 @@ body {
         border-style: solid;
         border-width: 1px;
         padding: 4px;
+    }
+}
+
+/* Native dialog */
+
+.native-dialog-rounded {
+    border-radius: 4px;
+    border-width: 0;
+    background-color: var(--dialog-background-color);
+    box-shadow: 2px 2px var(--dialog-background-shadow-color);
+    padding-left: 8px;
+    padding-right: 8px;
+    padding-top: 4px;
+    padding-bottom: 4px;
+
+    .button-line {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: flex-end;
+        margin-right: 10px;
+        margin-top: 10px;
     }
 }

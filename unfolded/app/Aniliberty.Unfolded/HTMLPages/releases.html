@@ -14,52 +14,45 @@
 <body>
 	<div id="app">
 		<page-header v-model:main-menu-visible="mainMenuVisible"
-			title="Каталог релизов">
+					 title="Каталог релизов">
 		</page-header>
 
 		<div class="page-content-with-panel">
 			<div class="left-panel flex-column">
-				<div
-					class="simple-panel-icon-button"
-					title="Выполнить синхронизация релизов">
+				<div class="simple-panel-icon-button"
+					 title="Выполнить синхронизация релизов">
 					<img :src="'/static/icons/releases/synchronization.svg'" width="30" height="30" />
 				</div>
-				<div
-					v-if="selectedReleases.length > 0"
-					class="simple-panel-icon-button"
-					title="Добавить/удалить релизы в/из избранного">
+				<div v-if="selectedReleases.length > 0"
+					 class="simple-panel-icon-button"
+					 title="Добавить/удалить релизы в/из избранного">
 					<img :src="'/static/icons/releases/favorite.svg'" width="30" height="30" />
 				</div>
-				<div
-					v-if="selectedReleases.length"
-					class="simple-panel-icon-button"
-					title="Отметить релизы как просмотренные">
+				<div v-if="selectedReleases.length"
+					 class="simple-panel-icon-button"
+					 title="Отметить релизы как просмотренные">
 					<img :src="'/static/icons/releases/seen.svg'" width="30" height="30" />
 				</div>
-				<div
-					v-if="selectedReleases.length"
-					class="simple-panel-icon-button"
-					title="Добавлять/удалять релизы в/из кинозала">
+				<div v-if="selectedReleases.length"
+					 class="simple-panel-icon-button"
+					 title="Добавлять/удалять релизы в/из кинозала">
 					<img :src="'/static/icons/mainmenu/cinemahall.svg'" width="30" height="30" />
 				</div>
-				<div
-					class="simple-panel-icon-button"
-					title="Добавить фильтры для фильтрации по разным полям релиза">
+				<div class="simple-panel-icon-button"
+					 title="Добавить фильтры для фильтрации по разным полям релиза">
 					<img :src="'/static/icons/releases/search.svg'" width="30" height="30" />
 				</div>
-				<div
-					class="simple-panel-icon-button"
-					title="Посмотреть уведомления о непросмотренных изменениях">
+				<div class="simple-panel-icon-button"
+					 title="Посмотреть уведомления о непросмотренных изменениях">
 					<img :src="'/static/icons/releases/notifications.svg'" width="30" height="30" />
 				</div>
-				<div
-					class="simple-panel-icon-button"
-					title="Открыть карточку релиза выбранного случайным образом">
+				<div class="simple-panel-icon-button"
+					 title="Открыть карточку релиза выбранного случайным образом">
 					<img :src="'/static/icons/releases/random.svg'" width="30" height="30" />
 				</div>
-				<div
-					class="simple-panel-icon-button"
-					title="Настройка страницы Каталог релизов">
+				<div class="simple-panel-icon-button"
+					 title="Настройка страницы Каталог релизов"
+					 @click="showSettingsDialog()">
 					<img :src="'/static/icons/commonbuttons/settings.svg'" width="30" height="30" />
 				</div>
 			</div>
@@ -67,58 +60,53 @@
 				<div class="page-subheader page-line-pair">
 					<div class="flex-row flex-base-center" style="margin: 0 0 0 4px;">
 						<simple-select v-model:item="sectionSelected"
-							:options="sections"
-							style="width: 130px;"
-							@selected="sectionChanged($event)">
+									   :options="sections"
+									   style="width: 130px;"
+									   @selected="sectionChanged($event)">
 						</simple-select>
 						<div style="width: 4px;"></div>
 						<simple-select v-if="sectionSelected === 6" v-model:item="subSectionSelected"
-							:options="historySections"
-							style="width: 170px;"
-							@selected="subSectionSelected = -1;">
+									   :options="historySections"
+									   style="width: 170px;"
+									   @selected="subSectionSelected = -1;">
 						</simple-select>
 						<simple-select v-if="sectionSelected === 7" v-model:item="subSectionSelected"
-							:options="seenMarkSections"
-							style="width: 225px;"
-							@selected="subSectionSelected = -1;">
+									   :options="seenMarkSections"
+									   style="width: 225px;"
+									   @selected="subSectionSelected = -1;">
 						</simple-select>
 						<simple-select v-if="sectionSelected === 8" v-model:item="subSectionSelected"
-							:options="setsSections"
-							style="width: 220px;"
-							@selected="subSectionSelected = -1;">
+									   :options="setsSections"
+									   style="width: 220px;"
+									   @selected="subSectionSelected = -1;">
 						</simple-select>
 					</div>
 					<div class="flex-row flex-base-center flex-other-center">
 						<input v-model="nameFilter" type="text" class="simple-input" placeholder="Введите название релиза" />
 					</div>
 					<div class="flex-row flex-base-center" style="margin-right: 4px;">
-						<simple-select
-							v-model:item="sortingField"
-							:options="sortingFields"
-							style="width: 170px; margin-right: 2px;"
-							@selected="loadReleases()">
+						<simple-select v-model:item="sortingField"
+									   :options="sortingFields"
+									   style="width: 170px; margin-right: 2px;"
+									   @selected="loadReleases()">
 						</simple-select>
-						<div
-							class="simple-icon-button"
-							title="Направление сортировки поиска"
-							@click="sortDescending = !sortDescending;loadReleases();">
+						<div class="simple-icon-button"
+							 title="Направление сортировки поиска"
+							 @click="sortDescending = !sortDescending;loadReleases();">
 							<img :src="'/static/icons/releases/' + (sortDescending ? 'sortdescending' : 'sortascending') + '.svg'" width="20" height="20" />
 						</div>
 					</div>
 				</div>
 				<div ref="releasesContainer" class="releases-releases-container" @click.right.prevent="toggleSelectionMode()">
 					<div class="releases-release-item-group" v-for="releasesGroup in releasesGroups">
-						<div
-							class="releases-release-item"
-							:class="{'releases-release-teim-selected': selectionModeEnabled && selectedReleases.includes(release.id) }"
-							v-for="release in releasesGroup.releases"
-							:key="release.id"
-							@click.prevent="toggleSelectionRelease(release.id)"
-							:title="release.description">
-							<img
-								class="poster"
-								:src="'https://anilibria.top/' + release.poster"
-							/>
+						<div class="releases-release-item"
+							 :class="{'releases-release-teim-selected': selectionModeEnabled && selectedReleases.includes(release.id) }"
+							 v-for="release in releasesGroup.releases"
+							 :key="release.id"
+							 @click.prevent="toggleSelectionRelease(release.id)"
+							 :title="release.description">
+							<img class="poster"
+								 :src="'https://anilibria.top/' + release.poster" />
 							<div class="information">
 								<span class="header-text" style="margin-top: 10px;">{{ release.title }}</span>
 								<span class="normal-text">{{ release.status }} {{ release.season ? '- ' + release.season : '' }} {{ release.year }}</span>
@@ -138,13 +126,11 @@
 								<div class="flex-row flex-base-center">
 									<span class="header-text" style="margin-bottom: 4px;">{{ userMarks.favorites.includes(release.id) ? 'В Избранном' : '' }}</span>
 									<div class="flex-1"></div>
-									<img
-										v-if="selectionModeEnabled && selectedReleases.includes(release.id)"
-										style="margin-right: 4px; margin-bottom: 4px;"
-										src="/static/icons/releases/selecteditem.svg"
-										width="24"
-										height="24"
-									/>
+									<img v-if="selectionModeEnabled && selectedReleases.includes(release.id)"
+										 style="margin-right: 4px; margin-bottom: 4px;"
+										 src="/static/icons/releases/selecteditem.svg"
+										 width="24"
+										 height="24" />
 								</div>
 							</div>
 						</div>
@@ -159,6 +145,29 @@
 
 		<page-drawer v-model:main-menu-visible="mainMenuVisible">
 		</page-drawer>
+
+		<dialog ref="settingsdialog" class="native-dialog-rounded releases-settings">
+			<div class="dialog-content">
+				<h3>Настройки Каталога Релизов</h3>
+				<form method="dialog">
+					<div class="flex-column gap-8">
+						<div>Стартовая секция:</div>
+						<simple-select v-model:item="settings.startedSection"
+							:options="sections"
+							style="width: 130px;">
+						</simple-select>
+						<div>Уведомления:</div>
+						<simple-select v-model:item="settings.notificationMode"
+							:options="notificationModes"
+							style="width: 130px;">
+						</simple-select>
+					</div>
+					<div class="button-line">
+						<div class="action-button" @click="closeSettingsDialog()">Закрыть</div>
+					</div>
+				</form>
+			</div>
+		</dialog>
 	</div>
 
 	<script type="module">
@@ -190,7 +199,24 @@
 				const selectionModeEnabled = ref(false);
 				const selectedReleases = ref([]);
 				const releasesContainer = useTemplateRef('releasesContainer');
+				const settingsDialog = useTemplateRef('settingsdialog');
 				let currentTimer = -1;
+				const settings = ref({startedSection: 0, notificationMode: 0});
+
+				const notificationModes = [
+					{
+						title: "Выключены",
+						id: 0
+					},
+					{
+						title: "Все",
+						id: 1
+					},
+					{
+						title: "Избранное",
+						id: 2
+					},
+				];
 
 				const sections = [
 					{
@@ -506,6 +532,14 @@
 					window.location.href = '/static/videoplayer.html?mode=release&id=' + id;
 				}
 
+				function showSettingsDialog() {
+					settingsDialog.value.showModal();
+				}
+
+				function closeSettingsDialog() {
+					settingsDialog.value.close();
+				}
+
 				window.addEventListener('resize', () => {
 					const newRelasesInGroup = getReleasesGroupCount();
 					if (newRelasesInGroup !== relasesInGroup.value) {
@@ -546,7 +580,11 @@
 					selectedReleases,
 					toggleSelectionRelease,
 					getPublishDay,
-					openInVideoPlayer
+					openInVideoPlayer,
+					showSettingsDialog,
+					settings,
+					notificationModes,
+					closeSettingsDialog
 				}
 			}
 		});

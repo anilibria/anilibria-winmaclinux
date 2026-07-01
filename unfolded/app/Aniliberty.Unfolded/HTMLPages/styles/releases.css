@@ -79,3 +79,9 @@
     pointer-events: none;
     text-align: right;
 }
+
+.releases-settings {
+    width: 250px;
+    height: 200px;
+    font-size: var(--middle-font-size);
+}
