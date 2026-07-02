@@ -67,18 +67,15 @@
 						<div style="width: 4px;"></div>
 						<simple-select v-if="sectionSelected === 6" v-model:item="subSectionSelected"
 									   :options="historySections"
-									   style="width: 170px;"
-									   @selected="subSectionSelected = -1;">
+									   style="width: 170px;">
 						</simple-select>
 						<simple-select v-if="sectionSelected === 7" v-model:item="subSectionSelected"
 									   :options="seenMarkSections"
-									   style="width: 225px;"
-									   @selected="subSectionSelected = -1;">
+									   style="width: 225px;">
 						</simple-select>
 						<simple-select v-if="sectionSelected === 8" v-model:item="subSectionSelected"
 									   :options="setsSections"
-									   style="width: 220px;"
-									   @selected="subSectionSelected = -1;">
+									   style="width: 220px;">
 						</simple-select>
 					</div>
 					<div class="flex-row flex-base-center flex-other-center">
@@ -113,7 +110,12 @@
 								<span class="normal-text">{{ release.type }} {{ release.series }} {{ release.genres ? '- ' + release.genres.join(', ') : '' }}</span>
 								<span class="normal-text"><b>Команда:</b> {{ release.voices ? release.voices.join(', ') : '' }}</span>
 								<span class="digit-text flex-row flex-base-center gap-4">
-									<img src="/static/icons/releases/online.svg" width="20" height="20" @click.prevent="openInVideoPlayer(release.id)" />
+									<img class="clickable-image"
+										 src="/static/icons/releases/online.svg"
+										 width="20"
+										 height="20"
+										 @click.prevent="openInVideoPlayer(release.id)"
+										 title="Открыть релиз в видеоплеере" />
 									<span>{{ release.countVideos }}{{ userMarks.fullSeenReleases.includes(release.id) ? '/' + release.countVideos : (userMarks.seenSeries[release.id] ? '/' + userMarks.seenSeries[release.id] : '' ) }}</span>
 									<img src="/static/icons/mainmenu/torrent.svg" width="20" height="20" />
 									<span>{{ release.countTorrents }}</span>
@@ -152,14 +154,30 @@
 				<form method="dialog">
 					<div class="flex-column gap-8">
 						<div>Стартовая секция:</div>
-						<simple-select v-model:item="settings.startedSection"
-							:options="sections"
-							style="width: 130px;">
-						</simple-select>
+						<div class="flex-row flex-base-center">
+							<simple-select v-model:item="settings.startedSection"
+										   :options="sections"
+										   style="width: 130px;"
+										   @selected="settings.startedSubSection = -1;">
+							</simple-select>
+							<div v-if="settings.startedSection >= 6 && settings.startedSection < 9" style="margin-left: 4px; margin-right: 4px;">-</div>
+							<simple-select v-if="settings.startedSection === 6" v-model:item="settings.startedSubSection"
+										   :options="historySections"
+										   style="width: 170px;">
+							</simple-select>
+							<simple-select v-if="settings.startedSection === 7" v-model:item="settings.startedSubSection"
+										   :options="seenMarkSections"
+										   style="width: 225px;">
+							</simple-select>
+							<simple-select v-if="settings.startedSection === 8" v-model:item="settings.startedSubSection"
+										   :options="setsSections"
+										   style="width: 220px;">
+							</simple-select>
+						</div>
 						<div>Уведомления:</div>
 						<simple-select v-model:item="settings.notificationMode"
-							:options="notificationModes"
-							style="width: 130px;">
+									   :options="notificationModes"
+									   style="width: 130px;">
 						</simple-select>
 					</div>
 					<div class="button-line">
@@ -201,7 +219,7 @@
 				const releasesContainer = useTemplateRef('releasesContainer');
 				const settingsDialog = useTemplateRef('settingsdialog');
 				let currentTimer = -1;
-				const settings = ref({startedSection: 0, notificationMode: 0});
+				const settings = ref({ startedSection: 0, startedSubSection: 0,  notificationMode: 0 });
 
 				const notificationModes = [
 					{

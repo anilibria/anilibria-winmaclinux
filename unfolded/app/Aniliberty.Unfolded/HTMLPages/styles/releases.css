@@ -42,6 +42,10 @@
         font-size: 15px;
         text-wrap: balance;
     }
+
+    .clickable-image {
+        cursor: pointer;
+    }
 }
 
 .releases-release-teim-selected {
@@ -81,7 +85,7 @@
 }
 
 .releases-settings {
-    width: 250px;
+    width: 400px;
     height: 200px;
     font-size: var(--middle-font-size);
 }

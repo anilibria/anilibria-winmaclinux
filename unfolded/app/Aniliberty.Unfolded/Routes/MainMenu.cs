@@ -28,7 +28,7 @@ namespace Aniliberty.Unfolded.Routes
 					},
 					new MainMenuModel
 					{
-						Name = "Подборки",
+						Name = "Мои Подборки",
 						Icon = "mypage"
 					},
 					new MainMenuModel
