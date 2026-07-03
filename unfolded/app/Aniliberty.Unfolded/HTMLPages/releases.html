@@ -148,7 +148,7 @@
 		<page-drawer v-model:main-menu-visible="mainMenuVisible">
 		</page-drawer>
 
-		<dialog ref="settingsdialog" class="native-dialog-rounded releases-settings">
+		<dialog ref="settingsdialog" class="native-dialog-rounded releases-settings" @close="settingsClosed()">
 			<div class="dialog-content">
 				<h3>Настройки Каталога Релизов</h3>
 				<form method="dialog">
@@ -190,7 +190,7 @@
 
 	<script type="module">
 		import { createApp, ref, watch, useTemplateRef } from './vue.global.js'
-		import { getRelasesByFilter, getUserMarks } from './unfoldapi.js'
+		import { getRelasesByFilter, getUserMarks, getPageSettings, saveSettings } from './unfoldapi.js'
 		import Drawer from './components/Drawer.js'
 		import PageHeader from './components/PageHeader.js'
 		import SimpleSelect from './components/SimpleSelect.js'
@@ -219,7 +219,7 @@
 				const releasesContainer = useTemplateRef('releasesContainer');
 				const settingsDialog = useTemplateRef('settingsdialog');
 				let currentTimer = -1;
-				const settings = ref({ startedSection: 0, startedSubSection: 0,  notificationMode: 0 });
+				const settings = ref({ startedSection: 0, startedSubSection: -1, notificationMode: 0 });
 
 				const notificationModes = [
 					{
@@ -446,12 +446,8 @@
 					releasesGroups.value = result;
 				}
 
-				function sectionChanged(newValue) {
-					disableSelectionMode();
-					releasesContainer.value.scrollTo({ top: 0, behavior: "instant" });
-
-					subSectionSelected.value = -1;
-					switch (newValue) {
+				function adjustSortingBySection(section) {
+					switch (section) {
 						case 0: // all
 						case 1: // favorite
 						case 2: // notification
@@ -470,6 +466,15 @@
 							sortDescending.value = false;
 							break;
 					}
+				}
+
+				function sectionChanged(newValue) {
+					disableSelectionMode();
+					releasesContainer.value.scrollTo({ top: 0, behavior: "instant" });
+
+					subSectionSelected.value = -1;
+
+					adjustSortingBySection();
 
 					loadReleases();
 				}
@@ -530,6 +535,10 @@
 
 				async function loadAllData() {
 					userMarks.value = await getUserMarks();
+					settings.value = await getPageSettings('releases');
+					sectionSelected.value = settings.value.startedSection;
+					subSectionSelected.value = settings.value.startedSubSection;
+					adjustSortingBySection();
 					await loadReleases();
 				}
 
@@ -558,6 +567,10 @@
 					settingsDialog.value.close();
 				}
 
+				async function settingsClosed() {
+					await saveSettings('releases', settings.value);
+				}
+
 				window.addEventListener('resize', () => {
 					const newRelasesInGroup = getReleasesGroupCount();
 					if (newRelasesInGroup !== relasesInGroup.value) {
@@ -581,6 +594,7 @@
 				return {
 					mainMenuVisible,
 					sectionSelected,
+					subSectionSelected,
 					sections,
 					historySections,
 					setsSections,
@@ -602,7 +616,8 @@
 					showSettingsDialog,
 					settings,
 					notificationModes,
-					closeSettingsDialog
+					closeSettingsDialog,
+					settingsClosed
 				}
 			}
 		});

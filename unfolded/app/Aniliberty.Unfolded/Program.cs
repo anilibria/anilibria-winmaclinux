@@ -60,8 +60,10 @@ namespace Aniliberty.Unfolded
 			app.MapGet("/", () => Results.Redirect("/static/releases.html"));
 
 			GlobalConfig.Initialize(app);
+			await Settings.Initialize();
 			await Releases.Initialize();
 
+			Settings.RegisterRoutes(app);
 			Synchronize.RegisterRoutes(app);
 			Releases.RegisterRoutes(app);
 			VideoProxy.RegisterRoutes(app);

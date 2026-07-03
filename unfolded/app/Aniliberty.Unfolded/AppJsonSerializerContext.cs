@@ -2,6 +2,7 @@ using Aniliberty.Unfolded.Models.CacheModels;
 using Aniliberty.Unfolded.Models.MainMenus;
 using Aniliberty.Unfolded.Models.OriginalApi;
 using Aniliberty.Unfolded.Models.Releases;
+using Aniliberty.Unfolded.Models.Settings;
 using System.Text.Json.Serialization;
 
 namespace Aniliberty.Unfolded
@@ -32,6 +33,9 @@ namespace Aniliberty.Unfolded
 	[JsonSerializable(typeof(LoginPassAuthResponseModel))]
 	[JsonSerializable(typeof(UserCollections))]
 	[JsonSerializable(typeof(IEnumerable<ReleaseDisplayEpisodeModel>))]
+	[JsonSerializable(typeof(ApplicationSettingsModel))]
+	[JsonSerializable(typeof(ApplicationSettingsReleasesModel))]
+	[JsonSerializable(typeof(ApplicationSettingsVideoplayerModel))]
 	[JsonSourceGenerationOptions(PropertyNamingPolicy = JsonKnownNamingPolicy.CamelCase)]
 	internal partial class AppJsonSerializerContext : JsonSerializerContext
 	{

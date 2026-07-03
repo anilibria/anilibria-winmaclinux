@@ -79,9 +79,13 @@ namespace Aniliberty.Unfolded.Routes
 		internal static async Task CheckNotifications(IEnumerable<ReleaseForCompare> newReleases)
 		{
 			if (!m_releases.Any()) return;
+			if (Settings.Model.Releases.NotificationMode == 0) return; // not need notifications
+
+			var onlyFavorites = Settings.Model.Releases.NotificationMode == 2;
 
 			var torrentMap = m_torrents.ToLookup(a => a.ReleaseId, a => a.Size);
 			var currentReleases = m_releases
+				.Where(a => onlyFavorites ? m_favorites.Contains(a.Id) || m_localFavorites.Contains(a.Id) : true)
 				.Select(a => new ReleaseForCompare { Id = a.Id, CountVideos = a.CountVideos, TorrentsSize = torrentMap[a.Id].Any() ? torrentMap[a.Id].Sum() : 0 })
 				.ToDictionary(a => a.Id);
 

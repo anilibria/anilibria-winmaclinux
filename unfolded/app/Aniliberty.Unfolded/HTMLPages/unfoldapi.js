@@ -115,3 +115,19 @@ export async function authorizationByLoginPass(login, password) {
 
     return await response.json();
 };
+
+export async function getPageSettings(page) {
+    const response = await fetch('/settings/bypage?page=' + page);
+    return await response.json();
+};
+
+export async function saveSettings(page, model) {
+    await fetch('/settings/save/' + page, {
+        method: "POST",
+        body: JSON.stringify(model),
+        headers: {
+            "Content-Type": "application/json"
+        }
+    });
+};
+
