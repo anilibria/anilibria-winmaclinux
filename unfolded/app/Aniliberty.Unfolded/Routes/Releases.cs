@@ -94,7 +94,7 @@ namespace Aniliberty.Unfolded.Routes
 			var countReleasesTorrents = 0;
 			foreach (var newRelease in newReleases)
 			{
-				if (!currentReleases.ContainsKey(newRelease.Id))
+				if (!m_releasesMap.ContainsKey(newRelease.Id))
 				{
 					m_notificationReleases.Add(newRelease.Id);
 					countNewReleases++;

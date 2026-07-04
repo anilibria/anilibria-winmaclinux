@@ -95,7 +95,7 @@
 					</div>
 				</div>
 				<div ref="releasesContainer" class="releases-releases-container" @click.right.prevent="toggleSelectionMode()">
-					<div class="releases-release-item-group" v-for="releasesGroup in releasesGroups">
+					<div v-if="releasesGroups.length" class="releases-release-item-group" v-for="releasesGroup in releasesGroups">
 						<div class="releases-release-item"
 							 :class="{'releases-release-teim-selected': selectionModeEnabled && selectedReleases.includes(release.id) }"
 							 v-for="release in releasesGroup.releases"
@@ -135,6 +135,12 @@
 										 height="24" />
 								</div>
 							</div>
+						</div>
+					</div>
+					<div v-if="!releasesGroups.length" class="releases-empty-search flex-row flex-base-center flex-other-center">
+						<div>
+							По текущему фильтру ничего не найдено.<br>
+							Попробуйте указать другие фильтры или раздел и повторить поиск.
 						</div>
 					</div>
 				</div>
@@ -441,7 +447,7 @@
 						currentGroup.push(release);
 						iterator++;
 					}
-					result.push({ releases: currentGroup });
+					if (currentGroup.length) result.push({ releases: currentGroup });
 
 					releasesGroups.value = result;
 				}
