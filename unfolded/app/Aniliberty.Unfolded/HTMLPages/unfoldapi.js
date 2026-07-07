@@ -71,30 +71,33 @@ export async function getRelasesByFilter(model) {
     );
     return await response.json();
 };
-
 export async function getUserMarks() {
     const response = await fetch('/releases/marks');
     return await response.json();
 };
-
 export async function getReleaseEpisodes(releaseId) {
     const response = await fetch('/releases/episodes?releaseId=' + releaseId);
+    return await response.json();
+};
+export async function getRelease(id) {
+    const response = await fetch('/releases/release?id=' + id);
+    return await response.json();
+};
+export async function getReleaseTorrents(id) {
+    const response = await fetch('/releases/torrents?id=' + id);
     return await response.json();
 };
 
 export async function synchronizeReleases() {
     await fetch('/sync/full');
 };
-
 export async function synchronizeUser() {
     await fetch('/sync/user');
 };
-
 export async function synchronizeFirstStart() {
     const response = await fetch('/sync/firststart');
     return response.json();
 };
-
 export async function synchronizeStatus() {
     const response = await fetch('/sync/status');
     return response.json();
@@ -120,7 +123,6 @@ export async function getPageSettings(page) {
     const response = await fetch('/settings/bypage?page=' + page);
     return await response.json();
 };
-
 export async function saveSettings(page, model) {
     await fetch('/settings/save/' + page, {
         method: "POST",

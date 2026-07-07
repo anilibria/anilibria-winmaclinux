@@ -1,0 +1,91 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta name="color-scheme" content="light dark">
+	<title>Карточка релиза</title>
+	<link rel="icon" type="image/x-icon" href="/static/icons/logo/default.svg">
+	<link rel="stylesheet" href="main.css">
+	<link rel="stylesheet" href="mainmenu.css">
+	<link rel="stylesheet" href="pagestructure.css">
+	<link rel="stylesheet" href="styles/releasecard.css">
+</head>
+<body>
+	<div id="app">
+		<page-header v-model:main-menu-visible="mainMenuVisible"
+			title="Карточка релиза">
+		</page-header>
+
+		<div class="page-content-with-panel">
+			<div class="left-panel flex-column">
+				<div class="simple-panel-icon-button simple-popup-container"
+					 title="Открыть или скопировать magnet ссылки из торрентов">
+					<img :src="'/static/icons/releasecard/magnet.svg'" width="30" height="30" />
+					<div class="simple-popup-box releasecard-rightmenu">
+						<div v-for="torrent in releaseTorrents">
+							<a href="copyToClipboard(torrent.magnet)">Копировать magnet ссылку {{ torrent.displayForm }}</a>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="right-content">
+
+			</div>
+		</div>
+
+		<page-drawer v-model:main-menu-visible="mainMenuVisible">
+		</page-drawer>
+	</div>
+
+	<script type="module">
+		import { createApp, ref } from './vue.global.js'
+		import { getRelease, getReleaseTorrents, getReleaseEpisodes } from './unfoldapi.js'
+		import Drawer from './components/Drawer.js'
+		import PageHeader from './components/PageHeader.js'
+
+		const app = createApp({
+			components: {
+				'page-drawer': Drawer,
+				'page-header': PageHeader
+			},
+			setup() {
+				const mainMenuVisible = ref(false);
+				const releaseId = ref(null);
+				const releaseCard = ref({});
+				const releaseTorrents = ref([]);
+				const releaseEpisodes = ref([]);
+
+				async function copyToClipboard(text) {
+					await navigator.clipboard.writeText(text);
+				}
+
+				function getParameter() {
+					const urlParams = new URLSearchParams(window.location.search);
+					releaseId.value = urlParams.get('id');
+				}
+
+				async function getCard() {
+					releaseCard.value = await getRelease(releaseId.value);
+					releaseEpisodes.value = await getReleaseEpisodes(releaseId.value);
+					releaseTorrents.value = await getReleaseTorrents(releaseId.value);
+				}
+
+				getParameter();
+				getCard();
+
+				return {
+					mainMenuVisible,
+					releaseCard,
+					copyToClipboard,
+					releaseCard,
+					releaseTorrents,
+					releaseEpisodes
+				}
+			}
+		});
+
+		app.mount('#app')
+	</script>
+</body>
+</html>

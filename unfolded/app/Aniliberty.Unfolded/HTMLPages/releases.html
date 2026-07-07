@@ -530,7 +530,10 @@
 				}
 
 				function toggleSelectionRelease(id) {
-					if (!selectionModeEnabled.value) return;
+					if (!selectionModeEnabled.value) {
+						window.location.href = "releasecard.html?id=" + id;
+						return;
+					}
 
 					if (selectedReleases.value.includes(id)) {
 						selectedReleases.value = selectedReleases.value.filter(a => a !== id);

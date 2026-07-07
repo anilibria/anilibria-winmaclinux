@@ -3,6 +3,7 @@ using Aniliberty.Unfolded.Helpers;
 using Aniliberty.Unfolded.Models.CacheModels;
 using Aniliberty.Unfolded.Models.Releases;
 using Microsoft.AspNetCore.Mvc;
+using System.Globalization;
 using System.Text;
 using static Aniliberty.Unfolded.Helpers.JsonHelpers;
 
@@ -39,6 +40,7 @@ namespace Aniliberty.Unfolded.Routes
 			app.MapPost("/releases/list", ([FromBody] ReleasesListFiltersModel model) => List(model));
 			app.MapGet("/releases/marks", () => Marks());
 			app.MapGet("/releases/episodes", (int releaseId) => Episodes(releaseId));
+			app.MapGet("/releases/torrents", (int id) => Torrents(id));
 		}
 
 		internal static async Task Initialize()
@@ -100,6 +102,8 @@ namespace Aniliberty.Unfolded.Routes
 					countNewReleases++;
 					continue;
 				}
+
+				if (!currentReleases.ContainsKey(newRelease.Id)) continue;
 
 				var currentRelease = currentReleases[newRelease.Id];
 				if (currentRelease.CountVideos < newRelease.CountVideos)
@@ -333,6 +337,56 @@ namespace Aniliberty.Unfolded.Routes
 			}
 
 			return Results.Json(new List<ReleaseDisplayEpisodeModel>(), AppJsonSerializerContext.Default);
+		}
+
+		private static string GetSizeFromBytes(long bytes, int decimalPlaces = 1)
+		{
+			if (bytes < 0) throw new ArgumentOutOfRangeException(nameof(bytes));
+			if (bytes == 0) return "0 B";
+
+			string[] units = { "B", "KB", "MB", "GB", "TB", "PB", "EB" };
+
+			double value = bytes;
+			int unitIndex = 0;
+
+			while (value >= 1024 && unitIndex < units.Length - 1)
+			{
+				value /= 1024;
+				unitIndex++;
+			}
+
+			return value.ToString($"F{decimalPlaces}", CultureInfo.InvariantCulture) + " " + units[unitIndex];
+		}
+
+		internal static IResult Torrents(int releaseId)
+		{
+			var torrents = m_torrents
+				.Where(a => a.ReleaseId == releaseId)
+				.ToList();
+			if (torrents.Any())
+			{
+				return Results.Json(
+					torrents
+						.Select(
+							a => new ReleaseDisplayTorrentModel
+							{
+								Codec = a.Codec?.Description ?? "",
+								Description = a.Description ?? "",
+								Filename = a.Filename ?? "",
+								Hash = a.Hash,
+								Magnet = a.Magnet,
+								Quality = a.Quality?.Description ?? "",
+								Size = a.Size,
+								Time = a.Time,
+								Type = a.Type?.Description ?? "",
+								DisplayForm = $"{(a.Quality?.Description ?? "")} {(a.Codec?.Description ?? "")} [{a.Description ?? ""}] {GetSizeFromBytes(a.Size)}"
+							}
+						),
+					AppJsonSerializerContext.Default
+				);
+			}
+
+			return Results.Json(new List<ReleaseDisplayTorrentModel>(), AppJsonSerializerContext.Default);
 		}
 
 	}
