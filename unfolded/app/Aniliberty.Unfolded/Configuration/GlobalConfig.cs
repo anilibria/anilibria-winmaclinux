@@ -49,6 +49,22 @@ namespace Aniliberty.Unfolded.Configuration
 			}
 		}
 
+		public static void OpenPathInSystem(string path)
+		{
+			if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+			{
+				Process.Start(new ProcessStartInfo { FileName = path, UseShellExecute = true });
+			}
+			else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+			{
+				Process.Start("xdg-open", path);
+			}
+			else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+			{
+				Process.Start("open", path);
+			}
+		}
+
 		private static int GetAvailablePort(int startingPort)
 		{
 			var properties = IPGlobalProperties.GetIPGlobalProperties();

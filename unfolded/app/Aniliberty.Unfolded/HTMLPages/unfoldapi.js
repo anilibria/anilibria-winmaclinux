@@ -71,8 +71,12 @@ export async function getRelasesByFilter(model) {
     );
     return await response.json();
 };
-export async function getUserMarks() {
-    const response = await fetch('/releases/marks');
+export async function getUserMarks(onlyForReleases) {
+    let onlyForReleaseParameter = '';
+    if (onlyForReleases) {
+        onlyForReleaseParameter = onlyForReleases.map(a => `onlyForReleases=${a}`).join('&')
+    }
+    const response = await fetch('/releases/marks' + (onlyForReleaseParameter ? `?${onlyForReleaseParameter}` : ''));
     return await response.json();
 };
 export async function getReleaseEpisodes(releaseId) {
@@ -86,6 +90,9 @@ export async function getRelease(id) {
 export async function getReleaseTorrents(id) {
     const response = await fetch('/releases/torrents?id=' + id);
     return await response.json();
+};
+export async function openMagnetInSystem(magnet) {
+    await fetch('/releases/openmagnet?magnet=' + magnet);
 };
 
 export async function synchronizeReleases() {

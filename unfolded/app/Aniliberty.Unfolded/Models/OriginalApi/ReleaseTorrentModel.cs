@@ -12,7 +12,7 @@ namespace Aniliberty.Unfolded.Models.OriginalApi
 		[JsonPropertyName("id")]
 		public int Id { get; init; }
 
-		[JsonPropertyName("marnet")]
+		[JsonPropertyName("magnet")]
 		public string Magnet { get; init; } = "";
 
 		[JsonPropertyName("filename")]

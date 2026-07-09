@@ -38,9 +38,10 @@ namespace Aniliberty.Unfolded.Routes
 		{
 			app.MapGet("/releases/release", ([FromQuery] int id) => Release(id));
 			app.MapPost("/releases/list", ([FromBody] ReleasesListFiltersModel model) => List(model));
-			app.MapGet("/releases/marks", () => Marks());
+			app.MapGet("/releases/marks", ([FromQuery] int[]? onlyForReleases) => Marks(onlyForReleases));
 			app.MapGet("/releases/episodes", (int releaseId) => Episodes(releaseId));
 			app.MapGet("/releases/torrents", (int id) => Torrents(id));
+			app.MapGet("/releases/openmagnet", (string magnet) => OpenMagnet(magnet));
 		}
 
 		internal static async Task Initialize()
@@ -164,12 +165,14 @@ namespace Aniliberty.Unfolded.Routes
 			return Results.Json(filteredItems, AppJsonSerializerContext.Default);
 		}
 
-		internal static IResult Marks()
+		internal static IResult Marks(IEnumerable<int>? onlyForReleases)
 		{
 			Dictionary<int, int> releaseSeries = new Dictionary<int, int>();
 			var fullReleaseSeens = new HashSet<int>();
 			foreach (var releaseEpisodes in m_episodes)
 			{
+				if (onlyForReleases != null && !onlyForReleases.Contains(releaseEpisodes.ReleaseId)) continue;
+
 				if (!m_releasesMap.ContainsKey(releaseEpisodes.ReleaseId)) continue;
 
 				var release = m_releasesMap[releaseEpisodes.ReleaseId];
@@ -186,7 +189,7 @@ namespace Aniliberty.Unfolded.Routes
 			}
 			var result = new MarksModel
 			{
-				Favorites = m_favorites,
+				Favorites = onlyForReleases != null ? m_favorites.Where(a => onlyForReleases.Contains(a)) : m_favorites,
 				SeenSeries = releaseSeries,
 				FullSeenReleases = fullReleaseSeens
 			};
@@ -387,6 +390,15 @@ namespace Aniliberty.Unfolded.Routes
 			}
 
 			return Results.Json(new List<ReleaseDisplayTorrentModel>(), AppJsonSerializerContext.Default);
+		}
+
+		internal static IResult OpenMagnet(string magnet)
+		{
+			if (!magnet.StartsWith("magnet:?")) return Results.Ok();
+
+			GlobalConfig.OpenPathInSystem(magnet);
+
+			return Results.Ok();
 		}
 
 	}

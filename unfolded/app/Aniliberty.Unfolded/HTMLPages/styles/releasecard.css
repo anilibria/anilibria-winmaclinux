@@ -1,4 +1,76 @@
 ﻿.releasecard-rightmenu {
     left: 100%;
     top: 0;
+    transform: unset;
+    font-size: 13px;
 }
+
+.releasecard-rightmenu-magnet {
+    width: 280px;
+    max-width: 400px;
+    padding: 8px;
+}
+
+.releasecard-maininfo-container {
+    display: flex;
+    flex-direction: row;
+
+    .poster {
+        margin-top: 4px;
+        margin-left: 4px;
+        width: 280px;
+        height: 390px;
+        border-color: var(--release-item-poster-border);
+        border-width: 2px;
+        border-style: solid;
+        border-radius: 4px;
+    }
+
+    .card-header {
+        font-size: 20px;
+        color: var(--page-header-text);
+    }
+
+    .card-field {
+        font-size: 16px;
+        color: var(--common-text-color);
+    }
+}
+
+.releasecard-description-container {
+    font-size: 14px;
+    padding: 4px;
+}
+
+.releasecard-episodes-container {
+
+    .header {
+        width: 100%;
+    }
+
+    .episodes-list {
+        font-size: 14px;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 7px;
+        overflow-x: scroll;
+        width: calc(100vw - 58px);
+        padding-left: 8px;
+        padding-right: 8px;
+    }
+
+    .poster-episode {
+        border-radius: 8px;
+        object-fit: cover;
+        object-position: center;
+        border-width: 2px;
+        border-color: var(--release-item-background-shadow);
+        border-style: solid;
+
+        &:hover {
+            filter: sepia(100%);
+        }
+    }
+}
+

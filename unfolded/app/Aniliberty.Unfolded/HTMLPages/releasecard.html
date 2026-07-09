@@ -19,18 +19,86 @@
 
 		<div class="page-content-with-panel">
 			<div class="left-panel flex-column">
-				<div class="simple-panel-icon-button simple-popup-container"
-					 title="Открыть или скопировать magnet ссылки из торрентов">
-					<img :src="'/static/icons/releasecard/magnet.svg'" width="30" height="30" />
+				<div class="simple-panel-icon-button simple-popup-container">
+					<div class="full-width-height flex-row flex-base-center flex-other-center">
+						<img :src="'/static/icons/commonbuttons/seen.svg'" width="30" height="30" />
+					</div>
+				</div>
+				<div class="simple-panel-icon-button simple-popup-container">
+					<div class="full-width-height flex-row flex-base-center flex-other-center">
+						<img :src="'/static/icons/releases/favorite.svg'" width="30" height="30" />
+					</div>
+				</div>
+				<div class="simple-panel-icon-button simple-popup-container">
+					<div class="full-width-height flex-row flex-base-center flex-other-center">
+						<img :src="'/static/icons/releasecard/magnet.svg'" width="30" height="30" />
+					</div>
 					<div class="simple-popup-box releasecard-rightmenu">
-						<div v-for="torrent in releaseTorrents">
-							<a href="copyToClipboard(torrent.magnet)">Копировать magnet ссылку {{ torrent.displayForm }}</a>
+						<div class="releasecard-rightmenu-magnet">
+							<div v-for="torrent in releaseTorrents">
+								<a class="default-link" @click.prevent="copyToClipboard(torrent.magnet)" href="">Копировать {{ torrent.displayForm }}</a>
+							</div>
+							<div v-for="torrent in releaseTorrents">
+								<a class="default-link" @click.prevent="openMagnet(torrent.magnet)" href="">Открыть {{ torrent.displayForm }}</a>
+							</div>
 						</div>
 					</div>
 				</div>
 			</div>
 			<div class="right-content">
-
+				<div class="releasecard-maininfo-container">
+					<img class="poster" :src="'https://anilibria.top/' + releaseCard.poster" />
+					<div class="flex-column gap-3" style="margin-left: 8px;">
+						<div class="card-header">{{ releaseCard.title }}</div>
+						<div class="card-field">{{ releaseCard.originalName }}</div>
+						<div class="card-field"><b>Статус:</b> {{ releaseCard.status }}</div>
+						<div class="card-field"><b>Год:</b> {{ releaseCard.year }}</div>
+						<div class="card-field"><b>Сезон:</b> {{ releaseCard.season }}</div>
+						<div class="card-field"><b>Тип:</b> {{ releaseCard.type }}</div>
+						<div class="card-field"><b>Жанры:</b> {{ releaseCard.type }}</div>
+						<div class="card-field"><b>Команда:</b> {{ releaseCard.type }}</div>
+						<div v-if="releaseEpisodes.length" style="height: 4px;"></div>
+						<div v-if="releaseEpisodes.length" class="flex-row flex-base-center gap-8">
+							<span>Доступно {{ releaseEpisodes.length }} серий</span>
+							<div class="action-button">Смотреть онлайн</div>
+						</div>
+						<div v-if="releaseTorrents.length" style="height: 4px;"></div>
+						<div v-if="releaseTorrents.length" class="flex-row flex-base-center gap-8">
+							<span>Доступно {{ releaseTorrents.length }} торрентов</span>
+							<div class="action-button">Скачать</div>
+							<span>или</span>
+							<div class="action-button">Смотреть торрент</div>
+						</div>
+						<div v-if="countSeen > 0" style="height: 4px;"></div>
+						<div v-if="countSeen > 0">
+							<span>
+								Просмотрено {{ countSeen }} серий
+							</span>
+						</div>
+						<div style="height: 4px;"></div>
+						<div class="flex-row flex-base-center gap-8">
+							<div class="action-button" @click="openComments()">Открыть комментарии</div>
+							<div class="action-button" @click="openOnWebSite()">Открыть на сайте</div>
+						</div>
+					</div>
+				</div>
+				<div class="releasecard-description-container" v-if="releaseCard.description">
+					<b>Описание:</b> {{ releaseCard.description }}
+				</div>
+				<div style="height: 8px;"></div>
+				<div class="releasecard-episodes-container" v-if="releaseCard.description">
+					<div class="header flex-row flex-base-center flex-other-center">
+						<span>Cерии</span>
+					</div>
+					<div class="episodes-list">
+						<div v-for="episode in releaseEpisodes">
+							<img class="poster-episode" :src="'https://aniliberty.top' + episode.preview" width="400" height="270" />
+							<div class="full-width flex-row flex-base-center flex-other-center">
+								<span>{{ episode.name || "&nbsp" }}</span>
+							</div>
+						</div>
+					</div>
+				</div>
 			</div>
 		</div>
 
@@ -40,7 +108,7 @@
 
 	<script type="module">
 		import { createApp, ref } from './vue.global.js'
-		import { getRelease, getReleaseTorrents, getReleaseEpisodes } from './unfoldapi.js'
+		import { getRelease, getReleaseTorrents, getReleaseEpisodes, getUserMarks, openMagnetInSystem } from './unfoldapi.js'
 		import Drawer from './components/Drawer.js'
 		import PageHeader from './components/PageHeader.js'
 
@@ -55,9 +123,15 @@
 				const releaseCard = ref({});
 				const releaseTorrents = ref([]);
 				const releaseEpisodes = ref([]);
+				const userMarks = ref([]);
+				const countSeen = ref(0);
 
 				async function copyToClipboard(text) {
 					await navigator.clipboard.writeText(text);
+				}
+
+				async function openMagnet(magnet) {
+					await openMagnetInSystem(magnet);
 				}
 
 				function getParameter() {
@@ -69,6 +143,18 @@
 					releaseCard.value = await getRelease(releaseId.value);
 					releaseEpisodes.value = await getReleaseEpisodes(releaseId.value);
 					releaseTorrents.value = await getReleaseTorrents(releaseId.value);
+					const releaseCardId = releaseCard.value.id;
+					userMarks.value = await getUserMarks([releaseCardId]);
+					countSeen.value = userMarks.value.fullSeenReleases.includes(releaseCardId) ? releaseEpisodes.value.length : (userMarks.value.seenSeries[releaseCardId] ? userMarks.value.seenSeries[releaseCardId] : '');
+				}
+
+				function openOnWebSite() {
+					window.open("https://aniliberty.top/anime/releases/release/" + releaseCard.value.code + "/episodes", '_blank');
+				}
+
+				function openComments() {
+					const domain = "https://vk.com/widget_comments.php?app=5315207&width=100%&_ver=1&limit=8&norealtime=0&url=https://www.anilibria.tv/release/";
+					window.open(domain + releaseCard.value.code + ".html", '_blank', 'noreferrer');
 				}
 
 				getParameter();
@@ -80,7 +166,12 @@
 					copyToClipboard,
 					releaseCard,
 					releaseTorrents,
-					releaseEpisodes
+					releaseEpisodes,
+					userMarks,
+					countSeen,
+					openMagnet,
+					openOnWebSite,
+					openComments
 				}
 			}
 		});
