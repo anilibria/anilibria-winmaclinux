@@ -65,6 +65,12 @@ namespace Aniliberty.Unfolded.Routes
 				Console.WriteLine("User Data...");
 				var content = await File.ReadAllTextAsync(userDataPath);
 				var userCollections = DeserializeFromJson<UserCollections>(content);
+				if (userCollections is not null)
+				{
+					m_favorites = userCollections.CloudFavorites.ToHashSet();
+					m_localFavorites = userCollections.LocalFavorites.ToHashSet();
+					m_seenEpisodes = userCollections.SeenEpisodes.ToHashSet();
+				}
 			}
 
 			Console.WriteLine("Initialize Releases completed!");
@@ -153,6 +159,17 @@ namespace Aniliberty.Unfolded.Routes
 			await WebSocketHub.SendMessage("ntc", messages.ToString());
 
 			return countNewReleases > 0;
+		}
+
+		internal static async Task SaveOnlyFavorites(IEnumerable<int>? favorites, IEnumerable<int>? localFavorites)
+		{
+			var saveModel = new UserCollections
+			{
+				CloudFavorites = favorites is not null ? favorites : m_favorites,
+				LocalFavorites = localFavorites is not null ? localFavorites : m_localFavorites,
+				SeenEpisodes = m_seenEpisodes
+			};
+			await File.WriteAllTextAsync(Path.Combine(GlobalConfig.PathToCache(), "userdata.cache"), SerializeToJson(saveModel));
 		}
 
 		internal static async Task SaveUserData(IEnumerable<int> favorites, IEnumerable<IEnumerable<object>> seenMarks)

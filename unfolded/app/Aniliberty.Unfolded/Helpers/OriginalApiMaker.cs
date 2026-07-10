@@ -102,6 +102,24 @@ namespace Aniliberty.Unfolded.Helpers
 			return await PerformRequestWithAuthorization<IEnumerable<int>>(httpClient, $"{ApiDomain}/api/v1/accounts/users/me/favorites/ids", "user favorites", token);
 		}
 
+		static public async Task AddUserFavorites(HttpClient httpClient, string token, IEnumerable<int> ids)
+		{
+			var model = ids
+				.Select(a => new FavoritesEditModel { ReleaseId = a })
+				.ToList();
+
+			await PerformPostRequest<IEnumerable<int>, List<FavoritesEditModel>>(httpClient, $"{ApiDomain}/api/v1/accounts/users/me/favorites", "user favorites", model, AppJsonSerializerContext.Default.ListFavoritesEditModel, token);
+		}
+
+		static public async Task DeleteUserFavorites(HttpClient httpClient, string token, IEnumerable<int> ids)
+		{
+			var model = ids
+				.Select(a => new FavoritesEditModel { ReleaseId = a })
+				.ToList();
+
+			await PerformPostRequest<IEnumerable<int>, List<FavoritesEditModel>>(httpClient, $"{ApiDomain}/api/v1/accounts/users/me/favorites", "user favorites", model, AppJsonSerializerContext.Default.ListFavoritesEditModel, token, method: HttpMethod.Delete);
+		}
+
 		static public async Task<IEnumerable<IEnumerable<object>>> GetUserSeens(HttpClient httpClient, string token)
 		{
 			return await PerformRequestWithAuthorization<IEnumerable<IEnumerable<object>>>(httpClient, $"{ApiDomain}/api/v1/accounts/users/me/views/timecodes", "user seen marks", token);
@@ -176,9 +194,9 @@ namespace Aniliberty.Unfolded.Helpers
 			return content == null ? throw new Exception($"Can't serialize response for {requestName}") : content;
 		}
 
-		private static async Task<T> PerformPostRequest<T, TModel>(HttpClient httpClient, string url, string requestName, TModel model, JsonTypeInfo<TModel> typeInfo, string? token = default)
+		private static async Task<T> PerformPostRequest<T, TModel>(HttpClient httpClient, string url, string requestName, TModel model, JsonTypeInfo<TModel> typeInfo, string? token = default, HttpMethod? method = default)
 		{
-			var message = new HttpRequestMessage(HttpMethod.Post, url);
+			var message = new HttpRequestMessage(method == default ? HttpMethod.Post : method, url);
 			if (!string.IsNullOrEmpty(token)) message.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
 			message.Content = JsonContent.Create(model, typeInfo);
 

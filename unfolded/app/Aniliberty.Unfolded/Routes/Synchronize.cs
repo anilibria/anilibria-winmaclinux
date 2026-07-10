@@ -27,6 +27,10 @@ namespace Aniliberty.Unfolded.Routes
 			app.MapGet("/sync/user", ([FromServices] IHttpClientFactory clientFactory, HttpContext context) => User(clientFactory, context));
 			app.MapGet("/sync/firststart", () => Results.Content(m_firstlyStarted ? "true" : "false"));
 			app.MapGet("/sync/status", () => Results.Content(m_synchronizationStarted ? "true" : "false"));
+			app.MapGet("/sync/addfavorites", (IHttpClientFactory clientFactory, HttpContext context, [FromQuery] int[] ids) => AddFavorites(clientFactory, context, ids));
+			app.MapGet("/sync/removefavorites", (IHttpClientFactory clientFactory, HttpContext context, [FromQuery] int[] ids) => RemoveFavorites(clientFactory, context, ids));
+			app.MapGet("/sync/addseens", (IHttpClientFactory clientFactory, HttpContext context, [FromQuery] int[] ids) => AddSeens(clientFactory, context, ids));
+			app.MapGet("/sync/removeseens", (IHttpClientFactory clientFactory, HttpContext context, [FromQuery] int[] ids) => RemoveSeens(clientFactory, context, ids));
 		}
 
 		public static async Task<IResult> Full(IHttpClientFactory clientFactory, bool checkLatest)
@@ -457,6 +461,70 @@ namespace Aniliberty.Unfolded.Routes
 			}
 
 			return partsCount;
+		}
+
+		internal static async Task<IResult> AddFavorites(IHttpClientFactory clientFactory, HttpContext context, int[] ids)
+		{
+			if (!ids.Any()) return Results.Ok();
+
+			var httpClient = clientFactory.CreateClient();
+			httpClient.Timeout = TimeSpan.FromSeconds(5);
+
+			var token = context.Request.Cookies?.FirstOrDefault(a => a.Key == Authorize.CookieName).Value ?? null;
+			if (token != null)
+			{
+				await OriginalApiMaker.AddUserFavorites(httpClient, token, ids);
+				var favorites = await OriginalApiMaker.GetUserFavorites(httpClient, token);
+				await Releases.SaveOnlyFavorites(favorites, null);
+			}
+			else
+			{
+				//TODO: save to local favorites
+			}
+
+			return Results.NotFound();
+		}
+
+		internal static async Task<IResult> RemoveFavorites(IHttpClientFactory clientFactory, HttpContext context, int[] ids)
+		{
+			if (!ids.Any()) return Results.Ok();
+
+			var httpClient = clientFactory.CreateClient();
+			httpClient.Timeout = TimeSpan.FromSeconds(5);
+
+			var token = context.Request.Cookies?.FirstOrDefault(a => a.Key == Authorize.CookieName).Value ?? null;
+			if (token != null)
+			{
+				await OriginalApiMaker.DeleteUserFavorites(httpClient, token, ids);
+				var favorites = await OriginalApiMaker.GetUserFavorites(httpClient, token);
+				await Releases.SaveOnlyFavorites(favorites, null);
+			}
+			else
+			{
+				//TODO: remove from local favorites
+			}
+
+			return Results.NotFound();
+		}
+
+		internal static IResult AddSeens(IHttpClientFactory clientFactory, HttpContext context, int[] ids)
+		{
+			if (!ids.Any()) return Results.Ok();
+
+			var httpClient = clientFactory.CreateClient();
+			httpClient.Timeout = TimeSpan.FromSeconds(5);
+
+			return Results.NotFound();
+		}
+
+		internal static IResult RemoveSeens(IHttpClientFactory clientFactory, HttpContext context, int[] ids)
+		{
+			if (!ids.Any()) return Results.Ok();
+
+			var httpClient = clientFactory.CreateClient();
+			httpClient.Timeout = TimeSpan.FromSeconds(5);
+
+			return Results.NotFound();
 		}
 
 	}

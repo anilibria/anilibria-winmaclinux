@@ -109,6 +109,14 @@ export async function synchronizeStatus() {
     const response = await fetch('/sync/status');
     return response.json();
 };
+export async function addFavorites(ids) {
+    const array = ids.map(a => `ids=${a}`).join('&');
+    await fetch('/sync/addfavorites?' + array);
+};
+export async function removeFavorites(ids) {
+    const array = ids.map(a => `ids=${a}`).join('&');
+    await fetch('/sync/removefavorites?' + array);
+};
 
 export async function authorizationByLoginPass(login, password) {
     const response = await fetch(

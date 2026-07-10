@@ -27,6 +27,12 @@
 					<div class="full-width-height flex-row flex-base-center flex-other-center">
 						<img :src="'/static/icons/releases/favorite.svg'" width="30" height="30" />
 					</div>
+					<div class="simple-popup-box releasecard-rightmenu">
+						<div class="releasecard-rightmenu-favorites flex-column">
+							<a v-if="!inFavorites" class="default-link" @click.prevent="addToFavorites()" href="">Добавить в избранное</a>
+							<a v-if="inFavorites" class="default-link" @click.prevent="removeFromFavorites()" href="">Удалить из избранного</a>
+						</div>
+					</div>
 				</div>
 				<div class="simple-panel-icon-button simple-popup-container">
 					<div class="full-width-height flex-row flex-base-center flex-other-center">
@@ -107,7 +113,10 @@
 
 	<script type="module">
 		import { createApp, ref } from './vue.global.js'
-		import { getRelease, getReleaseTorrents, getReleaseEpisodes, getUserMarks, openMagnetInSystem } from './unfoldapi.js'
+		import {
+			getRelease, getReleaseTorrents, getReleaseEpisodes, getUserMarks,
+			openMagnetInSystem, addFavorites, removeFavorites
+		} from './unfoldapi.js'
 		import Drawer from './components/Drawer.js'
 		import PageHeader from './components/PageHeader.js'
 
@@ -124,6 +133,7 @@
 				const releaseEpisodes = ref([]);
 				const userMarks = ref([]);
 				const countSeen = ref(0);
+				const inFavorites = ref(false);
 
 				async function copyToClipboard(text) {
 					await navigator.clipboard.writeText(text);
@@ -145,6 +155,7 @@
 					const releaseCardId = releaseCard.value.id;
 					userMarks.value = await getUserMarks([releaseCardId]);
 					countSeen.value = userMarks.value.fullSeenReleases.includes(releaseCardId) ? releaseEpisodes.value.length : (userMarks.value.seenSeries[releaseCardId] ? userMarks.value.seenSeries[releaseCardId] : '');
+					inFavorites.value = userMarks.value.favorites.includes(releaseCardId);
 				}
 
 				function openOnWebSite() {
@@ -164,6 +175,16 @@
 					window.location.href = '/static/videoplayer.html?mode=release&id=' + releaseCard.value.id + '&episode=' + episodeId;
 				}
 
+				async function addToFavorites() {
+					await addFavorites([releaseCard.value.id]);
+					inFavorites.value = true;
+				}
+
+				async function removeFromFavorites() {
+					await removeFavorites([releaseCard.value.id]);
+					inFavorites.value = false;
+				}
+
 				getParameter();
 				getCard();
 
@@ -180,7 +201,10 @@
 					openOnWebSite,
 					openComments,
 					watchOnline,
-					watchSerie
+					watchSerie,
+					addToFavorites,
+					removeFromFavorites,
+					inFavorites
 				}
 			}
 		});

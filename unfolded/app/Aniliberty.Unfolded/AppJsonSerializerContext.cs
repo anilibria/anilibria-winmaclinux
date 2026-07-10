@@ -38,6 +38,8 @@ namespace Aniliberty.Unfolded
 	[JsonSerializable(typeof(ApplicationSettingsVideoplayerModel))]
 	[JsonSerializable(typeof(IEnumerable<ReleaseDisplayTorrentModel>))]
 	[JsonSerializable(typeof(List<ReleaseSeriesSaveModel>))]
+	[JsonSerializable(typeof(List<FavoritesEditModel>))]
+	[JsonSerializable(typeof(IEnumerable<int>))]
 	[JsonSourceGenerationOptions(PropertyNamingPolicy = JsonKnownNamingPolicy.CamelCase)]
 	internal partial class AppJsonSerializerContext : JsonSerializerContext
 	{
