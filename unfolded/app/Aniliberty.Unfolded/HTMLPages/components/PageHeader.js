@@ -49,6 +49,8 @@ export default {
 				return;
 			}
 			if (message.indexOf('percent') === 0) {
+				if (!synchronizationRunned.value) synchronizationRunned.value = true;
+
 				synchronizationPercent.value = parseInt(message.replace('percent', ''));
 			}
 		}

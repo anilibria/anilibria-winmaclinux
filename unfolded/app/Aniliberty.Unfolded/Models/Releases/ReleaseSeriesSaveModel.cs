@@ -12,14 +12,8 @@ namespace Aniliberty.Unfolded.Models.Releases
 		[JsonPropertyName("pos")]
 		public string Poster { get; init; } = "";
 
-		[JsonPropertyName("poss")]
-		public IEnumerable<string> Posters { get; init; } = [];
-
-		[JsonPropertyName("relids")]
-		public IEnumerable<int> ReleasesIds { get; init; } = [];
-
-		[JsonPropertyName("tits")]
-		public IEnumerable<string> Titles { get; init; } = [];
+		[JsonPropertyName("rels")]
+		public IEnumerable<ReleaseSeriesReleaseSaveModel> Releases { get; set; } = Enumerable.Empty<ReleaseSeriesReleaseSaveModel>();
 
 		[JsonPropertyName("tit")]
 		public string Title { get; init; } = "";
@@ -32,6 +26,19 @@ namespace Aniliberty.Unfolded.Models.Releases
 
 		[JsonPropertyName("rat")]
 		public decimal Rating { get; set; }
+
+	}
+
+	public record ReleaseSeriesReleaseSaveModel
+	{
+		[JsonPropertyName("id")]
+		public int Id { get; set; }
+
+		[JsonPropertyName("ti")]
+		public string Title { get; init; } = "";
+
+		[JsonPropertyName("po")]
+		public string Poster { get; init; } = "";
 
 	}
 

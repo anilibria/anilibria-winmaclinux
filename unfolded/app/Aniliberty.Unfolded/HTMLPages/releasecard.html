@@ -13,8 +13,7 @@
 </head>
 <body>
 	<div id="app">
-		<page-header v-model:main-menu-visible="mainMenuVisible"
-			title="Карточка релиза">
+		<page-header v-model:main-menu-visible="mainMenuVisible" title="Карточка релиза">
 		</page-header>
 
 		<div class="page-content-with-panel">
@@ -60,7 +59,7 @@
 						<div v-if="releaseEpisodes.length" style="height: 4px;"></div>
 						<div v-if="releaseEpisodes.length" class="flex-row flex-base-center gap-8">
 							<span>Доступно {{ releaseEpisodes.length }} серий</span>
-							<div class="action-button">Смотреть онлайн</div>
+							<div class="action-button" @click="watchOnline()">Смотреть онлайн</div>
 						</div>
 						<div v-if="releaseTorrents.length" style="height: 4px;"></div>
 						<div v-if="releaseTorrents.length" class="flex-row flex-base-center gap-8">
@@ -92,7 +91,7 @@
 					</div>
 					<div class="episodes-list">
 						<div v-for="episode in releaseEpisodes">
-							<img class="poster-episode" :src="'https://aniliberty.top' + episode.preview" width="400" height="270" />
+							<img @click="watchSerie(episode.id)" class="poster-episode" :src="'https://aniliberty.top' + episode.preview" width="400" height="270" />
 							<div class="full-width flex-row flex-base-center flex-other-center">
 								<span>{{ episode.name || "&nbsp" }}</span>
 							</div>
@@ -157,6 +156,14 @@
 					window.open(domain + releaseCard.value.code + ".html", '_blank', 'noreferrer');
 				}
 
+				function watchOnline() {
+					window.location.href = '/static/videoplayer.html?mode=release&id=' + releaseCard.value.id;
+				}
+
+				function watchSerie(episodeId) {
+					window.location.href = '/static/videoplayer.html?mode=release&id=' + releaseCard.value.id + '&episode=' + episodeId;
+				}
+
 				getParameter();
 				getCard();
 
@@ -171,7 +178,9 @@
 					countSeen,
 					openMagnet,
 					openOnWebSite,
-					openComments
+					openComments,
+					watchOnline,
+					watchSerie
 				}
 			}
 		});

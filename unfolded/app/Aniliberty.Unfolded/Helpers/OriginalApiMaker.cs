@@ -84,7 +84,7 @@ namespace Aniliberty.Unfolded.Helpers
 
 		static public async Task<FranchiseReleasesModel> GetFranchisesReleases(HttpClient httpClient, string id)
 		{
-			return await PerformRequest<FranchiseReleasesModel>(httpClient, $"{ApiDomain}/api/v1/anime/franchises/" + id, "franchise releases");
+			return await PerformRequest<FranchiseReleasesModel>(httpClient, $"{ApiDomain}/api/v1/anime/franchises/" + id + "?include=franchise_releases.release_id,franchise_releases.sort_order", "franchise releases");
 		}
 
 		static public async Task<ReleaseDataFullCollectionModel> GetReleasesInnerCollections(HttpClient httpClient, IEnumerable<int> releasesId)

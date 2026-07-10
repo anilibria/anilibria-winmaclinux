@@ -1,15 +1,17 @@
-﻿namespace Aniliberty.Unfolded.Models.OriginalApi
+﻿using System.Text.Json.Serialization;
+
+namespace Aniliberty.Unfolded.Models.OriginalApi
 {
 
-    public class FranchiseReleasesItemModel
-    {
+	public class FranchiseReleasesItemModel
+	{
 
-        public int SortOrder { get; set; }
+		[JsonPropertyName("sort_order")]
+		public int SortOrder { get; set; }
 
-        public int ReleaseId { get; set; }
+		[JsonPropertyName("release_id")]
+		public int ReleaseId { get; set; }
 
-        public ReleaseDataModel Release { get; set; } = new ReleaseDataModel();
-
-    }
+	}
 
 }

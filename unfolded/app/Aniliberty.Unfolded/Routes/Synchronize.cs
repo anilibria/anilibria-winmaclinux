@@ -229,7 +229,52 @@ namespace Aniliberty.Unfolded.Routes
 			var newReleases = result
 				.Select(a => new ReleaseForCompare { Id = a.Id, CountVideos = a.CountVideos, TorrentsSize = torrentsMap[a.Id].Any() ? torrentsMap[a.Id].Sum() : 0 })
 				.ToArray();
-			await Releases.CheckNotifications(newReleases);
+			var hasNewReleases = await Releases.CheckNotifications(newReleases);
+
+			//save franchises if new releases was added
+			if (hasNewReleases) await SaveReleaseSeries(httpClient, folderToSaveCacheFiles);
+		}
+
+		public static async Task SaveReleaseSeries(HttpClient httpClient, string folderToSaveCacheFiles)
+		{
+			Console.WriteLine("Start synchronized franchises...");
+			var franchises = await OriginalApiMaker.GetAllFranchises(httpClient);
+
+			var result = new List<ReleaseSeriesSaveModel>();
+			if (!franchises.Any()) return;
+
+			Console.WriteLine($"Received {franchises.Count()} franchises");
+
+			foreach (var franchise in franchises)
+			{
+				var releasesItem = await OriginalApiMaker.GetFranchisesReleases(httpClient, franchise.Id);
+				if (releasesItem.FranchiseReleases.Count() <= 1) continue; //franchises with single release not actual
+
+				var releaseIds = releasesItem.FranchiseReleases
+					.OrderBy(a => a.SortOrder)
+					.Select(a => a.ReleaseId)
+					.ToArray();
+				var releases = Releases.GetReleasesPosterAndNames(releaseIds);
+
+				var model = new ReleaseSeriesSaveModel
+				{
+					CountReleases = releaseIds.Count(),
+					Poster = franchise.Image.Preview,
+					Releases = releases,
+					Title = franchise.Name,
+					CountSeconds = franchise.TotalDurationInSeconds ?? 0,
+					CountEpisodes = franchise.TotalEpisodes ?? 0,
+					Rating = franchise.Rating ?? 0
+				};
+				result.Add(model);
+			}
+
+			var path = Path.Combine(folderToSaveCacheFiles, "releaseseries.cache");
+			Console.WriteLine($"Saving to file {Path.GetFullPath(path)} items");
+
+			await File.WriteAllTextAsync(path, SerializeToJson(result));
+
+			Console.WriteLine($"Franchises saved!");
 		}
 
 		public static async Task SaveTypes(HttpClient httpClient, string folderToSaveCacheFiles)

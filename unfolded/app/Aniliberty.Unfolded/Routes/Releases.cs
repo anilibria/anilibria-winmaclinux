@@ -20,6 +20,8 @@ namespace Aniliberty.Unfolded.Routes
 
 		static List<ReleaseTorrentSaveModel> m_torrents = [];
 
+		static List<ReleaseSeriesSaveModel> m_franchises = [];
+
 		static HashSet<string> m_seenEpisodes = [];
 
 		static HashSet<int> m_favorites = new HashSet<int>();
@@ -77,12 +79,36 @@ namespace Aniliberty.Unfolded.Routes
 				var metadata = await Synchronize.ReadMetadata(path);
 				await ReadReleases(metadata, path);
 			}
+
+			var releasesSeriesPath = Path.Combine(path, "releaseseries.cache");
+			if (File.Exists(releasesSeriesPath))
+			{
+				m_franchises.Clear();
+
+				var releaseSeriesJson = await File.ReadAllTextAsync(releasesSeriesPath);
+				m_franchises = DeserializeFromJson<List<ReleaseSeriesSaveModel>>(releaseSeriesJson) ?? new List<ReleaseSeriesSaveModel>();
+			}
 		}
 
-		internal static async Task CheckNotifications(IEnumerable<ReleaseForCompare> newReleases)
+		internal static IEnumerable<ReleaseSeriesReleaseSaveModel> GetReleasesPosterAndNames(IEnumerable<int> ids)
 		{
-			if (!m_releases.Any()) return;
-			if (Settings.Model.Releases.NotificationMode == 0) return; // not need notifications
+			var result = new List<ReleaseSeriesReleaseSaveModel>(ids.Count());
+
+			foreach (var id in ids)
+			{
+				if (m_releasesMap.TryGetValue(id, out var release))
+				{
+					result.Add(new ReleaseSeriesReleaseSaveModel { Id = release.Id, Poster = release.Poster, Title = release.Title });
+				}
+			}
+
+			return result;
+		}
+
+		internal static async Task<bool> CheckNotifications(IEnumerable<ReleaseForCompare> newReleases)
+		{
+			if (!m_releases.Any()) return true;
+			if (Settings.Model.Releases.NotificationMode == 0) return false; // not need notifications
 
 			var onlyFavorites = Settings.Model.Releases.NotificationMode == 2;
 
@@ -125,6 +151,8 @@ namespace Aniliberty.Unfolded.Routes
 			if (countReleasesTorrents > 0) messages.Append($"Обновленные торренты в релизах {countReleasesTorrents}");
 
 			await WebSocketHub.SendMessage("ntc", messages.ToString());
+
+			return countNewReleases > 0;
 		}
 
 		internal static async Task SaveUserData(IEnumerable<int> favorites, IEnumerable<IEnumerable<object>> seenMarks)
