@@ -44,6 +44,7 @@ namespace Aniliberty.Unfolded.Routes
 			app.MapGet("/releases/episodes", (int releaseId) => Episodes(releaseId));
 			app.MapGet("/releases/torrents", (int id) => Torrents(id));
 			app.MapGet("/releases/openmagnet", (string magnet) => OpenMagnet(magnet));
+			app.MapGet("/releases/franchise", (int id) => Franchise(id));
 		}
 
 		internal static async Task Initialize()
@@ -444,6 +445,32 @@ namespace Aniliberty.Unfolded.Routes
 			GlobalConfig.OpenPathInSystem(magnet);
 
 			return Results.Ok();
+		}
+
+		internal static IResult Franchise(int id)
+		{
+			var franchise = m_franchises.FirstOrDefault(a => a.Releases.Any(b => b.Id == id));
+			if (franchise is null) return Results.Content("null", contentType: "application/json");
+
+			var countSeconds = TimeSpan.FromSeconds(franchise.CountSeconds);
+			var model = new DisplayFranchiseModel
+			{
+				CountEpisodes = franchise.CountEpisodes,
+				Title = franchise.Title,
+				Poster = franchise.Poster,
+				AllTime = $"{countSeconds.Hours} часов {countSeconds.Minutes} минут",
+				Releases = franchise.Releases
+					.Select(
+						a => new DisplayFranchiseReleaseModel
+						{
+							Title = a.Title,
+							Poster = a.Poster,
+							ReleaseId = a.Id
+						}
+					)
+			};
+
+			return Results.Json(model, AppJsonSerializerContext.Default);
 		}
 
 	}

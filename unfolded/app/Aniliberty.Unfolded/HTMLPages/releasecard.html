@@ -50,7 +50,7 @@
 					</div>
 				</div>
 			</div>
-			<div class="right-content">
+			<div class="right-content releasecard-card-container">
 				<div class="releasecard-maininfo-container">
 					<img class="poster" :src="'https://anilibria.top/' + releaseCard.poster" />
 					<div class="flex-column gap-3" style="margin-left: 8px;">
@@ -91,7 +91,7 @@
 					<b>Описание:</b> {{ releaseCard.description }}
 				</div>
 				<div style="height: 8px;"></div>
-				<div class="releasecard-episodes-container" v-if="releaseCard.description">
+				<div class="releasecard-episodes-container">
 					<div class="header flex-row flex-base-center flex-other-center">
 						<span>Cерии</span>
 					</div>
@@ -100,6 +100,20 @@
 							<img @click="watchSerie(episode.id)" class="poster-episode" :src="'https://aniliberty.top' + episode.preview" width="400" height="270" />
 							<div class="full-width flex-row flex-base-center flex-other-center">
 								<span>{{ episode.name || "&nbsp" }}</span>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div v-if="franchise" style="height: 8px;"></div>
+				<div v-if="franchise" class="releasecard-franchise-container">
+					<div class="header flex-row flex-base-center flex-other-center">
+						<span>{{ franchise.title }}</span>
+					</div>
+					<div class="releases-list">
+						<div v-for="release in franchise.releases" class="flex-column flex-base-center">
+							<img class="poster-release" :src="'https://aniliberty.top' + release.poster" width="180" height="270" />
+							<div class="full-width flex-row flex-base-center flex-other-center">
+								<span>{{ release.title }}</span>
 							</div>
 						</div>
 					</div>
@@ -115,7 +129,7 @@
 		import { createApp, ref } from './vue.global.js'
 		import {
 			getRelease, getReleaseTorrents, getReleaseEpisodes, getUserMarks,
-			openMagnetInSystem, addFavorites, removeFavorites
+			openMagnetInSystem, addFavorites, removeFavorites, getReleaseFranchise
 		} from './unfoldapi.js'
 		import Drawer from './components/Drawer.js'
 		import PageHeader from './components/PageHeader.js'
@@ -134,6 +148,7 @@
 				const userMarks = ref([]);
 				const countSeen = ref(0);
 				const inFavorites = ref(false);
+				const franchise = ref({});
 
 				async function copyToClipboard(text) {
 					await navigator.clipboard.writeText(text);
@@ -156,6 +171,7 @@
 					userMarks.value = await getUserMarks([releaseCardId]);
 					countSeen.value = userMarks.value.fullSeenReleases.includes(releaseCardId) ? releaseEpisodes.value.length : (userMarks.value.seenSeries[releaseCardId] ? userMarks.value.seenSeries[releaseCardId] : '');
 					inFavorites.value = userMarks.value.favorites.includes(releaseCardId);
+					franchise.value = await getReleaseFranchise(releaseCardId);
 				}
 
 				function openOnWebSite() {
@@ -204,7 +220,8 @@
 					watchSerie,
 					addToFavorites,
 					removeFromFavorites,
-					inFavorites
+					inFavorites,
+					franchise
 				}
 			}
 		});

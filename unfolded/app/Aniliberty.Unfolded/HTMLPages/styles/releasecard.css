@@ -60,7 +60,6 @@
         align-items: center;
         gap: 7px;
         overflow-x: scroll;
-        width: calc(100vw - 58px);
         padding-left: 8px;
         padding-right: 8px;
     }
@@ -75,6 +74,43 @@
 
         &:hover {
             filter: sepia(100%);
+        }
+    }
+}
+
+.releasecard-card-container {
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.releasecard-franchise-container {
+
+    .header {
+        width: 100%;
+    }
+
+    .releases-list {
+        font-size: 14px;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 7px;
+        overflow-x: scroll;
+        padding-left: 8px;
+        padding-right: 8px;
+    }
+
+    .poster-release {
+        margin-left: 4px;
+        width: 180px;
+        height: 270px;
+        border-color: var(--release-item-poster-border);
+        border-width: 2px;
+        border-style: solid;
+        border-radius: 4px;
+
+        &:hover {
+            filter: grayscale(80%);
         }
     }
 }

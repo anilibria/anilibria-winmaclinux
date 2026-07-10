@@ -94,6 +94,11 @@ export async function getReleaseTorrents(id) {
 export async function openMagnetInSystem(magnet) {
     await fetch('/releases/openmagnet?magnet=' + magnet);
 };
+export async function getReleaseFranchise(id) {
+    const response = await fetch('/releases/franchise?id=' + id);
+    return await response.json();
+};
+
 
 export async function synchronizeReleases() {
     await fetch('/sync/full');

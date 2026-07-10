@@ -1,31 +1,44 @@
-﻿namespace Aniliberty.Unfolded.Models.OriginalApi
+﻿using System.Text.Json.Serialization;
+
+namespace Aniliberty.Unfolded.Models.OriginalApi
 {
 
-    internal class FranchiseModel
-    {
+	internal class FranchiseModel
+	{
 
-        public string Id { get; set; } = "";
+		[JsonPropertyName("id")]
+		public string Id { get; set; } = "";
 
-        public string Name { get; set; } = "";
+		[JsonPropertyName("name")]
+		public string Name { get; set; } = "";
 
-        public string NameEnglish { get; set; } = "";
+		[JsonPropertyName("name_english")]
+		public string NameEnglish { get; set; } = "";
 
-        public decimal? Rating { get; set; } = null;
+		[JsonPropertyName("rating")]
+		public decimal? Rating { get; set; } = null;
 
-        public int? LastYear { get; set; }
+		[JsonPropertyName("last_year")]
+		public int? LastYear { get; set; }
 
-        public int? FirstYear { get; set; }
+		[JsonPropertyName("first_year")]
+		public int? FirstYear { get; set; }
 
-        public int? TotalReleases { get; set; }
+		[JsonPropertyName("total_releases")]
+		public int? TotalReleases { get; set; }
 
-        public int? TotalEpisodes { get; set; }
+		[JsonPropertyName("total_episodes")]
+		public int? TotalEpisodes { get; set; }
 
-        public string TotalDuration { get; set; } = "";
+		[JsonPropertyName("total_duration")]
+		public string TotalDuration { get; set; } = "";
 
-        public int? TotalDurationInSeconds { get; set; }
+		[JsonPropertyName("total_duration_in_seconds")]
+		public int? TotalDurationInSeconds { get; set; }
 
-        public FranchiseImageModel Image { get; set; } = new FranchiseImageModel();
+		[JsonPropertyName("image")]
+		public FranchiseImageModel Image { get; set; } = new FranchiseImageModel();
 
-    }
+	}
 
 }
