@@ -122,6 +122,30 @@ export async function removeFavorites(ids) {
     const array = ids.map(a => `ids=${a}`).join('&');
     await fetch('/sync/removefavorites?' + array);
 };
+export async function addSeenMark(ids) {
+    await fetch(
+        '/sync/addseens',
+        {
+            method: "POST",
+            body: JSON.stringify(ids),
+            headers: {
+                "Content-Type": "application/json"
+            }
+        }
+    );
+};
+export async function removeSeenMark(ids) {
+    await fetch(
+        '/sync/removeseens',
+        {
+            method: "POST",
+            body: JSON.stringify(ids),
+            headers: {
+                "Content-Type": "application/json"
+            }
+        }
+    );
+};
 
 export async function authorizationByLoginPass(login, password) {
     const response = await fetch(

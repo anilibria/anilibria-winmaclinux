@@ -125,6 +125,15 @@ namespace Aniliberty.Unfolded.Helpers
 			return await PerformRequestWithAuthorization<IEnumerable<IEnumerable<object>>>(httpClient, $"{ApiDomain}/api/v1/accounts/users/me/views/timecodes", "user seen marks", token);
 		}
 
+		static public async Task SetUserSeenMarks(HttpClient httpClient, string token, IEnumerable<string> ids, bool isWatch, int time = 0)
+		{
+			var model = ids
+				.Select(a => new SeenMarkEditModel { EpisodeId = a, IsWatched = isWatch, Time = time })
+				.ToList();
+
+			await PerformPostRequest<IEnumerable<int>, List<SeenMarkEditModel>>(httpClient, $"{ApiDomain}/api/v1/accounts/users/me/views/timecodes", "user seen marks", model, AppJsonSerializerContext.Default.ListSeenMarkEditModel, token);
+		}
+
 		static public async Task<LoginPassAuthResponseModel> AuthorizeByLoginPass(HttpClient httpClient, string login, string password)
 		{
 			var model = new LoginPassAuthModel

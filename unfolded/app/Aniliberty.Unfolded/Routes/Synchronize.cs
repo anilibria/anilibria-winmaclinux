@@ -29,8 +29,8 @@ namespace Aniliberty.Unfolded.Routes
 			app.MapGet("/sync/status", () => Results.Content(m_synchronizationStarted ? "true" : "false"));
 			app.MapGet("/sync/addfavorites", (IHttpClientFactory clientFactory, HttpContext context, [FromQuery] int[] ids) => AddFavorites(clientFactory, context, ids));
 			app.MapGet("/sync/removefavorites", (IHttpClientFactory clientFactory, HttpContext context, [FromQuery] int[] ids) => RemoveFavorites(clientFactory, context, ids));
-			app.MapGet("/sync/addseens", (IHttpClientFactory clientFactory, HttpContext context, [FromQuery] int[] ids) => AddSeens(clientFactory, context, ids));
-			app.MapGet("/sync/removeseens", (IHttpClientFactory clientFactory, HttpContext context, [FromQuery] int[] ids) => RemoveSeens(clientFactory, context, ids));
+			app.MapPost("/sync/addseens", (IHttpClientFactory clientFactory, HttpContext context, [FromBody] string[] ids) => AddSeens(clientFactory, context, ids));
+			app.MapPost("/sync/removeseens", (IHttpClientFactory clientFactory, HttpContext context, [FromBody] string[] ids) => RemoveSeens(clientFactory, context, ids));
 		}
 
 		public static async Task<IResult> Full(IHttpClientFactory clientFactory, bool checkLatest)
@@ -507,24 +507,36 @@ namespace Aniliberty.Unfolded.Routes
 			return Results.NotFound();
 		}
 
-		internal static IResult AddSeens(IHttpClientFactory clientFactory, HttpContext context, int[] ids)
+		internal static async Task<IResult> AddSeens(IHttpClientFactory clientFactory, HttpContext context, string[] ids)
 		{
 			if (!ids.Any()) return Results.Ok();
+
+			var token = context.Request.Cookies?.FirstOrDefault(a => a.Key == Authorize.CookieName).Value ?? null;
+			if (token == null) return Results.Unauthorized();
 
 			var httpClient = clientFactory.CreateClient();
 			httpClient.Timeout = TimeSpan.FromSeconds(5);
 
-			return Results.NotFound();
+			await OriginalApiMaker.SetUserSeenMarks(httpClient, token, ids, true);
+			Releases.AddSeenMarksToMemory(ids);
+
+			return Results.Ok();
 		}
 
-		internal static IResult RemoveSeens(IHttpClientFactory clientFactory, HttpContext context, int[] ids)
+		internal static async Task<IResult> RemoveSeens(IHttpClientFactory clientFactory, HttpContext context, string[] ids)
 		{
 			if (!ids.Any()) return Results.Ok();
+
+			var token = context.Request.Cookies?.FirstOrDefault(a => a.Key == Authorize.CookieName).Value ?? null;
+			if (token == null) return Results.Unauthorized();
 
 			var httpClient = clientFactory.CreateClient();
 			httpClient.Timeout = TimeSpan.FromSeconds(5);
 
-			return Results.NotFound();
+			await OriginalApiMaker.SetUserSeenMarks(httpClient, token, ids, true);
+			Releases.RemoveSeenMarksToMemory(ids);
+
+			return Results.Ok();
 		}
 
 	}

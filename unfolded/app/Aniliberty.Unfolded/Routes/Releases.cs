@@ -197,6 +197,30 @@ namespace Aniliberty.Unfolded.Routes
 			await File.WriteAllTextAsync(Path.Combine(GlobalConfig.PathToCache(), "userdata.cache"), SerializeToJson(saveModel));
 		}
 
+		/// <summary>
+		/// A quick way to add seen marks to memory instead of querying for all seen marks.
+		/// </summary>
+		/// <param name="ids">Episodes identifiers.</param>
+		internal static void AddSeenMarksToMemory(string[] ids)
+		{
+			foreach (var id in ids)
+			{
+				if (!m_seenEpisodes.Contains(id)) m_seenEpisodes.Add(id);
+			}
+		}
+
+		/// <summary>
+		/// A quick way to remove seen marks to memory instead of querying for all seen marks.
+		/// </summary>
+		/// <param name="ids">Episodes identifiers.</param>
+		internal static void RemoveSeenMarksToMemory(string[] ids)
+		{
+			foreach (var id in ids)
+			{
+				if (m_seenEpisodes.Contains(id)) m_seenEpisodes.Remove(id);
+			}
+		}
+
 		internal static IResult Release(int id)
 		{
 			if (m_releasesMap.ContainsKey(id)) return Results.Json(m_releasesMap[id], AppJsonSerializerContext.Default);
