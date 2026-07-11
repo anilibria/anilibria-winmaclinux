@@ -42,6 +42,7 @@ namespace Aniliberty.Unfolded
 	[JsonSerializable(typeof(IEnumerable<int>))]
 	[JsonSerializable(typeof(DisplayFranchiseModel))]
 	[JsonSerializable(typeof(List<SeenMarkEditModel>))]
+	[JsonSerializable(typeof(string[]))]
 	[JsonSourceGenerationOptions(PropertyNamingPolicy = JsonKnownNamingPolicy.CamelCase)]
 	internal partial class AppJsonSerializerContext : JsonSerializerContext
 	{

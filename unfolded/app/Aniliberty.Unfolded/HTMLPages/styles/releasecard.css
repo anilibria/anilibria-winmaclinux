@@ -59,7 +59,7 @@
         flex-direction: row;
         align-items: center;
         gap: 7px;
-        overflow-x: scroll;
+        overflow-x: auto;
         padding-left: 8px;
         padding-right: 8px;
     }
@@ -95,7 +95,7 @@
         flex-direction: row;
         align-items: center;
         gap: 7px;
-        overflow-x: scroll;
+        overflow-x: auto;
         padding-left: 8px;
         padding-right: 8px;
     }

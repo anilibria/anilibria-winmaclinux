@@ -53,7 +53,7 @@
 			<div class="right-content releasecard-card-container">
 				<div class="releasecard-maininfo-container">
 					<img class="poster" :src="'https://anilibria.top/' + releaseCard.poster" />
-					<div class="flex-column gap-3" style="margin-left: 8px;">
+					<div class="flex-column gap-3" style="margin-left: 8px; margin-top: 4px;">
 						<div class="card-header">{{ releaseCard.title }}</div>
 						<div class="card-field">{{ releaseCard.originalName }}</div>
 						<div class="card-field"><b>Статус:</b> {{ releaseCard.status }}</div>
@@ -107,11 +107,11 @@
 				<div v-if="franchise" style="height: 8px;"></div>
 				<div v-if="franchise" class="releasecard-franchise-container">
 					<div class="header flex-row flex-base-center flex-other-center">
-						<span>{{ franchise.title }}</span>
+						<span>Серия: {{ franchise.title }}</span>
 					</div>
 					<div class="releases-list">
 						<div v-for="release in franchise.releases" class="flex-column flex-base-center">
-							<img class="poster-release" :src="'https://aniliberty.top' + release.poster" width="180" height="270" />
+							<img @click="openLinkedSerie(release.releaseId)" class="poster-release" :src="'https://aniliberty.top' + release.poster" width="180" height="270" />
 							<div class="full-width flex-row flex-base-center flex-other-center">
 								<span>{{ release.title }}</span>
 							</div>
@@ -201,6 +201,12 @@
 					inFavorites.value = false;
 				}
 
+				function openLinkedSerie(id) {
+					if (id === releaseCard.value.id) return;
+
+					window.location.href = '/static/releasecard.html?id=' + id;
+				}
+
 				getParameter();
 				getCard();
 
@@ -221,7 +227,8 @@
 					addToFavorites,
 					removeFromFavorites,
 					inFavorites,
-					franchise
+					franchise,
+					openLinkedSerie
 				}
 			}
 		});
