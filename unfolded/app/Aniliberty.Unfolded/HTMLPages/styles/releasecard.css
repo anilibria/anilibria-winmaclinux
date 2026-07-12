@@ -16,6 +16,11 @@
     padding: 8px;
 }
 
+.releasecard-rightmenu-seens {
+    width: 210px;
+    padding: 8px;
+}
+
 .releasecard-maininfo-container {
     display: flex;
     flex-direction: row;
@@ -73,7 +78,7 @@
         border-style: solid;
 
         &:hover {
-            filter: sepia(100%);
+            filter: sepia(60%);
         }
     }
 }

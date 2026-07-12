@@ -48,8 +48,8 @@ namespace Aniliberty.Unfolded.Routes
 
 				if (IsEmptyTypes(cacheFolder)) await SaveTypes(httpClient, cacheFolder);
 
-				await SaveFullReleases(httpClient, cacheFolder, checkLatest);
-				await Releases.ReadReleases();
+				var needReadReleases = await SaveFullReleases(httpClient, cacheFolder, checkLatest);
+				if (needReadReleases) await Releases.ReadReleases();
 			}
 			finally
 			{
@@ -96,7 +96,7 @@ namespace Aniliberty.Unfolded.Routes
 			}
 		}
 
-		static public async Task SaveFullReleases(HttpClient httpClient, string folderToSaveCacheFiles, bool checkLatest)
+		static public async Task<bool> SaveFullReleases(HttpClient httpClient, string folderToSaveCacheFiles, bool checkLatest)
 		{
 			await WebSocketHub.SendMessage(SynchronizedCommand, "started");
 
@@ -145,10 +145,10 @@ namespace Aniliberty.Unfolded.Routes
 			{
 				Console.WriteLine("No need to synchronize releases all is up to date!");
 				await WebSocketHub.SendMessage(SynchronizedCommand, SynchronizedCommandUpToDate);
-				return;
+				return false;
 			}
 
-			if (!allReleases.Any()) return;
+			if (!allReleases.Any()) return false;
 
 			allReleases = allReleases
 				.Where(a => a.Episodes.Any() || a.Torrents.Any()) // stay only there where have episodes or torrents
@@ -237,6 +237,8 @@ namespace Aniliberty.Unfolded.Routes
 
 			//save franchises if new releases was added
 			if (hasNewReleases) await SaveReleaseSeries(httpClient, folderToSaveCacheFiles);
+
+			return true;
 		}
 
 		public static async Task SaveReleaseSeries(HttpClient httpClient, string folderToSaveCacheFiles)
@@ -518,7 +520,7 @@ namespace Aniliberty.Unfolded.Routes
 			httpClient.Timeout = TimeSpan.FromSeconds(5);
 
 			await OriginalApiMaker.SetUserSeenMarks(httpClient, token, ids, true);
-			Releases.AddSeenMarksToMemory(ids);
+			await Releases.AddSeenMarksToMemory(ids);
 
 			return Results.Ok();
 		}
@@ -533,8 +535,8 @@ namespace Aniliberty.Unfolded.Routes
 			var httpClient = clientFactory.CreateClient();
 			httpClient.Timeout = TimeSpan.FromSeconds(5);
 
-			await OriginalApiMaker.SetUserSeenMarks(httpClient, token, ids, true);
-			Releases.RemoveSeenMarksToMemory(ids);
+			await OriginalApiMaker.SetUserSeenMarks(httpClient, token, ids, false);
+			await Releases.RemoveSeenMarksToMemory(ids);
 
 			return Results.Ok();
 		}

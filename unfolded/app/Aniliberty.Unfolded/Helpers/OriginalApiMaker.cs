@@ -131,7 +131,7 @@ namespace Aniliberty.Unfolded.Helpers
 				.Select(a => new SeenMarkEditModel { EpisodeId = a, IsWatched = isWatch, Time = time })
 				.ToList();
 
-			await PerformPostRequest<IEnumerable<int>, List<SeenMarkEditModel>>(httpClient, $"{ApiDomain}/api/v1/accounts/users/me/views/timecodes", "user seen marks", model, AppJsonSerializerContext.Default.ListSeenMarkEditModel, token);
+			await PerformPostRequestWithoutResult(httpClient, $"{ApiDomain}/api/v1/accounts/users/me/views/timecodes", "user seen marks", model, AppJsonSerializerContext.Default.ListSeenMarkEditModel, token);
 		}
 
 		static public async Task<LoginPassAuthResponseModel> AuthorizeByLoginPass(HttpClient httpClient, string login, string password)
@@ -233,6 +233,24 @@ namespace Aniliberty.Unfolded.Helpers
 
 			var content = (T?)JsonSerializer.Deserialize(jsonContent, typeof(T), AppJsonSerializerContext.Default);
 			return content == null ? throw new Exception($"Can't serialize response for {requestName}") : content;
+		}
+
+		private static async Task PerformPostRequestWithoutResult<TModel>(HttpClient httpClient, string url, string requestName, TModel model, JsonTypeInfo<TModel> typeInfo, string? token = default, HttpMethod? method = default)
+		{
+			var message = new HttpRequestMessage(method == default ? HttpMethod.Post : method, url);
+			if (!string.IsNullOrEmpty(token)) message.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
+			message.Content = JsonContent.Create(model, typeInfo);
+
+			HttpResponseMessage pageContent;
+			try
+			{
+				pageContent = await httpClient.SendAsync(message);
+			}
+			catch (Exception ex)
+			{
+				throw new Exception($"Can't make HTTP request for {requestName} ({url})", ex);
+			}
+			if (pageContent == null) throw new Exception($"Can't read content for {requestName}");
 		}
 
 		public static async Task DownloadPoster(HttpClient httpClient, string url, string path)

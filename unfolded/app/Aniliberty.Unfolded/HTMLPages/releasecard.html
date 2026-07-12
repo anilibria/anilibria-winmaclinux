@@ -22,6 +22,14 @@
 					<div class="full-width-height flex-row flex-base-center flex-other-center">
 						<img :src="'/static/icons/commonbuttons/seen.svg'" width="30" height="30" />
 					</div>
+					<div class="simple-popup-box releasecard-rightmenu">
+						<div class="releasecard-rightmenu-seens flex-column">
+							<a v-if="countSeen != releaseEpisodes.length" class="default-link" @click.prevent="addSeenMarks()" href="">Отметить как просмотренное</a>
+							<a v-if="countSeen === releaseEpisodes.length" class="default-link" @click.prevent="removeSeenMarks()" href="">Отметить как не просмотренное</a>
+							<a class="default-link" @click.prevent="removeFromFavorites()" href="">Скрыть релиз</a>
+							<a class="default-link" @click.prevent="removeFromFavorites()" href="">Убрать релиз из скрытых</a>
+						</div>
+					</div>
 				</div>
 				<div class="simple-panel-icon-button simple-popup-container">
 					<div class="full-width-height flex-row flex-base-center flex-other-center">
@@ -129,7 +137,8 @@
 		import { createApp, ref } from './vue.global.js'
 		import {
 			getRelease, getReleaseTorrents, getReleaseEpisodes, getUserMarks,
-			openMagnetInSystem, addFavorites, removeFavorites, getReleaseFranchise
+			openMagnetInSystem, addFavorites, removeFavorites, getReleaseFranchise,
+			addSeenMark, removeSeenMark
 		} from './unfoldapi.js'
 		import Drawer from './components/Drawer.js'
 		import PageHeader from './components/PageHeader.js'
@@ -163,13 +172,17 @@
 					releaseId.value = urlParams.get('id');
 				}
 
+				async function getAllSeenMarks(releaseCardId) {
+					userMarks.value = await getUserMarks([releaseCardId]);
+					countSeen.value = userMarks.value.fullSeenReleases.includes(releaseCardId) ? releaseEpisodes.value.length : (userMarks.value.seenSeries[releaseCardId] ? userMarks.value.seenSeries[releaseCardId] : '');
+				}
+
 				async function getCard() {
 					releaseCard.value = await getRelease(releaseId.value);
 					releaseEpisodes.value = await getReleaseEpisodes(releaseId.value);
 					releaseTorrents.value = await getReleaseTorrents(releaseId.value);
 					const releaseCardId = releaseCard.value.id;
-					userMarks.value = await getUserMarks([releaseCardId]);
-					countSeen.value = userMarks.value.fullSeenReleases.includes(releaseCardId) ? releaseEpisodes.value.length : (userMarks.value.seenSeries[releaseCardId] ? userMarks.value.seenSeries[releaseCardId] : '');
+					await getAllSeenMarks(releaseCardId);
 					inFavorites.value = userMarks.value.favorites.includes(releaseCardId);
 					franchise.value = await getReleaseFranchise(releaseCardId);
 				}
@@ -201,6 +214,16 @@
 					inFavorites.value = false;
 				}
 
+				async function addSeenMarks() {
+					await addSeenMark(releaseEpisodes.value.map(a => a.id));
+					await getAllSeenMarks(releaseCard.value.id);
+				}
+
+				async function removeSeenMarks() {
+					await removeSeenMark(releaseEpisodes.value.map(a => a.id));
+					await getAllSeenMarks(releaseCard.value.id);
+				}
+
 				function openLinkedSerie(id) {
 					if (id === releaseCard.value.id) return;
 
@@ -228,7 +251,9 @@
 					removeFromFavorites,
 					inFavorites,
 					franchise,
-					openLinkedSerie
+					openLinkedSerie,
+					addSeenMarks,
+					removeSeenMarks
 				}
 			}
 		});

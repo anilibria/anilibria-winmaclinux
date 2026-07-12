@@ -14,7 +14,7 @@ export default {
 				<img src="/static/icons/mainmenu/logout.svg" width="30" height="30" />
 			</div>
 			<div class="main-menu-items">
-				<div v-for="item in mainMenu" @click="openOption('/' + item.icon + '.html')">
+				<div v-for="item in mainMenu" @click="openOption('/static/' + item.icon + '.html')">
 					<div class="main-menu-item">
 						<img width="30" height="30" :src="'/static/icons/mainmenu/' + item.icon + '.svg'" />
 						<span>{{item.name}}</span>

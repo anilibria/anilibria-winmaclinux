@@ -90,8 +90,6 @@ namespace Aniliberty.Unfolded.Routes
 			var releasesSeriesPath = Path.Combine(path, "releaseseries.cache");
 			if (File.Exists(releasesSeriesPath))
 			{
-				m_franchises.Clear();
-
 				var releaseSeriesJson = await File.ReadAllTextAsync(releasesSeriesPath);
 				m_franchises = DeserializeFromJson<List<ReleaseSeriesSaveModel>>(releaseSeriesJson) ?? new List<ReleaseSeriesSaveModel>();
 			}
@@ -173,10 +171,22 @@ namespace Aniliberty.Unfolded.Routes
 			await File.WriteAllTextAsync(Path.Combine(GlobalConfig.PathToCache(), "userdata.cache"), SerializeToJson(saveModel));
 		}
 
+		internal static async Task SaveOnlySeens(IEnumerable<string> seens)
+		{
+			var saveModel = new UserCollections
+			{
+				CloudFavorites = m_favorites,
+				LocalFavorites = m_localFavorites,
+				SeenEpisodes = seens
+			};
+			await File.WriteAllTextAsync(Path.Combine(GlobalConfig.PathToCache(), "userdata.cache"), SerializeToJson(saveModel));
+		}
+
 		internal static async Task SaveUserData(IEnumerable<int> favorites, IEnumerable<IEnumerable<object>> seenMarks)
 		{
-			foreach (var favorite in favorites) m_favorites.Add(favorite);
+			m_favorites = [.. favorites];
 
+			m_seenEpisodes = [];
 			foreach (var seenMark in seenMarks)
 			{
 				if (seenMark.Count() < 3) continue;
@@ -201,24 +211,28 @@ namespace Aniliberty.Unfolded.Routes
 		/// A quick way to add seen marks to memory instead of querying for all seen marks.
 		/// </summary>
 		/// <param name="ids">Episodes identifiers.</param>
-		internal static void AddSeenMarksToMemory(string[] ids)
+		internal static async Task AddSeenMarksToMemory(string[] ids)
 		{
 			foreach (var id in ids)
 			{
 				if (!m_seenEpisodes.Contains(id)) m_seenEpisodes.Add(id);
 			}
+
+			await SaveOnlySeens(m_seenEpisodes);
 		}
 
 		/// <summary>
 		/// A quick way to remove seen marks to memory instead of querying for all seen marks.
 		/// </summary>
 		/// <param name="ids">Episodes identifiers.</param>
-		internal static void RemoveSeenMarksToMemory(string[] ids)
+		internal static async Task RemoveSeenMarksToMemory(string[] ids)
 		{
 			foreach (var id in ids)
 			{
 				if (m_seenEpisodes.Contains(id)) m_seenEpisodes.Remove(id);
 			}
+
+			await SaveOnlySeens(m_seenEpisodes);
 		}
 
 		internal static IResult Release(int id)
@@ -342,9 +356,9 @@ namespace Aniliberty.Unfolded.Routes
 
 		static async Task ReadReleases(MetadataModel metadata, string folderToSaveCacheFiles)
 		{
-			m_episodes.Clear();
-			m_releases.Clear();
-			m_torrents.Clear();
+			var episodes = new List<ReleaseSaveEpisodeModel>();
+			var releases = new List<ReleaseSaveModel>();
+			var allTorrents = new List<ReleaseTorrentSaveModel>();
 
 			var extension = ".cache";
 
@@ -356,7 +370,7 @@ namespace Aniliberty.Unfolded.Routes
 				{
 					var releasesPartJson = await File.ReadAllTextAsync(releasesPart);
 					var deserialized = JsonHelpers.DeserializeFromJson<List<ReleaseSaveModel>>(releasesPartJson);
-					if (deserialized != null) m_releases.AddRange(deserialized);
+					if (deserialized != null) releases.AddRange(deserialized);
 				}
 			}
 
@@ -368,14 +382,18 @@ namespace Aniliberty.Unfolded.Routes
 				{
 					var partJson = await File.ReadAllTextAsync(episodesPart);
 					var deserialized = JsonHelpers.DeserializeFromJson<List<ReleaseSaveEpisodeModel>>(partJson);
-					if (deserialized != null) m_episodes.AddRange(deserialized);
+					if (deserialized != null) episodes.AddRange(deserialized);
 				}
 			}
 
 			var torrents = Path.Combine(folderToSaveCacheFiles, $"torrents{extension}");
 			var fullJson = await File.ReadAllTextAsync(torrents);
 			var deserializedTorrens = JsonHelpers.DeserializeFromJson<List<ReleaseTorrentSaveModel>>(fullJson);
-			if (deserializedTorrens != null) m_torrents.AddRange(deserializedTorrens);
+			if (deserializedTorrens != null) allTorrents.AddRange(deserializedTorrens);
+
+			m_episodes = episodes;
+			m_releases = releases;
+			m_torrents = allTorrents;
 
 			m_releasesMap = m_releases.ToDictionary(a => a.Id);
 		}
