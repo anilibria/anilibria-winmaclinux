@@ -17,20 +17,19 @@
 <body>
 	<div id="app">
 		<page-header v-model:main-menu-visible="mainMenuVisible"
-			title="Видеоплеер">
+					 title="Видеоплеер">
 		</page-header>
 
 		<div class="page-content-with-panel">
 			<div class="left-panel flex-column">
-				<div
-					class="simple-panel-icon-button"
-					title="Настройка страницы Видеоплеер">
+				<div class="simple-panel-icon-button"
+					 title="Настройка страницы Видеоплеер">
 					<img :src="'/static/icons/commonbuttons/settings.svg'" width="30" height="30" />
 				</div>
 			</div>
 			<div class="right-content">
 				<div class="videoplayer-container">
-					<video ref="video" playsinline controls :data-poster="poster">
+					<video ref="video" autoplay muted playsinline controls :data-poster="poster">
 					</video>
 				</div>
 			</div>
@@ -90,38 +89,131 @@
 					}
 				}
 
-				onMounted(async () => {
-					if (!hlsSupported.value) {
-						//TODO: show message
-						return;
+				function customControls() {
+					return `
+<div class="plyr__controls">
+	<div class="flex-col full-width">
+		<div class="flex-row flex-base-center">
+			<div class="plyr__controls__item plyr__time--current plyr__time" aria-label="Current time" role="timer"></div>
+			<span>из</span>
+			<div class="plyr__controls__item plyr__time--duration plyr__time" aria-label="Duration" role="timer"></div>
+			<div class="plyr__controls__item plyr__progress__container">
+				<div class="plyr__progress"><input data-plyr="seek" type="range" min="0" max="100" step="0.01" value="0" autocomplete="off" role="slider" aria-label="Seek" aria-valuemin="0" aria-valuemax="1413.0785290000006" aria-valuenow="0" id="plyr-seek-9030" aria-valuetext="00:00 of 00:00" seek-value="82.09820764752307" style="--value: 0%;">
+					<progress class="plyr__progress__buffer" min="0" max="100" value="0" role="progressbar" aria-hidden="true">% буффера</progress>
+					<span class="plyr__tooltip" style="left: 86.1976%;"></span>
+				</div>
+			</div>
+		</div>
+		<div class="flex-row flex-base-center">
+			<div class="plyr__controls__item plyr__volume">
+				<button type="button" class="plyr__control" data-plyr="mute" aria-pressed="false">
+					<svg class="icon--pressed" aria-hidden="true" focusable="false">
+					<use xlink:href="#plyr-muted"></use>
+					</svg>
+					<svg class="icon--not-pressed" aria-hidden="true" focusable="false">
+					<use xlink:href="#plyr-volume"></use>
+					</svg>
+					<span class="label--pressed plyr__sr-only">Unmute</span>
+					<span class="label--not-pressed plyr__sr-only">Mute</span>
+				</button>
+				<input
+					data-plyr="volume"
+					type="range" min="0" max="1" step="0.05" value="1" autocomplete="off" role="slider"
+					aria-label="Громкость"
+					aria-valuemin="0" aria-valuemax="100" aria-valuenow="100" id="plyr-volume-9030"
+					aria-valuetext="100.0%" style="--value: 100%;"
+				>
+			</div>
+			<div class="flex-1 flex-row flex-base-center flex-other-center">
+				<div>
+					<button class="plyr__controls__item plyr__control" type="button" data-plyr="rewind" aria-pressed="false" title="Перемотать на 10 секунд назад">
+						<svg aria-hidden="true" focusable="false">
+							<use xlink:href="#plyr-rewind"></use>
+						</svg>
+					</button>
+					<button class="plyr__controls__item plyr__control" type="button" data-plyr="play" aria-pressed="false" aria-label="Play">
+						<svg class="icon--pressed" aria-hidden="true" focusable="false">
+							<use xlink:href="#plyr-pause"></use>
+						</svg>
+						<svg class="icon--not-pressed" aria-hidden="true" focusable="false">
+							<use xlink:href="#plyr-play"></use>
+						</svg>
+					</button>
+					<button class="plyr__controls__item plyr__control" type="button" data-plyr="fast-forward" aria-pressed="false" title="Перемотать на 10 секунд вперед">
+						<svg aria-hidden="true" focusable="false">
+							<use xlink:href="#plyr-fast-forward"></use>
+						</svg>
+					</button>
+				</div>
+			</div>
+			<div>
+				<button class="plyr__controls__item plyr__control" type="button" data-plyr="captions" aria-pressed="false">
+					<svg class="icon--pressed" aria-hidden="true" focusable="false">
+						<use xlink:href="#plyr-captions-on"></use>
+					</svg>
+					<svg class="icon--not-pressed" aria-hidden="true" focusable="false">
+						<use xlink:href="#plyr-captions-off"></use>
+					</svg>
+				</button>
+				<button class="plyr__controls__item plyr__control" type="button" data-plyr="pip" aria-pressed="false">
+					<svg aria-hidden="true" focusable="false">
+						<use xlink:href="#plyr-pip"></use>
+					</svg>
+					<span class="plyr__sr-only">PIP</span>
+				</button>
+				<button class="plyr__controls__item plyr__control" type="button" data-plyr="fullscreen" aria-pressed="false" title="Полноэкранный режим">
+					<svg class="icon--pressed" aria-hidden="true" focusable="false">
+						<use xlink:href="#plyr-exit-fullscreen"></use>
+					</svg>
+					<svg class="icon--not-pressed" aria-hidden="true" focusable="false">
+						<use xlink:href="#plyr-enter-fullscreen"></use>
+					</svg>
+				</button>
+			</div>
+		</div>
+	</div>
+</div>
+						`;
 					}
-					await getSource();
 
-					const player = new Plyr(video.value, {});
-					player.on('languagechange', () => {
-						if (!hlsSource.value) return;
+					onMounted(async () => {
+						if (!hlsSupported.value) {
+							//TODO: show message
+							return;
+						}
+						await getSource();
 
-						setTimeout(() => hlsSource.value.subtitleTrack = player.currentTrack, 50);
+						const player = new Plyr(video.value, {
+							controls: customControls()
+						});
+						player.on('languagechange', () => {
+							if (!hlsSource.value) return;
+
+							setTimeout(() => hlsSource.value.subtitleTrack = player.currentTrack, 50);
+						});
+						player.on('controlsshown', (event) => {
+							console.log('The player controls are now visible!');
+						});
+
+						const videoSource = openEpisode(selectedEpisode.value);
+
+						const hls = new Hls();
+						hls.loadSource(videoSource);
+						hls.attachMedia(video.value);
+						hls.subtitleDisplay = true;
+						hlsSource.value = hls;
 					});
 
-					const videoSource = openEpisode(selectedEpisode.value);
-
-					const hls = new Hls();
-					hls.loadSource(videoSource);
-					hls.attachMedia(video.value);
-					hls.subtitleDisplay = true;
-					hlsSource.value = hls;
-				});
-
-				return {
-					mainMenuVisible,
-					hlsSupported,
-					episodes
+					return {
+						mainMenuVisible,
+						hlsSupported,
+						episodes,
+						poster
+					}
 				}
-			}
-		});
+			});
 
-		app.mount('#app')
+			app.mount('#app')
 	</script>
 </body>
 </html>
