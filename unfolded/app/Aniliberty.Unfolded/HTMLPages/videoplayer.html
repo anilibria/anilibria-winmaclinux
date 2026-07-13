@@ -30,16 +30,16 @@
 					<div class="simple-popup-box videoplayer-rightmenu">
 						<div class="videoplayer-rightmenu-quality flex-column">
 							Порядок сверху вниз
-							<div class="flex-row flex-base-center quality-line" v-for="(quality, index) in prefferedQuality" :key="quality">
+							<div class="flex-row flex-base-center quality-line" v-for="(quality, index) in settings.prefferedQuality" :key="quality">
 								<div class="quality-title">
 									<span>{{ quality.replace("hls", "") }}</span>
 								</div>
-								<div class="flex-column flex-base-center little-arrows">
-									<div class="little-arrow flex-row flex-base-center flex-other-center" @click="moveUp(quality)">
-										<span v-if="index > 0">&nbsp;&uparrow;</span>
+								<div class="flex-row flex-base-center little-arrows">
+									<div v-if="index > 0" class="little-arrow flex-row flex-base-center flex-other-center" @click="moveUp(quality)">
+										<span>&#8679;</span>
 									</div>
-									<div class="little-arrow flex-row flex-base-center flex-other-center" @click="moveDown(quality)">
-										<span v-if="index < 2">&nbsp;&downarrow;</span>
+									<div v-if="index < 2" class="little-arrow flex-row flex-base-center flex-other-center" @click="moveDown(quality)">
+										<span>&#8681;</span>
 									</div>
 								</div>
 							</div>
@@ -65,7 +65,7 @@
 
 	<script type="module">
 		import { createApp, ref, onMounted, useTemplateRef } from './vue.global.js'
-		import { getReleaseEpisodes } from './unfoldapi.js'
+		import { getReleaseEpisodes, getPageSettings, saveSettings } from './unfoldapi.js'
 		import Drawer from './components/Drawer.js'
 		import PageHeader from './components/PageHeader.js'
 
@@ -77,13 +77,13 @@
 			setup() {
 				const mainMenuVisible = ref(false);
 				const video = useTemplateRef('video');
-				const prefferedQuality = ref(['hls1080', 'hls720', 'hls480']);
 				let hlsSource = ref(null);
 				const hlsSupported = ref(Hls.isSupported());
 				const episodes = ref([]);
 				const selectedEpisode = ref();
 				const selectedQuality = ref();
 				const poster = ref(null);
+				const settings = ref({prefferedQuality: ['hls1080', 'hls720', 'hls480']})
 
 				async function getSource() {
 					const urlParams = new URLSearchParams(window.location.search);
@@ -105,7 +105,7 @@
 					const episode = episodes.value.find(a => a.id === id);
 					selectedEpisode.value = episode;
 
-					for (const quality of prefferedQuality.value) {
+					for (const quality of settings.value.prefferedQuality) {
 						if (episode[quality]) {
 							selectedQuality.value = quality;
 							return episode[quality];
@@ -113,8 +113,8 @@
 					}
 				}
 
-				function moveUp(quality) {
-					const array = [...prefferedQuality.value];
+				async function moveUp(quality) {
+					const array = [...settings.value.prefferedQuality];
 					const index = array.indexOf(quality);
 					if (index === 0) return;
 					const movedIndex = index - 1;
@@ -122,11 +122,13 @@
 					var oldValue = array[movedIndex];
 					array[index] = oldValue;
 					array[movedIndex] = quality;
-					prefferedQuality.value = array;
+					settings.value.prefferedQuality = array;
+
+					await saveVideoPlayerSettings();
 				}
 
-				function moveDown(quality) {
-					const array = [...prefferedQuality.value];
+				async function moveDown(quality) {
+					const array = [...settings.value.prefferedQuality];
 					const index = array.indexOf(quality);
 					if (index === 2) return;
 					const movedIndex = index + 1;
@@ -134,7 +136,13 @@
 					var oldValue = array[movedIndex];
 					array[index] = oldValue;
 					array[movedIndex] = quality;
-					prefferedQuality.value = array;
+					settings.value.prefferedQuality = array;
+
+					await saveVideoPlayerSettings();
+				}
+
+				async function saveVideoPlayerSettings() {
+					await saveSettings('videoplayer', settings.value);
 				}
 
 				function customControls() {
@@ -229,6 +237,7 @@
 							//TODO: show message
 							return;
 						}
+						settings.value = await getPageSettings('videoplayer');
 						await getSource();
 
 						const player = new Plyr(video.value, {
@@ -257,9 +266,9 @@
 						hlsSupported,
 						episodes,
 						poster,
-						prefferedQuality,
 						moveUp,
-						moveDown
+						moveDown,
+						settings
 					}
 				}
 			});
