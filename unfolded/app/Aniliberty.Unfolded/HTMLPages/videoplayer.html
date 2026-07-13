@@ -22,6 +22,30 @@
 
 		<div class="page-content-with-panel">
 			<div class="left-panel flex-column">
+				<div class="simple-panel-icon-button simple-popup-container"
+					 title="Настройка страницы Видеоплеер">
+					<div class="full-width-height flex-row flex-base-center flex-other-center">
+						<img :src="'/static/icons/videoplayer/quality.svg'" width="30" height="30" />
+					</div>
+					<div class="simple-popup-box videoplayer-rightmenu">
+						<div class="videoplayer-rightmenu-quality flex-column">
+							Порядок сверху вниз
+							<div class="flex-row flex-base-center quality-line" v-for="(quality, index) in prefferedQuality" :key="quality">
+								<div class="quality-title">
+									<span>{{ quality.replace("hls", "") }}</span>
+								</div>
+								<div class="flex-column flex-base-center little-arrows">
+									<div class="little-arrow flex-row flex-base-center flex-other-center" @click="moveUp(quality)">
+										<span v-if="index > 0">&nbsp;&uparrow;</span>
+									</div>
+									<div class="little-arrow flex-row flex-base-center flex-other-center" @click="moveDown(quality)">
+										<span v-if="index < 2">&nbsp;&downarrow;</span>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
 				<div class="simple-panel-icon-button"
 					 title="Настройка страницы Видеоплеер">
 					<img :src="'/static/icons/commonbuttons/settings.svg'" width="30" height="30" />
@@ -87,6 +111,30 @@
 							return episode[quality];
 						}
 					}
+				}
+
+				function moveUp(quality) {
+					const array = [...prefferedQuality.value];
+					const index = array.indexOf(quality);
+					if (index === 0) return;
+					const movedIndex = index - 1;
+
+					var oldValue = array[movedIndex];
+					array[index] = oldValue;
+					array[movedIndex] = quality;
+					prefferedQuality.value = array;
+				}
+
+				function moveDown(quality) {
+					const array = [...prefferedQuality.value];
+					const index = array.indexOf(quality);
+					if (index === 2) return;
+					const movedIndex = index + 1;
+
+					var oldValue = array[movedIndex];
+					array[index] = oldValue;
+					array[movedIndex] = quality;
+					prefferedQuality.value = array;
 				}
 
 				function customControls() {
@@ -208,7 +256,10 @@
 						mainMenuVisible,
 						hlsSupported,
 						episodes,
-						poster
+						poster,
+						prefferedQuality,
+						moveUp,
+						moveDown
 					}
 				}
 			});
