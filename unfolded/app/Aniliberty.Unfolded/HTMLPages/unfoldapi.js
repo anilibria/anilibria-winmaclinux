@@ -98,6 +98,11 @@ export async function getReleaseFranchise(id) {
     const response = await fetch('/releases/franchise?id=' + id);
     return await response.json();
 };
+export async function getReleaseNotifications(id) {
+    const response = await fetch('/releases/notifications');
+    return await response.text();
+};
+
 
 
 export async function synchronizeReleases() {

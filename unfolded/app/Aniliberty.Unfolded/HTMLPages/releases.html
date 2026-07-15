@@ -42,9 +42,10 @@
 					 title="Добавить фильтры для фильтрации по разным полям релиза">
 					<img :src="'/static/icons/releases/search.svg'" width="30" height="30" />
 				</div>
-				<div class="simple-panel-icon-button"
-					 title="Посмотреть уведомления о непросмотренных изменениях">
-					<img :src="'/static/icons/releases/notifications.svg'" width="30" height="30" />
+				<div v-if="notificationMessage" class="simple-panel-icon-button"
+					 :title="notificationMessage"
+					 @click="loadNotifications()">
+					<img class="releases-bell-animation" :src="'/static/icons/releases/notifications.svg'" width="30" height="30" />
 				</div>
 				<div class="simple-panel-icon-button"
 					 title="Открыть карточку релиза выбранного случайным образом">
@@ -150,6 +151,9 @@
 		<div class="releases-selection-helper">
 			{{ selectionModeEnabled ? 'Нажмите ЛКМ для выделения релизов, ПКМ для выхода' : 'Нажмите ПКМ для перехода в режим выделения' }}
 		</div>
+		<div v-if="backToTopVisible" class="releases-backtotop-helper flex-row flex-base-center flex-other-center" @click="backToTop()">
+			<img src="/static/icons/commonbuttons/arrowup.svg" width="20" height="20" />
+		</div>
 
 		<page-drawer v-model:main-menu-visible="mainMenuVisible">
 		</page-drawer>
@@ -195,8 +199,8 @@
 	</div>
 
 	<script type="module">
-		import { createApp, ref, watch, useTemplateRef } from './vue.global.js'
-		import { getRelasesByFilter, getUserMarks, getPageSettings, saveSettings } from './unfoldapi.js'
+		import { createApp, ref, watch, useTemplateRef, onMounted } from './vue.global.js'
+		import { getRelasesByFilter, getUserMarks, getPageSettings, saveSettings, getReleaseNotifications } from './unfoldapi.js'
 		import Drawer from './components/Drawer.js'
 		import PageHeader from './components/PageHeader.js'
 		import SimpleSelect from './components/SimpleSelect.js'
@@ -224,6 +228,8 @@
 				const selectedReleases = ref([]);
 				const releasesContainer = useTemplateRef('releasesContainer');
 				const settingsDialog = useTemplateRef('settingsdialog');
+				const notificationMessage = ref('');
+				const backToTopVisible = ref(false);
 				let currentTimer = -1;
 				const settings = ref({ startedSection: 0, startedSubSection: -1, notificationMode: 0 });
 
@@ -545,6 +551,7 @@
 				async function loadAllData() {
 					userMarks.value = await getUserMarks();
 					settings.value = await getPageSettings('releases');
+					notificationMessage.value = await getReleaseNotifications();
 					sectionSelected.value = settings.value.startedSection;
 					subSectionSelected.value = settings.value.startedSubSection;
 					adjustSortingBySection();
@@ -580,6 +587,16 @@
 					await saveSettings('releases', settings.value);
 				}
 
+				function loadNotifications() {
+					sectionSelected.value = 2;
+					subSectionSelected.value = -1;
+					loadReleases();
+				}
+
+				function backToTop() {
+					releasesContainer.value.scrollTo({top: 0, behavior: 'smooth' });
+				}
+
 				window.addEventListener('resize', () => {
 					const newRelasesInGroup = getReleasesGroupCount();
 					if (newRelasesInGroup !== relasesInGroup.value) {
@@ -599,6 +616,12 @@
 						currentTimer = setTimeout(() => { loadReleases() }, 1000);
 					}
 				);
+
+				onMounted(() => {
+					releasesContainer.value.addEventListener('scroll', () => {
+						backToTopVisible.value = releasesContainer.value.scrollTop > 0;
+					});
+				});
 
 				return {
 					mainMenuVisible,
@@ -626,7 +649,11 @@
 					settings,
 					notificationModes,
 					closeSettingsDialog,
-					settingsClosed
+					settingsClosed,
+					notificationMessage,
+					loadNotifications,
+					backToTop,
+					backToTopVisible
 				}
 			}
 		});

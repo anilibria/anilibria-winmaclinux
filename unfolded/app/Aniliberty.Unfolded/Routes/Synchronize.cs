@@ -48,8 +48,7 @@ namespace Aniliberty.Unfolded.Routes
 
 				if (IsEmptyTypes(cacheFolder)) await SaveTypes(httpClient, cacheFolder);
 
-				var needReadReleases = await SaveFullReleases(httpClient, cacheFolder, checkLatest);
-				if (needReadReleases) await Releases.ReadReleases();
+				await SaveFullReleases(httpClient, cacheFolder, checkLatest);
 			}
 			finally
 			{
@@ -158,85 +157,104 @@ namespace Aniliberty.Unfolded.Routes
 
 			var types = await ReadTypes(folderToSaveCacheFiles);
 
-			var result = new List<ReleaseSaveModel>();
-			var resultTorrents = new List<ReleaseTorrentSaveModel>();
-			var resultVideos = new List<ReleaseSaveEpisodeModel>();
+			var (episodes, releases, releasesMap, torrents) = Releases.OriginalCollections();
 
-			foreach (var fullRelease in allReleases.OrderByDescending(a => a.FreshAt))
+			int countNewReleases = 0;
+			int countNewEpisodes = 0;
+			int countNewTorrents = 0;
+			HashSet<int> notificationReleases = new HashSet<int>();
+			var needNotifications = releases.Any();
+
+			foreach (var fullRelease in allReleases)
 			{
-				//release
-				result.Add(new ReleaseSaveModel
+				if (releasesMap.ContainsKey(fullRelease.Id))
 				{
-					Id = fullRelease.Id,
-					Announce = fullRelease.Notification ?? "",
-					Code = fullRelease.Alias,
-					CountVideos = fullRelease.Episodes?.Count() ?? 0,
-					CountTorrents = fullRelease.Torrents?.Count() ?? 0,
-					Description = fullRelease.Description ?? "",
-					Timestamp = ParseDateTimeOffset(fullRelease.FreshAt),
-					OriginalName = fullRelease.Name.English,
-					Title = fullRelease.Name.Main,
-					Rating = fullRelease.AddedInUsersFavorites ?? 0,
-					Year = fullRelease.Year,
-					Season = types.Seasons.FirstOrDefault(a => a.Value == fullRelease.Season.Value)?.Description ?? "Не указано",
-					Status = fullRelease.IsInProduction ? "Сейчас в озвучке" : "Озвучка завершена",
-					Series = fullRelease.EpisodesAreUnknown ? -1 : fullRelease.EpisodesTotal ?? 0,
-					Poster = fullRelease.Poster?.Src ?? "",
-					Type = types.Types.FirstOrDefault(a => a.Value == fullRelease.Type.Value)?.Description ?? fullRelease.Type.Value,
-					Genres = fullRelease.Genres.Select(a => types.Genres.FirstOrDefault(b => b.Id == a.Id)?.Name ?? "").Where(a => !string.IsNullOrEmpty(a)),
-					IsOngoing = fullRelease.IsOngoing,
-					AgeRating = types.AgeRatings.FirstOrDefault(a => a.Value == fullRelease.AgeRating.Value)?.Description ?? fullRelease.AgeRating.Value,
-					Voices = fullRelease.Members != null ? fullRelease.Members.Where(a => a.Role.Value == "voicing").Select(a => a.Nickname) : [],
-					Team = fullRelease.Members != null ? fullRelease.Members.OrderByDescending(a => a.Role.Value).Select(a => a.Nickname) : [],
-					PublishDay = fullRelease.IsInProduction ? fullRelease.PublishDay?.Value : null
-				});
+					var currentRelease = releasesMap[fullRelease.Id];
+					currentRelease.MapFromApiModel(fullRelease, types);
 
-				// torrents
-				if (fullRelease.Torrents?.Any() == true)
-				{
-					foreach (var torrent in fullRelease.Torrents)
+					if (fullRelease.Episodes?.Any() == true)
 					{
-						resultTorrents.Add(
-							new ReleaseTorrentSaveModel
+						RemapEpisodes(fullRelease.Episodes);
+
+						var releaseEpisodes = episodes.FirstOrDefault(a => a.ReleaseId == fullRelease.Id);
+						if (releaseEpisodes == null)
+						{
+							episodes.Add(new ReleaseSaveEpisodeModel { ReleaseId = fullRelease.Id, Items = fullRelease.Episodes.Select(ReleaseSaveEpisodeItemModel.CreateFromApi).ToArray() });
+							if (needNotifications)
 							{
-								Id = torrent.Id,
-								Codec = torrent.Codec,
-								Description = torrent.Description,
-								Filename = torrent.Filename,
-								Hash = torrent.Hash,
-								Magnet = torrent.Magnet,
-								Quality = torrent.Quality,
-								Type = torrent.Type,
-								Size = torrent.Size,
-								ReleaseId = fullRelease.Id,
-								Seeders = torrent.Seeders,
-								Time = ParseDateTimeOffset(torrent.UpdatedAt)
+								countNewEpisodes += 1;
+								notificationReleases.Add(fullRelease.Id);
 							}
-						);
+						}
+						else
+						{
+							if (needNotifications && releaseEpisodes.Items.Count() != fullRelease.Episodes.Count())
+							{
+								countNewEpisodes += 1;
+								notificationReleases.Add(fullRelease.Id);
+							}
+
+							releaseEpisodes.Items = fullRelease.Episodes.Select(ReleaseSaveEpisodeItemModel.CreateFromApi).ToArray();
+						}
+					}
+					if (fullRelease.Torrents?.Any() == true)
+					{
+						var torrentItems = fullRelease.Torrents.Select(ReleaseTorrentSaveModel.CreateFromApi).ToArray();
+						var releaseTorrents = torrents.FirstOrDefault(a => a.ReleaseId == fullRelease.Id);
+						if (releaseTorrents == null)
+						{
+							torrents.Add(new ReleaseTorrentsSaveModel { ReleaseId = fullRelease.Id, Items = torrentItems });
+							if (needNotifications)
+							{
+								countNewTorrents += 1;
+								notificationReleases.Add(fullRelease.Id);
+							}
+						}
+						else
+						{
+							if (needNotifications && !releaseTorrents.Items.SequenceEqual(torrentItems))
+							{
+								countNewTorrents += 1;
+								notificationReleases.Add(fullRelease.Id);
+							}
+							releaseTorrents.Items = torrentItems;
+						}
 					}
 				}
-
-				// map episodes
-				if (fullRelease.Episodes?.Any() == true)
+				else
 				{
-					RemapEpisodes(fullRelease.Episodes);
-					resultVideos.Add(new ReleaseSaveEpisodeModel { ReleaseId = fullRelease.Id, Items = fullRelease.Episodes });
+					var newRelease = new ReleaseSaveModel();
+					newRelease.MapFromApiModel(fullRelease, types);
+					releasesMap.Add(newRelease.Id, newRelease);
+					releases.Add(newRelease);
+
+					if (fullRelease.Episodes?.Any() == true)
+					{
+						RemapEpisodes(fullRelease.Episodes);
+						episodes.Add(new ReleaseSaveEpisodeModel { ReleaseId = fullRelease.Id, Items = fullRelease.Episodes.Select(ReleaseSaveEpisodeItemModel.CreateFromApi).ToArray() });
+					}
+
+					if (fullRelease.Torrents?.Any() == true)
+					{
+						torrents.Add(new ReleaseTorrentsSaveModel { ReleaseId = fullRelease.Id, Items = fullRelease.Torrents.Select(ReleaseTorrentSaveModel.CreateFromApi).ToArray() });
+					}
+
+					if (needNotifications)
+					{
+						countNewReleases += 1;
+						notificationReleases.Add(newRelease.Id);
+					}
 				}
 			}
 
-			await SaveLoadedItemsToFiles(folderToSaveCacheFiles, result, resultTorrents, resultVideos, lastTimestamp);
+			await SaveLoadedItemsToFiles(folderToSaveCacheFiles, releases, torrents, episodes, lastTimestamp);
 
 			await WebSocketHub.SendMessage(SynchronizedCommand, SynchronizedCommandCompleted);
 
-			//check notifications
-			var torrentsMap = resultTorrents.ToLookup(a => a.ReleaseId, a => a.Size);
-			var newReleases = result
-				.Select(a => new ReleaseForCompare { Id = a.Id, CountVideos = a.CountVideos, TorrentsSize = torrentsMap[a.Id].Any() ? torrentsMap[a.Id].Sum() : 0 })
-				.ToArray();
-			var hasNewReleases = await Releases.CheckNotifications(newReleases);
+			await Releases.SetNotifications(notificationReleases, countNewReleases, countNewEpisodes, countNewTorrents);
 
 			//save franchises if new releases was added
-			if (hasNewReleases) await SaveReleaseSeries(httpClient, folderToSaveCacheFiles);
+			if (countNewReleases > 0) await SaveReleaseSeries(httpClient, folderToSaveCacheFiles);
 
 			return true;
 		}
@@ -362,7 +380,7 @@ namespace Aniliberty.Unfolded.Routes
 			return types;
 		}
 
-		static long ParseDateTimeOffset(string value)
+		internal static long ParseDateTimeOffset(string value)
 		{
 			if (string.IsNullOrEmpty(value)) return 0;
 
@@ -403,7 +421,7 @@ namespace Aniliberty.Unfolded.Routes
 		private static async Task SaveLoadedItemsToFiles(
 			string folderToSaveCacheFiles,
 			List<ReleaseSaveModel> result,
-			List<ReleaseTorrentSaveModel> resultTorrents,
+			List<ReleaseTorrentsSaveModel> resultTorrents,
 			List<ReleaseSaveEpisodeModel> resultVideos,
 			long lastTimestamp)
 		{

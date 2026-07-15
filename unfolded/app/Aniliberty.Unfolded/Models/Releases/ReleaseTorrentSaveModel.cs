@@ -1,33 +1,66 @@
 ﻿using Aniliberty.Unfolded.Models.OriginalApi;
+using Aniliberty.Unfolded.Routes;
 
-namespace Aniliberty.Unfolded.Models.Releases {
+namespace Aniliberty.Unfolded.Models.Releases
+{
 
-    internal record ReleaseTorrentSaveModel {
+	internal record ReleaseTorrentsSaveModel
+	{
 
-        public int ReleaseId { get; set; }
+		public int ReleaseId { get; set; }
 
-        public long Time { get; set; }
 
-        public string Hash { get; init; } = "";
+		public IEnumerable<ReleaseTorrentSaveModel> Items { get; set; } = Enumerable.Empty<ReleaseTorrentSaveModel>();
 
-        public int Id { get; init; }
+	}
 
-        public string Magnet { get; init; } = "";
+	internal class ReleaseTorrentSaveModel
+	{
 
-        public string Filename { get; init; } = "";
+		public long Time { get; set; }
 
-        public string Description { get; init; } = "";
+		public string Hash { get; set; } = "";
 
-        public StringValueItem Quality { get; init; } = new StringValueItem ();
+		public int Id { get; set; }
 
-        public StringValueItem Codec { get; init; } = new StringValueItem ();
+		public string Magnet { get; set; } = "";
 
-        public StringValueItem Type { get; init; } = new StringValueItem ();
+		public string Filename { get; set; } = "";
 
-        public long Size { get; init; }
+		public string Description { get; set; } = "";
 
-        public int Seeders { get; init; }
+		public string Quality { get; set; } = "";
 
-    }
+		public string Codec { get; set; } = "";
+
+		public string Type { get; set; } = "";
+
+		public long Size { get; set; }
+
+		public int Seeders { get; set; }
+
+		internal void MapFromApiModel(ReleaseTorrentModel torrent)
+		{
+			Time = Synchronize.ParseDateTimeOffset(torrent.UpdatedAt);
+			Hash = torrent.Hash;
+			Id = torrent.Id;
+			Magnet = torrent.Magnet;
+			Filename = torrent.Filename;
+			Description = torrent.Description;
+			Quality = torrent.Quality.Description;
+			Codec = torrent.Codec.Description;
+			Type = torrent.Type.Description;
+			Size = torrent.Size;
+			Seeders = torrent.Seeders;
+		}
+
+		internal static ReleaseTorrentSaveModel CreateFromApi(ReleaseTorrentModel torrent)
+		{
+			var model = new ReleaseTorrentSaveModel();
+			model.MapFromApiModel(torrent);
+			return model;
+		}
+
+	}
 
 }

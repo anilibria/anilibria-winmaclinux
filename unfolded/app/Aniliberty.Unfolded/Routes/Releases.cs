@@ -18,7 +18,7 @@ namespace Aniliberty.Unfolded.Routes
 
 		static Dictionary<int, ReleaseSaveModel> m_releasesMap = [];
 
-		static List<ReleaseTorrentSaveModel> m_torrents = [];
+		static List<ReleaseTorrentsSaveModel> m_torrents = [];
 
 		static List<ReleaseSeriesSaveModel> m_franchises = [];
 
@@ -36,6 +36,8 @@ namespace Aniliberty.Unfolded.Routes
 
 		static List<int> m_notificationReleases = new List<int>();
 
+		static string m_notificationMessage = "";
+
 		public static void RegisterRoutes(WebApplication app)
 		{
 			app.MapGet("/releases/release", ([FromQuery] int id) => Release(id));
@@ -45,6 +47,7 @@ namespace Aniliberty.Unfolded.Routes
 			app.MapGet("/releases/torrents", (int id) => Torrents(id));
 			app.MapGet("/releases/openmagnet", (string magnet) => OpenMagnet(magnet));
 			app.MapGet("/releases/franchise", (int id) => Franchise(id));
+			app.MapGet("/releases/notifications", () => Results.Content(m_notificationMessage));
 		}
 
 		internal static async Task Initialize()
@@ -110,54 +113,24 @@ namespace Aniliberty.Unfolded.Routes
 			return result;
 		}
 
-		internal static async Task<bool> CheckNotifications(IEnumerable<ReleaseForCompare> newReleases)
+		internal static async Task SetNotifications(IEnumerable<int> ids, int countNewReleases, int countNewEpisodes, int countNewTorrents)
 		{
-			if (!m_releases.Any()) return true;
-			if (Settings.Model.Releases.NotificationMode == 0) return false; // not need notifications
+			if (Settings.Model.Releases.NotificationMode == 0) return;
 
 			var onlyFavorites = Settings.Model.Releases.NotificationMode == 2;
 
-			var torrentMap = m_torrents.ToLookup(a => a.ReleaseId, a => a.Size);
-			var currentReleases = m_releases
-				.Where(a => onlyFavorites ? m_favorites.Contains(a.Id) || m_localFavorites.Contains(a.Id) : true)
-				.Select(a => new ReleaseForCompare { Id = a.Id, CountVideos = a.CountVideos, TorrentsSize = torrentMap[a.Id].Any() ? torrentMap[a.Id].Sum() : 0 })
-				.ToDictionary(a => a.Id);
-
-			var countNewReleases = 0;
-			var countReleasesSeries = 0;
-			var countReleasesTorrents = 0;
-			foreach (var newRelease in newReleases)
-			{
-				if (!m_releasesMap.ContainsKey(newRelease.Id))
-				{
-					m_notificationReleases.Add(newRelease.Id);
-					countNewReleases++;
-					continue;
-				}
-
-				if (!currentReleases.ContainsKey(newRelease.Id)) continue;
-
-				var currentRelease = currentReleases[newRelease.Id];
-				if (currentRelease.CountVideos < newRelease.CountVideos)
-				{
-					m_notificationReleases.Add(newRelease.Id);
-					countReleasesSeries++;
-				}
-				if (currentRelease.TorrentsSize != newRelease.TorrentsSize)
-				{
-					m_notificationReleases.Add(newRelease.Id);
-					countReleasesTorrents++;
-				}
-			}
+			var currentReleases = ids
+				.Where(a => onlyFavorites ? m_favorites.Contains(a) || m_localFavorites.Contains(a) : true)
+				.ToDictionary(a => a);
 
 			var messages = new StringBuilder();
 			if (countNewReleases > 0) messages.Append($"Новых релизов {countNewReleases} ");
-			if (countReleasesSeries > 0) messages.Append($"Новые серии в релизах {countReleasesSeries} ");
-			if (countReleasesTorrents > 0) messages.Append($"Обновленные торренты в релизах {countReleasesTorrents}");
+			if (countNewEpisodes > 0) messages.Append($"Новые серии в релизах {countNewEpisodes} ");
+			if (countNewTorrents > 0) messages.Append($"Обновленные торренты в релизах {countNewTorrents}");
 
-			await WebSocketHub.SendMessage("ntc", messages.ToString());
+			m_notificationMessage = messages.ToString();
 
-			return countNewReleases > 0;
+			await WebSocketHub.SendMessage("ntc", m_notificationMessage);
 		}
 
 		internal static async Task SaveOnlyFavorites(IEnumerable<int>? favorites, IEnumerable<int>? localFavorites)
@@ -354,11 +327,16 @@ namespace Aniliberty.Unfolded.Routes
 			}
 		}
 
+		static internal (List<ReleaseSaveEpisodeModel> episodes, List<ReleaseSaveModel> releases, Dictionary<int, ReleaseSaveModel> m_releasesMap, List<ReleaseTorrentsSaveModel> m_torrents) OriginalCollections()
+		{
+			return (m_episodes, m_releases, m_releasesMap, m_torrents);
+		}
+
 		static async Task ReadReleases(MetadataModel metadata, string folderToSaveCacheFiles)
 		{
 			var episodes = new List<ReleaseSaveEpisodeModel>();
 			var releases = new List<ReleaseSaveModel>();
-			var allTorrents = new List<ReleaseTorrentSaveModel>();
+			var allTorrents = new List<ReleaseTorrentsSaveModel>();
 
 			var extension = ".cache";
 
@@ -388,7 +366,7 @@ namespace Aniliberty.Unfolded.Routes
 
 			var torrents = Path.Combine(folderToSaveCacheFiles, $"torrents{extension}");
 			var fullJson = await File.ReadAllTextAsync(torrents);
-			var deserializedTorrens = JsonHelpers.DeserializeFromJson<List<ReleaseTorrentSaveModel>>(fullJson);
+			var deserializedTorrens = JsonHelpers.DeserializeFromJson<List<ReleaseTorrentsSaveModel>>(fullJson);
 			if (deserializedTorrens != null) allTorrents.AddRange(deserializedTorrens);
 
 			m_episodes = episodes;
@@ -409,19 +387,18 @@ namespace Aniliberty.Unfolded.Routes
 					{
 						Id = a.Id,
 						Name = a.Name,
-						NameEnglish = a.NameEnglish,
 						Hls1080 = a.Hls1080,
 						Hls480 = a.Hls480,
 						Hls720 = a.Hls720,
 						Ordinal = a.Ordinal,
-						Preview = a.Preview.Src,
+						Preview = a.Poster,
 						RutubeId = a.RutubeId,
 						YoutubeId = a.YoutubeId,
 						SortOrder = a.SortOrder,
-						OpeningEnd = a.Opening.Stop,
-						OpeningStart = a.Opening.Start,
-						EndingEnd = a.Ending.Stop,
-						EndingStart = a.Ending.Start
+						OpeningEnd = a.OpeningEnd,
+						OpeningStart = a.OpeningStart,
+						EndingEnd = a.EndingEnd,
+						EndingStart = a.EndingStart
 					}),
 					AppJsonSerializerContext.Default
 				);
@@ -451,26 +428,25 @@ namespace Aniliberty.Unfolded.Routes
 
 		internal static IResult Torrents(int releaseId)
 		{
-			var torrents = m_torrents
-				.Where(a => a.ReleaseId == releaseId)
-				.ToList();
-			if (torrents.Any())
+			var torrent = m_torrents.FirstOrDefault(a => a.ReleaseId == releaseId);
+
+			if (torrent?.Items?.Any() == true)
 			{
 				return Results.Json(
-					torrents
+					torrent.Items
 						.Select(
 							a => new ReleaseDisplayTorrentModel
 							{
-								Codec = a.Codec?.Description ?? "",
+								Codec = a.Codec ?? "",
 								Description = a.Description ?? "",
 								Filename = a.Filename ?? "",
 								Hash = a.Hash,
 								Magnet = a.Magnet,
-								Quality = a.Quality?.Description ?? "",
+								Quality = a.Quality ?? "",
 								Size = a.Size,
 								Time = a.Time,
-								Type = a.Type?.Description ?? "",
-								DisplayForm = $"{(a.Quality?.Description ?? "")} {(a.Codec?.Description ?? "")} [{a.Description ?? ""}] {GetSizeFromBytes(a.Size)}"
+								Type = a.Type ?? "",
+								DisplayForm = $"{(a.Quality ?? "")} {(a.Codec ?? "")} [{a.Description ?? ""}] {GetSizeFromBytes(a.Size)}"
 							}
 						),
 					AppJsonSerializerContext.Default

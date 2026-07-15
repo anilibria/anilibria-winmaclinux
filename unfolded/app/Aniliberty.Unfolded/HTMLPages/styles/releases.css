@@ -84,6 +84,24 @@
     text-align: right;
 }
 
+.releases-backtotop-helper {
+    font-size: 15px;
+    font-weight: bold;
+    opacity: .5;
+    width: 40px;
+    height: 40px;
+    position: absolute;
+    right: 20px;
+    bottom: 0px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    text-align: right;
+
+    &:hover {
+        opacity: 1;
+        background-color: var(--icon-button-hovered)
+    }
+}
+
 .releases-settings {
     width: 400px;
     height: 200px;
@@ -97,5 +115,57 @@
     > div {
         text-align: center;
         font-size: 17px;
+    }
+}
+
+.releases-bell-animation {
+    display: inline-block;
+    transform-origin: 50% 0%;
+    animation: bell-wiggle 1s ease-in-out infinite;
+}
+
+@keyframes bell-wiggle {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    10% {
+        transform: rotate(-10deg);
+    }
+
+    20% {
+        transform: rotate(12deg);
+    }
+
+    30% {
+        transform: rotate(-8deg);
+    }
+
+    40% {
+        transform: rotate(10deg);
+    }
+
+    50% {
+        transform: rotate(-6deg);
+    }
+
+    60% {
+        transform: rotate(8deg);
+    }
+
+    70% {
+        transform: rotate(-4deg);
+    }
+
+    80% {
+        transform: rotate(6deg);
+    }
+
+    90% {
+        transform: rotate(-2deg);
+    }
+
+    100% {
+        transform: rotate(0deg);
     }
 }

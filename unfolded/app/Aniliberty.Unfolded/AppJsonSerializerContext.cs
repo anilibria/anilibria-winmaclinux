@@ -12,7 +12,7 @@ namespace Aniliberty.Unfolded
 	[JsonSerializable(typeof(ReleaseSaveModel))]
 	[JsonSerializable(typeof(MetadataModel))]
 	[JsonSerializable(typeof(TypesResultModel))]
-	[JsonSerializable(typeof(List<ReleaseTorrentSaveModel>))]
+	[JsonSerializable(typeof(List<ReleaseTorrentsSaveModel>))]
 	[JsonSerializable(typeof(List<ReleaseSaveEpisodeModel>))]
 	[JsonSerializable(typeof(List<ReleaseSaveModel>))]
 	[JsonSerializable(typeof(ReleaseIdModel))]
