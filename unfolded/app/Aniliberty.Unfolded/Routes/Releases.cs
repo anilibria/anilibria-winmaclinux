@@ -42,6 +42,7 @@ namespace Aniliberty.Unfolded.Routes
 		{
 			app.MapGet("/releases/release", ([FromQuery] int id) => Release(id));
 			app.MapPost("/releases/list", ([FromBody] ReleasesListFiltersModel model) => List(model));
+			app.MapPost("/releases/random", ([FromBody] ReleasesListFiltersModel? model) => RandomRelease(model));
 			app.MapGet("/releases/marks", ([FromQuery] int[]? onlyForReleases) => Marks(onlyForReleases));
 			app.MapGet("/releases/episodes", (int releaseId) => Episodes(releaseId));
 			app.MapGet("/releases/torrents", (int id) => Torrents(id));
@@ -215,6 +216,14 @@ namespace Aniliberty.Unfolded.Routes
 			return Results.NotFound();
 		}
 
+
+		internal static IResult RandomRelease(ReleasesListFiltersModel? model)
+		{
+			var filteredItems = model is not null ? FilterReleases(model) : m_releases;
+			var index = new Random((int)DateTime.UtcNow.TimeOfDay.TotalSeconds).Next(0, filteredItems.Count());
+			return Results.Content(filteredItems.ElementAt(index).Id.ToString(), "application/json");
+		}
+
 		internal static IResult List(ReleasesListFiltersModel model)
 		{
 			var filteredItems = FilterReleases(model);
@@ -224,11 +233,12 @@ namespace Aniliberty.Unfolded.Routes
 
 		internal static IResult Marks(IEnumerable<int>? onlyForReleases)
 		{
+			var isOnlyReleases = onlyForReleases?.Any() ?? false;
 			Dictionary<int, int> releaseSeries = new Dictionary<int, int>();
 			var fullReleaseSeens = new HashSet<int>();
 			foreach (var releaseEpisodes in m_episodes)
 			{
-				if (onlyForReleases != null && !onlyForReleases.Contains(releaseEpisodes.ReleaseId)) continue;
+				if (isOnlyReleases && onlyForReleases != null && !onlyForReleases.Contains(releaseEpisodes.ReleaseId)) continue;
 
 				if (!m_releasesMap.ContainsKey(releaseEpisodes.ReleaseId)) continue;
 
@@ -246,7 +256,7 @@ namespace Aniliberty.Unfolded.Routes
 			}
 			var result = new MarksModel
 			{
-				Favorites = onlyForReleases != null ? m_favorites.Where(a => onlyForReleases.Contains(a)) : m_favorites,
+				Favorites = isOnlyReleases && onlyForReleases != null ? m_favorites.Where(a => onlyForReleases.Contains(a)) : m_favorites,
 				SeenSeries = releaseSeries,
 				FullSeenReleases = fullReleaseSeens
 			};
@@ -277,6 +287,27 @@ namespace Aniliberty.Unfolded.Routes
 						{
 							return false;
 						}
+						if (CheckStringValue(model.Description, a.Description)) return false;
+						if (CheckStringValue(model.Type, a.Type)) return false;
+						if (CheckStringValue(model.Type, a.Type)) return false;
+						if (CheckMultiStringValue(model.Voices, a.Voices, model.VoicesOr ?? false)) return false;
+						if (CheckMultiStringValue(model.Genres, a.Genres, model.GenresOr ?? false)) return false;
+						if (CheckMultiStringSingleValue(model.Years, a.Year.ToString(), model.YearsOr ?? false)) return false;
+						if (CheckMultiStringSingleValue(model.Seasons, a.Season, model.SeasonsOr ?? false)) return false;
+						if (CheckMultiStringSingleValue(model.Statuses, a.Status, model.StatusesOr ?? false)) return false;
+						if (model.InFavorites.HasValue)
+						{
+							var inFavorite = m_favorites.Contains(a.Id) || m_localFavorites.Contains(a.Id);
+							if (model.InFavorites.Value && !inFavorite) return false;
+							if (!model.InFavorites.Value && inFavorite) return false;
+						}
+						if (model.PartOfReleases.HasValue)
+						{
+							var inFranchise = m_franchises.Any(b => b.Releases.Any(c => c.Id == a.Id));
+							if (model.PartOfReleases.Value && !inFranchise) return false;
+							if (!model.PartOfReleases.Value && inFranchise) return false;
+						}
+						//if (CheckMultiStringSingleValue(model.ScheduleDays, a.PublishDay.ToString(), model.ScheduleDaysOr ?? false)) return false;
 
 						if (!FilterBySection(model.Section, a, seenEpisodes)) return false;
 
@@ -285,6 +316,70 @@ namespace Aniliberty.Unfolded.Routes
 				),
 				model
 			);
+
+			static bool CheckStringValue(string? filter, string? value)
+			{
+				if (string.IsNullOrEmpty(value)) return false;
+				if (string.IsNullOrEmpty(filter)) return false;
+
+				var valueLower = value.ToLowerInvariant();
+				var filterLower = filter.ToLowerInvariant();
+
+				if (valueLower.Contains(filterLower) || valueLower == filterLower) return true;
+
+				return false;
+			}
+
+			static bool CheckMultiStringValue(IEnumerable<string>? filter, IEnumerable<string>? value, bool or)
+			{
+				if (value is null) return false;
+				if (filter is null) return false;
+				filter = filter.Where(a => !string.IsNullOrEmpty(a)).ToList();
+				if (!filter.Any()) return false;
+
+				if (or == true) {
+					foreach (var filterItem in filter.Select(a => a.ToLowerInvariant()))
+					{
+						if (value.Any(a => a.ToLowerInvariant().Contains(filterItem))) return true;
+					}
+				}
+				else
+				{
+					var andFilter = filter
+						.Select(a => a.ToLowerInvariant())
+						.All(filterItemValue => value.Any(a => a.ToLowerInvariant().Contains(filterItemValue)));
+					if (andFilter) return true;
+				}
+
+				return false;
+			}
+
+			static bool CheckMultiStringSingleValue(IEnumerable<string>? filter, string? value, bool or)
+			{
+				if (string.IsNullOrEmpty(value)) return false;
+				if (filter is null) return false;
+				filter = filter.Where(a => !string.IsNullOrEmpty(a)).ToList();
+				if (!filter.Any()) return false;
+
+				if (or == true)
+				{
+					foreach (var filterItem in filter.Where(a => !string.IsNullOrEmpty(a)).Select(a => a.ToLowerInvariant()))
+					{
+						if (value.ToLowerInvariant().Contains(filterItem)) return true;
+					}
+				}
+				else
+				{
+					var andFilter = filter
+						.Where(a => !string.IsNullOrEmpty(a))
+						.Select(a => a.ToLowerInvariant())
+						.All(filterItemValue => value.ToLowerInvariant().Contains(filterItemValue));
+					if (andFilter) return true;
+				}
+
+				return false;
+			}
+
 		}
 
 		private static IEnumerable<ReleaseSaveModel> SortingReleases(IEnumerable<ReleaseSaveModel> releases, ReleasesListFiltersModel model)
@@ -404,7 +499,7 @@ namespace Aniliberty.Unfolded.Routes
 				);
 			}
 
-			return Results.Json(new List<ReleaseDisplayEpisodeModel>(), AppJsonSerializerContext.Default);
+			return Results.Json(new List<ReleaseDisplayEpisodeModel>().AsEnumerable(), AppJsonSerializerContext.Default);
 		}
 
 		private static string GetSizeFromBytes(long bytes, int decimalPlaces = 1)
@@ -453,7 +548,7 @@ namespace Aniliberty.Unfolded.Routes
 				);
 			}
 
-			return Results.Json(new List<ReleaseDisplayTorrentModel>(), AppJsonSerializerContext.Default);
+			return Results.Json(new List<ReleaseDisplayTorrentModel>().AsEnumerable(), AppJsonSerializerContext.Default);
 		}
 
 		internal static IResult OpenMagnet(string magnet)

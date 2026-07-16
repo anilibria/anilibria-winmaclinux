@@ -48,7 +48,8 @@
 					<img class="releases-bell-animation" :src="'/static/icons/releases/notifications.svg'" width="30" height="30" />
 				</div>
 				<div class="simple-panel-icon-button"
-					 title="Открыть карточку релиза выбранного случайным образом">
+					 title="Открыть карточку релиза выбранного случайным образом"
+					 @click="openRandomRelease()">
 					<img :src="'/static/icons/releases/random.svg'" width="30" height="30" />
 				</div>
 				<div class="simple-panel-icon-button"
@@ -200,7 +201,7 @@
 
 	<script type="module">
 		import { createApp, ref, watch, useTemplateRef, onMounted } from './vue.global.js'
-		import { getRelasesByFilter, getUserMarks, getPageSettings, saveSettings, getReleaseNotifications } from './unfoldapi.js'
+		import { getRelasesByFilter, getUserMarks, getPageSettings, saveSettings, getReleaseNotifications, getRandomReleaseFromAll } from './unfoldapi.js'
 		import Drawer from './components/Drawer.js'
 		import PageHeader from './components/PageHeader.js'
 		import SimpleSelect from './components/SimpleSelect.js'
@@ -594,7 +595,12 @@
 				}
 
 				function backToTop() {
-					releasesContainer.value.scrollTo({top: 0, behavior: 'smooth' });
+					releasesContainer.value.scrollTo({ top: 0, behavior: 'smooth' });
+				}
+
+				async function openRandomRelease() {
+					const id = await getRandomReleaseFromAll();
+					window.location.href = "releasecard.html?id=" + id;
 				}
 
 				window.addEventListener('resize', () => {
@@ -653,7 +659,8 @@
 					notificationMessage,
 					loadNotifications,
 					backToTop,
-					backToTopVisible
+					backToTopVisible,
+					openRandomRelease
 				}
 			}
 		});

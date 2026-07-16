@@ -8,7 +8,7 @@ namespace Aniliberty.Unfolded.Models.Releases
 
         public int ReleaseId { get; set; }
 
-        public IEnumerable<ReleaseSaveEpisodeItemModel> Items { get; set; } = Enumerable.Empty<ReleaseSaveEpisodeItemModel>();
+        public List<ReleaseSaveEpisodeItemModel> Items { get; set; } = Enumerable.Empty<ReleaseSaveEpisodeItemModel>().ToList();
 
     }
 
@@ -72,6 +72,24 @@ namespace Aniliberty.Unfolded.Models.Releases
 			var model = new ReleaseSaveEpisodeItemModel();
 			model.MapFromApiModel(episode);
 			return model;
+		}
+
+		internal static void MapOrCreateFromApi(IEnumerable<ReleaseEpisodeModel> apiEpisodes, List<ReleaseSaveEpisodeItemModel> saved)
+		{
+			var savedMap = saved.ToDictionary(a => a.Id);
+			foreach (var apiEpisode in apiEpisodes)
+			{
+				if (savedMap.ContainsKey(apiEpisode.Id))
+				{
+					var savedItem = savedMap[apiEpisode.Id];
+					savedItem.MapFromApiModel(apiEpisode);
+				} else
+				{
+					var newModel = new ReleaseSaveEpisodeItemModel();
+					newModel.MapFromApiModel(apiEpisode);
+					saved.Add(newModel);
+				}
+			}
 		}
 
 	}

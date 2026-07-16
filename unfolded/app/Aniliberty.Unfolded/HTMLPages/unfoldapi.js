@@ -71,6 +71,18 @@ export async function getRelasesByFilter(model) {
     );
     return await response.json();
 };
+export async function getRandomReleaseFromAll() {
+    const response = await fetch(
+        '/releases/random',
+        {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            }
+        }
+    );
+    return await response.json();
+};
 export async function getUserMarks(onlyForReleases) {
     let onlyForReleaseParameter = '';
     if (onlyForReleases) {
@@ -102,8 +114,6 @@ export async function getReleaseNotifications(id) {
     const response = await fetch('/releases/notifications');
     return await response.text();
 };
-
-
 
 export async function synchronizeReleases() {
     await fetch('/sync/full');

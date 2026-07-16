@@ -18,7 +18,7 @@
 
 		public bool? GenresOr { get; set; }
 
-		public IEnumerable<int>? Years { get; init; } = [];
+		public IEnumerable<string>? Years { get; init; } = [];
 
 		public bool? YearsOr { get; set; }
 

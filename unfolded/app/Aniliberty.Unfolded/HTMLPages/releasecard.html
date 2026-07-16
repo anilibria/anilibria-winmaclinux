@@ -42,7 +42,7 @@
 						</div>
 					</div>
 				</div>
-				<div class="simple-panel-icon-button simple-popup-container">
+				<div v-if="releaseTorrents.length" class="simple-panel-icon-button simple-popup-container">
 					<div class="full-width-height flex-row flex-base-center flex-other-center">
 						<img :src="'/static/icons/releasecard/magnet.svg'" width="30" height="30" />
 					</div>
@@ -105,9 +105,9 @@
 					</div>
 					<div class="episodes-list">
 						<div v-for="episode in releaseEpisodes">
-							<img @click="watchSerie(episode.id)" class="poster-episode" :src="'https://aniliberty.top' + episode.preview" width="400" height="270" />
+							<img @click="watchSerie(episode.id)" class="poster-episode" :src="episode.preview ? 'https://aniliberty.top' + episode.preview : '/static/backgrounds/emptyepisode.jpg'" width="400" height="270" />
 							<div class="full-width flex-row flex-base-center flex-other-center">
-								<span>{{ episode.name || "&nbsp" }}</span>
+								<span>{{ episode.name || "Серия " + (episode.sortOrder + 1) }}</span>
 							</div>
 						</div>
 					</div>
@@ -120,7 +120,7 @@
 					<div class="releases-list">
 						<div v-for="release in franchise.releases" class="flex-column flex-base-center">
 							<img @click="openLinkedSerie(release.releaseId)" class="poster-release" :src="'https://aniliberty.top' + release.poster" width="180" height="270" />
-							<div class="full-width flex-row flex-base-center flex-other-center">
+							<div class="franchise-release-title full-width flex-row flex-base-center flex-other-center">
 								<span>{{ release.title }}</span>
 							</div>
 						</div>

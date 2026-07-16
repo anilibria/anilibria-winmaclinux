@@ -179,7 +179,7 @@ namespace Aniliberty.Unfolded.Routes
 						var releaseEpisodes = episodes.FirstOrDefault(a => a.ReleaseId == fullRelease.Id);
 						if (releaseEpisodes == null)
 						{
-							episodes.Add(new ReleaseSaveEpisodeModel { ReleaseId = fullRelease.Id, Items = fullRelease.Episodes.Select(ReleaseSaveEpisodeItemModel.CreateFromApi).ToArray() });
+							episodes.Add(new ReleaseSaveEpisodeModel { ReleaseId = fullRelease.Id, Items = fullRelease.Episodes.Select(ReleaseSaveEpisodeItemModel.CreateFromApi).ToList() });
 							if (needNotifications)
 							{
 								countNewEpisodes += 1;
@@ -194,7 +194,7 @@ namespace Aniliberty.Unfolded.Routes
 								notificationReleases.Add(fullRelease.Id);
 							}
 
-							releaseEpisodes.Items = fullRelease.Episodes.Select(ReleaseSaveEpisodeItemModel.CreateFromApi).ToArray();
+							ReleaseSaveEpisodeItemModel.MapOrCreateFromApi(fullRelease.Episodes, releaseEpisodes.Items);
 						}
 					}
 					if (fullRelease.Torrents?.Any() == true)
@@ -212,7 +212,7 @@ namespace Aniliberty.Unfolded.Routes
 						}
 						else
 						{
-							if (needNotifications && !releaseTorrents.Items.SequenceEqual(torrentItems))
+							if (needNotifications && !releaseTorrents.Items.Select(a => a.Size).SequenceEqual(torrentItems.Select(a => a.Size)))
 							{
 								countNewTorrents += 1;
 								notificationReleases.Add(fullRelease.Id);
@@ -231,7 +231,7 @@ namespace Aniliberty.Unfolded.Routes
 					if (fullRelease.Episodes?.Any() == true)
 					{
 						RemapEpisodes(fullRelease.Episodes);
-						episodes.Add(new ReleaseSaveEpisodeModel { ReleaseId = fullRelease.Id, Items = fullRelease.Episodes.Select(ReleaseSaveEpisodeItemModel.CreateFromApi).ToArray() });
+						episodes.Add(new ReleaseSaveEpisodeModel { ReleaseId = fullRelease.Id, Items = fullRelease.Episodes.Select(ReleaseSaveEpisodeItemModel.CreateFromApi).ToList() });
 					}
 
 					if (fullRelease.Torrents?.Any() == true)
