@@ -118,6 +118,19 @@
     }
 }
 
+.releases-rightmenu {
+    left: 100%;
+    top: 0;
+    transform: unset;
+    font-size: 13px;
+}
+
+.releases-rightmenu-search {
+    width: 280px;
+    max-width: 400px;
+    padding: 8px;
+}
+
 .releases-bell-animation {
     display: inline-block;
     transform-origin: 50% 0%;

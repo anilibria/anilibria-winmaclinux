@@ -36,6 +36,8 @@ namespace Aniliberty.Unfolded.Routes
 
 		static List<int> m_notificationReleases = new List<int>();
 
+		static ReleaseDictionaries m_releaseDictionaries = new ReleaseDictionaries();
+
 		static string m_notificationMessage = "";
 
 		public static void RegisterRoutes(WebApplication app)
@@ -49,6 +51,7 @@ namespace Aniliberty.Unfolded.Routes
 			app.MapGet("/releases/openmagnet", (string magnet) => OpenMagnet(magnet));
 			app.MapGet("/releases/franchise", (int id) => Franchise(id));
 			app.MapGet("/releases/notifications", () => Results.Content(m_notificationMessage));
+			app.MapGet("/releases/dictionaries", () => Results.Json(m_releaseDictionaries, AppJsonSerializerContext.Default));
 		}
 
 		internal static async Task Initialize()
@@ -97,6 +100,12 @@ namespace Aniliberty.Unfolded.Routes
 				var releaseSeriesJson = await File.ReadAllTextAsync(releasesSeriesPath);
 				m_franchises = DeserializeFromJson<List<ReleaseSeriesSaveModel>>(releaseSeriesJson) ?? new List<ReleaseSeriesSaveModel>();
 			}
+
+			m_releaseDictionaries.Genres = m_releases.SelectMany(a => a.Genres).Where(a => !string.IsNullOrEmpty(a)).ToHashSet();
+			m_releaseDictionaries.Teams = m_releases.SelectMany(a => a.Team).Where(a => !string.IsNullOrEmpty(a)).ToHashSet();
+			m_releaseDictionaries.Seasons = m_releases.Select(a => a.Season).Where(a => !string.IsNullOrEmpty(a)).ToHashSet();
+			m_releaseDictionaries.Statuses = m_releases.Select(a => a.Status).Where(a => !string.IsNullOrEmpty(a)).ToHashSet();
+			m_releaseDictionaries.Years = m_releases.Select(a => a.Year.ToString()).OrderByDescending(a => a).ToHashSet();
 		}
 
 		internal static IEnumerable<ReleaseSeriesReleaseSaveModel> GetReleasesPosterAndNames(IEnumerable<int> ids)
@@ -290,7 +299,7 @@ namespace Aniliberty.Unfolded.Routes
 						if (CheckStringValue(model.Description, a.Description)) return false;
 						if (CheckStringValue(model.Type, a.Type)) return false;
 						if (CheckStringValue(model.Type, a.Type)) return false;
-						if (CheckMultiStringValue(model.Voices, a.Voices, model.VoicesOr ?? false)) return false;
+						if (CheckMultiStringValue(model.Team, a.Team, model.TeamOr ?? false)) return false;
 						if (CheckMultiStringValue(model.Genres, a.Genres, model.GenresOr ?? false)) return false;
 						if (CheckMultiStringSingleValue(model.Years, a.Year.ToString(), model.YearsOr ?? false)) return false;
 						if (CheckMultiStringSingleValue(model.Seasons, a.Season, model.SeasonsOr ?? false)) return false;
@@ -337,18 +346,25 @@ namespace Aniliberty.Unfolded.Routes
 				filter = filter.Where(a => !string.IsNullOrEmpty(a)).ToList();
 				if (!filter.Any()) return false;
 
-				if (or == true) {
+				if (or == true)
+				{
+					var founded = false;
 					foreach (var filterItem in filter.Select(a => a.ToLowerInvariant()))
 					{
-						if (value.Any(a => a.ToLowerInvariant().Contains(filterItem))) return true;
+						if (value.Where(a => a is not null).Any(a => a.ToLowerInvariant().Contains(filterItem)))
+						{
+							founded = true;
+							break;
+						}
 					}
+					if (!founded) return true;
 				}
 				else
 				{
 					var andFilter = filter
 						.Select(a => a.ToLowerInvariant())
-						.All(filterItemValue => value.Any(a => a.ToLowerInvariant().Contains(filterItemValue)));
-					if (andFilter) return true;
+						.All(filterItemValue => value.Where(a => a is not null).Any(a => a.ToLowerInvariant().Contains(filterItemValue)));
+					if (!andFilter) return true;
 				}
 
 				return false;

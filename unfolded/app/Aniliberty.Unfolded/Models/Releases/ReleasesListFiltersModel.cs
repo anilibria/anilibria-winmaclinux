@@ -10,9 +10,9 @@
 
 		public string? Description { get; init; } = "";
 
-		public IEnumerable<string>? Voices { get; init; } = [];
+		public IEnumerable<string>? Team { get; init; } = [];
 
-		public bool? VoicesOr { get; set; }
+		public bool? TeamOr { get; set; }
 
 		public IEnumerable<string>? Genres { get; init; } = [];
 

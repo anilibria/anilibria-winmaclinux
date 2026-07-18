@@ -161,6 +161,11 @@ export async function removeSeenMark(ids) {
         }
     );
 };
+export async function getReleaseDictionaries() {
+    const response = await fetch('/releases/dictionaries');
+    return await response.json();
+};
+
 
 export async function authorizationByLoginPass(login, password) {
     const response = await fetch(

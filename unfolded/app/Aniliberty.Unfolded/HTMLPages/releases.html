@@ -10,6 +10,15 @@
 	<link rel="stylesheet" href="mainmenu.css">
 	<link rel="stylesheet" href="pagestructure.css">
 	<link rel="stylesheet" href="styles/releases.css">
+	<link rel="stylesheet" href="libs/multiselect.css">
+	<script type="importmap">
+		{
+		  "imports": {
+			"vue": "./vue.global.js"
+		  }
+		}
+	</script>
+
 </head>
 <body>
 	<div id="app">
@@ -38,9 +47,105 @@
 					 title="Добавлять/удалять релизы в/из кинозала">
 					<img :src="'/static/icons/mainmenu/cinemahall.svg'" width="30" height="30" />
 				</div>
-				<div class="simple-panel-icon-button"
+				<div class="simple-panel-icon-button simple-popup-container"
 					 title="Добавить фильтры для фильтрации по разным полям релиза">
-					<img :src="'/static/icons/releases/search.svg'" width="30" height="30" />
+					<div class="full-width-height flex-row flex-base-center flex-other-center">
+						<img :src="'/static/icons/releases/search.svg'" width="30" height="30" />
+					</div>
+					<div class="simple-popup-box releases-rightmenu">
+						<div class="releases-rightmenu-search flex-column">
+							<div class="flex-column gap-2">
+								<span>Описание</span>
+								<input v-model="filterModel.description" type="text" class="simple-input" placeholder="Описание" />
+							</div>
+							<div class="flex-column gap-2">
+								<span>Тип</span>
+								<input v-model="filterModel.type" type="text" class="simple-input" placeholder="Тип" />
+							</div>
+							<div class="flex-column gap-2">
+								<span>Команда</span>
+								<div class="flex-row flex-base-center gap-4">
+									<multi-select v-model="filterModel.team" :options="releaseDictionaries.teams" style="width: 170px;" mode="tags" searchable>
+									</multi-select>
+									<div style="margin-left: 4px; margin-right: 4px;">
+										<span>ИЛИ/И</span>
+									</div>
+									<simple-switch v-model:state="filterModel.teamOr" @changed="loadReleases()">
+									</simple-switch>
+								</div>
+							</div>
+							<div class="flex-column gap-2">
+								<span>Жанры</span>
+								<div class="flex-row flex-base-center gap-4">
+									<multi-select v-model="filterModel.genres" :options="releaseDictionaries.genres" style="width: 170px;" mode="tags" searchable>
+									</multi-select>
+									<div style="margin-left: 4px; margin-right: 4px;">
+										<span>ИЛИ/И</span>
+									</div>
+									<simple-switch v-model:state="filterModel.genresOr" @changed="loadReleases()">
+									</simple-switch>
+								</div>
+							</div>
+							<div class="flex-column gap-2">
+								<span>Года</span>
+								<div class="flex-row flex-base-center gap-4">
+									<multi-select v-model:item="filterModel.years" :options="releaseDictionaries.years" style="width: 170px;" mode="tags" searchable>
+									</multi-select>
+									<div style="margin-left: 4px; margin-right: 4px;">
+										<span>ИЛИ/И</span>
+									</div>
+									<simple-switch v-model:state="filterModel.yearsOr" @changed="loadReleases()">
+									</simple-switch>
+								</div>
+							</div>
+							<div class="flex-column gap-2">
+								<span>Сезоны</span>
+								<div class="flex-row flex-base-center gap-4">
+									<simple-select v-model:item="filterModel.seasons" :options="releaseDictionaries.seasons" style="width: 170px;">
+									</simple-select>
+									<div style="margin-left: 4px; margin-right: 4px;">
+										<span>ИЛИ/И</span>
+									</div>
+									<simple-switch v-model:state="filterModel.seasonsOr" @changed="loadReleases()">
+									</simple-switch>
+								</div>
+							</div>
+							<div class="flex-column gap-2">
+								<span>Статусы</span>
+								<div class="flex-row flex-base-center gap-4">
+									<simple-select v-model:item="filterModel.statuses" :options="releaseDictionaries.statuses" style="width: 170px;">
+									</simple-select>
+									<div style="margin-left: 4px; margin-right: 4px;">
+										<span>ИЛИ/И</span>
+									</div>
+									<simple-switch v-model:state="filterModel.statusesOr" @changed="loadReleases()">
+									</simple-switch>
+								</div>
+							</div>
+							<div class="flex-column gap-2">
+								<span>Дни в расписании</span>
+								<div class="flex-row flex-base-center gap-4">
+									<simple-select v-model:item="filterModel.scheduleDays" :options="sections" style="width: 170px;">
+									</simple-select>
+									<div style="margin-left: 4px; margin-right: 4px;">
+										<span>ИЛИ/И</span>
+									</div>
+									<simple-switch v-model:state="filterModel.scheduleDaysOr" @changed="loadReleases()">
+									</simple-switch>
+								</div>
+							</div>
+							<div class="flex-column gap-2">
+								<span>В избранном</span>
+								<simple-switch v-model:state="filterModel.inFavorites" @changed="loadReleases()">
+								</simple-switch>
+							</div>
+							<div class="flex-column gap-2">
+								<span>Часть франшизы</span>
+								<simple-switch v-model:state="filterModel.partOfReleases" @changed="loadReleases()">
+								</simple-switch>
+							</div>
+						</div>
+					</div>
 				</div>
 				<div v-if="notificationMessage" class="simple-panel-icon-button"
 					 :title="notificationMessage"
@@ -200,17 +305,25 @@
 	</div>
 
 	<script type="module">
-		import { createApp, ref, watch, useTemplateRef, onMounted } from './vue.global.js'
-		import { getRelasesByFilter, getUserMarks, getPageSettings, saveSettings, getReleaseNotifications, getRandomReleaseFromAll } from './unfoldapi.js'
+		import { createApp, ref, watch, useTemplateRef, onMounted } from 'vue'
+		import {
+			getRelasesByFilter, getUserMarks, getPageSettings,
+			saveSettings, getReleaseNotifications, getRandomReleaseFromAll,
+			getReleaseDictionaries
+		} from './unfoldapi.js'
 		import Drawer from './components/Drawer.js'
 		import PageHeader from './components/PageHeader.js'
 		import SimpleSelect from './components/SimpleSelect.js'
+		import SimpleSwitch from './components/SimpleSwitch.js'
+		import MultiSelect from './libs/multiselect.mjs'
 
 		const app = createApp({
 			components: {
 				'page-drawer': Drawer,
 				'page-header': PageHeader,
 				'simple-select': SimpleSelect,
+				'simple-switch': SimpleSwitch,
+				'multi-select': MultiSelect
 			},
 			setup() {
 				const mainMenuVisible = ref(false);
@@ -233,6 +346,37 @@
 				const backToTopVisible = ref(false);
 				let currentTimer = -1;
 				const settings = ref({ startedSection: 0, startedSubSection: -1, notificationMode: 0 });
+				const filterModel = ref({
+					filter: "",
+					type: "",
+					description: "",
+					team: [],
+					teamOr: null,
+					genres: [],
+					genresOr: null,
+					years: [],
+					yearsOr: null,
+					seasons: [],
+					seasonsOr: null,
+					statuses: [],
+					statusesOr: null,
+					scheduleDays: [],
+					scheduleDaysOr: null,
+					inFavorites: null,
+					partOfReleases: null,
+					seenStatus: null,
+					sortingField: "",
+					sortingDescending: false,
+					section: 0
+				});
+				const teams = ref([]);
+				const releaseDictionaries = ref({
+					genres: [],
+					teams: [],
+					statuses: [],
+					years: [],
+					seasons: []
+				})
 
 				const notificationModes = [
 					{
@@ -493,35 +637,12 @@
 				}
 
 				async function loadReleases() {
-					const releases = await getRelasesByFilter(
-						{
-							filter: nameFilter.value,
-							type: "",
-							description: "",
-							voices: [],
-							voicesOr: null,
-							genres: [],
-							genresOr: null,
-							years: [],
-							yearsOr: null,
-							seasons: [],
-							seasonsOr: null,
-							statuses: [],
-							statusesOr: null,
-							scheduleDays: [],
-							scheduleDaysOr: null,
-							inFavorites: null,
-							partOfReleases: null,
-							seenStatus: null,
-							sortingField: sortingField.value,
-							sortingDescending: sortDescending.value,
-							section: sectionSelected.value
-						}
-					);
-					if (!releases) {
-						// Show empty message
-						return;
-					}
+					const sendModel = { ...filterModel.value };
+					sendModel.filter = nameFilter.value;
+					sendModel.sortingField = sortingField.value;
+					sendModel.sortingDescending = sortDescending.value;
+					sendModel.section = sectionSelected.value;
+					const releases = await getRelasesByFilter(sendModel);
 
 					recalculateReleaseGroups(releases);
 				}
@@ -553,6 +674,14 @@
 					userMarks.value = await getUserMarks();
 					settings.value = await getPageSettings('releases');
 					notificationMessage.value = await getReleaseNotifications();
+
+					const dictionaries = await getReleaseDictionaries();
+					releaseDictionaries.value.genres = dictionaries.genres;
+					releaseDictionaries.value.teams = dictionaries.teams;
+					releaseDictionaries.value.statuses = dictionaries.statuses;
+					releaseDictionaries.value.years = dictionaries.years;
+					releaseDictionaries.value.seasons = dictionaries.seasons;
+
 					sectionSelected.value = settings.value.startedSection;
 					subSectionSelected.value = settings.value.startedSubSection;
 					adjustSortingBySection();
@@ -660,7 +789,10 @@
 					loadNotifications,
 					backToTop,
 					backToTopVisible,
-					openRandomRelease
+					openRandomRelease,
+					filterModel,
+					releaseDictionaries,
+					teams
 				}
 			}
 		});
