@@ -339,14 +339,14 @@ namespace Aniliberty.Unfolded.Routes
 				return false;
 			}
 
-			static bool CheckMultiStringValue(IEnumerable<string>? filter, IEnumerable<string>? value, bool or)
+			static bool CheckMultiStringValue(IEnumerable<string>? filter, IEnumerable<string>? value, bool orAnd)
 			{
 				if (value is null) return false;
 				if (filter is null) return false;
 				filter = filter.Where(a => !string.IsNullOrEmpty(a)).ToList();
 				if (!filter.Any()) return false;
 
-				if (or == true)
+				if (orAnd == false)
 				{
 					var founded = false;
 					foreach (var filterItem in filter.Select(a => a.ToLowerInvariant()))
@@ -370,19 +370,25 @@ namespace Aniliberty.Unfolded.Routes
 				return false;
 			}
 
-			static bool CheckMultiStringSingleValue(IEnumerable<string>? filter, string? value, bool or)
+			static bool CheckMultiStringSingleValue(IEnumerable<string>? filter, string? value, bool orAnd)
 			{
 				if (string.IsNullOrEmpty(value)) return false;
 				if (filter is null) return false;
 				filter = filter.Where(a => !string.IsNullOrEmpty(a)).ToList();
 				if (!filter.Any()) return false;
 
-				if (or == true)
+				if (orAnd == false)
 				{
+					var founded = false;
 					foreach (var filterItem in filter.Where(a => !string.IsNullOrEmpty(a)).Select(a => a.ToLowerInvariant()))
 					{
-						if (value.ToLowerInvariant().Contains(filterItem)) return true;
+						if (value.ToLowerInvariant().Contains(filterItem))
+						{
+							founded = true;
+							break;
+						}
 					}
+					if (!founded) return true;
 				}
 				else
 				{
@@ -390,7 +396,7 @@ namespace Aniliberty.Unfolded.Routes
 						.Where(a => !string.IsNullOrEmpty(a))
 						.Select(a => a.ToLowerInvariant())
 						.All(filterItemValue => value.ToLowerInvariant().Contains(filterItemValue));
-					if (andFilter) return true;
+					if (!andFilter) return true;
 				}
 
 				return false;
