@@ -133,6 +133,10 @@ body {
     gap: 8px;
 }
 
+.no-text-wrap {
+    text-wrap: nowrap;
+}
+
 
 /* Simple icon button */
 

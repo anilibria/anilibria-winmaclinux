@@ -126,9 +126,13 @@
 }
 
 .releases-rightmenu-search {
-    width: 280px;
+    width: 380px;
     max-width: 400px;
     padding: 8px;
+}
+
+.releases-search-multiselect {
+    width: 200px;
 }
 
 .releases-bell-animation {

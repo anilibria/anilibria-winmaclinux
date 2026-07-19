@@ -334,7 +334,8 @@ namespace Aniliberty.Unfolded.Routes
 				var valueLower = value.ToLowerInvariant();
 				var filterLower = filter.ToLowerInvariant();
 
-				if (valueLower.Contains(filterLower) || valueLower == filterLower) return true;
+				var isMatched = valueLower.Contains(filterLower) || valueLower == filterLower;
+				if (!isMatched) return true;
 
 				return false;
 			}
