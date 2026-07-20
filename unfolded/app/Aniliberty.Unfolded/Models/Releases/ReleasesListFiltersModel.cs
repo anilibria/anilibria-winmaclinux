@@ -20,19 +20,11 @@
 
 		public IEnumerable<string>? Years { get; init; } = [];
 
-		public bool? YearsOr { get; set; }
-
 		public IEnumerable<string>? Seasons { get; init; } = [];
-
-		public bool? SeasonsOr { get; set; }
 
 		public IEnumerable<string>? Statuses { get; init; } = [];
 
-		public bool? StatusesOr { get; set; }
-
-		public IEnumerable<string>? ScheduleDays { get; init; } = [];
-
-		public bool? ScheduleDaysOr { get; set; }
+		public IEnumerable<int>? ScheduleDays { get; init; } = [];
 
 		public bool? InFavorites { get; init; } = null;
 

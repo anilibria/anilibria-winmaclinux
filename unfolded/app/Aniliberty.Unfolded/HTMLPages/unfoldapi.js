@@ -83,6 +83,19 @@ export async function getRandomReleaseFromAll() {
     );
     return await response.json();
 };
+export async function getRandomRelease(model) {
+    const response = await fetch(
+        '/releases/random',
+        {
+            method: "POST",
+            body: JSON.stringify(model),
+            headers: {
+                "Content-Type": "application/json"
+            }
+        }
+    );
+    return await response.json();
+};
 export async function getUserMarks(onlyForReleases) {
     let onlyForReleaseParameter = '';
     if (onlyForReleases) {

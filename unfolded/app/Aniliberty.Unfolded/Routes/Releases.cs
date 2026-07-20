@@ -102,7 +102,7 @@ namespace Aniliberty.Unfolded.Routes
 			}
 
 			m_releaseDictionaries.Genres = m_releases.SelectMany(a => a.Genres).Where(a => !string.IsNullOrEmpty(a)).ToHashSet();
-			m_releaseDictionaries.Teams = m_releases.SelectMany(a => a.Team).Where(a => !string.IsNullOrEmpty(a)).ToHashSet();
+			m_releaseDictionaries.Teams = m_releases.SelectMany(a => a.Team).Where(a => !string.IsNullOrEmpty(a)).OrderBy(a => a).ToHashSet();
 			m_releaseDictionaries.Seasons = m_releases.Select(a => a.Season).Where(a => !string.IsNullOrEmpty(a)).ToHashSet();
 			m_releaseDictionaries.Statuses = m_releases.Select(a => a.Status).Where(a => !string.IsNullOrEmpty(a)).ToHashSet();
 			m_releaseDictionaries.Years = m_releases.Select(a => a.Year.ToString()).OrderByDescending(a => a).ToHashSet();
@@ -301,9 +301,10 @@ namespace Aniliberty.Unfolded.Routes
 						if (CheckStringValue(model.Type, a.Type)) return false;
 						if (CheckMultiStringValue(model.Team, a.Team, model.TeamOr ?? false)) return false;
 						if (CheckMultiStringValue(model.Genres, a.Genres, model.GenresOr ?? false)) return false;
-						if (CheckMultiStringSingleValue(model.Years, a.Year.ToString(), model.YearsOr ?? false)) return false;
-						if (CheckMultiStringSingleValue(model.Seasons, a.Season, model.SeasonsOr ?? false)) return false;
-						if (CheckMultiStringSingleValue(model.Statuses, a.Status, model.StatusesOr ?? false)) return false;
+						if (CheckMultiStringSingleValue(model.Years, a.Year.ToString())) return false;
+						if (CheckMultiStringSingleValue(model.Seasons, a.Season)) return false;
+						if (CheckMultiStringSingleValue(model.Statuses, a.Status)) return false;
+						if (CheckMultiIntValue(model.ScheduleDays, a.PublishDay)) return false;
 						if (model.InFavorites.HasValue)
 						{
 							var inFavorite = m_favorites.Contains(a.Id) || m_localFavorites.Contains(a.Id);
@@ -316,7 +317,6 @@ namespace Aniliberty.Unfolded.Routes
 							if (model.PartOfReleases.Value && !inFranchise) return false;
 							if (!model.PartOfReleases.Value && inFranchise) return false;
 						}
-						//if (CheckMultiStringSingleValue(model.ScheduleDays, a.PublishDay.ToString(), model.ScheduleDaysOr ?? false)) return false;
 
 						if (!FilterBySection(model.Section, a, seenEpisodes)) return false;
 
@@ -328,8 +328,8 @@ namespace Aniliberty.Unfolded.Routes
 
 			static bool CheckStringValue(string? filter, string? value)
 			{
-				if (string.IsNullOrEmpty(value)) return false;
 				if (string.IsNullOrEmpty(filter)) return false;
+				if (string.IsNullOrEmpty(value)) return true;
 
 				var valueLower = value.ToLowerInvariant();
 				var filterLower = filter.ToLowerInvariant();
@@ -340,10 +340,21 @@ namespace Aniliberty.Unfolded.Routes
 				return false;
 			}
 
+			static bool CheckMultiIntValue(IEnumerable<int>? filter, int? value)
+			{
+				if (filter is null || !filter.Any()) return false;
+				if (!value.HasValue) return true;
+
+				var isMatched = filter.Contains(value.Value);
+				if (!isMatched) return true;
+
+				return false;
+			}
+
 			static bool CheckMultiStringValue(IEnumerable<string>? filter, IEnumerable<string>? value, bool orAnd)
 			{
 				if (value is null) return false;
-				if (filter is null) return false;
+				if (filter is null || !filter.Any()) return false;
 				filter = filter.Where(a => !string.IsNullOrEmpty(a)).ToList();
 				if (!filter.Any()) return false;
 
@@ -371,34 +382,23 @@ namespace Aniliberty.Unfolded.Routes
 				return false;
 			}
 
-			static bool CheckMultiStringSingleValue(IEnumerable<string>? filter, string? value, bool orAnd)
+			static bool CheckMultiStringSingleValue(IEnumerable<string>? filter, string? value)
 			{
 				if (string.IsNullOrEmpty(value)) return false;
 				if (filter is null) return false;
 				filter = filter.Where(a => !string.IsNullOrEmpty(a)).ToList();
 				if (!filter.Any()) return false;
 
-				if (orAnd == false)
+				var founded = false;
+				foreach (var filterItem in filter.Where(a => !string.IsNullOrEmpty(a)).Select(a => a.ToLowerInvariant()))
 				{
-					var founded = false;
-					foreach (var filterItem in filter.Where(a => !string.IsNullOrEmpty(a)).Select(a => a.ToLowerInvariant()))
+					if (value.ToLowerInvariant().Contains(filterItem))
 					{
-						if (value.ToLowerInvariant().Contains(filterItem))
-						{
-							founded = true;
-							break;
-						}
+						founded = true;
+						break;
 					}
-					if (!founded) return true;
 				}
-				else
-				{
-					var andFilter = filter
-						.Where(a => !string.IsNullOrEmpty(a))
-						.Select(a => a.ToLowerInvariant())
-						.All(filterItemValue => value.ToLowerInvariant().Contains(filterItemValue));
-					if (!andFilter) return true;
-				}
+				if (!founded) return true;
 
 				return false;
 			}

@@ -44,6 +44,18 @@ body {
     --middle-font-size: 13px;
     --middle-plus-font-size: 14px;
     --large-font-size: 15px;
+    --main-theme-active-color: light-dark(#b32121, #b32121);
+    /* multiselect style customization */
+    --ms-bg: light-dark(white, black);
+    --ms-border-color: light-dark(#cccccc, white);
+    --ms-font-size: light-dark(12px, 12px);
+    --ms-ring-color: light-dark(rgba(0, 102, 204, 0.2), rgba(0, 102, 204, 0.2));
+    --ms-tag-bg: light-dark(#b32121, #b32121);
+    --ms-tag-color: light-dark(white, white);
+    --ms-tag-font-size: light-dark(11px, 11px);
+    --ms-dropdown-bg: light-dark(white, black);
+    --ms-option-font-size: light-dark(11px, 11px);
+    --ms-empty-color: light-dark(black, white);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -308,8 +320,8 @@ body {
 
 .simple-switch {
     display: inline-block;
-    width: 50px;
-    height: 18px;
+    width: 40px;
+    height: 14px;
     border-radius: 12px;
     background: #bfbfbf;
     z-index: 0;
@@ -322,8 +334,8 @@ body {
 
     &::after {
         content: "";
-        height: 24px;
-        width: 24px;
+        height: 20px;
+        width: 20px;
         border-radius: 18px;
         background: #fff;
         top: -3px;
@@ -340,8 +352,8 @@ body {
     box-shadow: inset 0 0 10px 0 #999999;
 
     &::after {
-        left: 30px;
-        background: #118c4e;
+        left: 24px;
+        background: var(--main-theme-active-color);
     }
 }
 

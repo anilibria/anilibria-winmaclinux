@@ -1,0 +1,42 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8" />
+	<title>Test</title>
+	<link rel="stylesheet" href="libs/multiselect.css">
+	<script type="importmap">
+		{
+		  "imports": {
+			"vue": "./vue.global.js"
+		  }
+		}
+	</script>
+</head>
+<body>
+	<div id="app">
+		<multi-select v-model="puzda" :options="borozda" mode="tags" searchable>
+		</multi-select>
+	</div>
+
+	<script type="module">
+		import { createApp, ref } from 'vue'
+		import MultiSelect from './libs/multiselect.mjs'
+
+		const app = createApp({
+			components: {
+				'multi-select': MultiSelect
+			},
+			setup() {
+				const puzda = ref([]);
+				const borozda = ref(['LAla', "pupu"]);
+
+				return {
+					puzda,
+					borozda
+				};
+			}
+		});
+		app.mount('#app');
+	</script>
+</body>
+</html>

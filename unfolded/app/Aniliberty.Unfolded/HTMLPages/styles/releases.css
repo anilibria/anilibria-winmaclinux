@@ -131,6 +131,11 @@
     padding: 8px;
 }
 
+.releases-rightmenu-random {
+    min-width: 150px;
+    padding: 8px;
+}
+
 .releases-search-multiselect {
     width: 200px;
 }

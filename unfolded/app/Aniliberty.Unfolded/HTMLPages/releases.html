@@ -65,7 +65,7 @@
 							<div class="flex-column gap-2">
 								<span>Команда</span>
 								<div class="flex-row flex-base-center gap-4">
-									<multi-select class="releases-search-multiselect" v-model="filterModel.team" :options="releaseDictionaries.teams" mode="tags" searchable>
+									<multi-select class="releases-search-multiselect flex-1" v-model="filterModel.team" :options="releaseDictionaries.teams" mode="tags" searchable @select="loadReleases()" @deselect="loadReleases()" @clear="loadReleases()">
 									</multi-select>
 									<div class="no-text-wrap" style="margin-left: 4px; margin-right: 4px;">
 										<span>ИЛИ/И</span>
@@ -77,7 +77,7 @@
 							<div class="flex-column gap-2">
 								<span>Жанры</span>
 								<div class="flex-row flex-base-center gap-4">
-									<multi-select class="releases-search-multiselect" v-model="filterModel.genres" :options="releaseDictionaries.genres" mode="tags" searchable>
+									<multi-select class="releases-search-multiselect flex-1" v-model="filterModel.genres" :options="releaseDictionaries.genres" mode="tags" searchable @select="loadReleases()" @deselect="loadReleases()" @clear="loadReleases()">
 									</multi-select>
 									<div class="no-text-wrap" style="margin-left: 4px; margin-right: 4px;">
 										<span>ИЛИ/И</span>
@@ -89,49 +89,29 @@
 							<div class="flex-column gap-2">
 								<span>Года</span>
 								<div class="flex-row flex-base-center gap-4">
-									<multi-select class="releases-search-multiselect" v-model:item="filterModel.years" :options="releaseDictionaries.years" mode="tags" searchable>
+									<multi-select class="releases-search-multiselect flex-1" v-model="filterModel.years" :options="releaseDictionaries.years" mode="tags" searchable @select="loadReleases()" @deselect="loadReleases()" @clear="loadReleases()">
 									</multi-select>
-									<div class="no-text-wrap" style="margin-left: 4px; margin-right: 4px;">
-										<span>ИЛИ/И</span>
-									</div>
-									<simple-switch v-model:state="filterModel.yearsOr" @changed="loadReleases()">
-									</simple-switch>
 								</div>
 							</div>
 							<div class="flex-column gap-2">
 								<span>Сезоны</span>
 								<div class="flex-row flex-base-center gap-4">
-									<multi-select class="releases-search-multiselect" v-model:item="filterModel.seasons" :options="releaseDictionaries.seasons" mode="tags" searchable>
+									<multi-select class="releases-search-multiselect flex-1" v-model="filterModel.seasons" :options="releaseDictionaries.seasons" mode="tags" searchable @select="loadReleases()" @deselect="loadReleases()" @clear="loadReleases()">
 									</multi-select>
-									<div class="no-text-wrap" style="margin-left: 4px; margin-right: 4px;">
-										<span>ИЛИ/И</span>
-									</div>
-									<simple-switch v-model:state="filterModel.seasonsOr" @changed="loadReleases()">
-									</simple-switch>
 								</div>
 							</div>
 							<div class="flex-column gap-2">
 								<span>Статусы</span>
 								<div class="flex-row flex-base-center gap-4">
-									<multi-select class="releases-search-multiselect" v-model:item="filterModel.statuses" :options="releaseDictionaries.statuses" mode="tags" searchable>
+									<multi-select class="releases-search-multiselect flex-1" v-model="filterModel.statuses" :options="releaseDictionaries.statuses" mode="tags" searchable @select="loadReleases()" @deselect="loadReleases()" @clear="loadReleases()">
 									</multi-select>
-									<div class="no-text-wrap" style="margin-left: 4px; margin-right: 4px;">
-										<span>ИЛИ/И</span>
-									</div>
-									<simple-switch v-model:state="filterModel.statusesOr" @changed="loadReleases()">
-									</simple-switch>
 								</div>
 							</div>
 							<div class="flex-column gap-2">
 								<span>Дни в расписании</span>
 								<div class="flex-row flex-base-center gap-4">
-									<multi-select class="releases-search-multiselect" v-model:item="filterModel.scheduleDays" :options="releaseDictionaries.scheduleDays" mode="tags" searchable>
+									<multi-select class="releases-search-multiselect flex-1" v-model="filterModel.scheduleDays" :options="releaseDictionaries.scheduleDays" mode="tags" searchable @select="loadReleases()" @deselect="loadReleases()" @clear="loadReleases()">
 									</multi-select>
-									<div class="no-text-wrap" style="margin-left: 4px; margin-right: 4px;">
-										<span>ИЛИ/И</span>
-									</div>
-									<simple-switch v-model:state="filterModel.scheduleDaysOr" @changed="loadReleases()">
-									</simple-switch>
 								</div>
 							</div>
 							<div class="flex-row flex-base-center gap-8" style="height: 40px;">
@@ -148,12 +128,20 @@
 				<div v-if="notificationMessage" class="simple-panel-icon-button"
 					 :title="notificationMessage"
 					 @click="loadNotifications()">
-					<img class="releases-bell-animation" :src="'/static/icons/releases/notifications.svg'" width="30" height="30" />
+					<div class="full-width-height flex-row flex-base-center flex-other-center">
+						<img class="releases-bell-animation" :src="'/static/icons/releases/notifications.svg'" width="30" height="30" />
+					</div>
 				</div>
-				<div class="simple-panel-icon-button"
-					 title="Открыть карточку релиза выбранного случайным образом"
-					 @click="openRandomRelease()">
-					<img :src="'/static/icons/releases/random.svg'" width="30" height="30" />
+				<div class="simple-panel-icon-button simple-popup-container" title="Открыть карточку релиза выбранного случайным образом">
+					<div class="full-width-height flex-row flex-base-center flex-other-center">
+						<img :src="'/static/icons/releases/random.svg'" width="30" height="30" />
+					</div>
+					<div class="simple-popup-box releases-rightmenu">
+						<div class="releases-rightmenu-random flex-column">
+							<a class="default-link" @click.prevent="openRandomRelease()" href="">По всем релизам</a>
+							<a class="default-link" @click.prevent="openRandomReleaseInSelection()" href="">Из выбранного</a>
+						</div>
+					</div>
 				</div>
 				<div class="simple-panel-icon-button"
 					 title="Настройка страницы Каталог релизов"
@@ -307,7 +295,7 @@
 		import {
 			getRelasesByFilter, getUserMarks, getPageSettings,
 			saveSettings, getReleaseNotifications, getRandomReleaseFromAll,
-			getReleaseDictionaries
+			getReleaseDictionaries, getRandomRelease
 		} from './unfoldapi.js'
 		import Drawer from './components/Drawer.js'
 		import PageHeader from './components/PageHeader.js'
@@ -353,13 +341,9 @@
 					genres: [],
 					genresOr: null,
 					years: [],
-					yearsOr: null,
 					seasons: [],
-					seasonsOr: null,
 					statuses: [],
-					statusesOr: null,
 					scheduleDays: [],
-					scheduleDaysOr: null,
 					inFavorites: null,
 					partOfReleases: null,
 					seenStatus: null,
@@ -643,13 +627,16 @@
 					loadReleases();
 				}
 
-				async function loadReleases() {
+				function getListModel() {
 					const sendModel = { ...filterModel.value };
 					sendModel.filter = nameFilter.value;
 					sendModel.sortingField = sortingField.value;
 					sendModel.sortingDescending = sortDescending.value;
 					sendModel.section = sectionSelected.value;
-					const releases = await getRelasesByFilter(sendModel);
+					return sendModel;
+				}
+				async function loadReleases() {
+					const releases = await getRelasesByFilter(getListModel());
 
 					recalculateReleaseGroups(releases);
 				}
@@ -739,6 +726,18 @@
 					window.location.href = "releasecard.html?id=" + id;
 				}
 
+				async function openRandomReleaseInSelection() {
+					const id = await getRandomRelease(getListModel());
+					window.location.href = "releasecard.html?id=" + id;
+				}
+
+				function loadReleaseAfterTimer() {
+					console.log('loadReleaseAfterTimer');
+					if (currentTimer !== -1) clearTimeout(currentTimer);
+
+					currentTimer = setTimeout(() => { loadReleases() }, 1000);
+				}
+
 				window.addEventListener('resize', () => {
 					const newRelasesInGroup = getReleasesGroupCount();
 					if (newRelasesInGroup !== relasesInGroup.value) {
@@ -752,11 +751,17 @@
 
 				watch(
 					nameFilter,
-					(newValue) => {
-						if (currentTimer !== -1) clearTimeout(currentTimer);
+					(newValue) => { loadReleaseAfterTimer() }
+				);
 
-						currentTimer = setTimeout(() => { loadReleases() }, 1000);
-					}
+				watch(
+					() => filterModel.value.description,
+					(newValue) => { loadReleaseAfterTimer(); }
+				);
+
+				watch(
+					() => filterModel.value.type,
+					(newValue) => { loadReleaseAfterTimer() }
 				);
 
 				onMounted(() => {
@@ -799,7 +804,8 @@
 					openRandomRelease,
 					filterModel,
 					releaseDictionaries,
-					teams
+					teams,
+					openRandomReleaseInSelection
 				}
 			}
 		});
