@@ -143,10 +143,41 @@
 						</div>
 					</div>
 				</div>
-				<div class="simple-panel-icon-button"
-					 title="Настройка страницы Каталог релизов"
-					 @click="showSettingsDialog()">
-					<img :src="'/static/icons/commonbuttons/settings.svg'" width="30" height="30" />
+				<div class="simple-panel-icon-button simple-popup-container" title="Настройка страницы Каталог релизов">
+					<div class="full-width-height flex-row flex-base-center flex-other-center">
+						<img :src="'/static/icons/commonbuttons/settings.svg'" width="30" height="30" />
+					</div>
+					<div class="simple-popup-box releases-rightmenu">
+						<div class="releases-rightmenu-settings flex-column gap-8">
+							<div>Стартовая секция:</div>
+							<div class="flex-row flex-base-center">
+								<simple-select v-model:item="settings.startedSection"
+												:options="sections"
+												style="width: 130px;"
+												@selected="settings.startedSubSection = -1;">
+								</simple-select>
+								<div v-if="settings.startedSection >= 6 && settings.startedSection < 9" style="margin-left: 4px; margin-right: 4px;">-</div>
+								<simple-select v-if="settings.startedSection === 6" v-model:item="settings.startedSubSection"
+												:options="historySections"
+												style="width: 170px;">
+								</simple-select>
+								<simple-select v-if="settings.startedSection === 7" v-model:item="settings.startedSubSection"
+												:options="seenMarkSections"
+												style="width: 225px;">
+								</simple-select>
+								<simple-select v-if="settings.startedSection === 8" v-model:item="settings.startedSubSection"
+												:options="setsSections"
+												style="width: 220px;">
+								</simple-select>
+							</div>
+							<div>Уведомления:</div>
+							<simple-select v-model:item="settings.notificationMode" :options="notificationModes" style="width: 130px;">
+							</simple-select>
+							<div>Открывать ссылки:</div>
+							<simple-select v-model:item="settings.notificationMode" :options="notificationModes" style="width: 130px;">
+							</simple-select>
+						</div>
+					</div>
 				</div>
 			</div>
 			<div class="right-content">
@@ -249,45 +280,6 @@
 
 		<page-drawer v-model:main-menu-visible="mainMenuVisible">
 		</page-drawer>
-
-		<dialog ref="settingsdialog" class="native-dialog-rounded releases-settings" @close="settingsClosed()">
-			<div class="dialog-content">
-				<h3>Настройки Каталога Релизов</h3>
-				<form method="dialog">
-					<div class="flex-column gap-8">
-						<div>Стартовая секция:</div>
-						<div class="flex-row flex-base-center">
-							<simple-select v-model:item="settings.startedSection"
-										   :options="sections"
-										   style="width: 130px;"
-										   @selected="settings.startedSubSection = -1;">
-							</simple-select>
-							<div v-if="settings.startedSection >= 6 && settings.startedSection < 9" style="margin-left: 4px; margin-right: 4px;">-</div>
-							<simple-select v-if="settings.startedSection === 6" v-model:item="settings.startedSubSection"
-										   :options="historySections"
-										   style="width: 170px;">
-							</simple-select>
-							<simple-select v-if="settings.startedSection === 7" v-model:item="settings.startedSubSection"
-										   :options="seenMarkSections"
-										   style="width: 225px;">
-							</simple-select>
-							<simple-select v-if="settings.startedSection === 8" v-model:item="settings.startedSubSection"
-										   :options="setsSections"
-										   style="width: 220px;">
-							</simple-select>
-						</div>
-						<div>Уведомления:</div>
-						<simple-select v-model:item="settings.notificationMode"
-									   :options="notificationModes"
-									   style="width: 130px;">
-						</simple-select>
-					</div>
-					<div class="button-line">
-						<div class="action-button" @click="closeSettingsDialog()">Закрыть</div>
-					</div>
-				</form>
-			</div>
-		</dialog>
 	</div>
 
 	<script type="module">
@@ -327,7 +319,6 @@
 				const selectionModeEnabled = ref(false);
 				const selectedReleases = ref([]);
 				const releasesContainer = useTemplateRef('releasesContainer');
-				const settingsDialog = useTemplateRef('settingsdialog');
 				const notificationMessage = ref('');
 				const backToTopVisible = ref(false);
 				let currentTimer = -1;
@@ -699,18 +690,6 @@
 					window.location.href = '/static/videoplayer.html?mode=release&id=' + id;
 				}
 
-				function showSettingsDialog() {
-					settingsDialog.value.showModal();
-				}
-
-				function closeSettingsDialog() {
-					settingsDialog.value.close();
-				}
-
-				async function settingsClosed() {
-					await saveSettings('releases', settings.value);
-				}
-
 				function loadNotifications() {
 					sectionSelected.value = 2;
 					subSectionSelected.value = -1;
@@ -732,7 +711,6 @@
 				}
 
 				function loadReleaseAfterTimer() {
-					console.log('loadReleaseAfterTimer');
 					if (currentTimer !== -1) clearTimeout(currentTimer);
 
 					currentTimer = setTimeout(() => { loadReleases() }, 1000);
@@ -792,11 +770,8 @@
 					toggleSelectionRelease,
 					getPublishDay,
 					openInVideoPlayer,
-					showSettingsDialog,
 					settings,
 					notificationModes,
-					closeSettingsDialog,
-					settingsClosed,
 					notificationMessage,
 					loadNotifications,
 					backToTop,

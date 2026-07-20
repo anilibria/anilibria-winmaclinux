@@ -136,6 +136,13 @@
     padding: 8px;
 }
 
+.releases-rightmenu-settings {
+    width: 380px;
+    max-width: 400px;
+    height: 260px;
+    padding: 8px;
+}
+
 .releases-search-multiselect {
     width: 200px;
 }

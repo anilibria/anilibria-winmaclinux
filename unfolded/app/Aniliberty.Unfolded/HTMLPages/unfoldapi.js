@@ -9,40 +9,53 @@ const webSocketHubObserver = {
     }
 };
 
-const mainSocket = new WebSocket('ws://localhost:' + window.location.port + '/wshub/start');
-mainSocket.onopen = (event) => {
-    console.log('WebSocket successfully connected!');
-};
-mainSocket.onmessage = (event) => {
-    const data = event.data;
-    if (!data) return;
+let mainSocket = null;
 
-    const parts = data.split(':');
-    if (parts.length < 2) return;
+function connectToWebSocket() {
+    mainSocket = new WebSocket('ws://localhost:' + window.location.port + '/wshub/start');
+    mainSocket.onopen = (event) => {
+        console.log('WebSocket successfully connected!');
+    };
+    mainSocket.onmessage = (event) => {
+        const data = event.data;
+        if (!data) return;
 
-    const command = parts[0];
-    const message = parts[1];
+        const parts = data.split(':');
+        if (parts.length < 2) return;
 
-    switch (command) {
-        case "ntc": // notification common
-            webSocketHubObserver.notification("common", message);
-            break;
-        case "nte": // notification error
-            webSocketHubObserver.notification("error", message);
-            break;
-        case "user": // events related to user account
-            webSocketHubObserver.user(message);
-            break;
-        case "sync": // events related to synchronization
-            webSocketHubObserver.synchronization(message);
-            break;
-    }
-};
-mainSocket.onclose = (event) => {
-};
-mainSocket.onerror = (error) => {
-    console.error(error);
-};
+        const command = parts[0];
+        const message = parts[1];
+
+        switch (command) {
+            case "ntc": // notification common
+                webSocketHubObserver.notification("common", message);
+                break;
+            case "nte": // notification error
+                webSocketHubObserver.notification("error", message);
+                break;
+            case "user": // events related to user account
+                webSocketHubObserver.user(message);
+                break;
+            case "sync": // events related to synchronization
+                webSocketHubObserver.synchronization(message);
+                break;
+        }
+    };
+    mainSocket.onclose = (event) => {
+    };
+    mainSocket.onerror = (error) => {
+        console.error(error);
+    };
+}
+
+connectToWebSocket();
+
+window.addEventListener('pagehide', (event) => {
+    if (mainSocket && mainSocket.readyState === WebSocket.OPEN) socket.close(1000, "Page hided");
+});
+window.addEventListener('pageshow', (event) => {
+    if (event.persisted) connectToWebSocket();
+});
 
 export function webSocketObserver() {
     return webSocketHubObserver;
