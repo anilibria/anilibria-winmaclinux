@@ -123,15 +123,13 @@ namespace Aniliberty.Unfolded.Routes
 			return result;
 		}
 
+		internal static int GetNotificationMode() => Settings.Model.Releases.NotificationMode;
+
+		internal static HashSet<int> GetFavorites() => m_favorites.Concat(m_localFavorites).ToHashSet();
+
 		internal static async Task SetNotifications(IEnumerable<int> ids, int countNewReleases, int countNewEpisodes, int countNewTorrents)
 		{
 			if (Settings.Model.Releases.NotificationMode == 0) return;
-
-			var onlyFavorites = Settings.Model.Releases.NotificationMode == 2;
-
-			var currentReleases = ids
-				.Where(a => onlyFavorites ? m_favorites.Contains(a) || m_localFavorites.Contains(a) : true)
-				.ToDictionary(a => a);
 
 			var messages = new StringBuilder();
 			if (countNewReleases > 0) messages.Append($"Новых релизов {countNewReleases} ");
@@ -139,6 +137,7 @@ namespace Aniliberty.Unfolded.Routes
 			if (countNewTorrents > 0) messages.Append($"Обновленные торренты в релизах {countNewTorrents}");
 
 			m_notificationMessage = messages.ToString();
+			m_notificationReleases = ids.ToList();
 
 			await WebSocketHub.SendMessage("ntc", m_notificationMessage);
 		}
@@ -286,6 +285,20 @@ namespace Aniliberty.Unfolded.Routes
 				seenEpisodes.Add(releaseEpisodes.ReleaseId, countSeens);
 			}
 
+			var mostPopular = m_releases
+				.OrderByDescending(a => a.Rating)
+				.Select(a => a.Id)
+				.Take(50)
+				.ToHashSet();
+			var nowYear = DateTime.UtcNow.Year;
+			var mostPopularInCurrentYear = m_releases
+				.Where(a => a.Year == nowYear)
+				.OrderByDescending(a => a.Rating)
+				.Select(a => a.Id)
+				.Take(30)
+				.ToHashSet();
+			var currentSeason = GetCurrentSeason(nowYear);
+
 			return SortingReleases(
 				m_releases
 				.Where(
@@ -318,7 +331,7 @@ namespace Aniliberty.Unfolded.Routes
 							if (!model.PartOfReleases.Value && inFranchise) return false;
 						}
 
-						if (!FilterBySection(model.Section, a, seenEpisodes)) return false;
+						if (!FilterBySection(model.Section, model.SubSection, a, seenEpisodes, mostPopular, mostPopularInCurrentYear, currentSeason)) return false;
 
 						return true;
 					}
@@ -427,22 +440,53 @@ namespace Aniliberty.Unfolded.Routes
 			}
 		}
 
-		private static bool FilterBySection(ReleasesListFiltersSection section, ReleaseSaveModel release, Dictionary<int, int> seens)
+		private static bool FilterBySection(ReleasesListFiltersSection section, ReleasesListFiltersSubSection subSection, ReleaseSaveModel release, Dictionary<int, int> seens, HashSet<int> mostPopular, HashSet<int> mostPopularInCurrentYear, string? currentSeason)
 		{
-			if (m_hidedReleases.Contains(release.Id)) return false;
+			if (m_hidedReleases.Contains(release.Id) && section != ReleasesListFiltersSection.Seens && subSection != ReleasesListFiltersSubSection.Hided) return false;
 
 			switch (section)
 			{
 				case ReleasesListFiltersSection.All: return true;
 				case ReleasesListFiltersSection.Favorites: return m_favorites.Contains(release.Id);
 				case ReleasesListFiltersSection.Schedule: return release.PublishDay is not null;
-				case ReleasesListFiltersSection.History: return m_openHistory.Contains(release.Id) || m_seenHistory.Contains(release.Id);
-				case ReleasesListFiltersSection.OpenHistory: return m_openHistory.Contains(release.Id);
-				case ReleasesListFiltersSection.SeenHistory: return m_seenHistory.Contains(release.Id);
+				case ReleasesListFiltersSection.History:
+					if (subSection == ReleasesListFiltersSubSection.OpenHistory) return m_openHistory.Contains(release.Id);
+					if (subSection == ReleasesListFiltersSubSection.SeenHistory) return m_seenHistory.Contains(release.Id);
+					return m_openHistory.Contains(release.Id) || m_seenHistory.Contains(release.Id);
 				case ReleasesListFiltersSection.Notifications: return m_notificationReleases.Contains(release.Id);
-				case ReleasesListFiltersSection.Seens: return seens.Keys.Contains(release.Id);
+				case ReleasesListFiltersSection.Seens:
+					if (subSection == ReleasesListFiltersSubSection.Seen) return seens.ContainsKey(release.Id) && seens[release.Id] == release.CountVideos;
+					if (subSection == ReleasesListFiltersSubSection.SeenNow)
+					{
+						var countSeens = seens.ContainsKey(release.Id) ? seens[release.Id] : 0;
+						return countSeens > 0 && countSeens < release.CountVideos;
+					}
+					if (subSection == ReleasesListFiltersSubSection.NotSeen) return !seens.ContainsKey(release.Id);
+					if (subSection == ReleasesListFiltersSubSection.Hided) return m_hidedReleases.Contains(release.Id);
+					return true;
+				case ReleasesListFiltersSection.Collections:
+					if (subSection == ReleasesListFiltersSubSection.SeenToEnd) return seens.ContainsKey(release.Id) && seens[release.Id] == release.CountVideos && release.Status == "Озвучка завершена";
+					if (subSection == ReleasesListFiltersSubSection.SeenNotToEnd) return seens.ContainsKey(release.Id) && seens[release.Id] < release.CountVideos && release.Status == "Озвучка завершена";
+					if (subSection == ReleasesListFiltersSubSection.Films) return release.Type.ToLowerInvariant().Contains("фильм");
+					if (subSection == ReleasesListFiltersSubSection.Completed) return release.Status == "Озвучка завершена";
+					if (subSection == ReleasesListFiltersSubSection.PartOfRelease) return m_franchises.Any(a => a.Releases.Any(b => b.Id == release.Id));
+					if (subSection == ReleasesListFiltersSubSection.MostPopular) return mostPopular.Contains(release.Id);
+					if (subSection == ReleasesListFiltersSubSection.PopularInCurrentYear) return mostPopularInCurrentYear.Contains(release.Id);
+					if (subSection == ReleasesListFiltersSubSection.InCinemaHall) return true;
+					if (subSection == ReleasesListFiltersSubSection.CurrentSeason) return currentSeason is not null ? release.Season.ToLowerInvariant() == currentSeason.ToLowerInvariant() : false;
+					if (subSection == ReleasesListFiltersSubSection.NotCurrentSeason) return currentSeason is not null ? release.Season.ToLowerInvariant() != currentSeason.ToLowerInvariant() : false;
+					return true;
 				default: throw new NotSupportedException("Section not supported!");
 			}
+		}
+
+		private static string? GetCurrentSeason(int year)
+		{
+			return m_releases
+				.Where(a => a.PublishDay is not null && a.Status == "Сейчас в озвучке" && a.Year == year)
+				.GroupBy(a => a.Season)
+				.Select(a => new { Season = a.Key, Count = a.Count() })
+				.MaxBy(a => a.Count)?.Season;
 		}
 
 		static internal (List<ReleaseSaveEpisodeModel> episodes, List<ReleaseSaveModel> releases, Dictionary<int, ReleaseSaveModel> m_releasesMap, List<ReleaseTorrentsSaveModel> m_torrents) OriginalCollections()

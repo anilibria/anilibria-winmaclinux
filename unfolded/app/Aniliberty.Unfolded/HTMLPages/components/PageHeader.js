@@ -34,6 +34,12 @@ export default {
 		const synchronizationRunned = ref(false);
 		const synchronizationPercent = ref(0);
 
+		function toggleTheme() {
+			const currentTheme = document.documentElement.getAttribute('data-theme');
+			const isLight = !currentTheme || currentTheme === 'light';
+			document.documentElement.setAttribute('data-theme', isLight ? 'dark' : 'light');
+		}
+
 		function synchronizedHandler(message) {
 			if (message === 'started') {
 				synchronizationRunned.value = true;

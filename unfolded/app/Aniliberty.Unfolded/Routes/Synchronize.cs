@@ -163,7 +163,10 @@ namespace Aniliberty.Unfolded.Routes
 			int countNewEpisodes = 0;
 			int countNewTorrents = 0;
 			HashSet<int> notificationReleases = new HashSet<int>();
-			var needNotifications = releases.Any();
+			var notificationMode = Releases.GetNotificationMode();
+			var notificationOnylFavorites = notificationMode == 2;
+			var favoriteReleases = Releases.GetFavorites();
+			var needNotifications = releases.Any() && notificationMode != 0;
 
 			foreach (var fullRelease in allReleases)
 			{
@@ -171,6 +174,7 @@ namespace Aniliberty.Unfolded.Routes
 				{
 					var currentRelease = releasesMap[fullRelease.Id];
 					currentRelease.MapFromApiModel(fullRelease, types);
+					var needReleaseNotifications = needNotifications && (!notificationOnylFavorites || favoriteReleases.Contains(fullRelease.Id));
 
 					if (fullRelease.Episodes?.Any() == true)
 					{
@@ -180,7 +184,7 @@ namespace Aniliberty.Unfolded.Routes
 						if (releaseEpisodes == null)
 						{
 							episodes.Add(new ReleaseSaveEpisodeModel { ReleaseId = fullRelease.Id, Items = fullRelease.Episodes.Select(ReleaseSaveEpisodeItemModel.CreateFromApi).ToList() });
-							if (needNotifications)
+							if (needReleaseNotifications)
 							{
 								countNewEpisodes += 1;
 								notificationReleases.Add(fullRelease.Id);
@@ -188,7 +192,7 @@ namespace Aniliberty.Unfolded.Routes
 						}
 						else
 						{
-							if (needNotifications && releaseEpisodes.Items.Count() != fullRelease.Episodes.Count())
+							if (needReleaseNotifications && releaseEpisodes.Items.Count() != fullRelease.Episodes.Count())
 							{
 								countNewEpisodes += 1;
 								notificationReleases.Add(fullRelease.Id);
@@ -204,7 +208,7 @@ namespace Aniliberty.Unfolded.Routes
 						if (releaseTorrents == null)
 						{
 							torrents.Add(new ReleaseTorrentsSaveModel { ReleaseId = fullRelease.Id, Items = torrentItems });
-							if (needNotifications)
+							if (needReleaseNotifications)
 							{
 								countNewTorrents += 1;
 								notificationReleases.Add(fullRelease.Id);
@@ -212,7 +216,7 @@ namespace Aniliberty.Unfolded.Routes
 						}
 						else
 						{
-							if (needNotifications && !releaseTorrents.Items.Select(a => a.Size).SequenceEqual(torrentItems.Select(a => a.Size)))
+							if (needReleaseNotifications && !releaseTorrents.Items.Select(a => a.Size).SequenceEqual(torrentItems.Select(a => a.Size)))
 							{
 								countNewTorrents += 1;
 								notificationReleases.Add(fullRelease.Id);

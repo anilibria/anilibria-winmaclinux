@@ -55,14 +55,6 @@
 					<div class="simple-popup-box releases-rightmenu">
 						<div class="releases-rightmenu-search flex-column">
 							<div class="flex-column gap-2">
-								<span>Описание</span>
-								<input v-model="filterModel.description" type="text" class="simple-input" placeholder="Описание" />
-							</div>
-							<div class="flex-column gap-2">
-								<span>Тип</span>
-								<input v-model="filterModel.type" type="text" class="simple-input" placeholder="Тип" />
-							</div>
-							<div class="flex-column gap-2">
 								<span>Команда</span>
 								<div class="flex-row flex-base-center gap-4">
 									<multi-select class="releases-search-multiselect flex-1" v-model="filterModel.team" :options="releaseDictionaries.teams" mode="tags" searchable @select="loadReleases()" @deselect="loadReleases()" @clear="loadReleases()">
@@ -114,6 +106,14 @@
 									</multi-select>
 								</div>
 							</div>
+							<div class="flex-column gap-2">
+								<span>Описание</span>
+								<input v-model="filterModel.description" type="text" class="simple-input" placeholder="Описание" />
+							</div>
+							<div class="flex-column gap-2">
+								<span>Тип</span>
+								<input v-model="filterModel.type" type="text" class="simple-input" placeholder="Тип" />
+							</div>
 							<div class="flex-row flex-base-center gap-8" style="height: 40px;">
 								<span>В избранном</span>
 								<simple-switch v-model:state="filterModel.inFavorites" @changed="loadReleases()">
@@ -152,29 +152,29 @@
 							<div>Стартовая секция:</div>
 							<div class="flex-row flex-base-center">
 								<simple-select v-model:item="settings.startedSection"
-												:options="sections"
-												style="width: 130px;"
-												@selected="settings.startedSubSection = -1;">
+											   :options="sections"
+											   style="width: 130px;"
+											   @selected="settings.startedSubSection = -1;">
 								</simple-select>
 								<div v-if="settings.startedSection >= 6 && settings.startedSection < 9" style="margin-left: 4px; margin-right: 4px;">-</div>
 								<simple-select v-if="settings.startedSection === 6" v-model:item="settings.startedSubSection"
-												:options="historySections"
-												style="width: 170px;">
+											   :options="historySections"
+											   style="width: 170px;">
 								</simple-select>
 								<simple-select v-if="settings.startedSection === 7" v-model:item="settings.startedSubSection"
-												:options="seenMarkSections"
-												style="width: 225px;">
+											   :options="seenMarkSections"
+											   style="width: 225px;">
 								</simple-select>
 								<simple-select v-if="settings.startedSection === 8" v-model:item="settings.startedSubSection"
-												:options="setsSections"
-												style="width: 220px;">
+											   :options="setsSections"
+											   style="width: 220px;">
 								</simple-select>
 							</div>
 							<div>Уведомления:</div>
-							<simple-select v-model:item="settings.notificationMode" :options="notificationModes" style="width: 130px;">
+							<simple-select v-model:item="settings.notificationMode" :options="notificationModes" style="width: 100%;">
 							</simple-select>
 							<div>Открывать ссылки:</div>
-							<simple-select v-model:item="settings.notificationMode" :options="notificationModes" style="width: 130px;">
+							<simple-select v-model:item="settings.openLinkMode" :options="openLinkMode" style="width: 100%;">
 							</simple-select>
 						</div>
 					</div>
@@ -287,7 +287,8 @@
 		import {
 			getRelasesByFilter, getUserMarks, getPageSettings,
 			saveSettings, getReleaseNotifications, getRandomReleaseFromAll,
-			getReleaseDictionaries, getRandomRelease
+			getReleaseDictionaries, getRandomRelease, addFavorites, removeFavorites,
+			addSeenMark, removeSeenMark
 		} from './unfoldapi.js'
 		import Drawer from './components/Drawer.js'
 		import PageHeader from './components/PageHeader.js'
@@ -322,7 +323,7 @@
 				const notificationMessage = ref('');
 				const backToTopVisible = ref(false);
 				let currentTimer = -1;
-				const settings = ref({ startedSection: 0, startedSubSection: -1, notificationMode: 0 });
+				const settings = ref({ startedSection: 0, startedSubSection: -1, notificationMode: 0, openLinkMode: 0 });
 				const filterModel = ref({
 					filter: "",
 					type: "",
@@ -340,7 +341,8 @@
 					seenStatus: null,
 					sortingField: "",
 					sortingDescending: false,
-					section: 0
+					section: 0,
+					subSection: -1
 				});
 				const teams = ref([]);
 				const releaseDictionaries = ref({
@@ -366,13 +368,24 @@
 						id: 0
 					},
 					{
-						title: "Все",
+						title: "Уведомления по всем релизам",
 						id: 1
 					},
 					{
-						title: "Избранное",
+						title: "Уведомления только по избранному",
 						id: 2
 					},
+				];
+
+				const openLinkMode = [
+					{
+						title: "В текущем окне",
+						id: 0
+					},
+					{
+						title: "В новом окне",
+						id: 1
+					}
 				];
 
 				const sections = [
@@ -624,8 +637,10 @@
 					sendModel.sortingField = sortingField.value;
 					sendModel.sortingDescending = sortDescending.value;
 					sendModel.section = sectionSelected.value;
+					sendModel.subSection = subSectionSelected.value;
 					return sendModel;
 				}
+				
 				async function loadReleases() {
 					const releases = await getRelasesByFilter(getListModel());
 
@@ -780,7 +795,8 @@
 					filterModel,
 					releaseDictionaries,
 					teams,
-					openRandomReleaseInSelection
+					openRandomReleaseInSelection,
+					openLinkMode
 				}
 			}
 		});

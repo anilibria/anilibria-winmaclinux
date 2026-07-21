@@ -19,6 +19,11 @@
 		/// </summary>
 		public int NotificationMode { get; set; } = 0;
 
+		/// <summary>
+		/// Open link mode (open link in current or another window).
+		/// </summary>
+		public int OpenLinkMode { get; set; } = 0;
+
 	}
 
 }

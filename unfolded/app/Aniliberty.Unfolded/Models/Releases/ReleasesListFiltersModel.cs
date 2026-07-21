@@ -38,6 +38,8 @@
 
 		public ReleasesListFiltersSection Section { get; init; }
 
+		public ReleasesListFiltersSubSection SubSection { get; init; }
+
 	}
 
 	public enum ReleasesListFiltersSection
@@ -61,7 +63,14 @@
 
 		Seens = 7,
 
-		// Sub items
+		Collections = 8
+
+	};
+
+	public enum ReleasesListFiltersSubSection
+	{
+
+		NotSelected = -1,
 
 		OpenHistory = 40,
 
@@ -87,7 +96,7 @@
 
 		Completed = 51,
 
-		PopulInCurrentYear = 52,
+		PopularInCurrentYear = 52,
 
 		InCinemaHall = 53,
 
@@ -95,7 +104,7 @@
 
 		NotCurrentSeason = 55,
 
-	};
+	}
 
 	public enum ReleasesListFiltersModelSortingField
 	{
