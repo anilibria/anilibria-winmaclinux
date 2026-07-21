@@ -191,15 +191,18 @@
 						<div style="width: 4px;"></div>
 						<simple-select v-if="sectionSelected === 6" v-model:item="subSectionSelected"
 									   :options="historySections"
-									   style="width: 170px;">
+									   style="width: 170px;"
+									   @selected="subSectionChanged($event)">
 						</simple-select>
 						<simple-select v-if="sectionSelected === 7" v-model:item="subSectionSelected"
 									   :options="seenMarkSections"
-									   style="width: 225px;">
+									   style="width: 225px;"
+									   @selected="subSectionChanged($event)">
 						</simple-select>
 						<simple-select v-if="sectionSelected === 8" v-model:item="subSectionSelected"
 									   :options="setsSections"
-									   style="width: 220px;">
+									   style="width: 220px;"
+									   @selected="subSectionChanged($event)">
 						</simple-select>
 					</div>
 					<div class="flex-row flex-base-center flex-other-center">
@@ -631,6 +634,17 @@
 					loadReleases();
 				}
 
+				function subSectionChanged(newValue) {
+					disableSelectionMode();
+					releasesContainer.value.scrollTo({ top: 0, behavior: "instant" });
+
+					subSectionSelected.value = newValue;
+
+					adjustSortingBySection();
+
+					loadReleases();
+				}
+
 				function getListModel() {
 					const sendModel = { ...filterModel.value };
 					sendModel.filter = nameFilter.value;
@@ -796,7 +810,8 @@
 					releaseDictionaries,
 					teams,
 					openRandomReleaseInSelection,
-					openLinkMode
+					openLinkMode,
+					subSectionChanged
 				}
 			}
 		});

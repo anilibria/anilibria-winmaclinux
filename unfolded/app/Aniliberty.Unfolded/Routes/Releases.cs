@@ -331,7 +331,7 @@ namespace Aniliberty.Unfolded.Routes
 							if (!model.PartOfReleases.Value && inFranchise) return false;
 						}
 
-						if (!FilterBySection(model.Section, model.SubSection, a, seenEpisodes, mostPopular, mostPopularInCurrentYear, currentSeason)) return false;
+						if (!FilterBySection(model.Section, model.SubSection, a, seenEpisodes, mostPopular, mostPopularInCurrentYear, currentSeason, nowYear)) return false;
 
 						return true;
 					}
@@ -440,7 +440,7 @@ namespace Aniliberty.Unfolded.Routes
 			}
 		}
 
-		private static bool FilterBySection(ReleasesListFiltersSection section, ReleasesListFiltersSubSection subSection, ReleaseSaveModel release, Dictionary<int, int> seens, HashSet<int> mostPopular, HashSet<int> mostPopularInCurrentYear, string? currentSeason)
+		private static bool FilterBySection(ReleasesListFiltersSection section, ReleasesListFiltersSubSection subSection, ReleaseSaveModel release, Dictionary<int, int> seens, HashSet<int> mostPopular, HashSet<int> mostPopularInCurrentYear, string? currentSeason, int nowYear)
 		{
 			if (m_hidedReleases.Contains(release.Id) && section != ReleasesListFiltersSection.Seens && subSection != ReleasesListFiltersSubSection.Hided) return false;
 
@@ -467,14 +467,14 @@ namespace Aniliberty.Unfolded.Routes
 				case ReleasesListFiltersSection.Collections:
 					if (subSection == ReleasesListFiltersSubSection.SeenToEnd) return seens.ContainsKey(release.Id) && seens[release.Id] == release.CountVideos && release.Status == "Озвучка завершена";
 					if (subSection == ReleasesListFiltersSubSection.SeenNotToEnd) return seens.ContainsKey(release.Id) && seens[release.Id] < release.CountVideos && release.Status == "Озвучка завершена";
-					if (subSection == ReleasesListFiltersSubSection.Films) return release.Type.ToLowerInvariant().Contains("фильм");
+					if (subSection == ReleasesListFiltersSubSection.Films) return release.Type is not null && release.Type.ToLowerInvariant().Contains("фильм");
 					if (subSection == ReleasesListFiltersSubSection.Completed) return release.Status == "Озвучка завершена";
 					if (subSection == ReleasesListFiltersSubSection.PartOfRelease) return m_franchises.Any(a => a.Releases.Any(b => b.Id == release.Id));
 					if (subSection == ReleasesListFiltersSubSection.MostPopular) return mostPopular.Contains(release.Id);
 					if (subSection == ReleasesListFiltersSubSection.PopularInCurrentYear) return mostPopularInCurrentYear.Contains(release.Id);
 					if (subSection == ReleasesListFiltersSubSection.InCinemaHall) return true;
-					if (subSection == ReleasesListFiltersSubSection.CurrentSeason) return currentSeason is not null ? release.Season.ToLowerInvariant() == currentSeason.ToLowerInvariant() : false;
-					if (subSection == ReleasesListFiltersSubSection.NotCurrentSeason) return currentSeason is not null ? release.Season.ToLowerInvariant() != currentSeason.ToLowerInvariant() : false;
+					if (subSection == ReleasesListFiltersSubSection.CurrentSeason) return currentSeason is not null ? release.Season.ToLowerInvariant() == currentSeason.ToLowerInvariant() && release.Year == nowYear : false;
+					if (subSection == ReleasesListFiltersSubSection.NotCurrentSeason) return currentSeason is not null ? release.Season.ToLowerInvariant() != currentSeason.ToLowerInvariant() && release.Year == nowYear : false;
 					return true;
 				default: throw new NotSupportedException("Section not supported!");
 			}
