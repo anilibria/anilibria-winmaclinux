@@ -42,8 +42,8 @@
 					</div>
 					<div class="simple-popup-box releases-rightmenu">
 						<div class="releases-rightmenu-random flex-column">
-							<a class="default-link" @click.prevent="openRandomRelease()" href="">Добавить в избранное</a>
-							<a class="default-link" @click.prevent="openRandomReleaseInSelection()" href="">Удалить из избранного</a>
+							<a class="default-link" @click.prevent="addSelectedToFavorites()" href="">Добавить в избранное</a>
+							<a class="default-link" @click.prevent="removeSelectedToFavorites()" href="">Удалить из избранного</a>
 						</div>
 					</div>
 				</div>
@@ -55,8 +55,8 @@
 					</div>
 					<div class="simple-popup-box releases-rightmenu">
 						<div class="releases-rightmenu-random flex-column">
-							<a class="default-link" @click.prevent="openRandomRelease()" href="">Отметить как просмотренные</a>
-							<a class="default-link" @click.prevent="openRandomReleaseInSelection()" href="">Отметить как не просмотренные</a>
+							<a class="default-link" @click.prevent="addSelectedToSeens()" href="">Отметить как просмотренные</a>
+							<a class="default-link" @click.prevent="removeSelectedToSeens()" href="">Отметить как не просмотренные</a>
 						</div>
 					</div>
 				</div>
@@ -68,8 +68,8 @@
 					</div>
 					<div class="simple-popup-box releases-rightmenu">
 						<div class="releases-rightmenu-random flex-column">
-							<a class="default-link" @click.prevent="openRandomRelease()" href="">Добавить в кинозал</a>
-							<a class="default-link" @click.prevent="openRandomReleaseInSelection()" href="">Удалить из кинозала</a>
+							<a class="default-link" @click.prevent="addSelectedToCinemahall()" href="">Добавить в кинозал</a>
+							<a class="default-link" @click.prevent="removeSelectedToCinemahall()" href="">Удалить из кинозала</a>
 						</div>
 					</div>
 				</div>
@@ -320,7 +320,7 @@
 			getRelasesByFilter, getUserMarks, getPageSettings,
 			saveSettings, getReleaseNotifications, getRandomReleaseFromAll,
 			getReleaseDictionaries, getRandomRelease, addFavorites, removeFavorites,
-			addSeenMark, removeSeenMark
+			addSeenMark, removeSeenMark, addCinemahallReleases, removeCinemahallReleases
 		} from './unfoldapi.js'
 		import Drawer from './components/Drawer.js'
 		import PageHeader from './components/PageHeader.js'
@@ -778,6 +778,44 @@
 					currentTimer = setTimeout(() => { loadReleases() }, 1000);
 				}
 
+				function clearReleaseSelection() {
+					selectedReleases.value = [];
+				}
+
+				async function addSelectedToFavorites() {
+					await addFavorites(selectedReleases.value);
+					clearReleaseSelection();
+					userMarks.value = await getUserMarks();
+				}
+
+				async function removeSelectedToFavorites() {
+					await removeFavorites(selectedReleases.value);
+					clearReleaseSelection();
+					userMarks.value = await getUserMarks();
+				}
+
+				async function addSelectedToSeens() {
+					//TODO: get video ids
+					await addSeenMark(["pizda", "borozda"]);
+					clearReleaseSelection();
+				}
+
+				async function removeSelectedToSeens() {
+					//TODO: get video ids
+					await removeSeenMark(selectedReleases.value);
+					clearReleaseSelection();
+				}
+
+				async function addSelectedToCinemahall() {
+					await addCinemahallReleases(selectedReleases.value);
+					clearReleaseSelection();
+				}
+
+				async function removeSelectedToCinemahall() {
+					await removeCinemahallReleases(selectedReleases.value);
+					clearReleaseSelection();
+				}
+
 				window.addEventListener('resize', () => {
 					const newRelasesInGroup = getReleasesGroupCount();
 					if (newRelasesInGroup !== relasesInGroup.value) {
@@ -845,7 +883,13 @@
 					openRandomReleaseInSelection,
 					openLinkMode,
 					subSectionChanged,
-					saveReleasesSettings
+					saveReleasesSettings,
+					addSelectedToFavorites,
+					removeSelectedToFavorites,
+					addSelectedToCinemahall,
+					removeSelectedToCinemahall,
+					addSelectedToSeens,
+					removeSelectedToSeens
 				}
 			}
 		});

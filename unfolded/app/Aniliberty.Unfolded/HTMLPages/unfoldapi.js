@@ -51,7 +51,7 @@ function connectToWebSocket() {
 connectToWebSocket();
 
 window.addEventListener('pagehide', (event) => {
-    if (mainSocket && mainSocket.readyState === WebSocket.OPEN) socket.close(1000, "Page hided");
+    if (mainSocket && mainSocket.readyState === WebSocket.OPEN) mainSocket.close(1000, "Page hided");
 });
 window.addEventListener('pageshow', (event) => {
     if (event.persisted) connectToWebSocket();
@@ -156,12 +156,28 @@ export async function synchronizeStatus() {
     return response.json();
 };
 export async function addFavorites(ids) {
-    const array = ids.map(a => `ids=${a}`).join('&');
-    await fetch('/sync/addfavorites?' + array);
+    await fetch(
+        '/sync/addfavorites',
+        {
+            method: "POST",
+            body: JSON.stringify(ids),
+            headers: {
+                "Content-Type": "application/json"
+            }
+        }
+    );
 };
 export async function removeFavorites(ids) {
-    const array = ids.map(a => `ids=${a}`).join('&');
-    await fetch('/sync/removefavorites?' + array);
+    await fetch(
+        '/sync/removefavorites',
+        {
+            method: "POST",
+            body: JSON.stringify(ids),
+            headers: {
+                "Content-Type": "application/json"
+            }
+        }
+    );
 };
 export async function addSeenMark(ids) {
     await fetch(
@@ -217,6 +233,51 @@ export async function saveSettings(page, model) {
     await fetch('/settings/save/' + page, {
         method: "POST",
         body: JSON.stringify(model),
+        headers: {
+            "Content-Type": "application/json"
+        }
+    });
+};
+
+export async function getHidedReleases() {
+    const response = await fetch('/appdata/hidedreleases');
+    return await response.json();
+};
+export async function getCinemahallReleases() {
+    const response = await fetch('/appdata/cinemahall');
+    return await response.json();
+};
+export async function addHidedReleases(ids) {
+    await fetch('/appdata/hidedreleases/add', {
+        method: "POST",
+        body: JSON.stringify(ids),
+        headers: {
+            "Content-Type": "application/json"
+        }
+    });
+};
+export async function removeHidedReleases(ids) {
+    await fetch('/appdata/hidedreleases/remove', {
+        method: "POST",
+        body: JSON.stringify(ids),
+        headers: {
+            "Content-Type": "application/json"
+        }
+    });
+};
+export async function addCinemahallReleases(ids) {
+    await fetch('/appdata/cinemahall/add', {
+        method: "POST",
+        body: JSON.stringify(ids),
+        headers: {
+            "Content-Type": "application/json"
+        }
+    });
+};
+export async function removeCinemahallReleases(ids) {
+    await fetch('/appdata/cinemahall/remove', {
+        method: "POST",
+        body: JSON.stringify(ids),
         headers: {
             "Content-Type": "application/json"
         }

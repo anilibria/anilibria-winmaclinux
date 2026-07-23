@@ -27,8 +27,8 @@ namespace Aniliberty.Unfolded.Routes
 			app.MapGet("/sync/user", ([FromServices] IHttpClientFactory clientFactory, HttpContext context) => User(clientFactory, context));
 			app.MapGet("/sync/firststart", () => Results.Content(m_firstlyStarted ? "true" : "false"));
 			app.MapGet("/sync/status", () => Results.Content(m_synchronizationStarted ? "true" : "false"));
-			app.MapGet("/sync/addfavorites", (IHttpClientFactory clientFactory, HttpContext context, [FromQuery] int[] ids) => AddFavorites(clientFactory, context, ids));
-			app.MapGet("/sync/removefavorites", (IHttpClientFactory clientFactory, HttpContext context, [FromQuery] int[] ids) => RemoveFavorites(clientFactory, context, ids));
+			app.MapPost("/sync/addfavorites", (IHttpClientFactory clientFactory, HttpContext context, [FromBody] int[] ids) => AddFavorites(clientFactory, context, ids));
+			app.MapPost("/sync/removefavorites", (IHttpClientFactory clientFactory, HttpContext context, [FromBody] int[] ids) => RemoveFavorites(clientFactory, context, ids));
 			app.MapPost("/sync/addseens", (IHttpClientFactory clientFactory, HttpContext context, [FromBody] string[] ids) => AddSeens(clientFactory, context, ids));
 			app.MapPost("/sync/removeseens", (IHttpClientFactory clientFactory, HttpContext context, [FromBody] string[] ids) => RemoveSeens(clientFactory, context, ids));
 		}
@@ -487,7 +487,7 @@ namespace Aniliberty.Unfolded.Routes
 			return partsCount;
 		}
 
-		internal static async Task<IResult> AddFavorites(IHttpClientFactory clientFactory, HttpContext context, int[] ids)
+		internal static async Task<IResult> AddFavorites(IHttpClientFactory clientFactory, HttpContext context, IEnumerable<int> ids)
 		{
 			if (!ids.Any()) return Results.Ok();
 
@@ -498,8 +498,7 @@ namespace Aniliberty.Unfolded.Routes
 			if (token != null)
 			{
 				await OriginalApiMaker.AddUserFavorites(httpClient, token, ids);
-				var favorites = await OriginalApiMaker.GetUserFavorites(httpClient, token);
-				await Releases.SaveOnlyFavorites(favorites, null);
+				await Releases.AddToFavorites(ids, isLocal: false);
 			}
 			else
 			{
@@ -509,7 +508,7 @@ namespace Aniliberty.Unfolded.Routes
 			return Results.NotFound();
 		}
 
-		internal static async Task<IResult> RemoveFavorites(IHttpClientFactory clientFactory, HttpContext context, int[] ids)
+		internal static async Task<IResult> RemoveFavorites(IHttpClientFactory clientFactory, HttpContext context, IEnumerable<int> ids)
 		{
 			if (!ids.Any()) return Results.Ok();
 
@@ -520,8 +519,7 @@ namespace Aniliberty.Unfolded.Routes
 			if (token != null)
 			{
 				await OriginalApiMaker.DeleteUserFavorites(httpClient, token, ids);
-				var favorites = await OriginalApiMaker.GetUserFavorites(httpClient, token);
-				await Releases.SaveOnlyFavorites(favorites, null);
+				await Releases.RemoveFromFavorites(ids, isLocal: false);
 			}
 			else
 			{

@@ -142,12 +142,45 @@ namespace Aniliberty.Unfolded.Routes
 			await WebSocketHub.SendMessage("ntc", m_notificationMessage);
 		}
 
-		internal static async Task SaveOnlyFavorites(IEnumerable<int>? favorites, IEnumerable<int>? localFavorites)
+		internal static async Task AddToFavorites(IEnumerable<int> ids, bool isLocal)
+		{
+			foreach (var id in ids)
+			{
+				if (isLocal)
+				{
+					m_localFavorites.Add(id);
+				} else
+				{
+					m_favorites.Add(id);
+				}
+			}
+
+			await ResaveUserData();
+		}
+
+		internal static async Task RemoveFromFavorites(IEnumerable<int> ids, bool isLocal)
+		{
+			foreach (var id in ids)
+			{
+				if (isLocal)
+				{
+					m_localFavorites.Remove(id);
+				}
+				else
+				{
+					m_favorites.Remove(id);
+				}
+			}
+
+			await ResaveUserData();
+		}
+
+		private static async Task ResaveUserData()
 		{
 			var saveModel = new UserCollections
 			{
-				CloudFavorites = favorites is not null ? favorites : m_favorites,
-				LocalFavorites = localFavorites is not null ? localFavorites : m_localFavorites,
+				CloudFavorites = m_favorites,
+				LocalFavorites = m_localFavorites,
 				SeenEpisodes = m_seenEpisodes
 			};
 			await File.WriteAllTextAsync(Path.Combine(GlobalConfig.PathToCache(), "userdata.cache"), SerializeToJson(saveModel));
