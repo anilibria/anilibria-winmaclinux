@@ -52,6 +52,8 @@ namespace Aniliberty.Unfolded.Routes
 			app.MapGet("/releases/franchise", (int id) => Franchise(id));
 			app.MapGet("/releases/notifications", () => Results.Content(m_notificationMessage));
 			app.MapGet("/releases/dictionaries", () => Results.Json(m_releaseDictionaries, AppJsonSerializerContext.Default));
+			app.MapPost("/releases/addseens", (IHttpClientFactory clientFactory, HttpContext context, [FromBody] int[] ids) => AddReleasesToSeens(clientFactory, context, ids));
+			app.MapPost("/releases/removeseens", (IHttpClientFactory clientFactory, HttpContext context, [FromBody] int[] ids) => RemoveReleasesToSeens(clientFactory, context, ids));
 		}
 
 		internal static async Task Initialize()
@@ -684,6 +686,34 @@ namespace Aniliberty.Unfolded.Routes
 			};
 
 			return Results.Json(model, AppJsonSerializerContext.Default);
+		}
+
+		private static async Task<IResult> AddReleasesToSeens(IHttpClientFactory clientFactory, HttpContext context, int[] ids)
+		{
+			var allEpisodes = new List<string>();
+
+			foreach(var releaseEpisode in m_episodes)
+			{
+				if (!ids.Contains(releaseEpisode.ReleaseId)) continue;
+
+				allEpisodes.AddRange(releaseEpisode.Items.Select(a => a.Id));
+			}
+
+			return await Synchronize.AddSeens(clientFactory, context, allEpisodes.ToArray());
+		}
+
+		private static async Task<IResult> RemoveReleasesToSeens(IHttpClientFactory clientFactory, HttpContext context, int[] ids)
+		{
+			var allEpisodes = new List<string>();
+
+			foreach (var releaseEpisode in m_episodes)
+			{
+				if (!ids.Contains(releaseEpisode.ReleaseId)) continue;
+
+				allEpisodes.AddRange(releaseEpisode.Items.Select(a => a.Id));
+			}
+
+			return await Synchronize.RemoveSeens(clientFactory, context, allEpisodes.ToArray());
 		}
 
 	}

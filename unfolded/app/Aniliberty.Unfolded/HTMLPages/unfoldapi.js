@@ -140,6 +140,31 @@ export async function getReleaseNotifications(id) {
     const response = await fetch('/releases/notifications');
     return await response.text();
 };
+export async function addReleasesSeenMark(ids) {
+    await fetch(
+        '/releases/addseens',
+        {
+            method: "POST",
+            body: JSON.stringify(ids),
+            headers: {
+                "Content-Type": "application/json"
+            }
+        }
+    );
+};
+export async function removeReleasesSeenMark(ids) {
+    await fetch(
+        '/releases/removeseens',
+        {
+            method: "POST",
+            body: JSON.stringify(ids),
+            headers: {
+                "Content-Type": "application/json"
+            }
+        }
+    );
+};
+
 
 export async function synchronizeReleases() {
     await fetch('/sync/full');

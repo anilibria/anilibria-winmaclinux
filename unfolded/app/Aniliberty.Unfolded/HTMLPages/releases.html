@@ -320,7 +320,8 @@
 			getRelasesByFilter, getUserMarks, getPageSettings,
 			saveSettings, getReleaseNotifications, getRandomReleaseFromAll,
 			getReleaseDictionaries, getRandomRelease, addFavorites, removeFavorites,
-			addSeenMark, removeSeenMark, addCinemahallReleases, removeCinemahallReleases
+			addReleasesSeenMark, removeReleasesSeenMark, addCinemahallReleases, removeCinemahallReleases,
+			getCinemahallReleases, getHidedReleases
 		} from './unfoldapi.js'
 		import Drawer from './components/Drawer.js'
 		import PageHeader from './components/PageHeader.js'
@@ -349,6 +350,7 @@
 				const widthItem = 480 + 10; // 10 is a gap width
 				const leftPanelWidth = 40;
 				const userMarks = ref({ favorites: [], fullSeenReleases: [], seenSeries: {} });
+				const cinemahallReleases = ref([])
 				const selectionModeEnabled = ref(false);
 				const selectedReleases = ref([]);
 				const releasesContainer = useTemplateRef('releasesContainer');
@@ -720,6 +722,7 @@
 				async function loadAllData() {
 					userMarks.value = await getUserMarks();
 					settings.value = await getPageSettings('releases');
+					cinemahallReleases.value = await getCinemahallReleases();
 					notificationMessage.value = await getReleaseNotifications();
 
 					const dictionaries = await getReleaseDictionaries();
@@ -795,25 +798,27 @@
 				}
 
 				async function addSelectedToSeens() {
-					//TODO: get video ids
-					await addSeenMark(["pizda", "borozda"]);
+					await addReleasesSeenMark(selectedReleases.value);
 					clearReleaseSelection();
+					userMarks.value = await getUserMarks();
 				}
 
 				async function removeSelectedToSeens() {
-					//TODO: get video ids
-					await removeSeenMark(selectedReleases.value);
+					await removeReleasesSeenMark(selectedReleases.value);
 					clearReleaseSelection();
+					userMarks.value = await getUserMarks();					
 				}
 
 				async function addSelectedToCinemahall() {
 					await addCinemahallReleases(selectedReleases.value);
 					clearReleaseSelection();
+					cinemahallReleases.value = await getCinemahallReleases();
 				}
 
 				async function removeSelectedToCinemahall() {
 					await removeCinemahallReleases(selectedReleases.value);
 					clearReleaseSelection();
+					cinemahallReleases.value = await getCinemahallReleases();
 				}
 
 				window.addEventListener('resize', () => {
