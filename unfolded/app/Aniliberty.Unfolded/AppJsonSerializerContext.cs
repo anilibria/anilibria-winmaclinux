@@ -1,3 +1,4 @@
+using Aniliberty.Unfolded.Models.AppDatas;
 using Aniliberty.Unfolded.Models.CacheModels;
 using Aniliberty.Unfolded.Models.MainMenus;
 using Aniliberty.Unfolded.Models.OriginalApi;
@@ -44,6 +45,7 @@ namespace Aniliberty.Unfolded
 	[JsonSerializable(typeof(List<SeenMarkEditModel>))]
 	[JsonSerializable(typeof(string[]))]
 	[JsonSerializable(typeof(ReleaseDictionaries))]
+	[JsonSerializable(typeof(AppDataModel))]
 	[JsonSourceGenerationOptions(PropertyNamingPolicy = JsonKnownNamingPolicy.CamelCase)]
 	internal partial class AppJsonSerializerContext : JsonSerializerContext
 	{
