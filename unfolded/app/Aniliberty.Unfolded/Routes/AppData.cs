@@ -56,7 +56,7 @@ namespace Aniliberty.Unfolded.Routes
 			var lowerAction = action.ToLowerInvariant();
 			if (lowerAction == "add")
 			{
-				var newIds = ids.Except(m_appData.HidedReleases);
+				var newIds = ids.Except(m_appData.Cinemahall);
 				m_appData.Cinemahall.AddRange(newIds);
 			}
 			if (lowerAction == "remove") m_appData.Cinemahall = m_appData.Cinemahall.Where(a => !ids.Contains(a)).ToList();
@@ -69,11 +69,8 @@ namespace Aniliberty.Unfolded.Routes
 		private static async Task SaveSettings()
 		{
 			var path = Path.Combine(GlobalConfig.PathToCache(), "appdata");
-			if (File.Exists(path))
-			{
-				var json = JsonSerializer.Serialize(m_appData, AppJsonSerializerContext.Default.AppDataModel);
-				await File.WriteAllTextAsync(path, json);
-			}
+			var json = JsonSerializer.Serialize(m_appData, AppJsonSerializerContext.Default.AppDataModel);
+			await File.WriteAllTextAsync(path, json);
 		}
 
 	}

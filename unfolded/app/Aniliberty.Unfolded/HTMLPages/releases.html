@@ -54,7 +54,7 @@
 						<img :src="'/static/icons/releases/seen.svg'" width="30" height="30" />
 					</div>
 					<div class="simple-popup-box releases-rightmenu">
-						<div class="releases-rightmenu-random flex-column">
+						<div class="releases-rightmenu-seens flex-column">
 							<a class="default-link" @click.prevent="addSelectedToSeens()" href="">Отметить как просмотренные</a>
 							<a class="default-link" @click.prevent="removeSelectedToSeens()" href="">Отметить как не просмотренные</a>
 						</div>
@@ -303,7 +303,7 @@
 			</div>
 		</div>
 
-		<div class="releases-selection-helper">
+		<div :class="{'releases-selection-helper': true, 'releases-pulse-animation': selectionModeEnabled }">
 			{{ selectionModeEnabled ? 'Нажмите ЛКМ для выделения релизов, ПКМ для выхода' : 'Нажмите ПКМ для перехода в режим выделения' }}
 		</div>
 		<div v-if="backToTopVisible" class="releases-backtotop-helper flex-row flex-base-center flex-other-center" @click="backToTop()">
