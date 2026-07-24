@@ -125,6 +125,8 @@ namespace Aniliberty.Unfolded
 #endif
 
 			app.Run();
+
+			await AppData.Finilize();
 		}
 	}
 

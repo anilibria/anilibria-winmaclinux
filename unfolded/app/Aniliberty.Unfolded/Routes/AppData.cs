@@ -24,6 +24,13 @@ namespace Aniliberty.Unfolded.Routes
 			}
 		}
 
+		public static async Task Finilize()
+		{
+			m_appData.LastAppStart = DateTime.Now;
+			m_appData.AppStartCounter += 1;
+			await SaveSettings();
+		}
+
 		public static void RegisterRoutes(WebApplication app)
 		{
 			app.MapGet("/appdata/hidedreleases", () => Results.Json(m_appData.HidedReleases, AppJsonSerializerContext.Default));
