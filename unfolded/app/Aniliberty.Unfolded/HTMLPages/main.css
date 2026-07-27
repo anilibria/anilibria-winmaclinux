@@ -149,6 +149,11 @@ body {
     text-wrap: nowrap;
 }
 
+.common-bell-animation {
+    display: inline-block;
+    transform-origin: 50% 0%;
+    animation: bell-wiggle 1s ease-in-out infinite;
+}
 
 /* Simple icon button */
 

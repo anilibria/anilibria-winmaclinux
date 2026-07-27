@@ -57,6 +57,8 @@
 						<div class="releases-rightmenu-seens flex-column">
 							<a class="default-link" @click.prevent="addSelectedToSeens()" href="">Отметить как просмотренные</a>
 							<a class="default-link" @click.prevent="removeSelectedToSeens()" href="">Отметить как не просмотренные</a>
+							<a class="default-link" @click.prevent="addToHided()" href="">Скрыть релиз</a>
+							<a v-if="sectionSelected === 7 && subSectionSelected === 45" class="default-link" @click.prevent="removeFromHided()" href="">Сделать релиз видимым</a>
 						</div>
 					</div>
 				</div>
@@ -251,8 +253,8 @@
 					</div>
 				</div>
 				<div ref="releasesContainer" class="releases-releases-container" @click.right.prevent="toggleSelectionMode()">
-					<div v-if="releasesGroups.length" class="releases-release-item-group" v-for="releasesGroup in releasesGroups">
-						<div class="releases-release-item"
+					<div v-if="releasesGroups.length" class="releases-release-item-group" v-for="(releasesGroup, index) in releasesGroups" :key="index">
+						<div v-if="(290 * index) < scrollTopValue + scrollHeightValue" class="releases-release-item"
 							 :class="{'releases-release-teim-selected': selectionModeEnabled && selectedReleases.includes(release.id) }"
 							 v-for="release in releasesGroup.releases"
 							 :key="release.id"
@@ -328,7 +330,7 @@
 			saveSettings, getReleaseNotifications, getRandomReleaseFromAll,
 			getReleaseDictionaries, getRandomRelease, addFavorites, removeFavorites,
 			addReleasesSeenMark, removeReleasesSeenMark, addCinemahallReleases, removeCinemahallReleases,
-			getCinemahallReleases, getHidedReleases
+			getCinemahallReleases, getHidedReleases, addHidedReleases, removeHidedReleases
 		} from './unfoldapi.js'
 		import Drawer from './components/Drawer.js'
 		import PageHeader from './components/PageHeader.js'
@@ -363,6 +365,8 @@
 				const releasesContainer = useTemplateRef('releasesContainer');
 				const notificationMessage = ref('');
 				const backToTopVisible = ref(false);
+				const scrollTopValue = ref(0);
+				const scrollHeightValue = ref(0);
 				let currentTimer = -1;
 				const settings = ref({ startedSection: 0, startedSubSection: -1, notificationMode: 0, openLinkMode: 0 });
 				const filterModel = ref({
@@ -816,6 +820,16 @@
 					userMarks.value = await getUserMarks();					
 				}
 
+				async function addToHided() {
+					await addHidedReleases(selectedReleases.value);
+					clearReleaseSelection();
+				}
+
+				async function removeFromHided() {
+					await removeHidedReleases(selectedReleases.value);
+					clearReleaseSelection();
+				}
+
 				async function addSelectedToCinemahall() {
 					await addCinemahallReleases(selectedReleases.value);
 					clearReleaseSelection();
@@ -844,6 +858,7 @@
 						releasesGroups.value = [];
 						recalculateReleaseGroups(allReleases);
 					}
+					scrollHeightValue.value = releasesContainer.value.clientHeight;
 				});
 
 				loadAllData();
@@ -866,7 +881,12 @@
 				onMounted(() => {
 					releasesContainer.value.addEventListener('scroll', () => {
 						backToTopVisible.value = releasesContainer.value.scrollTop > 0;
+						scrollTopValue.value = releasesContainer.value.scrollTop;
 					});
+
+					setTimeout(() => {
+						scrollHeightValue.value = releasesContainer.value.clientHeight;
+					})
 				});
 
 				return {
@@ -911,7 +931,11 @@
 					removeSelectedToCinemahall,
 					addSelectedToSeens,
 					removeSelectedToSeens,
-					showMarksForRelease
+					showMarksForRelease,
+					scrollTopValue,
+					scrollHeightValue,
+					addToHided,
+					removeFromHided
 				}
 			}
 		});

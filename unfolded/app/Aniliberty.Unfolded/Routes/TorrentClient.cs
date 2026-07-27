@@ -1,6 +1,6 @@
 ﻿namespace Aniliberty.Unfolded.Routes
 {
-	public class TorrentClient
+	public static class TorrentClient
 	{
 	}
 
@@ -110,66 +110,6 @@ namespace TorrentStream {
             return httpContext.Request.Query.ContainsKey ( key ) ? httpContext.Request.Query.Where ( a => a.Key == key ).FirstOrDefault ().Value.First () ?? "" : "";
         }
 
-        public static async Task StartDownloadForOnlineStreaming ( HttpContext context ) {
-            context.Response.ContentType = "text/plain";
-            if ( context.Request.Query.Count != 3 ) {
-                context.Response.StatusCode = 204;
-                return;
-            }
-
-            var fileIndex = GetStringValueFromQuery ( "index", context );
-            var torrentPath = GetStringValueFromQuery ( "path", context );
-            var identifier = GetStringValueFromQuery ( "id", context );
-
-            var activeFileIndex = Convert.ToInt32 ( fileIndex );
-
-            var (torrentStream, result) = await GetTorrentStream ( torrentPath );
-
-            if ( !result ) {
-                context.Response.StatusCode = 400;
-                return;
-            }
-
-            try {
-                var manager = await GetManager ( torrentPath, torrentStream, identifier );
-                if ( manager == null ) {
-                    context.Response.StatusCode = 404;
-                    return;
-                }
-                var iterator = 0;
-                var torrentFiles = manager.Files
-                    .OrderBy ( a => a.Path )
-                    .ToList ();
-                foreach ( var file in torrentFiles ) {
-                    await manager.SetFilePriorityAsync ( file, iterator == activeFileIndex ? Priority.High : Priority.DoNotDownload );
-                    iterator++;
-                }
-
-                var currentFile = torrentFiles.ElementAt ( activeFileIndex );
-                var isDownloaded = currentFile.BitField.PercentComplete >= 100;
-
-                if ( !isDownloaded ) {
-                    if ( manager.StreamProvider != null ) {
-                        StreamProviderHelpers.DisposeInnerStream ( manager.StreamProvider );
-                        var httpStream = await manager.StreamProvider.CreateHttpStreamAsync ( currentFile, false );
-                        if ( httpStream != null ) {
-                            context.Response.StatusCode = 302;
-                            context.Response.Headers.Location = httpStream.FullUri;
-                        }
-                    }
-                } else {
-                    context.Response.StatusCode = 302;
-                    var fileName = Uri.EscapeDataString ( Path.GetFileName ( currentFile.FullPath ) );
-                    var filePath = Path.GetDirectoryName ( currentFile.FullPath ) ?? "";
-                    var fullPath = Path.Combine ( filePath, fileName );
-                    context.Response.Headers.Location = ( RuntimeInformation.IsOSPlatform ( OSPlatform.Windows ) ? "file:///" : "file://" ) + fullPath;
-                }
-            } catch ( Exception exception ) {
-                context.Response.StatusCode = 500;
-                await context.Response.WriteAsync ( "Error:" + exception.Message + "\n" + exception.StackTrace );
-            }
-        }
-
         private static async Task<TorrentManager?> GetManager ( string torrentPath, Stream? torrentStream, string identifier ) {
             TorrentManager? manager = null;
             if ( m_TorrentManagers.TryGetValue ( torrentPath, out var createdManager ) ) {
@@ -239,8 +179,6 @@ namespace TorrentStream {
 
             var torrentPath = GetStringValueFromQuery ( "path", context );
             var identifier = GetStringValueFromQuery ( "id", context );
-
-            torrentPath = "magnet:?xt=urn:btih:0bb164fdba0e8ad806d25562fd94c9a09f81b5d1&dn=Kanojo+Okarishimasu+4rd+Season+-+AniLiberty+%5BWEB-DL+1080p+HEVC%5D&xl=3121992505&tr=http://tr.libria.fun:2710/announce&tr=http://retracker.local/announce";
 
             var result = await StartFullDownload ( torrentPath, Convert.ToInt32 ( identifier ) );
 

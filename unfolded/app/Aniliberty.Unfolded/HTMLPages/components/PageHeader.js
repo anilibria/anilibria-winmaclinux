@@ -11,18 +11,21 @@ export default {
 			</div>
 			<div class="page-header">{{title}}</div>
 			<div v-if="receivedNotifications.length" class="icon-button simple-popup-container" title="Уведомления">
-				<img :src="'/static/icons/releases/notifications.svg'" width="20" height="20" />
+				<img class="common-bell-animation" :src="'/static/icons/releases/notifications.svg'" width="20" height="20" />
 				<div class="simple-popup-box notification-list-container">
 					<div v-for="notification in receivedNotifications" :class="{'common-notification': notification.type !== 'error', 'error-notification': notification.type === 'error'}">
 						{{ notification.message }}
 					</div>
 				</div>
-			</div>
+			</div>	
 			<div v-if="synchronizationRunned" class="icon-button" :title="'Cинхронизация...' + synchronizationPercent + '%'">
 				<img :src="'/static/icons/releases/synchronization.svg'" width="20" height="20" />
 			</div>
 			<div class="icon-button" title="Полезные ссылки">
 				<img src="/static/icons/commonbuttons/openinformation.svg" width="20" height="20" />
+			</div>
+			<div class="icon-button" title="Сменить тему" @click.prevent="toggleTheme()">
+				<img :src="'/static/icons/commonbuttons/changetheme.svg'" width="20" height="20" />
 			</div>
 			<div class="icon-button" title="Вернуться назад в истории переходов" @click="history.back();">
 				<img :src="'/static/icons/commonbuttons/' + (history.length > 1 ? 'navigationback' : 'navigationbackdisabled') + '.svg'" width="20" height="20" />
@@ -83,7 +86,8 @@ export default {
 			history,
 			receivedNotifications,
 			synchronizationRunned,
-			synchronizationPercent
+			synchronizationPercent,
+			toggleTheme
 		};
 	}
 };
