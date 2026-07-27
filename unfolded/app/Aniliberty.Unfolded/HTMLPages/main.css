@@ -45,6 +45,10 @@ body {
     --middle-plus-font-size: 14px;
     --large-font-size: 15px;
     --main-theme-active-color: light-dark(#b32121, #b32121);
+    --videoplayer-selected-item: light-dark(#c25656, #ffffff);
+    --videoplayer-idle-item: light-dark(#ffffff, #000000);
+    --videoplayer-selected-color: light-dark(white, black);
+    --videoplayer-idle-color: light-dark(black, white);
     /* multiselect style customization */
     --ms-bg: light-dark(white, black);
     --ms-border-color: light-dark(#cccccc, white);

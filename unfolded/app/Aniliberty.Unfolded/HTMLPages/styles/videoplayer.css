@@ -49,6 +49,34 @@
     }
 }
 
+.videoplayer-playlist-container {
+    position: absolute;
+    top: 40px;
+    left: 40px;
+    width: 180px;
+    background-color: var(--page-background);
+    opacity: 0.8;
+    max-height: 200px;
+    overflow-y: auto;
+
+    .playlist-item {
+        height: 30px;
+        background-color: var(--videoplayer-idle-item);
+        color: var(--videoplayer-idle-color);
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        padding-left: 6px;
+    }
+    .playlist-item:hover {
+        background-color: var(--videoplayer-selected-item);
+    }
+    .playlist-selected-item {
+        background-color: var(--videoplayer-selected-item);
+        color: var(--videoplayer-selected-color);
+    }
+}
+
 /* Change plyr styles */
 
 .plyr {

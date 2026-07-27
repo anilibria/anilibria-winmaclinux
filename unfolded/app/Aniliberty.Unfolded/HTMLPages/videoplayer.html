@@ -16,8 +16,7 @@
 </head>
 <body>
 	<div id="app">
-		<page-header v-model:main-menu-visible="mainMenuVisible"
-					 title="Видеоплеер">
+		<page-header v-model:main-menu-visible="mainMenuVisible" title="Видеоплеер">
 		</page-header>
 
 		<div class="page-content-with-panel">
@@ -55,6 +54,13 @@
 				<div class="videoplayer-container">
 					<video ref="video" autoplay muted playsinline controls :data-poster="poster">
 					</video>
+				</div>
+				<div class="videoplayer-playlist-container">
+					<div v-for="(episode, index) in episodes" :key="index">
+						<div class="playlist-item" :class="{'playlist-selected-item': episode === selectedEpisode}" @click.prevent="openEpisodeFromList(episode)">
+							Серия {{ episode.sortOrder + 1 }}
+						</div>
+					</div>
 				</div>
 			</div>
 		</div>
@@ -145,6 +151,30 @@
 					await saveSettings('videoplayer', settings.value);
 				}
 
+				function openNextSeria() {
+					const episodes = episodes.value;
+					const index = episodes.findIndex(a => a.id === selectedEpisode.value.id);
+					if (index >= episodes.length) return;
+
+					selectedEpisode.value = episodes[index + 1];
+					
+					adjustVideoSource(openEpisode(selectedEpisode.value));
+				}
+
+				function openPreviousSeria() {
+					const episodes = episodes.value;
+					const index = episodes.findIndex(a => a.id === selectedEpisode.value.id);
+					if (index === 0) return;
+
+					selectedEpisode.value = episodes[index - 1];
+					
+					adjustVideoSource(openEpisode(selectedEpisode.value));
+				}
+
+				function openEpisodeFromList(episode) {
+					adjustVideoSource(openEpisode(episode.id));
+				}
+
 				function customControls() {
 					return `
 <div class="plyr__controls">
@@ -182,7 +212,12 @@
 			</div>
 			<div class="flex-1 flex-row flex-base-center flex-other-center">
 				<div>
-					<button class="plyr__controls__item plyr__control" type="button" data-plyr="rewind" aria-pressed="false" title="Перемотать на 10 секунд назад">
+					<button class="plyr__controls__item plyr__control" type="button" data-plyr="rewind" aria-pressed="false" title="Перемотать назад">
+						<div class="flex-row flex-base-center flex-other-center">
+							<img src='/static/icons/videoplayer/leftjump.svg' width=18 height=18 />
+						</div>
+					</button>
+					<button id="previousSeriaButton" class="plyr__controls__item plyr__control" type="button" aria-pressed="false" title="Перейти на предыдущую серию">
 						<svg aria-hidden="true" focusable="false">
 							<use xlink:href="#plyr-rewind"></use>
 						</svg>
@@ -195,10 +230,15 @@
 							<use xlink:href="#plyr-play"></use>
 						</svg>
 					</button>
-					<button class="plyr__controls__item plyr__control" type="button" data-plyr="fast-forward" aria-pressed="false" title="Перемотать на 10 секунд вперед">
+					<button id="nextSeriaButton" class="plyr__controls__item plyr__control" type="button" aria-pressed="false" title="Перейти на следующую серию">
 						<svg aria-hidden="true" focusable="false">
 							<use xlink:href="#plyr-fast-forward"></use>
 						</svg>
+					</button>
+					<button class="plyr__controls__item plyr__control" type="button" data-plyr="fast-forward" aria-pressed="false" title="Перемотать вперед">
+						<div class="flex-row flex-base-center flex-other-center">
+							<img src='/static/icons/videoplayer/rightjump.svg' width=18 height=18 />
+						</div>
 					</button>
 				</div>
 			</div>
@@ -230,50 +270,60 @@
 	</div>
 </div>
 						`;
+				}
+
+				function adjustVideoSource(source) {
+					const hls = new Hls();
+					hls.loadSource(source);
+					hls.attachMedia(video.value);
+					hls.subtitleDisplay = true;
+					hlsSource.value = hls;				
+				} 
+
+				onMounted(async () => {
+					if (!hlsSupported.value) {
+						//TODO: show message
+						return;
 					}
+					settings.value = await getPageSettings('videoplayer');
+					await getSource();
 
-					onMounted(async () => {
-						if (!hlsSupported.value) {
-							//TODO: show message
-							return;
-						}
-						settings.value = await getPageSettings('videoplayer');
-						await getSource();
+					const player = new Plyr(video.value, {
+						controls: customControls()
+					});
+					player.on('languagechange', () => {
+						if (!hlsSource.value) return;
 
-						const player = new Plyr(video.value, {
-							controls: customControls()
-						});
-						player.on('languagechange', () => {
-							if (!hlsSource.value) return;
-
-							setTimeout(() => hlsSource.value.subtitleTrack = player.currentTrack, 50);
-						});
-						player.on('controlsshown', (event) => {
-							console.log('The player controls are now visible!');
-						});
-
-						const videoSource = openEpisode(selectedEpisode.value);
-
-						const hls = new Hls();
-						hls.loadSource(videoSource);
-						hls.attachMedia(video.value);
-						hls.subtitleDisplay = true;
-						hlsSource.value = hls;
+						setTimeout(() => hlsSource.value.subtitleTrack = player.currentTrack, 50);
+					});
+					player.on('controlsshown', (event) => {
+						console.log('The player controls are now visible!');
 					});
 
-					return {
-						mainMenuVisible,
-						hlsSupported,
-						episodes,
-						poster,
-						moveUp,
-						moveDown,
-						settings
-					}
-				}
-			});
+					const videoSource = openEpisode(selectedEpisode.value);
+					adjustVideoSource(videoSource);
 
-			app.mount('#app')
+					const nextSeriaButton = document.getElementById('nextSeriaButton');
+					const previousSeriaButton = document.getElementById('previousSeriaButton');
+					nextSeriaButton.addEventListener('click', openNextSeria);
+					previousSeriaButton.addEventListener('click', openPreviousSeria);
+				});
+
+				return {
+					mainMenuVisible,
+					hlsSupported,
+					episodes,
+					poster,
+					moveUp,
+					moveDown,
+					settings,
+					selectedEpisode,
+					openEpisodeFromList
+				}
+			}
+		});
+
+		app.mount('#app')
 	</script>
 </body>
 </html>
