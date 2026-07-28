@@ -1,7 +1,24 @@
-﻿namespace Aniliberty.Unfolded.Routes
+﻿using MonoTorrent.Client;
+
+namespace Aniliberty.Unfolded.Routes
 {
+
 	public static class TorrentClient
 	{
+
+		//private static ClientEngine? m_ClientEngine;
+
+		public static void Initialize()
+		{
+			var settings = new EngineSettingsBuilder
+			{
+				AutoSaveLoadFastResume = true,
+				AutoSaveLoadMagnetLinkMetadata = true,
+				AutoSaveLoadDhtCache = true,
+				CacheDirectory = ""
+			}.ToSettings();
+		}
+
 	}
 
 	/*
@@ -19,34 +36,6 @@ using System.Reflection;
 using System.Diagnostics.CodeAnalysis;
 
 namespace TorrentStream {
-
-    public static class StreamProviderHelpers {
-
-        private static PropertyInfo? GetActiveStreamProperty ( [DynamicallyAccessedMembers ( DynamicallyAccessedMemberTypes.NonPublicProperties )] Type type ) {
-            return type.GetProperties ( BindingFlags.NonPublic | BindingFlags.Instance ).FirstOrDefault ( a => a.Name == "ActiveStream" );
-        }
-
-        private static MethodInfo? GetDisposeMethod ( [DynamicallyAccessedMembers ( DynamicallyAccessedMemberTypes.PublicMethods )] Type type ) {
-            return type.GetMethod ( "Dispose" );
-        }
-
-        public static void DisposeInnerStream ( StreamProvider streamProvider ) {
-            var type = typeof ( StreamProvider );
-
-            PropertyInfo? property = GetActiveStreamProperty ( type );
-            if ( property == null ) return;
-
-            object? activeStream = property.GetMethod?.Invoke ( streamProvider, null );
-            if ( activeStream == null ) return;
-
-            var activeStreamType = typeof ( Stream );
-
-            var method = GetDisposeMethod ( activeStreamType );
-            if ( method == null ) return;
-
-            method.Invoke ( activeStream, null );
-        }
-    }
 
     public static class TorrentHandler {
 
@@ -170,32 +159,6 @@ namespace TorrentStream {
             return FullDownloadResult.Error;
         }
 
-        public static async Task StartFullDownload ( HttpContext context ) {
-            context.Response.ContentType = "text/plain";
-            if ( context.Request.Query.Count != 2 ) {
-                context.Response.StatusCode = 204;
-                return;
-            }
-
-            var torrentPath = GetStringValueFromQuery ( "path", context );
-            var identifier = GetStringValueFromQuery ( "id", context );
-
-            var result = await StartFullDownload ( torrentPath, Convert.ToInt32 ( identifier ) );
-
-            context.Response.StatusCode = result switch {
-                FullDownloadResult.NotCorrectParameters => 400,
-                FullDownloadResult.NotFound => 404,
-                FullDownloadResult.Error => 500,
-                _ => 200,
-            };
-
-            if ( result == FullDownloadResult.NoError ) {
-                SendMessageToSocket ( "nt:" + identifier );
-                await context.Response.WriteAsync ( "Downloading started" );
-                return;
-            }
-        }
-
         private static void ManagerTorrentStateChanged ( object? sender, TorrentStateChangedEventArgs e ) {
             if ( e.TorrentManager == null ) return;
 
@@ -217,16 +180,6 @@ namespace TorrentStream {
             }
 
             return "";
-        }
-
-        private static void SendMessageToSocket ( string message ) {
-            if ( !m_ActiveWebSockets.Any () ) return;
-
-            var messageInBytes = new ReadOnlyMemory<byte> ( Encoding.UTF8.GetBytes ( message ) );
-            foreach ( var socket in m_ActiveWebSockets.Keys ) {
-                if ( socket.State != WebSocketState.Open ) continue;
-                Task.Run ( async () => await socket.SendAsync ( messageInBytes, WebSocketMessageType.Text, true, CancellationToken.None ) );
-            }
         }
 
         public static async Task ClearAllTorrents () {
@@ -266,67 +219,6 @@ namespace TorrentStream {
             }
         }
 
-        public static async Task SaveState () {
-            await m_ClientEngine!.SaveStateAsync ( StateFilePath );
-            await File.WriteAllTextAsync ( InnerStateFilePath, JsonSerializer.Serialize ( m_TorrentManagers.Values.AsEnumerable (), TorrentStreamSerializerContext.Default.IEnumerableManagerModel ) );
-        }
-
-        public static async Task LoadState () {
-            if ( !File.Exists ( StateFilePath ) ) return;
-
-            try {
-                m_ClientEngine = await ClientEngine.RestoreStateAsync ( StateFilePath );
-            } catch {
-                m_ClientEngine = new ClientEngine ();
-            }
-            await m_ClientEngine.StartAllAsync (); // immediate start downloading after starting
-
-            var content = await File.ReadAllTextAsync ( InnerStateFilePath );
-            var torrentManagers = JsonSerializer.Deserialize ( content, typeof ( List<ManagerModel> ), TorrentStreamSerializerContext.Default ) as List<ManagerModel>;
-            if ( torrentManagers == null ) return;
-            foreach ( var torrentManager in torrentManagers ) {
-                torrentManager.Manager = m_ClientEngine.Torrents.FirstOrDefault ( a => a.InfoHashes.V1OrV2.ToHex () == torrentManager.MetadataId );
-                if ( torrentManager.Manager == null ) continue;
-                if ( torrentManager.Manager != null ) torrentManager.Manager.TorrentStateChanged += ManagerTorrentStateChanged;
-                m_TorrentManagers.TryAdd ( torrentManager.DownloadPath, torrentManager );
-            }
-        }
-
-        public static async Task TorrentWebSocket ( HttpContext context ) {
-            if ( context.WebSockets.IsWebSocketRequest ) {
-                using var webSocket = await context.WebSockets.AcceptWebSocketAsync ();
-                m_ActiveWebSockets.TryAdd ( webSocket, true );
-                await StartSocketSession ( webSocket );
-                if ( !m_ActiveWebSockets.TryRemove ( webSocket, out var result ) ) m_ActiveWebSockets.TryRemove ( webSocket, out var _ );
-                return;
-            }
-
-            context.Response.StatusCode = StatusCodes.Status400BadRequest;
-        }
-
-        private static async Task StartSocketSession ( WebSocket webSocket ) {
-            var buffer = new byte[1024].AsMemory ();
-
-            while ( true ) {
-                if ( webSocket.State != WebSocketState.Open ) break;
-
-                var receiveResult = await webSocket.ReceiveAsync ( buffer, CancellationToken.None );
-
-                if ( receiveResult.Count == 0 ) break;
-
-                var messageContent = Encoding.UTF8.GetString ( buffer.ToArray () );
-                var parts = messageContent.Split ( ":" );
-                if ( parts.Length != 2 ) continue;
-
-                switch ( parts[0] ) {
-                    case "ds": //download status
-                        if ( m_TorrentManagers.Any () ) await webSocket.SendAsync ( GetDownloadStatus (), WebSocketMessageType.Text, true, CancellationToken.None );
-                        break;
-                }
-            }
-
-            if ( m_ActiveWebSockets.ContainsKey ( webSocket ) ) m_ActiveWebSockets.TryRemove ( webSocket, out var _ );
-        }
 
         private static ReadOnlyMemory<byte> GetDownloadStatus () {
             var keys = m_TorrentManagers.Keys;

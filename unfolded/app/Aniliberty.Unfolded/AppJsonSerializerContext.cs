@@ -28,6 +28,7 @@ namespace Aniliberty.Unfolded
 	[JsonSerializable(typeof(IEnumerable<ReleaseSaveModel>))]
 	[JsonSerializable(typeof(UserProfileModel))]
 	[JsonSerializable(typeof(IEnumerable<int>))]
+	[JsonSerializable(typeof(List<string>))]
 	[JsonSerializable(typeof(IEnumerable<IEnumerable<object>>))]
 	[JsonSerializable(typeof(MarksModel))]
 	[JsonSerializable(typeof(LoginPassAuthModel))]

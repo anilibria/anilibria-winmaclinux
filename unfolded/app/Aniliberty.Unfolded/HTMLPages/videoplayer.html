@@ -55,10 +55,19 @@
 					<video ref="video" autoplay muted playsinline controls :data-poster="poster">
 					</video>
 				</div>
-				<div class="videoplayer-playlist-container">
+				<div class="videoplayer-playlist-container" :class="{'videoplayer-playlist-container-reverse-animation': playListVisible}">
 					<div v-for="(episode, index) in episodes" :key="index">
-						<div class="playlist-item" :class="{'playlist-selected-item': episode === selectedEpisode}" @click.prevent="openEpisodeFromList(episode)">
-							Серия {{ episode.sortOrder + 1 }}
+						<div class="flex-row flex-base-center playlist-item" :class="{'playlist-selected-item': episode === selectedEpisode}" @click.prevent="openEpisodeFromList(episode)" :title="episode.name">
+							<span class="flex-1">
+								Серия {{ episode.sortOrder + 1 }}
+							</span>
+							<div class="flex-row flex-all-center videoplayer-seen-mark" @click.stop="toggleSeenMark(episode.id)">
+								<img
+									:src="'/static/icons/videoplayer/' + (seenMarks.includes(episode.id) ? 'seenmarkselected.svg' : 'seenmark.svg') "
+									width="20"
+									height="20"
+								/>
+							</div>
 						</div>
 					</div>
 				</div>
@@ -70,8 +79,11 @@
 	</div>
 
 	<script type="module">
-		import { createApp, ref, onMounted, useTemplateRef } from './vue.global.js'
-		import { getReleaseEpisodes, getPageSettings, saveSettings } from './unfoldapi.js'
+		import { createApp, ref, onMounted, useTemplateRef } from './vue.js'
+		import {
+			getReleaseEpisodes, getPageSettings, saveSettings, watchVideoRelease,
+			addSeenMark, removeSeenMark, getSeenEpisodes
+		} from './unfoldapi.js'
 		import Drawer from './components/Drawer.js'
 		import PageHeader from './components/PageHeader.js'
 
@@ -84,18 +96,29 @@
 				const mainMenuVisible = ref(false);
 				const video = useTemplateRef('video');
 				let hlsSource = ref(null);
+				let videoPlayer = null;
 				const hlsSupported = ref(Hls.isSupported());
 				const episodes = ref([]);
-				const selectedEpisode = ref();
+				const releaseIds = ref([]);
+				const selectedEpisode = ref(null);
 				const selectedQuality = ref();
 				const poster = ref(null);
-				const settings = ref({prefferedQuality: ['hls1080', 'hls720', 'hls480']})
+				const playListVisible = ref(true);
+				const settings = ref({
+					prefferedQuality: ['hls1080', 'hls720', 'hls480'],
+					autoNextOpen: false,
+					autoSkipOpening: false,
+					autoSkipEnding: false,
+					showReleasePoster: false
+				})
+				const seenMarks = ref([])
 
 				async function getSource() {
 					const urlParams = new URLSearchParams(window.location.search);
 					const mode = urlParams.get('mode');
 					if (mode === `release`) {
 						const id = urlParams.get('id');
+						releaseIds.value = [id];
 						episodes.value = await getReleaseEpisodes(parseInt(id));
 						const episode = urlParams.get('episode');
 						if (episode) {
@@ -152,23 +175,23 @@
 				}
 
 				function openNextSeria() {
-					const episodes = episodes.value;
-					const index = episodes.findIndex(a => a.id === selectedEpisode.value.id);
-					if (index >= episodes.length) return;
+					const episodes = window.vueApp.episodes;
+					const index = episodes.findIndex(a => a.id === window.vueApp.selectedEpisode.id);
+					if (index >= episodes.length - 1) return;
 
-					selectedEpisode.value = episodes[index + 1];
+					window.vueApp.selectedEpisode = episodes[index + 1];
 					
-					adjustVideoSource(openEpisode(selectedEpisode.value));
+					adjustVideoSource(openEpisode(window.vueApp.selectedEpisode.id));
 				}
 
 				function openPreviousSeria() {
-					const episodes = episodes.value;
-					const index = episodes.findIndex(a => a.id === selectedEpisode.value.id);
+					const episodes = window.vueApp.episodes;
+					const index = episodes.findIndex(a => a.id === window.vueApp.selectedEpisode.id);
 					if (index === 0) return;
 
-					selectedEpisode.value = episodes[index - 1];
+					window.vueApp.selectedEpisode = episodes[index - 1];
 					
-					adjustVideoSource(openEpisode(selectedEpisode.value));
+					adjustVideoSource(openEpisode(window.vueApp.selectedEpisode.id));
 				}
 
 				function openEpisodeFromList(episode) {
@@ -277,8 +300,31 @@
 					hls.loadSource(source);
 					hls.attachMedia(video.value);
 					hls.subtitleDisplay = true;
-					hlsSource.value = hls;				
+					hlsSource.value = hls;
+
+					if (selectedEpisode.value && selectedEpisode.value.openingStart || selectedEpisode.value.endingStart) {
+						const pointers = [];
+						if (selectedEpisode.value.openingStart) pointers.push({ time: selectedEpisode.value.openingStart, label: 'Опенинг старт' });
+						if (selectedEpisode.value.openingEnd) pointers.push({ time: selectedEpisode.value.openingEnd, label: 'Опенинг конец' });
+						if (selectedEpisode.value.endingStart) pointers.push({ time: selectedEpisode.value.endingStart, label: 'Эндинг старт' });
+						if (selectedEpisode.value.endingEnd) pointers.push({ time: selectedEpisode.value.endingEnd, label: 'Эндинг конец' });
+
+						if (!videoPlayer.config.markers.enabled) videoPlayer.config.markers.enabled = true;
+						videoPlayer.config.markers.points = pointers;
+					} else {
+						videoPlayer.config.markers.points = [];
+					}
 				} 
+
+				async function toggleSeenMark(id) {
+					if (seenMarks.value.includes(id)) {
+						await removeSeenMark([id]);
+						seenMarks.value = seenMarks.value.filter(a => a !== id);
+					} else {
+						await addSeenMark([id]);
+						seenMarks.value.push(id);
+					}
+				}
 
 				onMounted(async () => {
 					if (!hlsSupported.value) {
@@ -287,6 +333,7 @@
 					}
 					settings.value = await getPageSettings('videoplayer');
 					await getSource();
+					seenMarks.value = await getSeenEpisodes(releaseIds.value);
 
 					const player = new Plyr(video.value, {
 						controls: customControls()
@@ -296,9 +343,53 @@
 
 						setTimeout(() => hlsSource.value.subtitleTrack = player.currentTrack, 50);
 					});
-					player.on('controlsshown', (event) => {
-						console.log('The player controls are now visible!');
+					player.on('controlsshown', () => {
+						playListVisible.value = true;
 					});
+					player.on('controlshidden', () => {
+						playListVisible.value = false;
+					});
+					player.on('ended', () => {
+						if (settings.value.autoNextOpen) openNextSeria();
+
+						if (!seenMarks.value.includes(id)) {
+							seenMarks.value.push(id);
+							addSeenMark([id]);
+						}
+					});
+					player.on('playing', () => {
+						//first start or after stop and play again
+
+					});
+					player.on('timeupdate', () => {
+						if (!window.vueApp.selectedEpisode) return;
+						if (!window.vueApp.selectedEpisode.openingStart && !window.vueApp.selectedEpisode.endingStart) return;
+
+						const currentTime = videoPlayer.currentTime;
+						const selectedEpisode = window.vueApp.selectedEpisode;
+						const episodeId = selectedEpisode.id;
+
+						if (settings.value.autoSkipOpening &&
+							currentTime >= selectedEpisode.openingStart &&
+							currentTime <= selectedEpisode.openingEnd) {
+							videoPlayer.currentTime = openingEnd;
+						}
+						if (settings.value.autoSkipEnding &&
+							currentTime >= selectedEpisode.endingStart &&
+							currentTime <= selectedEpisode.endingEnd &&
+							selectedEpisode.value !== episodes.at(-1)) {
+							openNextSeria();
+						}
+
+						// mark as seens if we reach ending
+						if (!seenMarks.value.includes(episodeId) &&
+							currentTime >= selectedEpisode.endingStart &&
+							currentTime <= selectedEpisode.endingEnd) {						
+							seenMarks.value.push(episodeId);
+							addSeenMark([episodeId]);
+						}
+					});					
+					videoPlayer = player;
 
 					const videoSource = openEpisode(selectedEpisode.value);
 					adjustVideoSource(videoSource);
@@ -318,12 +409,15 @@
 					moveDown,
 					settings,
 					selectedEpisode,
-					openEpisodeFromList
+					openEpisodeFromList,
+					playListVisible,
+					seenMarks,
+					toggleSeenMark
 				}
 			}
 		});
 
-		app.mount('#app')
+		window.vueApp = app.mount('#app');
 	</script>
 </body>
 </html>

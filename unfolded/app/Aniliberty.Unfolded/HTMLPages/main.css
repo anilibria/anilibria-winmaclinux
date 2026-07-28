@@ -49,6 +49,7 @@ body {
     --videoplayer-idle-item: light-dark(#ffffff, #000000);
     --videoplayer-selected-color: light-dark(white, black);
     --videoplayer-idle-color: light-dark(black, white);
+    --videoplayer-selected-seen-hover-color: light-dark(rgba(120, 128, 128, 0.9), rgba(120, 89, 89, 0.9));
     /* multiselect style customization */
     --ms-bg: light-dark(white, black);
     --ms-border-color: light-dark(#cccccc, white);
@@ -120,6 +121,11 @@ body {
 }
 
 .flex-other-center {
+    justify-content: center;
+}
+
+.flex-all-center {
+    align-items: center;
     justify-content: center;
 }
 

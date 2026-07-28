@@ -55,9 +55,10 @@
     left: 40px;
     width: 180px;
     background-color: var(--page-background);
-    opacity: 0.8;
+    opacity: 0;
     max-height: 200px;
     overflow-y: auto;
+    transition: opacity 0.5s;
 
     .playlist-item {
         height: 30px;
@@ -70,11 +71,35 @@
     }
     .playlist-item:hover {
         background-color: var(--videoplayer-selected-item);
+        color: var(--videoplayer-selected-color);
     }
     .playlist-selected-item {
         background-color: var(--videoplayer-selected-item);
         color: var(--videoplayer-selected-color);
     }
+}
+.videoplayer-playlist-container-reverse-animation {
+    opacity: 0.7;
+}
+
+.videoplayer-seen-mark {
+    width: 30px;
+    height: 100%;
+
+    &:hover {
+        background-color: var(--videoplayer-selected-seen-hover-color);
+    }
+}
+
+/*animation: showPlaylistAnimation 600ms ease-out 180ms forwards;*/
+
+@keyframes showPlaylistAnimation {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 0.7;
+  }
 }
 
 /* Change plyr styles */

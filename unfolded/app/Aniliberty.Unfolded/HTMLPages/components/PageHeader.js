@@ -1,4 +1,4 @@
-﻿import { ref, onMounted } from '/static/vue.global.js'
+﻿import { ref, onMounted } from '/static/vue.js'
 import { synchronizeFirstStart, synchronizeUser, synchronizeReleases, webSocketObserver, synchronizeStatus } from '/static/unfoldapi.js'
 
 export default {

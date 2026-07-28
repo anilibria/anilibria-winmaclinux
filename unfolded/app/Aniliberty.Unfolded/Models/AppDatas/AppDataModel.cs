@@ -1,8 +1,6 @@
 ﻿namespace Aniliberty.Unfolded.Models.AppDatas
 {
 
-	internal record WatchItem(int Id, DateTime Hit);
-
 	internal class AppDataModel
 	{
 
@@ -10,9 +8,9 @@
 
 		public List<int> Cinemahall { get; set; } = Enumerable.Empty<int>().ToList();
 
-		public List<WatchItem> HistoryWatch { get; set; } = Enumerable.Empty<WatchItem>().ToList();
+		public Dictionary<int, DateTime> HistoryWatch { get; set; } = new Dictionary<int, DateTime>();
 
-		public List<WatchItem> HistoryWatchVideo { get; set; } = Enumerable.Empty<WatchItem>().ToList();
+		public Dictionary<int, (DateTime hit, string videoId, long time)> HistoryWatchVideo { get; set; } = new Dictionary<int, (DateTime hit, string videoId, long time)>();
 
 		public DateTime LastAppStart { get; set; } = DateTime.Now;
 

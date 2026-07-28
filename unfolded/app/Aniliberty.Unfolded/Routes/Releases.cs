@@ -46,6 +46,7 @@ namespace Aniliberty.Unfolded.Routes
 			app.MapPost("/releases/list", ([FromBody] ReleasesListFiltersModel model) => List(model));
 			app.MapPost("/releases/random", ([FromBody] ReleasesListFiltersModel? model) => RandomRelease(model));
 			app.MapGet("/releases/marks", ([FromQuery] int[]? onlyForReleases) => Marks(onlyForReleases));
+			app.MapPost("/releases/seenEpisodes", ([FromBody] int[] releases) => SeenEpisodes(releases));
 			app.MapGet("/releases/episodes", (int releaseId) => Episodes(releaseId));
 			app.MapGet("/releases/torrents", (int id) => Torrents(id));
 			app.MapGet("/releases/openmagnet", (string magnet) => OpenMagnet(magnet));
@@ -151,7 +152,8 @@ namespace Aniliberty.Unfolded.Routes
 				if (isLocal)
 				{
 					m_localFavorites.Add(id);
-				} else
+				}
+				else
 				{
 					m_favorites.Add(id);
 				}
@@ -304,6 +306,17 @@ namespace Aniliberty.Unfolded.Routes
 				FullSeenReleases = fullReleaseSeens
 			};
 
+			return Results.Json(result, AppJsonSerializerContext.Default);
+		}
+
+		internal static IResult SeenEpisodes(IEnumerable<int> releases)
+		{
+			List<string> result = [];
+			foreach (var release in releases)
+			{
+				var episodes = m_episodes.FirstOrDefault(a => a.ReleaseId == release);
+				if (episodes != null) result.AddRange(episodes.Items.Where(a => m_seenEpisodes.Contains(a.Id)).Select(a => a.Id));
+			}
 			return Results.Json(result, AppJsonSerializerContext.Default);
 		}
 
@@ -692,7 +705,7 @@ namespace Aniliberty.Unfolded.Routes
 		{
 			var allEpisodes = new List<string>();
 
-			foreach(var releaseEpisode in m_episodes)
+			foreach (var releaseEpisode in m_episodes)
 			{
 				if (!ids.Contains(releaseEpisode.ReleaseId)) continue;
 

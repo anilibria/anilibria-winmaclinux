@@ -1,4 +1,4 @@
-﻿import { ref } from '/static/vue.global.js'
+﻿import { ref } from '/static/vue.js'
 import { getMainMenu, getUserData, refreshMainMenu } from '/static/mainmenu.js'
 import { webSocketObserver } from '/static/unfoldapi.js'
 

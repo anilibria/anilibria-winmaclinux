@@ -1,4 +1,4 @@
-﻿import { ref, watch } from '/static/vue.global.js'
+﻿import { ref, watch } from '/static/vue.js'
 import { getMainMenu, getUserData } from '/static/mainmenu.js'
 
 export default {

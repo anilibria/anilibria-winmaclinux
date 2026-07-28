@@ -117,6 +117,19 @@ export async function getUserMarks(onlyForReleases) {
     const response = await fetch('/releases/marks' + (onlyForReleaseParameter ? `?${onlyForReleaseParameter}` : ''));
     return await response.json();
 };
+export async function getSeenEpisodes(releases) {
+    const response = await fetch(
+        '/releases/seenEpisodes',
+        {
+            method: "POST",
+            body: JSON.stringify(releases),
+            headers: {
+                "Content-Type": "application/json"
+            }
+        }
+    );
+    return await response.json();
+};
 export async function getReleaseEpisodes(releaseId) {
     const response = await fetch('/releases/episodes?releaseId=' + releaseId);
     return await response.json();
@@ -303,6 +316,24 @@ export async function removeCinemahallReleases(ids) {
     await fetch('/appdata/cinemahall/remove', {
         method: "POST",
         body: JSON.stringify(ids),
+        headers: {
+            "Content-Type": "application/json"
+        }
+    });
+};
+export async function watchRelease(id) {
+    await fetch('/appdata/watchrelease?id=' + id, {
+        method: "POST",
+        body: '',
+        headers: {
+            "Content-Type": "application/json"
+        }
+    });
+};
+export async function watchVideoRelease(id, episode, time) {
+    await fetch('/appdata/watchvideorelease?id=' + id + '&episode=' + episode + '&time=' + time, {
+        method: "POST",
+        body: '',
         headers: {
             "Content-Type": "application/json"
         }
