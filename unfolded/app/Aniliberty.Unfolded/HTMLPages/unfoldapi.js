@@ -177,6 +177,21 @@ export async function removeReleasesSeenMark(ids) {
         }
     );
 };
+export async function getReleasePosters(ids) {
+    const response = await fetch(
+        '/releases/posters',
+        {
+            method: "POST",
+            body: JSON.stringify(ids),
+            headers: {
+                "Content-Type": "application/json"
+            }
+        }
+    );
+
+    return await response.json();
+};
+
 
 
 export async function synchronizeReleases() {

@@ -89,6 +89,9 @@
 						</div>
 					</div>
 				</div>
+				<div v-if="settings.showReleasePoster && playListVisible" class="videoplayer-release-poster-container">
+					<img class="poster" :src="poster" />
+				</div>
 			</div>
 		</div>
 
@@ -100,7 +103,7 @@
 		import { createApp, ref, onMounted, useTemplateRef } from './vue.js'
 		import {
 			getReleaseEpisodes, getPageSettings, saveSettings, watchVideoRelease,
-			addSeenMark, removeSeenMark, getSeenEpisodes
+			addSeenMark, removeSeenMark, getSeenEpisodes, getReleasePosters
 		} from './unfoldapi.js'
 		import Drawer from './components/Drawer.js'
 		import PageHeader from './components/PageHeader.js'
@@ -120,6 +123,7 @@
 				const hlsSupported = ref(Hls.isSupported());
 				const episodes = ref([]);
 				const releaseIds = ref([]);
+				const releasePosters = ref([]);
 				const selectedEpisode = ref(null);
 				const selectedQuality = ref();
 				const poster = ref('/static/backgrounds/emptyposter.png');
@@ -138,15 +142,19 @@
 					const mode = urlParams.get('mode');
 					if (mode === `release`) {
 						const id = urlParams.get('id');
-						releaseIds.value = [id];
-						episodes.value = await getReleaseEpisodes(parseInt(id));
+						const idInt = parseInt(id);
+						releaseIds.value = [idInt];
+						episodes.value = await getReleaseEpisodes(idInt);
 						const episode = urlParams.get('episode');
 						if (episode) {
 							selectedEpisode.value = episode;
 						} else {
 							selectedEpisode.value = episodes.value[0].id;
 						}
-						await watchVideoRelease(parseInt(id), selectedEpisode.value.id, 0);
+						await watchVideoRelease(idInt, selectedEpisode.value.id, 0);
+						releasePosters.value = await getReleasePosters([id]);
+						const releasePoster = releasePosters.value.find(a => a.id === idInt).poster;
+						poster.value = releasePoster ? 'https://anilibria.top' + releasePoster : '/static/backgrounds/emptyposter.png';
 
 						//TODO: open last episode in release
 						return;

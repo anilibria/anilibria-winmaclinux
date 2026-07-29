@@ -55,6 +55,7 @@ namespace Aniliberty.Unfolded.Routes
 			app.MapGet("/releases/dictionaries", () => Results.Json(m_releaseDictionaries, AppJsonSerializerContext.Default));
 			app.MapPost("/releases/addseens", (IHttpClientFactory clientFactory, HttpContext context, [FromBody] int[] ids) => AddReleasesToSeens(clientFactory, context, ids));
 			app.MapPost("/releases/removeseens", (IHttpClientFactory clientFactory, HttpContext context, [FromBody] int[] ids) => RemoveReleasesToSeens(clientFactory, context, ids));
+			app.MapPost("/releases/posters", ([FromBody] int[] ids) => ReleasePosters(ids));
 		}
 
 		internal static async Task Initialize()
@@ -727,6 +728,20 @@ namespace Aniliberty.Unfolded.Routes
 			}
 
 			return await Synchronize.RemoveSeens(clientFactory, context, allEpisodes.ToArray());
+		}
+
+		private static IResult ReleasePosters(int[] ids)
+		{
+			var result = new List<ReleasePosterModel>();
+			foreach (var id in ids)
+			{
+				if (m_releasesMap.TryGetValue(id, out var release))
+				{
+					result.Add(new ReleasePosterModel { Id = id, Poster = release.Poster });
+				}
+			}
+
+			return Results.Json(result, AppJsonSerializerContext.Default);
 		}
 
 	}
