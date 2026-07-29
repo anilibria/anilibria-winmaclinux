@@ -45,9 +45,27 @@
 						</div>
 					</div>
 				</div>
-				<div class="simple-panel-icon-button"
+				<div class="simple-panel-icon-button simple-popup-container"
 					 title="Настройка страницы Видеоплеер">
-					<img :src="'/static/icons/commonbuttons/settings.svg'" width="30" height="30" />
+					<div class="full-width-height flex-row flex-base-center flex-other-center">
+						<img :src="'/static/icons/commonbuttons/settings.svg'" width="30" height="30" />
+					</div>
+					<div class="simple-popup-box videoplayer-rightmenu">
+						<div class="videoplayer-rightmenu-settings flex-column gap-8">
+							<span>Автопереход между сериями</span>
+							<simple-switch v-model:state="settings.autoNextOpen" @changed="saveVideoPlayerSettings()">
+							</simple-switch>
+							<span>Автопропуск опенинга</span>
+							<simple-switch v-model:state="settings.autoSkipOpening" @changed="saveVideoPlayerSettings()">
+							</simple-switch>
+							<span>Автопропуск эндинга</span>
+							<simple-switch v-model:state="settings.autoSkipEnding" @changed="saveVideoPlayerSettings()">
+							</simple-switch>
+							<span>Показывать постер релиза</span>
+							<simple-switch v-model:state="settings.showReleasePoster" @changed="saveVideoPlayerSettings()">
+							</simple-switch>
+						</div>
+					</div>
 				</div>
 			</div>
 			<div class="right-content">
@@ -86,11 +104,13 @@
 		} from './unfoldapi.js'
 		import Drawer from './components/Drawer.js'
 		import PageHeader from './components/PageHeader.js'
+		import SimpleSwitch from './components/SimpleSwitch.js'
 
 		const app = createApp({
 			components: {
 				'page-drawer': Drawer,
-				'page-header': PageHeader
+				'page-header': PageHeader,
+				'simple-switch': SimpleSwitch
 			},
 			setup() {
 				const mainMenuVisible = ref(false);
@@ -102,7 +122,7 @@
 				const releaseIds = ref([]);
 				const selectedEpisode = ref(null);
 				const selectedQuality = ref();
-				const poster = ref(null);
+				const poster = ref('/static/backgrounds/emptyposter.png');
 				const playListVisible = ref(true);
 				const settings = ref({
 					prefferedQuality: ['hls1080', 'hls720', 'hls480'],
@@ -126,8 +146,13 @@
 						} else {
 							selectedEpisode.value = episodes.value[0].id;
 						}
+						await watchVideoRelease(parseInt(id), selectedEpisode.value.id, 0);
+
 						//TODO: open last episode in release
+						return;
 					}
+					
+					//TODO: open latest opened release
 				}
 
 				function openEpisode(id) {
@@ -412,7 +437,8 @@
 					openEpisodeFromList,
 					playListVisible,
 					seenMarks,
-					toggleSeenMark
+					toggleSeenMark,
+					saveVideoPlayerSettings
 				}
 			}
 		});

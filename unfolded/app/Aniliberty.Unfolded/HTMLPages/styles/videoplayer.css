@@ -49,6 +49,11 @@
     }
 }
 
+.videoplayer-rightmenu-settings {
+    width: 250px;
+    padding: 8px;
+}
+
 .videoplayer-playlist-container {
     position: absolute;
     top: 40px;
