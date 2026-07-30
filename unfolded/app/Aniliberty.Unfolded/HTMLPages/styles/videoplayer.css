@@ -111,7 +111,23 @@
     }
 }
 
-/*animation: showPlaylistAnimation 600ms ease-out 180ms forwards;*/
+.videoplayer-opening-ending-container {
+    position: absolute;
+    bottom: 80px;
+    right: 10px;
+    width: 200px;
+    height: 40px;
+    border-width: 1px;
+    border-style: solid;
+    border-color: var(--videoplayer-idle-color);
+    background-color: var(--videoplayer-idle-item);
+    font-size: var(--large-font-size);
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+}
+
 
 @keyframes showPlaylistAnimation {
   from {

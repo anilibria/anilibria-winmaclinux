@@ -92,6 +92,10 @@
 				<div v-if="settings.showReleasePoster && playListVisible" class="videoplayer-release-poster-container">
 					<img class="poster" :src="poster" />
 				</div>
+				<div v-if="showOpening || showEnding" class="videoplayer-opening-ending-container" @click="skipOpeningOrEnding()">
+					<span v-if="showOpening">Пропустить опенинг</span>
+					<span v-if="showEnding">Пропустить эндинг</span>
+				</div>
 			</div>
 		</div>
 
@@ -128,13 +132,16 @@
 				const selectedQuality = ref();
 				const poster = ref('/static/backgrounds/emptyposter.png');
 				const playListVisible = ref(true);
+				const showOpening = ref(false);
+				const showEnding = ref(false);
+				const skipStepTimer = ref(0);
 				const settings = ref({
 					prefferedQuality: ['hls1080', 'hls720', 'hls480'],
 					autoNextOpen: false,
 					autoSkipOpening: false,
 					autoSkipEnding: false,
 					showReleasePoster: false
-				})
+				});
 				const seenMarks = ref([])
 
 				async function getSource() {
@@ -145,26 +152,45 @@
 						const idInt = parseInt(id);
 						releaseIds.value = [idInt];
 						episodes.value = await getReleaseEpisodes(idInt);
+						seenMarks.value = await getSeenEpisodes([idInt]);
+						//TODO: open last episode in release
 						const episode = urlParams.get('episode');
 						if (episode) {
-							selectedEpisode.value = episode;
+							selectedEpisode.value = episodes.value.find(a => a.id === id);
 						} else {
-							selectedEpisode.value = episodes.value[0].id;
+							const lastFindEpisode = findFirstNotSeenEpisode();
+							if (lastFindEpisode) {
+								selectedEpisode.value = lastFindEpisode;
+							} else {
+								selectedEpisode.value = episodes.value[0];
+							}
 						}
-						await watchVideoRelease(idInt, selectedEpisode.value.id, 0);
+						
 						releasePosters.value = await getReleasePosters([id]);
 						const releasePoster = releasePosters.value.find(a => a.id === idInt).poster;
 						poster.value = releasePoster ? 'https://anilibria.top' + releasePoster : '/static/backgrounds/emptyposter.png';
 
-						//TODO: open last episode in release
+						await watchVideoRelease(idInt, selectedEpisode.value.id, 0);
+						
 						return;
 					}
 					
 					//TODO: open latest opened release
 				}
 
-				function openEpisode(id) {
-					const episode = episodes.value.find(a => a.id === id);
+				function findFirstNotSeenEpisode() {
+					const list = episodes.value;
+
+					for (const item of list) {
+						if (seenMarks.value.includes(item.id)) continue;
+
+						return item;
+					}
+
+					return null;
+				}
+
+				function openEpisode(episode) {
 					selectedEpisode.value = episode;
 
 					for (const quality of settings.value.prefferedQuality) {
@@ -359,6 +385,15 @@
 					}
 				}
 
+				function skipOpeningOrEnding() {
+					if (showOpening.value) {
+						videoPlayer.currentTime = selectedEpisode.value.openingEnd;
+					}
+					if (showEnding.value) {
+						openNextSeria();
+					}
+				}
+
 				onMounted(async () => {
 					if (!hlsSupported.value) {
 						//TODO: show message
@@ -366,7 +401,6 @@
 					}
 					settings.value = await getPageSettings('videoplayer');
 					await getSource();
-					seenMarks.value = await getSeenEpisodes(releaseIds.value);
 
 					const player = new Plyr(video.value, {
 						controls: customControls()
@@ -398,28 +432,46 @@
 						if (!window.vueApp.selectedEpisode) return;
 						if (!window.vueApp.selectedEpisode.openingStart && !window.vueApp.selectedEpisode.endingStart) return;
 
+						const showOpening = window.vueApp.showOpening;
+						const showEnding = window.vueApp.showEnding;
 						const currentTime = videoPlayer.currentTime;
 						const selectedEpisode = window.vueApp.selectedEpisode;
 						const episodeId = selectedEpisode.id;
+						const inOpening = currentTime >= selectedEpisode.openingStart && currentTime <= selectedEpisode.openingEnd;
+						const inEnding = currentTime >= selectedEpisode.endingStart && currentTime <= selectedEpisode.endingEnd;
 
-						if (settings.value.autoSkipOpening &&
-							currentTime >= selectedEpisode.openingStart &&
-							currentTime <= selectedEpisode.openingEnd) {
+						// if we auto skip opening we need to seek on end of opening
+						if (settings.value.autoSkipOpening && inOpening) {
 							videoPlayer.currentTime = openingEnd;
 						}
-						if (settings.value.autoSkipEnding &&
-							currentTime >= selectedEpisode.endingStart &&
-							currentTime <= selectedEpisode.endingEnd &&
-							selectedEpisode.value !== episodes.at(-1)) {
-							openNextSeria();
+						// if we not auto skip opening we need to show opening button
+						if (!settings.value.autoSkipOpening && !showOpening && inOpening) {
+							window.vueApp.showOpening = true;
+						}
+
+						// if we not auto skip ending we need to show ending button
+						if (!settings.value.autoSkipOpening && !showOpening && inOpening) {
+							window.vueApp.showEnding = true;
 						}
 
 						// mark as seens if we reach ending
-						if (!seenMarks.value.includes(episodeId) &&
-							currentTime >= selectedEpisode.endingStart &&
-							currentTime <= selectedEpisode.endingEnd) {						
+						if (!seenMarks.value.includes(episodeId) && inEnding) {
 							seenMarks.value.push(episodeId);
 							addSeenMark([episodeId]);
+						}
+						// if we auto skip ending we need to try open next seria
+						if (settings.value.autoSkipEnding && inEnding && selectedEpisode.value !== episodes.at(-1)) {
+							openNextSeria();
+						}
+
+						if (showOpening && !inOpening) window.vueApp.showOpening = false;
+						if (showEnding && !inEnding) window.vueApp.showEnding = false;
+
+						window.vueApp.skipStepTimer++;
+						if (window.vueApp.skipStepTimer == 50) {
+							//TODO: save watch timer
+							console.log('watch timer!!');
+							window.vueApp.skipStepTimer = 0;
 						}
 					});					
 					videoPlayer = player;
@@ -446,7 +498,11 @@
 					playListVisible,
 					seenMarks,
 					toggleSeenMark,
-					saveVideoPlayerSettings
+					saveVideoPlayerSettings,
+					showOpening,
+					showEnding,
+					skipStepTimer,
+					skipOpeningOrEnding
 				}
 			}
 		});

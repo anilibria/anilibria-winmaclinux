@@ -185,6 +185,7 @@
 					await getAllSeenMarks(releaseCardId);
 					inFavorites.value = userMarks.value.favorites.includes(releaseCardId);
 					franchise.value = await getReleaseFranchise(releaseCardId);
+					await watchRelease(releaseCardId);
 				}
 
 				function openOnWebSite() {
