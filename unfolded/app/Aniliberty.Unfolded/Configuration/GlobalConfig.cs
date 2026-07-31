@@ -9,7 +9,7 @@ namespace Aniliberty.Unfolded.Configuration
 	public static class GlobalConfig
 	{
 
-		private static int m_applicationPort = 8688;
+		private static int m_applicationPort = 8689;
 
 		private static string m_pathToCache = "";
 
@@ -21,12 +21,12 @@ namespace Aniliberty.Unfolded.Configuration
 
 		public static void Initialize(WebApplication app)
 		{
-			var availablePort = GetAvailablePort(8688);
+			//var availablePort = GetAvailablePort(8689);
 			var localDataFolder = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
 			m_pathToCache = Path.Combine(localDataFolder, "AnilibertyUnfolded");
 			if (!Directory.Exists(m_pathToCache)) Directory.CreateDirectory(m_pathToCache);
 
-			m_applicationPort = availablePort;
+			//m_applicationPort = availablePort;
 
 			app.Urls.Add("http://localhost:" + m_applicationPort);
 		}

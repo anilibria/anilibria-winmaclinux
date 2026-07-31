@@ -89,7 +89,7 @@
 
 .videoplayer-release-poster-container {
     position: absolute;
-    top: 0px;
+    top: 40px;
     right: 4px;
 
     .poster {
@@ -127,6 +127,7 @@
     align-items: center;
     justify-content: center;
 }
+
 
 
 @keyframes showPlaylistAnimation {

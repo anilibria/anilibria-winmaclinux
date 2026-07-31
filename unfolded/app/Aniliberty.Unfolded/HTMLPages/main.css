@@ -399,6 +399,12 @@ body {
     }
 }
 
+.main-info-links-container {
+    width: 150px;
+    font-size: 14px;
+    padding-left: 10px;
+}
+
 /* Native dialog */
 
 .native-dialog-rounded {
@@ -419,4 +425,17 @@ body {
         margin-right: 10px;
         margin-top: 10px;
     }
+}
+
+/* Common animations */
+.round-by-circle-animation {
+  animation: spin 2s linear infinite; 
+}
+@keyframes roundbycircle-animation {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }

@@ -72,29 +72,29 @@
 				<div class="videoplayer-container">
 					<video ref="video" autoplay muted playsinline controls :data-poster="poster">
 					</video>
-				</div>
-				<div class="videoplayer-playlist-container" :class="{'videoplayer-playlist-container-reverse-animation': playListVisible}">
-					<div v-for="(episode, index) in episodes" :key="index">
-						<div class="flex-row flex-base-center playlist-item" :class="{'playlist-selected-item': episode === selectedEpisode}" @click.prevent="openEpisodeFromList(episode)" :title="episode.name">
-							<span class="flex-1">
-								Серия {{ episode.sortOrder + 1 }}
-							</span>
-							<div class="flex-row flex-all-center videoplayer-seen-mark" @click.stop="toggleSeenMark(episode.id)">
-								<img
-									:src="'/static/icons/videoplayer/' + (seenMarks.includes(episode.id) ? 'seenmarkselected.svg' : 'seenmark.svg') "
-									width="20"
-									height="20"
-								/>
+					<div class="videoplayer-playlist-container" :class="{'videoplayer-playlist-container-reverse-animation': playListVisible}">
+						<div v-for="(episode, index) in episodes" :key="index">
+							<div class="flex-row flex-base-center playlist-item" :class="{'playlist-selected-item': episode === selectedEpisode}" @click.prevent="openEpisodeFromList(episode)" :title="episode.name">
+								<span class="flex-1">
+									Серия {{ episode.sortOrder + 1 }}
+								</span>
+								<div class="flex-row flex-all-center videoplayer-seen-mark" @click.stop="toggleSeenMark(episode.id)">
+									<img
+										:src="'/static/icons/videoplayer/' + (seenMarks.includes(episode.id) ? 'seenmarkselected.svg' : 'seenmark.svg') "
+										width="20"
+										height="20"
+									/>
+								</div>
 							</div>
 						</div>
 					</div>
-				</div>
-				<div v-if="settings.showReleasePoster && playListVisible" class="videoplayer-release-poster-container">
-					<img class="poster" :src="poster" />
-				</div>
-				<div v-if="showOpening || showEnding" class="videoplayer-opening-ending-container" @click="skipOpeningOrEnding()">
-					<span v-if="showOpening">Пропустить опенинг</span>
-					<span v-if="showEnding">Пропустить эндинг</span>
+					<div v-if="settings.showReleasePoster && playListVisible" class="videoplayer-release-poster-container">
+						<img class="poster" :src="poster" />
+					</div>
+					<div v-if="showOpening || showEnding" class="videoplayer-opening-ending-container" @click="skipOpeningOrEnding()">
+						<span v-if="showOpening">Пропустить опенинг</span>
+						<span v-if="showEnding">Пропустить эндинг</span>
+					</div>
 				</div>
 			</div>
 		</div>
@@ -127,6 +127,7 @@
 				const hlsSupported = ref(Hls.isSupported());
 				const episodes = ref([]);
 				const releaseIds = ref([]);
+				const selectedReleaseId = ref(-1);
 				const releasePosters = ref([]);
 				const selectedEpisode = ref(null);
 				const selectedQuality = ref();
@@ -169,9 +170,8 @@
 						releasePosters.value = await getReleasePosters([id]);
 						const releasePoster = releasePosters.value.find(a => a.id === idInt).poster;
 						poster.value = releasePoster ? 'https://anilibria.top' + releasePoster : '/static/backgrounds/emptyposter.png';
-
-						await watchVideoRelease(idInt, selectedEpisode.value.id, 0);
-						
+						selectedReleaseId.value = idInt;
+					
 						return;
 					}
 					
@@ -191,8 +191,6 @@
 				}
 
 				function openEpisode(episode) {
-					selectedEpisode.value = episode;
-
 					for (const quality of settings.value.prefferedQuality) {
 						if (episode[quality]) {
 							selectedQuality.value = quality;
@@ -240,7 +238,7 @@
 
 					window.vueApp.selectedEpisode = episodes[index + 1];
 					
-					adjustVideoSource(openEpisode(window.vueApp.selectedEpisode.id));
+					adjustVideoSource(openEpisode(window.vueApp.selectedEpisode));
 				}
 
 				function openPreviousSeria() {
@@ -250,11 +248,12 @@
 
 					window.vueApp.selectedEpisode = episodes[index - 1];
 					
-					adjustVideoSource(openEpisode(window.vueApp.selectedEpisode.id));
+					adjustVideoSource(openEpisode(window.vueApp.selectedEpisode));
 				}
 
 				function openEpisodeFromList(episode) {
-					adjustVideoSource(openEpisode(episode.id));
+					selectedEpisode.value = episode;
+					adjustVideoSource(openEpisode(episode));
 				}
 
 				function customControls() {
@@ -403,7 +402,12 @@
 					await getSource();
 
 					const player = new Plyr(video.value, {
-						controls: customControls()
+						controls: customControls(),
+						fullscreen: {
+							enabled: true,
+							fallback: true,
+							container: '.videoplayer-container'
+						}
 					});
 					player.on('languagechange', () => {
 						if (!hlsSource.value) return;
@@ -450,7 +454,7 @@
 						}
 
 						// if we not auto skip ending we need to show ending button
-						if (!settings.value.autoSkipOpening && !showOpening && inOpening) {
+						if (!settings.value.autoSkipEnding && !showEnding && inEnding) {
 							window.vueApp.showEnding = true;
 						}
 
@@ -469,8 +473,7 @@
 
 						window.vueApp.skipStepTimer++;
 						if (window.vueApp.skipStepTimer == 50) {
-							//TODO: save watch timer
-							console.log('watch timer!!');
+							window.vueApp.watchVideoRelease(window.vueApp.selectedReleaseId, selectedEpisode.id, Math.round(currentTime));
 							window.vueApp.skipStepTimer = 0;
 						}
 					});					
@@ -502,7 +505,9 @@
 					showOpening,
 					showEnding,
 					skipStepTimer,
-					skipOpeningOrEnding
+					skipOpeningOrEnding,
+					watchVideoRelease,
+					selectedReleaseId
 				}
 			}
 		});
