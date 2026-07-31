@@ -107,7 +107,8 @@
 		import { createApp, ref, onMounted, useTemplateRef } from './vue.js'
 		import {
 			getReleaseEpisodes, getPageSettings, saveSettings, watchVideoRelease,
-			addSeenMark, removeSeenMark, getSeenEpisodes, getReleasePosters
+			addSeenMark, removeSeenMark, getSeenEpisodes, getReleasePosters,
+			getWatchVideoRelease
 		} from './unfoldapi.js'
 		import Drawer from './components/Drawer.js'
 		import PageHeader from './components/PageHeader.js'
@@ -136,6 +137,7 @@
 				const showOpening = ref(false);
 				const showEnding = ref(false);
 				const skipStepTimer = ref(0);
+				const watchRelease = ref(null);
 				const settings = ref({
 					prefferedQuality: ['hls1080', 'hls720', 'hls480'],
 					autoNextOpen: false,
@@ -154,7 +156,6 @@
 						releaseIds.value = [idInt];
 						episodes.value = await getReleaseEpisodes(idInt);
 						seenMarks.value = await getSeenEpisodes([idInt]);
-						//TODO: open last episode in release
 						const episode = urlParams.get('episode');
 						if (episode) {
 							selectedEpisode.value = episodes.value.find(a => a.id === id);
@@ -166,6 +167,8 @@
 								selectedEpisode.value = episodes.value[0];
 							}
 						}
+
+						watchRelease.value = await getWatchVideoRelease(idInt);
 						
 						releasePosters.value = await getReleasePosters([id]);
 						const releasePoster = releasePosters.value.find(a => a.id === idInt).poster;
@@ -180,14 +183,16 @@
 
 				function findFirstNotSeenEpisode() {
 					const list = episodes.value;
+					let latest = null;
 
 					for (const item of list) {
+						latest = item;
 						if (seenMarks.value.includes(item.id)) continue;
 
 						return item;
 					}
 
-					return null;
+					return latest;
 				}
 
 				function openEpisode(episode) {
@@ -429,8 +434,12 @@
 						}
 					});
 					player.on('playing', () => {
-						//first start or after stop and play again
-
+						if (!watchRelease.value) return;
+						
+						if (selectedEpisode.value.id === watchRelease.value.videoId && watchRelease.value.time > 0) {
+							videoPlayer.currentTime = watchRelease.value.time;
+							watchRelease.value = null;
+						}
 					});
 					player.on('timeupdate', () => {
 						if (!window.vueApp.selectedEpisode) return;

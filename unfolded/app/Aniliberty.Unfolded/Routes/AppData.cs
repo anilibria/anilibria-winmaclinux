@@ -39,6 +39,7 @@ namespace Aniliberty.Unfolded.Routes
 			app.MapPost("/appdata/cinemahall/{action}", ([FromRoute] string action, [FromBody] IEnumerable<int> ids) => EditCinemahall(action, ids));
 			app.MapPost("/appdata/watchrelease", ([FromQuery] int id) => WatchRelease(id));
 			app.MapPost("/appdata/watchvideorelease", ([FromQuery] int id, [FromQuery] string episode, [FromQuery] long time) => WatchVideoRelease(id, episode, time));
+			app.MapGet("/appdata/watchvideorelease", ([FromQuery] int id) => GetWatchVideoRelease(id));
 		}
 
 		private static IResult WatchRelease(int id)
@@ -67,6 +68,17 @@ namespace Aniliberty.Unfolded.Routes
 			}
 
 			return Results.Ok();
+		}
+
+		private static IResult GetWatchVideoRelease(int id)
+		{
+
+			if (m_appData.HistoryWatchVideo.TryGetValue(id, out var item))
+			{
+				return Results.Json(item, AppJsonSerializerContext.Default);
+			}
+
+			return Results.Content("null", "application/json");
 		}
 
 		public static async Task<IResult> EditHidedReleases(string action, IEnumerable<int> ids)

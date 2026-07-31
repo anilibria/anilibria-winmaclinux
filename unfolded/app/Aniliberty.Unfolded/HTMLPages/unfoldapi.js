@@ -354,4 +354,9 @@ export async function watchVideoRelease(id, episode, time) {
         }
     });
 };
+export async function getWatchVideoRelease(id) {
+    const response = await fetch('/appdata/watchvideorelease?id=' + id);
+    return await response.json();
+};
+
 
