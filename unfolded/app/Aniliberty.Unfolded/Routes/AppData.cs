@@ -59,11 +59,11 @@ namespace Aniliberty.Unfolded.Routes
 		{
 			if (m_appData.HistoryWatchVideo.TryGetValue(id, out var _))
 			{
-				m_appData.HistoryWatchVideo[id] = (DateTime.Now, episode, time);
+				m_appData.HistoryWatchVideo[id] = new AppDataModelWatchVideoModel { Hit = DateTime.Now, VideoId = episode, Time = time };
 			}
 			else
 			{
-				m_appData.HistoryWatchVideo.Add(id, (DateTime.Now, episode, time));
+				m_appData.HistoryWatchVideo.Add(id, new AppDataModelWatchVideoModel { Hit = DateTime.Now, VideoId = episode, Time = time });
 			}
 
 			return Results.Ok();
