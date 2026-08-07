@@ -26,8 +26,8 @@
 						<div class="releasecard-rightmenu-seens flex-column">
 							<a v-if="countSeen != releaseEpisodes.length" class="default-link" @click.prevent="addSeenMarks()" href="">Отметить как просмотренное</a>
 							<a v-if="countSeen === releaseEpisodes.length" class="default-link" @click.prevent="removeSeenMarks()" href="">Отметить как не просмотренное</a>
-							<a class="default-link" @click.prevent="removeFromFavorites()" href="">Скрыть релиз</a>
-							<a class="default-link" @click.prevent="removeFromFavorites()" href="">Убрать релиз из скрытых</a>
+							<a class="default-link" @click.prevent="addToHidden()" href="">Скрыть релиз</a>
+							<a class="default-link" @click.prevent="removeFromHidden()" href="">Убрать релиз из скрытых</a>
 						</div>
 					</div>
 				</div>
@@ -138,7 +138,7 @@
 		import {
 			getRelease, getReleaseTorrents, getReleaseEpisodes, getUserMarks,
 			openMagnetInSystem, addFavorites, removeFavorites, getReleaseFranchise,
-			addSeenMark, removeSeenMark
+			addSeenMark, removeSeenMark, addHidedReleases, removeHidedReleases
 		} from './unfoldapi.js'
 		import Drawer from './components/Drawer.js'
 		import PageHeader from './components/PageHeader.js'
@@ -225,6 +225,14 @@
 					await getAllSeenMarks(releaseCard.value.id);
 				}
 
+				async function addToHidden() {
+					await addHidedReleases([releaseCard.value.id]);
+				}
+
+				async function removeFromHidden() {
+					await removeHidedReleases([releaseCard.value.id]);
+				}
+
 				function openLinkedSerie(id) {
 					if (id === releaseCard.value.id) return;
 
@@ -254,7 +262,9 @@
 					franchise,
 					openLinkedSerie,
 					addSeenMarks,
-					removeSeenMarks
+					removeSeenMarks,
+					addToHidden,
+					removeFromHidden
 				}
 			}
 		});

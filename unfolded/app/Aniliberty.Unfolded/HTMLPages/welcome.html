@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta name="color-scheme" content="light dark">
+	<title>Стартовая страница</title>
+	<link rel="icon" type="image/x-icon" href="/static/icons/logo/default.svg">
+	<link rel="stylesheet" href="styles/welcome.css">
+</head>
+<body>
+	<div id="app">
+        <div class="main-container">
+            <div class="main-header">Добро пожаловать в приложение AniLiberty.Unfolded</div>
+            <div class="step-header">Выполняется шаг {{ step + 1 }} из {{ countSteps }}</div>
+            <div class="action-header">{{ actionTitles[step] }}</div>
+            <div v-if="step === 0">
+                Для корректной работы приложения а также для проверки возможности синхронизации необходимо выполнить первоначальную
+                синхронизацию релизов и дождаться её выполнения. Синхронизация занимает примерно 1-2 минуты, откиньтесь к креслу пока она выполняется... 😴
+                Процент выполнения синхронизации...{{ percentSynchronization }}%
+            </div>
+            <div v-if="step === 1">
+                Давайте сразу настроим некоторые вещи в приложении, так будет удобней сразу пользоваться приложением.
+                Все эти настройки при желании Вы сможете поменять в самом приложении далее.
+                <b>
+                Нужны ли Вам нотификации? Эта функция собирает изменения между прошлой и новой синхронизацией и отображает
+                в секции уведомлений выжимку по количеству новых серий/торрентов/релизов. Также есть специальная секция на странице Каталог релизов
+                позволяющая отобразить в списке только релизы в которых были изменения.
+                <simple-select
+                    v-model:item="releaseSettings.notificationMode"
+                    :options="notificationModes"
+                    style="width: 170px;"
+                    @selected="saveReleasesSettings()">
+                </simple-select>
+                Папка для хранения скаченных видео файлов с торрентов. Даже если Вы не планируете счачивать торренты необходимо создать
+                папку для этого и выбрать её здесь.
+            </div>
+            <div v-if="step === 2">
+                Папка для хранения скаченных видео файлов с торрентов. Даже если Вы не планируете счачивать торренты необходимо создать
+                папку для этого и выбрать её здесь.
+            </div>
+        </div>
+	</div>
+
+	<script type="module">
+		import { createApp, ref } from './vue.js'
+		import { synchronizeReleases, webSocketObserver, saveSettings } from './unfoldapi.js'
+        import SimpleSelect from './components/SimpleSelect.js'
+
+		const app = createApp({
+			components: {
+                'simple-select': SimpleSelect,
+            },
+			setup() {
+                const percentSynchronization = ref(0);
+                const synchronizationCompleted = ref();
+                const step = ref(0);
+                const countSteps = ref(3);
+                const actionTitles = ref(['Синхронизация релизов','Общие настройки','Настройки торрента']);
+                const releaseSettings = ref({});
+
+				const notificationModes = [
+					{
+						title: "Выключены",
+						id: 0
+					},
+					{
+						title: "Уведомления по всем релизам",
+						id: 1
+					},
+					{
+						title: "Уведомления только по избранному",
+						id: 2
+					},
+				];
+
+                async function startSynchronization() {
+                    const synchronizedStarted = await synchronizeStatus();
+                    if (synchronizedStarted) {
+                        synchronizationCompleted.value = false;
+                        percentSynchronization.value = 0;
+                    } else {
+                        await synchronizeReleases();
+                    }
+                }
+
+                function synchronizedHandler(message) {
+                    if (message === 'started') {
+                        percentSynchronization.value = 0;
+                        synchronizationCompleted.value = false;
+                        return;
+                    }
+                    if (message === 'completed') {
+                        synchronizationCompleted.value = true;
+                        nextStep();
+                        return;
+                    }
+                    if (message === 'uptodate') {
+                        synchronizationRunned.value = true;
+                        nextStep();
+                        return;
+                    }
+                    if (message.indexOf('percent') === 0) {
+                        percentSynchronization.value = parseInt(message.replace('percent', ''));
+                    }
+                }
+
+                function nextStep() {
+                    step.value = step.value + 1;
+                }
+
+                async function loadSettings() {
+                    releaseSettings.value = await getPageSettings('releases');
+                }
+
+				async function saveReleasesSettings() {
+					await saveSettings('releases', releaseSettings.value);
+				}
+
+                webSocketObserver().synchronization = synchronizedHandler;
+
+				return {
+                    startSynchronization,
+                    step,
+                    countSteps,
+                    actionTitles,
+                    notificationModes,
+                    saveReleasesSettings
+				}
+			}
+		});
+
+		app.mount('#app')
+	</script>
+</body>
+</html>
