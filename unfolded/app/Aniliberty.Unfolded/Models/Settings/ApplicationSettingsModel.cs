@@ -8,6 +8,8 @@
 
 		public ApplicationSettingsVideoplayerModel VideoPlayer { get; set; } = new ApplicationSettingsVideoplayerModel();
 
+		public ApplicationSettingsTorrentModel Torrent { get; set; } = new ApplicationSettingsTorrentModel();
+
 	}
 
 }

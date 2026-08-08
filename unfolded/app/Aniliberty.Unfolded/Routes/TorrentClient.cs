@@ -1,4 +1,5 @@
-﻿using MonoTorrent.Client;
+﻿using Microsoft.AspNetCore.Mvc;
+using MonoTorrent.Client;
 
 namespace Aniliberty.Unfolded.Routes
 {
@@ -17,6 +18,30 @@ namespace Aniliberty.Unfolded.Routes
 				AutoSaveLoadDhtCache = true,
 				CacheDirectory = ""
 			}.ToSettings();
+		}
+
+		public static void RegisterRoutes(WebApplication app)
+		{
+			app.MapPost("/torrent/checkfolder", ([FromBody] string path) => CheckFolder(path));
+		}
+
+		public static IResult CheckFolder(string path)
+		{
+			var absoluteName = Path.GetFullPath(path);
+			var exists = Directory.Exists(absoluteName);
+			if (!exists)
+			{
+				try
+				{
+					Directory.CreateDirectory(absoluteName);
+					exists = true;
+				}
+				catch
+				{
+				}
+			}
+
+			return Results.Content(exists ? "true" : "false", "application/json");
 		}
 
 	}

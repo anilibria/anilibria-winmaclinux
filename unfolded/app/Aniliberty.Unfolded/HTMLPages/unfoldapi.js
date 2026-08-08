@@ -359,4 +359,15 @@ export async function getWatchVideoRelease(id) {
     return await response.json();
 };
 
+export async function torrentCheckFolder(path) {
+    const response = await fetch('/torrent/checkfolder', {
+        method: "POST",
+        body: JSON.stringify(path),
+        headers: {
+            "Content-Type": "application/json"
+        }
+    });
+    return await response.json();
+};
+
 

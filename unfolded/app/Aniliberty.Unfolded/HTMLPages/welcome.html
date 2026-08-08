@@ -11,53 +11,105 @@
 <body>
 	<div id="app">
         <div class="main-container">
+            <br>
             <div class="main-header">Добро пожаловать в приложение AniLiberty.Unfolded</div>
-            <div class="step-header">Выполняется шаг {{ step + 1 }} из {{ countSteps }}</div>
+            <div class="step-header">
+                <i>Давайте сразу настроим некоторые вещи в приложении, так будет удобней сразу пользоваться приложением.
+                Все эти настройки при желании Вы сможете поменять в самом приложении далее.</i>
+                <br><br>
+                <b>Выполняется шаг {{ step + 1 }} из {{ countSteps }}.</b>
+                <br>
+            </div>
             <div class="action-header">{{ actionTitles[step] }}</div>
             <div v-if="step === 0">
                 Для корректной работы приложения а также для проверки возможности синхронизации необходимо выполнить первоначальную
                 синхронизацию релизов и дождаться её выполнения. Синхронизация занимает примерно 1-2 минуты, откиньтесь к креслу пока она выполняется... 😴
-                Процент выполнения синхронизации...{{ percentSynchronization }}%
+                <br><br>
+
+                <div v-if="percentSynchronization === -1 && !synchronizationCompleted" class="action-button" style="width: 60px;" @click="startSynchronization()">Начать</div>
+                <div style="display: flex; flex-direction: column;">
+                    <span v-if="percentSynchronization !== -1">Процент выполнения синхронизации...{{ percentSynchronization }}%</span>
+                    <img v-if="percentSynchronization !== -1" src="/static/backgrounds/loadinganimation.gif" width="100" height="100" />
+                </div>
+                <span v-if="synchronizationCompleted">Синхронизация выполнена успешно!</span>
             </div>
-            <div v-if="step === 1">
-                Давайте сразу настроим некоторые вещи в приложении, так будет удобней сразу пользоваться приложением.
-                Все эти настройки при желании Вы сможете поменять в самом приложении далее.
-                <b>
+            <div v-if="step === 1 && releaseSettings">
                 Нужны ли Вам нотификации? Эта функция собирает изменения между прошлой и новой синхронизацией и отображает
                 в секции уведомлений выжимку по количеству новых серий/торрентов/релизов. Также есть специальная секция на странице Каталог релизов
                 позволяющая отобразить в списке только релизы в которых были изменения.
+                После выбора в селекторе ниже по каждому пункту будет показана подробное объяснение ниже селектора что оно делает.
+                Как выберите нажмите на кнопку Далее внизу страницы.
                 <simple-select
                     v-model:item="releaseSettings.notificationMode"
                     :options="notificationModes"
-                    style="width: 170px;"
+                    style="width: 270px;"
                     @selected="saveReleasesSettings()">
                 </simple-select>
-                Папка для хранения скаченных видео файлов с торрентов. Даже если Вы не планируете счачивать торренты необходимо создать
-                папку для этого и выбрать её здесь.
+                <i class="option-description">
+                    <span v-if="releaseSettings.notificationMode === 0">Уведомления полностью выключены. Плашки в верхней панели и на странице Каталоге релизов не будут отображатся совсем.</span>
+                    <span v-if="releaseSettings.notificationMode === 1">
+                        Уведомления будут формироваться по всем релизам в библиотеке проекта. Любые изменения произошедшие с релизами вне зависимости от года или статуса
+                        будут попадать в уведомления.
+                    </span>
+                    <span v-if="releaseSettings.notificationMode === 2">
+                        Уведомления будут формироваться только на базе релизов которые Вы добавили в избранное, остальные релизы будут игнорироваться.
+                    </span>
+                </i>
             </div>
-            <div v-if="step === 2">
+            <div v-if="step === 2 && torrentSettings">
                 Папка для хранения скаченных видео файлов с торрентов. Даже если Вы не планируете счачивать торренты необходимо создать
-                папку для этого и выбрать её здесь.
+                папку для этого и выбрать её здесь, потому что она может потребоваться для просмотра торрента онлайн или просто Вы вдруг передумаете,
+                вообщем лишним не будет.<br>
+                <div style="display: flex; flex-direction: row; align-items: center; gap: 8px;">
+                    <input
+                        v-model="torrentSettings.pathToDownloads"
+                        type="text"
+                        class="simple-input"
+                        style="width: 200px;"
+                        placeholder="Путь к папке скачивания торрентов"
+                    />
+                    <div class="action-button" style="width: 130px;" @click="selectTorrentDirectory()">Проверить путь</div>
+                </div>
+                <br>
+                Также сразу можно выбрать будете ли Вы использовать внутренний торрент клиент или предпочтете внешний.<br>
+                <div style="display: flex; flex-direction: row; align-items: center; gap: 8px;">
+                    <simple-switch v-model:state="torrentSettings.useInternalTorrectClient" @changed="saveTorrentSettings()">
+                    </simple-switch>
+                    <span v-if="!torrentSettings.useInternalTorrectClient">Использовать внешний торрент клиент (например qBitTorrent etc)</span>
+                    <span v-if="torrentSettings.useInternalTorrectClient">Использовать внутренний торрент клиент</span>
+                </div>
+            </div>
+            <div v-if="showNextButton">
+                <br>
+                <span class="next-button-header">Для перехода на следующий шаг нажмите Далее ниже</span>
+                <div class="action-button" style="width: 60px;" @click="nextStep()">Далее</div>
             </div>
         </div>
 	</div>
 
 	<script type="module">
 		import { createApp, ref } from './vue.js'
-		import { synchronizeReleases, webSocketObserver, saveSettings } from './unfoldapi.js'
+		import {
+            synchronizeReleases, webSocketObserver, saveSettings, synchronizeStatus,
+            getPageSettings, torrentCheckFolder
+        } from './unfoldapi.js'
         import SimpleSelect from './components/SimpleSelect.js'
+        import SimpleSwitch from './components/SimpleSwitch.js'
 
 		const app = createApp({
 			components: {
                 'simple-select': SimpleSelect,
+                'simple-switch': SimpleSwitch,
             },
 			setup() {
-                const percentSynchronization = ref(0);
+                const percentSynchronization = ref(-1);
                 const synchronizationCompleted = ref();
+                const showNextButton = ref(false);
                 const step = ref(0);
                 const countSteps = ref(3);
                 const actionTitles = ref(['Синхронизация релизов','Общие настройки','Настройки торрента']);
                 const releaseSettings = ref({});
+                const torrentSettings = ref({});
 
 				const notificationModes = [
 					{
@@ -92,12 +144,14 @@
                     }
                     if (message === 'completed') {
                         synchronizationCompleted.value = true;
-                        nextStep();
+                        showNextButton.value = true;
+                        percentSynchronization.value = -1;
                         return;
                     }
                     if (message === 'uptodate') {
-                        synchronizationRunned.value = true;
-                        nextStep();
+                        synchronizationCompleted.value = true;
+                        showNextButton.value = true;
+                        percentSynchronization.value = -1;
                         return;
                     }
                     if (message.indexOf('percent') === 0) {
@@ -107,25 +161,50 @@
 
                 function nextStep() {
                     step.value = step.value + 1;
+                    if (step.value == countSteps.value) {
+                        window.location.href = "/";
+                        return;
+                    }
+                    if (step.value === 2) showNextButton.value = false;
                 }
 
                 async function loadSettings() {
                     releaseSettings.value = await getPageSettings('releases');
+                    torrentSettings.value = await getPageSettings('torrent');
                 }
 
 				async function saveReleasesSettings() {
 					await saveSettings('releases', releaseSettings.value);
 				}
 
+				async function saveTorrentSettings() {
+					await saveSettings('torrent', torrentSettings.value);
+				}
+
+                async function selectTorrentDirectory() {
+                    const result = await torrentCheckFolder(torrentSettings.value.pathToDownloads);
+                    if (result) showNextButton.value = true;
+                }
+
+                loadSettings();
+
                 webSocketObserver().synchronization = synchronizedHandler;
 
 				return {
                     startSynchronization,
+                    synchronizationCompleted,
                     step,
                     countSteps,
                     actionTitles,
                     notificationModes,
-                    saveReleasesSettings
+                    saveReleasesSettings,
+                    nextStep,
+                    showNextButton,
+                    percentSynchronization,
+                    releaseSettings,
+                    torrentSettings,
+                    selectTorrentDirectory,
+                    saveTorrentSettings
 				}
 			}
 		});

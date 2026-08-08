@@ -28,8 +28,6 @@ namespace Aniliberty.Unfolded.Routes
 
 		static HashSet<int> m_localFavorites = new HashSet<int>();
 
-		static HashSet<int> m_hidedReleases = new HashSet<int>();
-
 		static List<int> m_openHistory = new List<int>();
 
 		static List<int> m_seenHistory = new List<int>();
@@ -491,37 +489,39 @@ namespace Aniliberty.Unfolded.Routes
 
 		private static bool FilterBySection(ReleasesListFiltersSection section, ReleasesListFiltersSubSection subSection, ReleaseSaveModel release, Dictionary<int, int> seens, HashSet<int> mostPopular, HashSet<int> mostPopularInCurrentYear, string? currentSeason, int nowYear)
 		{
-			if (m_hidedReleases.Contains(release.Id) && section != ReleasesListFiltersSection.Seens && subSection != ReleasesListFiltersSubSection.Hided) return false;
+			if (AppData.InHidedReleases(release.Id) && section != ReleasesListFiltersSection.Seens && subSection != ReleasesListFiltersSubSection.Hided) return false;
+
+			var releaseId = release.Id;
 
 			switch (section)
 			{
 				case ReleasesListFiltersSection.All: return true;
-				case ReleasesListFiltersSection.Favorites: return m_favorites.Contains(release.Id);
+				case ReleasesListFiltersSection.Favorites: return m_favorites.Contains(releaseId);
 				case ReleasesListFiltersSection.Schedule: return release.PublishDay is not null;
 				case ReleasesListFiltersSection.History:
-					if (subSection == ReleasesListFiltersSubSection.OpenHistory) return m_openHistory.Contains(release.Id);
-					if (subSection == ReleasesListFiltersSubSection.SeenHistory) return m_seenHistory.Contains(release.Id);
-					return m_openHistory.Contains(release.Id) || m_seenHistory.Contains(release.Id);
-				case ReleasesListFiltersSection.Notifications: return m_notificationReleases.Contains(release.Id);
+					if (subSection == ReleasesListFiltersSubSection.OpenHistory) return m_openHistory.Contains(releaseId);
+					if (subSection == ReleasesListFiltersSubSection.SeenHistory) return m_seenHistory.Contains(releaseId);
+					return m_openHistory.Contains(releaseId) || m_seenHistory.Contains(releaseId);
+				case ReleasesListFiltersSection.Notifications: return m_notificationReleases.Contains(releaseId);
 				case ReleasesListFiltersSection.Seens:
-					if (subSection == ReleasesListFiltersSubSection.Seen) return seens.ContainsKey(release.Id) && seens[release.Id] == release.CountVideos;
+					if (subSection == ReleasesListFiltersSubSection.Seen) return seens.ContainsKey(releaseId) && seens[releaseId] == release.CountVideos;
 					if (subSection == ReleasesListFiltersSubSection.SeenNow)
 					{
-						var countSeens = seens.ContainsKey(release.Id) ? seens[release.Id] : 0;
+						var countSeens = seens.ContainsKey(releaseId) ? seens[releaseId] : 0;
 						return countSeens > 0 && countSeens < release.CountVideos;
 					}
-					if (subSection == ReleasesListFiltersSubSection.NotSeen) return !seens.ContainsKey(release.Id);
-					if (subSection == ReleasesListFiltersSubSection.Hided) return m_hidedReleases.Contains(release.Id);
+					if (subSection == ReleasesListFiltersSubSection.NotSeen) return !seens.ContainsKey(releaseId);
+					if (subSection == ReleasesListFiltersSubSection.Hided) return AppData.InHidedReleases(releaseId);
 					return true;
 				case ReleasesListFiltersSection.Collections:
-					if (subSection == ReleasesListFiltersSubSection.SeenToEnd) return seens.ContainsKey(release.Id) && seens[release.Id] == release.CountVideos && release.Status == "Озвучка завершена";
-					if (subSection == ReleasesListFiltersSubSection.SeenNotToEnd) return seens.ContainsKey(release.Id) && seens[release.Id] < release.CountVideos && release.Status == "Озвучка завершена";
+					if (subSection == ReleasesListFiltersSubSection.SeenToEnd) return seens.ContainsKey(releaseId) && seens[releaseId] == release.CountVideos && release.Status == "Озвучка завершена";
+					if (subSection == ReleasesListFiltersSubSection.SeenNotToEnd) return seens.ContainsKey(releaseId) && seens[releaseId] < release.CountVideos && release.Status == "Озвучка завершена";
 					if (subSection == ReleasesListFiltersSubSection.Films) return release.Type is not null && release.Type.ToLowerInvariant().Contains("фильм");
 					if (subSection == ReleasesListFiltersSubSection.Completed) return release.Status == "Озвучка завершена";
 					if (subSection == ReleasesListFiltersSubSection.PartOfRelease) return m_franchises.Any(a => a.Releases.Any(b => b.Id == release.Id));
-					if (subSection == ReleasesListFiltersSubSection.MostPopular) return mostPopular.Contains(release.Id);
-					if (subSection == ReleasesListFiltersSubSection.PopularInCurrentYear) return mostPopularInCurrentYear.Contains(release.Id);
-					if (subSection == ReleasesListFiltersSubSection.InCinemaHall) return true;
+					if (subSection == ReleasesListFiltersSubSection.MostPopular) return mostPopular.Contains(releaseId);
+					if (subSection == ReleasesListFiltersSubSection.PopularInCurrentYear) return mostPopularInCurrentYear.Contains(releaseId);
+					if (subSection == ReleasesListFiltersSubSection.InCinemaHall) return AppData.InCinemahall(releaseId);
 					if (subSection == ReleasesListFiltersSubSection.CurrentSeason) return currentSeason is not null ? release.Season.ToLowerInvariant() == currentSeason.ToLowerInvariant() && release.Year == nowYear : false;
 					if (subSection == ReleasesListFiltersSubSection.NotCurrentSeason) return currentSeason is not null ? release.Season.ToLowerInvariant() != currentSeason.ToLowerInvariant() && release.Year == nowYear : false;
 					return true;

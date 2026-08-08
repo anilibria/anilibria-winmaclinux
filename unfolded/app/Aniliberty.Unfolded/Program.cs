@@ -109,6 +109,7 @@ namespace Aniliberty.Unfolded
 			await AppData.Initialize();
 			await Settings.Initialize();
 			await Releases.Initialize();
+			//TorrentClient.Initialize();
 
 			Settings.RegisterRoutes(app);
 			Synchronize.RegisterRoutes(app);
@@ -117,6 +118,7 @@ namespace Aniliberty.Unfolded
 			MainMenu.RegisterRoutes(app);
 			Authorize.RegisterRoutes(app);
 			WebSocketHub.RegisterRoutes(app);
+			TorrentClient.RegisterRoutes(app);
 			AppData.RegisterRoutes(app);
 
 #if !DEBUG

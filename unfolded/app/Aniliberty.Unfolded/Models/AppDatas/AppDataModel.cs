@@ -4,7 +4,7 @@
 	internal class AppDataModel
 	{
 
-		public List<int> HidedReleases { get; set; } = Enumerable.Empty<int>().ToList();
+		public HashSet<int> HidedReleases { get; set; } = Enumerable.Empty<int>().ToHashSet();
 
 		public List<int> Cinemahall { get; set; } = Enumerable.Empty<int>().ToList();
 

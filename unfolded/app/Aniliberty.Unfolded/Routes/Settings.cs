@@ -29,6 +29,7 @@ namespace Aniliberty.Unfolded.Routes
 			app.MapGet("/settings/bypage", ([FromQuery] string page) => ByPage(page));
 			app.MapPost("/settings/save/releases", ([FromBody] ApplicationSettingsReleasesModel model, CancellationToken cancellationToken) => SaveReleases(model, cancellationToken));
 			app.MapPost("/settings/save/videoplayer", ([FromBody] ApplicationSettingsVideoplayerModel model, CancellationToken cancellationToken) => SaveVideoPlayer(model, cancellationToken));
+			app.MapPost("/settings/save/torrent", ([FromBody] ApplicationSettingsTorrentModel model, CancellationToken cancellationToken) => SaveTorrent(model, cancellationToken));
 		}
 
 		private static IResult ByPage(string page)
@@ -38,8 +39,22 @@ namespace Aniliberty.Unfolded.Routes
 			{
 				case "releases": return Results.Json(m_settings.Releases, AppJsonSerializerContext.Default);
 				case "videoplayer": return Results.Json(m_settings.VideoPlayer, AppJsonSerializerContext.Default);
+				case "torrent": return Results.Json(m_settings.Torrent, AppJsonSerializerContext.Default);
 				default: return Results.NotFound();
 			}
+		}
+
+		private static async Task<IResult> SaveTorrent(ApplicationSettingsTorrentModel model, CancellationToken cancellationToken)
+		{
+			if (model == null) return Results.StatusCode(400);
+
+			m_settings.Torrent = model;
+
+			var json = JsonSerializer.Serialize(m_settings, AppJsonSerializerContext.Default.ApplicationSettingsModel);
+			var path = Path.Combine(GlobalConfig.PathToCache(), "settings");
+			await File.WriteAllTextAsync(path, json, cancellationToken);
+
+			return Results.Ok();
 		}
 
 		private static async Task<IResult> SaveVideoPlayer(ApplicationSettingsVideoplayerModel model, CancellationToken cancellationToken)

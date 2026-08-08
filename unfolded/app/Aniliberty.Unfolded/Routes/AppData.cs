@@ -89,9 +89,12 @@ namespace Aniliberty.Unfolded.Routes
 			if (lowerAction == "add")
 			{
 				var newIds = ids.Except(m_appData.HidedReleases);
-				m_appData.HidedReleases.AddRange(newIds);
+				foreach (var newId in newIds) m_appData.HidedReleases.Add(newId);
 			}
-			if (lowerAction == "remove") m_appData.HidedReleases = m_appData.HidedReleases.Where(a => !ids.Contains(a)).ToList();
+			if (lowerAction == "remove")
+			{
+				foreach (var removeId in ids) m_appData.HidedReleases.Remove(removeId);
+			}
 
 			await SaveSettings();
 
@@ -121,6 +124,12 @@ namespace Aniliberty.Unfolded.Routes
 			var json = JsonSerializer.Serialize(m_appData, AppJsonSerializerContext.Default.AppDataModel);
 			await File.WriteAllTextAsync(path, json);
 		}
+
+		public static bool InHidedReleases(int id) => m_appData.HidedReleases.Contains(id);
+
+		public static bool InCinemahall(int id) => m_appData.Cinemahall.Contains(id);
+
+		public static bool IsNeedToUpdateCommonThings() => m_appData.AppStartCounter % 3 == 0;
 
 	}
 
