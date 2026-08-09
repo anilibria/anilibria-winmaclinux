@@ -31,6 +31,8 @@ namespace Aniliberty.Unfolded.Routes
 			await SaveSettings();
 		}
 
+		public static bool IsFirstStart() => m_appData.AppStartCounter == 0;
+
 		public static void RegisterRoutes(WebApplication app)
 		{
 			app.MapGet("/appdata/hidedreleases", () => Results.Json(m_appData.HidedReleases, AppJsonSerializerContext.Default));

@@ -109,7 +109,7 @@ namespace Aniliberty.Unfolded
 			await AppData.Initialize();
 			await Settings.Initialize();
 			await Releases.Initialize();
-			//TorrentClient.Initialize();
+			if (!string.IsNullOrEmpty(Settings.Model.Torrent.PathToDownloads)) TorrentClient.Initialize();
 
 			Settings.RegisterRoutes(app);
 			Synchronize.RegisterRoutes(app);
@@ -121,9 +121,10 @@ namespace Aniliberty.Unfolded
 			TorrentClient.RegisterRoutes(app);
 			AppData.RegisterRoutes(app);
 
+			//Releases.IsEmptyData()
 #if !DEBUG
 			// open url in browser
-			GlobalConfig.OpenUrl();
+			GlobalConfig.OpenUrl(Releases.IsEmptyData() || AppData.IsFirstStart());
 #endif
 
 			app.Run();

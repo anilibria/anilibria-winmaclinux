@@ -31,9 +31,10 @@ namespace Aniliberty.Unfolded.Configuration
 			app.Urls.Add("http://localhost:" + m_applicationPort);
 		}
 
-		public static void OpenUrl()
+		public static void OpenUrl(bool needWelcome)
 		{
 			var url = "http://localhost:" + m_applicationPort;
+			if (needWelcome) url += "/static/welcome.html";
 
 			if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
 			{

@@ -86,6 +86,8 @@ namespace Aniliberty.Unfolded.Routes
 			Console.WriteLine("Initialize Releases completed!");
 		}
 
+		internal static bool IsEmptyData() => m_releases.Any();
+
 		internal static async Task ReadReleases()
 		{
 			var path = GlobalConfig.PathToCache();
@@ -742,6 +744,14 @@ namespace Aniliberty.Unfolded.Routes
 			}
 
 			return Results.Json(result, AppJsonSerializerContext.Default);
+		}
+
+		internal static ReleaseTorrentSaveModel? GetReleaseTorrent(int releaseId, string hash)
+		{
+			var item = m_torrents.FirstOrDefault(a => a.ReleaseId == releaseId);
+			if (item == null) return null;
+
+			return item.Items.FirstOrDefault(a => a.Hash == hash);
 		}
 
 	}
