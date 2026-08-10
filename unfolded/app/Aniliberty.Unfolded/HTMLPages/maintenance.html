@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta name="color-scheme" content="light dark">
+	<title>Обслуживание</title>
+	<link rel="icon" type="image/x-icon" href="/static/icons/logo/default.svg">
+	<link rel="stylesheet" href="main.css">
+	<link rel="stylesheet" href="mainmenu.css">
+	<link rel="stylesheet" href="pagestructure.css">
+</head>
+<body>
+	<div id="app">
+		<page-header v-model:main-menu-visible="mainMenuVisible" title="Обслуживание">
+		</page-header>
+
+		<div class="page-content-with-panel">
+			<div class="left-panel flex-column">
+			</div>
+			<div class="right-content">
+			</div>
+		</div>
+
+		<page-drawer v-model:main-menu-visible="mainMenuVisible">
+		</page-drawer>
+	</div>
+
+	<script type="module">
+		import { createApp, ref } from './vue.js'
+		import {
+			getRelease
+		} from './unfoldapi.js'
+		import Drawer from './components/Drawer.js'
+		import PageHeader from './components/PageHeader.js'
+
+		const app = createApp({
+			components: {
+				'page-drawer': Drawer,
+				'page-header': PageHeader
+			},
+			setup() {
+				const mainMenuVisible = ref(false);
+
+				return {
+					mainMenuVisible
+				}
+			}
+		});
+
+		app.mount('#app')
+	</script>
+</body>
+</html>

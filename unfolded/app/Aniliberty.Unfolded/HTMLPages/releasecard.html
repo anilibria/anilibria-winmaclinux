@@ -44,6 +44,18 @@
 				</div>
 				<div v-if="releaseTorrents.length" class="simple-panel-icon-button simple-popup-container">
 					<div class="full-width-height flex-row flex-base-center flex-other-center">
+						<img :src="'/static/icons/mainmenu/torrent.svg'" width="30" height="30" />
+					</div>
+					<div class="simple-popup-box releasecard-rightmenu">
+						<div class="releasecard-rightmenu-magnet">
+							<div v-for="torrent in releaseTorrents">
+								<a class="default-link" @click.prevent="openTorrent(torrent.hash)" href="">Открыть {{ torrent.displayForm }}</a>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div v-if="releaseTorrents.length" class="simple-panel-icon-button simple-popup-container">
+					<div class="full-width-height flex-row flex-base-center flex-other-center">
 						<img :src="'/static/icons/releasecard/magnet.svg'" width="30" height="30" />
 					</div>
 					<div class="simple-popup-box releasecard-rightmenu">
@@ -138,7 +150,8 @@
 		import {
 			getRelease, getReleaseTorrents, getReleaseEpisodes, getUserMarks,
 			openMagnetInSystem, addFavorites, removeFavorites, getReleaseFranchise,
-			addSeenMark, removeSeenMark, addHidedReleases, removeHidedReleases
+			addSeenMark, removeSeenMark, addHidedReleases, removeHidedReleases,
+			getPageSettings, watchRelease, downloadTorrent, openInExternalTorrentClient
 		} from './unfoldapi.js'
 		import Drawer from './components/Drawer.js'
 		import PageHeader from './components/PageHeader.js'
@@ -158,13 +171,22 @@
 				const countSeen = ref(0);
 				const inFavorites = ref(false);
 				const franchise = ref({});
-
+				const torrentSettings = ref({})
+				
 				async function copyToClipboard(text) {
 					await navigator.clipboard.writeText(text);
 				}
 
 				async function openMagnet(magnet) {
 					await openMagnetInSystem(magnet);
+				}
+
+				async function openTorrent(hash) {
+					if (torrentSettings.value.useInternalTorrectClient) {
+						await downloadTorrent(releaseId.value, hash);
+					} else {
+						await openInExternalTorrentClient(releaseId.value, hash);
+					}
 				}
 
 				function getParameter() {
@@ -178,6 +200,7 @@
 				}
 
 				async function getCard() {
+					torrentSettings.value = await getPageSettings('torrent');
 					releaseCard.value = await getRelease(releaseId.value);
 					releaseEpisodes.value = await getReleaseEpisodes(releaseId.value);
 					releaseTorrents.value = await getReleaseTorrents(releaseId.value);
@@ -264,7 +287,8 @@
 					addSeenMarks,
 					removeSeenMarks,
 					addToHidden,
-					removeFromHidden
+					removeFromHidden,
+					openTorrent
 				}
 			}
 		});

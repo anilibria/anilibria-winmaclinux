@@ -4,6 +4,7 @@ using Aniliberty.Unfolded.Models.MainMenus;
 using Aniliberty.Unfolded.Models.OriginalApi;
 using Aniliberty.Unfolded.Models.Releases;
 using Aniliberty.Unfolded.Models.Settings;
+using Aniliberty.Unfolded.Models.Torrents;
 using System.Text.Json.Serialization;
 
 namespace Aniliberty.Unfolded
@@ -52,6 +53,7 @@ namespace Aniliberty.Unfolded
 	[JsonSerializable(typeof(AppDataModel))]
 	[JsonSerializable(typeof(List<ReleasePosterModel>))]
 	[JsonSerializable(typeof(AppDataModelWatchVideoModel))]
+	[JsonSerializable(typeof(TorrentCache))]
 	[JsonSourceGenerationOptions(PropertyNamingPolicy = JsonKnownNamingPolicy.CamelCase)]
 	internal partial class AppJsonSerializerContext : JsonSerializerContext
 	{

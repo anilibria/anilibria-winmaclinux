@@ -369,5 +369,12 @@ export async function torrentCheckFolder(path) {
     });
     return await response.json();
 };
+export async function downloadTorrent(releaseId, hash) {
+    await fetch(`/torrent/download?releaseId=${releaseId}&hash=${hash}`);
+};
+export async function openInExternalTorrentClient(releaseId, hash) {
+    await fetch(`/torrent/openinexternalclient?releaseId=${releaseId}&hash=${hash}`);
+};
+
 
 

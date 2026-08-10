@@ -715,7 +715,7 @@
 
 				function toggleSelectionRelease(id) {
 					if (!selectionModeEnabled.value) {
-						window.location.href = "releasecard.html?id=" + id;
+						openReleaseCardByLink(id);
 						return;
 					}
 
@@ -776,14 +776,22 @@
 					releasesContainer.value.scrollTo({ top: 0, behavior: 'smooth' });
 				}
 
+				function openReleaseCardByLink(id) {
+					if (settings.value.openLinkMode) {
+						window.open("releasecard.html?id=" + id, '_blank');
+					} else {
+						window.location.href = "releasecard.html?id=" + id;
+					}
+				}
+
 				async function openRandomRelease() {
 					const id = await getRandomReleaseFromAll();
-					window.location.href = "releasecard.html?id=" + id;
+					openReleaseCardByLink(id);
 				}
 
 				async function openRandomReleaseInSelection() {
 					const id = await getRandomRelease(getListModel());
-					window.location.href = "releasecard.html?id=" + id;
+					openReleaseCardByLink(id);
 				}
 
 				function loadReleaseAfterTimer() {
