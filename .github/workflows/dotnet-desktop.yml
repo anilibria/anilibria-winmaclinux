@@ -21,15 +21,15 @@ jobs:
       run: dotnet publish -r win-arm64 -c Release --self-contained true unfolded/app/Aniliberty.Unfolded/Aniliberty.Unfolded.csproj
     - name: Copy binaries
       run: |
-        cp unfolded/app/Aniliberty.Unfolded/bin/Release/net10.0/win-x64/publish/LocalCacheChecker.exe unfolded64.exe
-        cp unfolded/app/Aniliberty.Unfolded/bin/Release/net10.0/win-arm64/publish/LocalCacheChecker.exe unfoldedarm64.exe
+        cp unfolded/app/Aniliberty.Unfolded/bin/Release/net10.0/win-x64/native/Aniliberty.Unfolded.exe unfold64.exe
+        cp unfolded/app/Aniliberty.Unfolded/bin/Release/net10.0/win-arm64/native/Aniliberty.Unfolded.exe unfoldarm64.exe
     - name: Upload x64 artifacts
       uses: actions/upload-artifact@v6
       with:
-        name: unfolded64
-        path: unfolded64.exe
+        name: unfold64
+        path: unfold64.exe
     - name: Upload arm64 artifacts
       uses: actions/upload-artifact@v6
       with:
-        name: unfoldedarm64
-        path: unfoldedarm64.exe
+        name: unfoldarm64
+        path: unfoldarm64.exe
