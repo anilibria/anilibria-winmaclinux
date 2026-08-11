@@ -86,7 +86,7 @@ namespace Aniliberty.Unfolded.Routes
 			Console.WriteLine("Initialize Releases completed!");
 		}
 
-		internal static bool IsEmptyData() => m_releases.Any();
+		internal static bool IsEmptyData() => !m_releases.Any();
 
 		internal static async Task ReadReleases()
 		{
