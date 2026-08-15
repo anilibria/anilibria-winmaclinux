@@ -375,6 +375,21 @@ export async function downloadTorrent(releaseId, hash) {
 export async function openInExternalTorrentClient(releaseId, hash) {
     await fetch(`/torrent/openinexternalclient?releaseId=${releaseId}&hash=${hash}`);
 };
+export async function getRelaseTorrentsByFilter() {
+    const response = await fetch(
+        '/torrent/list',
+        {
+            method: "POST",
+            body: JSON.stringify(model),
+            headers: {
+                "Content-Type": "application/json"
+            }
+        }
+    );
+    return await response.json();
+};
+
+
 
 
 
