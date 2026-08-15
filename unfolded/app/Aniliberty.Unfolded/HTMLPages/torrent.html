@@ -9,6 +9,14 @@
 	<link rel="stylesheet" href="main.css">
 	<link rel="stylesheet" href="mainmenu.css">
 	<link rel="stylesheet" href="pagestructure.css">
+	<link rel="stylesheet" href="styles/torrent.css">
+	<script type="importmap">
+		{
+		  "imports": {
+			"vue": "./vue.js"
+		  }
+		}
+	</script>	
 </head>
 <body>
 	<div id="app">
@@ -17,33 +25,60 @@
 
 		<div class="page-content-with-panel">
 			<div class="left-panel flex-column">
+				<div class="simple-panel-icon-button simple-popup-container" title="Настройка страницы Torrent клиент">
+					<div class="full-width-height flex-row flex-base-center flex-other-center">
+						<img :src="'/static/icons/commonbuttons/settings.svg'" width="30" height="30" />
+					</div>
+					<div class="simple-popup-box torrents-rightmenu">
+						<div class="torrents-rightmenu-settings flex-column gap-8">
+							<div>Использовать внутренний torrent клиент:</div>
+							<simple-switch v-model:state="settings.useInternalTorrectClient" @changed="savePageSettings()">
+							</simple-switch>
+						</div>
+					</div>
+				</div>
 			</div>
 			<div class="right-content">
 			</div>
 		</div>
-
+		
 		<page-drawer v-model:main-menu-visible="mainMenuVisible">
 		</page-drawer>
 	</div>
 
 	<script type="module">
-		import { createApp, ref } from './vue.js'
+		import { createApp, ref } from 'vue'
 		import {
-			getRelease
+			getPageSettings, saveSettings
 		} from './unfoldapi.js'
 		import Drawer from './components/Drawer.js'
 		import PageHeader from './components/PageHeader.js'
+		import SimpleSwitch from './components/SimpleSwitch.js'
 
 		const app = createApp({
 			components: {
 				'page-drawer': Drawer,
-				'page-header': PageHeader
+				'page-header': PageHeader,
+				'simple-switch': SimpleSwitch
 			},
 			setup() {
 				const mainMenuVisible = ref(false);
+				const settings = ref({useInternalTorrectClient: false, codecPrefference: []});
+
+				async function savePageSettings() {
+					await saveSettings('torrent', settings.value);
+				}
+
+				async function loadData() {
+					settings.value = await getPageSettings('torrent');
+				}
+
+				loadData();
 
 				return {
-					mainMenuVisible
+					mainMenuVisible,
+					savePageSettings,
+					settings
 				}
 			}
 		});

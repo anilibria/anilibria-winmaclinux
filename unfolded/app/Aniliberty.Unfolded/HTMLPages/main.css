@@ -429,7 +429,7 @@ body {
 
 /* Common animations */
 .round-by-circle-animation {
-  animation: spin 2s linear infinite; 
+  animation: roundbycircle-animation 2s linear infinite; 
 }
 @keyframes roundbycircle-animation {
   from {

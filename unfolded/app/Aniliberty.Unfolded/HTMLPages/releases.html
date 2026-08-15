@@ -763,7 +763,11 @@
 				}
 
 				function openInVideoPlayer(id) {
-					window.location.href = '/static/videoplayer.html?mode=release&id=' + id;
+					if (settings.value.openLinkMode) {
+						window.open("videoplayer.html?mode=release&id=" + id, '_blank');
+					} else {
+						window.location.href = 'videoplayer.html?mode=release&id=' + id;
+					}
 				}
 
 				function loadNotifications() {

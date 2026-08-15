@@ -321,7 +321,7 @@ namespace Aniliberty.Unfolded.Routes
 			return Results.Json(result, AppJsonSerializerContext.Default);
 		}
 
-		private static IEnumerable<ReleaseSaveModel> FilterReleases(ReleasesListFiltersModel model)
+		internal static IEnumerable<ReleaseSaveModel> FilterReleases(ReleasesListFiltersModel model)
 		{
 			var seenEpisodes = new Dictionary<int, int>();
 			foreach (var releaseEpisodes in m_episodes)
@@ -746,7 +746,21 @@ namespace Aniliberty.Unfolded.Routes
 			return Results.Json(result, AppJsonSerializerContext.Default);
 		}
 
-		internal static ReleaseTorrentSaveModel? GetReleaseTorrent(int releaseId, string hash)
+		internal static ReleaseTorrentSaveModel? GetReleaseTorrentByCodec(int releaseId, IEnumerable<string> codecPreferences)
+		{
+			var item = m_torrents.FirstOrDefault(a => a.ReleaseId == releaseId);
+			if (item == null) return null;
+
+			foreach (var codecPreference in codecPreferences)
+			{
+				var torrent = item.Items.FirstOrDefault(a => a.Codec.ToLowerInvariant().Contains(codecPreference));
+				if (torrent != null) return torrent;
+			}
+
+			return null;
+		}
+
+		internal static ReleaseTorrentSaveModel? GetReleaseTorrentByHash(int releaseId, string hash)
 		{
 			var item = m_torrents.FirstOrDefault(a => a.ReleaseId == releaseId);
 			if (item == null) return null;

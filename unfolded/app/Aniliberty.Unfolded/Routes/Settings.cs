@@ -48,6 +48,8 @@ namespace Aniliberty.Unfolded.Routes
 		{
 			if (model == null) return Results.StatusCode(400);
 
+			model.PathToDownloads = m_settings.Torrent.PathToDownloads; // path to download changed in another way
+
 			m_settings.Torrent = model;
 
 			var json = JsonSerializer.Serialize(m_settings, AppJsonSerializerContext.Default.ApplicationSettingsModel);

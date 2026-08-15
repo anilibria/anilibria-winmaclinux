@@ -8,6 +8,8 @@
 
 		public bool UseInternalTorrectClient { get; set; }
 
+		public IEnumerable<string> CodecPrefference { get; set; } = ["avc", "hevc", "av1"];
+
 	}
 
 }

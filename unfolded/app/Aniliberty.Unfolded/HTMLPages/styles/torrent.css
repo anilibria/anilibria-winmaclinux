@@ -1,0 +1,13 @@
+.torrents-rightmenu {
+    left: 100%;
+    top: 0;
+    transform: unset;
+    font-size: 13px;
+}
+
+.torrents-rightmenu-settings {
+    width: 380px;
+    max-width: 400px;
+    height: 260px;
+    padding: 8px;
+}

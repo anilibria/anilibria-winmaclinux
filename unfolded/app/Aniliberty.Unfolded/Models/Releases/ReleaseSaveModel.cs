@@ -43,6 +43,8 @@ namespace Aniliberty.Unfolded.Models.Releases
 
 		public IEnumerable<string> Team { get; set; } = Enumerable.Empty<string>();
 
+		public IEnumerable<string> Codecs { get; set; } = Enumerable.Empty<string>();
+
 		public int Year { get; set; }
 
 		public bool IsOngoing { get; set; }
@@ -74,6 +76,7 @@ namespace Aniliberty.Unfolded.Models.Releases
 			AgeRating = types.AgeRatings.FirstOrDefault(a => a.Value == fullRelease.AgeRating.Value)?.Description ?? fullRelease.AgeRating.Value;
 			Voices = fullRelease.Members != null ? fullRelease.Members.Where(a => a.Role.Value == "voicing").Select(a => a.Nickname) : [];
 			Team = fullRelease.Members != null ? fullRelease.Members.OrderByDescending(a => a.Role.Value).Select(a => a.Nickname) : [];
+			Codecs = fullRelease.Torrents?.Select(a => a.Codec?.Value ?? "").Where(a => a != "")?.Distinct().ToList() ?? [];
 			PublishDay = fullRelease.IsInProduction ? fullRelease.PublishDay?.Value : null;
 		}
 

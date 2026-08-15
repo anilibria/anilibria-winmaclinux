@@ -4,7 +4,7 @@
 	public record TorrentCacheItem
 	{
 
-		public string Description { get; set; } = "";
+		public string Codec { get; set; } = "";
 
 		public required int ReleaseId { get; set; }
 
