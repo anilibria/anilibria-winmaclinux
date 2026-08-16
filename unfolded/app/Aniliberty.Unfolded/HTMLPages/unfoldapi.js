@@ -369,13 +369,13 @@ export async function torrentCheckFolder(path) {
     });
     return await response.json();
 };
-export async function downloadTorrent(releaseId, hash) {
-    await fetch(`/torrent/download?releaseId=${releaseId}&hash=${hash}`);
+export async function downloadTorrent(releaseId) {
+    await fetch(`/torrent/download?releaseId=${releaseId}`);
 };
 export async function openInExternalTorrentClient(releaseId, hash) {
     await fetch(`/torrent/openinexternalclient?releaseId=${releaseId}&hash=${hash}`);
 };
-export async function getRelaseTorrentsByFilter() {
+export async function getRelaseTorrentsByFilter(model) {
     const response = await fetch(
         '/torrent/list',
         {

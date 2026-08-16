@@ -277,8 +277,17 @@
 										loading="lazy"
 									/>
 									<span>{{ release.countVideos }}{{ userMarks.fullSeenReleases.includes(release.id) ? '/' + release.countVideos : (userMarks.seenSeries[release.id] ? '/' + userMarks.seenSeries[release.id] : '' ) }}</span>
-									<img src="/static/icons/mainmenu/torrent.svg" width="20" height="20" loading="lazy" />
-									<span>{{ release.countTorrents }}</span>
+									<img
+										v-if="release.countTorrents > 0"
+										src="/static/icons/mainmenu/torrent.svg"
+										width="20"
+										height="20"
+										loading="lazy"
+										@click.stop="downloadInTorrent(release.id)"
+									/>
+									<div v-if="release.countTorrents > 0">
+										{{ formatCodecs(release.codecs) }}
+									</div>
 									<img src="/static/icons/releases/favorite.svg" width="20" height="20" loading="lazy" />
 									<span>{{ release.rating }}</span>
 									<img v-if="release.publishDay" src="/static/icons/releases/scheduleday.svg" width="20" height="20" loading="lazy" />
@@ -330,7 +339,8 @@
 			saveSettings, getReleaseNotifications, getRandomReleaseFromAll,
 			getReleaseDictionaries, getRandomRelease, addFavorites, removeFavorites,
 			addReleasesSeenMark, removeReleasesSeenMark, addCinemahallReleases, removeCinemahallReleases,
-			getCinemahallReleases, getHidedReleases, addHidedReleases, removeHidedReleases
+			getCinemahallReleases, getHidedReleases, addHidedReleases, removeHidedReleases,
+			downloadTorrent
 		} from './unfoldapi.js'
 		import Drawer from './components/Drawer.js'
 		import PageHeader from './components/PageHeader.js'
@@ -359,6 +369,7 @@
 				const widthItem = 480 + 10; // 10 is a gap width
 				const leftPanelWidth = 40;
 				const userMarks = ref({ favorites: [], fullSeenReleases: [], seenSeries: {} });
+				const torrentSettings = ref({});
 				const cinemahallReleases = ref([])
 				const selectionModeEnabled = ref(false);
 				const selectedReleases = ref([]);
@@ -733,6 +744,7 @@
 				async function loadAllData() {
 					userMarks.value = await getUserMarks();
 					settings.value = await getPageSettings('releases');
+					torrentSettings.value = await getPageSettings('torrent');
 					cinemahallReleases.value = await getCinemahallReleases();
 					notificationMessage.value = await getReleaseNotifications();
 
@@ -767,6 +779,15 @@
 						window.open("videoplayer.html?mode=release&id=" + id, '_blank');
 					} else {
 						window.location.href = 'videoplayer.html?mode=release&id=' + id;
+					}
+				}
+
+				async function downloadInTorrent(id) {
+					if (torrentSettings.value.useInternalTorrectClient) {
+						await downloadTorrent(id);
+					} else {
+						//TODO: show torrent dialog
+						//await openInExternalTorrentClient(id, '');
 					}
 				}
 
@@ -863,6 +884,20 @@
 					return `В ${isFavorite ? 'Избранном' : ''}${isCinemahall ? (isFavorite ? ' и ' : '') + 'Кинозале' : ''}`
 				}
 
+				function formatCodecs(codecs) {
+					if (!codecs) return '';
+
+					return codecs.map(a => clearCodec(a)).join('/');
+				}
+
+				function clearCodec(codec) {
+					let res = codec.toLowerCase();
+					const index = res.indexOf('/');
+					if (index > -1) return res.substring(index + 1);
+
+					return res;
+				}
+
 				window.addEventListener('resize', () => {
 					const newRelasesInGroup = getReleasesGroupCount();
 					if (newRelasesInGroup !== relasesInGroup.value) {
@@ -947,7 +982,9 @@
 					scrollTopValue,
 					scrollHeightValue,
 					addToHided,
-					removeFromHided
+					removeFromHided,
+					formatCodecs,
+					downloadInTorrent
 				}
 			}
 		});

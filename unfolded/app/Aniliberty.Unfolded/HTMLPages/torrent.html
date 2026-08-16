@@ -129,9 +129,9 @@
 							</div>
 						</div>
 					</div>
-					<div v-if="!releasesGroups.length" class="releases-empty-search flex-row flex-base-center flex-other-center">
+					<div v-if="!releasesGroups.length" class="torrents-empty-search flex-row flex-base-center flex-other-center">
 						<div>
-							По текущему фильтру ничего не найдено.<br>
+							По текущему фильтру релизов с активными торрентами не найдено.<br>
 							Попробуйте указать другие фильтры или раздел и повторить поиск.
 						</div>
 					</div>
@@ -144,9 +144,10 @@
 	</div>
 
 	<script type="module">
-		import { createApp, ref } from 'vue'
+		import { createApp, ref, useTemplateRef } from 'vue'
 		import {
-			getPageSettings, saveSettings
+			getPageSettings, saveSettings, getUserMarks, getCinemahallReleases,
+			getReleaseDictionaries, getRelaseTorrentsByFilter
 		} from './unfoldapi.js'
 		import Drawer from './components/Drawer.js'
 		import PageHeader from './components/PageHeader.js'
@@ -169,13 +170,75 @@
 				const nameFilter = ref('');
 				const selectedReleases = ref([]);
 				const selectionModeEnabled = ref(false);
+				const userMarks = ref({ favorites: [], fullSeenReleases: [], seenSeries: {} });
 				const releasesContainer = useTemplateRef('releasesContainer');
+				const cinemahallReleases = ref([]);
 				const releasesGroups = ref([]);
 				const releasesCount = ref(0);
 				let relasesInGroup = 1;
 				const widthItem = 480 + 10; // 10 is a gap width
 				const leftPanelWidth = 40;
+				const releaseDictionaries = ref({});
+				const filterModel = ref({
+					filter: "",
+					type: "",
+					description: "",
+					team: [],
+					teamOr: null,
+					genres: [],
+					genresOr: null,
+					years: [],
+					seasons: [],
+					statuses: [],
+					scheduleDays: [],
+					inFavorites: null,
+					partOfReleases: null,
+					seenStatus: null,
+					sortingField: "",
+					sortingDescending: false,
+					section: 0,
+					subSection: -1
+				});
 				const settings = ref({useInternalTorrectClient: false, codecPrefference: []});
+
+				const sections = [
+					{
+						title: "Все релизы",
+						id: 0
+					},
+					{
+						title: "Избранное",
+						id: 1
+					},
+					{
+						title: "Уведомления",
+						id: 2
+					},
+					{
+						title: "Расписание",
+						id: 3
+					},
+					{
+						title: "Алфавит",
+						id: 4
+					},
+					{
+						title: "История",
+						id: 6
+					},
+					{
+						title: "Группы",
+						id: 5
+					},
+					{
+						title: "Просмотр",
+						id: 7
+					},
+					{
+						title: "Подборки",
+						id: 8
+					}
+				];
 
 				const setsSections = [
 					{
@@ -281,6 +344,20 @@
 
 				async function loadData() {
 					settings.value = await getPageSettings('torrent');
+					userMarks.value = await getUserMarks();
+					cinemahallReleases.value = await getCinemahallReleases();
+
+					const dictionaries = await getReleaseDictionaries();
+					releaseDictionaries.value.genres = dictionaries.genres;
+					releaseDictionaries.value.teams = dictionaries.teams;
+					releaseDictionaries.value.statuses = dictionaries.statuses;
+					releaseDictionaries.value.years = dictionaries.years;
+					releaseDictionaries.value.seasons = dictionaries.seasons;
+
+					sectionSelected.value = 0;//settings.value.startedSection;
+					subSectionSelected.value = 0;//settings.value.startedSubSection;
+					adjustSortingBySection();
+					await loadReleases();
 				}
 
 				function getListModel() {
@@ -297,6 +374,28 @@
 					const releases = await getRelaseTorrentsByFilter(getListModel());
 
 					recalculateReleaseGroups(releases);
+				}
+
+				function getPublishDay(value) {
+					switch (value) {
+						case 1: return 'пн';
+						case 2: return 'вт';
+						case 3: return 'ср';
+						case 4: return 'чт';
+						case 5: return 'пт';
+						case 6: return 'сб';
+						case 7: return 'вс';
+						default: return '';
+					}
+				}
+
+				function showMarksForRelease(id) {
+					const isFavorite = userMarks.value.favorites.includes(id);
+					const isCinemahall = cinemahallReleases.value.includes(id);
+
+					if (!isFavorite && !isCinemahall) return '';
+
+					return `В ${isFavorite ? 'Избранном' : ''}${isCinemahall ? (isFavorite ? ' и ' : '') + 'Кинозале' : ''}`
 				}				
 
 				function disableSelectionMode() {
@@ -324,6 +423,33 @@
 							sortDescending.value = false;
 							break;
 					}
+				}
+
+				function getReleasesGroupCount() {
+					relasesInGroup = Math.floor((window.innerWidth - leftPanelWidth) / widthItem);
+					if (relasesInGroup === 0) return 1;
+					return relasesInGroup;
+				}
+
+				function recalculateReleaseGroups(releases) {
+					relasesInGroup = getReleasesGroupCount();
+					releasesCount.value = releases.length;
+
+					const result = [];
+					let iterator = 0;
+					let currentGroup = [];
+					for (const release of releases) {
+						if (iterator === relasesInGroup) {
+							result.push({ releases: [...currentGroup] });
+							currentGroup = [];
+							iterator = 0;
+						}
+						currentGroup.push(release);
+						iterator++;
+					}
+					if (currentGroup.length) result.push({ releases: currentGroup });
+
+					releasesGroups.value = result;
 				}
 
 				function sectionChanged(newValue) {
@@ -363,7 +489,14 @@
 					setsSections,
 					sortingFields,
 					releasesContainer,
-					loadReleases
+					loadReleases,
+					releasesGroups,
+					sections,
+					userMarks,
+					cinemahallReleases,
+					releaseDictionaries,
+					getPublishDay,
+					showMarksForRelease
 				}
 			}
 		});

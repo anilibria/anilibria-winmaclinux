@@ -76,10 +76,10 @@ namespace Aniliberty.Unfolded.Routes
 		public static void RegisterRoutes(WebApplication app)
 		{
 			app.MapPost("/torrent/checkfolder", ([FromBody] string path) => CheckFolder(path));
-			app.MapGet("/torrent/download", ([FromServices] IHttpClientFactory clientFactory, [FromQuery] int releaseId, string hash) => Download(clientFactory, releaseId));
+			app.MapGet("/torrent/download", ([FromServices] IHttpClientFactory clientFactory, [FromQuery] int releaseId) => Download(clientFactory, releaseId));
 			app.MapGet("/torrent/openinexternalclient", ([FromServices] IHttpClientFactory clientFactory, [FromQuery] int releaseId, string hash) => OpenInExternalClient(clientFactory, releaseId, hash));
 			app.MapGet("/torrent/remove", ([FromQuery] int releaseId, [FromQuery] string description, [FromQuery] bool removeFiles) => Remove(releaseId, removeFiles));
-			app.MapGet("/torrent/list", (ReleasesListFiltersModel model) => TorrentList(model));
+			app.MapPost("/torrent/list", ([FromBody]ReleasesListFiltersModel model) => TorrentList(model));
 		}
 
 		public static IResult CheckFolder(string path)
@@ -124,25 +124,22 @@ namespace Aniliberty.Unfolded.Routes
 			await torrentManager.StartAsync();
 			await torrentManager.WaitForMetadataAsync();
 
-			var description = $"{(torrent.Quality ?? "")} {(torrent.Codec ?? "")}";
+			var codec = torrent.Codec ?? "";
 			var filesCount = torrentManager.Files.Count;
 			var folder = torrentManager.ContainingDirectory;
 
-			if (!m_cache.Items.Any(a => a.ReleaseId == releaseId && a.Codec == description && a.CountVideos == filesCount && a.Path == folder))
+			// if it was item plus torrent before we remove it
+			if (m_cache.Items.Any(a => a.ReleaseId == releaseId))
 			{
-				m_cache.Items.Add(new TorrentCacheItem { ReleaseId = releaseId, CountVideos = filesCount, Codec = description, Path = folder, MetadataPath = torrentManager.MetadataPath });
-
-				var lessSeriesItem = m_cache.Items.FirstOrDefault(a => a.ReleaseId == releaseId && a.Codec == description && a.CountVideos < filesCount);
-				if (lessSeriesItem != null)
-				{
-					var lessManager = m_clientEngine.Torrents.FirstOrDefault(a => a.MetadataPath == lessSeriesItem.MetadataPath);
-					if (lessManager is not null) await m_clientEngine.RemoveAsync(lessManager);
-					m_cache.Items.Remove(lessSeriesItem);
-				}
+				var lessSeriesItem = m_cache.Items.First(a => a.ReleaseId == releaseId);
+				var lessManager = m_clientEngine.Torrents.FirstOrDefault(a => a.MetadataPath == lessSeriesItem.MetadataPath);
+				if (lessManager is not null) await m_clientEngine.RemoveAsync(lessManager);
+				m_cache.Items.Remove(lessSeriesItem);
 			}
 
-			await SaveTorrentCache();
+			m_cache.Items.Add(new TorrentCacheItem { ReleaseId = releaseId, CountVideos = filesCount, Codec = codec, Path = folder, MetadataPath = torrentManager.MetadataPath });
 
+			await SaveTorrentCache();
 
 			return Results.Ok();
 		}
