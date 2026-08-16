@@ -29,6 +29,8 @@ namespace Aniliberty.Unfolded.Configuration
 			//m_applicationPort = availablePort;
 
 			app.Urls.Add("http://localhost:" + m_applicationPort);
+
+			Console.WriteLine("Path to cache: " + m_pathToCache);
 		}
 
 		public static void OpenUrl(bool needWelcome)

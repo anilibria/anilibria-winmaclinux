@@ -53,6 +53,9 @@ namespace Aniliberty.Unfolded
 
 		public static async Task Main(string[] args)
 		{
+			Console.WriteLine("AniLiberty.Unfolded application");
+			Console.WriteLine("version 0.0.0\n");
+
 			var builder = WebApplication.CreateSlimBuilder(args);
 			builder.Services.ConfigureHttpJsonOptions(options =>
 			{

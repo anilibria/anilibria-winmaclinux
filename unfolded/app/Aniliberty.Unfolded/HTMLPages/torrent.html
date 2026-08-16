@@ -79,33 +79,23 @@
 						</div>
 					</div>
 				</div>
-				<div ref="releasesContainer" class="releases-releases-container" @click.right.prevent="toggleSelectionMode()">
-					<div v-if="releasesGroups.length" class="releases-release-item-group" v-for="(releasesGroup, index) in releasesGroups" :key="index">
-						<div class="releases-release-item"
-							 :class="{'releases-release-teim-selected': selectionModeEnabled && selectedReleases.includes(release.id) }"
+				<div ref="releasesContainer" class="torrents-releases-container" @click.right.prevent="toggleSelectionMode()">
+					<div v-if="releasesGroups.length" class="torrents-release-item-group" v-for="(releasesGroup, index) in releasesGroups" :key="index">
+						<div class="torrents-release-item"
+							 :class="{'torrents-release-item-selected': selectionModeEnabled && selectedReleases.includes(release.id) }"
 							 v-for="release in releasesGroup.releases"
 							 :key="release.id"
 							 @click.prevent="toggleSelectionRelease(release.id)"
 							 :title="release.description">
-							<img class="poster" :src="'https://anilibria.top/' + release.poster" loading="lazy"/>
+							<img class="poster" :src="'https://anilibria.top' + release.poster" loading="lazy"/>
 							<div class="information">
 								<span class="header-text" style="margin-top: 10px;">{{ release.title }}</span>
 								<span class="normal-text">{{ release.status }} {{ release.season ? '- ' + release.season : '' }} {{ release.year }}</span>
 								<span class="normal-text">{{ release.type }} {{ release.series }} {{ release.genres ? '- ' + release.genres.join(', ') : '' }}</span>
 								<span class="normal-text"><b>Команда:</b> {{ release.voices ? release.voices.join(', ') : '' }}</span>
 								<span class="digit-text flex-row flex-base-center gap-4">
-									<img
-										class="clickable-image"
-										src="/static/icons/releases/online.svg"
-										width="20"
-										height="20"
-										@click.stop="openInVideoPlayer(release.id)"
-										title="Открыть релиз в видеоплеере"
-										loading="lazy"
-									/>
-									<span>{{ release.countVideos }}{{ userMarks.fullSeenReleases.includes(release.id) ? '/' + release.countVideos : (userMarks.seenSeries[release.id] ? '/' + userMarks.seenSeries[release.id] : '' ) }}</span>
 									<img src="/static/icons/mainmenu/torrent.svg" width="20" height="20" loading="lazy" />
-									<span>{{ release.countTorrents }}</span>
+									<span>{{ showTorrentSeries(release.id) }}</span>
 									<img src="/static/icons/releases/favorite.svg" width="20" height="20" loading="lazy" />
 									<span>{{ release.rating }}</span>
 									<img v-if="release.publishDay" src="/static/icons/releases/scheduleday.svg" width="20" height="20" loading="lazy" />
@@ -133,6 +123,7 @@
 						<div>
 							По текущему фильтру релизов с активными торрентами не найдено.<br>
 							Попробуйте указать другие фильтры или раздел и повторить поиск.
+							Добавить торренты можно на странице <a href="releases.html">Каталог релизов</a>.
 						</div>
 					</div>
 				</div>
@@ -147,7 +138,7 @@
 		import { createApp, ref, useTemplateRef } from 'vue'
 		import {
 			getPageSettings, saveSettings, getUserMarks, getCinemahallReleases,
-			getReleaseDictionaries, getRelaseTorrentsByFilter
+			getReleaseDictionaries, getRelaseTorrentsByFilter, getActiveTorrents
 		} from './unfoldapi.js'
 		import Drawer from './components/Drawer.js'
 		import PageHeader from './components/PageHeader.js'
@@ -173,6 +164,7 @@
 				const userMarks = ref({ favorites: [], fullSeenReleases: [], seenSeries: {} });
 				const releasesContainer = useTemplateRef('releasesContainer');
 				const cinemahallReleases = ref([]);
+				const activeTorrents = ref({});
 				const releasesGroups = ref([]);
 				const releasesCount = ref(0);
 				let relasesInGroup = 1;
@@ -342,8 +334,22 @@
 					await saveSettings('torrent', settings.value);
 				}
 
+				function toggleSelectionRelease(id) {
+					if (!selectionModeEnabled.value) {
+						openReleaseCardByLink(id);
+						return;
+					}
+
+					if (selectedReleases.value.includes(id)) {
+						selectedReleases.value = selectedReleases.value.filter(a => a !== id);
+					} else {
+						selectedReleases.value.push(id);
+					}
+				}
+
 				async function loadData() {
 					settings.value = await getPageSettings('torrent');
+					activeTorrents.value = await getActiveTorrents();
 					userMarks.value = await getUserMarks();
 					cinemahallReleases.value = await getCinemahallReleases();
 
@@ -368,6 +374,11 @@
 					sendModel.section = sectionSelected.value;
 					sendModel.subSection = subSectionSelected.value;
 					return sendModel;
+				}
+
+				function toggleSelectionMode() {
+					selectedReleases.value = [];
+					selectionModeEnabled.value = !selectionModeEnabled.value;
 				}
 
 				async function loadReleases() {
@@ -396,7 +407,24 @@
 					if (!isFavorite && !isCinemahall) return '';
 
 					return `В ${isFavorite ? 'Избранном' : ''}${isCinemahall ? (isFavorite ? ' и ' : '') + 'Кинозале' : ''}`
-				}				
+				}
+
+				function showTorrentSeries(id) {
+					const torrent = activeTorrents.value[id];
+					const torrentVideos = torrent.countVideos;
+					const downloadedVideos = torrent.countDownloaded;
+					const seensVideos = 0;
+					if (userMarks.value.fullSeenReleases.includes(id)) {
+						seensVideos = downloadedVideos;
+					} else if (userMarks.value.seenSeries[id]) {
+						seensVideos = userMarks.value.seenSeries[id];
+						if (seensVideos > downloadedVideos) seensVideos = downloadedVideos;
+					}
+					
+					const torrentDisplay = torrentVideos != downloadedVideos ? `${downloadedVideos} из ${torrentVideos}` : `${downloadedVideos}`;
+					const seensDisplay = seensVideos > 0 ? `/${seensVideos}` : '';
+					return `${torrentDisplay}${seensDisplay}`;
+				}
 
 				function disableSelectionMode() {
 					selectedReleases.value = [];
@@ -496,7 +524,12 @@
 					cinemahallReleases,
 					releaseDictionaries,
 					getPublishDay,
-					showMarksForRelease
+					showMarksForRelease,
+					selectionModeEnabled,
+					toggleSelectionMode,
+					selectedReleases,
+					toggleSelectionRelease,
+					showTorrentSeries
 				}
 			}
 		});

@@ -45,7 +45,14 @@ namespace Aniliberty.Unfolded.Routes
 			//restore torrents
 			foreach (var item in m_cache.Items)
 			{
-				if (File.Exists(item.MetadataPath)) await m_clientEngine.AddAsync(item.MetadataPath, m_downloadPath);
+				if (File.Exists(item.MetadataPath))
+				{
+					var manager = await m_clientEngine.AddAsync(item.MetadataPath, m_downloadPath);
+					manager.TorrentStateChanged += async (_, e) =>
+					{
+						if (e.TorrentManager?.State == TorrentState.Seeding) await WebSocketHub.SendMessage("torrent", "enddownload:" + item.ReleaseId);
+					};
+				}
 			}
 			await m_clientEngine.StartAllAsync();
 		}
@@ -79,7 +86,8 @@ namespace Aniliberty.Unfolded.Routes
 			app.MapGet("/torrent/download", ([FromServices] IHttpClientFactory clientFactory, [FromQuery] int releaseId) => Download(clientFactory, releaseId));
 			app.MapGet("/torrent/openinexternalclient", ([FromServices] IHttpClientFactory clientFactory, [FromQuery] int releaseId, string hash) => OpenInExternalClient(clientFactory, releaseId, hash));
 			app.MapGet("/torrent/remove", ([FromQuery] int releaseId, [FromQuery] string description, [FromQuery] bool removeFiles) => Remove(releaseId, removeFiles));
-			app.MapPost("/torrent/list", ([FromBody]ReleasesListFiltersModel model) => TorrentList(model));
+			app.MapPost("/torrent/list", ([FromBody] ReleasesListFiltersModel model) => TorrentList(model));
+			app.MapGet("/torrent/active", () => GetActiveTorrents());
 		}
 
 		public static IResult CheckFolder(string path)
@@ -121,8 +129,16 @@ namespace Aniliberty.Unfolded.Routes
 				torrentManager = await m_clientEngine.AddAsync(torrentFile, m_downloadPath);
 			}
 
+			torrentManager.TorrentStateChanged += async (_, e) =>
+			{
+				if (e.TorrentManager?.State == TorrentState.Seeding) await WebSocketHub.SendMessage("torrent", "enddownload:" + releaseId);
+			};
+
 			await torrentManager.StartAsync();
+			await WebSocketHub.SendMessage("torrent", "startmeta:" + releaseId);
+
 			await torrentManager.WaitForMetadataAsync();
+			await WebSocketHub.SendMessage("torrent", "startdownload:" + releaseId);
 
 			var codec = torrent.Codec ?? "";
 			var filesCount = torrentManager.Files.Count;
@@ -190,6 +206,24 @@ namespace Aniliberty.Unfolded.Routes
 				.ToList();
 
 			return Results.Json(filteredItems, AppJsonSerializerContext.Default);
+		}
+
+		internal static IResult GetActiveTorrents()
+		{
+			if (m_clientEngine is null) return Results.Content("[]", "application/json");
+
+			var result = m_cache.Items
+				.Select(
+					a => new TorrentCacheDisplayItem
+					{
+						Codec = a.Codec,
+						ReleaseId = a.ReleaseId,
+						CountVideos = a.CountVideos,
+						CountDownloaded = m_clientEngine.Torrents.FirstOrDefault(b => b.MetadataPath == a.MetadataPath)?.Files.Count(c => c.BitField.AllTrue) ?? 0,
+					}
+				)
+				.ToDictionary(a => a.ReleaseId);
+			return Results.Json(result, AppJsonSerializerContext.Default);
 		}
 
 	}
