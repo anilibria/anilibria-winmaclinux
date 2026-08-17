@@ -35,5 +35,6 @@ flatpak build-bundle \
 
 ### CI
 
-`.github/workflows/flatpak.yml` использует контейнер KDE 6.11 и тот же манифест
-для `x86_64` и `aarch64`.
+`.github/workflows/flatpak.yml` в этом PR намеренно не изменяется. Текущий CI
+остаётся отдельным follow-up: его container tag нужно синхронизировать с KDE
+runtime манифеста перед включением Flatpak job для `x86_64` и `aarch64`.

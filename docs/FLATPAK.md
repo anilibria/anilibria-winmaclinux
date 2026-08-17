@@ -114,13 +114,11 @@ flatpak build-bundle \
 ## Файлы изменений
 
 ```text
-.github/workflows/flatpak.yml
 tv.anilibria.app.yml
 tv.anilibria.anilibria.appdata.xml
 flatpak-build.md
-FLATPAK_MIGRATION.md
-FLATPAK_QUICKSTART.md
-RESEARCH_REPORT.md
+docs/FLATPAK.md
 ```
 
-Workflow CI отдельно не изменялся в текущем коммите ветки `flatpak`.
+Workflow CI намеренно не изменялся в этом PR.
+
