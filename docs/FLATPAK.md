@@ -111,6 +111,14 @@ flatpak build-bundle \
 В headless WSL-среде визуальное Qt-окно не проверялось, но запуск и загрузка
 динамических библиотек проверены.
 
+## Источники
+
+- Flatpak Builder: https://docs.flatpak.org/en/latest/flatpak-builder.html
+- Sandbox permissions: https://docs.flatpak.org/en/latest/sandbox-permissions.html
+- Flathub application requirements: https://docs.flathub.org/docs/for-app-authors/requirements/
+- Official MPV manifest: https://raw.githubusercontent.com/flathub/io.mpv.Mpv/master/io.mpv.Mpv.yml
+- Official libmpv packaging pattern: https://raw.githubusercontent.com/flathub/com.github.KRTirtho.Spotube/master/com.github.KRTirtho.Spotube.yml
+
 ## Файлы изменений
 
 ```text
