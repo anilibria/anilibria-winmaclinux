@@ -6,6 +6,8 @@ const webSocketHubObserver = {
     user: function (message) {
     },
     synchronization: function (message) {
+    },
+    torrent: function (message) {
     }
 };
 
@@ -38,6 +40,9 @@ function connectToWebSocket() {
                 break;
             case "sync": // events related to synchronization
                 webSocketHubObserver.synchronization(message);
+                break;
+            case "torrent":
+                webSocketHubObserver.torrent(message);
                 break;
         }
     };

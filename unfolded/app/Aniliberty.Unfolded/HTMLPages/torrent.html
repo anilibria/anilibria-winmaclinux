@@ -364,6 +364,9 @@
 					subSectionSelected.value = 0;//settings.value.startedSubSection;
 					adjustSortingBySection();
 					await loadReleases();
+
+					//update torrents state each 8 secound
+					setInterval(() => refreshTorrents(), 8000);
 				}
 
 				function getListModel() {
@@ -409,11 +412,15 @@
 					return `В ${isFavorite ? 'Избранном' : ''}${isCinemahall ? (isFavorite ? ' и ' : '') + 'Кинозале' : ''}`
 				}
 
+				async function refreshTorrents() {
+					activeTorrents.value = await getActiveTorrents();
+				}
+
 				function showTorrentSeries(id) {
 					const torrent = activeTorrents.value[id];
 					const torrentVideos = torrent.countVideos;
 					const downloadedVideos = torrent.countDownloaded;
-					const seensVideos = 0;
+					let seensVideos = 0;
 					if (userMarks.value.fullSeenReleases.includes(id)) {
 						seensVideos = downloadedVideos;
 					} else if (userMarks.value.seenSeries[id]) {

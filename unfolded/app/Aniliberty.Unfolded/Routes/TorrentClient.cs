@@ -85,9 +85,10 @@ namespace Aniliberty.Unfolded.Routes
 			app.MapPost("/torrent/checkfolder", ([FromBody] string path) => CheckFolder(path));
 			app.MapGet("/torrent/download", ([FromServices] IHttpClientFactory clientFactory, [FromQuery] int releaseId) => Download(clientFactory, releaseId));
 			app.MapGet("/torrent/openinexternalclient", ([FromServices] IHttpClientFactory clientFactory, [FromQuery] int releaseId, string hash) => OpenInExternalClient(clientFactory, releaseId, hash));
-			app.MapGet("/torrent/remove", ([FromQuery] int releaseId, [FromQuery] string description, [FromQuery] bool removeFiles) => Remove(releaseId, removeFiles));
+			app.MapGet("/torrent/remove", ([FromQuery] int releaseId, [FromQuery] bool removeFiles) => Remove(releaseId, removeFiles));
 			app.MapPost("/torrent/list", ([FromBody] ReleasesListFiltersModel model) => TorrentList(model));
 			app.MapGet("/torrent/active", () => GetActiveTorrents());
+			app.MapGet("/torrent/videofile", GetTorrentVideoFile);
 		}
 
 		public static IResult CheckFolder(string path)
@@ -149,7 +150,11 @@ namespace Aniliberty.Unfolded.Routes
 			{
 				var lessSeriesItem = m_cache.Items.First(a => a.ReleaseId == releaseId);
 				var lessManager = m_clientEngine.Torrents.FirstOrDefault(a => a.MetadataPath == lessSeriesItem.MetadataPath);
-				if (lessManager is not null) await m_clientEngine.RemoveAsync(lessManager);
+				if (lessManager is not null)
+				{
+					await lessManager.StopAsync();
+					await m_clientEngine.RemoveAsync(lessManager);
+				}
 				m_cache.Items.Remove(lessSeriesItem);
 			}
 
@@ -191,8 +196,11 @@ namespace Aniliberty.Unfolded.Routes
 			var manager = m_clientEngine.Torrents.FirstOrDefault(a => a.MetadataPath == torrent.MetadataPath);
 			if (manager == null) return Results.NotFound();
 
+			await manager.StopAsync();
 			await m_clientEngine.RemoveAsync(manager);
 			if (removeFiles) Directory.Delete(torrent.Path, true);
+
+			await SaveTorrentCache();
 
 			return Results.Ok();
 		}
@@ -219,11 +227,29 @@ namespace Aniliberty.Unfolded.Routes
 						Codec = a.Codec,
 						ReleaseId = a.ReleaseId,
 						CountVideos = a.CountVideos,
-						CountDownloaded = m_clientEngine.Torrents.FirstOrDefault(b => b.MetadataPath == a.MetadataPath)?.Files.Count(c => c.BitField.AllTrue) ?? 0,
+						CountDownloaded = m_clientEngine.Torrents.FirstOrDefault(b => b.MetadataPath == a.MetadataPath)?.Files.Count(c => c.BitField.PercentComplete >= 100f) ?? 0,
 					}
 				)
 				.ToDictionary(a => a.ReleaseId);
 			return Results.Json(result, AppJsonSerializerContext.Default);
+		}
+
+		internal static IResult GetTorrentVideoFile([FromQuery]int releaseId, [FromQuery] int videoId) {
+			if (m_clientEngine == null) return Results.NoContent();
+
+			var torrent = m_cache.Items.FirstOrDefault(a => a.ReleaseId == releaseId);
+			if (torrent == null) return Results.NotFound();
+
+			var manager = m_clientEngine.Torrents.FirstOrDefault(a => a.MetadataPath == torrent.MetadataPath);
+			if (manager == null) return Results.NotFound();
+
+			if (videoId >= manager.Files.Count) return Results.NotFound();
+
+			var file = manager.Files.ElementAt(videoId);
+
+			var contentType = Program.GetContentType(file.FullPath);
+			var fileName = Path.GetFileName(file.FullPath);
+			return Results.File(file.FullPath, contentType, fileDownloadName: fileName);
 		}
 
 	}

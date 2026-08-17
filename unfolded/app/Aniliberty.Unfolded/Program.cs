@@ -1,5 +1,7 @@
 using Aniliberty.Unfolded.Configuration;
 using Aniliberty.Unfolded.Routes;
+using Microsoft.AspNetCore.StaticFiles;
+
 #if DEBUG
 using Microsoft.Extensions.FileProviders;
 #endif
@@ -41,15 +43,15 @@ namespace Aniliberty.Unfolded
 
 			return dict;
 		}
+#endif
 
-		static string? GetContentType(string path)
+		public static string? GetContentType(string path)
 		{
 			var provider = new FileExtensionContentTypeProvider();
 			if (provider.TryGetContentType(path, out var contentType)) return contentType;
 
 			return null;
 		}
-#endif
 
 		public static async Task Main(string[] args)
 		{

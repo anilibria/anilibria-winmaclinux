@@ -1,5 +1,8 @@
 ﻿import { ref, onMounted } from '/static/vue.js'
-import { synchronizeFirstStart, synchronizeUser, synchronizeReleases, webSocketObserver, synchronizeStatus } from '/static/unfoldapi.js'
+import {
+	synchronizeFirstStart, synchronizeUser, synchronizeReleases,
+	webSocketObserver, synchronizeStatus, getRelease
+} from '/static/unfoldapi.js'
 
 export default {
 	props: ['mainMenuVisible', 'title'],
@@ -73,8 +76,31 @@ export default {
 			receivedNotifications.value.unshift({ type, message });
 		}
 
+		async function torrentHandler(message) {
+			const parts = message.split(':');
+			if (parts.length !== 2) return;
+
+			const action = parts[0];
+			const releaseId = parseInt(parts[1]);
+			const release = await getRelease(releaseId);
+			let message = '';
+			switch (action) {
+				case 'startmeta':
+					message = 'Старт закачки метаданных: ' + release.title;
+					break;
+				case 'startdownload':
+					message = 'Начала скачивания: ' + release.title;
+					break;
+				case 'enddownload':
+					message = 'Cкачивание завершено: ' + release.title;
+					break;
+			}
+			if (message) receivedNotifications.value.unshift({ type, message });
+		}
+
 		webSocketObserver().synchronization = synchronizedHandler;
 		webSocketObserver().notification = notificationHandler;
+		webSocketObserver().torrent = torrentHandler;
 
 		onMounted(async () => {
 			const synchronizedStarted = await synchronizeStatus();

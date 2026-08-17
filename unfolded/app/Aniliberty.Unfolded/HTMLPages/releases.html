@@ -279,6 +279,7 @@
 									<span>{{ release.countVideos }}{{ userMarks.fullSeenReleases.includes(release.id) ? '/' + release.countVideos : (userMarks.seenSeries[release.id] ? '/' + userMarks.seenSeries[release.id] : '' ) }}</span>
 									<img
 										v-if="release.countTorrents > 0"
+										class="clickable-image"
 										src="/static/icons/mainmenu/torrent.svg"
 										width="20"
 										height="20"
