@@ -7,10 +7,11 @@
 	<project_license>GPL-3.0</project_license>
 
 	<name>Anilibria</name>
+	<developer id="tv.anilibria">
+		<name>Anilibria</name>
+	</developer>
 
-	<summary>
-		Anime in Russian voice acting by Anilibria.
-	</summary>
+	<summary>Anime in Russian voice acting by Anilibria</summary>
 
 	<summary xml:lang="ru">
 		Аниме в русской озвучке от Анилибрии. 
@@ -18,11 +19,12 @@
 
 	<description>
 		<p>Application for viewing and downloading anime in Russian voice acting from Anilibria.</p>
+		<p xml:lang="ru">Приложение для просмотра и скачивания аниме в русской озвучке от Анилибрии.</p>
 	</description>
-
-	<description xml:lang="ru">
-		<p>Приложение для просмотра и скачивание аниме в русской озвучке от Анилибрии.</p>
-	</description>
+	<categories>
+		<category>AudioVideo</category>
+		<category>Player</category>
+	</categories>
 
 	<screenshots>
 		<screenshot type="default">

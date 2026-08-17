@@ -90,3 +90,7 @@ src/AniLiberty
 /unfolded/app/Aniliberty.Unfolded/obj
 /unfolded/experiment
 /unfolded/app/Aniliberty.Unfolded/bin/Release/net10.0
+.codegraph/
+.flatpak-builder/
+/build/
+*.flatpak

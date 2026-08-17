@@ -1,30 +1,102 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/flatpak/flatpak-builder/main/data/flatpak-manifest.schema.json
 app-id: tv.anilibria.anilibria
 runtime: org.kde.Platform
-runtime-version: '5.15-24.08'
+runtime-version: '6.11'
 sdk: org.kde.Sdk
-command: AniLibria
-modules:
-  - name: anilibria
-    buildsystem: qmake
-    subdir: src
-    build-options:
-      env:
-        PREFIX: /app
-      config-opts:
-        - CONFIG += flatpak
-    post-install:
-      - desktop-file-edit --set-key=Exec --set-value=/app/bin/AniLibria /app/share/applications/anilibria.desktop
-    sources:
-      - type: git
-        url: https://github.com/anilibria/anilibria-winmaclinux
-rename-icon: "anilibria"
-rename-desktop-file: "anilibria.desktop"
+command: AniLiberty
+
 finish-args:
   - --share=ipc
-  - --socket=x11
+  - --socket=fallback-x11
   - --socket=wayland
   - --device=dri
   - --socket=pulseaudio
   - --share=network
-  - --filesystem=host
-  - --socket=system-bus
+  - --filesystem=xdg-download
+  - --filesystem=xdg-videos
+  - --talk-name=org.gnome.ScreenSaver
+  - --talk-name=org.freedesktop.ScreenSaver
+  - --talk-name=org.kde.ScreenSaver
+  - --talk-name=org.freedesktop.PowerManagement
+
+modules:
+  - name: libmpv
+    buildsystem: meson
+    config-opts:
+      - -Dlibmpv=true
+      - -Dcplayer=false
+      - -Dlua=disabled
+      - -Ddebug=false
+      - -Dbuild-date=false
+      - -Dalsa=disabled
+      - -Dmanpage-build=disabled
+      - -Dvulkan=enabled
+      - -Dlibdir=lib
+    cleanup:
+      - /share/bash-completion
+      - /share/zsh
+      - /share/doc
+      - /share/icons
+      - /share/applications
+    sources:
+      - type: archive
+        url: https://github.com/mpv-player/mpv/archive/refs/tags/v0.40.0.tar.gz
+        sha256: 10a0f4654f62140a6dd4d380dcf0bbdbdcf6e697556863dc499c296182f081a3
+    modules:
+      - name: libplacebo
+        buildsystem: meson
+        config-opts:
+          - -Dopengl=enabled
+          - -Dvulkan=enabled
+          - -Dglslang=disabled
+          - -Dd3d11=disabled
+          - -Ddemos=false
+          - -Dlibdir=lib
+        sources:
+          - type: archive
+            url: https://code.videolan.org/videolan/libplacebo/-/archive/v7.360.1/libplacebo-v7.360.1.tar.gz
+            sha256: 14c0a99f4b01557ec9826ce6b1d52f6de21be274ba03fd5aab7307f18766dc39
+          - type: archive
+            url: https://github.com/pallets/jinja/archive/refs/tags/3.1.6.tar.gz
+            sha256: 2074b22a72caa65474902234b320d73463d6d4c223ee49f4b433495758356337
+            dest: 3rdparty/jinja
+          - type: archive
+            url: https://github.com/Dav1dde/glad/archive/refs/tags/v2.0.8.tar.gz
+            sha256: 44f06f9195427c7017f5028d0894f57eb216b0a8f7c4eda7ce883732aeb2d0fc
+            dest: 3rdparty/glad
+      - name: libass
+        buildsystem: autotools
+        config-opts:
+          - --disable-static
+        sources:
+          - type: archive
+            url: https://github.com/libass/libass/releases/download/0.17.3/libass-0.17.3.tar.gz
+            sha256: da7c348deb6fa6c24507afab2dee7545ba5dd5bbf90a137bfe9e738f7df68537
+
+  - name: anilibria
+    buildsystem: cmake-ninja
+    builddir: true
+    subdir: src
+    build-options:
+      env:
+        PKG_CONFIG_PATH: /app/lib/pkgconfig:/app/lib64/pkgconfig
+    config-opts:
+      - -DCMAKE_BUILD_TYPE=RelWithDebInfo
+      - -DANILIBERTY_LESS_68_QT=OFF
+    sources:
+      - type: git
+        url: https://github.com/anilibria/anilibria-winmaclinux
+        commit: e169a42a8f6a4e4972cbc0412d86ce8994607aa1
+      - type: file
+        path: tv.anilibria.anilibria.appdata.xml
+        dest-filename: tv.anilibria.anilibria.appdata.xml
+    post-install:
+      - desktop-file-edit --set-key=Exec --set-value=/app/bin/AniLiberty /app/share/applications/tv.aniliberty.AniLiberty.desktop
+      - desktop-file-edit --set-key=Icon --set-value=tv.anilibria.anilibria /app/share/applications/tv.aniliberty.AniLiberty.desktop
+      - mv /app/share/applications/tv.aniliberty.AniLiberty.desktop /app/share/applications/tv.anilibria.anilibria.desktop
+      - install -Dm644 /run/build/anilibria/tv.anilibria.anilibria.appdata.xml /app/share/metainfo/tv.anilibria.anilibria.metainfo.xml
+      - mv /app/share/icons/hicolor/16x16/apps/aniliberty.png /app/share/icons/hicolor/16x16/apps/tv.anilibria.anilibria.png
+      - mv /app/share/icons/hicolor/32x32/apps/aniliberty.png /app/share/icons/hicolor/32x32/apps/tv.anilibria.anilibria.png
+      - mv /app/share/icons/hicolor/128x128/apps/aniliberty.png /app/share/icons/hicolor/128x128/apps/tv.anilibria.anilibria.png
+      - mv /app/share/icons/hicolor/256x256/apps/aniliberty.png /app/share/icons/hicolor/256x256/apps/tv.anilibria.anilibria.png
+      - mv /app/share/icons/hicolor/512x512/apps/aniliberty.png /app/share/icons/hicolor/512x512/apps/tv.anilibria.anilibria.png
