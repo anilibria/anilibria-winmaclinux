@@ -54,7 +54,7 @@ namespace Aniliberty.Unfolded.Routes
 					};
 				}
 			}
-			await m_clientEngine.StartAllAsync();
+			if (m_cache.Items.Any()) await m_clientEngine.StartAllAsync();
 		}
 
 		public static async Task Finilize()
@@ -87,8 +87,9 @@ namespace Aniliberty.Unfolded.Routes
 			app.MapGet("/torrent/openinexternalclient", ([FromServices] IHttpClientFactory clientFactory, [FromQuery] int releaseId, string hash) => OpenInExternalClient(clientFactory, releaseId, hash));
 			app.MapGet("/torrent/remove", ([FromQuery] int releaseId, [FromQuery] bool removeFiles) => Remove(releaseId, removeFiles));
 			app.MapPost("/torrent/list", ([FromBody] ReleasesListFiltersModel model) => TorrentList(model));
-			app.MapGet("/torrent/active", () => GetActiveTorrents());
-			app.MapGet("/torrent/videofile", GetTorrentVideoFile);
+			app.MapGet("/torrent/active", GetActiveTorrents);
+			app.MapGet("/torrent/videofile/{releaseId}/{videoIndex}/", GetTorrentVideoFile);
+			app.MapGet("/torrent/episodes", Episodes);
 		}
 
 		public static IResult CheckFolder(string path)
@@ -234,7 +235,8 @@ namespace Aniliberty.Unfolded.Routes
 			return Results.Json(result, AppJsonSerializerContext.Default);
 		}
 
-		internal static IResult GetTorrentVideoFile([FromQuery]int releaseId, [FromQuery] int videoId) {
+		internal static IResult GetTorrentVideoFile([FromRoute] int releaseId, [FromRoute] int videoIndex)
+		{
 			if (m_clientEngine == null) return Results.NoContent();
 
 			var torrent = m_cache.Items.FirstOrDefault(a => a.ReleaseId == releaseId);
@@ -243,13 +245,58 @@ namespace Aniliberty.Unfolded.Routes
 			var manager = m_clientEngine.Torrents.FirstOrDefault(a => a.MetadataPath == torrent.MetadataPath);
 			if (manager == null) return Results.NotFound();
 
-			if (videoId >= manager.Files.Count) return Results.NotFound();
+			if (videoIndex >= manager.Files.Count) return Results.NotFound();
 
-			var file = manager.Files.ElementAt(videoId);
+			var file = manager.Files.ElementAt(videoIndex);
 
-			var contentType = Program.GetContentType(file.FullPath);
 			var fileName = Path.GetFileName(file.FullPath);
-			return Results.File(file.FullPath, contentType, fileDownloadName: fileName);
+			return Results.File(file.FullPath, "video/x-matroska", fileDownloadName: fileName);
+		}
+
+		internal static IResult Episodes(HttpContext httpContext, int releaseId)
+		{
+			if (m_clientEngine is null) return Results.NoContent();
+
+			var torrent = m_cache.Items.FirstOrDefault(a => a.ReleaseId == releaseId);
+			if (torrent is null) return Results.NotFound();
+
+			var manager = m_clientEngine.Torrents.FirstOrDefault(a => a.MetadataPath == torrent.MetadataPath);
+			if (manager is null) return Results.NotFound();
+
+			var episodes = Releases.GetReleaseEpisodes(releaseId);
+			if (episodes is null) return Results.NotFound();
+
+			var host = $"{httpContext.Request.Scheme}://{httpContext.Request.Host}";
+
+			return Results.Json(
+				manager.Files
+					.OrderBy(a => a.FullPath)
+					.Select(
+						(a, index) => {
+							var episode = episodes.Items.ElementAt(index);
+							var pathToVideoFile = host + $"/torrent/videofile/{releaseId}/{index}/";
+
+							return new ReleaseDisplayEpisodeModel
+							{
+								Id = episode.Id,
+								Name = episode.Name,
+								Hls1080 = pathToVideoFile,
+								Hls480 = pathToVideoFile,
+								Hls720 = pathToVideoFile,
+								Ordinal = episode.Ordinal,
+								Preview = episode.Poster,
+								RutubeId = episode.RutubeId,
+								YoutubeId = episode.YoutubeId,
+								SortOrder = episode.SortOrder,
+								OpeningEnd = episode.OpeningEnd,
+								OpeningStart = episode.OpeningStart,
+								EndingEnd = episode.EndingEnd,
+								EndingStart = episode.EndingStart
+							};
+						}
+					),
+				AppJsonSerializerContext.Default
+			);
 		}
 
 	}

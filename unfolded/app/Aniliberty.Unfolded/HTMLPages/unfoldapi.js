@@ -380,7 +380,7 @@ export async function downloadTorrent(releaseId) {
 export async function openInExternalTorrentClient(releaseId, hash) {
     await fetch(`/torrent/openinexternalclient?releaseId=${releaseId}&hash=${hash}`);
 };
-export async function getActiveTorrents(releaseId, hash) {
+export async function getActiveTorrents() {
     const response =  await fetch(`/torrent/active`);
     return await response.json();
 };
@@ -398,8 +398,7 @@ export async function getRelaseTorrentsByFilter(model) {
     );
     return await response.json();
 };
-
-
-
-
-
+export async function getTorrentEpisodes(releaseId) {
+    const response =  await fetch(`/torrent/episodes?releaseId=${releaseId}`);
+    return await response.json();
+};

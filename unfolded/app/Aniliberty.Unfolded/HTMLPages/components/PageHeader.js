@@ -83,19 +83,19 @@ export default {
 			const action = parts[0];
 			const releaseId = parseInt(parts[1]);
 			const release = await getRelease(releaseId);
-			let message = '';
+			let resultMessage = '';
 			switch (action) {
 				case 'startmeta':
-					message = 'Старт закачки метаданных: ' + release.title;
+					resultMessage = 'Старт закачки метаданных: ' + release.title;
 					break;
 				case 'startdownload':
-					message = 'Начала скачивания: ' + release.title;
+					resultMessage = 'Начала скачивания: ' + release.title;
 					break;
 				case 'enddownload':
-					message = 'Cкачивание завершено: ' + release.title;
+					resultMessage = 'Cкачивание завершено: ' + release.title;
 					break;
 			}
-			if (message) receivedNotifications.value.unshift({ type, message });
+			if (resultMessage) receivedNotifications.value.unshift({ type, resultMessage });
 		}
 
 		webSocketObserver().synchronization = synchronizedHandler;

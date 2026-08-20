@@ -768,6 +768,8 @@ namespace Aniliberty.Unfolded.Routes
 			return item.Items.FirstOrDefault(a => a.Hash == hash);
 		}
 
+		internal static ReleaseSaveEpisodeModel? GetReleaseEpisodes(int releaseId) => m_episodes.FirstOrDefault(a => a.ReleaseId == releaseId);
+
 	}
 
 }

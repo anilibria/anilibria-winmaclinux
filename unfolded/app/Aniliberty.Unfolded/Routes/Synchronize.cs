@@ -135,7 +135,7 @@ namespace Aniliberty.Unfolded.Routes
 					break;
 				}
 
-				if (i % 2 == 0) await Task.Delay(500);
+				if (i % 2 == 0) await Task.Delay(1000);
 
 				await WebSocketHub.SendMessage(SynchronizedCommand, "percent" + ((float)i / (float)totalPages) * 100);
 			}

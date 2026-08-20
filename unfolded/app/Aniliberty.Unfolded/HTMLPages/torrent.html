@@ -94,7 +94,15 @@
 								<span class="normal-text">{{ release.type }} {{ release.series }} {{ release.genres ? '- ' + release.genres.join(', ') : '' }}</span>
 								<span class="normal-text"><b>Команда:</b> {{ release.voices ? release.voices.join(', ') : '' }}</span>
 								<span class="digit-text flex-row flex-base-center gap-4">
-									<img src="/static/icons/mainmenu/torrent.svg" width="20" height="20" loading="lazy" />
+									<img
+										class="clickable-image"
+										src="/static/icons/mainmenu/torrent.svg"
+										width="20"
+										height="20"
+										loading="lazy"
+										title="Открыть торрент на просмотр в видеоплеере"
+										@click.stop="openTorrentInVideoplayer(release.id)"
+									/>
 									<span>{{ showTorrentSeries(release.id) }}</span>
 									<img src="/static/icons/releases/favorite.svg" width="20" height="20" loading="lazy" />
 									<span>{{ release.rating }}</span>
@@ -509,6 +517,13 @@
 					loadReleases();
 				}
 
+				function openTorrentInVideoplayer(releaseId) {
+					if (settings.value.openLinkMode) {
+						window.open("videoplayer.html?mode=downloadedtorrent&id=" + releaseId, '_blank');
+					} else {
+						window.location.href = 'videoplayer.html?mode=downloadedtorrent&id=' + releaseId;
+					}					
+				}
 
 				loadData();
 
@@ -536,7 +551,8 @@
 					toggleSelectionMode,
 					selectedReleases,
 					toggleSelectionRelease,
-					showTorrentSeries
+					showTorrentSeries,
+					openTorrentInVideoplayer
 				}
 			}
 		});

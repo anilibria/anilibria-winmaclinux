@@ -108,7 +108,7 @@
 		import {
 			getReleaseEpisodes, getPageSettings, saveSettings, watchVideoRelease,
 			addSeenMark, removeSeenMark, getSeenEpisodes, getReleasePosters,
-			getWatchVideoRelease
+			getWatchVideoRelease, getTorrentEpisodes
 		} from './unfoldapi.js'
 		import Drawer from './components/Drawer.js'
 		import PageHeader from './components/PageHeader.js'
@@ -138,6 +138,7 @@
 				const showEnding = ref(false);
 				const skipStepTimer = ref(0);
 				const watchRelease = ref(null);
+				let needUseHls = false;
 				const settings = ref({
 					prefferedQuality: ['hls1080', 'hls720', 'hls480'],
 					autoNextOpen: false,
@@ -156,29 +157,44 @@
 						releaseIds.value = [idInt];
 						episodes.value = await getReleaseEpisodes(idInt);
 						seenMarks.value = await getSeenEpisodes([idInt]);
-						const episode = urlParams.get('episode');
-						if (episode) {
-							selectedEpisode.value = episodes.value.find(a => a.id === id);
-						} else {
-							const lastFindEpisode = findFirstNotSeenEpisode();
-							if (lastFindEpisode) {
-								selectedEpisode.value = lastFindEpisode;
-							} else {
-								selectedEpisode.value = episodes.value[0];
-							}
-						}
-
-						watchRelease.value = await getWatchVideoRelease(idInt);
-						
-						releasePosters.value = await getReleasePosters([id]);
-						const releasePoster = releasePosters.value.find(a => a.id === idInt).poster;
-						poster.value = releasePoster ? 'https://anilibria.top' + releasePoster : '/static/backgrounds/emptyposter.png';
-						selectedReleaseId.value = idInt;
+						loadEpisodeAndInnerState(urlParams.get('episode'), idInt);
+						needUseHls = true;
 					
 						return;
 					}
+					if (mode === `downloadedtorrent`) {
+						const id = urlParams.get('id');
+						const idInt = parseInt(id);
+						releaseIds.value = [idInt];
+						episodes.value = await getTorrentEpisodes(idInt);
+						seenMarks.value = await getSeenEpisodes([idInt]);
+						loadEpisodeAndInnerState(urlParams.get('episode'), idInt);
+					}
+					if (mode === `onlinetorrent`) {
+						//TODO: setup online torrent
+					}
 					
 					//TODO: open latest opened release
+				}
+
+				async function loadEpisodeAndInnerState(episode, idInt) {
+					if (episode) {
+						selectedEpisode.value = episodes.value.find(a => a.id === episode);
+					} else {
+						const lastFindEpisode = findFirstNotSeenEpisode();
+						if (lastFindEpisode) {
+							selectedEpisode.value = lastFindEpisode;
+						} else {
+							selectedEpisode.value = episodes.value[0];
+						}
+					}
+
+					watchRelease.value = await getWatchVideoRelease(idInt);
+					
+					releasePosters.value = await getReleasePosters([idInt]);
+					const releasePoster = releasePosters.value.find(a => a.id === idInt).poster;
+					poster.value = releasePoster ? 'https://anilibria.top' + releasePoster : '/static/backgrounds/emptyposter.png';
+					selectedReleaseId.value = idInt;
 				}
 
 				function findFirstNotSeenEpisode() {
@@ -359,12 +375,21 @@
 				}
 
 				function adjustVideoSource(source) {
-					const hls = new Hls();
-					hls.loadSource(source);
-					hls.attachMedia(video.value);
-					hls.subtitleDisplay = true;
-					hlsSource.value = hls;
-
+					if (needUseHls) {
+						const hls = new Hls();
+						hls.loadSource(source);
+						hls.attachMedia(video.value);
+						hls.subtitleDisplay = true;
+						hlsSource.value = hls;
+					} else {
+						videoPlayer.source = {
+							type: 'video',
+							sources: [
+								{ src: source, type: 'video/x-matroska' }
+							]
+						};
+					}
+					
 					if (selectedEpisode.value && selectedEpisode.value.openingStart || selectedEpisode.value.endingStart) {
 						const pointers = [];
 						if (selectedEpisode.value.openingStart) pointers.push({ time: selectedEpisode.value.openingStart, label: 'Опенинг старт' });
