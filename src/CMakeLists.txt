@@ -441,7 +441,9 @@ endif ()
 if (APPLE)
     target_link_libraries(AniLiberty PRIVATE dl)
 
-    set(ENV{PKG_CONFIG_PATH} "/opt/homebrew/bin/pkg-config") # change path to PkgConfig (it can be founded in Qt directory which is not correct)
+    if (NOT (DEFINED ENV{NIX_STORE}))
+      set(ENV{PKG_CONFIG_PATH} "/opt/homebrew/bin/pkg-config") # change path to PkgConfig (it can be founded in Qt directory which is not correct)
+    endif()
 
     find_package(PkgConfig REQUIRED)
     pkg_check_modules(LIBMPV REQUIRED IMPORTED_TARGET GLOBAL mpv)
