@@ -9,7 +9,7 @@ namespace Aniliberty.Unfolded.Helpers
 	internal static class OriginalApiMaker
 	{
 
-		public static string ApiDomain = "https://api.anilibria.app";
+		public static string ApiDomain = "https://aniliberty.top";//"https://api.anilibria.app";
 
 		static public async Task<ReleaseIdModel> GetPageIds(int page, HttpClient httpClient, int countOnPages = 50)
 		{

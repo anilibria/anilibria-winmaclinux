@@ -34,6 +34,14 @@
 							<div>Использовать внутренний torrent клиент:</div>
 							<simple-switch v-model:state="settings.useInternalTorrectClient" @changed="savePageSettings()">
 							</simple-switch>
+							<div>
+								Предпочтение качества торрента (сверху вниз):<br>
+								<span class="torrents-disclaimer">тащите мышкой для изменения</span>
+							</div>
+							<div class="torrents-sortable-quality-container">
+								<sortable-list v-model:options="settings.codecPrefference" @changed="savePageSettings()">
+								</sortable-list>
+							</div>
 						</div>
 					</div>
 				</div>
@@ -143,7 +151,7 @@
 	</div>
 
 	<script type="module">
-		import { createApp, ref, useTemplateRef } from 'vue'
+		import { createApp, ref, useTemplateRef, watch } from 'vue'
 		import {
 			getPageSettings, saveSettings, getUserMarks, getCinemahallReleases,
 			getReleaseDictionaries, getRelaseTorrentsByFilter, getActiveTorrents
@@ -152,13 +160,15 @@
 		import PageHeader from './components/PageHeader.js'
 		import SimpleSwitch from './components/SimpleSwitch.js'
 		import SimpleSelect from './components/SimpleSelect.js'
+		import SortableList from './components/SortableList.js'
 
 		const app = createApp({
 			components: {
 				'page-drawer': Drawer,
 				'page-header': PageHeader,
 				'simple-switch': SimpleSwitch,
-				'simple-select': SimpleSelect
+				'simple-select': SimpleSelect,
+				'sortable-list': SortableList,
 			},
 			setup() {
 				const mainMenuVisible = ref(false);
@@ -178,6 +188,7 @@
 				let relasesInGroup = 1;
 				const widthItem = 480 + 10; // 10 is a gap width
 				const leftPanelWidth = 40;
+				let currentTimer = -1;
 				const releaseDictionaries = ref({});
 				const filterModel = ref({
 					filter: "",
@@ -516,7 +527,7 @@
 
 					loadReleases();
 				}
-
+	
 				function openTorrentInVideoplayer(releaseId) {
 					if (settings.value.openLinkMode) {
 						window.open("videoplayer.html?mode=downloadedtorrent&id=" + releaseId, '_blank');
@@ -525,7 +536,18 @@
 					}					
 				}
 
+				function loadReleaseAfterTimer() {
+					if (currentTimer !== -1) clearTimeout(currentTimer);
+
+					currentTimer = setTimeout(() => { loadReleases() }, 1000);
+				}				
+
 				loadData();
+
+				watch(
+					nameFilter,
+					(newValue) => { loadReleaseAfterTimer() }
+				);
 
 				return {
 					mainMenuVisible,
@@ -552,7 +574,9 @@
 					selectedReleases,
 					toggleSelectionRelease,
 					showTorrentSeries,
-					openTorrentInVideoplayer
+					openTorrentInVideoplayer,
+					sectionChanged,
+					subSectionChanged
 				}
 			}
 		});

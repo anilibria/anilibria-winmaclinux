@@ -6,9 +6,9 @@
 }
 
 .torrents-rightmenu-settings {
-    width: 380px;
+    width: 340px;
     max-width: 400px;
-    height: 260px;
+    height: 160px;
     padding: 8px;
 }
 
@@ -90,5 +90,14 @@
 
 .torrents-release-item-selected {
     box-shadow: 2px 2px var(--releases-item-selected-background);
+}
+
+.torrents-disclaimer {
+    font-size: var(--middle-font-size);
+    font-style: italic;
+}
+
+.torrents-sortable-quality-container {
+    width: 60px;
 }
 
