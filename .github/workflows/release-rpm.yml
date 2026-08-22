@@ -3,7 +3,7 @@ name: Fedora package build
 on:
   push:
     tags:
-      - '*'
+      - 'v*'
 
 jobs:
   fedoraPackageBuild:
@@ -15,7 +15,10 @@ jobs:
       uses: actions/checkout@v5
 
     - name: Set version from tag
-      run: echo "VERSION=${{ github.ref_name }}" >> $GITHUB_ENV
+      run: |
+        VERSION="${{ github.ref_name }}"
+        VERSION="${VERSION#v}"
+        echo "VERSION=$VERSION" >> $GITHUB_ENV
 
     - name: Install libraries
       run: |
@@ -27,7 +30,7 @@ jobs:
     - name: Program build
       run: |
         cmake src -B src/build -DCMAKE_BUILD_TYPE=Release -DANILIBERTY_LESS_68_QT=On
-        cmake --build src/build
+        cmake --build src/build -j$(nproc)
 
     - name: Prepare RPM package
       run: |

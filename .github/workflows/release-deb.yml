@@ -3,7 +3,7 @@ name: Debian package build
 on:
   push:
     tags:
-      - '*'
+      - 'v*'
 
 jobs:
   debianPackageBuild:
@@ -14,10 +14,14 @@ jobs:
       uses: actions/checkout@v5
 
     - name: Set version from tag
-      run: echo "VERSION=${{ github.ref_name }}" >> $GITHUB_ENV
+      run: |
+        VERSION="${{ github.ref_name }}"
+        VERSION="${VERSION#v}"
+        echo "VERSION=$VERSION" >> $GITHUB_ENV
 
     - name: Install libraries
       run: |
+        sudo apt-get update
         sudo apt-get install -y --no-install-recommends \
         libmpv-dev pkg-config qt6-base-dev qt6-declarative-dev \
         qt6-websockets-dev qt6-svg-dev libxkbcommon-dev \
@@ -30,22 +34,24 @@ jobs:
     - name: Program build
       run: |
         cmake src -B src/build -DCMAKE_BUILD_TYPE=Release -DANILIBERTY_LESS_68_QT=On
-        cmake --build src/build
+        cmake --build src/build -j$(nproc)
 
     - name: Fix empty dir
       run: mkdir -p specs/deb/usr/bin/
 
     - name: Copy program to deb-package
-      run: sudo cp src/build/AniLiberty specs/deb/usr/bin/aniliberty
+      run: cp src/build/AniLiberty specs/deb/usr/bin/aniliberty
 
     - name: Update version in Debian control
       run: |
-        if [ -f specs/deb/DEBIAN/control ]; then
-          sudo sed -i "s/^Version:.*/Version: ${{ env.VERSION }}/" specs/deb/DEBIAN/control
+        if [ ! -f specs/deb/DEBIAN/control ]; then
+          echo "Error: specs/deb/DEBIAN/control not found"
+          exit 1
         fi
+        sed -i "s/^Version:.*/Version: ${{ env.VERSION }}/" specs/deb/DEBIAN/control
 
     - name: Build deb-package
-      run: sudo dpkg-deb --build specs/deb/ aniliberty_${{ env.VERSION }}_amd64.deb
+      run: dpkg-deb --build specs/deb/ aniliberty_${{ env.VERSION }}_amd64.deb
 
     - name: Upload package artifact
       uses: actions/upload-artifact@v5
