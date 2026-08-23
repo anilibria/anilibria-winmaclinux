@@ -28,10 +28,6 @@ namespace Aniliberty.Unfolded.Routes
 
 		static HashSet<int> m_localFavorites = new HashSet<int>();
 
-		static List<int> m_openHistory = new List<int>();
-
-		static List<int> m_seenHistory = new List<int>();
-
 		static List<int> m_notificationReleases = new List<int>();
 
 		static ReleaseDictionaries m_releaseDictionaries = new ReleaseDictionaries();
@@ -503,9 +499,9 @@ namespace Aniliberty.Unfolded.Routes
 				case ReleasesListFiltersSection.Favorites: return m_favorites.Contains(releaseId);
 				case ReleasesListFiltersSection.Schedule: return release.PublishDay is not null;
 				case ReleasesListFiltersSection.History:
-					if (subSection == ReleasesListFiltersSubSection.OpenHistory) return m_openHistory.Contains(releaseId);
-					if (subSection == ReleasesListFiltersSubSection.SeenHistory) return m_seenHistory.Contains(releaseId);
-					return m_openHistory.Contains(releaseId) || m_seenHistory.Contains(releaseId);
+					if (subSection == ReleasesListFiltersSubSection.OpenHistory) return AppData.IsInOnlyWatchHistory(releaseId);
+					if (subSection == ReleasesListFiltersSubSection.SeenHistory) return AppData.IsInOnlyWatchVideoHistory(releaseId);
+					return AppData.IsInWatchHistory(releaseId);
 				case ReleasesListFiltersSection.Notifications: return m_notificationReleases.Contains(releaseId);
 				case ReleasesListFiltersSection.Seens:
 					if (subSection == ReleasesListFiltersSubSection.Seen) return seens.ContainsKey(releaseId) && seens[releaseId] == release.CountVideos;

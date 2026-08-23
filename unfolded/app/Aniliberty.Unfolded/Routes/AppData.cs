@@ -133,6 +133,12 @@ namespace Aniliberty.Unfolded.Routes
 
 		public static bool IsNeedToUpdateCommonThings() => m_appData.AppStartCounter % 3 == 0;
 
+		public static bool IsInWatchHistory(int id) => m_appData.HistoryWatch.ContainsKey(id) || m_appData.HistoryWatchVideo.ContainsKey(id);
+
+		public static bool IsInOnlyWatchHistory(int id) => m_appData.HistoryWatch.ContainsKey(id);
+
+		public static bool IsInOnlyWatchVideoHistory(int id) => m_appData.HistoryWatchVideo.ContainsKey(id);
+
 	}
 
 }
