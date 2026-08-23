@@ -384,7 +384,6 @@ export async function getActiveTorrents() {
     const response =  await fetch(`/torrent/active`);
     return await response.json();
 };
-
 export async function getRelaseTorrentsByFilter(model) {
     const response = await fetch(
         '/torrent/list',
@@ -401,4 +400,19 @@ export async function getRelaseTorrentsByFilter(model) {
 export async function getTorrentEpisodes(releaseId) {
     const response =  await fetch(`/torrent/episodes?releaseId=${releaseId}`);
     return await response.json();
+};
+export async function removeTorrent(releaseId, removeFiles) {
+    await fetch(`/torrent/remove?releaseId=${releaseId}&removeFiles=${removeFiles}`);
+};
+export async function removeTorrents(releaseIds, removeFiles) {
+    await fetch(
+        `/torrent/removemulti?removeFiles=${removeFiles}`,
+        {
+            method: "POST",
+            body: JSON.stringify(releaseIds),
+            headers: {
+                "Content-Type": "application/json"
+            }
+        }
+    );
 };

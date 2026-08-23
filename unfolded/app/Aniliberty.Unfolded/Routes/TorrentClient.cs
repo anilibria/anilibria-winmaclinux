@@ -24,6 +24,8 @@ namespace Aniliberty.Unfolded.Routes
 
 		public static async Task Initialize()
 		{
+			Console.WriteLine("Inner torrent client starting...");
+
 			var settings = new EngineSettingsBuilder
 			{
 				AutoSaveLoadFastResume = true,
@@ -41,6 +43,9 @@ namespace Aniliberty.Unfolded.Routes
 			// delete torrent directory to prevent storing redundant files
 			if (Directory.Exists(m_torrentsPath)) Directory.Delete(m_torrentsPath);
 
+			Console.WriteLine("Inner torrent client started!");
+			Console.WriteLine("Torrent folder: " + Settings.Model.Torrent.PathToDownloads);
+
 			LoadTorrentCache();
 			//restore torrents
 			foreach (var item in m_cache.Items)
@@ -55,6 +60,36 @@ namespace Aniliberty.Unfolded.Routes
 				}
 			}
 			if (m_cache.Items.Any()) await m_clientEngine.StartAllAsync();
+		}
+
+		public static async Task RefreshTorrents(IEnumerable<int> ids)
+		{
+			if (m_clientEngine is null) return;
+
+			Console.WriteLine("Try to refresh torrents");
+
+			foreach (var id in ids)
+			{
+				try
+				{
+					var torrent = Releases.GetReleaseTorrentByCodec(id, Settings.Model.Torrent.CodecPrefference);
+					if (torrent is null) continue;
+
+					//remove current torrent if it exists
+					await RemoveTorrent(id, false, false);
+
+					var magnetLink = MagnetLink.Parse(torrent.Magnet);
+					var torrentManager = await m_clientEngine.AddAsync(magnetLink, m_downloadPath);
+
+					RegisterTorrentManager(torrentManager, id, torrent);
+				}
+				catch (Exception ex)
+				{
+					Console.WriteLine($"Refresh torrents error for release {id}: {ex.Message}");
+				}
+			}
+
+			Console.WriteLine("Refresh torrents completed");
 		}
 
 		public static async Task Finilize()
@@ -85,7 +120,8 @@ namespace Aniliberty.Unfolded.Routes
 			app.MapPost("/torrent/checkfolder", ([FromBody] string path) => CheckFolder(path));
 			app.MapGet("/torrent/download", ([FromServices] IHttpClientFactory clientFactory, [FromQuery] int releaseId) => Download(clientFactory, releaseId));
 			app.MapGet("/torrent/openinexternalclient", ([FromServices] IHttpClientFactory clientFactory, [FromQuery] int releaseId, string hash) => OpenInExternalClient(clientFactory, releaseId, hash));
-			app.MapGet("/torrent/remove", ([FromQuery] int releaseId, [FromQuery] bool removeFiles) => Remove(releaseId, removeFiles));
+			app.MapGet("/torrent/remove", Remove);
+			app.MapPost("/torrent/removemulti", RemoveMulti);
 			app.MapPost("/torrent/list", ([FromBody] ReleasesListFiltersModel model) => TorrentList(model));
 			app.MapGet("/torrent/active", GetActiveTorrents);
 			app.MapGet("/torrent/videofile/{releaseId}/{videoIndex}/", GetTorrentVideoFile);
@@ -111,6 +147,18 @@ namespace Aniliberty.Unfolded.Routes
 			return Results.Content(exists ? "true" : "false", "application/json");
 		}
 
+		private static void RegisterTorrentManager(TorrentManager torrentManager, int releaseId, ReleaseTorrentSaveModel torrent)
+		{
+			torrentManager.TorrentStateChanged += async (_, e) =>
+			{
+				if (e.TorrentManager?.State == TorrentState.Seeding) await WebSocketHub.SendMessage("torrent", "enddownload:" + releaseId);
+			};
+			var codec = torrent.Codec ?? "";
+			var filesCount = torrentManager.Files.Count;
+			var folder = torrentManager.ContainingDirectory;
+			m_cache.Items.Add(new TorrentCacheItem { ReleaseId = releaseId, CountVideos = filesCount, Codec = codec, Path = folder, MetadataPath = torrentManager.MetadataPath });
+		}
+
 		public static async Task<IResult> Download(IHttpClientFactory clientFactory, int releaseId)
 		{
 			if (m_clientEngine == null) return Results.NoContent();
@@ -131,20 +179,11 @@ namespace Aniliberty.Unfolded.Routes
 				torrentManager = await m_clientEngine.AddAsync(torrentFile, m_downloadPath);
 			}
 
-			torrentManager.TorrentStateChanged += async (_, e) =>
-			{
-				if (e.TorrentManager?.State == TorrentState.Seeding) await WebSocketHub.SendMessage("torrent", "enddownload:" + releaseId);
-			};
-
 			await torrentManager.StartAsync();
 			await WebSocketHub.SendMessage("torrent", "startmeta:" + releaseId);
 
 			await torrentManager.WaitForMetadataAsync();
 			await WebSocketHub.SendMessage("torrent", "startdownload:" + releaseId);
-
-			var codec = torrent.Codec ?? "";
-			var filesCount = torrentManager.Files.Count;
-			var folder = torrentManager.ContainingDirectory;
 
 			// if it was item plus torrent before we remove it
 			if (m_cache.Items.Any(a => a.ReleaseId == releaseId))
@@ -159,7 +198,7 @@ namespace Aniliberty.Unfolded.Routes
 				m_cache.Items.Remove(lessSeriesItem);
 			}
 
-			m_cache.Items.Add(new TorrentCacheItem { ReleaseId = releaseId, CountVideos = filesCount, Codec = codec, Path = folder, MetadataPath = torrentManager.MetadataPath });
+			RegisterTorrentManager(torrentManager, releaseId, torrent);
 
 			await SaveTorrentCache();
 
@@ -187,21 +226,42 @@ namespace Aniliberty.Unfolded.Routes
 			}
 		}
 
-		internal static async Task<IResult> Remove(int releaseId, bool removeFiles)
+		internal static async Task<bool> RemoveTorrent(int releaseId, bool removeFiles, bool saveImmediateCache)
 		{
-			if (m_clientEngine == null) return Results.NoContent();
+			if (m_clientEngine is null) return true;
 
 			var torrent = m_cache.Items.FirstOrDefault(a => a.ReleaseId == releaseId);
-			if (torrent == null) return Results.NotFound();
+			if (torrent == null) return false;
 
 			var manager = m_clientEngine.Torrents.FirstOrDefault(a => a.MetadataPath == torrent.MetadataPath);
-			if (manager == null) return Results.NotFound();
+			if (manager == null) return false;
 
 			await manager.StopAsync();
 			await m_clientEngine.RemoveAsync(manager);
 			if (removeFiles) Directory.Delete(torrent.Path, true);
 
-			await SaveTorrentCache();
+			if (saveImmediateCache) await SaveTorrentCache();
+
+			return true;
+		}
+
+		internal static async Task<IResult> Remove([FromQuery] int releaseId, [FromQuery] bool removeFiles)
+		{
+			if (m_clientEngine == null) return Results.NoContent();
+
+			await RemoveTorrent(releaseId, removeFiles, true);
+
+			return Results.Ok();
+		}
+
+		internal static async Task<IResult> RemoveMulti([FromBody] IEnumerable<int> releaseIds, [FromQuery] bool removeFiles)
+		{
+			if (m_clientEngine == null) return Results.NoContent();
+
+			foreach (var releaseId in releaseIds)
+			{
+				await RemoveTorrent(releaseId, removeFiles, true);
+			}
 
 			return Results.Ok();
 		}
@@ -272,7 +332,8 @@ namespace Aniliberty.Unfolded.Routes
 				manager.Files
 					.OrderBy(a => a.FullPath)
 					.Select(
-						(a, index) => {
+						(a, index) =>
+						{
 							var episode = episodes.Items.ElementAt(index);
 							var pathToVideoFile = host + $"/torrent/videofile/{releaseId}/{index}/";
 

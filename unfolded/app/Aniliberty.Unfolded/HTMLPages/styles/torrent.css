@@ -12,6 +12,12 @@
     padding: 8px;
 }
 
+.torrents-rightmenu-remove {
+    width: 180px;
+    height: 35px;
+    padding: 8px;
+}
+
 .torrents-empty-search {
     width: 100%;
     height: calc(100vh - 38px - 40px); /* 38 upper panel and 40 subheader */

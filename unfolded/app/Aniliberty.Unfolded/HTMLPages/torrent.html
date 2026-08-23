@@ -25,6 +25,17 @@
 
 		<div class="page-content-with-panel">
 			<div class="left-panel flex-column">
+				<div v-if="selectedReleases.length" class="simple-panel-icon-button simple-popup-container" title="Настройка страницы Torrent клиент">
+					<div class="full-width-height flex-row flex-base-center flex-other-center">
+						<img :src="'/static/icons/mainmenu/torrent.svg'" width="30" height="30" />
+					</div>
+					<div class="simple-popup-box torrents-rightmenu">
+						<div class="torrents-rightmenu-remove flex-column">
+							<a class="default-link" @click.prevent="removeSelectedWithFiles()" href="">Удалить вместе с файлами</a>
+							<a class="default-link" @click.prevent="removeSelectedWithoutFiles()" href="">Удалить без файлов</a>
+						</div>
+					</div>
+				</div>
 				<div class="simple-panel-icon-button simple-popup-container" title="Настройка страницы Torrent клиент">
 					<div class="full-width-height flex-row flex-base-center flex-other-center">
 						<img :src="'/static/icons/commonbuttons/settings.svg'" width="30" height="30" />
@@ -154,7 +165,8 @@
 		import { createApp, ref, useTemplateRef, watch } from 'vue'
 		import {
 			getPageSettings, saveSettings, getUserMarks, getCinemahallReleases,
-			getReleaseDictionaries, getRelaseTorrentsByFilter, getActiveTorrents
+			getReleaseDictionaries, getRelaseTorrentsByFilter, getActiveTorrents,
+			removeTorrents
 		} from './unfoldapi.js'
 		import Drawer from './components/Drawer.js'
 		import PageHeader from './components/PageHeader.js'
@@ -435,6 +447,10 @@
 					activeTorrents.value = await getActiveTorrents();
 				}
 
+				function clearReleaseSelection() {
+					selectedReleases.value = [];
+				}
+
 				function showTorrentSeries(id) {
 					const torrent = activeTorrents.value[id];
 					const torrentVideos = torrent.countVideos;
@@ -540,7 +556,22 @@
 					if (currentTimer !== -1) clearTimeout(currentTimer);
 
 					currentTimer = setTimeout(() => { loadReleases() }, 1000);
-				}				
+				}
+
+				function removeSelectedWithFiles() {
+					if (!selectedReleases.value.length) return;
+
+					removeTorrents(selectedReleases.value, true);
+
+					clearReleaseSelection();
+				}
+				function removeSelectedWithoutFiles() {
+					if (!selectedReleases.value.length) return;
+
+					removeTorrents(selectedReleases.value, false);
+
+					clearReleaseSelection();
+				}
 
 				loadData();
 
@@ -576,7 +607,9 @@
 					showTorrentSeries,
 					openTorrentInVideoplayer,
 					sectionChanged,
-					subSectionChanged
+					subSectionChanged,
+					removeSelectedWithFiles,
+					removeSelectedWithoutFiles
 				}
 			}
 		});

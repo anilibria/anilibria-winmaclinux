@@ -144,6 +144,8 @@ namespace Aniliberty.Unfolded.Routes
 			m_notificationReleases = ids.ToList();
 
 			await WebSocketHub.SendMessage("ntc", m_notificationMessage);
+
+			if (ids.Any() && countNewTorrents > 0) await TorrentClient.RefreshTorrents(ids);
 		}
 
 		internal static async Task AddToFavorites(IEnumerable<int> ids, bool isLocal)
