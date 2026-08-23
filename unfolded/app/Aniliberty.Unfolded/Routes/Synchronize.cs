@@ -499,6 +499,7 @@ namespace Aniliberty.Unfolded.Routes
 			{
 				await OriginalApiMaker.AddUserFavorites(httpClient, token, ids);
 				await Releases.AddToFavorites(ids, isLocal: false);
+				return Results.Ok();
 			}
 			else
 			{
@@ -520,6 +521,7 @@ namespace Aniliberty.Unfolded.Routes
 			{
 				await OriginalApiMaker.DeleteUserFavorites(httpClient, token, ids);
 				await Releases.RemoveFromFavorites(ids, isLocal: false);
+				return Results.Ok();
 			}
 			else
 			{

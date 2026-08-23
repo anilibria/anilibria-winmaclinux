@@ -290,7 +290,15 @@
 									<div v-if="release.countTorrents > 0">
 										{{ formatCodecs(release.codecs) }}
 									</div>
-									<img src="/static/icons/releases/favorite.svg" width="20" height="20" loading="lazy" />
+									<img
+										class="clickable-image"
+										src="/static/icons/releases/favorite.svg"
+										width="20"
+										height="20"
+										loading="lazy"
+										:title="userMarks.favorites.includes(release.id) ? 'Удалить релиз из избранных' : 'Добавить релиз в избранное'"
+										@click.stop="toggleReleaseInFavorites(release.id)"
+									/>
 									<span>{{ release.rating }}</span>
 									<img v-if="release.publishDay" src="/static/icons/releases/scheduleday.svg" width="20" height="20" loading="lazy" />
 									<span v-if="release.publishDay">{{ getPublishDay(release.publishDay) }}</span>
@@ -900,6 +908,15 @@
 					return res;
 				}
 
+				async function toggleReleaseInFavorites(id) {
+					if (userMarks.value.favorites.includes(id)) {
+						await removeFavorites([id]);
+					} else {
+						await addFavorites([id]);
+					}
+					userMarks.value = await getUserMarks();
+				}
+
 				window.addEventListener('resize', () => {
 					const newRelasesInGroup = getReleasesGroupCount();
 					if (newRelasesInGroup !== relasesInGroup.value) {
@@ -986,7 +1003,8 @@
 					addToHided,
 					removeFromHided,
 					formatCodecs,
-					downloadInTorrent
+					downloadInTorrent,
+					toggleReleaseInFavorites
 				}
 			}
 		});

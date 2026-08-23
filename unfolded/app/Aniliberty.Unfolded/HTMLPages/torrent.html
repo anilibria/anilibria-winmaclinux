@@ -157,12 +157,19 @@
 			</div>
 		</div>
 		
+		<div :class="{'torrents-selection-helper': true, 'torrents-pulse-animation': selectionModeEnabled }">
+			{{ selectionModeEnabled ? 'Нажмите ЛКМ для выделения релизов, ПКМ для выхода' : 'Нажмите ПКМ для перехода в режим выделения' }}
+		</div>
+		<div v-if="backToTopVisible" class="torrents-backtotop-helper flex-row flex-base-center flex-other-center" @click="backToTop()">
+			<img src="/static/icons/commonbuttons/arrowup.svg" width="20" height="20" />
+		</div>
+
 		<page-drawer v-model:main-menu-visible="mainMenuVisible">
 		</page-drawer>
 	</div>
 
 	<script type="module">
-		import { createApp, ref, useTemplateRef, watch } from 'vue'
+		import { createApp, ref, useTemplateRef, watch, onMounted } from 'vue'
 		import {
 			getPageSettings, saveSettings, getUserMarks, getCinemahallReleases,
 			getReleaseDictionaries, getRelaseTorrentsByFilter, getActiveTorrents,
@@ -197,6 +204,7 @@
 				const activeTorrents = ref({});
 				const releasesGroups = ref([]);
 				const releasesCount = ref(0);
+				const backToTopVisible = ref(false);
 				let relasesInGroup = 1;
 				const widthItem = 480 + 10; // 10 is a gap width
 				const leftPanelWidth = 40;
@@ -451,6 +459,10 @@
 					selectedReleases.value = [];
 				}
 
+				function backToTop() {
+					releasesContainer.value.scrollTo({ top: 0, behavior: 'smooth' });
+				}
+
 				function showTorrentSeries(id) {
 					const torrent = activeTorrents.value[id];
 					const torrentVideos = torrent.countVideos;
@@ -580,6 +592,12 @@
 					(newValue) => { loadReleaseAfterTimer() }
 				);
 
+				onMounted(() => {
+					releasesContainer.value.addEventListener('scroll', () => {
+						backToTopVisible.value = releasesContainer.value.scrollTop > 0;
+					});
+				});
+
 				return {
 					mainMenuVisible,
 					savePageSettings,
@@ -609,7 +627,9 @@
 					sectionChanged,
 					subSectionChanged,
 					removeSelectedWithFiles,
-					removeSelectedWithoutFiles
+					removeSelectedWithoutFiles,
+					backToTop,
+					backToTopVisible
 				}
 			}
 		});
