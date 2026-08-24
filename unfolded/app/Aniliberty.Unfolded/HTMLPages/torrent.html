@@ -463,6 +463,15 @@
 					releasesContainer.value.scrollTo({ top: 0, behavior: 'smooth' });
 				}
 
+				async function toggleReleaseInFavorites(id) {
+					if (userMarks.value.favorites.includes(id)) {
+						await removeFavorites([id]);
+					} else {
+						await addFavorites([id]);
+					}
+					userMarks.value = await getUserMarks();
+				}
+
 				function showTorrentSeries(id) {
 					const torrent = activeTorrents.value[id];
 					const torrentVideos = torrent.countVideos;

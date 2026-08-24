@@ -76,12 +76,16 @@ namespace Aniliberty.Unfolded.Routes
 					if (torrent is null) continue;
 
 					//remove current torrent if it exists
-					await RemoveTorrent(id, false, false);
+					var removed = await RemoveTorrent(id, false, false);
 
-					var magnetLink = MagnetLink.Parse(torrent.Magnet);
-					var torrentManager = await m_clientEngine.AddAsync(magnetLink, m_downloadPath);
+					if (removed) {
+						var magnetLink = MagnetLink.Parse(torrent.Magnet);
+						var torrentManager = await m_clientEngine.AddAsync(magnetLink, m_downloadPath);
 
-					RegisterTorrentManager(torrentManager, id, torrent);
+						await torrentManager.StartAsync();
+						await torrentManager.WaitForMetadataAsync();
+						RegisterTorrentManager(torrentManager, id, torrent);
+					}
 				}
 				catch (Exception ex)
 				{

@@ -1,0 +1,70 @@
+.releaseslist-release-item-group {
+    width: 100%;
+    height: 290px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.releaseslist-releases-container {
+    width: 100%;
+    height: calc(100vh - 38px - 40px); /* 38 upper panel and 40 subheader */
+    overflow: auto;
+}
+
+.releaseslist-release-item {
+    background-color: var(--release-item-background);
+    width: 480px;
+    height: 280px;
+    border-radius: 10px;
+    box-shadow: 2px 2px var(--release-item-background-shadow);
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+
+    .poster {
+        margin-left: 4px;
+        width: 180px;
+        height: 270px;
+        border-color: var(--release-item-poster-border);
+        border-width: 2px;
+        border-style: solid;
+        border-radius: 4px;
+    }
+
+    .information {
+        height: 100%;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        margin-left: 10px;
+        margin-right: 2px;
+    }
+
+    .header-text {
+        font-size: 16px;
+        text-wrap: balance;
+        color: var(--page-header-text);
+    }
+
+    .normal-text {
+        font-size: 14px;
+        text-wrap: balance;
+    }
+
+    .digit-text {
+        font-size: 15px;
+        text-wrap: balance;
+    }
+
+    .clickable-image {
+        cursor: pointer;
+    }
+}
+
+.releaseslist-release-item-selected {
+    box-shadow: 2px 2px var(--releases-item-selected-background);
+}
+

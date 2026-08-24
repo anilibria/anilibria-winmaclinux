@@ -10,6 +10,7 @@
 	<link rel="stylesheet" href="mainmenu.css">
 	<link rel="stylesheet" href="pagestructure.css">
 	<link rel="stylesheet" href="styles/releases.css">
+	<link rel="stylesheet" href="styles/releaselist.css">
 	<link rel="stylesheet" href="libs/multiselect.css">
 	<script type="importmap">
 		{
@@ -34,7 +35,7 @@
 						<img :src="'/static/icons/releases/synchronization.svg'" width="30" height="30" />
 					</div>
 				</div>
-				<div v-if="selectedReleases.length > 0"
+				<div v-if="selectedReleases.length"
 					 class="simple-panel-icon-button simple-popup-container"
 					 title="Добавить/удалить релизы в/из избранного">
 					<div class="full-width-height flex-row flex-base-center flex-other-center">
@@ -58,7 +59,7 @@
 							<a class="default-link" @click.prevent="addSelectedToSeens()" href="">Отметить как просмотренные</a>
 							<a class="default-link" @click.prevent="removeSelectedToSeens()" href="">Отметить как не просмотренные</a>
 							<a class="default-link" @click.prevent="addToHided()" href="">Скрыть релиз</a>
-							<a v-if="sectionSelected === 7 && subSectionSelected === 45" class="default-link" @click.prevent="removeFromHided()" href="">Сделать релиз видимым</a>
+							<a v-if="filterModel.section === 7 && filterModel.subsection === 45" class="default-link" @click.prevent="removeFromHided()" href="">Сделать релиз видимым</a>
 						</div>
 					</div>
 				</div>
@@ -214,23 +215,23 @@
 			<div class="right-content">
 				<div class="page-subheader page-line-pair">
 					<div class="flex-row flex-base-center" style="margin: 0 0 0 4px;">
-						<simple-select v-model:item="sectionSelected"
+						<simple-select v-model:item="filterModel.section"
 									   :options="sections"
 									   style="width: 130px;"
 									   @selected="sectionChanged($event)">
 						</simple-select>
 						<div style="width: 4px;"></div>
-						<simple-select v-if="sectionSelected === 6" v-model:item="subSectionSelected"
+						<simple-select v-if="filterModel.section === 6" v-model:item="filterModel.subsection"
 									   :options="historySections"
 									   style="width: 170px;"
 									   @selected="subSectionChanged($event)">
 						</simple-select>
-						<simple-select v-if="sectionSelected === 7" v-model:item="subSectionSelected"
+						<simple-select v-if="filterModel.section === 7" v-model:item="filterModel.subsection"
 									   :options="seenMarkSections"
 									   style="width: 225px;"
 									   @selected="subSectionChanged($event)">
 						</simple-select>
-						<simple-select v-if="sectionSelected === 8" v-model:item="subSectionSelected"
+						<simple-select v-if="filterModel.section === 8" v-model:item="filterModel.subsection"
 									   :options="setsSections"
 									   style="width: 220px;"
 									   @selected="subSectionChanged($event)">
@@ -240,26 +241,26 @@
 						<input v-model="nameFilter" type="text" class="simple-input" placeholder="Введите название релиза" />
 					</div>
 					<div class="flex-row flex-base-center" style="margin-right: 4px;">
-						<simple-select v-model:item="sortingField"
+						<simple-select v-model:item="filterModel.sortingField"
 									   :options="sortingFields"
 									   style="width: 170px; margin-right: 2px;"
-									   @selected="loadReleases()">
+									   @selected="changedSortingFields()">
 						</simple-select>
 						<div class="simple-icon-button"
 							 title="Направление сортировки поиска"
-							 @click="sortDescending = !sortDescending;loadReleases();">
-							<img :src="'/static/icons/releases/' + (sortDescending ? 'sortdescending' : 'sortascending') + '.svg'" width="20" height="20" />
+							 @click="toggleSortingDescending()">
+							<img :src="'/static/icons/releases/' + (filterModel.sortingDescending ? 'sortdescending' : 'sortascending') + '.svg'" width="20" height="20" />
 						</div>
 					</div>
 				</div>
-				<div ref="releasesContainer" class="releases-releases-container" @click.right.prevent="toggleSelectionMode()">
-					<div v-if="releasesGroups.length" class="releases-release-item-group" v-for="(releasesGroup, index) in releasesGroups" :key="index">
-						<div v-if="(290 * index) < scrollTopValue + scrollHeightValue" class="releases-release-item"
-							 :class="{'releases-release-teim-selected': selectionModeEnabled && selectedReleases.includes(release.id) }"
-							 v-for="release in releasesGroup.releases"
-							 :key="release.id"
-							 @click.prevent="toggleSelectionRelease(release.id)"
-							 :title="release.description">
+				<releases-list
+					v-model:allfilters="filterModel"
+					v-model:releasesselected="selectedReleases"
+					:item-height="290"
+					@openrelease="openReleaseCardByLink($event);"
+					ref="releasesList">
+					<template v-slot:release="{ release, isSelected, inCinemahall, inFavorites, seensCount }">
+						<div class="releaseslist-release-item" :class="{'releaseslist-release-item-selected': isSelected }">
 							<img class="poster" :src="'https://anilibria.top/' + release.poster" loading="lazy"/>
 							<div class="information">
 								<span class="header-text" style="margin-top: 10px;">{{ release.title }}</span>
@@ -276,7 +277,7 @@
 										title="Открыть релиз в видеоплеере"
 										loading="lazy"
 									/>
-									<span>{{ release.countVideos }}{{ userMarks.fullSeenReleases.includes(release.id) ? '/' + release.countVideos : (userMarks.seenSeries[release.id] ? '/' + userMarks.seenSeries[release.id] : '' ) }}</span>
+									<span>{{ release.countVideos }}{{ seensCount > 0 ? '/' + seensCount : '' }}</span>
 									<img
 										v-if="release.countTorrents > 0"
 										class="clickable-image"
@@ -296,7 +297,7 @@
 										width="20"
 										height="20"
 										loading="lazy"
-										:title="userMarks.favorites.includes(release.id) ? 'Удалить релиз из избранных' : 'Добавить релиз в избранное'"
+										:title="inFavorites ? 'Удалить релиз из избранных' : 'Добавить релиз в избранное'"
 										@click.stop="toggleReleaseInFavorites(release.id)"
 									/>
 									<span>{{ release.rating }}</span>
@@ -305,12 +306,13 @@
 								</span>
 								<div class="flex-1"></div>
 								<div class="flex-row flex-base-center">
-									<span class="header-text" style="margin-bottom: 4px;">
-										{{ showMarksForRelease(release.id) }}
+									<span v-if="inFavorites || inCinemahall" class="header-text" style="margin-bottom: 4px;">
+										<!-- {{ showMarksForRelease(release.id, userMarks, cinemahallReleases) }} -->
+										{{ 'В ' + (inFavorites ? 'Избранном' : '') + (inCinemahall ? (inFavorites ? ' и ' : '') + 'Кинозале' : '') }}
 									</span>
 									<div class="flex-1"></div>
 									<img
-										v-if="selectionModeEnabled && selectedReleases.includes(release.id)"
+										v-if="isSelected"
 										style="margin-right: 4px; margin-bottom: 4px;"
 										src="/static/icons/releases/selecteditem.svg"
 										width="24"
@@ -320,14 +322,8 @@
 								</div>
 							</div>
 						</div>
-					</div>
-					<div v-if="!releasesGroups.length" class="releases-empty-search flex-row flex-base-center flex-other-center">
-						<div>
-							По текущему фильтру ничего не найдено.<br>
-							Попробуйте указать другие фильтры или раздел и повторить поиск.
-						</div>
-					</div>
-				</div>
+					</template>
+				</releases-list>
 			</div>
 		</div>
 
@@ -356,6 +352,7 @@
 		import PageHeader from './components/PageHeader.js'
 		import SimpleSelect from './components/SimpleSelect.js'
 		import SimpleSwitch from './components/SimpleSwitch.js'
+		import ReleasesList from './components/ReleasesList.js'
 		import MultiSelect from './libs/multiselect.mjs'
 
 		const app = createApp({
@@ -364,14 +361,11 @@
 				'page-header': PageHeader,
 				'simple-select': SimpleSelect,
 				'simple-switch': SimpleSwitch,
-				'multi-select': MultiSelect
+				'multi-select': MultiSelect,
+				'releases-list': ReleasesList
 			},
 			setup() {
 				const mainMenuVisible = ref(false);
-				const sectionSelected = ref(0);
-				const subSectionSelected = ref(-1);
-				const sortingField = ref(0);
-				const sortDescending = ref(true);
 				const nameFilter = ref("");
 				const releasesGroups = ref([]);
 				const releasesCount = ref(0);
@@ -383,33 +377,12 @@
 				const cinemahallReleases = ref([])
 				const selectionModeEnabled = ref(false);
 				const selectedReleases = ref([]);
-				const releasesContainer = useTemplateRef('releasesContainer');
+				const releasesList = useTemplateRef('releasesList');
 				const notificationMessage = ref('');
 				const backToTopVisible = ref(false);
-				const scrollTopValue = ref(0);
-				const scrollHeightValue = ref(0);
 				let currentTimer = -1;
 				const settings = ref({ startedSection: 0, startedSubSection: -1, notificationMode: 0, openLinkMode: 0 });
-				const filterModel = ref({
-					filter: "",
-					type: "",
-					description: "",
-					team: [],
-					teamOr: null,
-					genres: [],
-					genresOr: null,
-					years: [],
-					seasons: [],
-					statuses: [],
-					scheduleDays: [],
-					inFavorites: null,
-					partOfReleases: null,
-					seenStatus: null,
-					sortingField: "",
-					sortingDescending: false,
-					section: 0,
-					subSection: -1
-				});
+				const filterModel = ref({});
 				const teams = ref([]);
 				const releaseDictionaries = ref({
 					genres: [],
@@ -637,138 +610,8 @@
 					},
 				];
 
-				function getReleasesGroupCount() {
-					relasesInGroup = Math.floor((window.innerWidth - leftPanelWidth) / widthItem);
-					if (relasesInGroup === 0) return 1;
-					return relasesInGroup;
-				}
-
-				function recalculateReleaseGroups(releases) {
-					relasesInGroup = getReleasesGroupCount();
-					releasesCount.value = releases.length;
-
-					const result = [];
-					let iterator = 0;
-					let currentGroup = [];
-					for (const release of releases) {
-						if (iterator === relasesInGroup) {
-							result.push({ releases: [...currentGroup] });
-							currentGroup = [];
-							iterator = 0;
-						}
-						currentGroup.push(release);
-						iterator++;
-					}
-					if (currentGroup.length) result.push({ releases: currentGroup });
-
-					releasesGroups.value = result;
-				}
-
-				function adjustSortingBySection(section) {
-					switch (section) {
-						case 0: // all
-						case 1: // favorite
-						case 2: // notification
-						case 4: // aphabet
-						case 7: // seen
-						case 8: // collections
-							sortingField.value = 0;
-							sortDescending.value = true;
-							break;
-						case 3: // schedule
-							sortingField.value = 1;
-							sortDescending.value = false;
-							break;
-						case 6: // history
-							sortingField.value = 13;
-							sortDescending.value = false;
-							break;
-					}
-				}
-
-				function sectionChanged(newValue) {
-					disableSelectionMode();
-					releasesContainer.value.scrollTo({ top: 0, behavior: "instant" });
-
-					subSectionSelected.value = -1;
-
-					adjustSortingBySection();
-
-					loadReleases();
-				}
-
-				function subSectionChanged(newValue) {
-					disableSelectionMode();
-					releasesContainer.value.scrollTo({ top: 0, behavior: "instant" });
-
-					subSectionSelected.value = newValue;
-
-					adjustSortingBySection();
-
-					loadReleases();
-				}
-
-				function getListModel() {
-					const sendModel = { ...filterModel.value };
-					sendModel.filter = nameFilter.value;
-					sendModel.sortingField = sortingField.value;
-					sendModel.sortingDescending = sortDescending.value;
-					sendModel.section = sectionSelected.value;
-					sendModel.subSection = subSectionSelected.value;
-					return sendModel;
-				}
-				
-				async function loadReleases() {
-					const releases = await getRelasesByFilter(getListModel());
-
-					recalculateReleaseGroups(releases);
-				}
-
-				function toggleSelectionMode() {
-					selectedReleases.value = [];
-					selectionModeEnabled.value = !selectionModeEnabled.value;
-				}
-
-				function disableSelectionMode() {
-					selectedReleases.value = [];
-					selectionModeEnabled.value = false;
-				}
-
-				function toggleSelectionRelease(id) {
-					if (!selectionModeEnabled.value) {
-						openReleaseCardByLink(id);
-						return;
-					}
-
-					if (selectedReleases.value.includes(id)) {
-						selectedReleases.value = selectedReleases.value.filter(a => a !== id);
-					} else {
-						selectedReleases.value.push(id);
-					}
-				}
-
 				async function saveReleasesSettings() {
 					await saveSettings('releases', settings.value);
-				}
-
-				async function loadAllData() {
-					userMarks.value = await getUserMarks();
-					settings.value = await getPageSettings('releases');
-					torrentSettings.value = await getPageSettings('torrent');
-					cinemahallReleases.value = await getCinemahallReleases();
-					notificationMessage.value = await getReleaseNotifications();
-
-					const dictionaries = await getReleaseDictionaries();
-					releaseDictionaries.value.genres = dictionaries.genres;
-					releaseDictionaries.value.teams = dictionaries.teams;
-					releaseDictionaries.value.statuses = dictionaries.statuses;
-					releaseDictionaries.value.years = dictionaries.years;
-					releaseDictionaries.value.seasons = dictionaries.seasons;
-
-					sectionSelected.value = settings.value.startedSection;
-					subSectionSelected.value = settings.value.startedSubSection;
-					adjustSortingBySection();
-					await loadReleases();
 				}
 
 				function getPublishDay(value) {
@@ -802,9 +645,9 @@
 				}
 
 				function loadNotifications() {
-					sectionSelected.value = 2;
-					subSectionSelected.value = -1;
-					loadReleases();
+					filterModel.value.section = 2;
+					filterModel.value.subsection = -1;
+					releasesList.loadReleases();
 				}
 
 				function backToTop() {
@@ -832,35 +675,31 @@
 				function loadReleaseAfterTimer() {
 					if (currentTimer !== -1) clearTimeout(currentTimer);
 
-					currentTimer = setTimeout(() => { loadReleases() }, 1000);
-				}
-
-				function clearReleaseSelection() {
-					selectedReleases.value = [];
+					currentTimer = setTimeout(() => { releasesList.value.loadReleases() }, 1000);
 				}
 
 				async function addSelectedToFavorites() {
 					await addFavorites(selectedReleases.value);
 					clearReleaseSelection();
-					userMarks.value = await getUserMarks();
+					setTimeout(async () => await releasesList.value.refreshUserMarks());
 				}
 
 				async function removeSelectedToFavorites() {
 					await removeFavorites(selectedReleases.value);
 					clearReleaseSelection();
-					userMarks.value = await getUserMarks();
+					releasesList.value.refreshUserMarks();
 				}
 
 				async function addSelectedToSeens() {
 					await addReleasesSeenMark(selectedReleases.value);
 					clearReleaseSelection();
-					userMarks.value = await getUserMarks();
+					releasesList.value.refreshUserMarks();
 				}
 
 				async function removeSelectedToSeens() {
 					await removeReleasesSeenMark(selectedReleases.value);
 					clearReleaseSelection();
-					userMarks.value = await getUserMarks();					
+					releasesList.value.refreshUserMarks();					
 				}
 
 				async function addToHided() {
@@ -885,9 +724,9 @@
 					cinemahallReleases.value = await getCinemahallReleases();
 				}
 
-				function showMarksForRelease(id) {
-					const isFavorite = userMarks.value.favorites.includes(id);
-					const isCinemahall = cinemahallReleases.value.includes(id);
+				function showMarksForRelease(id, userMarks, cinemahallReleases) {
+					const isFavorite = userMarks.favorites.includes(id);
+					const isCinemahall = cinemahallReleases.includes(id);
 
 					if (!isFavorite && !isCinemahall) return '';
 
@@ -909,25 +748,29 @@
 				}
 
 				async function toggleReleaseInFavorites(id) {
-					if (userMarks.value.favorites.includes(id)) {
+					if (releasesList.value.userMarks.favorites.includes(id)) {
 						await removeFavorites([id]);
 					} else {
 						await addFavorites([id]);
 					}
-					userMarks.value = await getUserMarks();
+					releasesList.value.refreshUserMarks();
 				}
 
-				window.addEventListener('resize', () => {
-					const newRelasesInGroup = getReleasesGroupCount();
-					if (newRelasesInGroup !== relasesInGroup.value) {
-						const allReleases = releasesGroups.value.map(a => a.releases).flat()
-						releasesGroups.value = [];
-						recalculateReleaseGroups(allReleases);
-					}
-					scrollHeightValue.value = releasesContainer.value.clientHeight;
-				});
+				function toggleSortingDescending() {
+					releasesList.value.sortingChanged(filterModel.value.sortingField, !filterModel.value.sortingDescending);
+				}
 
-				loadAllData();
+				function changedSortingFields() {
+					releasesList.value.sortingChanged(filterModel.value.sortingField, filterModel.value.sortingDescending);
+				}
+
+				function sectionChanged() {
+					releasesList.value.sectionChanged(filterModel.value.section);
+				}
+
+				function subSectionChanged() {
+					releasesList.value.subSectionChanged(filterModel.value.subsection);
+				}
 
 				watch(
 					nameFilter,
@@ -945,36 +788,27 @@
 				);
 
 				onMounted(() => {
-					releasesContainer.value.addEventListener('scroll', () => {
+					/*releasesContainer.value.addEventListener('scroll', () => {
 						backToTopVisible.value = releasesContainer.value.scrollTop > 0;
 						scrollTopValue.value = releasesContainer.value.scrollTop;
 					});
 
 					setTimeout(() => {
 						scrollHeightValue.value = releasesContainer.value.clientHeight;
-					})
+					})*/
 				});
 
 				return {
 					mainMenuVisible,
-					sectionSelected,
-					subSectionSelected,
 					sections,
 					historySections,
 					setsSections,
 					seenMarkSections,
 					sortingFields,
-					sortingField,
-					sortDescending,
 					nameFilter,
 					releasesGroups,
-					loadReleases,
-					sectionChanged,
-					userMarks,
 					selectionModeEnabled,
-					toggleSelectionMode,
 					selectedReleases,
-					toggleSelectionRelease,
 					getPublishDay,
 					openInVideoPlayer,
 					settings,
@@ -989,7 +823,6 @@
 					teams,
 					openRandomReleaseInSelection,
 					openLinkMode,
-					subSectionChanged,
 					saveReleasesSettings,
 					addSelectedToFavorites,
 					removeSelectedToFavorites,
@@ -998,13 +831,16 @@
 					addSelectedToSeens,
 					removeSelectedToSeens,
 					showMarksForRelease,
-					scrollTopValue,
-					scrollHeightValue,
 					addToHided,
 					removeFromHided,
 					formatCodecs,
 					downloadInTorrent,
-					toggleReleaseInFavorites
+					toggleReleaseInFavorites,
+					toggleSortingDescending,
+					changedSortingFields,
+					sectionChanged,
+					subSectionChanged,
+					openReleaseCardByLink
 				}
 			}
 		});
