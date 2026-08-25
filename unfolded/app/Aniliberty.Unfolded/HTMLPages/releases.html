@@ -213,46 +213,8 @@
 				</div>
 			</div>
 			<div class="right-content">
-				<div class="page-subheader page-line-pair">
-					<div class="flex-row flex-base-center" style="margin: 0 0 0 4px;">
-						<simple-select v-model:item="filterModel.section"
-									   :options="sections"
-									   style="width: 130px;"
-									   @selected="sectionChanged($event)">
-						</simple-select>
-						<div style="width: 4px;"></div>
-						<simple-select v-if="filterModel.section === 6" v-model:item="filterModel.subsection"
-									   :options="historySections"
-									   style="width: 170px;"
-									   @selected="subSectionChanged($event)">
-						</simple-select>
-						<simple-select v-if="filterModel.section === 7" v-model:item="filterModel.subsection"
-									   :options="seenMarkSections"
-									   style="width: 225px;"
-									   @selected="subSectionChanged($event)">
-						</simple-select>
-						<simple-select v-if="filterModel.section === 8" v-model:item="filterModel.subsection"
-									   :options="setsSections"
-									   style="width: 220px;"
-									   @selected="subSectionChanged($event)">
-						</simple-select>
-					</div>
-					<div class="flex-row flex-base-center flex-other-center">
-						<input v-model="nameFilter" type="text" class="simple-input" placeholder="Введите название релиза" />
-					</div>
-					<div class="flex-row flex-base-center" style="margin-right: 4px;">
-						<simple-select v-model:item="filterModel.sortingField"
-									   :options="sortingFields"
-									   style="width: 170px; margin-right: 2px;"
-									   @selected="changedSortingFields()">
-						</simple-select>
-						<div class="simple-icon-button"
-							 title="Направление сортировки поиска"
-							 @click="toggleSortingDescending()">
-							<img :src="'/static/icons/releases/' + (filterModel.sortingDescending ? 'sortdescending' : 'sortascending') + '.svg'" width="20" height="20" />
-						</div>
-					</div>
-				</div>
+				<releases-toolbar :filter-model="filterModel" :releases-list="releasesList">
+				</releases-toolbar>
 				<releases-list
 					v-model:allfilters="filterModel"
 					v-model:releasesselected="selectedReleases"
@@ -353,6 +315,7 @@
 		import SimpleSelect from './components/SimpleSelect.js'
 		import SimpleSwitch from './components/SimpleSwitch.js'
 		import ReleasesList from './components/ReleasesList.js'
+		import ReleasesToolBar from './components/ReleasesToolBar.js'
 		import MultiSelect from './libs/multiselect.mjs'
 
 		const app = createApp({
@@ -362,11 +325,11 @@
 				'simple-select': SimpleSelect,
 				'simple-switch': SimpleSwitch,
 				'multi-select': MultiSelect,
-				'releases-list': ReleasesList
+				'releases-list': ReleasesList,
+				'releases-toolbar': ReleasesToolBar,
 			},
 			setup() {
 				const mainMenuVisible = ref(false);
-				const nameFilter = ref("");
 				const releasesGroups = ref([]);
 				const releasesCount = ref(0);
 				let relasesInGroup = 1;
@@ -551,65 +514,6 @@
 					}
 				];
 
-				const sortingFields = [
-					{
-						title: "Обновлению",
-						id: 0
-					},
-					{
-						title: "Расписанию",
-						id: 1
-					},
-					{
-						title: "Имени",
-						id: 2
-					},
-					{
-						title: "Году",
-						id: 3
-					},
-					{
-						title: "Рейтингу",
-						id: 4
-					},
-					{
-						title: "Статусу",
-						id: 5
-					},
-					{
-						title: "Ориг. имени",
-						id: 6
-					},
-					{
-						title: "Истории открытия",
-						id: 7
-					},
-					{
-						title: "Истории просмотра",
-						id: 8
-					},
-					{
-						title: "Сезону",
-						id: 9
-					},
-					{
-						title: "Избранности",
-						id: 10
-					},
-					{
-						title: "Просмотренности",
-						id: 11
-					},
-					{
-						title: "Части серии",
-						id: 12
-					},
-					{
-						title: "Истории",
-						id: 13
-					},
-				];
-
 				async function saveReleasesSettings() {
 					await saveSettings('releases', settings.value);
 				}
@@ -756,27 +660,6 @@
 					releasesList.value.refreshUserMarks();
 				}
 
-				function toggleSortingDescending() {
-					releasesList.value.sortingChanged(filterModel.value.sortingField, !filterModel.value.sortingDescending);
-				}
-
-				function changedSortingFields() {
-					releasesList.value.sortingChanged(filterModel.value.sortingField, filterModel.value.sortingDescending);
-				}
-
-				function sectionChanged() {
-					releasesList.value.sectionChanged(filterModel.value.section);
-				}
-
-				function subSectionChanged() {
-					releasesList.value.subSectionChanged(filterModel.value.subsection);
-				}
-
-				watch(
-					nameFilter,
-					(newValue) => { loadReleaseAfterTimer() }
-				);
-
 				watch(
 					() => filterModel.value.description,
 					(newValue) => { loadReleaseAfterTimer(); }
@@ -804,11 +687,10 @@
 					historySections,
 					setsSections,
 					seenMarkSections,
-					sortingFields,
-					nameFilter,
 					releasesGroups,
 					selectionModeEnabled,
 					selectedReleases,
+					releasesList,
 					getPublishDay,
 					openInVideoPlayer,
 					settings,
@@ -836,10 +718,6 @@
 					formatCodecs,
 					downloadInTorrent,
 					toggleReleaseInFavorites,
-					toggleSortingDescending,
-					changedSortingFields,
-					sectionChanged,
-					subSectionChanged,
 					openReleaseCardByLink
 				}
 			}

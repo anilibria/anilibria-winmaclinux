@@ -19,6 +19,15 @@ namespace Aniliberty.Unfolded.Routes
 			app.MapGet("/wshub/start", ExternalWebSocket);
 		}
 
+		public static async Task Finilize()
+		{
+			foreach (var webSocket in m_webSockets.Keys)
+			{
+				if (webSocket.State == WebSocketState.Open) await webSocket.CloseAsync(WebSocketCloseStatus.NormalClosure, "bye bye", default);
+			}
+			m_observer.Clear();
+		}
+
 		public static async Task ExternalWebSocket(HttpContext context)
 		{
 			if (!context.WebSockets.IsWebSocketRequest)
@@ -51,26 +60,33 @@ namespace Aniliberty.Unfolded.Routes
 		{
 			var buffer = new byte[1024].AsMemory();
 
-			while (true)
+			try
 			{
-				if (webSocket.State != WebSocketState.Open) break;
-
-				var receiveResult = await webSocket.ReceiveAsync(buffer, CancellationToken.None);
-
-				if (receiveResult.Count != 0)
+				while (true)
 				{
-					var messageContent = Encoding.UTF8.GetString(buffer[..receiveResult.Count].ToArray());
-					var parts = messageContent.Split(":");
-					if (parts.Count() >= 2)
+					if (webSocket.State != WebSocketState.Open) break;
+
+					var receiveResult = await webSocket.ReceiveAsync(buffer, CancellationToken.None);
+
+					if (receiveResult.Count != 0)
 					{
-						var command = parts[0];
-						var message = parts[1];
-						if (m_observer.ContainsKey(command))
+						var messageContent = Encoding.UTF8.GetString(buffer[..receiveResult.Count].ToArray());
+						var parts = messageContent.Split(":");
+						if (parts.Count() >= 2)
 						{
-							m_observer[command](command, message);
+							var command = parts[0];
+							var message = parts[1];
+							if (m_observer.ContainsKey(command))
+							{
+								m_observer[command](command, message);
+							}
 						}
 					}
 				}
+			}
+			catch (Exception exception)
+			{
+				Console.WriteLine("WebSocket failed: " + exception.Message);
 			}
 
 			if (m_webSockets.ContainsKey(webSocket)) m_webSockets.TryRemove(webSocket, out var _);

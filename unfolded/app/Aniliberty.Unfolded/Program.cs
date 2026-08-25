@@ -59,6 +59,7 @@ namespace Aniliberty.Unfolded
 			Console.WriteLine("version 0.0.0\n");
 
 			var builder = WebApplication.CreateSlimBuilder(args);
+			builder.WebHost.UseShutdownTimeout(TimeSpan.FromSeconds(2));
 			builder.Services.ConfigureHttpJsonOptions(options =>
 			{
 				options.SerializerOptions.TypeInfoResolverChain.Insert(0, AppJsonSerializerContext.Default);
@@ -106,7 +107,7 @@ namespace Aniliberty.Unfolded
 
 				return Results.NotFound();
 			}).ExcludeFromDescription();
-#endif	
+#endif
 
 			app.MapGet("/", () => Results.Redirect("/static/releases.html"));
 
@@ -126,7 +127,6 @@ namespace Aniliberty.Unfolded
 			TorrentClient.RegisterRoutes(app);
 			AppData.RegisterRoutes(app);
 
-			//Releases.IsEmptyData()
 #if !DEBUG
 			// open url in browser
 			GlobalConfig.OpenUrl(Releases.IsEmptyData() || AppData.IsFirstStart());
@@ -136,6 +136,7 @@ namespace Aniliberty.Unfolded
 
 			await AppData.Finilize();
 			await TorrentClient.Finilize();
+			await WebSocketHub.Finilize();
 		}
 	}
 
