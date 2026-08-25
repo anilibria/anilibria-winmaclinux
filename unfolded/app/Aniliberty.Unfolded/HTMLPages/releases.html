@@ -35,47 +35,11 @@
 						<img :src="'/static/icons/releases/synchronization.svg'" width="30" height="30" />
 					</div>
 				</div>
-				<div v-if="selectedReleases.length"
-					 class="simple-panel-icon-button simple-popup-container"
-					 title="Добавить/удалить релизы в/из избранного">
-					<div class="full-width-height flex-row flex-base-center flex-other-center">
-						<img :src="'/static/icons/releases/favorite.svg'" width="30" height="30" />
-					</div>
-					<div class="simple-popup-box releases-rightmenu">
-						<div class="releases-rightmenu-random flex-column">
-							<a class="default-link" @click.prevent="addSelectedToFavorites()" href="">Добавить в избранное</a>
-							<a class="default-link" @click.prevent="removeSelectedToFavorites()" href="">Удалить из избранного</a>
-						</div>
-					</div>
-				</div>
-				<div v-if="selectedReleases.length"
-					 class="simple-panel-icon-button simple-popup-container"
-					 title="Отметить релизы как просмотренные">
-					<div class="full-width-height flex-row flex-base-center flex-other-center">
-						<img :src="'/static/icons/releases/seen.svg'" width="30" height="30" />
-					</div>
-					<div class="simple-popup-box releases-rightmenu">
-						<div class="releases-rightmenu-seens flex-column">
-							<a class="default-link" @click.prevent="addSelectedToSeens()" href="">Отметить как просмотренные</a>
-							<a class="default-link" @click.prevent="removeSelectedToSeens()" href="">Отметить как не просмотренные</a>
-							<a class="default-link" @click.prevent="addToHided()" href="">Скрыть релиз</a>
-							<a v-if="filterModel.section === 7 && filterModel.subsection === 45" class="default-link" @click.prevent="removeFromHided()" href="">Сделать релиз видимым</a>
-						</div>
-					</div>
-				</div>
-				<div v-if="selectedReleases.length"
-					 class="simple-panel-icon-button simple-popup-container"
-					 title="Добавлять/удалять релизы в/из кинозала">
-					<div class="full-width-height flex-row flex-base-center flex-other-center">
-						<img :src="'/static/icons/mainmenu/cinemahall.svg'" width="30" height="30" />
-					</div>
-					<div class="simple-popup-box releases-rightmenu">
-						<div class="releases-rightmenu-random flex-column">
-							<a class="default-link" @click.prevent="addSelectedToCinemahall()" href="">Добавить в кинозал</a>
-							<a class="default-link" @click.prevent="removeSelectedToCinemahall()" href="">Удалить из кинозала</a>
-						</div>
-					</div>
-				</div>
+				<releases-sidebar-actions
+					:selected-releases="selectedReleases"
+					:releases-list="releasesList"
+					:filter-model="filterModel">
+				</releases-sidebar-actions>
 				<div class="simple-panel-icon-button simple-popup-container"
 					 title="Добавить фильтры для фильтрации по разным полям релиза">
 					<div class="full-width-height flex-row flex-base-center flex-other-center">
@@ -306,9 +270,7 @@
 			getRelasesByFilter, getUserMarks, getPageSettings,
 			saveSettings, getReleaseNotifications, getRandomReleaseFromAll,
 			getReleaseDictionaries, getRandomRelease, addFavorites, removeFavorites,
-			addReleasesSeenMark, removeReleasesSeenMark, addCinemahallReleases, removeCinemahallReleases,
-			getCinemahallReleases, getHidedReleases, addHidedReleases, removeHidedReleases,
-			downloadTorrent
+			getCinemahallReleases, getHidedReleases, addHidedReleases, downloadTorrent
 		} from './unfoldapi.js'
 		import Drawer from './components/Drawer.js'
 		import PageHeader from './components/PageHeader.js'
@@ -316,6 +278,7 @@
 		import SimpleSwitch from './components/SimpleSwitch.js'
 		import ReleasesList from './components/ReleasesList.js'
 		import ReleasesToolBar from './components/ReleasesToolBar.js'
+		import ReleasesSideBarActions from './components/ReleasesSideBarActions.js'
 		import MultiSelect from './libs/multiselect.mjs'
 
 		const app = createApp({
@@ -327,6 +290,7 @@
 				'multi-select': MultiSelect,
 				'releases-list': ReleasesList,
 				'releases-toolbar': ReleasesToolBar,
+				'releases-sidebar-actions': ReleasesSideBarActions
 			},
 			setup() {
 				const mainMenuVisible = ref(false);
@@ -582,61 +546,6 @@
 					currentTimer = setTimeout(() => { releasesList.value.loadReleases() }, 1000);
 				}
 
-				async function addSelectedToFavorites() {
-					await addFavorites(selectedReleases.value);
-					clearReleaseSelection();
-					setTimeout(async () => await releasesList.value.refreshUserMarks());
-				}
-
-				async function removeSelectedToFavorites() {
-					await removeFavorites(selectedReleases.value);
-					clearReleaseSelection();
-					releasesList.value.refreshUserMarks();
-				}
-
-				async function addSelectedToSeens() {
-					await addReleasesSeenMark(selectedReleases.value);
-					clearReleaseSelection();
-					releasesList.value.refreshUserMarks();
-				}
-
-				async function removeSelectedToSeens() {
-					await removeReleasesSeenMark(selectedReleases.value);
-					clearReleaseSelection();
-					releasesList.value.refreshUserMarks();					
-				}
-
-				async function addToHided() {
-					await addHidedReleases(selectedReleases.value);
-					clearReleaseSelection();
-				}
-
-				async function removeFromHided() {
-					await removeHidedReleases(selectedReleases.value);
-					clearReleaseSelection();
-				}
-
-				async function addSelectedToCinemahall() {
-					await addCinemahallReleases(selectedReleases.value);
-					clearReleaseSelection();
-					cinemahallReleases.value = await getCinemahallReleases();
-				}
-
-				async function removeSelectedToCinemahall() {
-					await removeCinemahallReleases(selectedReleases.value);
-					clearReleaseSelection();
-					cinemahallReleases.value = await getCinemahallReleases();
-				}
-
-				function showMarksForRelease(id, userMarks, cinemahallReleases) {
-					const isFavorite = userMarks.favorites.includes(id);
-					const isCinemahall = cinemahallReleases.includes(id);
-
-					if (!isFavorite && !isCinemahall) return '';
-
-					return `В ${isFavorite ? 'Избранном' : ''}${isCinemahall ? (isFavorite ? ' и ' : '') + 'Кинозале' : ''}`
-				}
-
 				function formatCodecs(codecs) {
 					if (!codecs) return '';
 
@@ -706,15 +615,6 @@
 					openRandomReleaseInSelection,
 					openLinkMode,
 					saveReleasesSettings,
-					addSelectedToFavorites,
-					removeSelectedToFavorites,
-					addSelectedToCinemahall,
-					removeSelectedToCinemahall,
-					addSelectedToSeens,
-					removeSelectedToSeens,
-					showMarksForRelease,
-					addToHided,
-					removeFromHided,
 					formatCodecs,
 					downloadInTorrent,
 					toggleReleaseInFavorites,

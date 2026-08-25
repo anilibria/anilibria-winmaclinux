@@ -68,3 +68,14 @@
     box-shadow: 2px 2px var(--releases-item-selected-background);
 }
 
+.releaseslist-rightmenu-actions {
+    min-width: 150px;
+    padding: 8px;
+}
+
+.releaseslist-rightmenu-seens {
+    min-width: 220px;
+    padding: 8px;
+}
+
+

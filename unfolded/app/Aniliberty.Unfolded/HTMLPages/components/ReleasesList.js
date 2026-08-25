@@ -197,8 +197,11 @@ export default {
         }
 
         async function refreshUserMarks() {
-            console.log('refreshUserMarks');
             userMarks.value = await getUserMarks();
+        }
+
+        async function refreshCinemahall() {
+            cinemahallReleases.value = await getCinemahallReleases();
         }
 
         // load after load page all related data in one row
@@ -296,7 +299,9 @@ export default {
             sortingChanged,
             toggleSelectionMode,
             loadReleases,
-            refreshUserMarks
+            refreshUserMarks,
+            refreshCinemahall,
+            disableSelectionMode
 		};
 	}
 };
