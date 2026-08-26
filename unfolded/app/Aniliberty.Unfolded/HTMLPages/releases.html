@@ -109,6 +109,7 @@
 					v-model:allfilters="filterModel"
 					v-model:releasesselected="selectedReleases"
 					v-model:backtotopvisible="backToTopVisible"
+					:sourcepage="'releases'"
 					:item-height="290"
 					@openrelease="openReleaseCardByLink($event);"
 					ref="releasesList">
@@ -179,8 +180,8 @@
 			</div>
 		</div>
 
-		<div :class="{'releases-selection-helper': true, 'releases-pulse-animation': selectionModeEnabled }">
-			{{ selectionModeEnabled ? 'Нажмите ЛКМ для выделения релизов, ПКМ для выхода' : 'Нажмите ПКМ для перехода в режим выделения' }}
+		<div v-if="releasesList" :class="{'releases-selection-helper': true, 'releases-pulse-animation': releasesList.selectionModeEnabled }">
+			{{ releasesList.selectionModeEnabled ? 'Нажмите ЛКМ для выделения релизов, ПКМ для выхода' : 'Нажмите ПКМ для перехода в режим выделения' }}
 		</div>
 		<div v-if="backToTopVisible" class="releases-backtotop-helper flex-row flex-base-center flex-other-center" @click="backToTop()">
 			<img src="/static/icons/commonbuttons/arrowup.svg" width="20" height="20" />

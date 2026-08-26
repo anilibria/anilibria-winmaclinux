@@ -9,6 +9,7 @@
 	<link rel="stylesheet" href="main.css">
 	<link rel="stylesheet" href="mainmenu.css">
 	<link rel="stylesheet" href="pagestructure.css">
+	<link rel="stylesheet" href="styles/releaselist.css">
 	<link rel="stylesheet" href="styles/torrent.css">
 	<script type="importmap">
 		{
@@ -36,21 +37,30 @@
 						</div>
 					</div>
 				</div>
+				<releases-sidebar-actions
+					:selected-releases="selectedReleases"
+					:releases-list="releasesList"
+					:filter-model="filterModel">
+				</releases-sidebar-actions>
+				<releases-side-bar-search
+					:releases-list="releasesList"
+					:filter-model="filterModel">
+				</releases-side-bar-search>
 				<div class="simple-panel-icon-button simple-popup-container" title="Настройка страницы Torrent клиент">
 					<div class="full-width-height flex-row flex-base-center flex-other-center">
 						<img :src="'/static/icons/commonbuttons/settings.svg'" width="30" height="30" />
 					</div>
-					<div class="simple-popup-box torrents-rightmenu">
+					<div v-if="releasesList" class="simple-popup-box torrents-rightmenu">
 						<div class="torrents-rightmenu-settings flex-column gap-8">
 							<div>Использовать внутренний torrent клиент:</div>
-							<simple-switch v-model:state="settings.useInternalTorrectClient" @changed="savePageSettings()">
+							<simple-switch v-model:state="releasesList.torrentSettings.useInternalTorrectClient" @changed="savePageSettings()">
 							</simple-switch>
 							<div>
 								Предпочтение качества торрента (сверху вниз):<br>
 								<span class="torrents-disclaimer">тащите мышкой для изменения</span>
 							</div>
 							<div class="torrents-sortable-quality-container">
-								<sortable-list v-model:options="settings.codecPrefference" @changed="savePageSettings()">
+								<sortable-list v-model:options="releasesList.torrentSettings.codecPrefference" @changed="savePageSettings()">
 								</sortable-list>
 							</div>
 						</div>
@@ -58,54 +68,18 @@
 				</div>
 			</div>
 			<div class="right-content">
-				<div class="page-subheader page-line-pair">
-					<div class="flex-row flex-base-center" style="margin: 0 0 0 4px;">
-						<simple-select v-model:item="sectionSelected"
-									   :options="sections"
-									   style="width: 130px;"
-									   @selected="sectionChanged($event)">
-						</simple-select>
-						<div style="width: 4px;"></div>
-						<simple-select v-if="sectionSelected === 6" v-model:item="subSectionSelected"
-									   :options="historySections"
-									   style="width: 170px;"
-									   @selected="subSectionChanged($event)">
-						</simple-select>
-						<simple-select v-if="sectionSelected === 7" v-model:item="subSectionSelected"
-									   :options="seenMarkSections"
-									   style="width: 225px;"
-									   @selected="subSectionChanged($event)">
-						</simple-select>
-						<simple-select v-if="sectionSelected === 8" v-model:item="subSectionSelected"
-									   :options="setsSections"
-									   style="width: 220px;"
-									   @selected="subSectionChanged($event)">
-						</simple-select>
-					</div>
-					<div class="flex-row flex-base-center flex-other-center">
-						<input v-model="nameFilter" type="text" class="simple-input" placeholder="Введите название релиза" />
-					</div>
-					<div class="flex-row flex-base-center" style="margin-right: 4px;">
-						<simple-select v-model:item="sortingField"
-									   :options="sortingFields"
-									   style="width: 170px; margin-right: 2px;"
-									   @selected="loadReleases()">
-						</simple-select>
-						<div class="simple-icon-button"
-							 title="Направление сортировки поиска"
-							 @click="sortDescending = !sortDescending;loadReleases();">
-							<img :src="'/static/icons/releases/' + (sortDescending ? 'sortdescending' : 'sortascending') + '.svg'" width="20" height="20" />
-						</div>
-					</div>
-				</div>
-				<div ref="releasesContainer" class="torrents-releases-container" @click.right.prevent="toggleSelectionMode()">
-					<div v-if="releasesGroups.length" class="torrents-release-item-group" v-for="(releasesGroup, index) in releasesGroups" :key="index">
-						<div class="torrents-release-item"
-							 :class="{'torrents-release-item-selected': selectionModeEnabled && selectedReleases.includes(release.id) }"
-							 v-for="release in releasesGroup.releases"
-							 :key="release.id"
-							 @click.prevent="toggleSelectionRelease(release.id)"
-							 :title="release.description">
+				<releases-toolbar :filter-model="filterModel" :releases-list="releasesList">
+				</releases-toolbar>
+				<releases-list
+					v-model:allfilters="filterModel"
+					v-model:releasesselected="selectedReleases"
+					v-model:backtotopvisible="backToTopVisible"
+					:sourcepage="'torrent'"
+					:item-height="290"
+					@openrelease="openReleaseCardByLink($event);"
+					ref="releasesList">
+					<template v-slot:release="{ release, isSelected, inCinemahall, inFavorites, seensCount }">
+						<div class="releaseslist-release-item" :class="{'releaseslist-release-item-selected': isSelected }">
 							<img class="poster" :src="'https://anilibria.top' + release.poster" loading="lazy"/>
 							<div class="information">
 								<span class="header-text" style="margin-top: 10px;">{{ release.title }}</span>
@@ -113,29 +87,29 @@
 								<span class="normal-text">{{ release.type }} {{ release.series }} {{ release.genres ? '- ' + release.genres.join(', ') : '' }}</span>
 								<span class="normal-text"><b>Команда:</b> {{ release.voices ? release.voices.join(', ') : '' }}</span>
 								<span class="digit-text flex-row flex-base-center gap-4">
-									<img
-										class="clickable-image"
-										src="/static/icons/mainmenu/torrent.svg"
-										width="20"
-										height="20"
-										loading="lazy"
-										title="Открыть торрент на просмотр в видеоплеере"
-										@click.stop="openTorrentInVideoplayer(release.id)"
-									/>
-									<span>{{ showTorrentSeries(release.id) }}</span>
-									<img src="/static/icons/releases/favorite.svg" width="20" height="20" loading="lazy" />
-									<span>{{ release.rating }}</span>
-									<img v-if="release.publishDay" src="/static/icons/releases/scheduleday.svg" width="20" height="20" loading="lazy" />
-									<span v-if="release.publishDay">{{ getPublishDay(release.publishDay) }}</span>
+								<img
+									class="clickable-image"
+									src="/static/icons/mainmenu/torrent.svg"
+									width="20"
+									height="20"
+									loading="lazy"
+									title="Открыть торрент на просмотр в видеоплеере"
+									@click.stop="openTorrentInVideoplayer(release.id)"
+								/>
+								<span>{{ showTorrentSeries(release.id, seensCount) }}</span>
+								<img src="/static/icons/releases/favorite.svg" width="20" height="20" loading="lazy" />
+								<span>{{ release.rating }}</span>
+								<img v-if="release.publishDay" src="/static/icons/releases/scheduleday.svg" width="20" height="20" loading="lazy" />
+								<span v-if="release.publishDay">{{ getPublishDay(release.publishDay) }}</span>
 								</span>
 								<div class="flex-1"></div>
 								<div class="flex-row flex-base-center">
-									<span class="header-text" style="margin-bottom: 4px;">
-										{{ showMarksForRelease(release.id) }}
+									<span v-if="inFavorites || inCinemahall" class="header-text" style="margin-bottom: 4px;">
+										{{ 'В ' + (inFavorites ? 'Избранном' : '') + (inCinemahall ? (inFavorites ? ' и ' : '') + 'Кинозале' : '') }}
 									</span>
 									<div class="flex-1"></div>
 									<img
-										v-if="selectionModeEnabled && selectedReleases.includes(release.id)"
+										v-if="isSelected"
 										style="margin-right: 4px; margin-bottom: 4px;"
 										src="/static/icons/releases/selecteditem.svg"
 										width="24"
@@ -145,20 +119,13 @@
 								</div>
 							</div>
 						</div>
-					</div>
-					<div v-if="!releasesGroups.length" class="torrents-empty-search flex-row flex-base-center flex-other-center">
-						<div>
-							По текущему фильтру релизов с активными торрентами не найдено.<br>
-							Попробуйте указать другие фильтры или раздел и повторить поиск.
-							Добавить торренты можно на странице <a href="releases.html">Каталог релизов</a>.
-						</div>
-					</div>
-				</div>
-			</div>
+					</template>
+				</releases-list>
+			</div>			
 		</div>
-		
-		<div :class="{'torrents-selection-helper': true, 'torrents-pulse-animation': selectionModeEnabled }">
-			{{ selectionModeEnabled ? 'Нажмите ЛКМ для выделения релизов, ПКМ для выхода' : 'Нажмите ПКМ для перехода в режим выделения' }}
+
+		<div v-if="releasesList" :class="{'torrents-selection-helper': true, 'torrents-pulse-animation': releasesList.selectionModeEnabled }">
+			{{ releasesList.selectionModeEnabled ? 'Нажмите ЛКМ для выделения релизов, ПКМ для выхода' : 'Нажмите ПКМ для перехода в режим выделения' }}
 		</div>
 		<div v-if="backToTopVisible" class="torrents-backtotop-helper flex-row flex-base-center flex-other-center" @click="backToTop()">
 			<img src="/static/icons/commonbuttons/arrowup.svg" width="20" height="20" />
@@ -180,6 +147,11 @@
 		import SimpleSwitch from './components/SimpleSwitch.js'
 		import SimpleSelect from './components/SimpleSelect.js'
 		import SortableList from './components/SortableList.js'
+		import ReleasesList from './components/ReleasesList.js'
+		import ReleasesToolBar from './components/ReleasesToolBar.js'
+		import ReleasesSideBarActions from './components/ReleasesSideBarActions.js'
+		import ReleasesSideBarSearch from './components/ReleasesSideBarSearch.js'
+		import { getPublishDay } from './releaseDictionaries.js'
 
 		const app = createApp({
 			components: {
@@ -188,383 +160,49 @@
 				'simple-switch': SimpleSwitch,
 				'simple-select': SimpleSelect,
 				'sortable-list': SortableList,
+				'releases-list': ReleasesList,
+				'releases-toolbar': ReleasesToolBar,
+				'releases-sidebar-actions': ReleasesSideBarActions,
+				'releases-side-bar-search': ReleasesSideBarSearch
 			},
 			setup() {
 				const mainMenuVisible = ref(false);
-				const sectionSelected = ref(0);
-				const subSectionSelected = ref(-1);
-				const sortingField = ref(0);
-				const sortDescending = ref(true);
-				const nameFilter = ref('');
 				const selectedReleases = ref([]);
-				const selectionModeEnabled = ref(false);
-				const userMarks = ref({ favorites: [], fullSeenReleases: [], seenSeries: {} });
-				const releasesContainer = useTemplateRef('releasesContainer');
-				const cinemahallReleases = ref([]);
 				const activeTorrents = ref({});
-				const releasesGroups = ref([]);
-				const releasesCount = ref(0);
 				const backToTopVisible = ref(false);
-				let relasesInGroup = 1;
-				const widthItem = 480 + 10; // 10 is a gap width
-				const leftPanelWidth = 40;
-				let currentTimer = -1;
-				const releaseDictionaries = ref({});
-				const filterModel = ref({
-					filter: "",
-					type: "",
-					description: "",
-					team: [],
-					teamOr: null,
-					genres: [],
-					genresOr: null,
-					years: [],
-					seasons: [],
-					statuses: [],
-					scheduleDays: [],
-					inFavorites: null,
-					partOfReleases: null,
-					seenStatus: null,
-					sortingField: "",
-					sortingDescending: false,
-					section: 0,
-					subSection: -1
-				});
-				const settings = ref({useInternalTorrectClient: false, codecPrefference: []});
-
-				const sections = [
-					{
-						title: "Все релизы",
-						id: 0
-					},
-					{
-						title: "Избранное",
-						id: 1
-					},
-					{
-						title: "Уведомления",
-						id: 2
-					},
-					{
-						title: "Расписание",
-						id: 3
-					},
-					{
-						title: "Алфавит",
-						id: 4
-					},
-					{
-						title: "История",
-						id: 6
-					},
-					{
-						title: "Группы",
-						id: 5
-					},
-					{
-						title: "Просмотр",
-						id: 7
-					},
-					{
-						title: "Подборки",
-						id: 8
-					}
-				];
-
-				const setsSections = [
-					{
-						title: "Не выбрано",
-						id: -1
-					},
-					{
-						title: "Фильмы",
-						id: 48
-					},
-					{
-						title: "Самые популярные",
-						id: 49
-					},
-					{
-						title: "Часть серии",
-						id: 50
-					},
-					{
-						title: "Завершенные",
-						id: 51
-					},
-					{
-						title: "Популярное в текущем году",
-						id: 52
-					},
-					{
-						title: "В кинозале",
-						id: 53
-					},
-					{
-						title: "Текущий сезон",
-						id: 54
-					},
-					{
-						title: "Не текущий сезон",
-						id: 55
-					}
-				];
-
-				const sortingFields = [
-					{
-						title: "Обновлению",
-						id: 0
-					},
-					{
-						title: "Расписанию",
-						id: 1
-					},
-					{
-						title: "Имени",
-						id: 2
-					},
-					{
-						title: "Году",
-						id: 3
-					},
-					{
-						title: "Рейтингу",
-						id: 4
-					},
-					{
-						title: "Статусу",
-						id: 5
-					},
-					{
-						title: "Ориг. имени",
-						id: 6
-					},
-					{
-						title: "Истории открытия",
-						id: 7
-					},
-					{
-						title: "Истории просмотра",
-						id: 8
-					},
-					{
-						title: "Сезону",
-						id: 9
-					},
-					{
-						title: "Избранности",
-						id: 10
-					},
-					{
-						title: "Просмотренности",
-						id: 11
-					},
-					{
-						title: "Части серии",
-						id: 12
-					},
-					{
-						title: "Истории",
-						id: 13
-					},
-				];				
+				const filterModel = ref({});
+				const releasesList = useTemplateRef('releasesList');
 
 				async function savePageSettings() {
-					await saveSettings('torrent', settings.value);
-				}
-
-				function toggleSelectionRelease(id) {
-					if (!selectionModeEnabled.value) {
-						openReleaseCardByLink(id);
-						return;
-					}
-
-					if (selectedReleases.value.includes(id)) {
-						selectedReleases.value = selectedReleases.value.filter(a => a !== id);
-					} else {
-						selectedReleases.value.push(id);
-					}
+					releasesList.value.saveTorrentsSettings();
 				}
 
 				async function loadData() {
-					settings.value = await getPageSettings('torrent');
 					activeTorrents.value = await getActiveTorrents();
-					userMarks.value = await getUserMarks();
-					cinemahallReleases.value = await getCinemahallReleases();
 
-					const dictionaries = await getReleaseDictionaries();
-					releaseDictionaries.value.genres = dictionaries.genres;
-					releaseDictionaries.value.teams = dictionaries.teams;
-					releaseDictionaries.value.statuses = dictionaries.statuses;
-					releaseDictionaries.value.years = dictionaries.years;
-					releaseDictionaries.value.seasons = dictionaries.seasons;
-
-					sectionSelected.value = 0;//settings.value.startedSection;
-					subSectionSelected.value = 0;//settings.value.startedSubSection;
-					adjustSortingBySection();
-					await loadReleases();
-
-					//update torrents state each 8 secound
 					setInterval(() => refreshTorrents(), 8000);
-				}
-
-				function getListModel() {
-					const sendModel = { ...filterModel.value };
-					sendModel.filter = nameFilter.value;
-					sendModel.sortingField = sortingField.value;
-					sendModel.sortingDescending = sortDescending.value;
-					sendModel.section = sectionSelected.value;
-					sendModel.subSection = subSectionSelected.value;
-					return sendModel;
-				}
-
-				function toggleSelectionMode() {
-					selectedReleases.value = [];
-					selectionModeEnabled.value = !selectionModeEnabled.value;
-				}
-
-				async function loadReleases() {
-					const releases = await getRelaseTorrentsByFilter(getListModel());
-
-					recalculateReleaseGroups(releases);
-				}
-
-				function getPublishDay(value) {
-					switch (value) {
-						case 1: return 'пн';
-						case 2: return 'вт';
-						case 3: return 'ср';
-						case 4: return 'чт';
-						case 5: return 'пт';
-						case 6: return 'сб';
-						case 7: return 'вс';
-						default: return '';
-					}
-				}
-
-				function showMarksForRelease(id) {
-					const isFavorite = userMarks.value.favorites.includes(id);
-					const isCinemahall = cinemahallReleases.value.includes(id);
-
-					if (!isFavorite && !isCinemahall) return '';
-
-					return `В ${isFavorite ? 'Избранном' : ''}${isCinemahall ? (isFavorite ? ' и ' : '') + 'Кинозале' : ''}`
 				}
 
 				async function refreshTorrents() {
 					activeTorrents.value = await getActiveTorrents();
 				}
 
-				function clearReleaseSelection() {
-					selectedReleases.value = [];
-				}
-
 				function backToTop() {
-					releasesContainer.value.scrollTo({ top: 0, behavior: 'smooth' });
+					releasesList.value.backToTop();
 				}
 
-				async function toggleReleaseInFavorites(id) {
-					if (userMarks.value.favorites.includes(id)) {
-						await removeFavorites([id]);
-					} else {
-						await addFavorites([id]);
-					}
-					userMarks.value = await getUserMarks();
-				}
-
-				function showTorrentSeries(id) {
+				function showTorrentSeries(id, seenCount) {
 					const torrent = activeTorrents.value[id];
 					const torrentVideos = torrent.countVideos;
 					const downloadedVideos = torrent.countDownloaded;
-					let seensVideos = 0;
-					if (userMarks.value.fullSeenReleases.includes(id)) {
-						seensVideos = downloadedVideos;
-					} else if (userMarks.value.seenSeries[id]) {
-						seensVideos = userMarks.value.seenSeries[id];
-						if (seensVideos > downloadedVideos) seensVideos = downloadedVideos;
-					}
+					let seensVideos = seenCount;
+					if (seensVideos > downloadedVideos) seensVideos = downloadedVideos;
 					
 					const torrentDisplay = torrentVideos != downloadedVideos ? `${downloadedVideos} из ${torrentVideos}` : `${downloadedVideos}`;
 					const seensDisplay = seensVideos > 0 ? `/${seensVideos}` : '';
 					return `${torrentDisplay}${seensDisplay}`;
 				}
 
-				function disableSelectionMode() {
-					selectedReleases.value = [];
-					selectionModeEnabled.value = false;
-				}
-
-				function adjustSortingBySection(section) {
-					switch (section) {
-						case 0: // all
-						case 1: // favorite
-						case 2: // notification
-						case 4: // aphabet
-						case 7: // seen
-						case 8: // collections
-							sortingField.value = 0;
-							sortDescending.value = true;
-							break;
-						case 3: // schedule
-							sortingField.value = 1;
-							sortDescending.value = false;
-							break;
-						case 6: // history
-							sortingField.value = 13;
-							sortDescending.value = false;
-							break;
-					}
-				}
-
-				function getReleasesGroupCount() {
-					relasesInGroup = Math.floor((window.innerWidth - leftPanelWidth) / widthItem);
-					if (relasesInGroup === 0) return 1;
-					return relasesInGroup;
-				}
-
-				function recalculateReleaseGroups(releases) {
-					relasesInGroup = getReleasesGroupCount();
-					releasesCount.value = releases.length;
-
-					const result = [];
-					let iterator = 0;
-					let currentGroup = [];
-					for (const release of releases) {
-						if (iterator === relasesInGroup) {
-							result.push({ releases: [...currentGroup] });
-							currentGroup = [];
-							iterator = 0;
-						}
-						currentGroup.push(release);
-						iterator++;
-					}
-					if (currentGroup.length) result.push({ releases: currentGroup });
-
-					releasesGroups.value = result;
-				}
-
-				function sectionChanged(newValue) {
-					disableSelectionMode();
-					releasesContainer.value.scrollTo({ top: 0, behavior: "instant" });
-
-					subSectionSelected.value = -1;
-
-					adjustSortingBySection();
-
-					loadReleases();
-				}
-
-				function subSectionChanged(newValue) {
-					disableSelectionMode();
-					releasesContainer.value.scrollTo({ top: 0, behavior: "instant" });
-
-					subSectionSelected.value = newValue;
-
-					adjustSortingBySection();
-
-					loadReleases();
-				}
-	
 				function openTorrentInVideoplayer(releaseId) {
 					if (settings.value.openLinkMode) {
 						window.open("videoplayer.html?mode=downloadedtorrent&id=" + releaseId, '_blank');
@@ -573,72 +211,45 @@
 					}					
 				}
 
-				function loadReleaseAfterTimer() {
-					if (currentTimer !== -1) clearTimeout(currentTimer);
-
-					currentTimer = setTimeout(() => { loadReleases() }, 1000);
-				}
+				function openReleaseCardByLink(id) {
+					if (settings.value.openLinkMode) {
+						window.open("releasecard.html?id=" + id, '_blank');
+					} else {
+						window.location.href = "releasecard.html?id=" + id;
+					}
+				}				
 
 				function removeSelectedWithFiles() {
 					if (!selectedReleases.value.length) return;
 
 					removeTorrents(selectedReleases.value, true);
 
-					clearReleaseSelection();
+					releasesList.value.disableSelectionMode();
 				}
 				function removeSelectedWithoutFiles() {
 					if (!selectedReleases.value.length) return;
 
 					removeTorrents(selectedReleases.value, false);
 
-					clearReleaseSelection();
+					releasesList.value.disableSelectionMode();
 				}
 
 				loadData();
 
-				watch(
-					nameFilter,
-					(newValue) => { loadReleaseAfterTimer() }
-				);
-
-				onMounted(() => {
-					releasesContainer.value.addEventListener('scroll', () => {
-						backToTopVisible.value = releasesContainer.value.scrollTop > 0;
-					});
-				});
-
 				return {
 					mainMenuVisible,
-					savePageSettings,
-					settings,
-					sectionSelected,
-					subSectionSelected,
-					sortingField,
-					sortDescending,
-					nameFilter,
-					setsSections,
-					sortingFields,
-					releasesContainer,
-					loadReleases,
-					releasesGroups,
-					sections,
-					userMarks,
-					cinemahallReleases,
-					releaseDictionaries,
 					getPublishDay,
-					showMarksForRelease,
-					selectionModeEnabled,
-					toggleSelectionMode,
 					selectedReleases,
-					toggleSelectionRelease,
-					showTorrentSeries,
+					backToTopVisible,
+					filterModel,
+					releasesList,
 					openTorrentInVideoplayer,
-					sectionChanged,
-					subSectionChanged,
+					savePageSettings,
 					removeSelectedWithFiles,
 					removeSelectedWithoutFiles,
 					backToTop,
-					backToTopVisible
+					showTorrentSeries,
+					openReleaseCardByLink
 				}
 			}
 		});

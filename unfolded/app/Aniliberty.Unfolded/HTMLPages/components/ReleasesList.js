@@ -1,11 +1,11 @@
 import { ref, watch, useTemplateRef, onMounted } from '/static/vue.js'
 import {
 	getRelasesByFilter, getUserMarks, getPageSettings,
-    getReleaseNotifications, getCinemahallReleases
+    getReleaseNotifications, getCinemahallReleases, getRelaseTorrentsByFilter
 } from '/static/unfoldapi.js'
 
 export default {
-	props: ['releasesselected', 'allfilters', 'itemWidth', 'itemHeight', 'itemGap', 'leftPanelWidth', 'backtotopvisible'],
+	props: ['releasesselected', 'allfilters', 'itemWidth', 'itemHeight', 'itemGap', 'leftPanelWidth', 'backtotopvisible', 'sourcepage'],
 	emits: ['openrelease', 'update:releasesselected', 'update:allfilters', 'update:backtotopvisible'],
 	template: `
 <div ref="releasesContainer" class="releaseslist-releases-container" @click.right.prevent="toggleSelectionMode()">
@@ -175,7 +175,13 @@ export default {
 
         // reload releases by filters/sortings etc
         async function loadReleases() {
-            const releases = await getRelasesByFilter(filterModel.value);
+            let releases = [];
+            if (props.sourcepage === 'torrent') {
+                releases = await getRelaseTorrentsByFilter(filterModel.value);
+            }
+            if (props.sourcepage === 'releases') {
+                releases = await getRelasesByFilter(filterModel.value);
+            }
 
             recalculateReleaseGroups(releases);
         }
@@ -187,6 +193,10 @@ export default {
         async function refreshCinemahall() {
             cinemahallReleases.value = await getCinemahallReleases();
         }
+
+        async function saveTorrentsSettings() {
+            await saveSettings('torrent', torrentSettings.value);
+        }        
 
         // load after load page all related data in one row
         async function loadAllData() {
@@ -279,7 +289,8 @@ export default {
             loadReleases,
             refreshUserMarks,
             refreshCinemahall,
-            disableSelectionMode
+            disableSelectionMode,
+            saveTorrentsSettings
 		};
 	}
 };

@@ -16,7 +16,7 @@ export default {
         <div class="full-width-height flex-row flex-base-center flex-other-center">
             <img :src="'/static/icons/releases/favorite.svg'" width="30" height="30" />
         </div>
-        <div class="simple-popup-box releases-rightmenu">
+        <div class="simple-popup-box releaseslist-rightmenu">
             <div class="releaseslist-rightmenu-actions flex-column">
                 <a class="default-link" @click.prevent="addSelectedToFavorites()" href="">Добавить в избранное</a>
                 <a class="default-link" @click.prevent="removeSelectedToFavorites()" href="">Удалить из избранного</a>
@@ -29,7 +29,7 @@ export default {
         <div class="full-width-height flex-row flex-base-center flex-other-center">
             <img :src="'/static/icons/releases/seen.svg'" width="30" height="30" />
         </div>
-        <div class="simple-popup-box releases-rightmenu">
+        <div class="simple-popup-box releaseslist-rightmenu">
             <div class="releaseslist-rightmenu-seens flex-column">
                 <a class="default-link" @click.prevent="addSelectedToSeens()" href="">Отметить как просмотренные</a>
                 <a class="default-link" @click.prevent="removeSelectedToSeens()" href="">Отметить как не просмотренные</a>
@@ -44,7 +44,7 @@ export default {
         <div class="full-width-height flex-row flex-base-center flex-other-center">
             <img :src="'/static/icons/mainmenu/cinemahall.svg'" width="30" height="30" />
         </div>
-        <div class="simple-popup-box releases-rightmenu">
+        <div class="simple-popup-box releaseslist-rightmenu">
             <div class="releaseslist-rightmenu-actions flex-column">
                 <a class="default-link" @click.prevent="addSelectedToCinemahall()" href="">Добавить в кинозал</a>
                 <a class="default-link" @click.prevent="removeSelectedToCinemahall()" href="">Удалить из кинозала</a>
