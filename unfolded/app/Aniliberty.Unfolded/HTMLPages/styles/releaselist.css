@@ -68,6 +68,19 @@
     box-shadow: 2px 2px var(--releases-item-selected-background);
 }
 
+.releaseslist-rightmenu {
+    left: 100%;
+    top: 0;
+    transform: unset;
+    font-size: 13px;
+}
+
+.releaseslist-rightmenu-search {
+    width: 380px;
+    max-width: 400px;
+    padding: 8px;
+}
+
 .releaseslist-rightmenu-actions {
     min-width: 150px;
     padding: 8px;
@@ -78,4 +91,17 @@
     padding: 8px;
 }
 
+.releaseslist-search-multiselect {
+    width: 200px;
+}
+
+.releaseslist-empty-search {
+    width: 100%;
+    height: calc(100vh - 38px - 40px); /* 38 upper panel and 40 subheader */
+
+    > div {
+        text-align: center;
+        font-size: 17px;
+    }
+}
 

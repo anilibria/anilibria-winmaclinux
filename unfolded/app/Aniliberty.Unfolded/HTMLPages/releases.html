@@ -40,84 +40,10 @@
 					:releases-list="releasesList"
 					:filter-model="filterModel">
 				</releases-sidebar-actions>
-				<div class="simple-panel-icon-button simple-popup-container"
-					 title="Добавить фильтры для фильтрации по разным полям релиза">
-					<div class="full-width-height flex-row flex-base-center flex-other-center">
-						<img :src="'/static/icons/releases/search.svg'" width="30" height="30" />
-					</div>
-					<div class="simple-popup-box releases-rightmenu">
-						<div class="releases-rightmenu-search flex-column">
-							<div class="flex-column gap-2">
-								<span>Команда</span>
-								<div class="flex-row flex-base-center gap-4">
-									<multi-select class="releases-search-multiselect flex-1" v-model="filterModel.team" :options="releaseDictionaries.teams" mode="tags" searchable @select="loadReleases()" @deselect="loadReleases()" @clear="loadReleases()">
-									</multi-select>
-									<div class="no-text-wrap" style="margin-left: 4px; margin-right: 4px;">
-										<span>ИЛИ/И</span>
-									</div>
-									<simple-switch v-model:state="filterModel.teamOr" @changed="loadReleases()">
-									</simple-switch>
-								</div>
-							</div>
-							<div class="flex-column gap-2">
-								<span>Жанры</span>
-								<div class="flex-row flex-base-center gap-4">
-									<multi-select class="releases-search-multiselect flex-1" v-model="filterModel.genres" :options="releaseDictionaries.genres" mode="tags" searchable @select="loadReleases()" @deselect="loadReleases()" @clear="loadReleases()">
-									</multi-select>
-									<div class="no-text-wrap" style="margin-left: 4px; margin-right: 4px;">
-										<span>ИЛИ/И</span>
-									</div>
-									<simple-switch v-model:state="filterModel.genresOr" @changed="loadReleases()">
-									</simple-switch>
-								</div>
-							</div>
-							<div class="flex-column gap-2">
-								<span>Года</span>
-								<div class="flex-row flex-base-center gap-4">
-									<multi-select class="releases-search-multiselect flex-1" v-model="filterModel.years" :options="releaseDictionaries.years" mode="tags" searchable @select="loadReleases()" @deselect="loadReleases()" @clear="loadReleases()">
-									</multi-select>
-								</div>
-							</div>
-							<div class="flex-column gap-2">
-								<span>Сезоны</span>
-								<div class="flex-row flex-base-center gap-4">
-									<multi-select class="releases-search-multiselect flex-1" v-model="filterModel.seasons" :options="releaseDictionaries.seasons" mode="tags" searchable @select="loadReleases()" @deselect="loadReleases()" @clear="loadReleases()">
-									</multi-select>
-								</div>
-							</div>
-							<div class="flex-column gap-2">
-								<span>Статусы</span>
-								<div class="flex-row flex-base-center gap-4">
-									<multi-select class="releases-search-multiselect flex-1" v-model="filterModel.statuses" :options="releaseDictionaries.statuses" mode="tags" searchable @select="loadReleases()" @deselect="loadReleases()" @clear="loadReleases()">
-									</multi-select>
-								</div>
-							</div>
-							<div class="flex-column gap-2">
-								<span>Дни в расписании</span>
-								<div class="flex-row flex-base-center gap-4">
-									<multi-select class="releases-search-multiselect flex-1" v-model="filterModel.scheduleDays" :options="releaseDictionaries.scheduleDays" mode="tags" searchable @select="loadReleases()" @deselect="loadReleases()" @clear="loadReleases()">
-									</multi-select>
-								</div>
-							</div>
-							<div class="flex-column gap-2">
-								<span>Описание</span>
-								<input v-model="filterModel.description" type="text" class="simple-input" placeholder="Описание" />
-							</div>
-							<div class="flex-column gap-2">
-								<span>Тип</span>
-								<input v-model="filterModel.type" type="text" class="simple-input" placeholder="Тип" />
-							</div>
-							<div class="flex-row flex-base-center gap-8" style="height: 40px;">
-								<span>В избранном</span>
-								<simple-switch v-model:state="filterModel.inFavorites" @changed="loadReleases()">
-								</simple-switch>
-								<span>Часть франшизы</span>
-								<simple-switch v-model:state="filterModel.partOfReleases" @changed="loadReleases()">
-								</simple-switch>
-							</div>
-						</div>
-					</div>
-				</div>
+				<releases-side-bar-search
+					:releases-list="releasesList"
+					:filter-model="filterModel">
+				</releases-side-bar-search>
 				<div v-if="notificationMessage" class="simple-panel-icon-button"
 					 :title="notificationMessage"
 					 @click="loadNotifications()">
@@ -268,29 +194,26 @@
 		import { createApp, ref, watch, useTemplateRef, onMounted } from 'vue'
 		import {
 			getRelasesByFilter, getUserMarks, getPageSettings,
-			saveSettings, getReleaseNotifications, getRandomReleaseFromAll,
-			getReleaseDictionaries, getRandomRelease, addFavorites, removeFavorites,
+			saveSettings, getReleaseNotifications, getRandomReleaseFromAll, getRandomRelease, addFavorites, removeFavorites,
 			getCinemahallReleases, getHidedReleases, addHidedReleases, downloadTorrent
 		} from './unfoldapi.js'
 		import Drawer from './components/Drawer.js'
 		import PageHeader from './components/PageHeader.js'
 		import SimpleSelect from './components/SimpleSelect.js'
-		import SimpleSwitch from './components/SimpleSwitch.js'
 		import ReleasesList from './components/ReleasesList.js'
 		import ReleasesToolBar from './components/ReleasesToolBar.js'
 		import ReleasesSideBarActions from './components/ReleasesSideBarActions.js'
-		import MultiSelect from './libs/multiselect.mjs'
+		import ReleasesSideBarSearch from './components/ReleasesSideBarSearch.js'
 
 		const app = createApp({
 			components: {
 				'page-drawer': Drawer,
 				'page-header': PageHeader,
 				'simple-select': SimpleSelect,
-				'simple-switch': SimpleSwitch,
-				'multi-select': MultiSelect,
 				'releases-list': ReleasesList,
 				'releases-toolbar': ReleasesToolBar,
-				'releases-sidebar-actions': ReleasesSideBarActions
+				'releases-sidebar-actions': ReleasesSideBarActions,
+				'releases-side-bar-search': ReleasesSideBarSearch
 			},
 			setup() {
 				const mainMenuVisible = ref(false);
@@ -311,22 +234,6 @@
 				const settings = ref({ startedSection: 0, startedSubSection: -1, notificationMode: 0, openLinkMode: 0 });
 				const filterModel = ref({});
 				const teams = ref([]);
-				const releaseDictionaries = ref({
-					genres: [],
-					teams: [],
-					statuses: [],
-					years: [],
-					seasons: [],
-					scheduleDays: [
-						{ label: 'Понедельник', value: 1 },
-						{ label: 'Вторник', value: 2 },
-						{ label: 'Среда', value: 3 },
-						{ label: 'Четверг', value: 4 },
-						{ label: 'Пятница', value: 5 },
-						{ label: 'Суббота', value: 6 },
-						{ label: 'Воскресенье', value: 7 }
-					]
-				})
 
 				const notificationModes = [
 					{
@@ -610,7 +517,6 @@
 					backToTopVisible,
 					openRandomRelease,
 					filterModel,
-					releaseDictionaries,
 					teams,
 					openRandomReleaseInSelection,
 					openLinkMode,

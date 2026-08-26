@@ -1,7 +1,7 @@
 import { ref, watch, useTemplateRef, onMounted } from '/static/vue.js'
 import {
 	getRelasesByFilter, getUserMarks, getPageSettings,
-    getReleaseNotifications, getReleaseDictionaries, getCinemahallReleases
+    getReleaseNotifications, getCinemahallReleases
 } from '/static/unfoldapi.js'
 
 export default {
@@ -27,7 +27,7 @@ export default {
             </slot>
         </div>
     </div>
-    <div v-if="!releasesGroups.length" class="releases-empty-search flex-row flex-base-center flex-other-center">
+    <div v-if="!releasesGroups.length" class="releaseslist-empty-search flex-row flex-base-center flex-other-center">
         <div>
             <slot name="empty">
                 По текущему фильтру ничего не найдено.<br>
@@ -59,22 +59,6 @@ export default {
             sortingDescending: true,
             section: 0,
             subsection: -1
-        });
-        const releaseDictionaries = ref({
-            genres: [],
-            teams: [],
-            statuses: [],
-            years: [],
-            seasons: [],
-            scheduleDays: [
-                { label: 'Понедельник', value: 1 },
-                { label: 'Вторник', value: 2 },
-                { label: 'Среда', value: 3 },
-                { label: 'Четверг', value: 4 },
-                { label: 'Пятница', value: 5 },
-                { label: 'Суббота', value: 6 },
-                { label: 'Воскресенье', value: 7 }
-            ]
         });
 
         // release selection
@@ -211,13 +195,6 @@ export default {
             torrentSettings.value = await getPageSettings('torrent');
             cinemahallReleases.value = await getCinemahallReleases();
             notificationMessage.value = await getReleaseNotifications();
-
-            const dictionaries = await getReleaseDictionaries();
-            releaseDictionaries.value.genres = dictionaries.genres;
-            releaseDictionaries.value.teams = dictionaries.teams;
-            releaseDictionaries.value.statuses = dictionaries.statuses;
-            releaseDictionaries.value.years = dictionaries.years;
-            releaseDictionaries.value.seasons = dictionaries.seasons;
 
             if (props.allfilters) filterModel.value = Object.assign(filterModel.value, props.allfilters);
 
