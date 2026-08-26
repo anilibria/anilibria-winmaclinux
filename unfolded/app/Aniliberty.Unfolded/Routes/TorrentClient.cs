@@ -93,6 +93,8 @@ namespace Aniliberty.Unfolded.Routes
 				}
 			}
 
+			await SaveTorrentCache();
+
 			Console.WriteLine("Refresh torrents completed");
 		}
 
@@ -238,11 +240,17 @@ namespace Aniliberty.Unfolded.Routes
 			if (torrent == null) return false;
 
 			var manager = m_clientEngine.Torrents.FirstOrDefault(a => a.MetadataPath == torrent.MetadataPath);
-			if (manager == null) return false;
+			if (manager == null)
+			{
+				// if we have only record in cache file we just delete these empty item
+				m_cache.Items.Remove(torrent);
+				return false;
+			}
 
 			await manager.StopAsync();
 			await m_clientEngine.RemoveAsync(manager);
 			if (removeFiles) Directory.Delete(torrent.Path, true);
+			m_cache.Items.Remove(torrent);
 
 			if (saveImmediateCache) await SaveTorrentCache();
 
