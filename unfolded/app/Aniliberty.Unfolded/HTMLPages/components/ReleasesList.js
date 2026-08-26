@@ -5,8 +5,8 @@ import {
 } from '/static/unfoldapi.js'
 
 export default {
-	props: ['releasesselected', 'allfilters', 'itemWidth', 'itemHeight', 'itemGap', 'leftPanelWidth'],
-	emits: ['openrelease', 'update:releasesselected', 'update:allfilters'],
+	props: ['releasesselected', 'allfilters', 'itemWidth', 'itemHeight', 'itemGap', 'leftPanelWidth', 'backtotopvisible'],
+	emits: ['openrelease', 'update:releasesselected', 'update:allfilters', 'update:backtotopvisible'],
 	template: `
 <div ref="releasesContainer" class="releaseslist-releases-container" @click.right.prevent="toggleSelectionMode()">
     <div v-if="releasesGroups.length" class="releaseslist-release-item-group" v-for="(releasesGroup, index) in releasesGroups" :key="index">
@@ -250,6 +250,7 @@ export default {
         onMounted(() => {
             releasesContainer.value.addEventListener('scroll', () => {
                 scrollTopValue.value = releasesContainer.value.scrollTop;
+                context.emit('update:backtotopvisible', releasesContainer.value.scrollTop > 0);
             });
 
             setTimeout(() => {

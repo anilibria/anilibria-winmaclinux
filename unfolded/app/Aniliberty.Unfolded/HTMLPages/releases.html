@@ -108,6 +108,7 @@
 				<releases-list
 					v-model:allfilters="filterModel"
 					v-model:releasesselected="selectedReleases"
+					v-model:backtotopvisible="backToTopVisible"
 					:item-height="290"
 					@openrelease="openReleaseCardByLink($event);"
 					ref="releasesList">
@@ -159,7 +160,6 @@
 								<div class="flex-1"></div>
 								<div class="flex-row flex-base-center">
 									<span v-if="inFavorites || inCinemahall" class="header-text" style="margin-bottom: 4px;">
-										<!-- {{ showMarksForRelease(release.id, userMarks, cinemahallReleases) }} -->
 										{{ 'В ' + (inFavorites ? 'Избранном' : '') + (inCinemahall ? (inFavorites ? ' и ' : '') + 'Кинозале' : '') }}
 									</span>
 									<div class="flex-1"></div>
@@ -193,10 +193,11 @@
 	<script type="module">
 		import { createApp, ref, watch, useTemplateRef, onMounted } from 'vue'
 		import {
-			getRelasesByFilter, getUserMarks, getPageSettings,
+			getRelasesByFilter, getPageSettings,
 			saveSettings, getReleaseNotifications, getRandomReleaseFromAll, getRandomRelease, addFavorites, removeFavorites,
-			getCinemahallReleases, getHidedReleases, addHidedReleases, downloadTorrent
+			getHidedReleases, addHidedReleases, downloadTorrent
 		} from './unfoldapi.js'
+		import { sections, historySections, seenMarkSections, setsSections } from '/static/releaseDictionaries.js'
 		import Drawer from './components/Drawer.js'
 		import PageHeader from './components/PageHeader.js'
 		import SimpleSelect from './components/SimpleSelect.js'
@@ -217,14 +218,7 @@
 			},
 			setup() {
 				const mainMenuVisible = ref(false);
-				const releasesGroups = ref([]);
-				const releasesCount = ref(0);
-				let relasesInGroup = 1;
-				const widthItem = 480 + 10; // 10 is a gap width
-				const leftPanelWidth = 40;
-				const userMarks = ref({ favorites: [], fullSeenReleases: [], seenSeries: {} });
 				const torrentSettings = ref({});
-				const cinemahallReleases = ref([])
 				const selectionModeEnabled = ref(false);
 				const selectedReleases = ref([]);
 				const releasesList = useTemplateRef('releasesList');
@@ -233,7 +227,6 @@
 				let currentTimer = -1;
 				const settings = ref({ startedSection: 0, startedSubSection: -1, notificationMode: 0, openLinkMode: 0 });
 				const filterModel = ref({});
-				const teams = ref([]);
 
 				const notificationModes = [
 					{
@@ -258,130 +251,6 @@
 					{
 						title: "В новом окне",
 						id: 1
-					}
-				];
-
-				const sections = [
-					{
-						title: "Все релизы",
-						id: 0
-					},
-					{
-						title: "Избранное",
-						id: 1
-					},
-					{
-						title: "Уведомления",
-						id: 2
-					},
-					{
-						title: "Расписание",
-						id: 3
-					},
-					{
-						title: "Алфавит",
-						id: 4
-					},
-					{
-						title: "История",
-						id: 6
-					},
-					{
-						title: "Группы",
-						id: 5
-					},
-					{
-						title: "Просмотр",
-						id: 7
-					},
-					{
-						title: "Подборки",
-						id: 8
-					}
-				];
-
-				const historySections = [
-					{
-						title: "Не выбрано",
-						id: -1
-					},
-					{
-						title: "История",
-						id: 40
-					},
-					{
-						title: "История просмотра",
-						id: 41
-					}
-				];
-
-				const seenMarkSections = [
-					{
-						title: "Не выбрано",
-						id: -1
-					},
-					{
-						title: "Просмотренные",
-						id: 42
-					},
-					{
-						title: "Просматриваемые",
-						id: 43
-					},
-					{
-						title: "Не просмотренные",
-						id: 44
-					},
-					{
-						title: "Скрытые релизы",
-						id: 45
-					},
-					{
-						title: "Просмотренные до конца",
-						id: 46
-					},
-					{
-						title: "Просмотренные не до конца",
-						id: 47
-					}
-				];
-
-				const setsSections = [
-					{
-						title: "Не выбрано",
-						id: -1
-					},
-					{
-						title: "Фильмы",
-						id: 48
-					},
-					{
-						title: "Самые популярные",
-						id: 49
-					},
-					{
-						title: "Часть серии",
-						id: 50
-					},
-					{
-						title: "Завершенные",
-						id: 51
-					},
-					{
-						title: "Популярное в текущем году",
-						id: 52
-					},
-					{
-						title: "В кинозале",
-						id: 53
-					},
-					{
-						title: "Текущий сезон",
-						id: 54
-					},
-					{
-						title: "Не текущий сезон",
-						id: 55
 					}
 				];
 
@@ -422,11 +291,11 @@
 				function loadNotifications() {
 					filterModel.value.section = 2;
 					filterModel.value.subsection = -1;
-					releasesList.loadReleases();
+					releasesList.value.loadReleases();
 				}
 
 				function backToTop() {
-					releasesContainer.value.scrollTo({ top: 0, behavior: 'smooth' });
+					releasesList.value.backToTop();
 				}
 
 				function openReleaseCardByLink(id) {
@@ -447,12 +316,6 @@
 					openReleaseCardByLink(id);
 				}
 
-				function loadReleaseAfterTimer() {
-					if (currentTimer !== -1) clearTimeout(currentTimer);
-
-					currentTimer = setTimeout(() => { releasesList.value.loadReleases() }, 1000);
-				}
-
 				function formatCodecs(codecs) {
 					if (!codecs) return '';
 
@@ -466,64 +329,32 @@
 
 					return res;
 				}
-
-				async function toggleReleaseInFavorites(id) {
-					if (releasesList.value.userMarks.favorites.includes(id)) {
-						await removeFavorites([id]);
-					} else {
-						await addFavorites([id]);
-					}
-					releasesList.value.refreshUserMarks();
-				}
-
-				watch(
-					() => filterModel.value.description,
-					(newValue) => { loadReleaseAfterTimer(); }
-				);
-
-				watch(
-					() => filterModel.value.type,
-					(newValue) => { loadReleaseAfterTimer() }
-				);
-
-				onMounted(() => {
-					/*releasesContainer.value.addEventListener('scroll', () => {
-						backToTopVisible.value = releasesContainer.value.scrollTop > 0;
-						scrollTopValue.value = releasesContainer.value.scrollTop;
-					});
-
-					setTimeout(() => {
-						scrollHeightValue.value = releasesContainer.value.clientHeight;
-					})*/
-				});
-
+			
 				return {
 					mainMenuVisible,
-					sections,
-					historySections,
-					setsSections,
 					seenMarkSections,
-					releasesGroups,
 					selectionModeEnabled,
 					selectedReleases,
 					releasesList,
-					getPublishDay,
-					openInVideoPlayer,
+					sections,
+					historySections,
+					seenMarkSections,
+					setsSections,
 					settings,
 					notificationModes,
 					notificationMessage,
+					backToTopVisible,
+					filterModel,
+					openLinkMode,
+					getPublishDay,
+					openInVideoPlayer,
 					loadNotifications,
 					backToTop,
-					backToTopVisible,
 					openRandomRelease,
-					filterModel,
-					teams,
 					openRandomReleaseInSelection,
-					openLinkMode,
 					saveReleasesSettings,
 					formatCodecs,
 					downloadInTorrent,
-					toggleReleaseInFavorites,
 					openReleaseCardByLink
 				}
 			}

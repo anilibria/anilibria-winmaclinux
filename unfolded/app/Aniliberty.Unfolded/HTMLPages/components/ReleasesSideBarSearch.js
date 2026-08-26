@@ -1,4 +1,4 @@
-import { ref } from '/static/vue.js'
+import { ref, watch } from '/static/vue.js'
 import { getReleaseDictionaries } from '/static/unfoldapi.js'
 import SimpleSwitch from '/static/components/SimpleSwitch.js'
 import MultiSelect from '/static/libs/multiselect.mjs'
@@ -90,6 +90,7 @@ export default {
 </div>
 `,
 	setup(props) {
+        let currentTimer = -1;
         const releaseDictionaries = ref({
             genres: [],
             teams: [],
@@ -119,6 +120,22 @@ export default {
         async function loadReleases() {
             await props.releasesList.loadReleases();
         }
+
+        function loadReleaseAfterTimer() {
+            if (currentTimer !== -1) clearTimeout(currentTimer);
+
+            currentTimer = setTimeout(() => { props.releasesList.loadReleases() }, 1000);
+        }
+
+        watch(
+            () => props.filterModel.description,
+            () => { loadReleaseAfterTimer(); }
+        );
+
+        watch(
+            () => props.filterModel.type,
+            () => { loadReleaseAfterTimer() }
+        );
 
         loadAllData();
 
