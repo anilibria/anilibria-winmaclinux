@@ -66,37 +66,37 @@
 					<div class="full-width-height flex-row flex-base-center flex-other-center">
 						<img :src="'/static/icons/commonbuttons/settings.svg'" width="30" height="30" />
 					</div>
-					<div class="simple-popup-box releases-rightmenu">
+					-<div v-if="releasesList" class="simple-popup-box releases-rightmenu">
 						<div class="releases-rightmenu-settings flex-column gap-8">
 							<div>Стартовая секция:</div>
 							<div class="flex-row flex-base-center">
-								<simple-select v-model:item="settings.startedSection"
+								<simple-select v-model:item="releasesList.settings.startedSection"
 											   :options="sections"
 											   style="width: 130px;"
-											   @selected="settings.startedSubSection = -1; saveReleasesSettings();">
+											   @selected="releasesList.settings.startedSubSection = -1; saveReleasesSettings();">
 								</simple-select>
-								<div v-if="settings.startedSection >= 6 && settings.startedSection < 9" style="margin-left: 4px; margin-right: 4px;">-</div>
-								<simple-select v-if="settings.startedSection === 6" v-model:item="settings.startedSubSection"
+								<div v-if="releasesList.settings.startedSection >= 6 && releasesList.settings.startedSection < 9" style="margin-left: 4px; margin-right: 4px;">-</div>
+								<simple-select v-if="releasesList.settings.startedSection === 6" v-model:item="releasesList.settings.startedSubSection"
 											   :options="historySections"
 											   style="width: 170px;"
 											   @selected="saveReleasesSettings()">
 								</simple-select>
-								<simple-select v-if="settings.startedSection === 7" v-model:item="settings.startedSubSection"
+								<simple-select v-if="releasesList.settings.startedSection === 7" v-model:item="releasesList.settings.startedSubSection"
 											   :options="seenMarkSections"
 											   style="width: 225px;"
 											   @selected="saveReleasesSettings()">
 								</simple-select>
-								<simple-select v-if="settings.startedSection === 8" v-model:item="settings.startedSubSection"
+								<simple-select v-if="releasesList.settings.startedSection === 8" v-model:item="releasesList.settings.startedSubSection"
 											   :options="setsSections"
 											   style="width: 220px;"
 											   @selected="saveReleasesSettings()">
 								</simple-select>
 							</div>
 							<div>Уведомления:</div>
-							<simple-select v-model:item="settings.notificationMode" :options="notificationModes" style="width: 100%;" @selected="saveReleasesSettings()">
+							<simple-select v-model:item="releasesList.settings.notificationMode" :options="notificationModes" style="width: 100%;" @selected="saveReleasesSettings()">
 							</simple-select>
 							<div>Открывать ссылки:</div>
-							<simple-select v-model:item="settings.openLinkMode" :options="openLinkMode" style="width: 100%;" @selected="saveReleasesSettings()">
+							<simple-select v-model:item="releasesList.settings.openLinkMode" :options="openLinkMode" style="width: 100%;" @selected="saveReleasesSettings()">
 							</simple-select>
 						</div>
 					</div>
@@ -239,11 +239,10 @@
 				const notificationMessage = ref('');
 				const backToTopVisible = ref(false);
 				let currentTimer = -1;
-				const settings = ref({ startedSection: 0, startedSubSection: -1, notificationMode: 0, openLinkMode: 0 });
 				const filterModel = ref({});
 
 				async function saveReleasesSettings() {
-					await saveSettings('releases', settings.value);
+					await releasesList.value.saveReleasesSettings();
 				}
 
 				function getPublishDay(value) {
@@ -262,7 +261,7 @@
 				function openTorrentInVideoplayer(releaseId, torrentcount, torrentdownloaded) {
 					if (torrentcount !== torrentdownloaded) return;
 
-					if (settings.value.openLinkMode) {
+					if (releasesList.value.settings.openLinkMode) {
 						window.open("videoplayer.html?mode=downloadedtorrent&id=" + releaseId, '_blank');
 					} else {
 						window.location.href = 'videoplayer.html?mode=downloadedtorrent&id=' + releaseId;
@@ -270,7 +269,7 @@
 				}				
 
 				function openInVideoPlayer(id) {
-					if (settings.value.openLinkMode) {
+					if (releasesList.value.settings.openLinkMode) {
 						window.open("videoplayer.html?mode=release&id=" + id, '_blank');
 					} else {
 						window.location.href = 'videoplayer.html?mode=release&id=' + id;
@@ -297,7 +296,7 @@
 				}
 
 				function openReleaseCardByLink(id) {
-					if (settings.value.openLinkMode) {
+					if (releasesList.value.settings.openLinkMode) {
 						window.open("releasecard.html?id=" + id, '_blank');
 					} else {
 						window.location.href = "releasecard.html?id=" + id;
@@ -342,7 +341,6 @@
 					historySections,
 					seenMarkSections,
 					setsSections,
-					settings,
 					notificationModes,
 					notificationMessage,
 					backToTopVisible,

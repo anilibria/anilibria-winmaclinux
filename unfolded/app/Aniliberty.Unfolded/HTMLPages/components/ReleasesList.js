@@ -201,7 +201,11 @@ export default {
 
         async function saveTorrentsSettings() {
             await saveSettings('torrent', torrentSettings.value);
-        }        
+        }
+
+        async function saveReleasesSettings() {
+            await saveSettings('releases', settings.value);
+        }
 
         // load after load page all related data in one row
         async function loadAllData() {
@@ -315,7 +319,8 @@ export default {
             refreshCinemahall,
             disableSelectionMode,
             saveTorrentsSettings,
-            toggleReleaseInFavorites
+            toggleReleaseInFavorites,
+            saveReleasesSettings
 		};
 	}
 };
