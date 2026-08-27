@@ -1,7 +1,8 @@
 import { ref, watch, useTemplateRef, onMounted } from '/static/vue.js'
 import {
 	getRelasesByFilter, getUserMarks, getPageSettings,
-    getReleaseNotifications, getCinemahallReleases, getRelaseTorrentsByFilter
+    getReleaseNotifications, getCinemahallReleases, getRelaseTorrentsByFilter,
+    addFavorites, removeFavorites
 } from '/static/unfoldapi.js'
 
 export default {
@@ -243,7 +244,16 @@ export default {
 
         function backToTop() {
             releasesContainer.value.scrollTo({ top: 0, behavior: 'smooth' });
-        }        
+        }
+
+        async function toggleReleaseInFavorites(id) {
+            if (userMarks.value.favorites.includes(id)) {
+                await removeFavorites([id]);
+            } else {
+                await addFavorites([id]);
+            }
+            await refreshUserMarks();
+        }
 
         loadAllData();
 
@@ -290,7 +300,8 @@ export default {
             refreshUserMarks,
             refreshCinemahall,
             disableSelectionMode,
-            saveTorrentsSettings
+            saveTorrentsSettings,
+            toggleReleaseInFavorites
 		};
 	}
 };

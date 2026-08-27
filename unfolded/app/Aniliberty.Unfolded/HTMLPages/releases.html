@@ -330,6 +330,10 @@
 
 					return res;
 				}
+
+				async function toggleReleaseInFavorites(id) {
+					await releasesList.value.toggleReleaseInFavorites(id);
+				}
 			
 				return {
 					mainMenuVisible,
@@ -356,7 +360,8 @@
 					saveReleasesSettings,
 					formatCodecs,
 					downloadInTorrent,
-					openReleaseCardByLink
+					openReleaseCardByLink,
+					toggleReleaseInFavorites
 				}
 			}
 		});
