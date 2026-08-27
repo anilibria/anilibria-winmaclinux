@@ -193,3 +193,29 @@ export function getPublishDay(value) {
         default: return '';
     }
 }
+
+export const openLinkMode = [
+    {
+        title: "В текущем окне",
+        id: 0
+    },
+    {
+        title: "В новом окне",
+        id: 1
+    }
+];
+
+export const notificationModes = [
+    {
+        title: "Выключены",
+        id: 0
+    },
+    {
+        title: "Уведомления по всем релизам",
+        id: 1
+    },
+    {
+        title: "Уведомления только по избранному",
+        id: 2
+    },
+];

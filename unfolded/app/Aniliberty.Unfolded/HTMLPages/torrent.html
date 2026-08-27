@@ -53,6 +53,33 @@
 					</div>
 					<div v-if="releasesList" class="simple-popup-box torrents-rightmenu">
 						<div class="torrents-rightmenu-settings flex-column gap-8">
+							<div>Стартовая секция:</div>
+							<div class="flex-row flex-base-center">
+								<simple-select v-model:item="releasesList.torrentSettings.startedSection"
+											   :options="sections"
+											   style="width: 130px;"
+											   @selected="releasesList.torrentSettings.startedSubSection = -1; savePageSettings();">
+								</simple-select>
+								<div v-if="releasesList.torrentSettings.startedSection >= 6 && releasesList.torrentSettings.startedSection < 9" style="margin-left: 4px; margin-right: 4px;">-</div>
+								<simple-select v-if="releasesList.torrentSettings.startedSection === 6" v-model:item="releasesList.torrentSettings.startedSubSection"
+											   :options="historySections"
+											   style="width: 170px;"
+											   @selected="savePageSettings()">
+								</simple-select>
+								<simple-select v-if="releasesList.torrentSettings.startedSection === 7" v-model:item="releasesList.torrentSettings.startedSubSection"
+											   :options="seenMarkSections"
+											   style="width: 225px;"
+											   @selected="savePageSettings()">
+								</simple-select>
+								<simple-select v-if="releasesList.torrentSettings.startedSection === 8" v-model:item="releasesList.torrentSettings.startedSubSection"
+											   :options="setsSections"
+											   style="width: 220px;"
+											   @selected="savePageSettings()">
+								</simple-select>
+							</div>
+							<div>Открывать ссылки:</div>
+							<simple-select v-model:item="releasesList.torrentSettings.openLinkMode" :options="openLinkMode" style="width: 100%;" @selected="savePageSettings()">
+							</simple-select>
 							<div>Использовать внутренний torrent клиент:</div>
 							<simple-switch v-model:state="releasesList.torrentSettings.useInternalTorrectClient" @changed="savePageSettings()">
 							</simple-switch>
@@ -79,7 +106,7 @@
 					:item-height="290"
 					@openrelease="openReleaseCardByLink($event);"
 					ref="releasesList">
-					<template v-slot:release="{ release, isSelected, inCinemahall, inFavorites, seensCount }">
+					<template v-slot:release="{ release, isSelected, inCinemahall, inFavorites, seensCount, torrentcount, torrentdownloaded }">
 						<div class="releaseslist-release-item" :class="{'releaseslist-release-item-selected': isSelected }">
 							<img class="poster" :src="'https://anilibria.top' + release.poster" loading="lazy"/>
 							<div class="information">
@@ -97,7 +124,7 @@
 									title="Открыть торрент на просмотр в видеоплеере"
 									@click.stop="openTorrentInVideoplayer(release.id)"
 								/>
-								<span>{{ showTorrentSeries(release.id, seensCount) }}</span>
+								<span>{{ showTorrentSeries(release.id, seensCount, torrentcount, torrentdownloaded) }}</span>
 								<img
 									class="clickable-image"
 									src="/static/icons/releases/favorite.svg"
@@ -151,6 +178,7 @@
 			getReleaseDictionaries, getRelaseTorrentsByFilter, getActiveTorrents,
 			removeTorrents
 		} from './unfoldapi.js'
+		import { sections, historySections, seenMarkSections, setsSections, openLinkMode } from '/static/releaseDictionaries.js'
 		import Drawer from './components/Drawer.js'
 		import PageHeader from './components/PageHeader.js'
 		import SimpleSwitch from './components/SimpleSwitch.js'
@@ -204,10 +232,7 @@
 					await releasesList.value.toggleReleaseInFavorites(id);
 				}
 
-				function showTorrentSeries(id, seenCount) {
-					const torrent = activeTorrents.value[id];
-					const torrentVideos = torrent.countVideos;
-					const downloadedVideos = torrent.countDownloaded;
+				function showTorrentSeries(id, seenCount, torrentVideos, downloadedVideos) {
 					let seensVideos = seenCount;
 					if (seensVideos > downloadedVideos) seensVideos = downloadedVideos;
 					
@@ -217,7 +242,7 @@
 				}
 
 				function openTorrentInVideoplayer(releaseId) {
-					if (settings.value.openLinkMode) {
+					if (releasesList.value.torrentSettings.openLinkMode) {
 						window.open("videoplayer.html?mode=downloadedtorrent&id=" + releaseId, '_blank');
 					} else {
 						window.location.href = 'videoplayer.html?mode=downloadedtorrent&id=' + releaseId;
@@ -225,7 +250,7 @@
 				}
 
 				function openReleaseCardByLink(id) {
-					if (settings.value.openLinkMode) {
+					if (releasesList.value.torrentSettings.openLinkMode) {
 						window.open("releasecard.html?id=" + id, '_blank');
 					} else {
 						window.location.href = "releasecard.html?id=" + id;
@@ -256,6 +281,11 @@
 					backToTopVisible,
 					filterModel,
 					releasesList,
+					sections,
+					historySections,
+					seenMarkSections,
+					setsSections,
+					openLinkMode,
 					openTorrentInVideoplayer,
 					savePageSettings,
 					removeSelectedWithFiles,

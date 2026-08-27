@@ -1,8 +1,8 @@
 import { ref, watch, useTemplateRef, onMounted } from '/static/vue.js'
 import {
-	getRelasesByFilter, getUserMarks, getPageSettings,
+	getRelasesByFilter, getUserMarks, getPageSettings, getActiveTorrents,
     getReleaseNotifications, getCinemahallReleases, getRelaseTorrentsByFilter,
-    addFavorites, removeFavorites
+    addFavorites, removeFavorites, saveSettings
 } from '/static/unfoldapi.js'
 
 export default {
@@ -23,6 +23,9 @@ export default {
                 :inCinemahall="cinemahallReleases.includes(release.id)"
                 :inFavorites="userMarks.favorites.includes(release.id)"
                 :seensCount="userMarks.fullSeenReleases.includes(release.id) ? release.countVideos : (userMarks.seenSeries[release.id] ? userMarks.seenSeries[release.id] : 0)"
+                :hasactivetorrent="Object.hasOwn(activeTorrents, release.id)"
+                :torrentcount="Object.hasOwn(activeTorrents, release.id) ? activeTorrents[release.id].countVideos : 0"
+                :torrentdownloaded="Object.hasOwn(activeTorrents, release.id) ? activeTorrents[release.id].countDownloaded : 0"
                 :release="release"
                 >
             </slot>
@@ -78,6 +81,7 @@ export default {
     	const torrentSettings = ref({});
         const settings = ref({ startedSection: 0, startedSubSection: -1, notificationMode: 0, openLinkMode: 0 });
 		const cinemahallReleases = ref([]);
+        const activeTorrents = ref({});
 
         // synchronize data
         const notificationMessage = ref('');
@@ -206,11 +210,20 @@ export default {
             torrentSettings.value = await getPageSettings('torrent');
             cinemahallReleases.value = await getCinemahallReleases();
             notificationMessage.value = await getReleaseNotifications();
+            activeTorrents.value = await getActiveTorrents();
 
             if (props.allfilters) filterModel.value = Object.assign(filterModel.value, props.allfilters);
 
-            filterModel.value.section = settings.value.startedSection;
-            filterModel.value.subSection = settings.value.startedSubSection;
+            switch (props.sourcepage) {
+                case 'releases':
+                    filterModel.value.section = settings.value.startedSection;
+                    filterModel.value.subSection = settings.value.startedSubSection;
+                    break;
+                case 'torrent':
+                    filterModel.value.section = torrentSettings.value.startedSection;
+                    filterModel.value.subSection = torrentSettings.value.startedSubSection;
+                    break;
+            }
             adjustSortingBySection();
             await loadReleases();
         }
@@ -290,6 +303,7 @@ export default {
             cinemahallReleases,
             settings,
             torrentSettings,
+            activeTorrents,
             sectionChanged,
             subSectionChanged,
             toggleSelectionRelease,

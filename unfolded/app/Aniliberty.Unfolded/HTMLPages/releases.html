@@ -113,7 +113,7 @@
 					:item-height="290"
 					@openrelease="openReleaseCardByLink($event);"
 					ref="releasesList">
-					<template v-slot:release="{ release, isSelected, inCinemahall, inFavorites, seensCount }">
+					<template v-slot:release="{ release, isSelected, inCinemahall, inFavorites, seensCount, hasactivetorrent, torrentcount, torrentdownloaded }">
 						<div class="releaseslist-release-item" :class="{'releaseslist-release-item-selected': isSelected }">
 							<img class="poster" :src="'https://anilibria.top/' + release.poster" loading="lazy"/>
 							<div class="information">
@@ -121,7 +121,7 @@
 								<span class="normal-text">{{ release.status }} {{ release.season ? '- ' + release.season : '' }} {{ release.year }}</span>
 								<span class="normal-text">{{ release.type }} {{ release.series }} {{ release.genres ? '- ' + release.genres.join(', ') : '' }}</span>
 								<span class="normal-text"><b>Команда:</b> {{ release.voices ? release.voices.join(', ') : '' }}</span>
-								<span class="digit-text flex-row flex-base-center gap-4">
+								<div class="digit-text flex-row flex-base-center gap-4">
 									<img
 										class="clickable-image"
 										src="/static/icons/releases/online.svg"
@@ -132,18 +132,31 @@
 										loading="lazy"
 									/>
 									<span>{{ release.countVideos }}{{ seensCount > 0 ? '/' + seensCount : '' }}</span>
-									<img
-										v-if="release.countTorrents > 0"
-										class="clickable-image"
-										src="/static/icons/mainmenu/torrent.svg"
-										width="20"
-										height="20"
-										loading="lazy"
-										title="Скачать релиз через торрент"
-										@click.stop="downloadInTorrent(release.id)"
-									/>
-									<div v-if="release.countTorrents > 0">
-										{{ formatCodecs(release.codecs) }}
+									<div class="flex flex-row" v-if="release.countTorrents > 0 && !hasactivetorrent">
+										<img
+											class="clickable-image"
+											src="/static/icons/mainmenu/torrent.svg"
+											width="20"
+											height="20"
+											loading="lazy"
+											title="Скачать релиз через торрент"
+											@click.stop="downloadInTorrent(release.id)"
+										/>
+										&nbsp;
+										<span> {{ formatCodecs(release.codecs) }} </span>
+									</div>
+									<div class="flex flex-row" v-if="hasactivetorrent">
+										<img
+											class="clickable-image"
+											src="/static/icons/mainmenu/torrent.svg"
+											width="20"
+											height="20"
+											loading="lazy"
+											:title="torrentcount === torrentdownloaded ? 'Открыть скаченный релиз в видеоплеере' : 'Релиз скачивается...'"
+											@click.stop="openTorrentInVideoplayer(release.id, torrentcount, torrentdownloaded)"
+										/>
+										&nbsp;
+										<span>{{ torrentdownloaded }} из {{ torrentcount }}</span>
 									</div>
 									<img
 										class="clickable-image"
@@ -157,7 +170,7 @@
 									<span>{{ release.rating }}</span>
 									<img v-if="release.publishDay" src="/static/icons/releases/scheduleday.svg" width="20" height="20" loading="lazy" />
 									<span v-if="release.publishDay">{{ getPublishDay(release.publishDay) }}</span>
-								</span>
+								</div>
 								<div class="flex-1"></div>
 								<div class="flex-row flex-base-center">
 									<span v-if="inFavorites || inCinemahall" class="header-text" style="margin-bottom: 4px;">
@@ -198,7 +211,7 @@
 			saveSettings, getReleaseNotifications, getRandomReleaseFromAll, getRandomRelease, addFavorites, removeFavorites,
 			getHidedReleases, addHidedReleases, downloadTorrent
 		} from './unfoldapi.js'
-		import { sections, historySections, seenMarkSections, setsSections } from '/static/releaseDictionaries.js'
+		import { sections, historySections, seenMarkSections, setsSections, openLinkMode, notificationModes } from '/static/releaseDictionaries.js'
 		import Drawer from './components/Drawer.js'
 		import PageHeader from './components/PageHeader.js'
 		import SimpleSelect from './components/SimpleSelect.js'
@@ -229,32 +242,6 @@
 				const settings = ref({ startedSection: 0, startedSubSection: -1, notificationMode: 0, openLinkMode: 0 });
 				const filterModel = ref({});
 
-				const notificationModes = [
-					{
-						title: "Выключены",
-						id: 0
-					},
-					{
-						title: "Уведомления по всем релизам",
-						id: 1
-					},
-					{
-						title: "Уведомления только по избранному",
-						id: 2
-					},
-				];
-
-				const openLinkMode = [
-					{
-						title: "В текущем окне",
-						id: 0
-					},
-					{
-						title: "В новом окне",
-						id: 1
-					}
-				];
-
 				async function saveReleasesSettings() {
 					await saveSettings('releases', settings.value);
 				}
@@ -271,6 +258,16 @@
 						default: return '';
 					}
 				}
+
+				function openTorrentInVideoplayer(releaseId, torrentcount, torrentdownloaded) {
+					if (torrentcount !== torrentdownloaded) return;
+
+					if (settings.value.openLinkMode) {
+						window.open("videoplayer.html?mode=downloadedtorrent&id=" + releaseId, '_blank');
+					} else {
+						window.location.href = 'videoplayer.html?mode=downloadedtorrent&id=' + releaseId;
+					}					
+				}				
 
 				function openInVideoPlayer(id) {
 					if (settings.value.openLinkMode) {
@@ -361,7 +358,8 @@
 					formatCodecs,
 					downloadInTorrent,
 					openReleaseCardByLink,
-					toggleReleaseInFavorites
+					toggleReleaseInFavorites,
+					openTorrentInVideoplayer
 				}
 			}
 		});

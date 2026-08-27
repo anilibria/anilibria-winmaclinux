@@ -10,6 +10,12 @@
 
 		public IEnumerable<string> CodecPrefference { get; set; } = ["avc", "hevc", "av1"];
 
+		public int StartedSection { get; set; } = 0;
+
+		public int StartedSubSection { get; set; } = -1;
+
+		public int OpenLinkMode { get; set; } = 0;
+
 	}
 
 }
