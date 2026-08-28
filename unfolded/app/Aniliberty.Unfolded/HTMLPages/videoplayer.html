@@ -69,11 +69,11 @@
 				</div>
 			</div>
 			<div class="right-content">
-				<div class="videoplayer-container">
+				<div class="videoplayer-container" :class="{'videoplayer-container-hide-mouse': !playListVisible}">
 					<video ref="video" autoplay muted playsinline controls :data-poster="poster">
 					</video>
 					<div class="videoplayer-playlist-container" :class="{'videoplayer-playlist-container-reverse-animation': playListVisible}">
-						<div v-for="(episode, index) in episodes" :key="index">
+						<div ref="episodeslist" v-for="(episode, index) in episodes" :key="index">
 							<div class="flex-row flex-base-center playlist-item" :class="{'playlist-selected-item': episode === selectedEpisode}" @click.prevent="openEpisodeFromList(episode)" :title="episode.name">
 								<span class="flex-1">
 									Серия {{ episode.sortOrder + 1 }}
@@ -123,6 +123,7 @@
 			setup() {
 				const mainMenuVisible = ref(false);
 				const video = useTemplateRef('video');
+				const episodesList = useTemplateRef('episodeslist');
 				let hlsSource = ref(null);
 				let videoPlayer = null;
 				const hlsSupported = ref(Hls.isSupported());
@@ -177,6 +178,13 @@
 					//TODO: open latest opened release
 				}
 
+				function scrollToEpisodeInList() {
+					const index = episodes.value.indexOf(selectedEpisode.value);
+					if (index === -1) return;
+
+					episodesList.value[index].scrollIntoView({ behavior: "smooth" });
+				}
+
 				async function loadEpisodeAndInnerState(episode, idInt) {
 					if (episode) {
 						selectedEpisode.value = episodes.value.find(a => a.id === episode);
@@ -195,6 +203,8 @@
 					const releasePoster = releasePosters.value.find(a => a.id === idInt).poster;
 					poster.value = releasePoster ? 'https://anilibria.top' + releasePoster : '/static/backgrounds/emptyposter.png';
 					selectedReleaseId.value = idInt;
+
+					setTimeout(() => scrollToEpisodeInList());
 				}
 
 				function findFirstNotSeenEpisode() {
@@ -260,6 +270,8 @@
 					window.vueApp.selectedEpisode = episodes[index + 1];
 					
 					adjustVideoSource(openEpisode(window.vueApp.selectedEpisode));
+
+					setTimeout(() => window.vueApp.scrollToEpisodeInList());
 				}
 
 				function openPreviousSeria() {
@@ -270,6 +282,8 @@
 					window.vueApp.selectedEpisode = episodes[index - 1];
 					
 					adjustVideoSource(openEpisode(window.vueApp.selectedEpisode));
+
+					setTimeout(() => window.vueApp.scrollToEpisodeInList());
 				}
 
 				function openEpisodeFromList(episode) {
@@ -495,11 +509,11 @@
 						// mark as seens if we reach ending
 						if (!seenMarks.value.includes(episodeId) && inEnding) {
 							seenMarks.value.push(episodeId);
-							addSeenMark([episodeId]);
+							window.vueApp.addSeenMark([episodeId]);
 						}
 						// if we auto skip ending we need to try open next seria
 						if (settings.value.autoSkipEnding && inEnding && selectedEpisode.value !== episodes.at(-1)) {
-							openNextSeria();
+							window.vueApp.openNextSeria();
 						}
 
 						if (showOpening && !inOpening) window.vueApp.showOpening = false;

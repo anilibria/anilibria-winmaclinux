@@ -111,6 +111,10 @@
     }
 }
 
+.videoplayer-container-hide-mouse {
+    cursor: none;
+}
+
 .videoplayer-opening-ending-container {
     position: absolute;
     bottom: 80px;
@@ -127,8 +131,6 @@
     align-items: center;
     justify-content: center;
 }
-
-
 
 @keyframes showPlaylistAnimation {
   from {
