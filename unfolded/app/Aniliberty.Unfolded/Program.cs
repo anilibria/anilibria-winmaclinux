@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.Extensions.FileProviders;
 #endif
 #if !DEBUG
-using Microsoft.AspNetCore.StaticFiles;
 using System.Reflection;
 #endif
 namespace Aniliberty.Unfolded
