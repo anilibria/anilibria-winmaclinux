@@ -14,15 +14,15 @@ jobs:
       with:
         dotnet-version: 10.0.x
     - name: Restore dependencies
-      run: dotnet restore unfolded/app/Aniliberty.Unfolded/Aniliberty.Unfolded.csproj
+      run: dotnet restore unfolded/Aniliberty.Unfolded.csproj
     - name: Publish x64 application
-      run: dotnet publish -r win-x64 -c Release --self-contained true unfolded/app/Aniliberty.Unfolded/Aniliberty.Unfolded.csproj
+      run: dotnet publish -r win-x64 -c Release --self-contained true unfolded/Aniliberty.Unfolded.csproj
     - name: Publish arm64 application
-      run: dotnet publish -r win-arm64 -c Release --self-contained true unfolded/app/Aniliberty.Unfolded/Aniliberty.Unfolded.csproj
+      run: dotnet publish -r win-arm64 -c Release --self-contained true unfolded/Aniliberty.Unfolded.csproj
     - name: Copy binaries
       run: |
-        cp unfolded/app/Aniliberty.Unfolded/bin/Release/net10.0/win-x64/native/Aniliberty.Unfolded.exe unfold64.exe
-        cp unfolded/app/Aniliberty.Unfolded/bin/Release/net10.0/win-arm64/native/Aniliberty.Unfolded.exe unfoldarm64.exe
+        cp unfolded/bin/Release/net10.0/win-x64/native/Aniliberty.Unfolded.exe unfold64.exe
+        cp unfolded/bin/Release/net10.0/win-arm64/native/Aniliberty.Unfolded.exe unfoldarm64.exe
     - name: Upload x64 artifacts
       uses: actions/upload-artifact@v6
       with:
@@ -33,3 +33,27 @@ jobs:
       with:
         name: unfoldarm64
         path: unfoldarm64.exe
+  macos:
+    runs-on: macos-latest    
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v6
+    - name: Install .NET Core
+      uses: actions/setup-dotnet@v5
+      with:
+        dotnet-version: 10.0.x
+    - name: Restore dependencies
+      run: dotnet restore unfolded/Aniliberty.Unfolded.csproj
+    - name: Publish x64 application
+      run: dotnet publish -r osx-x64 -c Release --self-contained true unfolded/Aniliberty.Unfolded.csproj
+    - name: Publish arm64 application
+      run: dotnet publish -r osx-arm64 -c Release --self-contained true unfolded/Aniliberty.Unfolded.csproj
+    - name: Merge to single binary
+      run: lipo -create -output Aniliberty.Unfolded unfolded/bin/Release/net10.0/osx-arm64/native/Aniliberty.Unfolded unfolded/bin/Release/net10.0/osx-x64/native/Aniliberty.Unfolded
+    - name: Code sign
+      run: codesign --force --sign - Aniliberty.Unfolded
+    - name: Upload x64 artifacts
+      uses: actions/upload-artifact@v6
+      with:
+        name: dist-macosmultiarch
+        path: Aniliberty.Unfolded
