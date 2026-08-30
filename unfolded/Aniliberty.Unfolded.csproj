@@ -22,7 +22,6 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<!-- Prevents Mono.Nat from being trimmed -->
 		<TrimmerRootAssembly Include="Mono.Nat" />
 	</ItemGroup>
 
