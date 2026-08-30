@@ -29,7 +29,7 @@ namespace Aniliberty.Unfolded.Routes
 				{
 					Path = "/",
 					Domain = "localhost",
-					Secure = true,
+					Secure = false,
 					HttpOnly = true,
 					SameSite = SameSiteMode.Strict,
 					Expires = DateTimeOffset.UtcNow.AddDays(100),
