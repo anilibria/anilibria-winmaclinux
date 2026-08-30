@@ -23,9 +23,7 @@
 
 	<ItemGroup>
 		<PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.9" />
-		<PackageReference Include="MonoTorrent" Version="3.0.2">
-			<TrimmerSingleWarn>false</TrimmerSingleWarn>
-		</PackageReference>
+		<PackageReference Include="MonoTorrent" Version="3.0.2" />
 	</ItemGroup>
 	
 	<ItemGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
