@@ -258,7 +258,7 @@ namespace Aniliberty.Unfolded.Routes
 			await Releases.SetNotifications(notificationReleases, countNewReleases, countNewEpisodes, countNewTorrents);
 
 			//save franchises if new releases was added
-			if (countNewReleases > 0) await SaveReleaseSeries(httpClient, folderToSaveCacheFiles);
+			if (countNewReleases > 0 || Releases.IsEmptyReleaseSeries()) await SaveReleaseSeries(httpClient, folderToSaveCacheFiles);
 
 			return true;
 		}

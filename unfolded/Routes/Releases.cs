@@ -84,6 +84,8 @@ namespace Aniliberty.Unfolded.Routes
 
 		internal static bool IsEmptyData() => !m_releases.Any();
 
+		internal static bool IsEmptyReleaseSeries() => !m_franchises.Any();
+
 		internal static async Task ReadReleases()
 		{
 			var path = GlobalConfig.PathToCache();
