@@ -22,12 +22,10 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<TrimmerRootAssembly Include="Mono.Nat" />
-	</ItemGroup>
-
-	<ItemGroup>
 		<PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.9" />
-		<PackageReference Include="MonoTorrent" Version="3.0.2" />
+		<PackageReference Include="MonoTorrent" Version="3.0.2">
+			<TrimmerSingleWarn>false</TrimmerSingleWarn>
+		</PackageReference>
 	</ItemGroup>
 	
 	<ItemGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
