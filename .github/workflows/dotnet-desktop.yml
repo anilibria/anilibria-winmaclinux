@@ -19,10 +19,6 @@ jobs:
       run: dotnet publish -r win-x64 -c Release --self-contained true unfolded/Aniliberty.Unfolded.csproj
     - name: Publish arm64 application
       run: dotnet publish -r win-arm64 -c Release --self-contained true unfolded/Aniliberty.Unfolded.csproj
-    - name: Copy binaries
-      run: |
-        cp unfolded/bin/Release/net10.0/win-x64/native/Aniliberty.Unfolded.exe unfold64.exe
-        cp unfolded/bin/Release/net10.0/win-arm64/native/Aniliberty.Unfolded.exe unfoldarm64.exe
     - name: Upload x64 artifacts
       uses: actions/upload-artifact@v6
       with:
@@ -57,3 +53,33 @@ jobs:
       with:
         name: macosmultiarch
         path: Aniliberty.Unfolded
+  linux64:
+    runs-on: ubuntu-latest   
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v6
+    - name: Install .NET Core
+      uses: actions/setup-dotnet@v5
+      with:
+        dotnet-version: 10.0.x
+    - name: Publish x64 application
+      run: dotnet publish -r linux-x64 -c Release --self-contained true unfolded/Aniliberty.Unfolded.csproj
+    - uses: actions/upload-artifact@v6
+      with:
+        name: linux64
+        path: unfolded/bin/Release/net10.0/linux-x64/native/Aniliberty.Unfolded
+  linuxarm64:
+    runs-on: ubuntu-26.04-arm
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v6
+    - name: Install .NET Core
+      uses: actions/setup-dotnet@v5
+      with:
+        dotnet-version: 10.0.x
+    - name: Publish x64 application
+      run: dotnet publish -r linux-arm64 -c Release --self-contained true unfolded/Aniliberty.Unfolded.csproj
+    - uses: actions/upload-artifact@v6
+      with:
+        name: linuxarm64
+        path: unfolded/bin/Release/net10.0/linux-arm64/native/Aniliberty.Unfolded
