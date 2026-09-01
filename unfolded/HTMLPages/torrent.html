@@ -263,6 +263,8 @@
 					removeTorrents(selectedReleases.value, true);
 
 					releasesList.value.disableSelectionMode();
+
+					releasesList.value.loadReleases();
 				}
 				function removeSelectedWithoutFiles() {
 					if (!selectedReleases.value.length) return;
@@ -270,6 +272,8 @@
 					removeTorrents(selectedReleases.value, false);
 
 					releasesList.value.disableSelectionMode();
+
+					releasesList.value.loadReleases();
 				}
 
 				loadData();

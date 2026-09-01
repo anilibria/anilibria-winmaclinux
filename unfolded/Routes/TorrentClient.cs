@@ -98,11 +98,13 @@ namespace Aniliberty.Unfolded.Routes
 					}
 					if (message.StartsWith("delete-files"))
 					{
-						var releaseIds = message.Substring("delete-files:".Length).Split(",").Select(a => Convert.ToInt32(a));
+						var releaseIds = message.Substring("delete-files:".Length).Split(",").Select(a => Convert.ToInt32(a)).ToList();
+						await RemoveMulti(releaseIds, true);
 					}
 					if (message.StartsWith("delete:"))
 					{
 						var releaseIds = message.Substring("delete:".Length).Split(",").Select(a => Convert.ToInt32(a));
+						await RemoveMulti(releaseIds, false);
 					}
 					if (message.StartsWith("refresh"))
 					{
@@ -250,8 +252,16 @@ namespace Aniliberty.Unfolded.Routes
 
 			await manager.StopAsync();
 			await m_clientEngine.RemoveAsync(manager);
-			if (removeFiles) Directory.Delete(torrent.Path, true);
+			if (removeFiles)
+			{
+				await Task.Run(() =>
+				{
+					Directory.Delete(torrent.Path, true);
+				});
+			}
 			TorrentClient.Cache.Items.Remove(torrent);
+
+			await WebSocketHub.SendMessage("torrent", "remove-" + releaseId);
 
 			if (saveImmediateCache) await TorrentClient.SaveTorrentCache();
 

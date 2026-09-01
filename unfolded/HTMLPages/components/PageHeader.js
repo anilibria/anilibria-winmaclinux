@@ -97,6 +97,9 @@ export default {
 				case 'failmetadata':
 					resultMessage = 'Не удалось получить метаданные релиза: ' + release.title;
 					break;
+				case 'remove':
+					resultMessage = 'Торрент удален для релиза: ' + release.title;
+					break;
 			}
 			if (resultMessage) receivedNotifications.value.unshift({ type: 'common', message: resultMessage });
 		}
