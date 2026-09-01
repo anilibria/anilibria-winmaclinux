@@ -277,10 +277,9 @@
 				}
 
 				async function downloadInTorrent(id) {
-					if (torrentSettings.value.useInternalTorrectClient) {
+					if (releasesList.value.torrentSettings.useInternalTorrectClient) {
 						await downloadTorrent(id);
 					} else {
-						//TODO: show torrent dialog
 						//await openInExternalTorrentClient(id, '');
 					}
 				}

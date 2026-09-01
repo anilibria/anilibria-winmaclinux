@@ -77,7 +77,7 @@ export default {
 		}
 
 		async function torrentHandler(message) {
-			const parts = message.split(':');
+			const parts = message.split('-');
 			if (parts.length !== 2) return;
 
 			const action = parts[0];
@@ -94,8 +94,11 @@ export default {
 				case 'enddownload':
 					resultMessage = 'Cкачивание завершено: ' + release.title;
 					break;
+				case 'failmetadata':
+					resultMessage = 'Не удалось получить метаданные релиза: ' + release.title;
+					break;
 			}
-			if (resultMessage) receivedNotifications.value.unshift({ type, resultMessage });
+			if (resultMessage) receivedNotifications.value.unshift({ type: 'common', message: resultMessage });
 		}
 
 		webSocketObserver().synchronization = synchronizedHandler;

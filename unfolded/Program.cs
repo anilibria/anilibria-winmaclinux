@@ -78,6 +78,8 @@ namespace Aniliberty.Unfolded
 				});
 			});
 
+			builder.Services.AddHostedService<TorrentBackgroundService>();
+
 			var app = builder.Build();
 			app.UseCors("AllowAll");
 			app.UseWebSockets();
@@ -114,7 +116,7 @@ namespace Aniliberty.Unfolded
 			await AppData.Initialize();
 			await Settings.Initialize();
 			await Releases.Initialize();
-			if (!string.IsNullOrEmpty(Settings.Model.Torrent.PathToDownloads)) await TorrentClient.Initialize();
+			if (!string.IsNullOrEmpty(Settings.Model.Torrent.PathToDownloads)) TorrentClient.Initialize();
 
 			Settings.RegisterRoutes(app);
 			Synchronize.RegisterRoutes(app);
@@ -134,7 +136,6 @@ namespace Aniliberty.Unfolded
 			app.Run();
 
 			await AppData.Finilize();
-			await TorrentClient.Finilize();
 			await WebSocketHub.Finilize();
 		}
 	}
