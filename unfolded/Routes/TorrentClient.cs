@@ -213,6 +213,7 @@ namespace Aniliberty.Unfolded.Routes
 			catch (OperationCanceledException)
 			{
 				await WebSocketHub.SendMessage("torrent", "failmetadata-" + releaseId);
+				return Results.StatusCode(500);
 			}
 
 			// if it was item plus torrent before we remove it
