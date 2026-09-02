@@ -57,6 +57,7 @@ namespace Aniliberty.Unfolded.Routes
 			m_torrentsPath = Path.Combine(Settings.Model.Torrent.PathToDownloads, "Torrents");
 			// delete torrent directory to prevent storing redundant files
 			if (Directory.Exists(m_torrentsPath)) Directory.Delete(m_torrentsPath);
+			Directory.CreateDirectory(m_torrentsPath);
 
 			m_clientEngine = new ClientEngine(settings);
 			Console.WriteLine("Inner torrent client started!");
@@ -100,7 +101,8 @@ namespace Aniliberty.Unfolded.Routes
 
 				if (string.IsNullOrEmpty(message)) break;
 
-				try {
+				try
+				{
 					if (message.StartsWith("download"))
 					{
 						var releaseId = Convert.ToInt32(message.Substring("download:".Length));
@@ -128,7 +130,9 @@ namespace Aniliberty.Unfolded.Routes
 							Console.WriteLine($"Download Progress: {torrent.Progress:0.00}%, Speed: {torrent.Monitor.DownloadRate / 1024.0:0.00} KB/s, Peers: {torrent.OpenConnections}");
 						}
 					}
-				} catch (Exception ex) {
+				}
+				catch (Exception ex)
+				{
 					Console.WriteLine($"TorentClient loop handler: {message}, " + ex.Message);
 				}
 			}
@@ -221,6 +225,7 @@ namespace Aniliberty.Unfolded.Routes
 			catch (OperationCanceledException)
 			{
 				await WebSocketHub.SendMessage("torrent", "failmetadata-" + releaseId);
+				await torrentManager.StopAsync();
 				await m_clientEngine.RemoveAsync(torrentManager);
 				return Results.StatusCode(500);
 			}
@@ -388,7 +393,7 @@ namespace Aniliberty.Unfolded.Routes
 			{
 				var response = await httpClient.GetAsync($"https://www.anilibria.top/api/v1/anime/torrents/{torrent.Id}/file");
 				var tempFile = Path.Combine(TorrentBackgroundService.TorrentsPath, Guid.NewGuid().ToString().Replace("-", "") + ".torrent");
-				using var savedFile = File.OpenRead(Path.Combine(TorrentBackgroundService.TorrentsPath, tempFile));
+				using var savedFile = File.Open(Path.Combine(TorrentBackgroundService.TorrentsPath, tempFile), FileMode.OpenOrCreate);
 				await response.Content.CopyToAsync(savedFile);
 				GlobalConfig.OpenPathInSystem(tempFile);
 				return Results.Ok();
