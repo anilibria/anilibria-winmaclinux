@@ -117,7 +117,7 @@ export default {
 					resultMessage = 'Старт закачки метаданных: ' + release.title;
 					break;
 				case 'startdownload':
-					resultMessage = 'Начала скачивания: ' + release.title;
+					resultMessage = 'Начало скачивания: ' + release.title;
 					break;
 				case 'enddownload':
 					resultMessage = 'Cкачивание завершено: ' + release.title;
@@ -141,7 +141,7 @@ export default {
 			if (synchronizedStarted) synchronizationRunned.value = true;
 
 			const firstStart = await synchronizeFirstStart();
-			if (firstStart) {
+			if (firstStart && !synchronizedStarted) {
 				await synchronizeUser();
 				await synchronizeReleases();
 			}

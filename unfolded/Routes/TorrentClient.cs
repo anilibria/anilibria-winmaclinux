@@ -45,7 +45,7 @@ namespace Aniliberty.Unfolded.Routes
 				CacheDirectory = Settings.Model.Torrent.PathToDownloads,
 				MaximumConnections = 40,
 				MaximumUploadRate = 50 * 1024,
-				MaximumDownloadRate = 1024 * 1024, // 1Mb/s
+				MaximumDownloadRate = 5 * 1024 * 1024, // 5Mb/s
 				ListenEndPoints = new Dictionary<string, IPEndPoint>
 				{
 					["ipv4"] = new IPEndPoint(IPAddress.Any, torrentPort),
