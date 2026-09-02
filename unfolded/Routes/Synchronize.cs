@@ -27,6 +27,7 @@ namespace Aniliberty.Unfolded.Routes
 			app.MapGet("/sync/user", ([FromServices] IHttpClientFactory clientFactory, HttpContext context) => User(clientFactory, context));
 			app.MapGet("/sync/firststart", () => Results.Content(m_firstlyStarted ? "true" : "false"));
 			app.MapGet("/sync/status", () => Results.Content(m_synchronizationStarted ? "true" : "false"));
+			app.MapGet("/sync/fullstatus", () => Results.Content($"{{\"firstStart\": {(m_firstlyStarted ? "true" : "false")}, \"status\": {(m_synchronizationStarted ? "true" : "false")}}}"));
 			app.MapPost("/sync/addfavorites", (IHttpClientFactory clientFactory, HttpContext context, [FromBody] int[] ids) => AddFavorites(clientFactory, context, ids));
 			app.MapPost("/sync/removefavorites", (IHttpClientFactory clientFactory, HttpContext context, [FromBody] int[] ids) => RemoveFavorites(clientFactory, context, ids));
 			app.MapPost("/sync/addseens", (IHttpClientFactory clientFactory, HttpContext context, [FromBody] string[] ids) => AddSeens(clientFactory, context, ids));

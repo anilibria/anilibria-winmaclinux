@@ -213,6 +213,10 @@ export async function synchronizeStatus() {
     const response = await fetch('/sync/status');
     return response.json();
 };
+export async function synchronizeFullStatus() {
+    const response = await fetch('/sync/fullstatus');
+    return response.json();
+};
 export async function addFavorites(ids) {
     await fetch(
         '/sync/addfavorites',

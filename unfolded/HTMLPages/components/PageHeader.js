@@ -1,6 +1,6 @@
 ﻿import { ref, onMounted } from '/static/vue.js'
 import {
-	synchronizeFirstStart, synchronizeUser, synchronizeReleases,
+	synchronizeUser, synchronizeReleases, synchronizeFullStatus,
 	webSocketObserver, synchronizeStatus, getRelease
 } from '/static/unfoldapi.js'
 
@@ -137,11 +137,10 @@ export default {
 		webSocketObserver().torrent = torrentHandler;
 
 		onMounted(async () => {
-			const synchronizedStarted = await synchronizeStatus();
-			if (synchronizedStarted) synchronizationRunned.value = true;
+			const fullStatus = await synchronizeFullStatus();
+			if (fullStatus.status) synchronizationRunned.value = true;
 
-			const firstStart = await synchronizeFirstStart();
-			if (firstStart && !synchronizedStarted) {
+			if (fullStatus.firstStart && !fullStatus.status) {
 				await synchronizeUser();
 				await synchronizeReleases();
 			}

@@ -55,9 +55,7 @@ namespace Aniliberty.Unfolded.Routes
 			}.ToSettings();
 			m_downloadPath = Path.Combine(Settings.Model.Torrent.PathToDownloads, "Downloads");
 			m_torrentsPath = Path.Combine(Settings.Model.Torrent.PathToDownloads, "Torrents");
-			// delete torrent directory to prevent storing redundant files
-			if (Directory.Exists(m_torrentsPath)) Directory.Delete(m_torrentsPath);
-			Directory.CreateDirectory(m_torrentsPath);
+			if (!Directory.Exists(m_torrentsPath)) Directory.CreateDirectory(m_torrentsPath);
 
 			m_clientEngine = new ClientEngine(settings);
 			Console.WriteLine("Inner torrent client started!");
