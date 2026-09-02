@@ -80,8 +80,8 @@
 						<div class="card-field"><b>Год:</b> {{ releaseCard.year }}</div>
 						<div class="card-field"><b>Сезон:</b> {{ releaseCard.season }}</div>
 						<div class="card-field"><b>Тип:</b> {{ releaseCard.type }}</div>
-						<div class="card-field"><b>Жанры:</b> {{ releaseCard.type }}</div>
-						<div class="card-field"><b>Команда:</b> {{ releaseCard.type }}</div>
+						<div class="card-field"><b>Жанры:</b> <span v-for="(genre, index) in releaseCard.genres">{{ genre + (index < releaseCard.genres.length- 1 ? ',' : '') }}&nbsp;</span></div>
+						<div class="card-field"><b>Команда:</b> <span v-for="(member, index) in releaseCard.team">{{ member + (index < releaseCard.team.length- 1 ? ',' : '') }}&nbsp;</span></div>
 						<div v-if="releaseEpisodes.length" style="height: 4px;"></div>
 						<div v-if="releaseEpisodes.length" class="flex-row flex-base-center gap-8">
 							<span>Доступно {{ releaseEpisodes.length }} серий</span>
