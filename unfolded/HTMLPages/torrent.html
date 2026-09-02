@@ -264,7 +264,7 @@
 
 					releasesList.value.disableSelectionMode();
 
-					releasesList.value.loadReleases();
+					setTimeout(() => releasesList.value.loadReleases(), 3000);
 				}
 				function removeSelectedWithoutFiles() {
 					if (!selectedReleases.value.length) return;
@@ -273,7 +273,7 @@
 
 					releasesList.value.disableSelectionMode();
 
-					releasesList.value.loadReleases();
+					setTimeout(() => releasesList.value.loadReleases(), 3000);
 				}
 
 				loadData();

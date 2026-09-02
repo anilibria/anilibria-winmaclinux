@@ -12,6 +12,7 @@
 
 		public int CountDownloaded { get; init; }
 
+		public bool Downloaded { get; init; }
 	}
 
 }

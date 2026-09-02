@@ -42,7 +42,7 @@
 						</div>
 					</div>
 				</div>
-				<div v-if="releaseTorrents.length" class="simple-panel-icon-button simple-popup-container">
+				<div v-if="(torrentSettings && !torrentSettings.useInternalTorrectClient) && releaseTorrents.length" class="simple-panel-icon-button simple-popup-container">
 					<div class="full-width-height flex-row flex-base-center flex-other-center">
 						<img :src="'/static/icons/mainmenu/torrent.svg'" width="30" height="30" />
 					</div>
@@ -88,11 +88,17 @@
 							<div class="action-button" @click="watchOnline()">Смотреть онлайн</div>
 						</div>
 						<div v-if="releaseTorrents.length" style="height: 4px;"></div>
-						<div v-if="releaseTorrents.length" class="flex-row flex-base-center gap-8">
+						<div v-if="releaseTorrents.length && !Object.hasOwn(activeTorrents, releaseId)" class="flex-row flex-base-center gap-8">
 							<span>Доступно {{ releaseTorrents.length }} торрентов</span>
-							<div class="action-button">Скачать</div>
-							<span>или</span>
+							<div class="flex-row gap-8" v-if="torrentSettings && torrentSettings.useInternalTorrectClient">
+								<div class="action-button" @click="downloadReleaseTorrent()">Скачать</div>
+								<span>или</span>
+							</div>
 							<div class="action-button">Смотреть торрент</div>
+						</div>
+						<div v-if="Object.hasOwn(activeTorrents, releaseId)" class="flex-row flex-base-center gap-8">
+							<span>{{ getDownloadedStatus() }}</span>
+							<div v-if="activeTorrents[releaseId].downloaded" class="action-button" @click="watchDowloadedTorrent()">Смотреть торрент</div>
 						</div>
 						<div v-if="countSeen > 0" style="height: 4px;"></div>
 						<div v-if="countSeen > 0">
@@ -151,7 +157,8 @@
 			getRelease, getReleaseTorrents, getReleaseEpisodes, getUserMarks,
 			openMagnetInSystem, addFavorites, removeFavorites, getReleaseFranchise,
 			addSeenMark, removeSeenMark, addHidedReleases, removeHidedReleases,
-			getPageSettings, watchRelease, downloadTorrent, openInExternalTorrentClient
+			getPageSettings, watchRelease, downloadTorrent, openInExternalTorrentClient,
+			getActiveTorrents
 		} from './unfoldapi.js'
 		import Drawer from './components/Drawer.js'
 		import PageHeader from './components/PageHeader.js'
@@ -171,7 +178,9 @@
 				const countSeen = ref(0);
 				const inFavorites = ref(false);
 				const franchise = ref({});
-				const torrentSettings = ref({})
+				const torrentSettings = ref({});
+				const cardMode = ref('release');
+				const activeTorrents = ref({});
 				
 				async function copyToClipboard(text) {
 					await navigator.clipboard.writeText(text);
@@ -182,16 +191,18 @@
 				}
 
 				async function openTorrent(hash) {
-					if (torrentSettings.value.useInternalTorrectClient) {
-						await downloadTorrent(releaseId.value, hash);
-					} else {
-						await openInExternalTorrentClient(releaseId.value, hash);
-					}
+					await openInExternalTorrentClient(releaseId.value, hash);
+				}
+
+				async function downloadReleaseTorrent() {
+					await downloadTorrent(releaseId.value);
 				}
 
 				function getParameter() {
 					const urlParams = new URLSearchParams(window.location.search);
-					releaseId.value = urlParams.get('id');
+					releaseId.value = parseInt(urlParams.get('id'));
+					const cardModeValue = urlParams.get('mode');
+					if (cardModeValue) cardMode.value = cardModeValue;
 				}
 
 				async function getAllSeenMarks(releaseCardId) {
@@ -204,6 +215,7 @@
 					releaseCard.value = await getRelease(releaseId.value);
 					releaseEpisodes.value = await getReleaseEpisodes(releaseId.value);
 					releaseTorrents.value = await getReleaseTorrents(releaseId.value);
+					activeTorrents.value = await getActiveTorrents();
 					const releaseCardId = releaseCard.value.id;
 					await getAllSeenMarks(releaseCardId);
 					inFavorites.value = userMarks.value.favorites.includes(releaseCardId);
@@ -262,18 +274,36 @@
 					window.location.href = '/static/releasecard.html?id=' + id;
 				}
 
+				function getDownloadedStatus() {
+					const activeTorrent = activeTorrents.value[releaseId.value];
+					
+					if (activeTorrent.downloaded) return 'Торрент полностью загружен';
+					
+					return `Торрент загружается: ${activeTorrent.countDownloaded} из ${activeTorrent.countVideos}`;
+				}
+
+				function watchDowloadedTorrent() {
+					window.location.href = 'videoplayer.html?mode=downloadedtorrent&id=' + releaseId;
+				}
+
 				getParameter();
 				getCard();
 
 				return {
 					mainMenuVisible,
 					releaseCard,
-					copyToClipboard,
 					releaseCard,
 					releaseTorrents,
 					releaseEpisodes,
 					userMarks,
 					countSeen,
+					inFavorites,
+					franchise,
+					cardMode,
+					torrentSettings,
+					activeTorrents,
+					releaseId,
+					copyToClipboard,
 					openMagnet,
 					openOnWebSite,
 					openComments,
@@ -281,14 +311,15 @@
 					watchSerie,
 					addToFavorites,
 					removeFromFavorites,
-					inFavorites,
-					franchise,
 					openLinkedSerie,
 					addSeenMarks,
 					removeSeenMarks,
 					addToHidden,
 					removeFromHidden,
-					openTorrent
+					openTorrent,
+					downloadReleaseTorrent,
+					getDownloadedStatus,
+					watchDowloadedTorrent
 				}
 			}
 		});

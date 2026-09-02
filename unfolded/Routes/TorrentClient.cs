@@ -88,9 +88,19 @@ namespace Aniliberty.Unfolded.Routes
 
 			while (!stoppingToken.IsCancellationRequested)
 			{
+				var message = "";
 				try
 				{
-					var message = await TorrentClient.ServiceChannel.Reader.ReadAsync(stoppingToken);
+					message = await TorrentClient.ServiceChannel.Reader.ReadAsync(stoppingToken);
+				}
+				catch (Exception ex)
+				{
+					Console.WriteLine("TorentClient loop: " + ex.Message);
+				}
+
+				if (string.IsNullOrEmpty(message)) break;
+
+				try {
 					if (message.StartsWith("download"))
 					{
 						var releaseId = Convert.ToInt32(message.Substring("download:".Length));
@@ -118,10 +128,8 @@ namespace Aniliberty.Unfolded.Routes
 							Console.WriteLine($"Download Progress: {torrent.Progress:0.00}%, Speed: {torrent.Monitor.DownloadRate / 1024.0:0.00} KB/s, Peers: {torrent.OpenConnections}");
 						}
 					}
-				}
-				catch(Exception ex)
-				{
-					Console.WriteLine("TorentClient loop: " + ex.Message);
+				} catch (Exception ex) {
+					Console.WriteLine($"TorentClient loop handler: {message}, " + ex.Message);
 				}
 			}
 		}
@@ -213,6 +221,7 @@ namespace Aniliberty.Unfolded.Routes
 			catch (OperationCanceledException)
 			{
 				await WebSocketHub.SendMessage("torrent", "failmetadata-" + releaseId);
+				await m_clientEngine.RemoveAsync(torrentManager);
 				return Results.StatusCode(500);
 			}
 
@@ -408,12 +417,18 @@ namespace Aniliberty.Unfolded.Routes
 			await m_serviceChannel.Writer.WriteAsync("status");
 			var result = m_cache.Items
 				.Select(
-					a => new TorrentCacheDisplayItem
+					a =>
 					{
-						Codec = a.Codec,
-						ReleaseId = a.ReleaseId,
-						CountVideos = a.CountVideos,
-						CountDownloaded = TorrentBackgroundService.ClientEngine.Torrents.FirstOrDefault(b => b.MetadataPath == a.MetadataPath)?.Files.Count(c => c.BitField.PercentComplete >= 100f) ?? 0,
+						var torrentManager = TorrentBackgroundService.ClientEngine.Torrents.FirstOrDefault(b => b.MetadataPath == a.MetadataPath);
+
+						return new TorrentCacheDisplayItem
+						{
+							Codec = a.Codec,
+							ReleaseId = a.ReleaseId,
+							CountVideos = a.CountVideos,
+							CountDownloaded = torrentManager?.Files.Count(c => c.BitField.PercentComplete >= 100f) ?? 0,
+							Downloaded = torrentManager?.Progress == 100,
+						};
 					}
 				)
 				.ToDictionary(a => a.ReleaseId);
