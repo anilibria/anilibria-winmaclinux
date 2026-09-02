@@ -45,10 +45,38 @@ export default {
 		const synchronizationRunned = ref(false);
 		const synchronizationPercent = ref(0);
 
+		function isLocalStorageAvailable() {
+			try {
+				const storage = window.localStorage;
+				const x = "__storage_test__";
+				storage.setItem(x, x);
+				storage.removeItem(x);
+				return true;
+			} catch (e) {
+				return (
+				e instanceof DOMException &&
+				e.name === "QuotaExceededError" &&
+				// Acknowledge QuotaExceededError only if there's already something stored
+				window.localStorage &&
+				window.localStorage.length !== 0
+				);
+			}
+		}
+
+		function restoreTheme() {
+			if (isLocalStorageAvailable()) {
+				const savedTheme = localStorage.getItem('unfoldtheme');
+				if (savedTheme) document.documentElement.setAttribute('data-theme', savedTheme);
+			}
+		}
+
 		function toggleTheme() {
 			const currentTheme = document.documentElement.getAttribute('data-theme');
 			const isLight = !currentTheme || currentTheme === 'light';
 			document.documentElement.setAttribute('data-theme', isLight ? 'dark' : 'light');
+			if (isLocalStorageAvailable()) {
+				localStorage.setItem('unfoldtheme', isLight ? 'dark' : 'light');
+			}
 		}
 
 		function synchronizedHandler(message) {
@@ -117,6 +145,8 @@ export default {
 				await synchronizeUser();
 				await synchronizeReleases();
 			}
+
+			restoreTheme();
 		});
 
 		return {
