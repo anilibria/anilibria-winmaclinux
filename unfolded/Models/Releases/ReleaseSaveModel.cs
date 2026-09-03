@@ -43,7 +43,7 @@ namespace Aniliberty.Unfolded.Models.Releases
 
 		public IEnumerable<string> Team { get; set; } = Enumerable.Empty<string>();
 
-		public IEnumerable<string> Codecs { get; set; } = Enumerable.Empty<string>();
+		public IEnumerable<ReleaseSaveTorrentCodecModel> TorrentCodecs { get; set; } = Enumerable.Empty<ReleaseSaveTorrentCodecModel>();
 
 		public int Year { get; set; }
 
@@ -76,10 +76,15 @@ namespace Aniliberty.Unfolded.Models.Releases
 			AgeRating = types.AgeRatings.FirstOrDefault(a => a.Value == fullRelease.AgeRating.Value)?.Description ?? fullRelease.AgeRating.Value;
 			Voices = fullRelease.Members != null ? fullRelease.Members.Where(a => a.Role.Value == "voicing").Select(a => a.Nickname) : [];
 			Team = fullRelease.Members != null ? fullRelease.Members.OrderByDescending(a => a.Role.Value).Select(a => a.Nickname) : [];
-			Codecs = fullRelease.Torrents?.Select(a => a.Codec?.Value ?? "").Where(a => a != "")?.Distinct().ToList() ?? [];
+			TorrentCodecs = fullRelease.Torrents?
+				.Where(a => a.Codec is not null && !string.IsNullOrEmpty(a.Codec.Value))
+				.Select(a => new ReleaseSaveTorrentCodecModel(a.Codec.Value, a.Hash))
+				.ToList() ?? [];
 			PublishDay = fullRelease.IsInProduction ? fullRelease.PublishDay?.Value : null;
 		}
 
 	}
+
+	public record ReleaseSaveTorrentCodecModel(string Name, string Hash);
 
 }
