@@ -305,6 +305,10 @@ export async function getHidedReleases() {
     const response = await fetch('/appdata/hidedreleases');
     return await response.json();
 };
+export async function releaseIsHided(id) {
+    const response = await fetch('/appdata/hidedrelease?id=' + id);
+    return await response.json();
+};
 export async function getCinemahallReleases() {
     const response = await fetch('/appdata/cinemahall');
     return await response.json();

@@ -36,6 +36,7 @@ namespace Aniliberty.Unfolded.Routes
 		public static void RegisterRoutes(WebApplication app)
 		{
 			app.MapGet("/appdata/hidedreleases", () => Results.Json(m_appData.HidedReleases, AppJsonSerializerContext.Default));
+			app.MapGet("/appdata/hidedrelease", ([FromQuery] int id) => Results.Content(m_appData.HidedReleases.Contains(id) ? "true" : "false"));
 			app.MapGet("/appdata/cinemahall", () => Results.Json(m_appData.Cinemahall, AppJsonSerializerContext.Default));
 			app.MapPost("/appdata/hidedreleases/{action}", ([FromRoute] string action, [FromBody] IEnumerable<int> ids) => EditHidedReleases(action, ids));
 			app.MapPost("/appdata/cinemahall/{action}", ([FromRoute] string action, [FromBody] IEnumerable<int> ids) => EditCinemahall(action, ids));

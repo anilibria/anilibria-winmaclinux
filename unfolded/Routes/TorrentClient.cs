@@ -155,18 +155,27 @@ namespace Aniliberty.Unfolded.Routes
 					var torrent = Releases.GetReleaseTorrentByCodec(id, Settings.Model.Torrent.CodecPrefference);
 					if (torrent is null) continue;
 
+					var activeTorrent = TorrentClient.Cache.Items.FirstOrDefault(a => a.ReleaseId == id);
+					if (activeTorrent is null) continue;
+
+					using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(60));
+					var magnetLink = MagnetLink.Parse(torrent.Magnet);
+					var torrentManager = await m_clientEngine.AddAsync(magnetLink, m_downloadPath);
+					await torrentManager.StartAsync();
+					
+					try
+					{
+						await torrentManager.WaitForMetadataAsync(cts.Token);
+					}
+					catch (OperationCanceledException)
+					{
+						throw;
+					}
+
 					//remove current torrent if it exists
 					var removed = await RemoveTorrent(id, false, true);
 
-					if (removed)
-					{
-						var magnetLink = MagnetLink.Parse(torrent.Magnet);
-						var torrentManager = await m_clientEngine.AddAsync(magnetLink, m_downloadPath);
-
-						await torrentManager.StartAsync();
-						await torrentManager.WaitForMetadataAsync();
-						RegisterTorrentManager(torrentManager, id, torrent);
-					}
+					if (removed) RegisterTorrentManager(torrentManager, id, torrent);
 				}
 				catch (Exception ex)
 				{

@@ -26,8 +26,8 @@
 						<div class="releasecard-rightmenu-seens flex-column">
 							<a v-if="countSeen != releaseEpisodes.length" class="default-link" @click.prevent="addSeenMarks()" href="">Отметить как просмотренное</a>
 							<a v-if="countSeen === releaseEpisodes.length" class="default-link" @click.prevent="removeSeenMarks()" href="">Отметить как не просмотренное</a>
-							<a class="default-link" @click.prevent="addToHidden()" href="">Скрыть релиз</a>
-							<a class="default-link" @click.prevent="removeFromHidden()" href="">Убрать релиз из скрытых</a>
+							<a v-if="!releaseHided" class="default-link" @click.prevent="addToHidden()" href="">Скрыть релиз</a>
+							<a v-if="releaseHided" class="default-link" @click.prevent="removeFromHidden()" href="">Убрать релиз из скрытых</a>
 						</div>
 					</div>
 				</div>
@@ -158,7 +158,7 @@
 			openMagnetInSystem, addFavorites, removeFavorites, getReleaseFranchise,
 			addSeenMark, removeSeenMark, addHidedReleases, removeHidedReleases,
 			getPageSettings, watchRelease, downloadTorrent, openInExternalTorrentClient,
-			getActiveTorrents
+			getActiveTorrents, releaseIsHided
 		} from './unfoldapi.js'
 		import Drawer from './components/Drawer.js'
 		import PageHeader from './components/PageHeader.js'
@@ -181,6 +181,7 @@
 				const torrentSettings = ref({});
 				const cardMode = ref('release');
 				const activeTorrents = ref({});
+				const releaseHided = ref(false);
 				
 				async function copyToClipboard(text) {
 					await navigator.clipboard.writeText(text);
@@ -210,12 +211,17 @@
 					countSeen.value = userMarks.value.fullSeenReleases.includes(releaseCardId) ? releaseEpisodes.value.length : (userMarks.value.seenSeries[releaseCardId] ? userMarks.value.seenSeries[releaseCardId] : '');
 				}
 
+				async function getHidedStatus() {
+					releaseHided.value = await releaseIsHided(releaseId.value);
+				}
+
 				async function getCard() {
 					torrentSettings.value = await getPageSettings('torrent');
 					releaseCard.value = await getRelease(releaseId.value);
 					releaseEpisodes.value = await getReleaseEpisodes(releaseId.value);
 					releaseTorrents.value = await getReleaseTorrents(releaseId.value);
 					activeTorrents.value = await getActiveTorrents();
+					await getHidedStatus();
 					const releaseCardId = releaseCard.value.id;
 					await getAllSeenMarks(releaseCardId);
 					inFavorites.value = userMarks.value.favorites.includes(releaseCardId);
@@ -262,10 +268,12 @@
 
 				async function addToHidden() {
 					await addHidedReleases([releaseCard.value.id]);
+					await getHidedStatus();
 				}
 
 				async function removeFromHidden() {
 					await removeHidedReleases([releaseCard.value.id]);
+					await getHidedStatus();
 				}
 
 				function openLinkedSerie(id) {
@@ -303,6 +311,7 @@
 					torrentSettings,
 					activeTorrents,
 					releaseId,
+					releaseHided,
 					copyToClipboard,
 					openMagnet,
 					openOnWebSite,

@@ -251,9 +251,9 @@
 
 				function openReleaseCardByLink(id) {
 					if (releasesList.value.torrentSettings.openLinkMode) {
-						window.open("releasecard.html?id=" + id, '_blank');
+						window.open("releasecard.html?mode=downloadedtorrent&id=" + id, '_blank');
 					} else {
-						window.location.href = "releasecard.html?id=" + id;
+						window.location.href = "releasecard.html?mode=downloadedtorrent&id=" + id;
 					}
 				}				
 
