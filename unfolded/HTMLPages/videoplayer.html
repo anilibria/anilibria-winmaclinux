@@ -108,7 +108,7 @@
 		import {
 			getReleaseEpisodes, getPageSettings, saveSettings, watchVideoRelease,
 			addSeenMark, removeSeenMark, getSeenEpisodes, getReleasePosters,
-			getWatchVideoRelease, getTorrentEpisodes
+			getWatchVideoRelease, getTorrentEpisodes, getLastWatchVideoRelease
 		} from './unfoldapi.js'
 		import Drawer from './components/Drawer.js'
 		import PageHeader from './components/PageHeader.js'
@@ -175,7 +175,15 @@
 						//TODO: setup online torrent
 					}
 					
-					//TODO: open latest opened release
+					const lastWatchVideo = await getLastWatchVideoRelease();
+					if (lastWatchVideo) {
+						const idInt = lastWatchVideo.releaseId;
+						releaseIds.value = [idInt];
+						episodes.value = await getReleaseEpisodes(idInt);
+						seenMarks.value = await getSeenEpisodes([idInt]);
+						loadEpisodeAndInnerState(null, idInt);
+						needUseHls = true;
+					}
 				}
 
 				function scrollToEpisodeInList() {

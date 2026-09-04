@@ -368,7 +368,11 @@ export async function watchVideoRelease(id, episode, time) {
     });
 };
 export async function getWatchVideoRelease(id) {
-    const response = await fetch('/appdata/watchvideorelease?id=' + id);
+    const response = await fetch(`/appdata/watchvideorelease?id=` + id);
+    return await response.json();
+};
+export async function getLastWatchVideoRelease() {
+    const response = await fetch(`/appdata/lastwatchvideorelease`);
     return await response.json();
 };
 

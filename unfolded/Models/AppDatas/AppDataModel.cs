@@ -30,4 +30,11 @@
 
 	}
 
+	internal class AppDataModelWatchReleaseVideoModel : AppDataModelWatchVideoModel
+	{
+
+		public int ReleaseId { get; set; }
+
+	}
+
 }

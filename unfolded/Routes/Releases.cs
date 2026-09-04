@@ -778,6 +778,14 @@ namespace Aniliberty.Unfolded.Routes
 
 		internal static ReleaseSaveEpisodeModel? GetReleaseEpisodes(int releaseId) => m_episodes.FirstOrDefault(a => a.ReleaseId == releaseId);
 
+		internal static int GetEpisodeRelease(string episodeId)
+		{
+			var item = m_episodes.FirstOrDefault(a => a.Items.Any(b => b.Id == episodeId));
+			if (item is not null) return item.ReleaseId;
+
+			return -1;
+		}
+
 	}
 
 }

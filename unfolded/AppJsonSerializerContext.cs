@@ -55,6 +55,7 @@ namespace Aniliberty.Unfolded
 	[JsonSerializable(typeof(AppDataModelWatchVideoModel))]
 	[JsonSerializable(typeof(TorrentCache))]
 	[JsonSerializable(typeof(Dictionary<int, TorrentCacheDisplayItem>))]
+	[JsonSerializable(typeof(AppDataModelWatchReleaseVideoModel))]
 	[JsonSourceGenerationOptions(PropertyNamingPolicy = JsonKnownNamingPolicy.CamelCase)]
 	internal partial class AppJsonSerializerContext : JsonSerializerContext
 	{
