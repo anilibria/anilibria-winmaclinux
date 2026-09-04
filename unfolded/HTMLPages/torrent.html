@@ -38,6 +38,16 @@
 						</div>
 					</div>
 				</div>
+				<div class="simple-panel-icon-button simple-popup-container" title="Настройка страницы Torrent клиент">
+					<div class="full-width-height flex-row flex-base-center flex-other-center">
+						<img :src="'/static/icons/commonbuttons/actions.svg'" width="30" height="30" />
+					</div>
+					<div class="simple-popup-box torrents-rightmenu">
+						<div class="torrents-rightmenu-remove flex-column">
+							<a class="default-link" @click.prevent="refreshAllTorrents()" href="">Обновить все торренты</a>
+						</div>
+					</div>
+				</div>
 				<releases-sidebar-actions
 					:selected-releases="selectedReleases"
 					:releases-list="releasesList"
@@ -176,7 +186,7 @@
 		import {
 			getPageSettings, saveSettings, getUserMarks, getCinemahallReleases,
 			getReleaseDictionaries, getRelaseTorrentsByFilter, getActiveTorrents,
-			removeTorrents
+			removeTorrents, refreshAllTorrents
 		} from './unfoldapi.js'
 		import { sections, historySections, seenMarkSections, setsSections, openLinkMode } from '/static/releaseDictionaries.js'
 		import Drawer from './components/Drawer.js'
@@ -297,7 +307,8 @@
 					backToTop,
 					showTorrentSeries,
 					openReleaseCardByLink,
-					toggleReleaseInFavorites
+					toggleReleaseInFavorites,
+					refreshAllTorrents
 				}
 			}
 		});

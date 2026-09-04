@@ -78,7 +78,7 @@ function paramsToQuery(params) {
 
 export async function getRelasesByFilter(model) {
     const response = await fetch(
-        '/releases/list',
+        `/releases/list`,
         {
             method: "POST",
             body: JSON.stringify(model),
@@ -91,7 +91,7 @@ export async function getRelasesByFilter(model) {
 };
 export async function getRandomReleaseFromAll() {
     const response = await fetch(
-        '/releases/random',
+        `/releases/random`,
         {
             method: "POST",
             headers: {
@@ -103,7 +103,7 @@ export async function getRandomReleaseFromAll() {
 };
 export async function getRandomRelease(model) {
     const response = await fetch(
-        '/releases/random',
+        `/releases/random`,
         {
             method: "POST",
             body: JSON.stringify(model),
@@ -373,7 +373,7 @@ export async function getWatchVideoRelease(id) {
 };
 
 export async function torrentCheckFolder(path) {
-    const response = await fetch('/torrent/checkfolder', {
+    const response = await fetch(`/torrent/checkfolder`, {
         method: "POST",
         body: JSON.stringify(path),
         headers: {
@@ -394,7 +394,7 @@ export async function getActiveTorrents() {
 };
 export async function getRelaseTorrentsByFilter(model) {
     const response = await fetch(
-        '/torrent/list',
+        `/torrent/list`,
         {
             method: "POST",
             body: JSON.stringify(model),
@@ -411,6 +411,9 @@ export async function getTorrentEpisodes(releaseId) {
 };
 export async function removeTorrent(releaseId, removeFiles) {
     await fetch(`/torrent/remove?releaseId=${releaseId}&removeFiles=${removeFiles}`);
+};
+export async function refreshAllTorrents() {
+    await fetch(`/torrent/refresh`);
 };
 export async function removeTorrents(releaseIds, removeFiles) {
     await fetch(

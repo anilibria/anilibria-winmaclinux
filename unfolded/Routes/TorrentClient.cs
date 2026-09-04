@@ -162,7 +162,7 @@ namespace Aniliberty.Unfolded.Routes
 					var magnetLink = MagnetLink.Parse(torrent.Magnet);
 					var torrentManager = await m_clientEngine.AddAsync(magnetLink, m_downloadPath);
 					await torrentManager.StartAsync();
-					
+
 					try
 					{
 						await torrentManager.WaitForMetadataAsync(cts.Token);
@@ -367,6 +367,7 @@ namespace Aniliberty.Unfolded.Routes
 			app.MapGet("/torrent/active", GetActiveTorrents);
 			app.MapGet("/torrent/videofile/{releaseId}/{videoIndex}/", GetTorrentVideoFile);
 			app.MapGet("/torrent/episodes", Episodes);
+			app.MapGet("/torrent/refresh", RefreshAllTorrents);
 		}
 
 		public static IResult CheckFolder(string path)
@@ -510,6 +511,40 @@ namespace Aniliberty.Unfolded.Routes
 					),
 				AppJsonSerializerContext.Default
 			);
+		}
+
+		internal static async Task<IResult> RefreshAllTorrents()
+		{
+			List<int> releaseIds = [];
+			foreach (var activeTorrent in m_cache.Items)
+			{
+				var torrent = Releases.GetReleaseTorrentByCodec(activeTorrent.ReleaseId, Settings.Model.Torrent.CodecPrefference);
+				if (torrent is not null)
+				{
+					var parsedCount = GetCountFromDescription(torrent.Description);
+					if (parsedCount > activeTorrent.CountVideos) releaseIds.Add(activeTorrent.ReleaseId);
+				}
+			}
+			if (!releaseIds.Any()) return Results.NoContent();
+
+			await m_serviceChannel.Writer.WriteAsync("refresh:" + string.Join(",", releaseIds));
+
+			return Results.Ok();
+
+			static int GetCountFromDescription(string description)
+			{
+				if (!description.Contains("-")) return 0;
+
+				var parts = description.Split("-");
+				if (parts.Length != 2) return 0;
+
+				if (int.TryParse(parts[1], out var count))
+				{
+					return count;
+				}
+
+				return 0;
+			}
 		}
 
 	}
