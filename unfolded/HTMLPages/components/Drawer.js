@@ -23,7 +23,7 @@ export default {
 			</div>
 			<div class="main-menu-logo">
 				<div class="icon"></div>
-				<span class="version">Aniliberty.Unfolded<br>версия 0.0.0</span>
+				<span class="version">Aniliberty.Unfolded<br>версия 0.0.2</span>
 			</div>
 		</div>
 	</div>

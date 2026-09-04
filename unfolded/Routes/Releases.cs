@@ -768,6 +768,14 @@ namespace Aniliberty.Unfolded.Routes
 			return item.Items.FirstOrDefault(a => a.Hash == hash);
 		}
 
+		internal static IEnumerable<ReleaseTorrentSaveModel> GetReleaseTorrentByReleaseId(int releaseId)
+		{
+			var item = m_torrents.FirstOrDefault(a => a.ReleaseId == releaseId);
+			if (item == null) return [];
+
+			return [.. item.Items];
+		}
+
 		internal static ReleaseSaveEpisodeModel? GetReleaseEpisodes(int releaseId) => m_episodes.FirstOrDefault(a => a.ReleaseId == releaseId);
 
 	}

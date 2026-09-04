@@ -10,6 +10,7 @@
 		<IsTrimmable>true</IsTrimmable>
 		<PublishTrimmed>true</PublishTrimmed>
 		<EnableTrimAnalyzer>true</EnableTrimAnalyzer>
+		<Version>0.0.2</Version>
 		<AssemblyTitle>Aniliberty.Unfolded</AssemblyTitle>
 	</PropertyGroup>
 
