@@ -16,7 +16,7 @@ namespace Aniliberty.Unfolded.Routes
 				([FromQuery] string username, [FromBody] string password, HttpContext context, IHttpClientFactory clientFactory)
 					=> Login(clientFactory, context, username, password)
 			);
-			app.MapGet("/auth/logout", (IHttpClientFactory clientFactory, HttpContext context) => Logout(clientFactory, context));
+			app.MapPost("/auth/logout", Logout);
 		}
 
 		public static async Task<IResult> Login(IHttpClientFactory clientFactory, HttpContext context, string userName, string password)
@@ -45,18 +45,19 @@ namespace Aniliberty.Unfolded.Routes
 			}
 		}
 
-		public static IResult Logout(IHttpClientFactory clientFactory, HttpContext context)
+		public static IResult Logout(HttpContext context)
 		{
 			var options = new CookieOptions
 			{
 				Path = "/",
 				Domain = "localhost",
-				Secure = true,
+				Secure = false,
 				HttpOnly = true,
 				SameSite = SameSiteMode.Strict,
 			};
 
 			context.Response.Cookies.Delete(CookieName, options);
+			MainMenu.RemoveUser();
 			return Results.Ok("success");
 		}
 

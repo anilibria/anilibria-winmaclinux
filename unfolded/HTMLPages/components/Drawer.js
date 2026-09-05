@@ -1,6 +1,6 @@
 ﻿import { ref } from '/static/vue.js'
 import { getMainMenu, getUserData, refreshMainMenu } from '/static/mainmenu.js'
-import { webSocketObserver } from '/static/unfoldapi.js'
+import { webSocketObserver, userLogout } from '/static/unfoldapi.js'
 
 export default {
 	props: ['mainMenuVisible'],
@@ -11,7 +11,14 @@ export default {
 			<div v-if="userData && userData.name" class="main-menu-user">
 				<img class="main-menu-avatar" :src="'https://anilibria.top/' + userData.avatar" />
 				<span>Вы авторизованы как:<br>{{userData.name}}</span>
-				<img src="/static/icons/mainmenu/logout.svg" width="30" height="30" />
+				<img
+					src="/static/icons/mainmenu/logout.svg"
+					width="30"
+					height="30"
+					class="clickable-element"
+					@click="currentUserLogout()"
+					title="Выйти из аккаунта"
+				/>
 			</div>
 			<div class="main-menu-items">
 				<div v-for="item in mainMenu" @click="openOption('/static/' + item.icon + '.html')">
@@ -34,9 +41,7 @@ export default {
 		async function userEvent(message) {
 			if (message === 'opened') {
 				console.info('User completed, need refresh menu');
-				await refreshMainMenu();
-				mainMenu.value = getMainMenu();
-				userData.value = getUserData();
+				await refreshAllData();
 			}
 		}
 
@@ -44,12 +49,25 @@ export default {
 			window.location.href = url;
 		}
 
+		async function refreshAllData() {
+			await refreshMainMenu();
+			mainMenu.value = getMainMenu();
+			userData.value = getUserData();
+		}
+
+		async function currentUserLogout() {
+			await userLogout();
+
+			await refreshAllData();
+		}
+
 		webSocketObserver().user = userEvent;
 
 		return {
 			mainMenu,
 			userData,
-			openOption
+			openOption,
+			currentUserLogout
 		};
 	}
 };

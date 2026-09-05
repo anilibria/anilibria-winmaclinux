@@ -286,6 +286,9 @@ export async function authorizationByLoginPass(login, password) {
 
     return await response.json();
 };
+export async function userLogout() {
+    await fetch('/auth/logout', { method: "POST", body: "", headers: { "Content-Type": "application/json" } });
+};
 
 export async function getPageSettings(page) {
     const response = await fetch('/settings/bypage?page=' + page);

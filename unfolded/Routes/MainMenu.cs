@@ -83,7 +83,7 @@ namespace Aniliberty.Unfolded.Routes
 				new MainMenuModel
 				{
 					Name = "Авторизация",
-					Icon = ""
+					Icon = "authorization"
 				}
 			);
 		}

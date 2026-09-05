@@ -42,7 +42,7 @@
 
 	<script type="module">
 		import { createApp, ref } from './vue.js'
-		import { authorizationByLoginPass } from './unfoldapi.js'
+		import { authorizationByLoginPass, synchronizeUser } from './unfoldapi.js'
 		import Drawer from './components/Drawer.js'
 		import PageHeader from './components/PageHeader.js'
 
@@ -62,6 +62,7 @@
 
 					const result = await authorizationByLoginPass(login.value, password.value);
 					if (result === "success") {
+						await synchronizeUser();
 						window.location.href = "releases.html";
 						return;
 					}
