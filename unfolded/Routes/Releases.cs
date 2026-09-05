@@ -478,13 +478,13 @@ namespace Aniliberty.Unfolded.Routes
 				case ReleasesListFiltersModelSortingField.Status: return model.SortingDescending == true ? releases.OrderByDescending(a => a.Status) : releases.OrderBy(a => a.Status);
 				case ReleasesListFiltersModelSortingField.Season: return model.SortingDescending == true ? releases.OrderByDescending(a => a.Season) : releases.OrderBy(a => a.Season);
 				case ReleasesListFiltersModelSortingField.ReleaseSeries: return releases;
-				case ReleasesListFiltersModelSortingField.SeenHistory: return releases;
-				case ReleasesListFiltersModelSortingField.OpenHistory: return releases;
-				case ReleasesListFiltersModelSortingField.ScheduleDay: return releases;
+				case ReleasesListFiltersModelSortingField.SeenHistory: return model.SortingDescending == true ? releases.OrderByDescending(a => AppData.IsInOnlyWatchVideoHistory(a.Id) ? 1 : 0) : releases.OrderBy(a => AppData.IsInOnlyWatchVideoHistory(a.Id) ? 1 : 0);
+				case ReleasesListFiltersModelSortingField.OpenHistory: return model.SortingDescending == true ? releases.OrderByDescending(a => AppData.IsInOnlyWatchHistory(a.Id) ? 1 : 0) : releases.OrderBy(a => AppData.IsInOnlyWatchHistory(a.Id) ? 1 : 0);
+				case ReleasesListFiltersModelSortingField.ScheduleDay: return model.SortingDescending == true ? releases.OrderByDescending(a => a.PublishDay ?? 0) : releases.OrderBy(a => a.PublishDay ?? 0);
 				case ReleasesListFiltersModelSortingField.Favorite: return releases;
 				case ReleasesListFiltersModelSortingField.SeenMark: return releases;
 				case ReleasesListFiltersModelSortingField.Year: return model.SortingDescending == true ? releases.OrderByDescending(a => a.Year) : releases.OrderBy(a => a.Year);
-				case ReleasesListFiltersModelSortingField.History: return releases;
+				case ReleasesListFiltersModelSortingField.History: return model.SortingDescending == true ? releases.OrderByDescending(a => AppData.IsInWatchHistory(a.Id) ? 1 : 0) : releases.OrderBy(a => AppData.IsInWatchHistory(a.Id) ? 1 : 0);
 				default: throw new Exception("Not supported sorting field!");
 			}
 		}

@@ -92,8 +92,8 @@ export default {
 
         //////
         // Sections and selection related
-        function adjustSortingBySection(section) {
-            switch (section) {
+        function adjustSortingBySection() {
+            switch (filterModel.value.section) {
                 case 0: // all
                 case 1: // favorite
                 case 2: // notification
