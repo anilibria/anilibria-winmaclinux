@@ -45,6 +45,7 @@
 					<div class="simple-popup-box torrents-rightmenu">
 						<div class="torrents-rightmenu-remove flex-column">
 							<a class="default-link" @click.prevent="refreshAllTorrents()" href="">Обновить все торренты</a>
+							<a class="default-link" @click.prevent="removeAllTorrents()" href="">Удалить все торренты</a>
 						</div>
 					</div>
 				</div>
@@ -186,7 +187,7 @@
 		import {
 			getPageSettings, saveSettings, getUserMarks, getCinemahallReleases,
 			getReleaseDictionaries, getRelaseTorrentsByFilter, getActiveTorrents,
-			removeTorrents, refreshAllTorrents
+			removeTorrents, refreshAllTorrents, removeAllTorrents
 		} from './unfoldapi.js'
 		import { sections, historySections, seenMarkSections, setsSections, openLinkMode } from '/static/releaseDictionaries.js'
 		import Drawer from './components/Drawer.js'
@@ -308,7 +309,8 @@
 					showTorrentSeries,
 					openReleaseCardByLink,
 					toggleReleaseInFavorites,
-					refreshAllTorrents
+					refreshAllTorrents,
+					removeAllTorrents
 				}
 			}
 		});

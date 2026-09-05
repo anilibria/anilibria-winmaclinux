@@ -431,3 +431,16 @@ export async function removeTorrents(releaseIds, removeFiles) {
         }
     );
 };
+
+export async function removeAllTorrents() {
+    await fetch(
+        `/torrent/removeall`,
+        {
+            method: "POST",
+            body: '',
+            headers: {
+                "Content-Type": "application/json"
+            }
+        }
+    );
+};

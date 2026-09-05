@@ -128,6 +128,9 @@ export default {
 				case 'remove':
 					resultMessage = 'Торрент удален для релиза: ' + release.title;
 					break;
+				case 'removeall':
+					resultMessage = 'Все торренты удалены';
+					break;
 			}
 			if (resultMessage) receivedNotifications.value.unshift({ type: 'common', message: resultMessage });
 		}

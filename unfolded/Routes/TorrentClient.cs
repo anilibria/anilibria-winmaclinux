@@ -128,12 +128,32 @@ namespace Aniliberty.Unfolded.Routes
 							Console.WriteLine($"Download Progress: {torrent.Progress:0.00}%, Speed: {torrent.Monitor.DownloadRate / 1024.0:0.00} KB/s, Peers: {torrent.OpenConnections}");
 						}
 					}
+					if (message == "deleteall")
+					{
+						await RemoveAll();
+					}
 				}
 				catch (Exception ex)
 				{
 					Console.WriteLine($"TorentClient loop handler: {message}, " + ex.Message);
 				}
 			}
+		}
+
+		public async Task RemoveAll()
+		{
+			TorrentClient.Cache.Items.Clear();
+			if (m_clientEngine is not null)
+			{
+				await m_clientEngine.StopAllAsync();
+
+				foreach (var torrent in m_clientEngine.Torrents)
+				{
+					await m_clientEngine.RemoveAsync(torrent);
+				}
+			}
+
+			await WebSocketHub.SendMessage("torrent", "removeall");
 		}
 
 		public override async Task StopAsync(CancellationToken cancellationToken)
@@ -363,6 +383,7 @@ namespace Aniliberty.Unfolded.Routes
 			app.MapPost("/torrent/removemulti",
 				([FromBody] IEnumerable<int> releaseIds, [FromQuery] bool removeFiles) => m_serviceChannel.Writer.WriteAsync($"delete{(removeFiles ? "-files" : "")}:" + string.Join(",", releaseIds))
 			);
+			app.MapPost("/torrent/removeall", () => m_serviceChannel.Writer.WriteAsync($"deleteall"));
 			app.MapPost("/torrent/list", ([FromBody] ReleasesListFiltersModel model) => TorrentList(model));
 			app.MapGet("/torrent/active", GetActiveTorrents);
 			app.MapGet("/torrent/videofile/{releaseId}/{videoIndex}/", GetTorrentVideoFile);

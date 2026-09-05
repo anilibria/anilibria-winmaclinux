@@ -46,7 +46,7 @@ namespace Aniliberty.Unfolded.Routes
 			app.MapGet("/appdata/lastwatchvideorelease", GetLastWatchVideoRelease);
 		}
 
-		private static IResult WatchRelease(int id)
+		private static async Task<IResult> WatchRelease(int id)
 		{
 			if (m_appData.HistoryWatch.TryGetValue(id, out var _))
 			{
@@ -57,10 +57,18 @@ namespace Aniliberty.Unfolded.Routes
 				m_appData.HistoryWatch.Add(id, DateTime.Now);
 			}
 
+			try
+			{
+				await SaveSettings();
+			}
+			catch
+			{
+			}
+
 			return Results.Ok();
 		}
 
-		private static IResult WatchVideoRelease(int id, string episode, long time)
+		private static async Task<IResult> WatchVideoRelease(int id, string episode, long time)
 		{
 			if (m_appData.HistoryWatchVideo.TryGetValue(id, out var _))
 			{
@@ -69,6 +77,14 @@ namespace Aniliberty.Unfolded.Routes
 			else
 			{
 				m_appData.HistoryWatchVideo.Add(id, new AppDataModelWatchVideoModel { Hit = DateTime.Now, VideoId = episode, Time = time });
+			}
+
+			try
+			{
+				await SaveSettings();
+			}
+			catch
+			{
 			}
 
 			return Results.Ok();
