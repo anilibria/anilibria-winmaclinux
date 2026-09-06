@@ -109,7 +109,7 @@ export default {
                     break;
                 case 6: // history
                     filterModel.value.sortingField = 13;
-                    filterModel.value.sortingDescending = false;
+                    filterModel.value.sortingDescending = true;
                     break;
             }
 

@@ -173,9 +173,43 @@ namespace Aniliberty.Unfolded.Routes
 
 		public static bool IsInWatchHistory(int id) => m_appData.HistoryWatch.ContainsKey(id) || m_appData.HistoryWatchVideo.ContainsKey(id);
 
+		public static DateTime? GetDateWatchReleaseHistory(int id)
+		{
+			if (m_appData.HistoryWatchVideo.ContainsKey(id)) {
+				return m_appData.HistoryWatchVideo[id].Hit;
+			}
+			if (m_appData.HistoryWatch.ContainsKey(id))
+			{
+				return m_appData.HistoryWatch[id];
+			}
+
+			return null;
+		}
+
+
 		public static bool IsInOnlyWatchHistory(int id) => m_appData.HistoryWatch.ContainsKey(id);
 
+		public static DateTime? GetDateOnlyWatchHistory(int id)
+		{
+			if (m_appData.HistoryWatch.ContainsKey(id))
+			{
+				return m_appData.HistoryWatch[id];
+			}
+
+			return null;
+		}
+
 		public static bool IsInOnlyWatchVideoHistory(int id) => m_appData.HistoryWatchVideo.ContainsKey(id);
+
+		public static DateTime? GetDateOnlyWatchVideoHistory(int id)
+		{
+			if (m_appData.HistoryWatchVideo.ContainsKey(id))
+			{
+				return m_appData.HistoryWatchVideo[id].Hit;
+			}
+
+			return null;
+		}
 
 	}
 
