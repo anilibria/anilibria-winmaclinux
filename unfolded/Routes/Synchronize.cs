@@ -36,10 +36,7 @@ namespace Aniliberty.Unfolded.Routes
 
 		public static async Task<IResult> Full(IHttpClientFactory clientFactory, bool checkLatest)
 		{
-			var newSyncValue = true;
-			var snapshotValue = m_synchronizationStarted;
-			var originalSyncValue = Interlocked.CompareExchange(ref m_synchronizationStarted, newSyncValue, false);
-			if (originalSyncValue == true) return Results.Conflict();
+			if (m_synchronizationStarted == true) return Results.Conflict();
 
 			try
 			{
