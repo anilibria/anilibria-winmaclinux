@@ -1,4 +1,5 @@
 using Aniliberty.Unfolded.Configuration;
+using Aniliberty.Unfolded.Middlewares;
 using Aniliberty.Unfolded.Routes;
 using Microsoft.AspNetCore.StaticFiles;
 
@@ -77,6 +78,8 @@ namespace Aniliberty.Unfolded
 					policy.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
 				});
 			});
+			builder.Services.AddProblemDetails();
+			builder.Services.AddExceptionHandler<GlobalExceptionMiddleware>();
 
 			builder.Services.AddHostedService<TorrentBackgroundService>();
 
@@ -109,6 +112,8 @@ namespace Aniliberty.Unfolded
 				return Results.NotFound();
 			}).ExcludeFromDescription();
 #endif
+
+			app.UseExceptionHandler();
 
 			app.MapGet("/", () => Results.Redirect("/static/releases.html"));
 
