@@ -199,6 +199,10 @@ export default {
             cinemahallReleases.value = await getCinemahallReleases();
         }
 
+        async function refreshActiveTorrents() {
+            activeTorrents.value = await getActiveTorrents();
+        }
+
         async function saveTorrentsSettings() {
             await saveSettings('torrent', torrentSettings.value);
         }
@@ -320,7 +324,8 @@ export default {
             disableSelectionMode,
             saveTorrentsSettings,
             toggleReleaseInFavorites,
-            saveReleasesSettings
+            saveReleasesSettings,
+            refreshActiveTorrents
 		};
 	}
 };

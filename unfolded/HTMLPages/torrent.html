@@ -216,7 +216,6 @@
 			setup() {
 				const mainMenuVisible = ref(false);
 				const selectedReleases = ref([]);
-				const activeTorrents = ref({});
 				const backToTopVisible = ref(false);
 				const filterModel = ref({});
 				const releasesList = useTemplateRef('releasesList');
@@ -226,13 +225,7 @@
 				}
 
 				async function loadData() {
-					activeTorrents.value = await getActiveTorrents();
-
-					setInterval(() => refreshTorrents(), 8000);
-				}
-
-				async function refreshTorrents() {
-					activeTorrents.value = await getActiveTorrents();
+					setInterval(() => releasesList.value.refreshActiveTorrents(), 8000);
 				}
 
 				function backToTop() {
