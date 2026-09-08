@@ -133,7 +133,7 @@
 				const releasePosters = ref([]);
 				const selectedEpisode = ref(null);
 				const selectedQuality = ref();
-				const poster = ref('/static/backgrounds/emptyposter.png');
+				const poster = ref('');///static/backgrounds/emptyposter.png');
 				const playListVisible = ref(true);
 				const showOpening = ref(false);
 				const showEnding = ref(false);
@@ -294,6 +294,15 @@
 					setTimeout(() => window.vueApp.scrollToEpisodeInList());
 				}
 
+				function toggleFitVideo() {
+					const current = video.value.style.objectFit;
+					if (current === `cover` || current === ``) {
+						video.value.style["object-fit"] = 'contain';
+					} else {
+						video.value.style["object-fit"] = 'cover';
+					}
+				}
+
 				function openEpisodeFromList(episode) {
 					selectedEpisode.value = episode;
 					adjustVideoSource(openEpisode(episode));
@@ -367,6 +376,11 @@
 				</div>
 			</div>
 			<div>
+				<button id="toggleCropModeButton" class="plyr__controls__item plyr__control" type="button" aria-pressed="false" title="Переключить режим обрезки видео">
+					<div class="flex-row flex-base-center flex-other-center">
+						<img src='/static/icons/videoplayer/resize.svg' width=18 height=18 />
+					</div>
+				</button>
 				<button class="plyr__controls__item plyr__control" type="button" data-plyr="captions" aria-pressed="false">
 					<svg class="icon--pressed" aria-hidden="true" focusable="false">
 						<use xlink:href="#plyr-captions-on"></use>
@@ -540,8 +554,10 @@
 
 					const nextSeriaButton = document.getElementById('nextSeriaButton');
 					const previousSeriaButton = document.getElementById('previousSeriaButton');
+					const toggleCropModeButton = document.getElementById('toggleCropModeButton');
 					nextSeriaButton.addEventListener('click', openNextSeria);
 					previousSeriaButton.addEventListener('click', openPreviousSeria);
+					toggleCropModeButton.addEventListener('click', toggleFitVideo);
 				});
 
 				return {
@@ -549,22 +565,23 @@
 					hlsSupported,
 					episodes,
 					poster,
-					moveUp,
-					moveDown,
 					settings,
 					selectedEpisode,
-					openEpisodeFromList,
 					playListVisible,
 					seenMarks,
-					toggleSeenMark,
-					saveVideoPlayerSettings,
 					showOpening,
 					showEnding,
 					skipStepTimer,
-					skipOpeningOrEnding,
 					watchVideoRelease,
 					selectedReleaseId,
-					addSeenMark
+					addSeenMark,
+					moveUp,
+					moveDown,
+					openEpisodeFromList,
+					toggleSeenMark,
+					saveVideoPlayerSettings,
+					skipOpeningOrEnding,
+					toggleFitVideo
 				}
 			}
 		});
