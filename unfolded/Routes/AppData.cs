@@ -175,7 +175,8 @@ namespace Aniliberty.Unfolded.Routes
 
 		public static DateTime? GetDateWatchReleaseHistory(int id)
 		{
-			if (m_appData.HistoryWatchVideo.ContainsKey(id)) {
+			if (m_appData.HistoryWatchVideo.ContainsKey(id))
+			{
 				return m_appData.HistoryWatchVideo[id].Hit;
 			}
 			if (m_appData.HistoryWatch.ContainsKey(id))
@@ -209,6 +210,17 @@ namespace Aniliberty.Unfolded.Routes
 			}
 
 			return null;
+		}
+
+		internal static async Task RemoveCinemahall(IEnumerable<int> result)
+		{
+			var ids = m_appData.Cinemahall.ToHashSet();
+			foreach (int deleteId in result)
+			{
+				if (ids.Contains(deleteId)) m_appData.Cinemahall.Remove(deleteId);
+			}
+
+			await SaveSettings();
 		}
 
 	}

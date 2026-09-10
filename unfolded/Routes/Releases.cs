@@ -791,6 +791,13 @@ namespace Aniliberty.Unfolded.Routes
 			return -1;
 		}
 
+		internal static ReleaseSaveModel? GetReleaseById(int id)
+		{
+			if (m_releasesMap.ContainsKey(id)) return m_releasesMap[id];
+
+			return null;
+		}
+
 	}
 
 }
