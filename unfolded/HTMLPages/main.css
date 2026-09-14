@@ -44,6 +44,8 @@ body {
     --middle-font-size: 13px;
     --middle-plus-font-size: 14px;
     --large-font-size: 15px;
+    --extra-large-font-size: 16px;
+    --double-extra-large-font-size: 17px;
     --main-theme-active-color: light-dark(#b32121, #b32121);
     --videoplayer-selected-item: light-dark(#c25656, #ffffff);
     --videoplayer-idle-item: light-dark(#ffffff, #000000);
@@ -68,6 +70,27 @@ body {
         --main-menu-logo: url('/static/icons/logo/dark.svg');
     }
 }
+
+@media (max-width: 1000px) {
+    :root {
+        --middle-font-size: 12px;
+        --middle-plus-font-size: 13px;
+        --large-font-size: 14px;
+        --extra-large-font-size: 15px;
+        --double-extra-large-font-size: 16px;
+    }
+}
+
+@media (max-width: 800px) {
+    :root {
+        --middle-font-size: 11px;
+        --middle-plus-font-size: 12px;
+        --large-font-size: 13px;
+        --extra-large-font-size: 14px;
+        --double-extra-large-font-size: 15px;
+    }
+}
+
 
 :root[data-theme="light"] {
     color-scheme: light;
@@ -206,7 +229,7 @@ body {
     -moz-appearance: none;
     width: 100%;
     padding: 4px 40px 4px 6px;
-    font-size: 13px;
+    font-size: var(--middle-font-size);
     color: #333333;
     cursor: pointer;
     background-color: #ffffff;
@@ -240,7 +263,7 @@ body {
 .simple-input {
     padding: 4px 6px;
     box-sizing: border-box;
-    font-size: 13px;
+    font-size: var(--middle-font-size);
     color: #333333;
 
     background-color: #ffffff;
@@ -273,7 +296,7 @@ body {
     background-color: var(--action-button-background);
     color: var(--action-button-color);
     border-radius: 10px;
-    font-size: 14px;
+    font-size: var(--middle-plus-font-size);
     display: flex;
     flex-direction: row;
     justify-content: center;
@@ -401,7 +424,7 @@ body {
 
 .main-info-links-container {
     width: 150px;
-    font-size: 14px;
+    font-size: var(--middle-plus-font-size);
     padding-left: 10px;
 }
 

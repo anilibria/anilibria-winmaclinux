@@ -184,11 +184,7 @@
 
 	<script type="module">
 		import { createApp, ref, useTemplateRef, watch, onMounted } from 'vue'
-		import {
-			getPageSettings, saveSettings, getUserMarks, getCinemahallReleases,
-			getReleaseDictionaries, getRelaseTorrentsByFilter, getActiveTorrents,
-			removeTorrents, refreshAllTorrents, removeAllTorrents
-		} from './unfoldapi.js'
+		import { removeTorrents, refreshAllTorrents, removeAllTorrents } from './unfoldapi.js'
 		import { sections, historySections, seenMarkSections, setsSections, openLinkMode } from '/static/releaseDictionaries.js'
 		import Drawer from './components/Drawer.js'
 		import PageHeader from './components/PageHeader.js'

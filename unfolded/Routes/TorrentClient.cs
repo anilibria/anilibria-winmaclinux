@@ -199,7 +199,7 @@ namespace Aniliberty.Unfolded.Routes
 				}
 				catch (Exception ex)
 				{
-					Console.WriteLine($"Refresh torrents error for release {id}: {ex.Message}");
+					Console.WriteLine($"Refresh torrents error for release {id}: {ex.Message} {ex.StackTrace}");
 				}
 			}
 

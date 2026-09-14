@@ -798,6 +798,17 @@ namespace Aniliberty.Unfolded.Routes
 			return null;
 		}
 
+		internal static bool IsReleaseSeensByEnd(int releaseId)
+		{
+			var episodes = m_episodes.FirstOrDefault(a => a.ReleaseId == releaseId);
+			if (episodes is null) return false;
+			var release = m_releasesMap.ContainsKey(releaseId) ? m_releasesMap[releaseId] : null;
+			if (release is null) return false;
+
+			var seens = episodes.Items.Count(a => m_seenEpisodes.Contains(a.Id));
+			return seens == release.CountVideos && release.Status == "Озвучка завершена";
+		}
+
 	}
 
 }

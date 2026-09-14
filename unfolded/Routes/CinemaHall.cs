@@ -26,13 +26,11 @@ namespace Aniliberty.Unfolded.Routes
 
 		internal static async Task<IResult> RemoveSeens()
 		{
-			var result = new List<int>() ;
+			var result = new List<int>();
 
 			foreach (var id in AppData.Model.Cinemahall.ToHashSet())
 			{
-				var item = Releases.GetReleaseById(id);
-				if (item is null) continue;
-				if (item.Status != "Озвучка завершена") continue;
+				if (!Releases.IsReleaseSeensByEnd(id)) continue;
 
 				result.Add(id);
 			}
