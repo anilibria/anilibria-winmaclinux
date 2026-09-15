@@ -10,6 +10,8 @@
 
 		public ApplicationSettingsTorrentModel Torrent { get; set; } = new ApplicationSettingsTorrentModel();
 
+		public ApplicationSettingsCinemaHallModel Cinamahall { get; set; } = new ApplicationSettingsCinemaHallModel();
+
 	}
 
 }

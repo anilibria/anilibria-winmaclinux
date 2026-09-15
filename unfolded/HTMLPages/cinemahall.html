@@ -27,38 +27,27 @@
 
 		<div class="page-content-with-panel">
 			<div class="left-panel flex-column">
-				<div v-if="selectedReleases.length" class="simple-panel-icon-button simple-popup-container" title="Настройка страницы Torrent клиент">
-					<div class="full-width-height flex-row flex-base-center flex-other-center">
-						<img :src="'/static/icons/mainmenu/torrent.svg'" width="30" height="30" />
-					</div>
-					<div class="simple-popup-box torrents-rightmenu">
-						<div class="torrents-rightmenu-remove flex-column">
-							<a class="default-link" @click.prevent="removeSelectedWithFiles()" href="">Удалить вместе с файлами</a>
-							<a class="default-link" @click.prevent="removeSelectedWithoutFiles()" href="">Удалить без файлов</a>
-						</div>
-					</div>
-				</div>
-				<div class="simple-panel-icon-button simple-popup-container" title="Настройка страницы Torrent клиент">
-					<div class="full-width-height flex-row flex-base-center flex-other-center">
-						<img :src="'/static/icons/commonbuttons/actions.svg'" width="30" height="30" />
-					</div>
-					<div class="simple-popup-box torrents-rightmenu">
-						<div class="torrents-rightmenu-remove flex-column">
-							<a class="default-link" @click.prevent="refreshAllTorrents()" href="">Обновить все торренты</a>
-							<a class="default-link" @click.prevent="removeAllTorrents()" href="">Удалить все торренты</a>
-						</div>
-					</div>
-				</div>
 				<releases-sidebar-actions
 					:selected-releases="selectedReleases"
 					:releases-list="releasesList"
 					:filter-model="filterModel">
 				</releases-sidebar-actions>
+				<div class="simple-panel-icon-button simple-popup-container" title="Дополнительные действия с Кинозалом">
+					<div class="full-width-height flex-row flex-base-center flex-other-center">
+						<img :src="'/static/icons/commonbuttons/actions.svg'" width="30" height="30" />
+					</div>
+					<div class="simple-popup-box torrents-rightmenu">
+						<div class="torrents-rightmenu-remove flex-column">
+							<a class="default-link" @click.prevent="refreshAllTorrents()" href="">Удалить все завершенные</a>
+							<a class="default-link" @click.prevent="removeAllTorrents()" href="">Удалить весь кинозал</a>
+						</div>
+					</div>
+				</div>
 				<releases-side-bar-search
 					:releases-list="releasesList"
 					:filter-model="filterModel">
 				</releases-side-bar-search>
-				<div class="simple-panel-icon-button simple-popup-container" title="Настройка страницы Torrent клиент">
+				<div class="simple-panel-icon-button simple-popup-container" title="Настройка страницы Кинозал">
 					<div class="full-width-height flex-row flex-base-center flex-other-center">
 						<img :src="'/static/icons/commonbuttons/settings.svg'" width="30" height="30" />
 					</div>
@@ -66,42 +55,34 @@
 						<div class="torrents-rightmenu-settings flex-column gap-8">
 							<div>Стартовая секция:</div>
 							<div class="flex-row flex-base-center">
-								<simple-select v-model:item="releasesList.torrentSettings.startedSection"
+								<simple-select v-model:item="settings.startedSection"
 											   :options="sections"
 											   style="width: 130px;"
-											   @selected="releasesList.torrentSettings.startedSubSection = -1; savePageSettings();">
+											   @selected="settings.startedSubSection = -1; savePageSettings();">
 								</simple-select>
-								<div v-if="releasesList.torrentSettings.startedSection >= 6 && releasesList.torrentSettings.startedSection < 9" style="margin-left: 4px; margin-right: 4px;">-</div>
-								<simple-select v-if="releasesList.torrentSettings.startedSection === 6" v-model:item="releasesList.torrentSettings.startedSubSection"
+								<div v-if="settings.startedSection >= 6 && settings.startedSection < 9" style="margin-left: 4px; margin-right: 4px;">-</div>
+								<simple-select v-if="settings.startedSection === 6" v-model:item="settings.startedSubSection"
 											   :options="historySections"
 											   style="width: 170px;"
 											   @selected="savePageSettings()">
 								</simple-select>
-								<simple-select v-if="releasesList.torrentSettings.startedSection === 7" v-model:item="releasesList.torrentSettings.startedSubSection"
+								<simple-select v-if="settings.startedSection === 7" v-model:item="settings.startedSubSection"
 											   :options="seenMarkSections"
 											   style="width: 225px;"
 											   @selected="savePageSettings()">
 								</simple-select>
-								<simple-select v-if="releasesList.torrentSettings.startedSection === 8" v-model:item="releasesList.torrentSettings.startedSubSection"
+								<simple-select v-if="settings.startedSection === 8" v-model:item="settings.startedSubSection"
 											   :options="setsSections"
 											   style="width: 220px;"
 											   @selected="savePageSettings()">
 								</simple-select>
 							</div>
 							<div>Открывать ссылки:</div>
-							<simple-select v-model:item="releasesList.torrentSettings.openLinkMode" :options="openLinkMode" style="width: 100%;" @selected="savePageSettings()">
+							<simple-select v-model:item="settings.openLinkMode" :options="openLinkMode" style="width: 100%;" @selected="savePageSettings()">
 							</simple-select>
-							<div>Использовать внутренний torrent клиент:</div>
-							<simple-switch v-model:state="releasesList.torrentSettings.useInternalTorrectClient" @changed="savePageSettings()">
-							</simple-switch>
-							<div>
-								Предпочтение качества торрента (сверху вниз):<br>
-								<span class="torrents-disclaimer">тащите мышкой для изменения</span>
-							</div>
-							<div class="torrents-sortable-quality-container">
-								<sortable-list v-model:options="releasesList.torrentSettings.codecPrefference" @changed="savePageSettings()">
-								</sortable-list>
-							</div>
+							<!--<div>Использовать внутренний torrent клиент:</div>
+							<simple-switch v-model:state="settings.useInternalTorrectClient" @changed="savePageSettings()">
+							</simple-switch>-->
 						</div>
 					</div>
 				</div>
@@ -117,7 +98,7 @@
 					:item-height="290"
 					@openrelease="openReleaseCardByLink($event);"
 					ref="releasesList">
-					<template v-slot:release="{ release, isSelected, inCinemahall, inFavorites, seensCount, torrentcount, torrentdownloaded }">
+					<template v-slot:release="{ release, isSelected, inCinemahall, inFavorites, seensCount, torrentcount, torrentdownloaded, hasactivetorrent }">
 						<div class="releaseslist-release-item" :class="{'releaseslist-release-item-selected': isSelected }">
 							<img class="poster" :src="'https://anilibria.top' + release.poster" loading="lazy"/>
 							<div class="information">
@@ -126,16 +107,23 @@
 								<span class="normal-text">{{ release.type }} {{ release.series }} {{ release.genres ? '- ' + release.genres.join(', ') : '' }}</span>
 								<span class="normal-text"><b>Команда:</b> {{ release.voices ? release.voices.join(', ') : '' }}</span>
 								<span class="digit-text flex-row flex-base-center gap-4">
-								<img
-									class="clickable-image"
-									src="/static/icons/mainmenu/torrent.svg"
-									width="20"
-									height="20"
-									loading="lazy"
-									title="Открыть торрент на просмотр в видеоплеере"
-									@click.stop="openTorrentInVideoplayer(release.id)"
-								/>
-								<span>{{ showTorrentSeries(release.id, seensCount, torrentcount, torrentdownloaded) }}</span>
+								<release-list-item-video-info
+									v-if="!hasactivetorrent"
+									:release="release"
+									:open-link-mode="settings.openLinkMode"
+									:seens-count="seensCount"
+									videomode="release">
+								</release-list-item-video-info>
+								<release-list-item-torrent-info
+									v-if="hasactivetorrent"
+									:release="release"
+									:hasactivetorrent="hasactivetorrent"
+									:use-internal-torrect-client="releasesList.torrentSettings.useInternalTorrectClient"
+									:torrentcount="torrentcount"
+									:torrentdownloaded="torrentdownloaded"
+									:open-link-mode="settings.openLinkMode"
+									videomode="downloadedtorrent">
+								</release-list-item-torrent-info>
 								<img
 									class="clickable-image"
 									src="/static/icons/releases/favorite.svg"
@@ -151,9 +139,7 @@
 								</span>
 								<div class="flex-1"></div>
 								<div class="flex-row flex-base-center">
-									<span v-if="inFavorites || inCinemahall" class="header-text" style="margin-bottom: 4px;">
-										{{ 'В ' + (inFavorites ? 'Избранном' : '') + (inCinemahall ? (inFavorites ? ' и ' : '') + 'Кинозале' : '') }}
-									</span>
+									<span v-if="inFavorites" class="header-text" style="margin-bottom: 4px;"> В Избранном</span>
 									<div class="flex-1"></div>
 									<img
 										v-if="isSelected"
@@ -184,7 +170,7 @@
 
 	<script type="module">
 		import { createApp, ref, useTemplateRef, watch, onMounted } from 'vue'
-		import { getPageSettings, saveSettings } from './unfoldapi.js'
+		import { getPageSettings, saveSettings } from '/static/unfoldapi.js'
 		import { sections, historySections, seenMarkSections, setsSections, openLinkMode } from '/static/releaseDictionaries.js'
 		import Drawer from './components/Drawer.js'
 		import PageHeader from './components/PageHeader.js'
@@ -195,6 +181,8 @@
 		import ReleasesToolBar from './components/ReleasesToolBar.js'
 		import ReleasesSideBarActions from './components/ReleasesSideBarActions.js'
 		import ReleasesSideBarSearch from './components/ReleasesSideBarSearch.js'
+		import ReleaseListItemTorrentInfo from './components/ReleaseListItemTorrentInfo.js'
+		import ReleaseListItemVideoInfo from './components/ReleaseListItemVideoInfo.js'
 		import { getPublishDay } from './releaseDictionaries.js'
 
 		const app = createApp({
@@ -207,7 +195,9 @@
 				'releases-list': ReleasesList,
 				'releases-toolbar': ReleasesToolBar,
 				'releases-sidebar-actions': ReleasesSideBarActions,
-				'releases-side-bar-search': ReleasesSideBarSearch
+				'releases-side-bar-search': ReleasesSideBarSearch,
+				'release-list-item-torrent-info': ReleaseListItemTorrentInfo,
+				'release-list-item-video-info': ReleaseListItemVideoInfo
 			},
 			setup() {
 				const mainMenuVisible = ref(false);
@@ -215,13 +205,14 @@
 				const backToTopVisible = ref(false);
 				const filterModel = ref({});
 				const releasesList = useTemplateRef('releasesList');
+				const settings = ref({ startedSection: 0, startedSubSection: -1, notificationMode: 0, openLinkMode: 0 })
 
 				async function savePageSettings() {
-					releasesList.value.saveTorrentsSettings();
+					await saveSettings('cinemahall', settings.value);
 				}
 
 				async function loadData() {
-					setInterval(() => releasesList.value.refreshActiveTorrents(), 8000);
+					settings.value = await getPageSettings('cinemahall');
 					setInterval(() => releasesList.value.refreshActiveTorrents(), 8000);
 				}
 
@@ -233,44 +224,18 @@
 					await releasesList.value.toggleReleaseInFavorites(id);
 				}
 
-				function showTorrentSeries(id, seenCount, torrentVideos, downloadedVideos) {
-					let seensVideos = seenCount;
-					if (seensVideos > downloadedVideos) seensVideos = downloadedVideos;
-					
-					const torrentDisplay = torrentVideos != downloadedVideos ? `${downloadedVideos} из ${torrentVideos}` : `${downloadedVideos}`;
-					const seensDisplay = seensVideos > 0 ? `/${seensVideos}` : '';
-					return `${torrentDisplay}${seensDisplay}`;
-				}
-
-				function openTorrentInVideoplayer(releaseId) {
-					if (releasesList.value.torrentSettings.openLinkMode) {
-						window.open("videoplayer.html?mode=downloadedtorrent&id=" + releaseId, '_blank');
-					} else {
-						window.location.href = 'videoplayer.html?mode=downloadedtorrent&id=' + releaseId;
-					}					
-				}
-
 				function openReleaseCardByLink(id) {
-					if (releasesList.value.torrentSettings.openLinkMode) {
-						window.open("releasecard.html?mode=downloadedtorrent&id=" + id, '_blank');
+					if (settings.value.openLinkMode) {
+						window.open("releasecard.html?mode=cinemahall&id=" + id, '_blank');
 					} else {
-						window.location.href = "releasecard.html?mode=downloadedtorrent&id=" + id;
+						window.location.href = "releasecard.html?mode=cinemahall&id=" + id;
 					}
-				}				
+				}
 
-				function removeSelectedWithFiles() {
+				function removeSelected() {
 					if (!selectedReleases.value.length) return;
 
 					removeTorrents(selectedReleases.value, true);
-
-					releasesList.value.disableSelectionMode();
-
-					setTimeout(() => releasesList.value.loadReleases(), 3000);
-				}
-				function removeSelectedWithoutFiles() {
-					if (!selectedReleases.value.length) return;
-
-					removeTorrents(selectedReleases.value, false);
 
 					releasesList.value.disableSelectionMode();
 
@@ -291,16 +256,11 @@
 					seenMarkSections,
 					setsSections,
 					openLinkMode,
-					openTorrentInVideoplayer,
+					settings,
 					savePageSettings,
-					removeSelectedWithFiles,
-					removeSelectedWithoutFiles,
 					backToTop,
-					showTorrentSeries,
 					openReleaseCardByLink,
-					toggleReleaseInFavorites,
-					refreshAllTorrents,
-					removeAllTorrents
+					toggleReleaseInFavorites
 				}
 			}
 		});

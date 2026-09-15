@@ -198,7 +198,6 @@ export async function getReleasePosters(ids) {
 };
 
 
-
 export async function synchronizeReleases() {
     await fetch('/sync/full');
 };
@@ -434,7 +433,6 @@ export async function removeTorrents(releaseIds, removeFiles) {
         }
     );
 };
-
 export async function removeAllTorrents() {
     await fetch(
         `/torrent/removeall`,
@@ -446,4 +444,18 @@ export async function removeAllTorrents() {
             }
         }
     );
+};
+
+export async function getRelaseCinemahallByFilter(model) {
+    const response = await fetch(
+        `/cinemahall/list`,
+        {
+            method: "POST",
+            body: JSON.stringify(model),
+            headers: {
+                "Content-Type": "application/json"
+            }
+        }
+    );
+    return await response.json();
 };

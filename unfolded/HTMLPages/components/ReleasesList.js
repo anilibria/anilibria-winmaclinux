@@ -2,7 +2,7 @@ import { ref, watch, useTemplateRef, onMounted } from '/static/vue.js'
 import {
 	getRelasesByFilter, getUserMarks, getPageSettings, getActiveTorrents,
     getReleaseNotifications, getCinemahallReleases, getRelaseTorrentsByFilter,
-    addFavorites, removeFavorites, saveSettings
+    addFavorites, removeFavorites, saveSettings, getRelaseCinemahallByFilter
 } from '/static/unfoldapi.js'
 
 export default {
@@ -178,17 +178,30 @@ export default {
         //////
         // Load and prepare releases for display
 
+        let releaseLoaded = false;
+
         // reload releases by filters/sortings etc
         async function loadReleases() {
-            let releases = [];
-            if (props.sourcepage === 'torrent') {
-                releases = await getRelaseTorrentsByFilter(filterModel.value);
-            }
-            if (props.sourcepage === 'releases') {
-                releases = await getRelasesByFilter(filterModel.value);
-            }
+            if (releaseLoaded) return;
 
-            recalculateReleaseGroups(releases);
+            releaseLoaded = true;
+
+            try {
+                let releases = [];
+                if (props.sourcepage === 'torrent') {
+                    releases = await getRelaseTorrentsByFilter(filterModel.value);
+                }
+                if (props.sourcepage === 'releases') {
+                    releases = await getRelasesByFilter(filterModel.value);
+                }
+                if (props.sourcepage === 'cinemahall') {
+                    releases = await getRelaseCinemahallByFilter(filterModel.value);
+                }
+    
+                recalculateReleaseGroups(releases);
+            } finally {
+                releaseLoaded = false;
+            }
         }
 
         async function refreshUserMarks() {
