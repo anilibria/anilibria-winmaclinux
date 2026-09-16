@@ -128,6 +128,8 @@
 				let videoPlayer = null;
 				const hlsSupported = ref(Hls.isSupported());
 				const episodes = ref([]);
+				const groupedEpisodes = ref([]);
+				const isGroupedEpisodes = ref(false);
 				const releaseIds = ref([]);
 				const selectedReleaseId = ref(-1);
 				const releasePosters = ref([]);
@@ -173,6 +175,9 @@
 					}
 					if (mode === `onlinetorrent`) {
 						//TODO: setup online torrent
+					}
+					if (mode === `cinemahall`) {
+						isGroupedEpisodes.value = true;
 					}
 					
 					const lastWatchVideo = await getLastWatchVideoRelease();

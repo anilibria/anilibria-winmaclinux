@@ -32,6 +32,11 @@
 					:releases-list="releasesList"
 					:filter-model="filterModel">
 				</releases-sidebar-actions>
+				<div class="simple-panel-icon-button simple-popup-container" title="Смотреть кинозал" @click="watchCinemahall()">
+					<div class="full-width-height flex-row flex-base-center flex-other-center">
+						<img :src="'/static/icons/mainmenu/videoplayer.svg'" width="30" height="30" />
+					</div>
+				</div>
 				<div class="simple-panel-icon-button simple-popup-container" title="Дополнительные действия с Кинозалом">
 					<div class="full-width-height flex-row flex-base-center flex-other-center">
 						<img :src="'/static/icons/commonbuttons/actions.svg'" width="30" height="30" />
@@ -255,6 +260,13 @@
 					await releasesList.value.loadReleases();
 				}
 
+				function watchCinemahall() {
+					if (settings.value.openLinkMode) {
+						window.open(`videoplayer.html?mode=cinemahall`, '_blank');
+					} else {
+						window.location.href = `videoplayer.html?mode=cinemahall`;
+					}
+				}
 
 				loadData();
 
@@ -276,7 +288,8 @@
 					openReleaseCardByLink,
 					toggleReleaseInFavorites,
 					removeAllSeens,
-					removeAll
+					removeAll,
+					watchCinemahall
 				}
 			}
 		});
