@@ -10,6 +10,8 @@
 
 		public int OpenLinkMode { get; set; } = 0;
 
+		public bool UseOnlyOnline { get; set; } = false;
+
 	}
 
 }

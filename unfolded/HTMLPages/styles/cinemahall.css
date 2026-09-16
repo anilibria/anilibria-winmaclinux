@@ -1,0 +1,18 @@
+.cinemahall-rightmenu {
+    left: 100%;
+    top: 0;
+    transform: unset;
+    font-size: 13px;
+}
+
+.cinemahall-rightmenu-remove {
+    width: 180px;
+    padding: 8px;
+}
+
+.cinemahall-rightmenu-settings {
+    width: 340px;
+    max-width: 400px;
+    height: 270px;
+    padding: 8px;
+}

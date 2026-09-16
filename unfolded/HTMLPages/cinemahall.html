@@ -10,7 +10,7 @@
 	<link rel="stylesheet" href="mainmenu.css">
 	<link rel="stylesheet" href="pagestructure.css">
 	<link rel="stylesheet" href="styles/releaselist.css">
-	<link rel="stylesheet" href="styles/torrent.css">
+	<link rel="stylesheet" href="styles/cinemahall.css">
 	<link rel="stylesheet" href="libs/multiselect.css">
 	<script type="importmap">
 		{
@@ -36,8 +36,8 @@
 					<div class="full-width-height flex-row flex-base-center flex-other-center">
 						<img :src="'/static/icons/commonbuttons/actions.svg'" width="30" height="30" />
 					</div>
-					<div class="simple-popup-box torrents-rightmenu">
-						<div class="torrents-rightmenu-remove flex-column">
+					<div class="simple-popup-box cinemahall-rightmenu">
+						<div class="cinemahall-rightmenu-remove flex-column">
 							<a class="default-link" @click.prevent="removeAllSeens()" href="">Удалить все завершенные</a>
 							<a class="default-link" @click.prevent="removeAll()" href="">Удалить весь кинозал</a>
 						</div>
@@ -51,8 +51,8 @@
 					<div class="full-width-height flex-row flex-base-center flex-other-center">
 						<img :src="'/static/icons/commonbuttons/settings.svg'" width="30" height="30" />
 					</div>
-					<div v-if="releasesList" class="simple-popup-box torrents-rightmenu">
-						<div class="torrents-rightmenu-settings flex-column gap-8">
+					<div v-if="releasesList" class="simple-popup-box cinemahall-rightmenu">
+						<div class="cinemahall-rightmenu-settings flex-column gap-8">
 							<div>Стартовая секция:</div>
 							<div class="flex-row flex-base-center">
 								<simple-select v-model:item="settings.startedSection"
@@ -80,9 +80,9 @@
 							<div>Открывать ссылки:</div>
 							<simple-select v-model:item="settings.openLinkMode" :options="openLinkMode" style="width: 100%;" @selected="savePageSettings()">
 							</simple-select>
-							<!--<div>Использовать внутренний torrent клиент:</div>
-							<simple-switch v-model:state="settings.useInternalTorrectClient" @changed="savePageSettings()">
-							</simple-switch>-->
+							<div>Смотреть в видеоплеере только онлайн:</div>
+							<simple-switch v-model:state="settings.useOnlyOnline" @changed="savePageSettings()">
+							</simple-switch>
 						</div>
 					</div>
 				</div>
@@ -108,14 +108,14 @@
 								<span class="normal-text"><b>Команда:</b> {{ release.voices ? release.voices.join(', ') : '' }}</span>
 								<span class="digit-text flex-row flex-base-center gap-4">
 								<release-list-item-video-info
-									v-if="!hasactivetorrent"
+									v-if="settings.useOnlyOnline || !hasactivetorrent"
 									:release="release"
 									:open-link-mode="settings.openLinkMode"
 									:seens-count="seensCount"
 									videomode="release">
 								</release-list-item-video-info>
 								<release-list-item-torrent-info
-									v-if="hasactivetorrent"
+									v-if="!settings.useOnlyOnline && hasactivetorrent"
 									:release="release"
 									:hasactivetorrent="hasactivetorrent"
 									:use-internal-torrect-client="releasesList.torrentSettings.useInternalTorrectClient"
@@ -213,7 +213,6 @@
 
 				async function loadData() {
 					settings.value = await getPageSettings('cinemahall');
-					setInterval(() => releasesList.value.refreshActiveTorrents(), 8000);
 				}
 
 				function backToTop() {
@@ -244,10 +243,16 @@
 
 				async function removeAllSeens() {
 					await removeAllSeensInCinemahall();
+
+					await releasesList.value.refreshCinemahall();
+					await releasesList.value.loadReleases();
 				}
 
 				async function removeAll() {
 					await removeAllInCinemahall();
+
+					await releasesList.value.refreshCinemahall();
+					await releasesList.value.loadReleases();
 				}
 
 
