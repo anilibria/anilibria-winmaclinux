@@ -38,8 +38,8 @@
 					</div>
 					<div class="simple-popup-box torrents-rightmenu">
 						<div class="torrents-rightmenu-remove flex-column">
-							<a class="default-link" @click.prevent="refreshAllTorrents()" href="">Удалить все завершенные</a>
-							<a class="default-link" @click.prevent="removeAllTorrents()" href="">Удалить весь кинозал</a>
+							<a class="default-link" @click.prevent="removeAllSeens()" href="">Удалить все завершенные</a>
+							<a class="default-link" @click.prevent="removeAll()" href="">Удалить весь кинозал</a>
 						</div>
 					</div>
 				</div>
@@ -157,10 +157,10 @@
 			</div>			
 		</div>
 
-		<div v-if="releasesList" :class="{'torrents-selection-helper': true, 'torrents-pulse-animation': releasesList.selectionModeEnabled }">
+		<div v-if="releasesList" :class="{'selection-helper': true, 'selection-pulse-animation': releasesList.selectionModeEnabled }">
 			{{ releasesList.selectionModeEnabled ? 'Нажмите ЛКМ для выделения релизов, ПКМ для выхода' : 'Нажмите ПКМ для перехода в режим выделения' }}
 		</div>
-		<div v-if="backToTopVisible" class="torrents-backtotop-helper flex-row flex-base-center flex-other-center" @click="backToTop()">
+		<div v-if="backToTopVisible" class="selection-backtotop-helper flex-row flex-base-center flex-other-center" @click="backToTop()">
 			<img src="/static/icons/commonbuttons/arrowup.svg" width="20" height="20" />
 		</div>
 
@@ -170,7 +170,7 @@
 
 	<script type="module">
 		import { createApp, ref, useTemplateRef, watch, onMounted } from 'vue'
-		import { getPageSettings, saveSettings } from '/static/unfoldapi.js'
+		import { getPageSettings, saveSettings, removeAllSeensInCinemahall, removeAllInCinemahall } from '/static/unfoldapi.js'
 		import { sections, historySections, seenMarkSections, setsSections, openLinkMode } from '/static/releaseDictionaries.js'
 		import Drawer from './components/Drawer.js'
 		import PageHeader from './components/PageHeader.js'
@@ -242,6 +242,15 @@
 					setTimeout(() => releasesList.value.loadReleases(), 3000);
 				}
 
+				async function removeAllSeens() {
+					await removeAllSeensInCinemahall();
+				}
+
+				async function removeAll() {
+					await removeAllInCinemahall();
+				}
+
+
 				loadData();
 
 				return {
@@ -260,7 +269,9 @@
 					savePageSettings,
 					backToTop,
 					openReleaseCardByLink,
-					toggleReleaseInFavorites
+					toggleReleaseInFavorites,
+					removeAllSeens,
+					removeAll
 				}
 			}
 		});

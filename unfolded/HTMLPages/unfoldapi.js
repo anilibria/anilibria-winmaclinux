@@ -459,3 +459,27 @@ export async function getRelaseCinemahallByFilter(model) {
     );
     return await response.json();
 };
+export async function removeAllSeensInCinemahall(model) {
+    await fetch(
+        `/cinemahall/removeseens`,
+        {
+            method: "POST",
+            body: '',
+            headers: {
+                "Content-Type": "application/json"
+            }
+        }
+    );
+};
+export async function removeAllInCinemahall(model) {
+    await fetch(
+        `/cinemahall/removeall`,
+        {
+            method: "POST",
+            body: '',
+            headers: {
+                "Content-Type": "application/json"
+            }
+        }
+    );
+};

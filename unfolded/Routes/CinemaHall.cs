@@ -11,6 +11,7 @@ namespace Aniliberty.Unfolded.Routes
 		{
 			app.MapPost("/cinemahall/list", FullList);
 			app.MapPost("/cinemahall/removeseens", RemoveSeens);
+			app.MapPost("/cinemahall/removeall", RemoveAll);
 		}
 
 		internal static async Task<IResult> FullList([FromBody] ReleasesListFiltersModel model)
@@ -38,6 +39,11 @@ namespace Aniliberty.Unfolded.Routes
 			await AppData.RemoveCinemahall(result);
 
 			return Results.Ok();
+		}
+
+		private static async Task RemoveAll()
+		{
+			await AppData.RemoveAllCinemahall();
 		}
 
 	}

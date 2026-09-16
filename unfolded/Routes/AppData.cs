@@ -223,6 +223,12 @@ namespace Aniliberty.Unfolded.Routes
 			await SaveSettings();
 		}
 
+		internal static async Task RemoveAllCinemahall()
+		{
+			m_appData.Cinemahall.Clear();
+			await SaveSettings();
+		}
+
 	}
 
 }
