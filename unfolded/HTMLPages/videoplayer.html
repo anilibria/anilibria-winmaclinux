@@ -256,11 +256,7 @@
 
 					watchRelease.value = await getWatchVideoRelease(idInt);
 					
-					poster.value = 'https://anilibria.top' + latest.group.poster;
-					selectedReleaseId.value = latest.group.releaseId;
-					selectedReleaseTitle.value = latest.group.name;
-					needUseHls = latest.group.mode === 'online';
-
+					adjustGroupedRelease(latest.group);
 					setTimeout(() => scrollToEpisodeInList());
 				}
 
@@ -316,6 +312,60 @@
 					}
 
 					return {episode: latest, group: latestGroup};
+				}
+
+				function findFirstGroupNotSeenEpisodeForCurrent() {
+					const groups = groupedEpisodes.value;
+					let latest = selectedEpisode.value;
+					let latestGroup = groups.find(a => a.releaseId === selectedReleaseId.value);
+					const skipIndex = groups.indexOf(latestGroup);
+					const skipEpisodeIndex = latestGroup.episodes.indexOf(latest);
+
+					for (const item of latestGroup.episodes.slice(skipEpisodeIndex + 1)) {
+						latest = item;
+						if (seenMarks.value.includes(item.id)) continue;
+
+						return {episode: latest, group: latestGroup};
+					}
+
+					for (const group of groups.slice(skipIndex + 1)) {
+						latestGroup = group;
+						for (const item of group.episodes) {
+							latest = item;
+							if (seenMarks.value.includes(item.id)) continue;
+
+							return {episode: latest, group: latestGroup};
+						}
+					}
+
+					return {episode: latest, group: latestGroup};
+				}
+
+				function findPreviousGroupNotSeenEpisode() {
+					const groups = groupedEpisodes.value;
+					let latest = selectedEpisode.value;
+					let latestGroup = groups.find(a => a.releaseId === selectedReleaseId.value);
+					const skipIndex = groups.indexOf(latestGroup);
+					const skipEpisodeIndex = latestGroup.episodes.indexOf(latest);
+
+					for (const item of latestGroup.episodes.slice(0, skipEpisodeIndex - 1).toReversed()) {
+						latest = item;
+						if (seenMarks.value.includes(item.id)) continue;
+
+						return {episode: latest, group: latestGroup};
+					}
+
+					for (const group of groups.slice(skipIndex - 1).toReversed()) {
+						latestGroup = group;
+						for (const item of group.episodes.toReversed()) {
+							latest = item;
+							if (seenMarks.value.includes(item.id)) continue;
+
+							return {episode: latest, group: latestGroup};
+						}
+					}
+
+					return {episode: latest, group: latestGroup};
 				}				
 
 				function openEpisode(episode) {
@@ -359,27 +409,47 @@
 					await saveSettings('videoplayer', settings.value);
 				}
 
+				function adjustGroupedRelease(group) {
+					selectedReleaseId.value = group.releaseId;
+					poster.value = 'https://anilibria.top' + group.poster;
+					selectedReleaseTitle.value = group.name;
+					needUseHls = group.mode === 'online';
+				}
+
 				function openNextSeria() {
-					const episodes = window.vueApp.episodes;
-					const index = episodes.findIndex(a => a.id === window.vueApp.selectedEpisode.id);
-					if (index >= episodes.length - 1) return;
+					if (isGroupedEpisodes.value) {
+						const item = findFirstGroupNotSeenEpisodeForCurrent();
+						adjustGroupedRelease(item.group);
+						window.vueApp.selectedEpisode = item.episode;
+						adjustVideoSource(openEpisode(window.vueApp.selectedEpisode));
+					} else {
+						const episodes = window.vueApp.episodes;
+						const index = episodes.findIndex(a => a.id === window.vueApp.selectedEpisode.id);
+						if (index >= episodes.length - 1) return;
+	
+						window.vueApp.selectedEpisode = episodes[index + 1];
+						adjustVideoSource(openEpisode(window.vueApp.selectedEpisode));
 
-					window.vueApp.selectedEpisode = episodes[index + 1];
-					
-					adjustVideoSource(openEpisode(window.vueApp.selectedEpisode));
-
+					}	
 					setTimeout(() => window.vueApp.scrollToEpisodeInList());
 				}
 
 				function openPreviousSeria() {
-					const episodes = window.vueApp.episodes;
-					const index = episodes.findIndex(a => a.id === window.vueApp.selectedEpisode.id);
-					if (index === 0) return;
-
-					window.vueApp.selectedEpisode = episodes[index - 1];
-					
-					adjustVideoSource(openEpisode(window.vueApp.selectedEpisode));
-
+					debugger
+					if (isGroupedEpisodes.value) {
+						debugger
+						const item = findPreviousGroupNotSeenEpisode();
+						adjustGroupedRelease(item.group);
+						window.vueApp.selectedEpisode.value = item.episode;
+					} else {
+						const episodes = window.vueApp.episodes;
+						const index = episodes.findIndex(a => a.id === window.vueApp.selectedEpisode.id);
+						if (index === 0) return;
+	
+						window.vueApp.selectedEpisode = episodes[index - 1];
+						
+						adjustVideoSource(openEpisode(window.vueApp.selectedEpisode));
+					}
 					setTimeout(() => window.vueApp.scrollToEpisodeInList());
 				}
 
@@ -399,10 +469,7 @@
 
 				function openEpisodeFromGroupedList(episode, group) {
 					if (selectedReleaseId.value !== group.releaseId) {
-						selectedReleaseId.value = group.releaseId;
-						poster.value = group.poster;
-						selectedReleaseTitle.value = group.name;
-						needUseHls = group.mode === 'online';
+						adjustGroupedRelease(group);
 					}
 					selectedEpisode.value = episode;
 					adjustVideoSource(openEpisode(episode));
@@ -683,7 +750,9 @@
 					saveVideoPlayerSettings,
 					skipOpeningOrEnding,
 					toggleFitVideo,
-					cutGroupName
+					cutGroupName,
+					openEpisodeFromGroupedList,
+					scrollToEpisodeInList
 				}
 			}
 		});
