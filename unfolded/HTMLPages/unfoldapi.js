@@ -483,3 +483,7 @@ export async function removeAllInCinemahall() {
         }
     );
 };
+export async function getCinemahallEpisodes() {
+    const response = await fetch(`/cinemahall/episodes`);
+    return await response.json();
+};

@@ -568,6 +568,12 @@ namespace Aniliberty.Unfolded.Routes
 			}
 		}
 
+		public static bool IsInActiveTorrents(int releaseId)
+		{
+			return m_cache.Items
+				.Any(a => a.ReleaseId == releaseId);
+		}
+
 	}
 
 }

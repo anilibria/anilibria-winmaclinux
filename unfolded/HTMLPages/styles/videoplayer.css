@@ -65,6 +65,18 @@
     overflow-y: auto;
     transition: opacity 0.5s;
 
+    .grouped-item {
+        height: 30px;
+        background-color: var(--videoplayer-idle-item);
+        color: var(--linked-text-color);
+        font-size: var(--large-font-size);
+        text-align: center;
+        text-wrap: balance;
+        padding-top: 12px;
+        padding-bottom: 12px;
+        padding-left: 6px;
+        padding-right: 6px;
+    }    
     .playlist-item {
         height: 30px;
         background-color: var(--videoplayer-idle-item);

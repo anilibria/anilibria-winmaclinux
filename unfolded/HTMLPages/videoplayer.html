@@ -70,9 +70,9 @@
 			</div>
 			<div class="right-content">
 				<div class="videoplayer-container" :class="{'videoplayer-container-hide-mouse': !playListVisible}">
-					<video ref="video" autoplay muted playsinline controls :data-poster="poster">
+					<video ref="video" autoplay muted playsinline controls>
 					</video>
-					<div class="videoplayer-playlist-container" :class="{'videoplayer-playlist-container-reverse-animation': playListVisible}">
+					<div v-if="!isGroupedEpisodes" class="videoplayer-playlist-container" :class="{'videoplayer-playlist-container-reverse-animation': playListVisible}">
 						<div ref="episodeslist" v-for="(episode, index) in episodes" :key="index">
 							<div class="flex-row flex-base-center playlist-item" :class="{'playlist-selected-item': episode === selectedEpisode}" @click.prevent="openEpisodeFromList(episode)" :title="episode.name">
 								<span class="flex-1">
@@ -84,6 +84,27 @@
 										width="20"
 										height="20"
 									/>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div v-if="isGroupedEpisodes" class="videoplayer-playlist-container videoplayer-playlist-container-reverse-animation">
+						<div ref="episodeslist" v-for="(group, groupIndex) in groupedEpisodes" :key="groupIndex">
+							<div class="flex-row flex-base-center grouped-item">
+								<span :title="group.name">{{ cutGroupName(group.name) }}</span>
+							</div>
+							<div v-for="(episode, index) in group.episodes" :key="index">
+								<div class="flex-row flex-base-center playlist-item" :class="{'playlist-selected-item': episode === selectedEpisode}" @click.prevent="openEpisodeFromGroupedList(episode, group)" :title="episode.name">
+									<span class="flex-1">
+										Серия {{ episode.sortOrder + 1 }}
+									</span>
+									<div class="flex-row flex-all-center videoplayer-seen-mark" @click.stop="toggleSeenMark(episode.id)">
+										<img
+											:src="'/static/icons/videoplayer/' + (seenMarks.includes(episode.id) ? 'seenmarkselected.svg' : 'seenmark.svg') "
+											width="20"
+											height="20"
+										/>
+									</div>
 								</div>
 							</div>
 						</div>
@@ -108,7 +129,7 @@
 		import {
 			getReleaseEpisodes, getPageSettings, saveSettings, watchVideoRelease,
 			addSeenMark, removeSeenMark, getSeenEpisodes, getReleasePosters,
-			getWatchVideoRelease, getTorrentEpisodes, getLastWatchVideoRelease
+			getWatchVideoRelease, getTorrentEpisodes, getLastWatchVideoRelease, getCinemahallEpisodes
 		} from './unfoldapi.js'
 		import Drawer from './components/Drawer.js'
 		import PageHeader from './components/PageHeader.js'
@@ -132,10 +153,11 @@
 				const isGroupedEpisodes = ref(false);
 				const releaseIds = ref([]);
 				const selectedReleaseId = ref(-1);
+				const selectedReleaseTitle = ref('');
 				const releasePosters = ref([]);
 				const selectedEpisode = ref(null);
 				const selectedQuality = ref();
-				const poster = ref('');///static/backgrounds/emptyposter.png');
+				const poster = ref('/static/backgrounds/emptyposter.png');
 				const playListVisible = ref(true);
 				const showOpening = ref(false);
 				const showEnding = ref(false);
@@ -151,6 +173,14 @@
 				});
 				const seenMarks = ref([])
 
+				function cutGroupName(name) {
+					if (name && name.length > 45) {
+						return name.substring(0, 45) + '...';
+					}
+
+					return name;
+				}
+
 				async function getSource() {
 					const urlParams = new URLSearchParams(window.location.search);
 					const mode = urlParams.get('mode');
@@ -160,7 +190,7 @@
 						releaseIds.value = [idInt];
 						episodes.value = await getReleaseEpisodes(idInt);
 						seenMarks.value = await getSeenEpisodes([idInt]);
-						loadEpisodeAndInnerState(urlParams.get('episode'), idInt);
+						await loadEpisodeAndInnerState(urlParams.get('episode'), idInt);
 						needUseHls = true;
 					
 						return;
@@ -171,13 +201,20 @@
 						releaseIds.value = [idInt];
 						episodes.value = await getTorrentEpisodes(idInt);
 						seenMarks.value = await getSeenEpisodes([idInt]);
-						loadEpisodeAndInnerState(urlParams.get('episode'), idInt);
+						await loadEpisodeAndInnerState(urlParams.get('episode'), idInt);
+
+						return;
 					}
 					if (mode === `onlinetorrent`) {
 						//TODO: setup online torrent
 					}
 					if (mode === `cinemahall`) {
 						isGroupedEpisodes.value = true;
+						groupedEpisodes.value = await getCinemahallEpisodes();
+						const ids = groupedEpisodes.value.map(a => a.releaseId);
+						seenMarks.value = await getSeenEpisodes(ids);
+						await loadGroupEpisodeAndInnerState();
+						return;
 					}
 					
 					const lastWatchVideo = await getLastWatchVideoRelease();
@@ -186,16 +223,45 @@
 						releaseIds.value = [idInt];
 						episodes.value = await getReleaseEpisodes(idInt);
 						seenMarks.value = await getSeenEpisodes([idInt]);
-						loadEpisodeAndInnerState(null, idInt);
+						await loadEpisodeAndInnerState(null, idInt);
 						needUseHls = true;
 					}
 				}
 
 				function scrollToEpisodeInList() {
-					const index = episodes.value.indexOf(selectedEpisode.value);
-					if (index === -1) return;
+					let index = -1;					
+					if (isGroupedEpisodes.value) {
+						let skippedIndexes = 0;
+						for (const group of groupedEpisodes.value) {
+							const foundIndex = group.episodes.indexOf(selectedEpisode.value);
+							if (foundIndex != -1) {
+								skippedIndexes += foundIndex + 1;
+								break;
+							}
 
+							skippedIndexes += group.episodes.length + 1;
+						}
+					} else {
+						index = episodes.value.indexOf(selectedEpisode.value);
+					}
+
+					if (index === -1) return;	
 					episodesList.value[index].scrollIntoView({ behavior: "smooth" });
+				}
+
+				async function loadGroupEpisodeAndInnerState() {
+					const latest = findFirstGroupNotSeenEpisode();
+					selectedEpisode.value = latest.episode;
+					const idInt = latest.group.releaseId;
+
+					watchRelease.value = await getWatchVideoRelease(idInt);
+					
+					poster.value = 'https://anilibria.top' + latest.group.poster;
+					selectedReleaseId.value = latest.group.releaseId;
+					selectedReleaseTitle.value = latest.group.name;
+					needUseHls = latest.group.mode === 'online';
+
+					setTimeout(() => scrollToEpisodeInList());
 				}
 
 				async function loadEpisodeAndInnerState(episode, idInt) {
@@ -233,6 +299,24 @@
 
 					return latest;
 				}
+
+				function findFirstGroupNotSeenEpisode() {
+					const groups = groupedEpisodes.value;
+					let latest = null;
+					let latestGroup = null;
+
+					for (const group of groups) {
+						latestGroup = group;
+						for (const item of group.episodes) {
+							latest = item;
+							if (seenMarks.value.includes(item.id)) continue;
+
+							return {episode: latest, group: latestGroup};
+						}
+					}
+
+					return {episode: latest, group: latestGroup};
+				}				
 
 				function openEpisode(episode) {
 					for (const quality of settings.value.prefferedQuality) {
@@ -309,6 +393,17 @@
 				}
 
 				function openEpisodeFromList(episode) {
+					selectedEpisode.value = episode;
+					adjustVideoSource(openEpisode(episode));
+				}
+
+				function openEpisodeFromGroupedList(episode, group) {
+					if (selectedReleaseId.value !== group.releaseId) {
+						selectedReleaseId.value = group.releaseId;
+						poster.value = group.poster;
+						selectedReleaseTitle.value = group.name;
+						needUseHls = group.mode === 'online';
+					}
 					selectedEpisode.value = episode;
 					adjustVideoSource(openEpisode(episode));
 				}
@@ -553,7 +648,6 @@
 						}
 					});					
 					videoPlayer = player;
-
 					const videoSource = openEpisode(selectedEpisode.value);
 					adjustVideoSource(videoSource);
 
@@ -580,13 +674,16 @@
 					watchVideoRelease,
 					selectedReleaseId,
 					addSeenMark,
+					isGroupedEpisodes,
+					groupedEpisodes,
 					moveUp,
 					moveDown,
 					openEpisodeFromList,
 					toggleSeenMark,
 					saveVideoPlayerSettings,
 					skipOpeningOrEnding,
-					toggleFitVideo
+					toggleFitVideo,
+					cutGroupName
 				}
 			}
 		});
