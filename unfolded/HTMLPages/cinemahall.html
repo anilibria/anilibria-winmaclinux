@@ -105,13 +105,21 @@
 					ref="releasesList">
 					<template v-slot:release="{ release, isSelected, inCinemahall, inFavorites, seensCount, torrentcount, torrentdownloaded, hasactivetorrent }">
 						<div class="releaseslist-release-item" :class="{'releaseslist-release-item-selected': isSelected }">
-							<img class="poster" :src="'https://anilibria.top' + release.poster" loading="lazy"/>
+							<img class="poster" :src="'https://anilibria.top' + release.poster" loading="lazy" />
 							<div class="information">
 								<span class="header-text" style="margin-top: 10px;">{{ release.title }}</span>
 								<span class="normal-text">{{ release.status }} {{ release.season ? '- ' + release.season : '' }} {{ release.year }}</span>
 								<span class="normal-text">{{ release.type }} {{ release.series }} {{ release.genres ? '- ' + release.genres.join(', ') : '' }}</span>
 								<span class="normal-text"><b>Команда:</b> {{ release.voices ? release.voices.join(', ') : '' }}</span>
 								<span class="digit-text flex-row flex-base-center gap-4">
+								<img
+									src="/static/icons/mainmenu/cinemahall.svg"
+									width="18"
+									height="18"
+									loading="lazy"
+									title="Порядок просмотра в кинозале"
+								/>
+								<span class="normal-text">{{ releasesList.cinemahallReleases.indexOf(release.id) }}</span>
 								<release-list-item-video-info
 									v-if="settings.useOnlyOnline || !hasactivetorrent"
 									:release="release"
