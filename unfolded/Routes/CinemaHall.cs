@@ -13,6 +13,7 @@ namespace Aniliberty.Unfolded.Routes
 			app.MapPost("/cinemahall/list", FullList);
 			app.MapPost("/cinemahall/removeseens", RemoveSeens);
 			app.MapPost("/cinemahall/removeall", RemoveAll);
+			app.MapPost("/cinemahall/changesort", ChangeSort);
 		}
 
 		internal static async Task<IResult> FullList([FromBody] ReleasesListFiltersModel model)
@@ -63,7 +64,7 @@ namespace Aniliberty.Unfolded.Routes
 
 				if (!useOnlyOnline && TorrentClient.IsInActiveTorrents(releaseId))
 				{
-					
+
 					result.Add(
 						new ReleaseDisplayGroupEpisodeModel
 						{
@@ -136,6 +137,13 @@ namespace Aniliberty.Unfolded.Routes
 			}
 
 			return Results.Json(result, AppJsonSerializerContext.Default);
+		}
+
+		internal static async Task<IResult> ChangeSort([FromQuery] int movedReleaseId, [FromQuery] int dropReleaseId)
+		{
+			await AppData.ChangeOrderInCinemahall(movedReleaseId, dropReleaseId);
+
+			return Results.Ok();
 		}
 
 	}

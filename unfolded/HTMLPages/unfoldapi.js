@@ -487,3 +487,13 @@ export async function getCinemahallEpisodes() {
     const response = await fetch(`/cinemahall/episodes`);
     return await response.json();
 };
+export async function changeSortInCinemahall(movedReleaseId, dropReleaseId) {
+    await fetch(
+        `/cinemahall/changesort?movedReleaseId=${movedReleaseId}&dropReleaseId=${dropReleaseId}`,
+        {
+            method: "POST",
+            body: '',
+            headers: { "Content-Type": "application/json" }
+        }
+    );
+};

@@ -104,7 +104,13 @@
 					@openrelease="openReleaseCardByLink($event);"
 					ref="releasesList">
 					<template v-slot:release="{ release, isSelected, inCinemahall, inFavorites, seensCount, torrentcount, torrentdownloaded, hasactivetorrent }">
-						<div class="releaseslist-release-item" :class="{'releaseslist-release-item-selected': isSelected }">
+						<div
+							class="releaseslist-release-item"
+							:class="{'releaseslist-release-item-selected': isSelected }"
+							@dragstart="dragStart(release, $event)"
+							@drop="dropItem(release)"
+							@dragover.prevent
+							draggable="true">
 							<img class="poster" :src="'https://anilibria.top' + release.poster" loading="lazy" />
 							<div class="information">
 								<span class="header-text" style="margin-top: 10px;">{{ release.title }}</span>
@@ -183,7 +189,7 @@
 
 	<script type="module">
 		import { createApp, ref, useTemplateRef, watch, onMounted } from 'vue'
-		import { getPageSettings, saveSettings, removeAllSeensInCinemahall, removeAllInCinemahall } from '/static/unfoldapi.js'
+		import { getPageSettings, saveSettings, removeAllSeensInCinemahall, removeAllInCinemahall, changeSortInCinemahall } from '/static/unfoldapi.js'
 		import { sections, historySections, seenMarkSections, setsSections, openLinkMode } from '/static/releaseDictionaries.js'
 		import Drawer from './components/Drawer.js'
 		import PageHeader from './components/PageHeader.js'
@@ -276,6 +282,24 @@
 					}
 				}
 
+				const draggedItem = ref(null);
+
+				function dragStart(item, element) {
+					draggedItem.value = item;
+					
+					element.dataTransfer.effectAllowed = "move";
+					element.dataTransfer.setData("text/plain", null);
+				}
+
+				async function dropItem(item) {
+					if (draggedItem.value === item) return;
+					const dragItem = draggedItem.value;
+					draggedItem.value = null;
+
+					await changeSortInCinemahall(dragItem.id, item.id);
+					await releasesList.value.refreshCinemahall();
+				}
+
 				loadData();
 
 				return {
@@ -297,7 +321,9 @@
 					toggleReleaseInFavorites,
 					removeAllSeens,
 					removeAll,
-					watchCinemahall
+					watchCinemahall,
+					dragStart,
+					dropItem
 				}
 			}
 		});

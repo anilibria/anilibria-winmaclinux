@@ -229,6 +229,19 @@ namespace Aniliberty.Unfolded.Routes
 			await SaveSettings();
 		}
 
+		internal static async Task ChangeOrderInCinemahall(int movedReleaseId, int dropReleaseId)
+		{
+			var list = m_appData.Cinemahall.ToList();
+			var isLess = list.IndexOf(movedReleaseId) < list.IndexOf(dropReleaseId);
+			list.Remove(movedReleaseId);
+			var dropIndex = list.IndexOf(dropReleaseId);
+			list.Insert(dropIndex + (isLess ? 1 : 0), movedReleaseId);
+
+			m_appData.Cinemahall = list;
+
+			await SaveSettings();
+		}
+
 	}
 
 }
