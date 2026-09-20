@@ -421,9 +421,11 @@ namespace Aniliberty.Unfolded.Routes
 			try
 			{
 				var response = await httpClient.GetAsync($"https://www.anilibria.top/api/v1/anime/torrents/{torrent.Id}/file");
-				var tempFile = Path.Combine(TorrentBackgroundService.TorrentsPath, Guid.NewGuid().ToString().Replace("-", "") + ".torrent");
-				using var savedFile = File.Open(Path.Combine(TorrentBackgroundService.TorrentsPath, tempFile), FileMode.OpenOrCreate);
+				var torrentFolder = Path.Combine(Settings.Model.Torrent.PathToDownloads, "Torrents");
+				var tempFile = Path.Combine(torrentFolder, Guid.NewGuid().ToString().Replace("-", "") + ".torrent");
+				var savedFile = File.Open(tempFile, FileMode.OpenOrCreate);
 				await response.Content.CopyToAsync(savedFile);
+				savedFile.Close();
 				GlobalConfig.OpenPathInSystem(tempFile);
 				return Results.Ok();
 			}
