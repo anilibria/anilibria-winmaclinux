@@ -229,24 +229,28 @@
 				}
 
 				function scrollToEpisodeInList() {
-					let index = -1;					
 					if (isGroupedEpisodes.value) {
-						let skippedIndexes = 0;
+						let groupIndex = -1;
+						let elementIndex = -1; 
 						for (const group of groupedEpisodes.value) {
-							const foundIndex = group.episodes.indexOf(selectedEpisode.value);
-							if (foundIndex != -1) {
-								skippedIndexes += foundIndex + 1;
+							elementIndex = group.episodes.indexOf(selectedEpisode.value);
+							if (elementIndex != -1) {
+								groupIndex = groupedEpisodes.value.indexOf(group);
 								break;
 							}
-
-							skippedIndexes += group.episodes.length + 1;
+						}
+						if (groupIndex !== -1) {
+							const groupElement = episodesList.value[groupIndex];
+							const innerElement = groupElement.children[elementIndex + 1];
+							innerElement.scrollIntoView({ behavior: "smooth" });	
 						}
 					} else {
+						let index = -1;
 						index = episodes.value.indexOf(selectedEpisode.value);
+						if (index === -1) return;
+						
+						episodesList.value[index].scrollIntoView({ behavior: "smooth" });
 					}
-
-					if (index === -1) return;	
-					episodesList.value[index].scrollIntoView({ behavior: "smooth" });
 				}
 
 				async function loadGroupEpisodeAndInnerState() {
@@ -348,14 +352,14 @@
 					const skipIndex = groups.indexOf(latestGroup);
 					const skipEpisodeIndex = latestGroup.episodes.indexOf(latest);
 
-					for (const item of latestGroup.episodes.slice(0, skipEpisodeIndex - 1).toReversed()) {
+					for (const item of latestGroup.episodes.slice(0, skipEpisodeIndex).toReversed()) {
 						latest = item;
 						if (seenMarks.value.includes(item.id)) continue;
 
 						return {episode: latest, group: latestGroup};
 					}
 
-					for (const group of groups.slice(skipIndex - 1).toReversed()) {
+					for (const group of groups.slice(0, skipIndex).toReversed()) {
 						latestGroup = group;
 						for (const item of group.episodes.toReversed()) {
 							latest = item;
@@ -366,7 +370,7 @@
 					}
 
 					return {episode: latest, group: latestGroup};
-				}				
+				}
 
 				function openEpisode(episode) {
 					for (const quality of settings.value.prefferedQuality) {
@@ -435,12 +439,11 @@
 				}
 
 				function openPreviousSeria() {
-					debugger
 					if (isGroupedEpisodes.value) {
-						debugger
 						const item = findPreviousGroupNotSeenEpisode();
 						adjustGroupedRelease(item.group);
-						window.vueApp.selectedEpisode.value = item.episode;
+						window.vueApp.selectedEpisode = item.episode;
+						adjustVideoSource(openEpisode(window.vueApp.selectedEpisode));
 					} else {
 						const episodes = window.vueApp.episodes;
 						const index = episodes.findIndex(a => a.id === window.vueApp.selectedEpisode.id);
