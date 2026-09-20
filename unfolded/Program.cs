@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.StaticFiles;
 
 #if DEBUG
 using Microsoft.Extensions.FileProviders;
+using System.Reflection;
 #endif
 #if !DEBUG
 using System.Reflection;
@@ -56,7 +57,9 @@ namespace Aniliberty.Unfolded
 		public static async Task Main(string[] args)
 		{
 			Console.WriteLine("AniLiberty.Unfolded application");
-			Console.WriteLine("version 0.0.0\n");
+			Version? version = Assembly.GetEntryAssembly()?.GetName().Version;
+			string? fileVersion = version is not null ? $"{version.Major}.{version.Minor}.{version.Build}" : "";
+			if (fileVersion is not null) Console.WriteLine($"version {fileVersion}\n");
 
 			var builder = WebApplication.CreateSlimBuilder(args);
 			builder.WebHost.UseShutdownTimeout(TimeSpan.FromSeconds(2));
