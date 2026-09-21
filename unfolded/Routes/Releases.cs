@@ -356,7 +356,7 @@ namespace Aniliberty.Unfolded.Routes
 					a =>
 					{
 						if (!string.IsNullOrEmpty(model.Filter) &&
-							!(a.Title.ToLowerInvariant().Contains(model.Filter) || a.OriginalName.ToLowerInvariant().Contains(model.Filter)))
+							!(a.Title.ToLowerInvariant().Contains(model.Filter.ToLowerInvariant()) || a.OriginalName.ToLowerInvariant().Contains(model.Filter.ToLowerInvariant())))
 						{
 							return false;
 						}
