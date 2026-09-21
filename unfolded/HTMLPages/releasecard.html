@@ -88,7 +88,7 @@
 							<div class="action-button" @click="watchOnline()">Смотреть онлайн</div>
 						</div>
 						<div v-if="releaseTorrents.length" style="height: 4px;"></div>
-						<div v-if="releaseTorrents.length && !Object.hasOwn(activeTorrents, releaseId)" class="flex-row flex-base-center gap-8">
+						<div v-if="releaseTorrents.length && (!torrentSettings.useInternalTorrectClient || !Object.hasOwn(activeTorrents, releaseId))" class="flex-row flex-base-center gap-8">
 							<span>Доступно {{ releaseTorrents.length }} торрентов</span>
 							<div class="flex-row gap-8" v-if="torrentSettings && torrentSettings.useInternalTorrectClient">
 								<div class="action-button" @click="downloadReleaseTorrent()">Скачать</div>
@@ -96,7 +96,7 @@
 							</div>
 							<div class="action-button">Смотреть торрент</div>
 						</div>
-						<div v-if="Object.hasOwn(activeTorrents, releaseId)" class="flex-row flex-base-center gap-8">
+						<div v-if="torrentSettings.useInternalTorrectClient && Object.hasOwn(activeTorrents, releaseId)" class="flex-row flex-base-center gap-8">
 							<span>{{ getDownloadedStatus() }}</span>
 							<div v-if="activeTorrents[releaseId].downloaded" class="action-button" @click="watchDowloadedTorrent()">Смотреть торрент</div>
 						</div>
