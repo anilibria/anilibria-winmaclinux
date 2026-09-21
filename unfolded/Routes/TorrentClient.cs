@@ -60,7 +60,6 @@ namespace Aniliberty.Unfolded.Routes
 			m_clientEngine = new ClientEngine(settings);
 			Console.WriteLine("Inner torrent client started!");
 			Console.WriteLine("Torrent port: " + torrentPort);
-			Console.WriteLine("Torrent folder: " + Settings.Model.Torrent.PathToDownloads);
 		}
 
 		protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -348,8 +347,12 @@ namespace Aniliberty.Unfolded.Routes
 
 		public static void Initialize()
 		{
-			m_torrentCacheFile = Path.Combine(Settings.Model.Torrent.PathToDownloads, "torrents.cache");
-			LoadTorrentCache();
+			Console.WriteLine("Torrent folder: " + Settings.Model.Torrent.PathToDownloads);
+			if (Settings.Model.Torrent.UseInternalTorrectClient && !string.IsNullOrEmpty(Settings.Model.Torrent.PathToDownloads))
+			{
+				m_torrentCacheFile = Path.Combine(Settings.Model.Torrent.PathToDownloads, "torrents.cache");
+				LoadTorrentCache();
+			}
 		}
 
 		public static void LoadTorrentCache()

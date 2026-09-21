@@ -172,8 +172,20 @@
 							</div>
 						</div>
 					</template>
+					<template v-slot:empty="">
+						<div v-if="releasesList">
+							<span v-if="releasesList.cinemahallReleases">
+								По текущему фильтру ничего не найдено.<br>
+								Попробуйте указать другие фильтры или раздел и повторить поиск.
+							</span>
+							<span v-if="!releasesList.cinemahallReleases">
+								Нет добавленных релизов в кинозал.<br>
+								Чтобы добавить их перейдите на страницу Каталог релизов.
+							</span>
+						</div>
+					</template>
 				</releases-list>
-			</div>			
+			</div>
 		</div>
 
 		<div v-if="releasesList" :class="{'selection-helper': true, 'selection-pulse-animation': releasesList.selectionModeEnabled }">

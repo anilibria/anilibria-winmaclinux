@@ -94,6 +94,7 @@
 							<div>Использовать внутренний torrent клиент:</div>
 							<simple-switch v-model:state="releasesList.torrentSettings.useInternalTorrectClient" @changed="savePageSettings()">
 							</simple-switch>
+							<div>Если внутренний torrent клиент был выключен на старте то необходимо вначале перезапустить приложение!</div>
 							<div>
 								Предпочтение качества торрента (сверху вниз):<br>
 								<span class="torrents-disclaimer">тащите мышкой для изменения</span>
