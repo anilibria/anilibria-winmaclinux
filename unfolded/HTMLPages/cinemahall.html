@@ -32,7 +32,7 @@
 					:releases-list="releasesList"
 					:filter-model="filterModel">
 				</releases-sidebar-actions>
-				<div class="simple-panel-icon-button simple-popup-container" title="Смотреть кинозал" @click="watchCinemahall()">
+				<div v-if="isSometingInCinemahall" class="simple-panel-icon-button simple-popup-container" title="Смотреть кинозал" @click="watchCinemahall()">
 					<div class="full-width-height flex-row flex-base-center flex-other-center">
 						<img :src="'/static/icons/mainmenu/videoplayer.svg'" width="30" height="30" />
 					</div>
@@ -201,7 +201,10 @@
 
 	<script type="module">
 		import { createApp, ref, useTemplateRef, watch, onMounted } from 'vue'
-		import { getPageSettings, saveSettings, removeAllSeensInCinemahall, removeAllInCinemahall, changeSortInCinemahall } from '/static/unfoldapi.js'
+		import {
+			getPageSettings, saveSettings, removeAllSeensInCinemahall, removeAllInCinemahall,
+			changeSortInCinemahall, hasSomethingInCinemahall
+		} from '/static/unfoldapi.js'
 		import { sections, historySections, seenMarkSections, setsSections, openLinkMode } from '/static/releaseDictionaries.js'
 		import Drawer from './components/Drawer.js'
 		import PageHeader from './components/PageHeader.js'
@@ -236,7 +239,8 @@
 				const backToTopVisible = ref(false);
 				const filterModel = ref({});
 				const releasesList = useTemplateRef('releasesList');
-				const settings = ref({ startedSection: 0, startedSubSection: -1, notificationMode: 0, openLinkMode: 0 })
+				const settings = ref({ startedSection: 0, startedSubSection: -1, notificationMode: 0, openLinkMode: 0 });
+				const somethingInCinemahall = ref(false);
 
 				async function savePageSettings() {
 					await saveSettings('cinemahall', settings.value);
@@ -244,6 +248,7 @@
 
 				async function loadData() {
 					settings.value = await getPageSettings('cinemahall');
+					await isSometingInCinemahall();
 				}
 
 				function backToTop() {
@@ -277,6 +282,7 @@
 
 					await releasesList.value.refreshCinemahall();
 					await releasesList.value.loadReleases();
+					await isSometingInCinemahall();
 				}
 
 				async function removeAll() {
@@ -284,6 +290,7 @@
 
 					await releasesList.value.refreshCinemahall();
 					await releasesList.value.loadReleases();
+					somethingInCinemahall.value = false;
 				}
 
 				function watchCinemahall() {
@@ -312,6 +319,10 @@
 					await releasesList.value.refreshCinemahall();
 				}
 
+				async function isSometingInCinemahall() {
+					somethingInCinemahall.value = await hasSomethingInCinemahall();
+				}
+
 				loadData();
 
 				return {
@@ -335,7 +346,8 @@
 					removeAll,
 					watchCinemahall,
 					dragStart,
-					dropItem
+					dropItem,
+					isSometingInCinemahall
 				}
 			}
 		});

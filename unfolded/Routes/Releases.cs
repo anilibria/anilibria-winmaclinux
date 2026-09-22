@@ -809,6 +809,22 @@ namespace Aniliberty.Unfolded.Routes
 			return seens == release.CountVideos && release.Status == "Озвучка завершена";
 		}
 
+		internal static bool AllReleasesInSeen(IEnumerable<int> releases)
+		{
+			foreach (var releaseId in releases)
+			{
+				var episodes = m_episodes.FirstOrDefault(a => a.ReleaseId == releaseId);
+				if (episodes is null) continue;
+				var release = m_releasesMap.ContainsKey(releaseId) ? m_releasesMap[releaseId] : null;
+				if (release is null) continue;
+
+				var seens = episodes.Items.Count(a => m_seenEpisodes.Contains(a.Id));
+				if (seens != release.CountVideos) return false;
+			}
+
+			return true;
+		}
+
 	}
 
 }

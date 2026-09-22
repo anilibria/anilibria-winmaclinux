@@ -14,6 +14,7 @@ namespace Aniliberty.Unfolded.Routes
 			app.MapPost("/cinemahall/removeseens", RemoveSeens);
 			app.MapPost("/cinemahall/removeall", RemoveAll);
 			app.MapPost("/cinemahall/changesort", ChangeSort);
+			app.MapGet("/cinemahall/hassometings", HasSomething);
 		}
 
 		internal static async Task<IResult> FullList([FromBody] ReleasesListFiltersModel model)
@@ -144,6 +145,13 @@ namespace Aniliberty.Unfolded.Routes
 			await AppData.ChangeOrderInCinemahall(movedReleaseId, dropReleaseId);
 
 			return Results.Ok();
+		}
+
+		internal static IResult HasSomething()
+		{
+			var allSeens = Releases.AllReleasesInSeen(AppData.Model.Cinemahall);
+
+			return Results.Content(allSeens ? "false" : "true", "application/json");
 		}
 
 	}

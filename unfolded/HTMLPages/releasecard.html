@@ -18,6 +18,19 @@
 
 		<div class="page-content-with-panel">
 			<div class="left-panel flex-column">
+				<div class="simple-panel-icon-button simple-popup-container" title="Копировать название и описание">
+					<div class="full-width-height flex-row flex-base-center flex-other-center">
+						<img :src="'/static/icons/releasecard/copy.svg'" width="30" height="30" />
+					</div>
+					<div class="simple-popup-box releasecard-rightmenu">
+						<div class="releasecard-rightmenu-copy flex-column">
+							<a class="default-link" @click.prevent="copyStuff('name')" href="">Копировать название</a>
+							<a class="default-link" @click.prevent="copyStuff('originalname')" href="">Копировать оригинальное название</a>
+							<a class="default-link" @click.prevent="copyStuff('nameandoriginalname')" href="">Копировать оба названия</a>
+							<a class="default-link" @click.prevent="copyStuff('description')" href="">Копировать описание</a>
+						</div>
+					</div>
+				</div>
 				<div class="simple-panel-icon-button simple-popup-container">
 					<div class="full-width-height flex-row flex-base-center flex-other-center">
 						<img :src="'/static/icons/commonbuttons/seen.svg'" width="30" height="30" />
@@ -294,6 +307,23 @@
 					window.location.href = 'videoplayer.html?mode=downloadedtorrent&id=' + releaseId.value;
 				}
 
+				async function copyStuff(mode) {
+					switch (mode) {
+						case 'name':
+							await navigator.clipboard.writeText(releaseCard.value.title);
+							break;
+						case 'originalname':
+							await navigator.clipboard.writeText(releaseCard.value.originalName);
+							break;
+						case 'nameandoriginalname':
+							await navigator.clipboard.writeText(releaseCard.value.title + " " + releaseCard.value.originalName);
+							break;
+						case 'description':
+							await navigator.clipboard.writeText(releaseCard.value.description);
+							break;
+					}
+				}
+
 				getParameter();
 				getCard();
 
@@ -328,7 +358,8 @@
 					openTorrent,
 					downloadReleaseTorrent,
 					getDownloadedStatus,
-					watchDowloadedTorrent
+					watchDowloadedTorrent,
+					copyStuff
 				}
 			}
 		});

@@ -21,6 +21,11 @@
     padding: 8px;
 }
 
+.releasecard-rightmenu-copy {
+    width: 228px;
+    padding: 8px;
+}
+
 .releasecard-maininfo-container {
     display: flex;
     flex-direction: row;

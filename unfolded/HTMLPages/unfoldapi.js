@@ -497,3 +497,7 @@ export async function changeSortInCinemahall(movedReleaseId, dropReleaseId) {
         }
     );
 };
+export async function hasSomethingInCinemahall() {
+    const response = await fetch(`/cinemahall/hassometings`);
+    return await response.json();
+};
