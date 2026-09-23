@@ -102,6 +102,8 @@
 					:sourcepage="'cinemahall'"
 					:item-height="290"
 					@openrelease="openReleaseCardByLink($event);"
+					:sortfield="14"
+					:sortdesc="false"
 					ref="releasesList">
 					<template v-slot:release="{ release, isSelected, inCinemahall, inFavorites, seensCount, torrentcount, torrentdownloaded, hasactivetorrent }">
 						<div
@@ -125,7 +127,7 @@
 									loading="lazy"
 									title="Порядок просмотра в кинозале"
 								/>
-								<span class="normal-text">{{ releasesList.cinemahallReleases.indexOf(release.id) }}</span>
+								<span class="normal-text">{{ releasesList.cinemahallReleases.indexOf(release.id) + 1 }}</span>
 								<release-list-item-video-info
 									v-if="settings.useOnlyOnline || !hasactivetorrent"
 									:release="release"

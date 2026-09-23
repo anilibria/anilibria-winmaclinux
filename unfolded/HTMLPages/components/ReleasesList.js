@@ -6,7 +6,7 @@ import {
 } from '/static/unfoldapi.js'
 
 export default {
-	props: ['releasesselected', 'allfilters', 'itemWidth', 'itemHeight', 'itemGap', 'leftPanelWidth', 'backtotopvisible', 'sourcepage'],
+	props: ['releasesselected', 'allfilters', 'itemWidth', 'itemHeight', 'itemGap', 'leftPanelWidth', 'backtotopvisible', 'sourcepage', 'sortfield', 'sortdesc'],
 	emits: ['openrelease', 'update:releasesselected', 'update:allfilters', 'update:backtotopvisible'],
 	template: `
 <div ref="releasesContainer" class="releaseslist-releases-container" @click.right.prevent="toggleSelectionMode()">
@@ -246,6 +246,11 @@ export default {
                     break;
             }
             adjustSortingBySection();
+            if (props.sortfield) {
+                filterModel.value.sortingField = props.sortfield;
+                filterModel.value.sortingDescending = props.sortdesc || false;
+                context.emit('update:allfilters', filterModel.value);
+            }
             await loadReleases();
         }
 

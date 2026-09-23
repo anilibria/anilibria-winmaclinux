@@ -137,6 +137,8 @@
 
 		History = 13,
 
+		Cinemahall = 14,
+
 	};
 
 	public enum ReleasesListFiltersModelSeenStatus

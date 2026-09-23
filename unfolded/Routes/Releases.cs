@@ -490,6 +490,7 @@ namespace Aniliberty.Unfolded.Routes
 				case ReleasesListFiltersModelSortingField.SeenMark: return model.SortingDescending == true ? releases.OrderByDescending(a => seenEpisodes.ContainsKey(a.Id) ? 1 : 0) : releases.OrderBy(a => seenEpisodes.ContainsKey(a.Id) ? 1 : 0); ;
 				case ReleasesListFiltersModelSortingField.Year: return model.SortingDescending == true ? releases.OrderByDescending(a => a.Year) : releases.OrderBy(a => a.Year);
 				case ReleasesListFiltersModelSortingField.History: return model.SortingDescending == true ? releases.OrderByDescending(a => AppData.GetDateWatchReleaseHistory(a.Id)) : releases.OrderBy(a => AppData.GetDateWatchReleaseHistory(a.Id));
+				case ReleasesListFiltersModelSortingField.Cinemahall: return model.SortingDescending == true ? releases.OrderByDescending(a => AppData.GetCinemahallOrder(a.Id)) : releases.OrderBy(a => AppData.GetCinemahallOrder(a.Id));
 				default: throw new Exception("Not supported sorting field!");
 			}
 		}

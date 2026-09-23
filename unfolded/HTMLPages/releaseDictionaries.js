@@ -55,6 +55,10 @@
         title: "Истории",
         id: 13
     },
+    {
+        title: "Кинозалу",
+        id: 14
+    }
 ];
 
 export const sections = [

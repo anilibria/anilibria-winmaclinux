@@ -187,6 +187,11 @@ namespace Aniliberty.Unfolded.Routes
 			return null;
 		}
 
+		public static int GetCinemahallOrder(int id)
+		{
+			var index = m_appData.Cinemahall.IndexOf(id);
+			return index == -1 ? 99999 : index;
+		}
 
 		public static bool IsInOnlyWatchHistory(int id) => m_appData.HistoryWatch.ContainsKey(id);
 
