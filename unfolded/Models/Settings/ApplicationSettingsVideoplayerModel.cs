@@ -14,6 +14,8 @@
 
 		public bool ShowReleasePoster { get; set; }
 
+		public int OpenSingleMode { get; set; } = 0;
+
 	}
 
 }

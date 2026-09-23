@@ -30,7 +30,7 @@ export default {
 			</div>
 			<div class="main-menu-logo">
 				<div class="icon"></div>
-				<span class="version">Aniliberty.Unfolded<br>версия 0.0.4</span>
+				<span class="version">Aniliberty.Unfolded<br>версия 0.0.5</span>
 			</div>
 		</div>
 	</div>

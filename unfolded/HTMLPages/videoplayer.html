@@ -22,7 +22,7 @@
 		<div class="page-content-with-panel">
 			<div class="left-panel flex-column">
 				<div class="simple-panel-icon-button simple-popup-container"
-					 title="Настройка страницы Видеоплеер">
+					 title="Настройка качества видео">
 					<div class="full-width-height flex-row flex-base-center flex-other-center">
 						<img :src="'/static/icons/videoplayer/quality.svg'" width="30" height="30" />
 					</div>
@@ -52,6 +52,13 @@
 					</div>
 					<div class="simple-popup-box videoplayer-rightmenu">
 						<div class="videoplayer-rightmenu-settings flex-column gap-8">
+							<span>Открыть серию в одиночном релизе</span>
+							<simple-select
+								v-model:item="settings.openSingleMode"
+								:options="openSingleModes"
+								style="width: 250px;"
+								@selected="saveVideoPlayerSettings();">
+							</simple-select>							
 							<span>Автопереход между сериями</span>
 							<simple-switch v-model:state="settings.autoNextOpen" @changed="saveVideoPlayerSettings()">
 							</simple-switch>
@@ -131,15 +138,18 @@
 			addSeenMark, removeSeenMark, getSeenEpisodes, getReleasePosters,
 			getWatchVideoRelease, getTorrentEpisodes, getLastWatchVideoRelease, getCinemahallEpisodes
 		} from './unfoldapi.js'
+		import { openSingleModes } from './releaseDictionaries.js'
 		import Drawer from './components/Drawer.js'
 		import PageHeader from './components/PageHeader.js'
 		import SimpleSwitch from './components/SimpleSwitch.js'
+		import SimpleSelect from './components/SimpleSelect.js'
 
 		const app = createApp({
 			components: {
 				'page-drawer': Drawer,
 				'page-header': PageHeader,
-				'simple-switch': SimpleSwitch
+				'simple-switch': SimpleSwitch,
+				'simple-select': SimpleSelect
 			},
 			setup() {
 				const mainMenuVisible = ref(false);
@@ -265,18 +275,34 @@
 				}
 
 				async function loadEpisodeAndInnerState(episode, idInt) {
+					watchRelease.value = await getWatchVideoRelease(idInt);
+
 					if (episode) {
 						selectedEpisode.value = episodes.value.find(a => a.id === episode);
 					} else {
-						const lastFindEpisode = findFirstNotSeenEpisode();
-						if (lastFindEpisode) {
-							selectedEpisode.value = lastFindEpisode;
-						} else {
-							selectedEpisode.value = episodes.value[0];
+						if (settings.value.openSingleMode === 0) { // last not seens
+							const lastFindEpisode = findFirstNotSeenEpisode();
+							if (lastFindEpisode) {
+								selectedEpisode.value = lastFindEpisode;
+							} else {
+								selectedEpisode.value = episodes.value[0];
+							}
+						}
+						if (settings.value.openSingleMode === 1) { // last opened
+							if (watchRelease.value) {
+								const lastWatchEpisode = episodes.value.find(a => a.id === watchRelease.value.videoId);
+								if (lastWatchEpisode) {
+									selectedEpisode.value = lastWatchEpisode;	
+								} else {
+									selectedEpisode.value = episodes.value[0];	
+								}
+							} else {
+								selectedEpisode.value = episodes.value[0];
+							}
 						}
 					}
 
-					watchRelease.value = await getWatchVideoRelease(idInt);
+					console.log('watch release data ', watchRelease.value);
 					
 					releasePosters.value = await getReleasePosters([idInt]);
 					const releasePoster = releasePosters.value.find(a => a.id === idInt).poster;
@@ -656,18 +682,18 @@
 					player.on('controlshidden', () => {
 						playListVisible.value = false;
 					});
-					player.on('ended', () => {
-						if (settings.value.autoNextOpen) openNextSeria();
-
+					player.on('ended', async () => {
 						if (!seenMarks.value.includes(id)) {
 							seenMarks.value.push(id);
-							addSeenMark([id]);
+							await addSeenMark([id]);
 						}
+						if (settings.value.autoNextOpen) openNextSeria();
 					});
 					player.on('playing', () => {
 						if (!watchRelease.value) return;
 						
 						if (selectedEpisode.value.id === watchRelease.value.videoId && watchRelease.value.time > 0) {
+							console.log("watch release skip time" + watchRelease.value.time);
 							videoPlayer.currentTime = watchRelease.value.time;
 							watchRelease.value = null;
 						}
@@ -746,6 +772,7 @@
 					addSeenMark,
 					isGroupedEpisodes,
 					groupedEpisodes,
+					openSingleModes,
 					moveUp,
 					moveDown,
 					openEpisodeFromList,

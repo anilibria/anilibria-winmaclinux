@@ -219,3 +219,14 @@ export const notificationModes = [
         id: 2
     },
 ];
+
+export const openSingleModes = [
+    {
+        title: "Последнюю непросмотренную",
+        id: 0
+    },
+    {
+        title: "Последнюю открываемую",
+        id: 1
+    }
+];
