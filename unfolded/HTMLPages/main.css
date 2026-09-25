@@ -52,6 +52,10 @@ body {
     --videoplayer-selected-color: light-dark(white, black);
     --videoplayer-idle-color: light-dark(black, white);
     --videoplayer-selected-seen-hover-color: light-dark(rgba(120, 128, 128, 0.9), rgba(120, 89, 89, 0.9));
+    --simple-input-background: light-dark(white, black);
+    --simple-input-color: light-dark(#333333, white);
+    --simple-input-active-border-color: light-dark(#b32121, white);
+    --simple-input-active-border-shadow-color: light-dark(rgba(179, 33, 33, 0.25), rgba(255, 255, 255, 0.25));
     /* multiselect style customization */
     --ms-bg: light-dark(white, black);
     --ms-border-color: light-dark(#cccccc, white);
@@ -264,9 +268,9 @@ body {
     padding: 4px 6px;
     box-sizing: border-box;
     font-size: var(--middle-font-size);
-    color: #333333;
+    color: var(--simple-input-color);
 
-    background-color: #ffffff;
+    background-color: var(--simple-input-background);
     border: 1px solid #cccccc;
     border-radius: 6px;
 
@@ -274,8 +278,8 @@ body {
 
     &:focus {
         outline: none;
-        border-color: #0066cc;
-        box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.25);
+        border-color: var(--simple-input-active-border-color);
+        box-shadow: 0 0 0 3px var(--simple-input-active-border-shadow-color);
     }
     &:disabled {
         background-color: #f5f5f5;
