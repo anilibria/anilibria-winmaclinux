@@ -40,6 +40,8 @@
 
 		public ReleasesListFiltersSubSection SubSection { get; init; }
 
+		public IEnumerable<int>? TorrentState { get; set; }
+
 	}
 
 	public enum ReleasesListFiltersSection

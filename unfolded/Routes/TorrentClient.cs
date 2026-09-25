@@ -579,6 +579,28 @@ namespace Aniliberty.Unfolded.Routes
 				.Any(a => a.ReleaseId == releaseId);
 		}
 
+		public static bool IsFullDownloaded(int releaseId)
+		{
+			if (TorrentBackgroundService.ClientEngine is null) return false;
+			var activeTorrent = m_cache.Items.FirstOrDefault(a => a.ReleaseId == releaseId);
+			if (activeTorrent is null) return false;
+			var torrentManager = TorrentBackgroundService.ClientEngine.Torrents.FirstOrDefault(b => b.MetadataPath == activeTorrent.MetadataPath);
+			if (torrentManager is null) return false;
+
+			return torrentManager.Progress == 100;
+		}
+
+		public static bool IsDownloading(int releaseId)
+		{
+			if (TorrentBackgroundService.ClientEngine is null) return false;
+			var activeTorrent = m_cache.Items.FirstOrDefault(a => a.ReleaseId == releaseId);
+			if (activeTorrent is null) return false;
+			var torrentManager = TorrentBackgroundService.ClientEngine.Torrents.FirstOrDefault(b => b.MetadataPath == activeTorrent.MetadataPath);
+			if (torrentManager is null) return false;
+
+			return torrentManager.Progress != 100;
+		}
+
 	}
 
 }

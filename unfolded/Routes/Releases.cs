@@ -369,6 +369,8 @@ namespace Aniliberty.Unfolded.Routes
 						if (CheckMultiStringSingleValue(model.Seasons, a.Season)) return false;
 						if (CheckMultiStringSingleValue(model.Statuses, a.Status)) return false;
 						if (CheckMultiIntValue(model.ScheduleDays, a.PublishDay)) return false;
+						if (CheckTorrentState(model.TorrentState, a.Id)) return false;
+
 						if (model.InFavorites.HasValue)
 						{
 							var inFavorite = m_favorites.Contains(a.Id) || m_localFavorites.Contains(a.Id);
@@ -405,6 +407,35 @@ namespace Aniliberty.Unfolded.Routes
 				if (!isMatched) return true;
 
 				return false;
+			}
+
+			static bool CheckTorrentState(IEnumerable<int>? state, int id)
+			{
+				if (state is null) return false;
+				if (!state.Any()) return false;
+
+				var isMatched = false;
+				foreach (var item in state)
+				{
+					switch (item) {
+						case 0: // not in active torrents
+							isMatched = !TorrentClient.IsInActiveTorrents(id);
+							break;
+						case 1: // in active torrents
+							isMatched = TorrentClient.IsInActiveTorrents(id);
+							break;
+						case 2: // fully downloaded
+							isMatched = TorrentClient.IsFullDownloaded(id);
+							break;
+						case 3: // downloading
+							isMatched = TorrentClient.IsDownloading(id);
+							break;
+					}
+
+					if (isMatched) break;
+				}
+
+				return !isMatched;
 			}
 
 			static bool CheckMultiIntValue(IEnumerable<int>? filter, int? value)

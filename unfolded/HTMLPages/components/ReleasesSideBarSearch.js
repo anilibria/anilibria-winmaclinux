@@ -2,6 +2,7 @@ import { ref, watch } from '/static/vue.js'
 import { getReleaseDictionaries } from '/static/unfoldapi.js'
 import SimpleSwitch from '/static/components/SimpleSwitch.js'
 import MultiSelect from '/static/libs/multiselect.mjs'
+import { torrentStates, scheduleDaysFilters } from '/static/releaseDictionaries.js'
 
 export default {
 	props: ['filterModel','releasesList'],
@@ -70,6 +71,13 @@ export default {
                 </div>
             </div>
             <div class="flex-column gap-2">
+                <span>Состояние торрента</span>
+                <div class="flex-row flex-base-center gap-4">
+                    <multi-select class="releaseslist-search-multiselect flex-1" v-model="filterModel.torrentState" :options="releaseDictionaries.torrentStates" mode="tags" searchable @select="loadReleases()" @deselect="loadReleases()" @clear="loadReleases()">
+                    </multi-select>
+                </div>
+            </div>
+            <div class="flex-column gap-2">
                 <span>Описание</span>
                 <input v-model="filterModel.description" type="text" class="simple-input" placeholder="Описание" />
             </div>
@@ -97,15 +105,8 @@ export default {
             statuses: [],
             years: [],
             seasons: [],
-            scheduleDays: [
-                { label: 'Понедельник', value: 1 },
-                { label: 'Вторник', value: 2 },
-                { label: 'Среда', value: 3 },
-                { label: 'Четверг', value: 4 },
-                { label: 'Пятница', value: 5 },
-                { label: 'Суббота', value: 6 },
-                { label: 'Воскресенье', value: 7 }
-            ]
+            torrentStates: torrentStates,
+            scheduleDays: scheduleDaysFilters
         });
 
         async function loadAllData() {

@@ -54,6 +54,7 @@ namespace Aniliberty.Unfolded
 			return null;
 		}
 
+		[STAThread]
 		public static async Task Main(string[] args)
 		{
 			Console.WriteLine("AniLiberty.Unfolded application");

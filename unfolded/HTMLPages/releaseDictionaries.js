@@ -234,3 +234,32 @@ export const openSingleModes = [
         id: 1
     }
 ];
+
+export const torrentStates = [
+    {
+        label: "Не в торрентах",
+        value: 0
+    },
+    {
+        label: "В торрентах",
+        value: 1
+    },
+    {
+        label: "Полностью скачен",
+        value: 2
+    },
+    {
+        label: "Скачивается",
+        value: 3
+    }
+];
+
+export const scheduleDaysFilters = [
+    { label: 'Понедельник', value: 1 },
+    { label: 'Вторник', value: 2 },
+    { label: 'Среда', value: 3 },
+    { label: 'Четверг', value: 4 },
+    { label: 'Пятница', value: 5 },
+    { label: 'Суббота', value: 6 },
+    { label: 'Воскресенье', value: 7 }
+];

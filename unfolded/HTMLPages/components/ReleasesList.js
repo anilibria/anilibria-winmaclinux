@@ -62,7 +62,8 @@ export default {
             sortingField: 0,
             sortingDescending: true,
             section: 0,
-            subsection: -1
+            subsection: -1,
+            torrentState: []
         });
 
         // release selection
