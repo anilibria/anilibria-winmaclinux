@@ -683,11 +683,11 @@
 						playListVisible.value = false;
 					});
 					player.on('ended', async () => {
-						if (!seenMarks.value.includes(id)) {
-							seenMarks.value.push(id);
-							await addSeenMark([id]);
+						if (!seenMarks.value.includes(selectedEpisode.value.id)) {
+							seenMarks.value.push(selectedEpisode.value.id);
+							await addSeenMark([selectedEpisode.value.id]);
 						}
-						if (settings.value.autoNextOpen) openNextSeria();
+						if (settings.value.autoNextOpen) window.vueApp.openNextSeria();
 					});
 					player.on('playing', () => {
 						if (!watchRelease.value) return;
