@@ -57,13 +57,23 @@ namespace Aniliberty.Unfolded
 		[STAThread]
 		public static async Task Main(string[] args)
 		{
+
 			Console.WriteLine("AniLiberty.Unfolded application");
 			Version? version = Assembly.GetEntryAssembly()?.GetName().Version;
 			string? fileVersion = version is not null ? $"{version.Major}.{version.Minor}.{version.Build}" : "";
 			if (fileVersion is not null) Console.WriteLine($"version {fileVersion}\n");
+			
+			ThreadPool.SetMinThreads(workerThreads: 200, completionPortThreads: 200);
 
 			var builder = WebApplication.CreateSlimBuilder(args);
 			builder.WebHost.UseShutdownTimeout(TimeSpan.FromSeconds(2));
+			builder.WebHost.ConfigureKestrel(serverOptions =>
+			{
+				serverOptions.Limits.MaxConcurrentConnections = 10000;
+				serverOptions.Limits.MaxConcurrentUpgradedConnections = 5000;
+			});
+			//TODO: try to use!!!
+			//builder.WebHost.UseSockets();
 			builder.Services.ConfigureHttpJsonOptions(options =>
 			{
 				options.SerializerOptions.TypeInfoResolverChain.Insert(0, AppJsonSerializerContext.Default);

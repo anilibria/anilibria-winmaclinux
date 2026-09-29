@@ -691,7 +691,7 @@
 					});
 					player.on('playing', () => {
 						if (!watchRelease.value) return;
-						
+
 						if (selectedEpisode.value.id === watchRelease.value.videoId && watchRelease.value.time > 0) {
 							console.log("watch release skip time" + watchRelease.value.time);
 							videoPlayer.currentTime = watchRelease.value.time;
@@ -712,7 +712,7 @@
 
 						// if we auto skip opening we need to seek on end of opening
 						if (settings.value.autoSkipOpening && inOpening) {
-							videoPlayer.currentTime = openingEnd;
+							videoPlayer.currentTime = selectedEpisode.openingEnd;
 						}
 						// if we not auto skip opening we need to show opening button
 						if (!settings.value.autoSkipOpening && !showOpening && inOpening) {
@@ -730,7 +730,7 @@
 							addSeenMark([episodeId]);
 						}
 						// if we auto skip ending we need to try open next seria
-						if (settings.value.autoSkipEnding && inEnding && selectedEpisode.value !== episodes.at(-1)) {
+						if (settings.value.autoSkipEnding && inEnding && selectedEpisode !== window.vueApp.episodes.at(-1)) {
 							window.vueApp.openNextSeria();
 						}
 
@@ -782,7 +782,8 @@
 					toggleFitVideo,
 					cutGroupName,
 					openEpisodeFromGroupedList,
-					scrollToEpisodeInList
+					scrollToEpisodeInList,
+					openNextSeria
 				}
 			}
 		});
