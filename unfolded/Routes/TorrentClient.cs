@@ -489,7 +489,7 @@ namespace Aniliberty.Unfolded.Routes
 			var file = manager.Files.ElementAt(videoIndex);
 
 			var fileName = Path.GetFileName(file.FullPath);
-			return Results.File(file.FullPath, "video/x-matroska", fileDownloadName: fileName);
+			return Results.File(file.FullPath, "video/x-matroska", fileDownloadName: fileName, enableRangeProcessing: true);
 		}
 
 		internal static IResult Episodes(HttpContext httpContext, int releaseId)
