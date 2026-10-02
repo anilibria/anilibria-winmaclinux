@@ -1,8 +1,10 @@
 ﻿using Aniliberty.Unfolded.Configuration;
 using Aniliberty.Unfolded.Helpers;
 using Aniliberty.Unfolded.Models.CacheModels;
+using Aniliberty.Unfolded.Models.MySelections;
 using Aniliberty.Unfolded.Models.Releases;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Frozen;
 using System.Globalization;
 using System.Text;
 using static Aniliberty.Unfolded.Helpers.JsonHelpers;
@@ -417,7 +419,8 @@ namespace Aniliberty.Unfolded.Routes
 				var isMatched = false;
 				foreach (var item in state)
 				{
-					switch (item) {
+					switch (item)
+					{
 						case 0: // not in active torrents
 							isMatched = !TorrentClient.IsInActiveTorrents(id);
 							break;
@@ -841,6 +844,33 @@ namespace Aniliberty.Unfolded.Routes
 			return seens == release.CountVideos && release.Status == "Озвучка завершена";
 		}
 
+		internal static bool IsReleaseSeensByEnd(ReleaseSaveModel release, bool withoutStatus = false)
+		{
+			var episodes = m_episodes.FirstOrDefault(a => a.ReleaseId == release.Id);
+			if (episodes is null) return false;
+
+			var seens = episodes.Items.Count(a => m_seenEpisodes.Contains(a.Id));
+			return seens == release.CountVideos && (!withoutStatus || release.Status == "Озвучка завершена");
+		}
+
+		internal static bool IsReleaseInSeensNotAll(ReleaseSaveModel release)
+		{
+			var episodes = m_episodes.FirstOrDefault(a => a.ReleaseId == release.Id);
+			if (episodes is null) return false;
+
+			var seens = episodes.Items.Count(a => m_seenEpisodes.Contains(a.Id));
+			return seens > 0 && seens != release.CountVideos;
+		}
+
+		internal static bool IsReleaseNotSeensAtAll(ReleaseSaveModel release)
+		{
+			var episodes = m_episodes.FirstOrDefault(a => a.ReleaseId == release.Id);
+			if (episodes is null) return false;
+
+			var seens = episodes.Items.Count(a => m_seenEpisodes.Contains(a.Id));
+			return seens == 0;
+		}
+
 		internal static bool AllReleasesInSeen(IEnumerable<int> releases)
 		{
 			foreach (var releaseId in releases)
@@ -857,6 +887,116 @@ namespace Aniliberty.Unfolded.Routes
 			return true;
 		}
 
+		internal static Dictionary<SelectionType, List<ReleaseSaveModel>> GetBySelectionTypes(IEnumerable<SelectionType> types)
+		{
+			var result = types
+				.Select(a => new { SelectionType = a, Items = new List<ReleaseSaveModel>() })
+				.ToFrozenDictionary(a => a.SelectionType, a => a.Items);
+			var selectionHash = result.Keys.ToHashSet();
+
+			var lastSession = ((DateTimeOffset)AppData.Model.LastAppStart).ToUnixTimeSeconds();
+			var abandonedDate = DateTime.Now.AddDays(-18);
+			var lastDate = ((DateTimeOffset)DateTime.Now.AddDays(-3)).ToUnixTimeSeconds();
+			var currentYear = DateTime.Now.Year;
+
+			foreach (var release in m_releases)
+			{
+				if (selectionHash.Contains(SelectionType.UpdateForLastSession) && release.Timestamp > lastSession)
+				{
+					var collection = result[SelectionType.UpdateForLastSession];
+					if (collection.Count > 50) continue;
+
+					collection.Add(release);
+				}
+				if (selectionHash.Contains(SelectionType.LastUpdate) && release.Timestamp > lastDate)
+				{
+					var collection = result[SelectionType.LastUpdate];
+					if (collection.Count > 50) continue;
+
+					collection.Add(release);
+				}
+
+				if (selectionHash.Contains(SelectionType.UpdateByFavorite) && m_favorites.Contains(release.Id) && IsReleaseInSeensNotAll(release))
+				{
+					var collection = result[SelectionType.UpdateByFavorite];
+					if (collection.Count > 50) continue;
+
+					collection.Add(release);
+				}
+
+				if (selectionHash.Contains(SelectionType.AbandonedView) && AppData.Model.HistoryWatchVideo.ContainsKey(release.Id) && AppData.Model.HistoryWatchVideo[release.Id].Hit < abandonedDate)
+				{
+					var collection = result[SelectionType.AbandonedView];
+					if (collection.Count > 50) continue;
+
+					collection.Add(release);
+				}
+
+				if (selectionHash.Contains(SelectionType.WillBeView) && !AppData.Model.HistoryWatchVideo.ContainsKey(release.Id) && IsReleaseNotSeensAtAll(release))
+				{
+					var collection = result[SelectionType.WillBeView];
+					if (collection.Count > 50) continue;
+
+					collection.Add(release);
+				}
+
+				if (selectionHash.Contains(SelectionType.CurrentSeason) && release.Status != "Озвучка завершена" && release.Year == currentYear)
+				{
+					var collection = result[SelectionType.CurrentSeason];
+					if (collection.Count > 50) continue;
+
+					collection.Add(release);
+				}
+			}
+
+			return result.ToDictionary();
+		}
+
 	}
 
 }
+
+/*
+  // abandon seens
+        if (hasInHistory) {
+            auto historyItem = m_historyItems->value(releaseId);
+            auto isAdandonRelease = historyItem->watchTimestamp() > 0 && adandonReleasesCount.contains(releaseId) &&
+                adandonReleasesCount.value(releaseId) < release->countOnlineVideos() &&
+                historyItem->watchTimestamp() < adandonTimestamp;
+
+            if (isAdandonRelease) m_myAnilibriaAbandonReleases.append(releaseId);
+        }
+
+        // will watch
+        if (m_userFavorites->contains(releaseId)) {
+            auto seenVideos = adandonReleasesCount[releaseId];
+            int watchTimestamp = 0;
+            if (hasInHistory) {
+                auto item = m_historyItems->value(releaseId);
+                watchTimestamp = item->watchTimestamp();
+            }
+
+            if (seenVideos == 0 && watchTimestamp == 0) m_myAnilibriaWillWatchReleases.append(releaseId);
+        }
+
+        if (hasInHistory) {
+            auto historyItem = m_historyItems->value(releaseId);
+
+            if (historyItem->watchTimestamp() == 0) {
+                // recommends for genres
+                if (m_myAnilibriaRecommendsForGenres.count() < 30) {
+                    auto releaseGenres = release->genres().toLower();
+                    foreach (auto genre, genres) {
+                        if (releaseGenres.contains(genre)) m_myAnilibriaRecommendsForGenres.append(releaseId);
+                    }
+                }
+                // recommends for voices
+                if (m_myAnilibriaRecommendsForVoices.count() < 30) {
+                    auto releaseVoices = release->voicers().toLower();
+                    foreach (auto voice, popularVoices) {
+                        if (releaseVoices.contains(voice)) m_myAnilibriaRecommendsForVoices.append(releaseId);
+                    }
+                }
+            }
+        }
+ */
