@@ -24,13 +24,14 @@ namespace Aniliberty.Unfolded.Routes
 			throw new NotImplementedException();
 		}
 
-		internal static Dictionary<SelectionType, int> GetCounts() {
-			var result = new Dictionary<SelectionType, int>();
+		internal static List<(SelectionType, int)> GetCounts()
+		{
+			var models = Releases.GetBySelectionTypes(m_model);
 
-
-			foreach (var item in m_model)
+			var result = new List<(SelectionType, int)>();
+			foreach (var model in models)
 			{
-				//var items = GetByType(item.Type);
+				result.Add((model.Key.Type, model.Value.Count));
 			}
 
 			return result;
