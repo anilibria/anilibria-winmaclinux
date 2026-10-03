@@ -14,6 +14,8 @@ namespace Aniliberty.Unfolded.Models.MySelections
 
 		public bool? SortingDescending { get; init; }
 
+		public int? HowMuchDaysExpire { get; set; }
+
 	}
 
 }

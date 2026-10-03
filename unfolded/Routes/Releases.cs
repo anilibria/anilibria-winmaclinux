@@ -34,6 +34,10 @@ namespace Aniliberty.Unfolded.Routes
 
 		static ReleaseDictionaries m_releaseDictionaries = new ReleaseDictionaries();
 
+		static HashSet<string> m_popularVoices = new HashSet<string>();
+
+		static HashSet<string> m_popularGenres = new HashSet<string>();
+
 		static string m_notificationMessage = "";
 
 		public static void RegisterRoutes(WebApplication app)
@@ -82,6 +86,23 @@ namespace Aniliberty.Unfolded.Routes
 			}
 
 			Console.WriteLine("Initialize Releases completed!");
+
+			m_popularVoices = m_releases
+				.OrderByDescending(a => a.Rating)
+				.SelectMany(a => a.Voices)
+				.GroupBy(a => a)
+				.OrderByDescending(a => a.Count())
+				.Select(a => a.Key)
+				.Take(10)
+				.ToHashSet();
+			m_popularGenres = m_releases
+				.OrderByDescending(a => a.Rating)
+				.SelectMany(a => a.Genres)
+				.GroupBy(a => a)
+				.OrderByDescending(a => a.Count())
+				.Select(a => a.Key)
+				.Take(10)
+				.ToHashSet();
 		}
 
 		internal static bool IsEmptyData() => !m_releases.Any();
@@ -887,65 +908,96 @@ namespace Aniliberty.Unfolded.Routes
 			return true;
 		}
 
-		internal static Dictionary<SelectionType, List<ReleaseSaveModel>> GetBySelectionTypes(IEnumerable<SelectionType> types)
+		internal static Dictionary<SelectionModel, List<ReleaseSaveModel>> GetBySelectionTypes(IEnumerable<SelectionModel> models)
 		{
-			var result = types
-				.Select(a => new { SelectionType = a, Items = new List<ReleaseSaveModel>() })
-				.ToFrozenDictionary(a => a.SelectionType, a => a.Items);
-			var selectionHash = result.Keys.ToHashSet();
-
 			var lastSession = ((DateTimeOffset)AppData.Model.LastAppStart).ToUnixTimeSeconds();
-			var abandonedDate = DateTime.Now.AddDays(-18);
-			var lastDate = ((DateTimeOffset)DateTime.Now.AddDays(-3)).ToUnixTimeSeconds();
+			var defaultAbandonedDate = DateTime.Now.AddDays(-18);
+			var defaultLastDate = ((DateTimeOffset)DateTime.Now.AddDays(-3)).ToUnixTimeSeconds();
 			var currentYear = DateTime.Now.Year;
+			var result = new Dictionary<SelectionModel, List<ReleaseSaveModel>>();
 
-			foreach (var release in m_releases)
+			var lastDates = models.ToDictionary(
+				a => a,
+				a => a.HowMuchDaysExpire.HasValue ? (long?)((DateTimeOffset)DateTime.Now.AddDays(-a.HowMuchDaysExpire.Value)).ToUnixTimeSeconds() : null
+			);
+
+			foreach (var release in m_releases.OrderByDescending(a => a.Rating))
 			{
-				if (selectionHash.Contains(SelectionType.UpdateForLastSession) && release.Timestamp > lastSession)
+				var infavorites = m_favorites.Contains(release.Id);
+				var inWatchHistory = AppData.Model.HistoryWatchVideo.ContainsKey(release.Id);
+
+				foreach (var model in models)
 				{
-					var collection = result[SelectionType.UpdateForLastSession];
-					if (collection.Count > 50) continue;
+					if (model.Type == SelectionType.UpdateForLastSession && release.Timestamp > lastSession)
+					{
+						var collection = result[model];
+						if (model.MaximumReleases.HasValue && collection.Count >= model.MaximumReleases) continue;
 
-					collection.Add(release);
-				}
-				if (selectionHash.Contains(SelectionType.LastUpdate) && release.Timestamp > lastDate)
-				{
-					var collection = result[SelectionType.LastUpdate];
-					if (collection.Count > 50) continue;
+						collection.Add(release);
+					}
+					if (model.Type == SelectionType.LastUpdate && lastDates[model] is not null ? release.Timestamp > lastDates[model] : release.Timestamp > defaultLastDate)
+					{
+						var collection = result[model];
+						if (model.MaximumReleases.HasValue && collection.Count >= model.MaximumReleases) continue;
 
-					collection.Add(release);
-				}
+						collection.Add(release);
+					}
 
-				if (selectionHash.Contains(SelectionType.UpdateByFavorite) && m_favorites.Contains(release.Id) && IsReleaseInSeensNotAll(release))
-				{
-					var collection = result[SelectionType.UpdateByFavorite];
-					if (collection.Count > 50) continue;
+					if (model.Type == SelectionType.UpdateByFavorite && infavorites && IsReleaseInSeensNotAll(release))
+					{
+						var collection = result[model];
+						if (model.MaximumReleases.HasValue && collection.Count >= model.MaximumReleases) continue;
 
-					collection.Add(release);
-				}
+						collection.Add(release);
+					}
 
-				if (selectionHash.Contains(SelectionType.AbandonedView) && AppData.Model.HistoryWatchVideo.ContainsKey(release.Id) && AppData.Model.HistoryWatchVideo[release.Id].Hit < abandonedDate)
-				{
-					var collection = result[SelectionType.AbandonedView];
-					if (collection.Count > 50) continue;
+					var abandoneDate = model.HowMuchDaysExpire.HasValue ? DateTime.Now.AddDays(-model.HowMuchDaysExpire.Value) : defaultAbandonedDate;
+					if (model.Type == SelectionType.AbandonedView && inWatchHistory && AppData.Model.HistoryWatchVideo[release.Id].Hit < abandoneDate)
+					{
+						var collection = result[model];
+						if (model.MaximumReleases.HasValue && collection.Count >= model.MaximumReleases) continue;
 
-					collection.Add(release);
-				}
+						collection.Add(release);
+					}
 
-				if (selectionHash.Contains(SelectionType.WillBeView) && !AppData.Model.HistoryWatchVideo.ContainsKey(release.Id) && IsReleaseNotSeensAtAll(release))
-				{
-					var collection = result[SelectionType.WillBeView];
-					if (collection.Count > 50) continue;
+					if (model.Type == SelectionType.WillBeView && !inWatchHistory && infavorites && IsReleaseNotSeensAtAll(release))
+					{
+						var collection = result[model];
+						if (model.MaximumReleases.HasValue && collection.Count >= model.MaximumReleases) continue;
 
-					collection.Add(release);
-				}
+						collection.Add(release);
+					}
 
-				if (selectionHash.Contains(SelectionType.CurrentSeason) && release.Status != "Озвучка завершена" && release.Year == currentYear)
-				{
-					var collection = result[SelectionType.CurrentSeason];
-					if (collection.Count > 50) continue;
+					if (model.Type == SelectionType.CurrentSeason && release.Status != "Озвучка завершена" && release.Year == currentYear)
+					{
+						var collection = result[model];
+						if (model.MaximumReleases.HasValue && collection.Count >= model.MaximumReleases) continue;
 
-					collection.Add(release);
+						collection.Add(release);
+					}
+					if (model.Type == SelectionType.ActualInCurrentSeason && release.Status != "Озвучка завершена" && release.Year == currentYear)
+					{
+						var collection = result[model];
+						if (model.MaximumReleases.HasValue && collection.Count >= model.MaximumReleases) continue;
+
+						collection.Add(release);
+					}
+					if (model.Type == SelectionType.RecomendationForVoices && release.Voices.Any(m_popularVoices.Contains))
+					{
+						var collection = result[model];
+						var maximum = model.MaximumReleases.HasValue ? model.MaximumReleases.Value : 10;
+						if (collection.Count >= maximum) continue;
+
+						collection.Add(release);
+					}
+					if (model.Type == SelectionType.RecomendationForGenres && release.Genres.Any(m_popularGenres.Contains))
+					{
+						var collection = result[model];
+						var maximum = model.MaximumReleases.HasValue ? model.MaximumReleases.Value : 10;
+						if (collection.Count >= maximum) continue;
+
+						collection.Add(release);
+					}
 				}
 			}
 
@@ -955,48 +1007,3 @@ namespace Aniliberty.Unfolded.Routes
 	}
 
 }
-
-/*
-  // abandon seens
-        if (hasInHistory) {
-            auto historyItem = m_historyItems->value(releaseId);
-            auto isAdandonRelease = historyItem->watchTimestamp() > 0 && adandonReleasesCount.contains(releaseId) &&
-                adandonReleasesCount.value(releaseId) < release->countOnlineVideos() &&
-                historyItem->watchTimestamp() < adandonTimestamp;
-
-            if (isAdandonRelease) m_myAnilibriaAbandonReleases.append(releaseId);
-        }
-
-        // will watch
-        if (m_userFavorites->contains(releaseId)) {
-            auto seenVideos = adandonReleasesCount[releaseId];
-            int watchTimestamp = 0;
-            if (hasInHistory) {
-                auto item = m_historyItems->value(releaseId);
-                watchTimestamp = item->watchTimestamp();
-            }
-
-            if (seenVideos == 0 && watchTimestamp == 0) m_myAnilibriaWillWatchReleases.append(releaseId);
-        }
-
-        if (hasInHistory) {
-            auto historyItem = m_historyItems->value(releaseId);
-
-            if (historyItem->watchTimestamp() == 0) {
-                // recommends for genres
-                if (m_myAnilibriaRecommendsForGenres.count() < 30) {
-                    auto releaseGenres = release->genres().toLower();
-                    foreach (auto genre, genres) {
-                        if (releaseGenres.contains(genre)) m_myAnilibriaRecommendsForGenres.append(releaseId);
-                    }
-                }
-                // recommends for voices
-                if (m_myAnilibriaRecommendsForVoices.count() < 30) {
-                    auto releaseVoices = release->voicers().toLower();
-                    foreach (auto voice, popularVoices) {
-                        if (releaseVoices.contains(voice)) m_myAnilibriaRecommendsForVoices.append(releaseId);
-                    }
-                }
-            }
-        }
- */
