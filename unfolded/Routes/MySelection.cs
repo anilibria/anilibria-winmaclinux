@@ -16,25 +16,27 @@ namespace Aniliberty.Unfolded.Routes
 
 		private static async Task<IResult> Counts()
 		{
-			throw new NotImplementedException();
+			var models = Releases.GetBySelectionTypes(m_model);
+
+			var result = new List<CountModel>();
+			foreach (var model in models)
+			{
+				result.Add(
+					new CountModel
+					{
+						Count = model.Value.Count,
+						Type = model.Key.Type,
+						Name = model.Key.Name
+					}
+				);
+			}
+
+			return Results.Json(result, AppJsonSerializerContext.Default);
 		}
 
 		private static async Task<IResult> Add()
 		{
 			throw new NotImplementedException();
-		}
-
-		internal static List<(SelectionType, int)> GetCounts()
-		{
-			var models = Releases.GetBySelectionTypes(m_model);
-
-			var result = new List<(SelectionType, int)>();
-			foreach (var model in models)
-			{
-				result.Add((model.Key.Type, model.Value.Count));
-			}
-
-			return result;
 		}
 
 	}

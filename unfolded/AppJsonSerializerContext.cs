@@ -1,6 +1,7 @@
 using Aniliberty.Unfolded.Models.AppDatas;
 using Aniliberty.Unfolded.Models.CacheModels;
 using Aniliberty.Unfolded.Models.MainMenus;
+using Aniliberty.Unfolded.Models.MySelections;
 using Aniliberty.Unfolded.Models.OriginalApi;
 using Aniliberty.Unfolded.Models.Releases;
 using Aniliberty.Unfolded.Models.Settings;
@@ -57,6 +58,7 @@ namespace Aniliberty.Unfolded
 	[JsonSerializable(typeof(Dictionary<int, TorrentCacheDisplayItem>))]
 	[JsonSerializable(typeof(AppDataModelWatchReleaseVideoModel))]
 	[JsonSerializable(typeof(List<ReleaseDisplayGroupEpisodeModel>))]
+	[JsonSerializable(typeof(List<CountModel>))]
 	[JsonSourceGenerationOptions(PropertyNamingPolicy = JsonKnownNamingPolicy.CamelCase)]
 	internal partial class AppJsonSerializerContext : JsonSerializerContext
 	{

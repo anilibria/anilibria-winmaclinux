@@ -16,6 +16,8 @@ namespace Aniliberty.Unfolded.Models.MySelections
 
 		public int? HowMuchDaysExpire { get; set; }
 
+		public string Name { get; set; } = "";
+
 	}
 
 }
