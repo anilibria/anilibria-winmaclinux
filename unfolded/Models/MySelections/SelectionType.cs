@@ -24,7 +24,7 @@
 
 		RecomendationForGenres = 10, // Рекомендации по жанрам
 
-		UserSearchFilter = 11, // Пользовательский фильтр
+		UserSectionOrSearchFilter = 11, // Пользовательская секция и/или фильтр
 
 		UserGroup = 12, // Пользовательская группа
 

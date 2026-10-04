@@ -59,6 +59,8 @@ namespace Aniliberty.Unfolded
 	[JsonSerializable(typeof(AppDataModelWatchReleaseVideoModel))]
 	[JsonSerializable(typeof(List<ReleaseDisplayGroupEpisodeModel>))]
 	[JsonSerializable(typeof(List<CountModel>))]
+	[JsonSerializable(typeof(List<SelectionModel>))]
+	[JsonSerializable(typeof(SelectionModel))]
 	[JsonSourceGenerationOptions(PropertyNamingPolicy = JsonKnownNamingPolicy.CamelCase)]
 	internal partial class AppJsonSerializerContext : JsonSerializerContext
 	{
