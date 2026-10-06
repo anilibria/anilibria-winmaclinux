@@ -17,6 +17,11 @@
 
 		<div class="page-content-with-panel">
 			<div class="left-panel flex-column">
+				<div class="simple-panel-icon-button" title="Добавить новую подборку">
+					<div @click="addSelection()" class="full-width-height flex-row flex-base-center flex-other-center">
+						<img :src="'/static/icons/commonbuttons/plus.svg'" width="30" height="30" />
+					</div>
+				</div>
 			</div>
 			<div class="right-content">
 			</div>
@@ -42,8 +47,13 @@
 			setup() {
 				const mainMenuVisible = ref(false);
 
+				function addSelection() {
+
+				}
+
 				return {
-					mainMenuVisible
+					mainMenuVisible,
+					addSelection
 				}
 			}
 		});
