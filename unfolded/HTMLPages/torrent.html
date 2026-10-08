@@ -119,7 +119,7 @@
 					@openrelease="openReleaseCardByLink($event);"
 					ref="releasesList">
 					<template v-slot:release="{ release, isSelected, inCinemahall, inFavorites, seensCount, torrentcount, torrentdownloaded }">
-						<div class="releaseslist-release-item" :class="{'releaseslist-release-item-selected': isSelected }">
+						<div class="releaseslist-release-item" :class="{'releaseslist-release-item-selected': isSelected }" :title="release.description">
 							<img class="poster" :src="'https://anilibria.top' + release.poster" loading="lazy"/>
 							<div class="information">
 								<span class="header-text" style="margin-top: 10px;">{{ release.title }}</span>

@@ -109,6 +109,7 @@
 						<div
 							class="releaseslist-release-item"
 							:class="{'releaseslist-release-item-selected': isSelected }"
+							:title="release.description"
 							@dragstart="dragStart(release, $event)"
 							@drop="dropItem(release)"
 							@dragover.prevent
