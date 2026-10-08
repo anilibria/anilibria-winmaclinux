@@ -9,6 +9,7 @@
 	<link rel="stylesheet" href="main.css">
 	<link rel="stylesheet" href="mainmenu.css">
 	<link rel="stylesheet" href="pagestructure.css">
+	<link rel="stylesheet" href="styles/mypage.css">
 </head>
 <body>
 	<div id="app">
@@ -18,42 +19,98 @@
 		<div class="page-content-with-panel">
 			<div class="left-panel flex-column">
 				<div class="simple-panel-icon-button" title="Добавить новую подборку">
-					<div @click="addSelection()" class="full-width-height flex-row flex-base-center flex-other-center">
+					<div @click="showAddModal()" class="full-width-height flex-row flex-base-center flex-other-center">
 						<img :src="'/static/icons/commonbuttons/plus.svg'" width="30" height="30" />
 					</div>
 				</div>
 			</div>
 			<div class="right-content">
+			    <div v-if="!selections.length" class="full-width-height flex-row flex-base-center flex-other-center">
+					<span class="text-align-center">
+						У Вас пока нет подборок.<br>
+						Чтобы создать новую подборку нажмите на иконку с зеленым плюсиком в левой панели.
+					</span>
+				</div>
 			</div>
 		</div>
 
+		<dialog ref="modal" class="native-dialog-rounded" style="width: 400px;">
+			<div class="mypage-dialog-header" v-if="modalMode === 'add'">Добавить подборку</div>
+			<div class="mypage-dialog-header" v-if="modalMode === 'edit'">Изменить подборку</div>
+			<div class="flex-column gap-4">
+				<span class="common-text mypage-dialog-subheader">Тип подборки</span>
+				<simple-select
+					v-model:item="modelSelection.type"
+					:options="selectionModes"
+					style="width: 330px;">
+				</simple-select>
+			</div>
+			<div class="button-line">
+				<div v-if="modalMode === 'add'" class="action-button" style="width: 60px;" @click="addNewSelection()">Добавить</div>
+				<div v-if="modalMode === 'edit'" class="action-button" style="width: 60px;" @click="editExistsSelection()">Изменить</div>
+				<div class="action-button" style="width: 60px;" @click="closeModal()">Отмена</div>
+			</div>
+		</dialog>
 		<page-drawer v-model:main-menu-visible="mainMenuVisible">
 		</page-drawer>
 	</div>
 
 	<script type="module">
-		import { createApp, ref } from './vue.js'
+		import { createApp, ref, useTemplateRef } from './vue.js'
 		import {
-			getRelease
+			getSelectionCounts, addSelection, updateSelection, deleteSelection
 		} from './unfoldapi.js'
+		import { selectionModes } from './releaseDictionaries.js'
+		import SimpleSelect from './components/SimpleSelect.js'
 		import Drawer from './components/Drawer.js'
 		import PageHeader from './components/PageHeader.js'
 
 		const app = createApp({
 			components: {
 				'page-drawer': Drawer,
-				'page-header': PageHeader
+				'page-header': PageHeader,
+				'simple-select': SimpleSelect
 			},
 			setup() {
 				const mainMenuVisible = ref(false);
+				const selections = ref([]);
+				const modelSelection = ref({});
+				const modal = useTemplateRef('modal');
+				const modalMode = ref('');
 
-				function addSelection() {
+				async function addNewSelection() {
+					await addSelection(modelSelection.value);
+				}
 
+				async function editExistsSelection() {
+					await updateSelection(modelSelection.value);
+				}
+
+				function showAddModal() {
+					modalMode.value = 'add';
+					modal.value.showModal();
+				}
+
+				function showEditModal() {
+					modalMode.value = 'edit';
+					modal.value.showModal();
+				}
+
+				function closeModal() {
+					modalMode.value = '';
+					modal.value.close();
 				}
 
 				return {
 					mainMenuVisible,
-					addSelection
+					selections,
+					modelSelection,
+					modalMode,
+					selectionModes,
+					showAddModal,
+					closeModal,
+					addNewSelection,
+					editExistsSelection
 				}
 			}
 		});

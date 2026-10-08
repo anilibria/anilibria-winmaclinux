@@ -76,6 +76,7 @@ function paramsToQuery(params) {
     return new URLSearchParams(params).toString();
 }
 
+// Releases
 export async function getRelasesByFilter(model) {
     const response = await fetch(
         `/releases/list`,
@@ -197,7 +198,7 @@ export async function getReleasePosters(ids) {
     return await response.json();
 };
 
-
+// Synchronization
 export async function synchronizeReleases() {
     await fetch('/sync/full');
 };
@@ -269,7 +270,7 @@ export async function getReleaseDictionaries() {
     return await response.json();
 };
 
-
+// Authorization
 export async function authorizationByLoginPass(login, password) {
     const response = await fetch(
         '/auth/login?username=' + login,
@@ -302,6 +303,8 @@ export async function saveSettings(page, model) {
         }
     });
 };
+
+// App data
 
 export async function getHidedReleases() {
     const response = await fetch('/appdata/hidedreleases');
@@ -378,6 +381,7 @@ export async function getLastWatchVideoRelease() {
     return await response.json();
 };
 
+// Torrent client
 export async function torrentCheckFolder(path) {
     const response = await fetch(`/torrent/checkfolder`, {
         method: "POST",
@@ -446,6 +450,8 @@ export async function removeAllTorrents() {
     );
 };
 
+// Cinemahall
+
 export async function getRelaseCinemahallByFilter(model) {
     const response = await fetch(
         `/cinemahall/list`,
@@ -499,5 +505,43 @@ export async function changeSortInCinemahall(movedReleaseId, dropReleaseId) {
 };
 export async function hasSomethingInCinemahall() {
     const response = await fetch(`/cinemahall/hassometings`);
+    return await response.json();
+};
+
+// My Selections
+
+export async function addSelection(model) {
+    await fetch(
+        `/myselection/add`,
+        {
+            method: "POST",
+            body: JSON.stringify(model),
+            headers: { "Content-Type": "application/json" }
+        }
+    );
+};
+export async function updateSelection(model) {
+    await fetch(
+        `/myselection/update`,
+        {
+            method: "PUT",
+            body: JSON.stringify(model),
+            headers: { "Content-Type": "application/json" }
+        }
+    );
+};
+export async function deleteSelection(id) {
+    await fetch(
+        `/myselection/remove&id=${id}`,
+        {
+            method: "DELETE",
+            body: '',
+            headers: { "Content-Type": "application/json" }
+        }
+    );
+};
+
+export async function getSelectionCounts() {
+    const response = await fetch(`/myselection/counts`);
     return await response.json();
 };

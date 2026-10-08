@@ -1,0 +1,7 @@
+.mypage-dialog-header {
+    font-size: var(--large-font-size);
+    padding-bottom: 12px;
+}
+.mypage-dialog-subheader {
+    font-size: var(--middle-plus-font-size);
+}

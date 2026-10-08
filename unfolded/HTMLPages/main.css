@@ -117,6 +117,10 @@ body {
     height: 100%;
 }
 
+.text-align-center {
+    text-align: center;
+}
+
 .flex-row {
     display: flex;
     flex-direction: row;
@@ -184,6 +188,10 @@ body {
 
 .no-text-wrap {
     text-wrap: nowrap;
+}
+
+.common-text {
+    color: var(--common-text-color);
 }
 
 .common-bell-animation {
@@ -436,13 +444,15 @@ body {
 
 .native-dialog-rounded {
     border-radius: 4px;
-    border-width: 0;
+    border-width: 1px;
+    border-color: transparent;
     background-color: var(--dialog-background-color);
     box-shadow: 2px 2px var(--dialog-background-shadow-color);
     padding-left: 8px;
     padding-right: 8px;
     padding-top: 4px;
     padding-bottom: 4px;
+    outline: 0px solid transparent;
 
     .button-line {
         display: flex;
