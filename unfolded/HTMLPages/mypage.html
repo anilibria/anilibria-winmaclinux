@@ -44,6 +44,27 @@
 					:options="selectionModes"
 					style="width: 330px;">
 				</simple-select>
+				<span class="common-text mypage-dialog-subheader">Название</span>
+				<input v-model="modelSelection.name" type="text" class="simple-input" placeholder="Введите название подборки" />
+				<span class="common-text mypage-dialog-subheader">Максимум элементов</span>
+				<simple-select
+					v-model:item="modelSelection.maximumReleases"
+					:options="maximumElements"
+					style="width: 330px;">
+				</simple-select>
+				<span class="common-text mypage-dialog-subheader">Сортировка списка</span>
+				<div class="flex-row flex-base-center">
+					<simple-select v-model:item="modelSelection.sortingField"
+									:options="sortingFields"
+									style="width: 290px; margin-right: 2px;"
+									@selected="changedSortingFields()">
+					</simple-select>
+					<div class="simple-icon-button"
+							title="Направление сортировки"
+							@click="toggleSortingDescending()">
+						<img :src="'/static/icons/releases/' + (modelSelection.sortingDescending ? 'sortdescending' : 'sortascending') + '.svg'" width="20" height="20" />
+					</div>
+				</div>
 			</div>
 			<div class="button-line">
 				<div v-if="modalMode === 'add'" class="action-button" style="width: 60px;" @click="addNewSelection()">Добавить</div>
@@ -60,7 +81,7 @@
 		import {
 			getSelectionCounts, addSelection, updateSelection, deleteSelection
 		} from './unfoldapi.js'
-		import { selectionModes } from './releaseDictionaries.js'
+		import { selectionModes, sortingFields } from './releaseDictionaries.js'
 		import SimpleSelect from './components/SimpleSelect.js'
 		import Drawer from './components/Drawer.js'
 		import PageHeader from './components/PageHeader.js'
@@ -78,16 +99,48 @@
 				const modal = useTemplateRef('modal');
 				const modalMode = ref('');
 
+				const maximumElements = [
+					{
+						title: "Неограниченно",
+						id: null
+					},
+					{
+						title: "5",
+						id: 5
+					},
+					{
+						title: "10",
+						id: 10
+					},
+					{
+						title: "15",
+						id: 15
+					},
+					{
+						title: "20",
+						id: 20
+					}
+				];
+
 				async function addNewSelection() {
+					closeModal();
+
+					if (!modelSelection.value.name) {
+						const name = selectionModes.find(a => a.id === modelSelection.value.type).title;
+						modelSelection.value.name = name;
+					}
 					await addSelection(modelSelection.value);
 				}
 
 				async function editExistsSelection() {
+					closeModal();
+
 					await updateSelection(modelSelection.value);
 				}
 
 				function showAddModal() {
 					modalMode.value = 'add';
+					modelSelection.value = {type: 1, maximumReleases: 5, sortingField: 0, sortingDescending: false};
 					modal.value.showModal();
 				}
 
@@ -101,16 +154,23 @@
 					modal.value.close();
 				}
 
+				function toggleSortingDescending() {
+					modelSelection.value.sortingDescending = !modelSelection.value.sortingDescending;
+				}
+
 				return {
 					mainMenuVisible,
 					selections,
 					modelSelection,
 					modalMode,
 					selectionModes,
+					maximumElements,
+					sortingFields,
 					showAddModal,
 					closeModal,
 					addNewSelection,
-					editExistsSelection
+					editExistsSelection,
+					toggleSortingDescending
 				}
 			}
 		});

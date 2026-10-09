@@ -146,6 +146,7 @@ namespace Aniliberty.Unfolded
 			WebSocketHub.RegisterRoutes(app);
 			TorrentClient.RegisterRoutes(app);
 			CinemaHall.RegisterRoutes(app);
+			MySelection.RegisterRoutes(app);
 			AppData.RegisterRoutes(app);
 
 #if !DEBUG
