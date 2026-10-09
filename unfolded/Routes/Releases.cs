@@ -915,6 +915,10 @@ namespace Aniliberty.Unfolded.Routes
 			var defaultLastDate = ((DateTimeOffset)DateTime.Now.AddDays(-3)).ToUnixTimeSeconds();
 			var currentYear = DateTime.Now.Year;
 			var result = new Dictionary<SelectionModel, List<ReleaseSaveModel>>();
+			foreach (var model in models)
+			{
+				result.Add(model, new List<ReleaseSaveModel>());
+			}
 
 			var lastDates = models.ToDictionary(
 				a => a,

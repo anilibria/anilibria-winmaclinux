@@ -31,6 +31,9 @@
 						Чтобы создать новую подборку нажмите на иконку с зеленым плюсиком в левой панели.
 					</span>
 				</div>
+				<div v-if="selections.length">
+					{{ selections }}
+				</div>
 			</div>
 		</div>
 
@@ -157,6 +160,12 @@
 				function toggleSortingDescending() {
 					modelSelection.value.sortingDescending = !modelSelection.value.sortingDescending;
 				}
+
+				async function refreshCounts() {
+					selections.value = await getSelectionCounts();
+				}
+
+				refreshCounts();
 
 				return {
 					mainMenuVisible,

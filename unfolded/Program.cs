@@ -135,6 +135,7 @@ namespace Aniliberty.Unfolded
 			await AppData.Initialize();
 			await Settings.Initialize();
 			await Releases.Initialize();
+			await MySelection.Initialize();
 			TorrentClient.Initialize();
 
 			Settings.RegisterRoutes(app);

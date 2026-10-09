@@ -1,7 +1,7 @@
 ﻿using Aniliberty.Unfolded.Configuration;
+using Aniliberty.Unfolded.Helpers;
 using Aniliberty.Unfolded.Models.MySelections;
 using Microsoft.AspNetCore.Mvc;
-using System.Text.Json;
 
 namespace Aniliberty.Unfolded.Routes
 {
@@ -11,7 +11,17 @@ namespace Aniliberty.Unfolded.Routes
 
 		internal static List<SelectionModel> m_model = new List<SelectionModel>();
 
-		public static void RegisterRoutes(WebApplication app)
+		internal static async Task Initialize()
+		{
+			var selectionsPath = Path.Combine(GlobalConfig.PathToCache(), "selections");
+			if (File.Exists(selectionsPath))
+			{
+				var json = await File.ReadAllTextAsync(selectionsPath);
+				m_model = JsonHelpers.DeserializeFromJson<List<SelectionModel>>(json) ?? new List<SelectionModel>();
+			}
+		}
+
+		internal static void RegisterRoutes(WebApplication app)
 		{
 			app.MapPost("/myselection/add", Add);
 			app.MapPut("/myselection/update", Update);
@@ -80,7 +90,7 @@ namespace Aniliberty.Unfolded.Routes
 		private static async Task SaveSelections()
 		{
 			var path = Path.Combine(GlobalConfig.PathToCache(), "selections");
-			var json = JsonSerializer.Serialize(m_model, AppJsonSerializerContext.Default.ListSelectionModel);
+			var json = JsonHelpers.SerializeToJson(m_model);
 			await File.WriteAllTextAsync(path, json);
 		}
 
