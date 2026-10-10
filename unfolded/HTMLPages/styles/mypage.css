@@ -20,11 +20,16 @@
     font-size: var(--extra-large-font-size);
     color: var(--page-header-text);
 }
+.mypage-header-selections-container {
+    overflow-y: auto;
+    width: calc(100vw - 40px);
+    height: calc(100vh - 40px);
+}
 .mypage-vertical-releases-container {
     overflow-x: scroll;
     overflow-y: hidden;
     height: 350px;
-    width: 100vw;
+    width: calc(100vw - 40px);
 
     .item-container {
         margin-top: 4px;

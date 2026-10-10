@@ -41,17 +41,19 @@
 							@selected="">
 						</simple-select>
 					</div>
-					<div v-for="(selection,index) in selections" :key="index">
-						<div class="mypage-selection-header">
-							{{ selection.title }} ({{ selection.count }})
-						</div>
-						<div class="flex-row full-width mypage-vertical-releases-container">
-							<div
-								class="item-container flex-column flex-base-center"
-								v-for="(release, releaseIndex) in selection.releases"
-								:title="release.description">
-								<img class="poster" :src="'https://anilibria.top/' + release.poster" />
-								<div class="release-title">{{ release.title }}</div>
+					<div class="mypage-header-selections-container">
+						<div v-for="(selection,index) in selections" :key="index">
+							<div class="mypage-selection-header">
+								{{ selection.title }} ({{ selection.count }})
+							</div>
+							<div class="flex-row full-width mypage-vertical-releases-container">
+								<div
+									class="item-container flex-column flex-base-center"
+									v-for="(release, releaseIndex) in selection.releases"
+									:title="release.description">
+									<img class="poster" :src="'https://anilibria.top/' + release.poster" />
+									<div class="release-title">{{ release.title }}</div>
+								</div>
 							</div>
 						</div>
 					</div>
