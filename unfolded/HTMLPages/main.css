@@ -56,6 +56,7 @@ body {
     --simple-input-color: light-dark(#333333, white);
     --simple-input-active-border-color: light-dark(#b32121, white);
     --simple-input-active-border-shadow-color: light-dark(rgba(179, 33, 33, 0.25), rgba(255, 255, 255, 0.25));
+    --selection-header-border-color: light-dark(black, white);
     /* multiselect style customization */
     --ms-bg: light-dark(white, black);
     --ms-border-color: light-dark(#cccccc, white);

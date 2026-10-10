@@ -6,3 +6,50 @@
 .mypage-dialog-subheader {
     font-size: var(--middle-plus-font-size);
 }
+.mypage-subheader-selection-selector {
+    margin-left: 4px;
+}
+.mypage-selection-header {
+    border-color: var(--selection-header-border-color);
+    border-radius: 4px;
+    border-width: 1px;
+    border-style: solid;
+    padding: 3px;
+    margin-left: 4px;
+    margin-right: 4px;
+    font-size: var(--extra-large-font-size);
+    color: var(--page-header-text);
+}
+.mypage-vertical-releases-container {
+    overflow-x: scroll;
+    overflow-y: hidden;
+    height: 350px;
+    width: 100vw;
+
+    .item-container {
+        margin-top: 4px;
+        min-width: 270px;
+    }
+
+    .poster {
+        margin-left: 4px;
+        width: 180px;
+        height: 270px;
+        border-color: var(--release-item-poster-border);
+        border-width: 2px;
+        border-style: solid;
+        border-radius: 4px;
+    }
+
+    .release-title {
+        font-size: var(--large-font-size);
+        text-align: center;
+        color: var(--page-header-text);
+        user-select: none;
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 3;
+        overflow: hidden;
+        height: 50px;
+    }
+}

@@ -4,7 +4,6 @@ using Aniliberty.Unfolded.Models.CacheModels;
 using Aniliberty.Unfolded.Models.MySelections;
 using Aniliberty.Unfolded.Models.Releases;
 using Microsoft.AspNetCore.Mvc;
-using System.Collections.Frozen;
 using System.Globalization;
 using System.Text;
 using static Aniliberty.Unfolded.Helpers.JsonHelpers;
@@ -932,75 +931,21 @@ namespace Aniliberty.Unfolded.Routes
 
 				foreach (var model in models)
 				{
-					if (model.Type == SelectionType.UpdateForLastSession && release.Timestamp > lastSession)
-					{
-						var collection = result[model];
-						if (model.MaximumReleases.HasValue && collection.Count >= model.MaximumReleases) continue;
-
-						collection.Add(release);
-					}
-					if (model.Type == SelectionType.LastUpdate && lastDates[model] is not null ? release.Timestamp > lastDates[model] : release.Timestamp > defaultLastDate)
-					{
-						var collection = result[model];
-						if (model.MaximumReleases.HasValue && collection.Count >= model.MaximumReleases) continue;
-
-						collection.Add(release);
-					}
-
-					if (model.Type == SelectionType.UpdateByFavorite && infavorites && IsReleaseInSeensNotAll(release))
-					{
-						var collection = result[model];
-						if (model.MaximumReleases.HasValue && collection.Count >= model.MaximumReleases) continue;
-
-						collection.Add(release);
-					}
-
+					var mustBeInclude = false;
+					if (model.Type == SelectionType.LastUpdate && (lastDates[model] is not null ? release.Timestamp > lastDates[model] : release.Timestamp > defaultLastDate)) mustBeInclude = true;
 					var abandoneDate = model.HowMuchDaysExpire.HasValue ? DateTime.Now.AddDays(-model.HowMuchDaysExpire.Value) : defaultAbandonedDate;
-					if (model.Type == SelectionType.AbandonedView && inWatchHistory && AppData.Model.HistoryWatchVideo[release.Id].Hit < abandoneDate)
-					{
+					if (model.Type == SelectionType.AbandonedView && inWatchHistory && AppData.Model.HistoryWatchVideo[release.Id].Hit < abandoneDate) mustBeInclude = true;
+					if (model.Type == SelectionType.UpdateForLastSession && release.Timestamp > lastSession) mustBeInclude = true;
+					if (model.Type == SelectionType.UpdateByFavorite && infavorites && IsReleaseInSeensNotAll(release)) mustBeInclude = true;
+					if (model.Type == SelectionType.WillBeView && !inWatchHistory && infavorites && IsReleaseNotSeensAtAll(release)) mustBeInclude = true;
+					if (model.Type == SelectionType.CurrentSeason && release.Status != "Озвучка завершена" && release.Year == currentYear) mustBeInclude = true;
+					if (model.Type == SelectionType.ActualInCurrentSeason && release.Status != "Озвучка завершена" && release.Year == currentYear) mustBeInclude = true;
+					if (model.Type == SelectionType.RecomendationForVoices && release.Voices.Any(m_popularVoices.Contains)) mustBeInclude = true;
+					if (model.Type == SelectionType.RecomendationForGenres && release.Genres.Any(m_popularGenres.Contains)) mustBeInclude = true;
+
+					if (mustBeInclude) {
 						var collection = result[model];
-						if (model.MaximumReleases.HasValue && collection.Count >= model.MaximumReleases) continue;
-
-						collection.Add(release);
-					}
-
-					if (model.Type == SelectionType.WillBeView && !inWatchHistory && infavorites && IsReleaseNotSeensAtAll(release))
-					{
-						var collection = result[model];
-						if (model.MaximumReleases.HasValue && collection.Count >= model.MaximumReleases) continue;
-
-						collection.Add(release);
-					}
-
-					if (model.Type == SelectionType.CurrentSeason && release.Status != "Озвучка завершена" && release.Year == currentYear)
-					{
-						var collection = result[model];
-						if (model.MaximumReleases.HasValue && collection.Count >= model.MaximumReleases) continue;
-
-						collection.Add(release);
-					}
-					if (model.Type == SelectionType.ActualInCurrentSeason && release.Status != "Озвучка завершена" && release.Year == currentYear)
-					{
-						var collection = result[model];
-						if (model.MaximumReleases.HasValue && collection.Count >= model.MaximumReleases) continue;
-
-						collection.Add(release);
-					}
-					if (model.Type == SelectionType.RecomendationForVoices && release.Voices.Any(m_popularVoices.Contains))
-					{
-						var collection = result[model];
-						var maximum = model.MaximumReleases.HasValue ? model.MaximumReleases.Value : 10;
-						if (collection.Count >= maximum) continue;
-
-						collection.Add(release);
-					}
-					if (model.Type == SelectionType.RecomendationForGenres && release.Genres.Any(m_popularGenres.Contains))
-					{
-						var collection = result[model];
-						var maximum = model.MaximumReleases.HasValue ? model.MaximumReleases.Value : 10;
-						if (collection.Count >= maximum) continue;
-
-						collection.Add(release);
+						if (!model.MaximumReleases.HasValue || collection.Count < model.MaximumReleases) collection.Add(release);
 					}
 				}
 			}

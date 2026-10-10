@@ -32,7 +32,29 @@
 					</span>
 				</div>
 				<div v-if="selections.length">
-					{{ selections }}
+					<div class="page-subheader page-line-pair flex-row flex-base-center">
+						<simple-select
+							class="mypage-subheader-selection-selector"
+							v-model:item="selectedSelection"
+							:options="selections"
+							style="width: 220px;"
+							@selected="">
+						</simple-select>
+					</div>
+					<div v-for="(selection,index) in selections" :key="index">
+						<div class="mypage-selection-header">
+							{{ selection.title }} ({{ selection.count }})
+						</div>
+						<div class="flex-row full-width mypage-vertical-releases-container">
+							<div
+								class="item-container flex-column flex-base-center"
+								v-for="(release, releaseIndex) in selection.releases"
+								:title="release.description">
+								<img class="poster" :src="'https://anilibria.top/' + release.poster" />
+								<div class="release-title">{{ release.title }}</div>
+							</div>
+						</div>
+					</div>
 				</div>
 			</div>
 		</div>
@@ -45,7 +67,7 @@
 				<simple-select
 					v-model:item="modelSelection.type"
 					:options="selectionModes"
-					style="width: 330px;">
+					style="width: 100%;">
 				</simple-select>
 				<span class="common-text mypage-dialog-subheader">Название</span>
 				<input v-model="modelSelection.name" type="text" class="simple-input" placeholder="Введите название подборки" />
@@ -53,13 +75,14 @@
 				<simple-select
 					v-model:item="modelSelection.maximumReleases"
 					:options="maximumElements"
-					style="width: 330px;">
+					style="width: 100%;">
 				</simple-select>
 				<span class="common-text mypage-dialog-subheader">Сортировка списка</span>
 				<div class="flex-row flex-base-center">
 					<simple-select v-model:item="modelSelection.sortingField"
 									:options="sortingFields"
-									style="width: 290px; margin-right: 2px;"
+									class="flex-1"
+									style="margin-right: 2px;"
 									@selected="changedSortingFields()">
 					</simple-select>
 					<div class="simple-icon-button"
@@ -82,7 +105,7 @@
 	<script type="module">
 		import { createApp, ref, useTemplateRef } from './vue.js'
 		import {
-			getSelectionCounts, addSelection, updateSelection, deleteSelection
+			getSelectionCounts, addSelection, updateSelection, deleteSelection, getAllSelections
 		} from './unfoldapi.js'
 		import { selectionModes, sortingFields } from './releaseDictionaries.js'
 		import SimpleSelect from './components/SimpleSelect.js'
@@ -98,6 +121,7 @@
 			setup() {
 				const mainMenuVisible = ref(false);
 				const selections = ref([]);
+				const selectedSelection = ref(null);
 				const modelSelection = ref({});
 				const modal = useTemplateRef('modal');
 				const modalMode = ref('');
@@ -162,7 +186,9 @@
 				}
 
 				async function refreshCounts() {
-					selections.value = await getSelectionCounts();
+					/*const counts = await getSelectionCounts();
+					selections.value = counts.map(a => { return { type: a.type, title: a.name, count: a.count } });*/
+					selections.value = await getAllSelections();
 				}
 
 				refreshCounts();
@@ -175,6 +201,7 @@
 					selectionModes,
 					maximumElements,
 					sortingFields,
+					selectedSelection,
 					showAddModal,
 					closeModal,
 					addNewSelection,

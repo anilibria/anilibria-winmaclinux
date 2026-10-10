@@ -27,6 +27,7 @@ namespace Aniliberty.Unfolded.Routes
 			app.MapPut("/myselection/update", Update);
 			app.MapDelete("/myselection/remove", Delete);
 			app.MapGet("/myselection/counts", Counts);
+			app.MapGet("/myselection/allselections", AllSelections);
 		}
 
 		private static IResult Counts()
@@ -41,7 +42,38 @@ namespace Aniliberty.Unfolded.Routes
 					{
 						Count = model.Value.Count,
 						Type = model.Key.Type,
-						Name = model.Key.Name
+						Title = model.Key.Name
+					}
+				);
+			}
+
+			return Results.Json(result, AppJsonSerializerContext.Default);
+		}
+
+		private static IResult AllSelections()
+		{
+			var models = Releases.GetBySelectionTypes(m_model);
+
+			var result = new List<SelectionCountModel>();
+			foreach (var model in models)
+			{
+				result.Add(
+					new SelectionCountModel
+					{
+						Id = model.Key.Id,
+						Count = model.Value.Count,
+						Type = model.Key.Type,
+						Title = model.Key.Name,
+						Releases = model.Value
+							.Select(
+								a => new SelectionCountReleaseModel
+								{
+									Description = a.Description,
+									Id = a.Id,
+									Poster = a.Poster,
+									Title = a.Title
+								}
+							)
 					}
 				);
 			}

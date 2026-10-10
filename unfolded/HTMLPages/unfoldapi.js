@@ -545,3 +545,7 @@ export async function getSelectionCounts() {
     const response = await fetch(`/myselection/counts`);
     return await response.json();
 };
+export async function getAllSelections() {
+    const response = await fetch(`/myselection/allselections`);
+    return await response.json();
+};
