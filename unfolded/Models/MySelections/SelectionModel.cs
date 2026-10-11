@@ -26,6 +26,8 @@ namespace Aniliberty.Unfolded.Models.MySelections
 
 		public string? Filter { get; init; } = "";
 
+		public bool Expanded { get; set; }
+
 	}
 
 }

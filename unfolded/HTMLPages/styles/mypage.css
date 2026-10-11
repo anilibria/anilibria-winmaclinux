@@ -19,6 +19,7 @@
     margin-right: 4px;
     font-size: var(--extra-large-font-size);
     color: var(--page-header-text);
+    margin-bottom: 2px;
 }
 .mypage-header-selections-container {
     overflow-y: auto;

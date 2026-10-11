@@ -43,11 +43,11 @@
 					</div>
 					<div class="mypage-header-selections-container">
 						<div v-for="(selection,index) in selections" :key="index">
-							<div class="mypage-selection-header flex-row flex-base-center">
+							<div @click="toggleExpandSelection(selection)" class="mypage-selection-header flex-row flex-base-center">
 								<span>{{ selection.title }} ({{ selection.count }})</span>
 								<div class="flex-1"></div>
 								<img
-									@click="deleteExistsSelection(selection)"
+									@click.stop="deleteExistsSelection(selection)"
 									src="/static/icons/commonbuttons/delete.svg"
 									width="20"
 									height="20"
@@ -55,7 +55,7 @@
 									title="Удалить подборку"
 								/>
 							</div>
-							<div class="flex-row full-width mypage-vertical-releases-container">
+							<div v-if="selection.expanded" class="flex-row full-width mypage-vertical-releases-container">
 								<div
 									class="item-container flex-column flex-base-center"
 									v-for="(release, releaseIndex) in selection.releases"
@@ -116,7 +116,8 @@
 	<script type="module">
 		import { createApp, ref, useTemplateRef } from './vue.js'
 		import {
-			getSelectionCounts, addSelection, updateSelection, deleteSelection, getAllSelections
+			getSelectionCounts, addSelection, updateSelection, deleteSelection, getAllSelections,
+			updateExpandSelection
 		} from './unfoldapi.js'
 		import { selectionModes, sortingFields } from './releaseDictionaries.js'
 		import SimpleSelect from './components/SimpleSelect.js'
@@ -160,6 +161,11 @@
 					}
 				];
 
+				async function toggleExpandSelection(selection) {
+					selection.expanded = !selection.expanded;
+					await updateExpandSelection(selection.id, selection.expanded);
+				}
+
 				async function addNewSelection() {
 					closeModal();
 
@@ -182,7 +188,7 @@
 
 				function showAddModal() {
 					modalMode.value = 'add';
-					modelSelection.value = {type: 1, maximumReleases: 5, sortingField: 0, sortingDescending: false};
+					modelSelection.value = {type: 1, maximumReleases: 5, sortingField: 0, sortingDescending: false, expanded: true};
 					modal.value.showModal();
 				}
 
@@ -227,7 +233,8 @@
 					addNewSelection,
 					editExistsSelection,
 					toggleSortingDescending,
-					deleteExistsSelection
+					deleteExistsSelection,
+					toggleExpandSelection
 				}
 			}
 		});

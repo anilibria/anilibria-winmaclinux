@@ -547,3 +547,11 @@ export async function getAllSelections() {
     const response = await fetch(`/myselection/allselections`);
     return await response.json();
 };
+export async function updateExpandSelection(id, expand) {
+    await fetch(
+        `/myselection/changeexpand?id=${id}&expand=${expand}`,
+        {
+            method: "PUT"
+        }
+    );
+};

@@ -28,6 +28,7 @@ namespace Aniliberty.Unfolded.Routes
 			app.MapDelete("/myselection/remove", Delete);
 			app.MapGet("/myselection/counts", Counts);
 			app.MapGet("/myselection/allselections", AllSelections);
+			app.MapPut("/myselection/changeexpand", ChangeExpand);
 		}
 
 		private static IResult Counts()
@@ -64,6 +65,7 @@ namespace Aniliberty.Unfolded.Routes
 						Count = model.Value.Count,
 						Type = model.Key.Type,
 						Title = model.Key.Name,
+						Expanded = model.Key.Expanded,
 						Releases = model.Value
 							.Select(
 								a => new SelectionCountReleaseModel
@@ -117,6 +119,19 @@ namespace Aniliberty.Unfolded.Routes
 			await SaveSelections();
 
 			return Results.Ok();
+		}
+
+		private static async Task<IResult> ChangeExpand(string id, bool expand)
+		{
+			var item = m_model.FirstOrDefault(a => a.Id == id);
+			if (item is not null)
+			{
+				item.Expanded = expand;
+				await SaveSelections();
+				return Results.Ok();
+			}
+
+			return Results.NoContent();
 		}
 
 		private static async Task SaveSelections()

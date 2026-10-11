@@ -5,7 +5,7 @@
 	{
 
 		public IEnumerable<SelectionCountReleaseModel> Releases { get; init; } = Enumerable.Empty<SelectionCountReleaseModel>();
-	
+		public bool Expanded { get; internal set; }
 	}
 
 }

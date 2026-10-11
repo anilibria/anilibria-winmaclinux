@@ -943,9 +943,10 @@ namespace Aniliberty.Unfolded.Routes
 					if (model.Type == SelectionType.RecomendationForVoices && release.Voices.Any(m_popularVoices.Contains)) mustBeInclude = true;
 					if (model.Type == SelectionType.RecomendationForGenres && release.Genres.Any(m_popularGenres.Contains)) mustBeInclude = true;
 
-					if (mustBeInclude) {
+					if (mustBeInclude)
+					{
 						var collection = result[model];
-						if (!model.MaximumReleases.HasValue || collection.Count < model.MaximumReleases) collection.Add(release);
+						if (collection.Count < 50 && (!model.MaximumReleases.HasValue || collection.Count < model.MaximumReleases)) collection.Add(release);
 					}
 				}
 			}
