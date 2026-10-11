@@ -43,15 +43,24 @@
 					</div>
 					<div class="mypage-header-selections-container">
 						<div v-for="(selection,index) in selections" :key="index">
-							<div class="mypage-selection-header">
-								{{ selection.title }} ({{ selection.count }})
+							<div class="mypage-selection-header flex-row flex-base-center">
+								<span>{{ selection.title }} ({{ selection.count }})</span>
+								<div class="flex-1"></div>
+								<img
+									@click="deleteExistsSelection(selection)"
+									src="/static/icons/commonbuttons/delete.svg"
+									width="20"
+									height="20"
+									loading="lazy"
+									title="Удалить подборку"
+								/>
 							</div>
 							<div class="flex-row full-width mypage-vertical-releases-container">
 								<div
 									class="item-container flex-column flex-base-center"
 									v-for="(release, releaseIndex) in selection.releases"
 									:title="release.description">
-									<img class="poster" :src="'https://anilibria.top/' + release.poster" />
+									<img class="poster" :src="'https://anilibria.top/' + release.poster" loading="lazy" />
 									<div class="release-title">{{ release.title }}</div>
 								</div>
 							</div>
@@ -159,12 +168,16 @@
 						modelSelection.value.name = name;
 					}
 					await addSelection(modelSelection.value);
+
+					await refreshSelections();
 				}
 
 				async function editExistsSelection() {
 					closeModal();
 
 					await updateSelection(modelSelection.value);
+
+					await refreshSelections();
 				}
 
 				function showAddModal() {
@@ -187,13 +200,18 @@
 					modelSelection.value.sortingDescending = !modelSelection.value.sortingDescending;
 				}
 
-				async function refreshCounts() {
-					/*const counts = await getSelectionCounts();
-					selections.value = counts.map(a => { return { type: a.type, title: a.name, count: a.count } });*/
+				async function refreshSelections() {
+					/*const counts = await getSelectionCounts();*/
 					selections.value = await getAllSelections();
 				}
 
-				refreshCounts();
+				async function deleteExistsSelection(selection) {
+					await deleteSelection(selection.id);
+
+					await refreshSelections();
+				}
+
+				refreshSelections();
 
 				return {
 					mainMenuVisible,
@@ -208,7 +226,8 @@
 					closeModal,
 					addNewSelection,
 					editExistsSelection,
-					toggleSortingDescending
+					toggleSortingDescending,
+					deleteExistsSelection
 				}
 			}
 		});

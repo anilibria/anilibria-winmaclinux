@@ -532,11 +532,9 @@ export async function updateSelection(model) {
 };
 export async function deleteSelection(id) {
     await fetch(
-        `/myselection/remove&id=${id}`,
+        `/myselection/remove?id=${id}`,
         {
-            method: "DELETE",
-            body: '',
-            headers: { "Content-Type": "application/json" }
+            method: "DELETE"
         }
     );
 };
