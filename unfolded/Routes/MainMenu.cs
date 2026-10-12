@@ -70,7 +70,7 @@ namespace Aniliberty.Unfolded.Routes
 
 			var authorizationItem = m_mainMenu
 				.FirstOrDefault(a => a.Name == "Авторизация");
-			if (authorizationItem != null) m_mainMenu.Remove(authorizationItem);
+			if (!string.IsNullOrEmpty(m_userName) && authorizationItem != null) m_mainMenu.Remove(authorizationItem);
 
 		}
 
