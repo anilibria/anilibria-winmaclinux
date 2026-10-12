@@ -555,3 +555,11 @@ export async function updateExpandSelection(id, expand) {
         }
     );
 };
+export async function updateOrderSelection(movedId, dropId) {
+    await fetch(
+        `/myselection/changeorder?movedId=${movedId}&dropId=${dropId}`,
+        {
+            method: "PUT"
+        }
+    );
+};

@@ -28,6 +28,8 @@ namespace Aniliberty.Unfolded.Models.MySelections
 
 		public bool Expanded { get; set; }
 
+		public int Order { get; set; }
+
 	}
 
 }

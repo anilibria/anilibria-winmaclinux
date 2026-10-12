@@ -17,7 +17,9 @@ namespace Aniliberty.Unfolded.Routes
 			if (File.Exists(selectionsPath))
 			{
 				var json = await File.ReadAllTextAsync(selectionsPath);
-				m_model = JsonHelpers.DeserializeFromJson<List<SelectionModel>>(json) ?? new List<SelectionModel>();
+				m_model = (JsonHelpers.DeserializeFromJson<List<SelectionModel>>(json) ?? new List<SelectionModel>())
+					.OrderBy(a => a.Order)
+					.ToList();
 			}
 		}
 
@@ -29,6 +31,7 @@ namespace Aniliberty.Unfolded.Routes
 			app.MapGet("/myselection/counts", Counts);
 			app.MapGet("/myselection/allselections", AllSelections);
 			app.MapPut("/myselection/changeexpand", ChangeExpand);
+			app.MapPut("/myselection/changeorder", ChangeSort);
 		}
 
 		private static IResult Counts()
@@ -86,6 +89,7 @@ namespace Aniliberty.Unfolded.Routes
 		private static async Task<IResult> Add([FromBody] SelectionModel model)
 		{
 			model.Id = Guid.NewGuid().ToString();
+			model.Order = m_model.Any() ? m_model.Max(a => a.Order) + 1 : 1;
 			m_model.Add(model);
 			await SaveSelections();
 
@@ -121,7 +125,7 @@ namespace Aniliberty.Unfolded.Routes
 			return Results.Ok();
 		}
 
-		private static async Task<IResult> ChangeExpand(string id, bool expand)
+		private static async Task<IResult> ChangeExpand([FromQuery] string id, [FromQuery] bool expand)
 		{
 			var item = m_model.FirstOrDefault(a => a.Id == id);
 			if (item is not null)
@@ -132,6 +136,29 @@ namespace Aniliberty.Unfolded.Routes
 			}
 
 			return Results.NoContent();
+		}
+
+		private static async Task<IResult> ChangeSort([FromQuery] string movedId, [FromQuery] string dropId)
+		{
+			var moved = m_model.FirstOrDefault(a => a.Id == movedId);
+			var drop = m_model.FirstOrDefault(a => a.Id == dropId);
+			if (moved is null || drop is null) return Results.BadRequest();
+
+			var dropIndex = m_model.IndexOf(drop);
+			var isLess = m_model.IndexOf(moved) < dropIndex;
+			m_model.Remove(moved);
+			m_model.Insert(dropIndex + (isLess ? 1 : 0), moved);
+
+			var iterator = 1;
+			foreach (var item in m_model)
+			{
+				item.Order = iterator;
+				iterator++;
+			}
+
+			await SaveSelections();
+
+			return Results.Ok();
 		}
 
 		private static async Task SaveSelections()

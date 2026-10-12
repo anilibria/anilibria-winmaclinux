@@ -934,7 +934,7 @@ namespace Aniliberty.Unfolded.Routes
 					var mustBeInclude = false;
 					if (model.Type == SelectionType.LastUpdate && (lastDates[model] is not null ? release.Timestamp > lastDates[model] : release.Timestamp > defaultLastDate)) mustBeInclude = true;
 					var abandoneDate = model.HowMuchDaysExpire.HasValue ? DateTime.Now.AddDays(-model.HowMuchDaysExpire.Value) : defaultAbandonedDate;
-					if (model.Type == SelectionType.AbandonedView && inWatchHistory && AppData.Model.HistoryWatchVideo[release.Id].Hit < abandoneDate) mustBeInclude = true;
+					if (model.Type == SelectionType.AbandonedView && inWatchHistory && AppData.Model.HistoryWatchVideo[release.Id].Hit < abandoneDate && !IsReleaseSeensByEnd(release, withoutStatus: true)) mustBeInclude = true;
 					if (model.Type == SelectionType.UpdateForLastSession && release.Timestamp > lastSession) mustBeInclude = true;
 					if (model.Type == SelectionType.UpdateByFavorite && infavorites && IsReleaseInSeensNotAll(release)) mustBeInclude = true;
 					if (model.Type == SelectionType.WillBeView && !inWatchHistory && infavorites && IsReleaseNotSeensAtAll(release)) mustBeInclude = true;

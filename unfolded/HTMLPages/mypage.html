@@ -42,7 +42,13 @@
 						</simple-select>
 					</div>
 					<div class="mypage-header-selections-container">
-						<div v-for="(selection,index) in selections" :key="index">
+						<div
+							v-for="(selection,index) in selections"
+							:key="index"
+							@dragstart="dragStart(selection, $event)"
+							@drop="dropItem(selection)"
+							@dragover.prevent
+							draggable="true">
 							<div @click="toggleExpandSelection(selection)" class="mypage-selection-header flex-row flex-base-center">
 								<span>{{ selection.title }} ({{ selection.count }})</span>
 								<div class="flex-1"></div>
@@ -117,7 +123,7 @@
 		import { createApp, ref, useTemplateRef } from './vue.js'
 		import {
 			getSelectionCounts, addSelection, updateSelection, deleteSelection, getAllSelections,
-			updateExpandSelection
+			updateExpandSelection, updateOrderSelection
 		} from './unfoldapi.js'
 		import { selectionModes, sortingFields } from './releaseDictionaries.js'
 		import SimpleSelect from './components/SimpleSelect.js'
@@ -137,6 +143,7 @@
 				const modelSelection = ref({});
 				const modal = useTemplateRef('modal');
 				const modalMode = ref('');
+				const draggedItem = ref(null);
 
 				const maximumElements = [
 					{
@@ -217,6 +224,22 @@
 					await refreshSelections();
 				}
 
+				function dragStart(item, element) {
+					draggedItem.value = item;
+					
+					element.dataTransfer.effectAllowed = "move";
+					element.dataTransfer.setData("text/plain", null);
+				}
+
+				async function dropItem(item) {
+					if (draggedItem.value === item) return;
+					const dragItem = draggedItem.value;
+					draggedItem.value = null;
+
+					await updateOrderSelection(dragItem.id, item.id);
+					await refreshSelections();
+				}				
+
 				refreshSelections();
 
 				return {
@@ -234,7 +257,9 @@
 					editExistsSelection,
 					toggleSortingDescending,
 					deleteExistsSelection,
-					toggleExpandSelection
+					toggleExpandSelection,
+					dragStart,
+					dropItem
 				}
 			}
 		});
