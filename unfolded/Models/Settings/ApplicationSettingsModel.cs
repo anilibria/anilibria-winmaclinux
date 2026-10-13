@@ -12,6 +12,8 @@
 
 		public ApplicationSettingsCinemaHallModel Cinamahall { get; set; } = new ApplicationSettingsCinemaHallModel();
 
+		public ApplicationSettingsMyPageModel MyPage { get; set; } = new ApplicationSettingsMyPageModel();
+
 	}
 
 }

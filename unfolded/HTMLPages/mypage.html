@@ -23,6 +23,39 @@
 						<img :src="'/static/icons/commonbuttons/plus.svg'" width="30" height="30" />
 					</div>
 				</div>
+				<div class="simple-panel-icon-button simple-popup-container" title="Настройка страницы Мои подборки">
+					<div class="full-width-height flex-row flex-base-center flex-other-center">
+						<img :src="'/static/icons/commonbuttons/settings.svg'" width="30" height="30" />
+					</div>
+					<div class="simple-popup-box mypage-rightmenu">
+						<div class="mypage-rightmenu-settings flex-column gap-8">
+							<div>Стартовая подборка:</div>
+							<div class="flex-row flex-base-center">
+								<simple-select v-model:item="settings.startedSelection"
+									:options="selections"
+									style="width: 100%;"
+									@selected="savePageSettings();">
+								</simple-select>
+							</div>
+							<div>Открывать ссылки:</div>
+							<simple-select
+								v-model:item="settings.openLinkMode"
+								:options="openLinkMode"
+								style="width: 100%;"
+								@selected="savePageSettings()">
+							</simple-select>
+							<div>Режим списка:</div>
+							<simple-select
+								v-model:item="settings.listMode"
+								:options="listModes"
+								style="width: 100%;"
+								@selected="savePageSettings()">
+							</simple-select>
+							<!--<sortable-list v-model:options="releasesList.torrentSettings.codecPrefference" @changed="savePageSettings()">
+							</sortable-list>-->
+						</div>
+					</div>
+				</div>
 			</div>
 			<div class="right-content">
 			    <div v-if="!selections.length" class="full-width-height flex-row flex-base-center flex-other-center">
@@ -32,23 +65,24 @@
 					</span>
 				</div>
 				<div v-if="selections.length">
-					<div class="page-subheader page-line-pair flex-row flex-base-center">
+					<div v-if="settings.listMode === 1" class="page-subheader page-line-pair flex-row flex-base-center">
 						<simple-select
 							class="mypage-subheader-selection-selector"
-							v-model:item="selectedSelection"
+							v-model:item="selectedSelectionId"
 							:options="selections"
 							style="width: 220px;"
-							@selected="">
+							@selected="changeSelectionGrid(selectedSelectionId)">
 						</simple-select>
 					</div>
-					<div class="mypage-header-selections-container">
+					<div v-if="settings.listMode === 0" class="mypage-header-selections-container">
 						<div
 							v-for="(selection,index) in selections"
 							:key="index"
 							@dragstart="dragStart(selection, $event)"
 							@drop="dropItem(selection)"
 							@dragover.prevent
-							draggable="true">
+							draggable="true"
+							style="margin-top: 4px;">
 							<div @click="toggleExpandSelection(selection)" class="mypage-selection-header flex-row flex-base-center">
 								<span>{{ selection.title }} ({{ selection.count }})</span>
 								<div class="flex-1"></div>
@@ -69,6 +103,18 @@
 									<img class="poster" :src="'https://anilibria.top/' + release.poster" loading="lazy" />
 									<div class="release-title">{{ release.title }}</div>
 								</div>
+							</div>
+						</div>
+					</div>
+					<div v-if="settings.listMode === 1" class="mypage-header-selections-container">
+						<div v-for="(group, index) in grid" class="mypage-grid-group-container flex-row flex-other-center" :key="index">
+							<div
+								class="item-container flex-column flex-base-center flex-other-center"
+								v-for="(release, releaseIndex) in group.releases"
+								:title="release.description"
+								:key="releaseIndex">
+								<img class="poster" :src="'https://anilibria.top/' + release.poster" loading="lazy" />
+								<div class="release-title">{{ release.title }}</div>
 							</div>
 						</div>
 					</div>
@@ -123,9 +169,9 @@
 		import { createApp, ref, useTemplateRef } from './vue.js'
 		import {
 			getSelectionCounts, addSelection, updateSelection, deleteSelection, getAllSelections,
-			updateExpandSelection, updateOrderSelection
+			updateExpandSelection, updateOrderSelection, getPageSettings, saveSettings
 		} from './unfoldapi.js'
-		import { selectionModes, sortingFields } from './releaseDictionaries.js'
+		import { selectionModes, sortingFields, openLinkMode } from './releaseDictionaries.js'
 		import SimpleSelect from './components/SimpleSelect.js'
 		import Drawer from './components/Drawer.js'
 		import PageHeader from './components/PageHeader.js'
@@ -139,11 +185,18 @@
 			setup() {
 				const mainMenuVisible = ref(false);
 				const selections = ref([]);
+				const selectedSelectionId = ref(null);
 				const selectedSelection = ref(null);
 				const modelSelection = ref({});
 				const modal = useTemplateRef('modal');
 				const modalMode = ref('');
 				const draggedItem = ref(null);
+				const settings = ref({});
+				
+				const grid = ref([]);
+				let relasesInGroup = 1;
+				const widthItem = 270 + 10;
+				const leftPanelWidth = 40;
 
 				const maximumElements = [
 					{
@@ -165,6 +218,17 @@
 					{
 						title: "20",
 						id: 20
+					}
+				];
+
+				const listModes = [
+					{
+						title: "Список групп",
+						id: 0
+					},
+					{
+						title: "Сетка",
+						id: 1
 					}
 				];
 
@@ -240,7 +304,48 @@
 					await refreshSelections();
 				}				
 
-				refreshSelections();
+				async function loadData() {
+					settings.value = await getPageSettings('mypage');
+					await refreshSelections();
+					if (settings.value.listMode === 1 && settings.value.startedSelection) await changeSelectionGrid(settings.value.startedSelection);
+				}
+
+				async function savePageSettings() {
+					await saveSettings('mypage', settings.value);
+				}
+
+				function getReleasesGroupCount() {
+					relasesInGroup = Math.floor((window.innerWidth - leftPanelWidth) / widthItem);
+					if (relasesInGroup === 0) return 1;
+					return relasesInGroup;
+				}
+
+				function recalculateReleaseGrid(releases) {
+					relasesInGroup = getReleasesGroupCount();
+
+					const result = [];
+					let iterator = 0;
+					let currentGroup = [];
+					for (const release of selectedSelection.value.releases) {
+						if (iterator === relasesInGroup) {
+							result.push({ releases: [...currentGroup] });
+							currentGroup = [];
+							iterator = 0;
+						}
+						currentGroup.push(release);
+						iterator++;
+					}
+					if (currentGroup.length) result.push({ releases: currentGroup });
+					grid.value = result;
+				}
+
+				async function changeSelectionGrid(id) {
+					if (selectedSelectionId.value !== id) selectedSelectionId.value = id;
+					selectedSelection.value = selections.value.find(a => a.id === id);
+					await recalculateReleaseGrid();
+				}
+
+				loadData();
 
 				return {
 					mainMenuVisible,
@@ -251,6 +356,11 @@
 					maximumElements,
 					sortingFields,
 					selectedSelection,
+					settings,
+					openLinkMode,
+					listModes,
+					selectedSelectionId,
+					grid,
 					showAddModal,
 					closeModal,
 					addNewSelection,
@@ -259,7 +369,9 @@
 					deleteExistsSelection,
 					toggleExpandSelection,
 					dragStart,
-					dropItem
+					dropItem,
+					savePageSettings,
+					changeSelectionGrid
 				}
 			}
 		});

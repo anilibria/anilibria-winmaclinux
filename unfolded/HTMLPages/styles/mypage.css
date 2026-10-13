@@ -60,3 +60,53 @@
         height: 50px;
     }
 }
+
+.mypage-grid-group-container {
+    height: 350px;
+    width: calc(100vw - 40px);
+
+    .item-container {
+        margin-top: 4px;
+        min-width: 270px;
+        width: 270px;
+        max-width: 270px;
+    }
+
+    .poster {
+        margin-left: 4px;
+        width: 180px;
+        height: 270px;
+        border-color: var(--release-item-poster-border);
+        border-width: 2px;
+        border-style: solid;
+        border-radius: 4px;
+        user-select: none;
+    }
+
+    .release-title {
+        font-size: var(--large-font-size);
+        text-align: center;
+        color: var(--page-header-text);
+        user-select: none;
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 3;
+        overflow: hidden;
+        height: 50px;
+    }
+}
+
+
+.mypage-rightmenu {
+    left: 100%;
+    top: 0;
+    transform: unset;
+    font-size: 13px;
+}
+
+.mypage-rightmenu-settings {
+    width: 340px;
+    max-width: 400px;
+    height: 200px;
+    padding: 8px;
+}
