@@ -347,6 +347,15 @@
 
 				loadData();
 
+				window.addEventListener('resize', () => {
+					const oldGroupCount = relasesInGroup;
+					getReleasesGroupCount();
+					if (oldGroupCount != relasesInGroup && selectedSelection.value) {
+						grid.value = [];
+						recalculateReleaseGrid(selectedSelection.releases);
+					}
+				});
+
 				return {
 					mainMenuVisible,
 					selections,
