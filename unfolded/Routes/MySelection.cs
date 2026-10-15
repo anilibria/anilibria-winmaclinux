@@ -61,6 +61,8 @@ namespace Aniliberty.Unfolded.Routes
 			var result = new List<SelectionCountModel>();
 			foreach (var model in models)
 			{
+				if (model.Value.Count <= 0) continue;
+
 				result.Add(
 					new SelectionCountModel
 					{

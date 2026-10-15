@@ -924,6 +924,33 @@ namespace Aniliberty.Unfolded.Routes
 				a => a.HowMuchDaysExpire.HasValue ? (long?)((DateTimeOffset)DateTime.Now.AddDays(-a.HowMuchDaysExpire.Value)).ToUnixTimeSeconds() : null
 			);
 
+			var seenEpisodes = new Dictionary<int, int>();
+			foreach (var releaseEpisodes in m_episodes)
+			{
+				if (!m_releasesMap.ContainsKey(releaseEpisodes.ReleaseId)) continue;
+
+				var release = m_releasesMap[releaseEpisodes.ReleaseId];
+
+				var countSeens = releaseEpisodes.Items.Count(a => m_seenEpisodes.Contains(a.Id));
+				seenEpisodes.Add(releaseEpisodes.ReleaseId, countSeens);
+			}
+
+			var mostPopular = m_releases
+				.OrderByDescending(a => a.Rating)
+				.Select(a => a.Id)
+				.Take(50)
+				.ToHashSet();
+			var nowYear = DateTime.UtcNow.Year;
+			var mostPopularInCurrentYear = m_releases
+				.Where(a => a.Year == nowYear)
+				.OrderByDescending(a => a.Rating)
+				.Select(a => a.Id)
+				.Take(30)
+				.ToHashSet();
+			var currentSeason = GetCurrentSeason(nowYear);
+			var allFavorites = m_favorites.Concat(m_localFavorites).ToHashSet();
+			var allFranchises = m_franchises.SelectMany(a => a.Releases).Select(a => a.Id).ToHashSet();
+
 			foreach (var release in m_releases.OrderByDescending(a => a.Rating))
 			{
 				var infavorites = m_favorites.Contains(release.Id);
@@ -942,16 +969,45 @@ namespace Aniliberty.Unfolded.Routes
 					if (model.Type == SelectionType.ActualInCurrentSeason && release.Status != "Озвучка завершена" && release.Year == currentYear) mustBeInclude = true;
 					if (model.Type == SelectionType.RecomendationForVoices && release.Voices.Any(m_popularVoices.Contains)) mustBeInclude = true;
 					if (model.Type == SelectionType.RecomendationForGenres && release.Genres.Any(m_popularGenres.Contains)) mustBeInclude = true;
-
-					if (mustBeInclude)
+					if (model.Type == SelectionType.UserSectionOrSearchFilter)
 					{
-						var collection = result[model];
-						if (collection.Count < 50 && (!model.MaximumReleases.HasValue || collection.Count < model.MaximumReleases)) collection.Add(release);
+						if (model.Section.HasValue && model.SubSection.HasValue)
+						{
+							mustBeInclude = FilterBySection(model.Section.Value, model.SubSection.Value, release, seenEpisodes, mostPopular, mostPopularInCurrentYear, currentSeason, nowYear);
+						}
+
+						if (!string.IsNullOrEmpty(model.Filter))
+						{
+							mustBeInclude = (release.Title.ToLowerInvariant().Contains(model.Filter.ToLowerInvariant()) || release.OriginalName.ToLowerInvariant().Contains(model.Filter.ToLowerInvariant()));
+						}
 					}
+
+					if (mustBeInclude) result[model].Add(release);
 				}
 			}
 
-			return result.ToDictionary();
+			return result
+				.Select(a => new { a.Key, Releases = LimitAndSortReleases(a.Key, a.Value) })
+				.ToDictionary(a => a.Key, a => a.Releases);
+
+			List<ReleaseSaveModel> LimitAndSortReleases(SelectionModel model, List<ReleaseSaveModel> releases)
+			{
+				var maximumCount = model.MaximumReleases ?? 50;
+				return SortingReleases(
+					releases,
+					new ReleasesListFiltersModel
+					{
+						SortingField = model.SortingField,
+						SortingDescending = model.SortingDescending
+					},
+					allFavorites,
+					allFranchises,
+					seenEpisodes
+				)
+				.Take(maximumCount)
+				.ToList();
+			}
+
 		}
 
 	}

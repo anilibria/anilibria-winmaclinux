@@ -30,7 +30,7 @@
     overflow-x: scroll;
     overflow-y: hidden;
     height: 350px;
-    width: calc(100vw - 40px);
+    width: calc(100vw - 60px);
 
     .item-container {
         margin-top: 4px;
@@ -58,6 +58,7 @@
         -webkit-line-clamp: 3;
         overflow: hidden;
         height: 50px;
+        max-width: 240px;
     }
 }
 
@@ -93,6 +94,7 @@
         -webkit-line-clamp: 3;
         overflow: hidden;
         height: 50px;
+        max-width: 260px;
     }
 }
 

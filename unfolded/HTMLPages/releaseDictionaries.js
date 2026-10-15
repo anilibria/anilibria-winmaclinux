@@ -308,9 +308,5 @@ export const selectionModes = [
     {
         title: "Пользовательская",
         id: 11
-    },
-    {
-        title: "Группа",
-        id: 12
-    },
+    }
 ];
