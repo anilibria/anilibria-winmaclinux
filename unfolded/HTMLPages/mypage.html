@@ -73,6 +73,17 @@
 							style="width: 220px;"
 							@selected="changeSelectionGrid(selectedSelectionId)">
 						</simple-select>
+						<div class="flex-1"></div>
+						<div v-if="selectedSelection" class="flex-row flex-base-center" style="cursor: pointer;">
+							<img
+								@click.stop="deleteExistsSelection(selectedSelection)"
+								src="/static/icons/commonbuttons/delete.svg"
+								width="20"
+								height="20"
+								loading="lazy"
+								title="Удалить подборку"
+							/>
+						</div>
 					</div>
 					<div v-if="settings.listMode === 0" class="mypage-header-selections-container">
 						<div
@@ -100,7 +111,13 @@
 									class="item-container flex-column flex-base-center"
 									v-for="(release, releaseIndex) in selection.releases"
 									:title="release.description">
-									<img class="poster" :src="'https://anilibria.top/' + release.poster" loading="lazy" />
+									<img
+										class="poster"
+										:src="'https://anilibria.top/' + release.poster"
+										loading="lazy"
+										@click="watchRelease(release)"
+										@contextmenu.prevent="showOptionsModal(release)"
+									/>
 									<div class="release-title">{{ release.title }}</div>
 								</div>
 							</div>
@@ -113,7 +130,13 @@
 								v-for="(release, releaseIndex) in group.releases"
 								:title="release.description"
 								:key="releaseIndex">
-								<img class="poster" :src="'https://anilibria.top/' + release.poster" loading="lazy" />
+								<img
+									class="poster"
+									:src="'https://anilibria.top/' + release.poster"
+									loading="lazy"
+									@click="watchRelease(release)"
+									@contextmenu.prevent="showOptionsModal(release)"
+								/>
 								<div class="release-title">{{ release.title }}</div>
 							</div>
 						</div>
@@ -437,6 +460,18 @@
 					await recalculateReleaseGrid();
 				}
 
+				function watchRelease(release) {
+					if (settings.value.openLinkMode) {
+						window.open("videoplayer.html?mode=release&id=" + release.id, '_blank');
+					} else {
+						window.location.href = 'videoplayer.html?mode=release&id=' + release.id;
+					}
+				}
+
+				function showOptionsModal(release) {
+
+				}
+
 				loadData();
 
 				window.addEventListener('resize', () => {
@@ -478,7 +513,9 @@
 					dragStart,
 					dropItem,
 					savePageSettings,
-					changeSelectionGrid
+					changeSelectionGrid,
+					watchRelease,
+					showOptionsModal
 				}
 			}
 		});
