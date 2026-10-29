@@ -121,43 +121,43 @@
 								<span class="normal-text">{{ release.type }} {{ release.series }} {{ release.genres ? '- ' + release.genres.join(', ') : '' }}</span>
 								<span class="normal-text"><b>Команда:</b> {{ release.voices ? release.voices.join(', ') : '' }}</span>
 								<span class="digit-text flex-row flex-base-center gap-4">
-								<img
-									src="/static/icons/mainmenu/cinemahall.svg"
-									width="18"
-									height="18"
-									loading="lazy"
-									title="Порядок просмотра в кинозале"
-								/>
-								<span class="normal-text">{{ releasesList.cinemahallReleases.indexOf(release.id) + 1 }}</span>
-								<release-list-item-video-info
-									v-if="settings.useOnlyOnline || !hasactivetorrent"
-									:release="release"
-									:open-link-mode="settings.openLinkMode"
-									:seens-count="seensCount"
-									videomode="release">
-								</release-list-item-video-info>
-								<release-list-item-torrent-info
-									v-if="!settings.useOnlyOnline && hasactivetorrent"
-									:release="release"
-									:hasactivetorrent="hasactivetorrent"
-									:use-internal-torrect-client="releasesList.torrentSettings.useInternalTorrectClient"
-									:torrentcount="torrentcount"
-									:torrentdownloaded="torrentdownloaded"
-									:open-link-mode="settings.openLinkMode"
-									videomode="downloadedtorrent">
-								</release-list-item-torrent-info>
-								<img
-									class="clickable-image"
-									src="/static/icons/releases/favorite.svg"
-									width="20"
-									height="20"
-									loading="lazy"
-									:title="inFavorites ? 'Удалить релиз из избранных' : 'Добавить релиз в избранное'"
-									@click.stop="toggleReleaseInFavorites(release.id)"
-								/>
-								<span>{{ release.rating }}</span>
-								<img v-if="release.publishDay" src="/static/icons/releases/scheduleday.svg" width="20" height="20" loading="lazy" />
-								<span v-if="release.publishDay">{{ getPublishDay(release.publishDay) }}</span>
+									<img
+										src="/static/icons/mainmenu/cinemahall.svg"
+										width="18"
+										height="18"
+										loading="lazy"
+										title="Порядок просмотра в кинозале"
+									/>
+									<span class="normal-text">{{ releasesList.cinemahallReleases.indexOf(release.id) + 1 }}</span>
+									<release-list-item-video-info
+										v-if="settings.useOnlyOnline || !hasactivetorrent"
+										:release="release"
+										:open-link-mode="settings.openLinkMode"
+										:seens-count="seensCount"
+										videomode="release">
+									</release-list-item-video-info>
+									<release-list-item-torrent-info
+										v-if="!settings.useOnlyOnline && hasactivetorrent"
+										:release="release"
+										:hasactivetorrent="hasactivetorrent"
+										:use-internal-torrect-client="releasesList.torrentSettings.useInternalTorrectClient"
+										:torrentcount="torrentcount"
+										:torrentdownloaded="torrentdownloaded"
+										:open-link-mode="settings.openLinkMode"
+										videomode="downloadedtorrent">
+									</release-list-item-torrent-info>
+									<img
+										class="clickable-image"
+										src="/static/icons/releases/favorite.svg"
+										width="20"
+										height="20"
+										loading="lazy"
+										:title="inFavorites ? 'Удалить релиз из избранных' : 'Добавить релиз в избранное'"
+										@click.stop="toggleReleaseInFavorites(release.id)"
+									/>
+									<span>{{ release.rating }}</span>
+									<img v-if="release.publishDay" src="/static/icons/releases/scheduleday.svg" width="20" height="20" loading="lazy" />
+									<span v-if="release.publishDay">{{ getPublishDay(release.publishDay) }}</span>
 								</span>
 								<div class="flex-1"></div>
 								<div class="flex-row flex-base-center">

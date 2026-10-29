@@ -235,6 +235,26 @@
 				<div class="action-button" style="width: 60px;" @click="closeModal()">Отмена</div>
 			</div>
 		</dialog>
+		<dialog ref="optionsmodal" class="native-dialog-rounded" style="width: 280px;">
+			<div class="mypage-dialog-header">Выберите действие</div>
+			<div v-if="userMarks && optionRelease" class="flex-column gap-4 flex-base-center">
+				<a v-if="!userMarks.favorites.includes(optionRelease.id)" class="default-link" href="" @click.prevent="addToFavorite()">
+					Добавить в избранное
+				</a>
+				<a v-if="userMarks.favorites.includes(optionRelease.id)" class="default-link" href="" @click.prevent="removeFromFavorite()">
+					Удалить из избранного
+				</a>
+				<a v-if="!userMarks.fullSeenReleases.includes(optionRelease.id)" class="default-link" href="" @click.prevent="addSeen()">
+					Добавить в просмотренное
+				</a>
+				<a v-if="userMarks.fullSeenReleases.includes(optionRelease.id)" class="default-link" href="" @click.prevent="removeSeen()">
+					Удалить из просмотренного
+				</a>
+			</div>
+			<div class="button-line">
+				<div class="action-button" style="width: 60px;" @click="optionsModal.close()">Закрыть</div>
+			</div>
+		</dialog>
 		<page-drawer v-model:main-menu-visible="mainMenuVisible">
 		</page-drawer>
 	</div>
@@ -243,7 +263,8 @@
 		import { createApp, ref, useTemplateRef } from './vue.js'
 		import {
 			getSelectionCounts, addSelection, updateSelection, deleteSelection, getAllSelections,
-			updateExpandSelection, updateOrderSelection, getPageSettings, saveSettings
+			updateExpandSelection, updateOrderSelection, getPageSettings, saveSettings,
+			getUserMarks, addFavorites, removeFavorites, addReleasesSeenMark, removeReleasesSeenMark
 		} from './unfoldapi.js'
 		import {
 			selectionModes, sortingFields, openLinkMode, sections, historySections,
@@ -267,9 +288,12 @@
 				const selectedSelection = ref(null);
 				const modelSelection = ref({});
 				const modal = useTemplateRef('modal');
+				const optionsModal = useTemplateRef('optionsmodal');
+				const optionRelease = ref(null);
 				const modalMode = ref('');
 				const draggedItem = ref(null);
 				const settings = ref({});
+				const userMarks = ref({});
 				
 				const grid = ref([]);
 				let relasesInGroup = 1;
@@ -421,6 +445,7 @@
 
 				async function loadData() {
 					settings.value = await getPageSettings('mypage');
+					userMarks.value = await getUserMarks();
 					await refreshSelections();
 					if (settings.value.listMode === 1 && settings.value.startedSelection) await changeSelectionGrid(settings.value.startedSelection);
 				}
@@ -469,7 +494,31 @@
 				}
 
 				function showOptionsModal(release) {
+					optionRelease.value = release;
+					optionsModal.value.showModal();
+				}
 
+				async function addToFavorite() {
+					optionsModal.value.close();
+					await addFavorites([optionRelease.value.id]);
+					userMarks.value = await getUserMarks();
+				}
+				async function removeFromFavorite() {
+					optionsModal.value.close();
+					await removeFavorites([optionRelease.value.id]);
+					userMarks.value = await getUserMarks();
+				}
+
+				async function addSeen() {
+					optionsModal.value.close();
+					await addReleasesSeenMark([optionRelease.value.id]);
+					userMarks.value = await getUserMarks();
+				}
+
+				async function removeSeen() {
+					optionsModal.value.close();
+					await removeReleasesSeenMark([optionRelease.value.id]);
+					userMarks.value = await getUserMarks();
 				}
 
 				loadData();
@@ -503,6 +552,9 @@
 					historySections,
 					seenMarkSections,
 					setsSections,
+					optionRelease,
+					userMarks,
+					optionsModal,
 					showAddModal,
 					closeModal,
 					addNewSelection,
@@ -515,7 +567,11 @@
 					savePageSettings,
 					changeSelectionGrid,
 					watchRelease,
-					showOptionsModal
+					showOptionsModal,
+					addToFavorite,
+					removeFromFavorite,
+					addSeen,
+					removeSeen
 				}
 			}
 		});

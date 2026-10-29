@@ -341,6 +341,10 @@ body {
     &:active {
         color: var(--linked-text-color);
     }
+    &:focus { 
+        outline: 0;
+        box-shadow: 0 0 0 .1rem #fff, 0 0 0 .2rem var(--linked-text-color);
+    }    
 }
 
 /* Simple popup style */
