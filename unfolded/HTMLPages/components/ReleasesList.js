@@ -63,7 +63,8 @@ export default {
             sortingDescending: true,
             section: 0,
             subsection: -1,
-            torrentState: []
+            torrentState: [],
+            isGrouping: false
         });
 
         // release selection

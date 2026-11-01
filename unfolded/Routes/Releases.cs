@@ -4,6 +4,7 @@ using Aniliberty.Unfolded.Models.CacheModels;
 using Aniliberty.Unfolded.Models.MySelections;
 using Aniliberty.Unfolded.Models.Releases;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Frozen;
 using System.Globalization;
 using System.Text;
 using static Aniliberty.Unfolded.Helpers.JsonHelpers;
@@ -370,7 +371,7 @@ namespace Aniliberty.Unfolded.Routes
 				.ToHashSet();
 			var currentSeason = GetCurrentSeason(nowYear);
 			var allFavorites = m_favorites.Concat(m_localFavorites).ToHashSet();
-			var allFranchises = m_franchises.SelectMany(a => a.Releases).Select(a => a.Id).ToHashSet();
+			var allFranchises = m_franchises.SelectMany(a => a.Releases.Select((b, index) => new { b.Id, Franchise = a.Title, Index = index })).ToFrozenDictionary(a => a.Id, a => new FranchiseSortModel { Title = a.Franchise, Index = a.Index });
 
 			return SortingReleases(
 				m_releases
@@ -526,7 +527,7 @@ namespace Aniliberty.Unfolded.Routes
 
 		}
 
-		private static IEnumerable<ReleaseSaveModel> SortingReleases(IEnumerable<ReleaseSaveModel> releases, ReleasesListFiltersModel model, HashSet<int> allFavorites, HashSet<int> allFranchises, Dictionary<int, int> seenEpisodes)
+		private static IEnumerable<ReleaseSaveModel> SortingReleases(IEnumerable<ReleaseSaveModel> releases, ReleasesListFiltersModel model, HashSet<int> allFavorites, FrozenDictionary<int, FranchiseSortModel> allFranchises, Dictionary<int, int> seenEpisodes)
 		{
 			switch (model.SortingField)
 			{
@@ -534,18 +535,60 @@ namespace Aniliberty.Unfolded.Routes
 				case ReleasesListFiltersModelSortingField.Name: return model.SortingDescending == true ? releases.OrderByDescending(a => a.Title) : releases.OrderBy(a => a.Title);
 				case ReleasesListFiltersModelSortingField.OriginalName: return model.SortingDescending == true ? releases.OrderByDescending(a => a.OriginalName) : releases.OrderBy(a => a.OriginalName);
 				case ReleasesListFiltersModelSortingField.Rating: return model.SortingDescending == true ? releases.OrderByDescending(a => a.Rating) : releases.OrderBy(a => a.Rating);
-				case ReleasesListFiltersModelSortingField.Status: return model.SortingDescending == true ? releases.OrderByDescending(a => a.Status) : releases.OrderBy(a => a.Status);
-				case ReleasesListFiltersModelSortingField.Season: return model.SortingDescending == true ? releases.OrderByDescending(a => a.Season) : releases.OrderBy(a => a.Season);
-				case ReleasesListFiltersModelSortingField.ReleaseSeries: return model.SortingDescending == true ? releases.OrderByDescending(a => allFranchises.Contains(a.Id) ? 1 : 0) : releases.OrderBy(a => allFranchises.Contains(a.Id) ? 1 : 0);
+				case ReleasesListFiltersModelSortingField.Status:
+					if (model.IsGrouping)
+					{
+						return model.SortingDescending == true ?
+							releases.GroupBy(a => a.Status).OrderByDescending(a => a.Key).SelectMany(a => a) :
+							releases.GroupBy(a => a.Status).OrderBy(a => a.Key).SelectMany(a => a);
+					}
+					return model.SortingDescending == true ? releases.OrderByDescending(a => a.Status) : releases.OrderBy(a => a.Status);
+				case ReleasesListFiltersModelSortingField.Season:
+					if (model.IsGrouping)
+					{
+						return model.SortingDescending == true ?
+							releases.GroupBy(a => a.Season).OrderByDescending(a => a.Key).SelectMany(a => a) :
+							releases.GroupBy(a => a.Season).OrderBy(a => a.Key).SelectMany(a => a);
+					}
+					return model.SortingDescending == true ? releases.OrderByDescending(a => a.Season) : releases.OrderBy(a => a.Season);
+				case ReleasesListFiltersModelSortingField.ReleaseSeries:
+					if (model.IsGrouping)
+					{
+						return model.SortingDescending == true ?
+							releases.GroupBy(a => a.Season).OrderByDescending(a => a.Key).SelectMany(a => a) :
+							releases.GroupBy(a => a.Season).OrderBy(a => a.Key).SelectMany(a => a);
+					}
+					return model.SortingDescending == true ? releases.OrderByDescending(a => GetFranchiseIndex(a, allFranchises)) : releases.OrderBy(a => GetFranchiseIndex(a, allFranchises));
 				case ReleasesListFiltersModelSortingField.SeenHistory: return model.SortingDescending == true ? releases.OrderByDescending(a => AppData.GetDateOnlyWatchVideoHistory(a.Id)) : releases.OrderBy(a => AppData.GetDateOnlyWatchVideoHistory(a.Id));
 				case ReleasesListFiltersModelSortingField.OpenHistory: return model.SortingDescending == true ? releases.OrderByDescending(a => AppData.GetDateOnlyWatchHistory(a.Id)) : releases.OrderBy(a => AppData.GetDateOnlyWatchHistory(a.Id));
-				case ReleasesListFiltersModelSortingField.ScheduleDay: return model.SortingDescending == true ? releases.OrderByDescending(a => a.PublishDay ?? 0) : releases.OrderBy(a => a.PublishDay ?? 0);
+				case ReleasesListFiltersModelSortingField.ScheduleDay:
+					if (model.IsGrouping)
+					{
+						return model.SortingDescending == true ?
+							releases.GroupBy(a => a.PublishDay).OrderByDescending(a => a.Key).SelectMany(a => a) :
+							releases.GroupBy(a => a.PublishDay).OrderBy(a => a.Key).SelectMany(a => a);
+					}
+					return model.SortingDescending == true ? releases.OrderByDescending(a => a.PublishDay ?? 0) : releases.OrderBy(a => a.PublishDay ?? 0);
 				case ReleasesListFiltersModelSortingField.Favorite: return model.SortingDescending == true ? releases.OrderByDescending(a => allFavorites.Contains(a.Id) ? 1 : 0) : releases.OrderBy(a => allFavorites.Contains(a.Id) ? 1 : 0);
 				case ReleasesListFiltersModelSortingField.SeenMark: return model.SortingDescending == true ? releases.OrderByDescending(a => seenEpisodes.ContainsKey(a.Id) ? 1 : 0) : releases.OrderBy(a => seenEpisodes.ContainsKey(a.Id) ? 1 : 0); ;
-				case ReleasesListFiltersModelSortingField.Year: return model.SortingDescending == true ? releases.OrderByDescending(a => a.Year) : releases.OrderBy(a => a.Year);
+				case ReleasesListFiltersModelSortingField.Year:
+					if (model.IsGrouping)
+					{
+						return model.SortingDescending == true ?
+							releases.GroupBy(a => a.Year).OrderByDescending(a => a.Key).SelectMany(a => a) :
+							releases.GroupBy(a => a.Year).OrderBy(a => a.Key).SelectMany(a => a);
+					}
+					return model.SortingDescending == true ? releases.OrderByDescending(a => a.Year) : releases.OrderBy(a => a.Year);
 				case ReleasesListFiltersModelSortingField.History: return model.SortingDescending == true ? releases.OrderByDescending(a => AppData.GetDateWatchReleaseHistory(a.Id)) : releases.OrderBy(a => AppData.GetDateWatchReleaseHistory(a.Id));
 				case ReleasesListFiltersModelSortingField.Cinemahall: return model.SortingDescending == true ? releases.OrderByDescending(a => AppData.GetCinemahallOrder(a.Id)) : releases.OrderBy(a => AppData.GetCinemahallOrder(a.Id));
 				default: throw new Exception("Not supported sorting field!");
+			}
+
+			string GetFranchiseIndex(ReleaseSaveModel model, FrozenDictionary<int, FranchiseSortModel> allFranchises)
+			{
+				if (allFranchises.TryGetValue(model.Id, out var item)) return $"{item.Title}--{item.Index}";
+
+				return "";
 			}
 		}
 
@@ -949,7 +992,7 @@ namespace Aniliberty.Unfolded.Routes
 				.ToHashSet();
 			var currentSeason = GetCurrentSeason(nowYear);
 			var allFavorites = m_favorites.Concat(m_localFavorites).ToHashSet();
-			var allFranchises = m_franchises.SelectMany(a => a.Releases).Select(a => a.Id).ToHashSet();
+			var allFranchises = m_franchises.SelectMany(a => a.Releases.Select((b, index) => new { b.Id, Franchise = a.Title, Index = index })).ToFrozenDictionary(a => a.Id, a => new FranchiseSortModel { Title = a.Franchise, Index = a.Index });
 
 			foreach (var release in m_releases.OrderByDescending(a => a.Rating))
 			{

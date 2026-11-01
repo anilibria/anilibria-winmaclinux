@@ -40,7 +40,9 @@
 
 		public ReleasesListFiltersSubSection SubSection { get; init; }
 
-		public IEnumerable<int>? TorrentState { get; set; }
+		public IEnumerable<int>? TorrentState { get; init; }
+
+		public bool IsGrouping { get; init; }
 
 	}
 
