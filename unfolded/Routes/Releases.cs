@@ -552,12 +552,6 @@ namespace Aniliberty.Unfolded.Routes
 					}
 					return model.SortingDescending == true ? releases.OrderByDescending(a => a.Season) : releases.OrderBy(a => a.Season);
 				case ReleasesListFiltersModelSortingField.ReleaseSeries:
-					if (model.IsGrouping)
-					{
-						return model.SortingDescending == true ?
-							releases.GroupBy(a => a.Season).OrderByDescending(a => a.Key).SelectMany(a => a) :
-							releases.GroupBy(a => a.Season).OrderBy(a => a.Key).SelectMany(a => a);
-					}
 					return model.SortingDescending == true ? releases.OrderByDescending(a => GetFranchiseIndex(a, allFranchises)) : releases.OrderBy(a => GetFranchiseIndex(a, allFranchises));
 				case ReleasesListFiltersModelSortingField.SeenHistory: return model.SortingDescending == true ? releases.OrderByDescending(a => AppData.GetDateOnlyWatchVideoHistory(a.Id)) : releases.OrderBy(a => AppData.GetDateOnlyWatchVideoHistory(a.Id));
 				case ReleasesListFiltersModelSortingField.OpenHistory: return model.SortingDescending == true ? releases.OrderByDescending(a => AppData.GetDateOnlyWatchHistory(a.Id)) : releases.OrderBy(a => AppData.GetDateOnlyWatchHistory(a.Id));
