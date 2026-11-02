@@ -609,7 +609,10 @@ namespace Aniliberty.Unfolded.Routes
 						var countSeens = seens.ContainsKey(releaseId) ? seens[releaseId] : 0;
 						return countSeens > 0 && countSeens < release.CountVideos;
 					}
-					if (subSection == ReleasesListFiltersSubSection.NotSeen) return !seens.ContainsKey(releaseId);
+					if (subSection == ReleasesListFiltersSubSection.NotSeen) {
+						var countSeens = seens.ContainsKey(releaseId) ? seens[releaseId] : 0;
+						return countSeens == 0;
+					}
 					if (subSection == ReleasesListFiltersSubSection.Hided) return AppData.InHidedReleases(releaseId);
 					return true;
 				case ReleasesListFiltersSection.Collections:
