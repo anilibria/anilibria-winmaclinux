@@ -148,6 +148,7 @@ namespace Aniliberty.Unfolded
 			TorrentClient.RegisterRoutes(app);
 			CinemaHall.RegisterRoutes(app);
 			MySelection.RegisterRoutes(app);
+			Series.RegisterRoutes(app);
 			AppData.RegisterRoutes(app);
 
 #if !DEBUG

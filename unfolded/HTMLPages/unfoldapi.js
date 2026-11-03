@@ -563,3 +563,19 @@ export async function updateOrderSelection(movedId, dropId) {
         }
     );
 };
+
+// Series
+
+export async function getRelaseSeriesByFilter(model) {
+    const response = await fetch(
+        `/series/list`,
+        {
+            method: "POST",
+            body: JSON.stringify(model),
+            headers: {
+                "Content-Type": "application/json"
+            }
+        }
+    );
+    return await response.json();
+};

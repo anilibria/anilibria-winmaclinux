@@ -43,7 +43,7 @@
 					v-model:allfilters="filterModel"
 					v-model:releasesselected="selectedReleases"
 					v-model:backtotopvisible="backToTopVisible"
-					:sourcepage="'releases'"
+					:sourcepage="'series'"
 					:item-height="290"
 					@openrelease="openReleaseCardByLink($event);"
 					ref="releasesList">
@@ -156,9 +156,17 @@
 				}
 
 				async function loadData() {
-					settings.value = await getPageSettings('cinemahall');
+					settings.value = await getPageSettings('series');
 					await isSometingInCinemahall();
-				}				
+				}
+
+				function openReleaseCardByLink(id) {
+					if (settings.value.openLinkMode) {
+						window.open("releasecard.html?id=" + id, '_blank');
+					} else {
+						window.location.href = "releasecard.html?id=" + id;
+					}
+				}
 
 				return {
 					mainMenuVisible,

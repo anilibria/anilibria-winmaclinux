@@ -14,6 +14,8 @@
 
 		public ApplicationSettingsMyPageModel MyPage { get; set; } = new ApplicationSettingsMyPageModel();
 
+		public ApplicationSettingsSeriesModel Series { get; set; } = new ApplicationSettingsSeriesModel();
+
 	}
 
 }
