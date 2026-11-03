@@ -48,10 +48,18 @@ export default {
             <img :src="'/static/icons/releases/' + (filterModel.sortingDescending ? 'sortdescending' : 'sortascending') + '.svg'" width="20" height="20" />
         </div>
     </div>
+    <div
+        v-if="groupedFields.includes(filterModel.sortingField)"
+        class="simple-icon-button"
+        :title="filterModel.isGrouping ? 'Выключить группировку' : 'Включить группировку по полю сортировки'"
+        @click="toggleGrouping()">
+        <img :src="'/static/icons/commonbuttons/' + (filterModel.isGrouping ? 'enablegrouping' : 'disablegrouping') + '.svg'" width="20" height="20" />
+    </div>
 </div>
 `,
 	setup(props) {
         let currentTimer = -1;
+        const groupedFields = [5, 9, 1, 3, 12];
 
         function changedSortingFields() {
             props.releasesList.sortingChanged(props.filterModel.sortingField, props.filterModel.sortingDescending);
@@ -67,6 +75,10 @@ export default {
 
         function toggleSortingDescending() {
             props.releasesList.sortingChanged(props.filterModel.sortingField, !props.filterModel.sortingDescending);
+        }
+
+        function toggleGrouping() {
+            props.releasesList.groupingChanged(!props.filterModel.isGrouping);
         }
 
         function loadReleaseAfterTimer() {
@@ -89,10 +101,12 @@ export default {
             historySections,
             seenMarkSections,
             setsSections,
+            groupedFields,
             sectionChanged,
             subSectionChanged,
             changedSortingFields,
-            toggleSortingDescending
+            toggleSortingDescending,
+            toggleGrouping
 		};
 	}
 };
