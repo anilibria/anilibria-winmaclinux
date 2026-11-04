@@ -1,9 +1,10 @@
-import { ref, watch, useTemplateRef, onMounted } from '/static/vue.js'
+import { ref, useTemplateRef, onMounted } from '/static/vue.js'
 import {
 	getRelasesByFilter, getUserMarks, getPageSettings, getActiveTorrents,
     getReleaseNotifications, getCinemahallReleases, getRelaseTorrentsByFilter,
-    addFavorites, removeFavorites, saveSettings, getRelaseCinemahallByFilter
+    addFavorites, removeFavorites, saveSettings, getRelaseCinemahallByFilter, getRelaseSeriesByFilter
 } from '/static/unfoldapi.js'
+import { getFullPublishDay } from '/static/releaseDictionaries.js'
 
 export default {
 	props: ['releasesselected', 'allfilters', 'itemWidth', 'itemHeight', 'itemGap', 'leftPanelWidth', 'backtotopvisible', 'sourcepage', 'sortfield', 'sortdesc'],
@@ -11,7 +12,16 @@ export default {
 	template: `
 <div ref="releasesContainer" class="releaseslist-releases-container" @click.right.prevent="toggleSelectionMode()">
     <div v-if="releasesGroups.length" class="releaseslist-release-item-group" v-for="(releasesGroup, index) in releasesGroups" :key="index">
-        <div v-if="(itemHeight * index) < scrollTopValue + scrollHeightValue"
+        <div v-if="releasesGroup.group && (itemHeight * index) < scrollTopValue + scrollHeightValue" style="width: 74%; height: 100%;">
+            <slot name="groupheader" :groupkey="releasesGroup.group">
+                <div class="group-container flex-row flex-base-center flex-other-center">
+                    <div class="group-header-container">
+                        {{ releasesGroup.group }}
+                    </div>
+                </div>
+            </slot>
+        </div>
+        <div v-if="!releasesGroup.group && (itemHeight * index) < scrollTopValue + scrollHeightValue"
             v-for="release in releasesGroup.releases"
             :key="release.id"
             @click.stop="toggleSelectionRelease(release.id)">
@@ -115,6 +125,12 @@ export default {
                     break;
             }
 
+            if (filterModel.value.section === 3) { // for schedule enable grouping by default
+                filterModel.value.isGrouping = true;
+            } else {
+                filterModel.value.isGrouping = false;
+            }
+
             context.emit('update:allfilters', filterModel.value);
         }
 
@@ -122,6 +138,19 @@ export default {
             filterModel.value.sortingField = field;
             filterModel.value.sortingDescending = descending;
             context.emit('update:allfilters', filterModel.value);
+            loadReleases();
+        }
+
+        const activeGroupingFields = [5, 9, 1, 3, 12];
+
+        function isAllowableGrouping(sortingField) {
+            return activeGroupingFields.includes(sortingField);
+        }
+        function groupingChanged(isGrouping) {
+            if (isGrouping && !isAllowableGrouping(filterModel.value.sortingField)) return;
+
+            filterModel.value.isGrouping = isGrouping;
+            
             loadReleases();
         }
 
@@ -199,6 +228,9 @@ export default {
                 if (props.sourcepage === 'cinemahall') {
                     releases = await getRelaseCinemahallByFilter(filterModel.value);
                 }
+                if (props.sourcepage === 'series') {
+                    releases = await getRelaseSeriesByFilter(filterModel.value);
+                }
     
                 recalculateReleaseGroups(releases);
             } finally {
@@ -262,11 +294,45 @@ export default {
             return relasesInGroup;
         }
 
-        function recalculateReleaseGroups(releases) {
-            relasesInGroup = getReleasesGroupCount();
-            releasesCount.value = releases.length;
+        function getGroupValue(release) {
+            switch (filterModel.value.sortingField) {
+                case 5: // status
+                    return release.status;
+                case 9: // season
+                    return release.season;
+                case 1: // schedule day
+                    return getFullPublishDay(release.publishDay);
+                case 3: // year
+                    return release.year;
+                case 12: // release series
+                    return "";
+                default: 
+                    return "Нет группы";
+            }
+        }
 
-            const result = [];
+        function recalculateReleaseGrouping(releases) {
+            const groupedResult = [];
+            let currentGroupKey = "";
+            let currentGroupReleases = [];
+
+            for (const release of releases) {
+                const groupKey = getGroupValue(release);
+                if (currentGroupKey !== groupKey) {
+                    if (currentGroupReleases.length) {
+                        groupedResult.push({ group: currentGroupKey, releases: [] });
+                        recalculateReleaseGroupingItem(currentGroupReleases, groupedResult);
+                        currentGroupReleases = [];
+                    }
+                    currentGroupKey = groupKey;
+                }
+                currentGroupReleases.push(release);
+            }
+
+            releasesGroups.value = groupedResult;
+        }
+
+        function recalculateReleaseGroupingItem(releases, result) {
             let iterator = 0;
             let currentGroup = [];
             for (const release of releases) {
@@ -279,7 +345,19 @@ export default {
                 iterator++;
             }
             if (currentGroup.length) result.push({ releases: currentGroup });
+        }
 
+        function recalculateReleaseGroups(releases) {
+            relasesInGroup = getReleasesGroupCount();
+            releasesCount.value = releases.length;
+
+            if (filterModel.value.isGrouping) {
+                recalculateReleaseGrouping(releases);
+                return;
+            }
+
+            const result = [];
+            recalculateReleaseGroupingItem(releases, result);
             releasesGroups.value = result;
         }
 
@@ -345,7 +423,8 @@ export default {
             saveTorrentsSettings,
             toggleReleaseInFavorites,
             saveReleasesSettings,
-            refreshActiveTorrents
+            refreshActiveTorrents,
+            groupingChanged
 		};
 	}
 };
