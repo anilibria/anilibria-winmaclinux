@@ -2,12 +2,13 @@ import { ref, useTemplateRef, onMounted } from '/static/vue.js'
 import {
 	getRelasesByFilter, getUserMarks, getPageSettings, getActiveTorrents,
     getReleaseNotifications, getCinemahallReleases, getRelaseTorrentsByFilter,
-    addFavorites, removeFavorites, saveSettings, getRelaseCinemahallByFilter, getRelaseSeriesByFilter
+    addFavorites, removeFavorites, saveSettings, getRelaseCinemahallByFilter, getRelaseSeriesByFilter,
+    getAllFranchises
 } from '/static/unfoldapi.js'
 import { getFullPublishDay } from '/static/releaseDictionaries.js'
 
 export default {
-	props: ['releasesselected', 'allfilters', 'itemWidth', 'itemHeight', 'itemGap', 'leftPanelWidth', 'backtotopvisible', 'sourcepage', 'sortfield', 'sortdesc'],
+	props: ['releasesselected', 'allfilters', 'itemWidth', 'itemHeight', 'itemGap', 'leftPanelWidth', 'backtotopvisible', 'sourcepage', 'sortfield', 'sortdesc', 'defaultgrouping'],
 	emits: ['openrelease', 'update:releasesselected', 'update:allfilters', 'update:backtotopvisible'],
 	template: `
 <div ref="releasesContainer" class="releaseslist-releases-container" @click.right.prevent="toggleSelectionMode()">
@@ -15,7 +16,7 @@ export default {
         <div v-if="releasesGroup.group && (itemHeight * index) < scrollTopValue + scrollHeightValue" style="width: 74%; height: 100%;">
             <slot name="groupheader" :groupkey="releasesGroup.group">
                 <div class="group-container flex-row flex-base-center flex-other-center">
-                    <div class="group-header-container">
+                    <div class="group-header-container flex-row flex-base-center flex-other-center">
                         {{ releasesGroup.group }}
                     </div>
                 </div>
@@ -94,6 +95,8 @@ export default {
         const settings = ref({ startedSection: 0, startedSubSection: -1, notificationMode: 0, openLinkMode: 0 });
 		const cinemahallReleases = ref([]);
         const activeTorrents = ref({});
+        const franchises = ref([]);
+        let sourceReleases = [];
 
         // synchronize data
         const notificationMessage = ref('');
@@ -138,6 +141,12 @@ export default {
             filterModel.value.sortingField = field;
             filterModel.value.sortingDescending = descending;
             context.emit('update:allfilters', filterModel.value);
+
+            //if enable grouping but we user select not groupable field need disable grouping
+            if (!isAllowableGrouping(filterModel.value.sortingField) && filterModel.value.isGrouping) {
+                filterModel.value.isGrouping = false;
+            }
+
             loadReleases();
         }
 
@@ -218,21 +227,21 @@ export default {
             releaseLoaded = true;
 
             try {
-                let releases = [];
+                sourceReleases = [];
                 if (props.sourcepage === 'torrent') {
-                    releases = await getRelaseTorrentsByFilter(filterModel.value);
+                    sourceReleases = await getRelaseTorrentsByFilter(filterModel.value);
                 }
                 if (props.sourcepage === 'releases') {
-                    releases = await getRelasesByFilter(filterModel.value);
+                    sourceReleases = await getRelasesByFilter(filterModel.value);
                 }
                 if (props.sourcepage === 'cinemahall') {
-                    releases = await getRelaseCinemahallByFilter(filterModel.value);
+                    sourceReleases = await getRelaseCinemahallByFilter(filterModel.value);
                 }
                 if (props.sourcepage === 'series') {
-                    releases = await getRelaseSeriesByFilter(filterModel.value);
+                    sourceReleases = await getRelaseSeriesByFilter(filterModel.value);
                 }
     
-                recalculateReleaseGroups(releases);
+                recalculateReleaseGroups();
             } finally {
                 releaseLoaded = false;
             }
@@ -266,6 +275,7 @@ export default {
             cinemahallReleases.value = await getCinemahallReleases();
             notificationMessage.value = await getReleaseNotifications();
             activeTorrents.value = await getActiveTorrents();
+            franchises.value = await getAllFranchises();
 
             if (props.allfilters) filterModel.value = Object.assign(filterModel.value, props.allfilters);
 
@@ -279,12 +289,30 @@ export default {
                     filterModel.value.subSection = torrentSettings.value.startedSubSection;
                     break;
             }
-            adjustSortingBySection();
-            if (props.sortfield) {
-                filterModel.value.sortingField = props.sortfield;
-                filterModel.value.sortingDescending = props.sortdesc || false;
-                context.emit('update:allfilters', filterModel.value);
+            if (props.sourcepage === 'series') {
+                const seriesSettings = await getPageSettings('series');
+                filterModel.value.section = seriesSettings.startedSection || 0;
+                filterModel.value.subSection = seriesSettings.startedSubSection || -1;
             }
+            if (props.sourcepage === 'cinemahall') {
+                const cinemahallSettings = await getPageSettings('cinemahall');
+                filterModel.value.section = cinemahallSettings.startedSection || 0;
+                filterModel.value.subSection = cinemahallSettings.startedSubSection || -1;
+            }
+
+            adjustSortingBySection();
+            let needUpdateFilters = false;
+            if (props.sortfield) {
+                filterModel.value.sortingField = props.sortfield;                
+                filterModel.value.sortingDescending = props.sortdesc || false;
+                needUpdateFilters = true;
+            }
+            if (props.defaultgrouping) {
+                filterModel.value.isGrouping = true;
+                needUpdateFilters = true;
+            }
+            if (needUpdateFilters) context.emit('update:allfilters', filterModel.value);
+
             await loadReleases();
         }
 
@@ -305,7 +333,10 @@ export default {
                 case 3: // year
                     return release.year;
                 case 12: // release series
-                    return "";
+                    if (Object.hasOwn(franchises.value.releases, release.id.toString())) {
+                        return franchises.value.names[franchises.value.releases[release.id.toString()]];
+                    }
+                    return "Нет группы";
                 default: 
                     return "Нет группы";
             }
@@ -329,6 +360,11 @@ export default {
                 currentGroupReleases.push(release);
             }
 
+            if (currentGroupReleases.length) {
+                groupedResult.push({ group: currentGroupKey, releases: [] });
+                recalculateReleaseGroupingItem(currentGroupReleases, groupedResult);
+            }
+
             releasesGroups.value = groupedResult;
         }
 
@@ -347,17 +383,18 @@ export default {
             if (currentGroup.length) result.push({ releases: currentGroup });
         }
 
-        function recalculateReleaseGroups(releases) {
+        function recalculateReleaseGroups() {
+            releasesGroups.value = [];
             relasesInGroup = getReleasesGroupCount();
-            releasesCount.value = releases.length;
+            releasesCount.value = sourceReleases.length;
 
             if (filterModel.value.isGrouping) {
-                recalculateReleaseGrouping(releases);
+                recalculateReleaseGrouping(sourceReleases);
                 return;
             }
 
             const result = [];
-            recalculateReleaseGroupingItem(releases, result);
+            recalculateReleaseGroupingItem(sourceReleases, result);
             releasesGroups.value = result;
         }
 
@@ -378,11 +415,7 @@ export default {
 
         window.addEventListener('resize', () => {
             const newRelasesInGroup = getReleasesGroupCount();
-            if (newRelasesInGroup !== relasesInGroup.value) {
-                const allReleases = releasesGroups.value.map(a => a.releases).flat()
-                releasesGroups.value = [];
-                recalculateReleaseGroups(allReleases);
-            }
+            if (newRelasesInGroup !== relasesInGroup.value) recalculateReleaseGroups();
             scrollHeightValue.value = releasesContainer.value.clientHeight;
         });
 

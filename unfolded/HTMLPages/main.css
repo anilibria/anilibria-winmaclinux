@@ -528,6 +528,15 @@ body {
   }
 }
 
+/* left sidebar menu */
+
+.sidebar-rightmenu {
+    left: 100%;
+    top: 0;
+    transform: unset;
+    font-size: 13px;
+}
+
 /* Common animations */
 .round-by-circle-animation {
   animation: roundbycircle-animation 2s linear infinite; 

@@ -10,6 +10,7 @@
 	<link rel="stylesheet" href="mainmenu.css">
 	<link rel="stylesheet" href="pagestructure.css">
 	<link rel="stylesheet" href="styles/releaselist.css">
+	<link rel="stylesheet" href="styles/series.css">
 	<link rel="stylesheet" href="libs/multiselect.css">
 	<script type="importmap">
 		{
@@ -35,6 +36,45 @@
 					:releases-list="releasesList"
 					:filter-model="filterModel">
 				</releases-side-bar-search>
+				<div class="simple-panel-icon-button simple-popup-container" title="Настройка страницы Связанные релизы">
+					<div class="full-width-height flex-row flex-base-center flex-other-center">
+						<img :src="'/static/icons/commonbuttons/settings.svg'" width="30" height="30" />
+					</div>
+					<div v-if="releasesList" class="simple-popup-box sidebar-rightmenu">
+						<div class="series-rightmenu-settings flex-column gap-8">
+							<div>Стартовая секция:</div>
+							<div class="flex-row flex-base-center">
+								<simple-select v-model:item="settings.startedSection"
+											   :options="sections"
+											   style="width: 130px;"
+											   @selected="settings.startedSubSection = -1; savePageSettings();">
+								</simple-select>
+								<div v-if="settings.startedSection >= 6 && settings.startedSection < 9" style="margin-left: 4px; margin-right: 4px;">-</div>
+								<simple-select v-if="settings.startedSection === 6" v-model:item="settings.startedSubSection"
+											   :options="historySections"
+											   style="width: 170px;"
+											   @selected="savePageSettings()">
+								</simple-select>
+								<simple-select v-if="settings.startedSection === 7" v-model:item="settings.startedSubSection"
+											   :options="seenMarkSections"
+											   style="width: 225px;"
+											   @selected="savePageSettings()">
+								</simple-select>
+								<simple-select v-if="settings.startedSection === 8" v-model:item="settings.startedSubSection"
+											   :options="setsSections"
+											   style="width: 220px;"
+											   @selected="savePageSettings()">
+								</simple-select>
+							</div>
+							<div>Открывать ссылки:</div>
+							<simple-select v-model:item="settings.openLinkMode" :options="openLinkMode" style="width: 100%;" @selected="savePageSettings()">
+							</simple-select>
+							<div>Смотреть в видеоплеере только онлайн:</div>
+							<simple-switch v-model:state="settings.useOnlyOnline" @changed="savePageSettings()">
+							</simple-switch>
+						</div>
+					</div>
+				</div>
 			</div>
 			<div class="right-content">
 				<releases-toolbar :filter-model="filterModel" :releases-list="releasesList">
@@ -46,6 +86,9 @@
 					:sourcepage="'series'"
 					:item-height="290"
 					@openrelease="openReleaseCardByLink($event);"
+					:sortfield="12"
+					:sortdesc="false"
+					:defaultgrouping="true"
 					ref="releasesList">
 					<template v-slot:release="{ release, isSelected, inCinemahall, inFavorites, seensCount, hasactivetorrent, torrentcount, torrentdownloaded }">
 						<div class="releaseslist-release-item" :class="{'releaseslist-release-item-selected': isSelected }" :title="release.description">
@@ -108,7 +151,7 @@
 			</div>
 		</div>
 
-		<back-to-topmenu :releasesList="releasesList" :backToTopVisible="backToTopVisible">
+		<back-to-topmenu :releases-list="releasesList" :back-to-top-visible="backToTopVisible">
 		</back-to-topmenu>
 
 		<page-drawer v-model:main-menu-visible="mainMenuVisible">
@@ -118,7 +161,7 @@
 	<script type="module">
 		import { createApp, ref, useTemplateRef } from 'vue'
 		import {
-			getRelease
+			getRelease, getPageSettings, saveSettings
 		} from './unfoldapi.js'
 		import Drawer from './components/Drawer.js'
 		import PageHeader from './components/PageHeader.js'
@@ -129,7 +172,9 @@
 		import ReleaseListItemTorrentInfo from './components/ReleaseListItemTorrentInfo.js'
 		import ReleaseListItemVideoInfo from './components/ReleaseListItemVideoInfo.js'
 		import BackToTopMenu from './components/BackToTopMenu.js'
-		import { getPublishDay } from './releaseDictionaries.js'
+		import SimpleSelect from './components/SimpleSelect.js'
+		import SimpleSwitch from './components/SimpleSwitch.js'
+		import { getPublishDay, openLinkMode, sections, historySections, seenMarkSections, setsSections } from './releaseDictionaries.js'
 
 		const app = createApp({
 			components: {
@@ -141,6 +186,8 @@
 				'releases-side-bar-search': ReleasesSideBarSearch,
 				'release-list-item-torrent-info': ReleaseListItemTorrentInfo,
 				'release-list-item-video-info': ReleaseListItemVideoInfo,
+				'simple-select': SimpleSelect,
+				'simple-switch': SimpleSwitch,
 				'back-to-topmenu': BackToTopMenu
 			},
 			setup() {
@@ -157,7 +204,10 @@
 
 				async function loadData() {
 					settings.value = await getPageSettings('series');
-					await isSometingInCinemahall();
+				}
+
+				async function savePageSettings() {
+					await saveSettings('series', settings.value);
 				}
 
 				function openReleaseCardByLink(id) {
@@ -168,6 +218,8 @@
 					}
 				}
 
+				loadData();
+
 				return {
 					mainMenuVisible,
 					selectedReleases,
@@ -175,8 +227,14 @@
 					releasesList,
 					backToTopVisible,
 					settings,
+					openLinkMode,
+					sections,
+					historySections,
+					seenMarkSections,
+					setsSections,
 					toggleReleaseInFavorites,
-					getPublishDay
+					getPublishDay,
+					savePageSettings
 				}
 			}
 		});

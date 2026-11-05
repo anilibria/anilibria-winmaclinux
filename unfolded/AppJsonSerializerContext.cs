@@ -62,6 +62,7 @@ namespace Aniliberty.Unfolded
 	[JsonSerializable(typeof(List<SelectionCountModel>))]
 	[JsonSerializable(typeof(List<SelectionModel>))]
 	[JsonSerializable(typeof(SelectionModel))]
+	[JsonSerializable(typeof(FranchisesModel))]
 	[JsonSourceGenerationOptions(PropertyNamingPolicy = JsonKnownNamingPolicy.CamelCase)]
 	internal partial class AppJsonSerializerContext : JsonSerializerContext
 	{

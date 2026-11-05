@@ -48,6 +48,7 @@ namespace Aniliberty.Unfolded.Routes {
 			app.MapGet("/releases/torrents", (int id) => Torrents(id));
 			app.MapGet("/releases/openmagnet", (string magnet) => OpenMagnet(magnet));
 			app.MapGet("/releases/franchise", (int id) => Franchise(id));
+			app.MapGet("/releases/franchises", () => Franchises());
 			app.MapGet("/releases/notifications", () => Results.Content(m_notificationMessage));
 			app.MapGet("/releases/dictionaries", () => Results.Json(m_releaseDictionaries, AppJsonSerializerContext.Default));
 			app.MapPost("/releases/addseens", (IHttpClientFactory clientFactory, HttpContext context, [FromBody] int[] ids) => AddReleasesToSeens(clientFactory, context, ids));
@@ -713,6 +714,20 @@ namespace Aniliberty.Unfolded.Routes {
 			};
 
 			return Results.Json(model, AppJsonSerializerContext.Default);
+		}
+
+		internal static IResult Franchises() {
+			var result = new FranchisesModel();
+
+			foreach (var franchise in m_franchises) {
+				result.Names.Add(franchise.Title);
+				var index = result.Names.Count - 1;
+				foreach (var release in franchise.Releases) {
+					result.Releases.Add(release.Id, index);
+				}
+			}
+
+			return Results.Json(result, AppJsonSerializerContext.Default);
 		}
 
 		private static async Task<IResult> AddReleasesToSeens(IHttpClientFactory clientFactory, HttpContext context, int[] ids) {

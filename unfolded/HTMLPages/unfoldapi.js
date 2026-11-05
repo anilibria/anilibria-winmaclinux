@@ -155,6 +155,10 @@ export async function getReleaseFranchise(id) {
     const response = await fetch('/releases/franchise?id=' + id);
     return await response.json();
 };
+export async function getAllFranchises() {
+    const response = await fetch('/releases/franchises');
+    return await response.json();
+};
 export async function getReleaseNotifications(id) {
     const response = await fetch('/releases/notifications');
     return await response.text();

@@ -111,8 +111,11 @@
     box-shadow: 2px 2px var(--release-item-background-shadow);
     font-size: var(--double-extra-large-font-size);
     font-weight: bold;
+    text-align: center;
+    word-wrap: break-word;
     color: var(--linked-text-color);
     width: 100%;
+    min-height: 80px;
 }
 
 .group-container {
