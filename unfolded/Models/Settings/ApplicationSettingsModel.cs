@@ -16,6 +16,8 @@
 
 		public ApplicationSettingsSeriesModel Series { get; set; } = new ApplicationSettingsSeriesModel();
 
+		public ApplicationSettingsMaintenanceModel Maintenance { get; set; } = new ApplicationSettingsMaintenanceModel();
+
 	}
 
 }
