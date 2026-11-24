@@ -6,6 +6,10 @@
 
 		public string AppAddressCustom { get; set; } = "";
 
+		public int PosterAddress { get; set; }
+
+		public string PosterAddressCustom { get; set; } = "";
+
 	}
 
 }

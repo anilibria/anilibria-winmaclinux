@@ -9,6 +9,7 @@
 	<link rel="stylesheet" href="main.css">
 	<link rel="stylesheet" href="mainmenu.css">
 	<link rel="stylesheet" href="pagestructure.css">
+	<link rel="stylesheet" href="styles/maintenance.css">
 </head>
 <body>
 	<div id="app">
@@ -19,6 +20,33 @@
 			<div class="left-panel flex-column">
 			</div>
 			<div class="right-content">
+				<div class="page-subheader flex-row flex-base-center">
+					<simple-select class="maintenance-sections-selector" v-model:item="settingSection"
+						:options="settingSections"
+						style="width: 270px;">
+					</simple-select>
+				</div>
+				<div class="flex-column maintenance-settings-top-element">
+					<div class="maintenance-setting-header">
+						<span class="common-text">Адрес API</span>
+					</div>
+					<div class="flex-row flex-base-center" style="margin: 0 0 0 4px;">
+						<simple-select v-model:item="settings.apiAddress"
+							:options="apiAddresses"
+							style="width: 270px;">
+						</simple-select>
+					</div>
+					<div class="maintenance-setting-header">
+						<span class="common-text">Адрес для постеров</span>
+					</div>
+					<div class="flex-row flex-base-center" style="margin: 0 0 0 4px;">
+						<simple-select v-model:item="settings.posterAddress"
+							:options="apiAddresses"
+							style="width: 270px;">
+						</simple-select>
+					</div>
+				</div>
+
 			</div>
 		</div>
 
@@ -29,21 +57,57 @@
 	<script type="module">
 		import { createApp, ref } from './vue.js'
 		import {
-			getRelease
+			getPageSettings, saveSettings
 		} from './unfoldapi.js'
 		import Drawer from './components/Drawer.js'
 		import PageHeader from './components/PageHeader.js'
+		import SimpleSelect from './components/SimpleSelect.js'
 
 		const app = createApp({
 			components: {
 				'page-drawer': Drawer,
-				'page-header': PageHeader
+				'page-header': PageHeader,
+				'simple-select': SimpleSelect
 			},
 			setup() {
 				const mainMenuVisible = ref(false);
+				const settings = ref({apiAddress: 0, appAddressCustom: '', posterAddress: 0, posterAddressCustom: ''});
+				const settingSection = ref(0);
+
+				const apiAddresses = [
+					{
+						title: "Основной сайт - aniliberty.top",
+						id: 0
+					},
+					{
+						title: "Основной старый сайт - anilibria.top",
+						id: 1
+					},
+					{
+						title: "Сайт приложений - api.anilibria.app",
+						id: 2
+					}
+				];
+
+				const settingSections = [
+					{
+						title: "Настройки API",
+						id: 0
+					}
+				];
+
+				async function loadData() {
+					settings.value = await getPageSettings('maintenance');
+				}
+
+				loadData();
 
 				return {
-					mainMenuVisible
+					mainMenuVisible,
+					apiAddresses,
+					settings,
+					settingSections,
+					settingSection
 				}
 			}
 		});

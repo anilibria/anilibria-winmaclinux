@@ -33,6 +33,7 @@ namespace Aniliberty.Unfolded.Routes
 			app.MapPost("/settings/save/cinemahall", ([FromBody] ApplicationSettingsCinemaHallModel model, CancellationToken cancellationToken) => SaveCinemaHall(model, cancellationToken));
 			app.MapPost("/settings/save/mypage", ([FromBody] ApplicationSettingsMyPageModel model, CancellationToken cancellationToken) => SaveMyPage(model, cancellationToken));
 			app.MapPost("/settings/save/series", ([FromBody] ApplicationSettingsSeriesModel model, CancellationToken cancellationToken) => SaveSeries(model, cancellationToken));
+			app.MapPost("/settings/save/maintenance", ([FromBody] ApplicationSettingsMaintenanceModel model, CancellationToken cancellationToken) => SaveMaintenance(model, cancellationToken));
 		}
 
 		private static IResult ByPage(string page)
@@ -46,8 +47,21 @@ namespace Aniliberty.Unfolded.Routes
 				case "cinemahall": return Results.Json(m_settings.Cinamahall, AppJsonSerializerContext.Default);
 				case "mypage": return Results.Json(m_settings.MyPage, AppJsonSerializerContext.Default);
 				case "series": return Results.Json(m_settings.Series, AppJsonSerializerContext.Default);
+				case "maintenance": return Results.Json(m_settings.Maintenance, AppJsonSerializerContext.Default);
 				default: return Results.NotFound();
 			}
+		}
+
+		private static async Task<IResult> SaveMaintenance(ApplicationSettingsMaintenanceModel model, CancellationToken cancellationToken) {
+			if (model == null) return Results.StatusCode(400);
+
+			m_settings.Maintenance = model;
+
+			var json = JsonSerializer.Serialize(m_settings, AppJsonSerializerContext.Default.ApplicationSettingsModel);
+			var path = Path.Combine(GlobalConfig.PathToCache(), "settings");
+			await File.WriteAllTextAsync(path, json, cancellationToken);
+
+			return Results.Ok();
 		}
 
 		private static async Task<IResult> SaveSeries(ApplicationSettingsSeriesModel model, CancellationToken cancellationToken) {
