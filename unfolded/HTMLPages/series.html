@@ -92,7 +92,7 @@
 					ref="releasesList">
 					<template v-slot:release="{ release, isSelected, inCinemahall, inFavorites, seensCount, hasactivetorrent, torrentcount, torrentdownloaded }">
 						<div class="releaseslist-release-item" :class="{'releaseslist-release-item-selected': isSelected }" :title="release.description">
-							<img class="poster" :src="'https://anilibria.top/' + release.poster" loading="lazy"/>
+							<img class="poster" :src="posterAddress + release.poster" loading="lazy"/>
 							<div class="information">
 								<span class="header-text" style="margin-top: 10px;">{{ release.title }}</span>
 								<span class="normal-text">{{ release.status }} {{ release.season ? '- ' + release.season : '' }} {{ release.year }}</span>
@@ -161,7 +161,7 @@
 	<script type="module">
 		import { createApp, ref, useTemplateRef } from 'vue'
 		import {
-			getRelease, getPageSettings, saveSettings
+			getRelease, getPageSettings, saveSettings, getMaintenancePosterAddress
 		} from './unfoldapi.js'
 		import Drawer from './components/Drawer.js'
 		import PageHeader from './components/PageHeader.js'
@@ -197,6 +197,7 @@
 				const releasesList = useTemplateRef('releasesList');
 				const backToTopVisible = ref(false);
 				const settings = ref({ startedSection: 0, startedSubSection: -1, notificationMode: 0, openLinkMode: 0 });
+				const posterAddress = ref('https://anilibria.top/');
 
 				async function toggleReleaseInFavorites(id) {
 					await releasesList.value.toggleReleaseInFavorites(id);
@@ -204,6 +205,7 @@
 
 				async function loadData() {
 					settings.value = await getPageSettings('series');
+					posterAddress.value = await getMaintenancePosterAddress();
 				}
 
 				async function savePageSettings() {
@@ -232,6 +234,7 @@
 					historySections,
 					seenMarkSections,
 					setsSections,
+					posterAddress,
 					toggleReleaseInFavorites,
 					getPublishDay,
 					savePageSettings

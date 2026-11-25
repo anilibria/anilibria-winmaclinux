@@ -114,7 +114,7 @@
 							@drop="dropItem(release)"
 							@dragover.prevent
 							draggable="true">
-							<img class="poster" :src="'https://anilibria.top' + release.poster" loading="lazy" />
+							<img class="poster" :src="posterAddress + release.poster" loading="lazy" />
 							<div class="information">
 								<span class="header-text" style="margin-top: 10px;">{{ release.title }}</span>
 								<span class="normal-text">{{ release.status }} {{ release.season ? '- ' + release.season : '' }} {{ release.year }}</span>
@@ -206,7 +206,7 @@
 		import { createApp, ref, useTemplateRef, watch, onMounted } from 'vue'
 		import {
 			getPageSettings, saveSettings, removeAllSeensInCinemahall, removeAllInCinemahall,
-			changeSortInCinemahall, hasSomethingInCinemahall
+			changeSortInCinemahall, hasSomethingInCinemahall, getMaintenancePosterAddress
 		} from '/static/unfoldapi.js'
 		import { sections, historySections, seenMarkSections, setsSections, openLinkMode } from '/static/releaseDictionaries.js'
 		import Drawer from './components/Drawer.js'
@@ -244,6 +244,7 @@
 				const releasesList = useTemplateRef('releasesList');
 				const settings = ref({ startedSection: 0, startedSubSection: -1, notificationMode: 0, openLinkMode: 0 });
 				const somethingInCinemahall = ref(false);
+				const posterAddress = ref('https://anilibria.top/');
 
 				async function savePageSettings() {
 					await saveSettings('cinemahall', settings.value);
@@ -251,6 +252,7 @@
 
 				async function loadData() {
 					settings.value = await getPageSettings('cinemahall');
+					posterAddress.value = await getMaintenancePosterAddress();
 					await isSometingInCinemahall();
 				}
 
@@ -341,6 +343,7 @@
 					setsSections,
 					openLinkMode,
 					settings,
+					posterAddress,
 					savePageSettings,
 					backToTop,
 					openReleaseCardByLink,

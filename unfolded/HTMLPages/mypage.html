@@ -113,7 +113,7 @@
 									:title="release.description">
 									<img
 										class="poster"
-										:src="'https://anilibria.top/' + release.poster"
+										:src="posterAddress + release.poster"
 										loading="lazy"
 										@click="watchRelease(release)"
 										@contextmenu.prevent="showOptionsModal(release)"
@@ -132,7 +132,7 @@
 								:key="releaseIndex">
 								<img
 									class="poster"
-									:src="'https://anilibria.top/' + release.poster"
+									:src="posterAddress + release.poster"
 									loading="lazy"
 									@click="watchRelease(release)"
 									@contextmenu.prevent="showOptionsModal(release)"
@@ -264,7 +264,8 @@
 		import {
 			getSelectionCounts, addSelection, updateSelection, deleteSelection, getAllSelections,
 			updateExpandSelection, updateOrderSelection, getPageSettings, saveSettings,
-			getUserMarks, addFavorites, removeFavorites, addReleasesSeenMark, removeReleasesSeenMark
+			getUserMarks, addFavorites, removeFavorites, addReleasesSeenMark, removeReleasesSeenMark,
+			getMaintenancePosterAddress
 		} from './unfoldapi.js'
 		import {
 			selectionModes, sortingFields, openLinkMode, sections, historySections,
@@ -294,6 +295,7 @@
 				const draggedItem = ref(null);
 				const settings = ref({});
 				const userMarks = ref({});
+				const posterAddress = ref('https://anilibria.top/');
 				
 				const grid = ref([]);
 				let relasesInGroup = 1;
@@ -446,6 +448,7 @@
 				async function loadData() {
 					settings.value = await getPageSettings('mypage');
 					userMarks.value = await getUserMarks();
+					posterAddress.value = await getMaintenancePosterAddress();
 					await refreshSelections();
 					if (settings.value.listMode === 1 && settings.value.startedSelection) await changeSelectionGrid(settings.value.startedSelection);
 				}
@@ -555,6 +558,7 @@
 					optionRelease,
 					userMarks,
 					optionsModal,
+					posterAddress,
 					showAddModal,
 					closeModal,
 					addNewSelection,

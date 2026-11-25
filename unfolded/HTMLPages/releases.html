@@ -115,7 +115,7 @@
 					ref="releasesList">
 					<template v-slot:release="{ release, isSelected, inCinemahall, inFavorites, seensCount, hasactivetorrent, torrentcount, torrentdownloaded }">
 						<div class="releaseslist-release-item" :class="{'releaseslist-release-item-selected': isSelected }" :title="release.description">
-							<img class="poster" :src="'https://anilibria.top/' + release.poster" loading="lazy"/>
+							<img class="poster" :src="posterAddress + release.poster" loading="lazy"/>
 							<div class="information">
 								<span class="header-text" style="margin-top: 10px;">{{ release.title }}</span>
 								<span class="normal-text">{{ release.status }} {{ release.season ? '- ' + release.season : '' }} {{ release.year }}</span>
@@ -222,7 +222,7 @@
 		import {
 			getRelasesByFilter, getPageSettings,
 			saveSettings, getReleaseNotifications, getRandomReleaseFromAll, getRandomRelease, addFavorites, removeFavorites,
-			getHidedReleases, addHidedReleases, downloadTorrent, openInExternalTorrentClient
+			getHidedReleases, addHidedReleases, downloadTorrent, openInExternalTorrentClient, getMaintenancePosterAddress
 		} from './unfoldapi.js'
 		import { sections, historySections, seenMarkSections, setsSections, openLinkMode, notificationModes } from '/static/releaseDictionaries.js'
 		import Drawer from './components/Drawer.js'
@@ -253,6 +253,7 @@
 				const backToTopVisible = ref(false);
 				let currentTimer = -1;
 				const filterModel = ref({});
+				const posterAddress = ref('https://anilibria.top/');
 
 				async function saveReleasesSettings() {
 					await releasesList.value.saveReleasesSettings();
@@ -339,9 +340,15 @@
 					return res;
 				}
 
+				async function loadData() {
+					posterAddress.value = await getMaintenancePosterAddress();
+				}
+
 				async function toggleReleaseInFavorites(id) {
 					await releasesList.value.toggleReleaseInFavorites(id);
 				}
+
+				loadData();
 			
 				return {
 					mainMenuVisible,
@@ -358,6 +365,7 @@
 					backToTopVisible,
 					filterModel,
 					openLinkMode,
+					posterAddress,
 					getPublishDay,
 					openInVideoPlayer,
 					loadNotifications,

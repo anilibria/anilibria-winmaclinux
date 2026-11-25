@@ -120,7 +120,7 @@
 					ref="releasesList">
 					<template v-slot:release="{ release, isSelected, inCinemahall, inFavorites, seensCount, torrentcount, torrentdownloaded }">
 						<div class="releaseslist-release-item" :class="{'releaseslist-release-item-selected': isSelected }" :title="release.description">
-							<img class="poster" :src="'https://anilibria.top' + release.poster" loading="lazy"/>
+							<img class="poster" :src="posterAddress + release.poster" loading="lazy"/>
 							<div class="information">
 								<span class="header-text" style="margin-top: 10px;">{{ release.title }}</span>
 								<span class="normal-text">{{ release.status }} {{ release.season ? '- ' + release.season : '' }} {{ release.year }}</span>
@@ -185,7 +185,7 @@
 
 	<script type="module">
 		import { createApp, ref, useTemplateRef, watch, onMounted } from 'vue'
-		import { removeTorrents, refreshAllTorrents, removeAllTorrents } from './unfoldapi.js'
+		import { removeTorrents, refreshAllTorrents, removeAllTorrents, getMaintenancePosterAddress } from './unfoldapi.js'
 		import { sections, historySections, seenMarkSections, setsSections, openLinkMode } from '/static/releaseDictionaries.js'
 		import Drawer from './components/Drawer.js'
 		import PageHeader from './components/PageHeader.js'
@@ -216,12 +216,14 @@
 				const backToTopVisible = ref(false);
 				const filterModel = ref({});
 				const releasesList = useTemplateRef('releasesList');
+				const posterAddress = ref('https://anilibria.top/');
 
 				async function savePageSettings() {
 					releasesList.value.saveTorrentsSettings();
 				}
 
 				async function loadData() {
+					posterAddress.value = await getMaintenancePosterAddress();
 					setInterval(() => releasesList.value.refreshActiveTorrents(), 8000);
 				}
 
@@ -291,6 +293,7 @@
 					seenMarkSections,
 					setsSections,
 					openLinkMode,
+					posterAddress,
 					openTorrentInVideoplayer,
 					savePageSettings,
 					removeSelectedWithFiles,

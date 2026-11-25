@@ -583,3 +583,10 @@ export async function getRelaseSeriesByFilter(model) {
     );
     return await response.json();
 };
+
+// Maintenance
+
+export async function getMaintenancePosterAddress() {
+    const response = await fetch(`/maintenance/posteraddress`);
+    return await response.json();
+}

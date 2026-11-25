@@ -149,6 +149,7 @@ namespace Aniliberty.Unfolded
 			CinemaHall.RegisterRoutes(app);
 			MySelection.RegisterRoutes(app);
 			Series.RegisterRoutes(app);
+			Maintenance.RegisterRoutes(app);
 			AppData.RegisterRoutes(app);
 
 #if !DEBUG
