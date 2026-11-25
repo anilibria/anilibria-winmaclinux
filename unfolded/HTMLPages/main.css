@@ -186,6 +186,12 @@ body {
 .gap-8 {
     gap: 8px;
 }
+.gap-9 {
+    gap: 9px;
+}
+.gap-10 {
+    gap: 10px;
+}
 
 .no-text-wrap {
     text-wrap: nowrap;
@@ -470,6 +476,68 @@ body {
     }
 }
 
+/* Simple Input Range */
+
+.simple-range {
+    --track-h: 6px;
+    --thumb-d: 20px;
+    --accent: #2563eb;
+    --track: #e2e8f0;
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: var(--thumb-d);
+    background: transparent;
+    cursor: pointer;
+
+    &::-webkit-slider-runnable-track {
+        height: var(--track-h);
+        border-radius: 999px;
+        background: linear-gradient(to right,
+        var(--accent) 0%, var(--accent) var(--pct, 0%),
+        var(--track)   var(--pct, 0%), var(--track) 100%);
+    }
+    &::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        appearance: none;
+        margin-top: calc((var(--thumb-d) - var(--track-h)) / -2);
+        width: var(--thumb-d);
+        height: var(--thumb-d);
+        border-radius: 50%;
+        background: #fff;
+        border: 2px solid var(--accent);
+        box-shadow: 0 1px 4px rgba(0,0,0,.2);
+        transition: transform .15s ease;
+    }
+    &::-webkit-slider-thumb:hover {
+        transform: scale(1.15);
+    }    
+    &:focus-visible::-webkit-slider-thumb {
+        box-shadow: 0 0 0 4px rgba(37, 99, 235, .25);
+    }
+    &::-moz-range-track {
+        height: var(--track-h); border-radius: 999px; background: var(--track);
+    }
+    &::-moz-range-progress {
+        height: var(--track-h); border-radius: 999px; background: var(--accent);
+    }
+    &::-moz-range-thumb {
+        width: var(--thumb-d); height: var(--thumb-d);
+        border-radius: 50%; background: #fff;
+        border: 2px solid var(--accent);
+        box-shadow: 0 1px 4px rgba(170, 157, 157, 0.2);
+        transition: transform .15s ease;
+    }
+    &::-moz-range-thumb:hover {
+        transform: scale(1.15);
+    }
+    &:focus-visible::-moz-range-thumb {
+        box-shadow: 0 0 0 4px rgba(37, 99, 235, .25);
+    }
+    &:focus {
+        outline: none;
+    }
+}
 /* Selection helper for release lists */
 
 .selection-helper {

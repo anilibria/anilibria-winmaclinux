@@ -119,6 +119,64 @@
 					<div v-if="settings.showReleasePoster && playListVisible" class="videoplayer-release-poster-container">
 						<img class="poster" :src="poster" />
 					</div>
+					<div class="videoplayer-release-control-panel-container flex-column">
+						<div class="flex-row flex-base-center gap-4">
+							<span>{{playerCurrentTime}}</span>
+							<span>из</span>
+							<span>{{playerAllTime}}</span>
+							<input
+								type="range"
+								min="0"
+								:max="playerDurationValue"
+								class="simple-range flex-1"
+								:value="playerTimeValue"
+								@input="event => updatePlayerCurrentTime(event.target.value)"
+								:style="{'--pct': (playerTimeValue / playerDurationValue) * 100 + '%'}"
+							/>
+						</div>
+						<div class="flex-row flex-base-center">
+							<div class="flex-row flex-base-center gap-4" style="margin-left: 8px;">
+								<div class="flex-row flex-base-center flex-other-center" @click="togglePlayerMute()">
+									<img :src="'/static/icons/videoplayer/muteo' + (playerMute ? 'n' : 'ff') + '.svg'" width="30" height="30" />
+								</div>
+								<input
+									type="range"
+									min="0"
+									:max="100"
+									class="simple-range"
+									:value="playerVolume"
+									@input="event => updateVolume(event.target.value)"
+									:style="{'--pct': (playerVolume / 100) * 100 + '%'}"
+									style="width: 100px;"
+								/>
+							</div>
+							<div class="flex-1 flex-row flex-all-center videoplayer-control-buttons-container" style="gap: 18px;">
+								<div class="flex-row flex-base-center flex-other-center">
+									<img :src="'/static/icons/videoplayer/leftjump.svg'" width="30" height="30" />
+								</div>
+								<div class="flex-row flex-all-center" @click="openPreviousSeria()">
+									<img :src="'/static/icons/videoplayer/previousseria.svg'" width="30" height="30" />
+								</div>
+								<div v-if="isPlaying" class="flex-row flex-all-center"  @click="pauseInVideoPlayer()">
+									<img :src="'/static/icons/videoplayer/pause.svg'" width="30" height="30" />
+								</div>
+								<div v-if="!isPlaying" class="flex-row flex-all-center" @click="playInVideoPlayer()">
+									<img :src="'/static/icons/videoplayer/play.svg'" width="30" height="30" />
+								</div>
+								<div class="flex-row flex-all-center" @click="openNextSeria()">
+									<img :src="'/static/icons/videoplayer/nextseria.svg'" width="30" height="30" />
+								</div>
+								<div class="flex-row flex-all-center">
+									<img :src="'/static/icons/videoplayer/rightjump.svg'" width="30" height="30" />
+								</div>
+							</div>
+							<div class="flex-row flex-base-center" style="margin-right: 8px;">
+								<div class="flex-row flex-all-center" @click="toggleFullScreenInVideoPlayer()">
+									<img :src="'/static/icons/videoplayer/fullscreen.svg'" width="30" height="30" />
+								</div>
+							</div>
+						</div>
+					</div>
 					<div v-if="showOpening || showEnding" class="videoplayer-opening-ending-container" @click="skipOpeningOrEnding()">
 						<span v-if="showOpening">Пропустить опенинг</span>
 						<span v-if="showEnding">Пропустить эндинг</span>
@@ -181,7 +239,17 @@
 					autoSkipEnding: false,
 					showReleasePoster: false
 				});
-				const seenMarks = ref([])
+				const seenMarks = ref([]);
+				let lastPlayerTime = 0;
+				let lastPlayerDuration = -1;
+				const playerCurrentTime = ref('');
+				const playerAllTime = ref('');
+				const playerEstimateTime = ref('');
+				const playerDurationValue = ref(0);
+				const playerTimeValue = ref(0);
+				const isPlaying = ref(false);
+				const playerVolume = ref(50);
+				const playerMute = ref(false);
 
 				function cutGroupName(name) {
 					if (name && name.length > 45) {
@@ -606,6 +674,22 @@
 						`;
 				}
 
+				function playInVideoPlayer() {
+					videoPlayer.play();
+				}
+
+				function pauseInVideoPlayer() {
+					videoPlayer.pause();
+				}
+
+				function toggleFullScreenInVideoPlayer() {
+					if (videoPlayer.fullscreen.active) {
+						videoPlayer.fullscreen.exit();
+					} else {
+						videoPlayer.fullscreen.enter();
+					}
+				}
+
 				function adjustVideoSource(source) {
 					if (needUseHls) {
 						const hls = new Hls();
@@ -655,6 +739,47 @@
 					}
 				}
 
+				function humanizeSeconds(totalSeconds) {
+					totalSeconds = Math.max(0, Math.floor(totalSeconds));
+					const h = Math.floor(totalSeconds / 3600);
+					const allMinutes = Math.floor((totalSeconds % 3600) / 60);
+					const allSeconds = totalSeconds % 60;
+
+					const parts = [];
+					if (h) parts.push(`${h}:`);
+					if (allMinutes) {
+						parts.push(`${allMinutes < 10 ? '0' : ''}${allMinutes}:`);
+					} else {
+						parts.push(`00:`);
+					}
+					if (allSeconds || parts.length === 0) parts.push(`${allSeconds < 10 ? '0' : ''}${allSeconds}`);
+
+					return parts.join('');
+				}				
+
+				function updateTime(newTime) {
+					console.log('updateTime' + newTime);
+					const trunced = Math.trunc(newTime);
+					if (lastPlayerTime === trunced) return; // time not changed
+
+					playerCurrentTime.value = humanizeSeconds(trunced);
+					playerTimeValue.value = trunced;
+				}
+
+				function updatePlayerCurrentTime($event) {
+					videoPlayer.currentTime = parseInt($event);
+				}
+
+				function updateVolume(newValue) {
+					videoPlayer.volume = parseInt(newValue) / 100;
+					playerVolume.value = newValue;
+				}
+
+				function togglePlayerMute() {
+					videoPlayer.muted = !videoPlayer.muted;
+					playerMute.value = videoPlayer.muted;
+				}
+
 				onMounted(async () => {
 					if (!hlsSupported.value) {
 						//TODO: show message
@@ -683,6 +808,7 @@
 						playListVisible.value = false;
 					});
 					player.on('ended', async () => {
+						isPlaying.value = false;
 						if (!seenMarks.value.includes(selectedEpisode.value.id)) {
 							seenMarks.value.push(selectedEpisode.value.id);
 							await addSeenMark([selectedEpisode.value.id]);
@@ -690,21 +816,35 @@
 						if (settings.value.autoNextOpen) window.vueApp.openNextSeria();
 					});
 					player.on('playing', () => {
+						isPlaying.value = true;
+						if (lastPlayerDuration === -1) {
+							lastPlayerDuration = videoPlayer.duration;
+							playerAllTime.value = humanizeSeconds(lastPlayerDuration);
+							playerDurationValue.value = lastPlayerDuration;
+						}
 						if (!watchRelease.value) return;
 
 						if (selectedEpisode.value.id === watchRelease.value.videoId && watchRelease.value.time > 0) {
-							console.log("watch release skip time" + watchRelease.value.time);
 							videoPlayer.currentTime = watchRelease.value.time;
 							watchRelease.value = null;
-						}
+						}						 
+					});
+					player.on('play', () => {
+						isPlaying.value = true;
+					});
+					player.on('pause', () => {
+						isPlaying.value = false;
 					});
 					player.on('timeupdate', () => {
 						if (!window.vueApp.selectedEpisode) return;
-						if (!window.vueApp.selectedEpisode.openingStart && !window.vueApp.selectedEpisode.endingStart) return;
 
-						const showOpening = window.vueApp.showOpening;
-						const showEnding = window.vueApp.showEnding;
 						const currentTime = videoPlayer.currentTime;
+
+						window.vueApp.updateTime(currentTime);
+
+						if (!window.vueApp.selectedEpisode.openingStart && !window.vueApp.selectedEpisode.endingStart) return;
+						const showOpening = window.vueApp.showOpening;
+						const showEnding = window.vueApp.showEnding;						
 						const selectedEpisode = window.vueApp.selectedEpisode;
 						const episodeId = selectedEpisode.id;
 						const inOpening = currentTime >= selectedEpisode.openingStart && currentTime <= selectedEpisode.openingEnd;
@@ -744,6 +884,7 @@
 						}
 					});					
 					videoPlayer = player;
+					videoPlayer.volume = playerVolume.value / 100;
 					const videoSource = openEpisode(selectedEpisode.value);
 					adjustVideoSource(videoSource);
 
@@ -773,6 +914,13 @@
 					isGroupedEpisodes,
 					groupedEpisodes,
 					openSingleModes,
+					playerCurrentTime,
+					playerAllTime,
+					playerDurationValue,
+					playerTimeValue,
+					isPlaying,
+					playerVolume,
+					playerMute,
 					moveUp,
 					moveDown,
 					openEpisodeFromList,
@@ -783,7 +931,15 @@
 					cutGroupName,
 					openEpisodeFromGroupedList,
 					scrollToEpisodeInList,
-					openNextSeria
+					openNextSeria,
+					updateTime,
+					updatePlayerCurrentTime,
+					playInVideoPlayer,
+					pauseInVideoPlayer,
+					toggleFullScreenInVideoPlayer,
+					openPreviousSeria,
+					updateVolume,
+					togglePlayerMute
 				}
 			}
 		});
