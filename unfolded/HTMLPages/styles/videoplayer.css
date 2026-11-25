@@ -117,7 +117,7 @@
 
 .videoplayer-release-control-panel-container {
     position: absolute;
-    bottom: 80px;
+    bottom: 0px;
     right: 1px;
     left: 40px;
     background-color: lightgray;

@@ -119,7 +119,7 @@
 					<div v-if="settings.showReleasePoster && playListVisible" class="videoplayer-release-poster-container">
 						<img class="poster" :src="poster" />
 					</div>
-					<div class="videoplayer-release-control-panel-container flex-column">
+					<div v-if="playListVisible" class="videoplayer-release-control-panel-container flex-column" :style="{'left': isFullScreen ? '0px' : '40px'}">
 						<div class="flex-row flex-base-center gap-4">
 							<span>{{playerCurrentTime}}</span>
 							<span>из</span>
@@ -151,7 +151,7 @@
 								/>
 							</div>
 							<div class="flex-1 flex-row flex-all-center videoplayer-control-buttons-container" style="gap: 18px;">
-								<div class="flex-row flex-base-center flex-other-center">
+								<div class="flex-row flex-all-center" @click="leftJumpInVideoPlayer()">
 									<img :src="'/static/icons/videoplayer/leftjump.svg'" width="30" height="30" />
 								</div>
 								<div class="flex-row flex-all-center" @click="openPreviousSeria()">
@@ -166,11 +166,14 @@
 								<div class="flex-row flex-all-center" @click="openNextSeria()">
 									<img :src="'/static/icons/videoplayer/nextseria.svg'" width="30" height="30" />
 								</div>
-								<div class="flex-row flex-all-center">
+								<div class="flex-row flex-all-center" @click="rightJumpInVideoPlayer()">
 									<img :src="'/static/icons/videoplayer/rightjump.svg'" width="30" height="30" />
 								</div>
 							</div>
-							<div class="flex-row flex-base-center" style="margin-right: 8px;">
+							<div class="flex-row flex-base-center" style="margin-right: 8px;gap: 18px;">
+								<div class="flex-row flex-all-center" @click="toggleFitVideo()">
+									<img :src="'/static/icons/videoplayer/resize.svg'" width="30" height="30" />
+								</div>
 								<div class="flex-row flex-all-center" @click="toggleFullScreenInVideoPlayer()">
 									<img :src="'/static/icons/videoplayer/fullscreen.svg'" width="30" height="30" />
 								</div>
@@ -250,6 +253,7 @@
 				const isPlaying = ref(false);
 				const playerVolume = ref(50);
 				const playerMute = ref(false);
+				const isFullScreen = ref(false);
 
 				function cutGroupName(name) {
 					if (name && name.length > 45) {
@@ -572,106 +576,20 @@
 					adjustVideoSource(openEpisode(episode));
 				}
 
-				function customControls() {
-					return `
-<div class="plyr__controls">
-	<div class="flex-col full-width">
-		<div class="flex-row flex-base-center">
-			<div class="plyr__controls__item plyr__time--current plyr__time" aria-label="Current time" role="timer"></div>
-			<span>из</span>
-			<div class="plyr__controls__item plyr__time--duration plyr__time" aria-label="Duration" role="timer"></div>
-			<div class="plyr__controls__item plyr__progress__container">
-				<div class="plyr__progress"><input data-plyr="seek" type="range" min="0" max="100" step="0.01" value="0" autocomplete="off" role="slider" aria-label="Seek" aria-valuemin="0" aria-valuemax="1413.0785290000006" aria-valuenow="0" id="plyr-seek-9030" aria-valuetext="00:00 of 00:00" seek-value="82.09820764752307" style="--value: 0%;">
-					<progress class="plyr__progress__buffer" min="0" max="100" value="0" role="progressbar" aria-hidden="true">% буффера</progress>
-					<span class="plyr__tooltip" style="left: 86.1976%;"></span>
-				</div>
-			</div>
-		</div>
-		<div class="flex-row flex-base-center">
-			<div class="plyr__controls__item plyr__volume">
-				<button type="button" class="plyr__control" data-plyr="mute" aria-pressed="false">
-					<svg class="icon--pressed" aria-hidden="true" focusable="false">
-					<use xlink:href="#plyr-muted"></use>
-					</svg>
-					<svg class="icon--not-pressed" aria-hidden="true" focusable="false">
-					<use xlink:href="#plyr-volume"></use>
-					</svg>
-					<span class="label--pressed plyr__sr-only">Unmute</span>
-					<span class="label--not-pressed plyr__sr-only">Mute</span>
-				</button>
-				<input
-					data-plyr="volume"
-					type="range" min="0" max="1" step="0.05" value="1" autocomplete="off" role="slider"
-					aria-label="Громкость"
-					aria-valuemin="0" aria-valuemax="100" aria-valuenow="100" id="plyr-volume-9030"
-					aria-valuetext="100.0%" style="--value: 100%;"
-				>
-			</div>
-			<div class="flex-1 flex-row flex-base-center flex-other-center">
-				<div>
-					<button class="plyr__controls__item plyr__control" type="button" data-plyr="rewind" aria-pressed="false" title="Перемотать назад">
-						<div class="flex-row flex-base-center flex-other-center">
-							<img src='/static/icons/videoplayer/leftjump.svg' width=18 height=18 />
-						</div>
-					</button>
-					<button id="previousSeriaButton" class="plyr__controls__item plyr__control" type="button" aria-pressed="false" title="Перейти на предыдущую серию">
-						<svg aria-hidden="true" focusable="false">
-							<use xlink:href="#plyr-rewind"></use>
-						</svg>
-					</button>
-					<button class="plyr__controls__item plyr__control" type="button" data-plyr="play" aria-pressed="false" aria-label="Play">
-						<svg class="icon--pressed" aria-hidden="true" focusable="false">
-							<use xlink:href="#plyr-pause"></use>
-						</svg>
-						<svg class="icon--not-pressed" aria-hidden="true" focusable="false">
-							<use xlink:href="#plyr-play"></use>
-						</svg>
-					</button>
-					<button id="nextSeriaButton" class="plyr__controls__item plyr__control" type="button" aria-pressed="false" title="Перейти на следующую серию">
-						<svg aria-hidden="true" focusable="false">
-							<use xlink:href="#plyr-fast-forward"></use>
-						</svg>
-					</button>
-					<button class="plyr__controls__item plyr__control" type="button" data-plyr="fast-forward" aria-pressed="false" title="Перемотать вперед">
-						<div class="flex-row flex-base-center flex-other-center">
-							<img src='/static/icons/videoplayer/rightjump.svg' width=18 height=18 />
-						</div>
-					</button>
-				</div>
-			</div>
-			<div>
-				<button id="toggleCropModeButton" class="plyr__controls__item plyr__control" type="button" aria-pressed="false" title="Переключить режим обрезки видео">
-					<div class="flex-row flex-base-center flex-other-center">
-						<img src='/static/icons/videoplayer/resize.svg' width=18 height=18 />
-					</div>
-				</button>
-				<button class="plyr__controls__item plyr__control" type="button" data-plyr="captions" aria-pressed="false">
-					<svg class="icon--pressed" aria-hidden="true" focusable="false">
-						<use xlink:href="#plyr-captions-on"></use>
-					</svg>
-					<svg class="icon--not-pressed" aria-hidden="true" focusable="false">
-						<use xlink:href="#plyr-captions-off"></use>
-					</svg>
-				</button>
-				<button class="plyr__controls__item plyr__control" type="button" data-plyr="pip" aria-pressed="false">
-					<svg aria-hidden="true" focusable="false">
-						<use xlink:href="#plyr-pip"></use>
-					</svg>
-					<span class="plyr__sr-only">PIP</span>
-				</button>
-				<button class="plyr__controls__item plyr__control" type="button" data-plyr="fullscreen" aria-pressed="false" title="Полноэкранный режим">
-					<svg class="icon--pressed" aria-hidden="true" focusable="false">
-						<use xlink:href="#plyr-exit-fullscreen"></use>
-					</svg>
-					<svg class="icon--not-pressed" aria-hidden="true" focusable="false">
-						<use xlink:href="#plyr-enter-fullscreen"></use>
-					</svg>
-				</button>
-			</div>
+                function customControls() {
+                    return `<div class="plyr__controls">
+					<div class="flex-row flex-base-center">
+	<div class="plyr__controls__item plyr__time--current plyr__time" aria-label="Current time" role="timer"></div>
+	<span>из</span>
+	<div class="plyr__controls__item plyr__time--duration plyr__time" aria-label="Duration" role="timer"></div>
+	<div class="plyr__controls__item plyr__progress__container">
+		<div class="plyr__progress"><input data-plyr="seek" type="range" min="0" max="100" step="0.01" value="0" autocomplete="off" role="slider" aria-label="Seek" aria-valuemin="0" aria-valuemax="1413.0785290000006" aria-valuenow="0" id="plyr-seek-9030" aria-valuetext="00:00 of 00:00" seek-value="82.09820764752307" style="--value: 0%;">
+			<progress class="plyr__progress__buffer" min="0" max="100" value="0" role="progressbar" aria-hidden="true">% буффера</progress>
+			<span class="plyr__tooltip" style="left: 86.1976%;"></span>
 		</div>
 	</div>
 </div>
-						`;
+					</div>`;
 				}
 
 				function playInVideoPlayer() {
@@ -684,9 +602,11 @@
 
 				function toggleFullScreenInVideoPlayer() {
 					if (videoPlayer.fullscreen.active) {
+						isFullScreen.value = false;
 						videoPlayer.fullscreen.exit();
 					} else {
 						videoPlayer.fullscreen.enter();
+						isFullScreen.value = true;
 					}
 				}
 
@@ -758,7 +678,6 @@
 				}				
 
 				function updateTime(newTime) {
-					console.log('updateTime' + newTime);
 					const trunced = Math.trunc(newTime);
 					if (lastPlayerTime === trunced) return; // time not changed
 
@@ -778,6 +697,36 @@
 				function togglePlayerMute() {
 					videoPlayer.muted = !videoPlayer.muted;
 					playerMute.value = videoPlayer.muted;
+				}
+
+				function leftJumpInVideoPlayer() {
+					videoPlayer.currentTime -= 30;
+				}
+
+				function rightJumpInVideoPlayer() {
+					videoPlayer.currentTime += 30;
+				}
+
+				let moveMouseTimer = 0;
+
+				function removeControlTimer() {
+					clearTimeout(moveMouseTimer);
+					moveMouseTimer = 0;
+				}
+
+				function addControlTimer() {
+					moveMouseTimer = setTimeout(() => {
+						playListVisible.value = false;
+					}, 5000);
+				}
+
+				function controlStartTimer() {
+					if (playListVisible.value) {
+						removeControlTimer();
+						return;
+					}
+					
+					addControlTimer();
 				}
 
 				onMounted(async () => {
@@ -801,14 +750,9 @@
 
 						setTimeout(() => hlsSource.value.subtitleTrack = player.currentTrack, 50);
 					});
-					player.on('controlsshown', () => {
-						playListVisible.value = true;
-					});
-					player.on('controlshidden', () => {
-						playListVisible.value = false;
-					});
 					player.on('ended', async () => {
 						isPlaying.value = false;
+						playListVisible.value = true;
 						if (!seenMarks.value.includes(selectedEpisode.value.id)) {
 							seenMarks.value.push(selectedEpisode.value.id);
 							await addSeenMark([selectedEpisode.value.id]);
@@ -817,6 +761,7 @@
 					});
 					player.on('playing', () => {
 						isPlaying.value = true;
+						addControlTimer();
 						if (lastPlayerDuration === -1) {
 							lastPlayerDuration = videoPlayer.duration;
 							playerAllTime.value = humanizeSeconds(lastPlayerDuration);
@@ -831,9 +776,15 @@
 					});
 					player.on('play', () => {
 						isPlaying.value = true;
+						addControlTimer();
 					});
 					player.on('pause', () => {
 						isPlaying.value = false;
+						removeControlTimer();
+						playListVisible.value = true;
+					});
+					player.on('controlsshown', () => {
+						playListVisible.value = true;
 					});
 					player.on('timeupdate', () => {
 						if (!window.vueApp.selectedEpisode) return;
@@ -887,13 +838,6 @@
 					videoPlayer.volume = playerVolume.value / 100;
 					const videoSource = openEpisode(selectedEpisode.value);
 					adjustVideoSource(videoSource);
-
-					const nextSeriaButton = document.getElementById('nextSeriaButton');
-					const previousSeriaButton = document.getElementById('previousSeriaButton');
-					const toggleCropModeButton = document.getElementById('toggleCropModeButton');
-					nextSeriaButton.addEventListener('click', openNextSeria);
-					previousSeriaButton.addEventListener('click', openPreviousSeria);
-					toggleCropModeButton.addEventListener('click', toggleFitVideo);
 				});
 
 				return {
@@ -921,6 +865,7 @@
 					isPlaying,
 					playerVolume,
 					playerMute,
+					isFullScreen,
 					moveUp,
 					moveDown,
 					openEpisodeFromList,
@@ -939,7 +884,10 @@
 					toggleFullScreenInVideoPlayer,
 					openPreviousSeria,
 					updateVolume,
-					togglePlayerMute
+					togglePlayerMute,
+					leftJumpInVideoPlayer,
+					rightJumpInVideoPlayer,
+					controlStartTimer
 				}
 			}
 		});
