@@ -312,9 +312,7 @@
 							}
 						}
 					}
-
-					console.log('watch release data ', watchRelease.value);
-					
+				
 					releasePosters.value = await getReleasePosters([idInt]);
 					const releasePoster = releasePosters.value.find(a => a.id === idInt).poster;
 					poster.value = releasePoster ? 'https://anilibria.top' + releasePoster : '/static/backgrounds/emptyposter.png';
@@ -580,7 +578,27 @@
 					</button>
 				</div>
 			</div>
-			<div>
+			<div class="flex-row flex-all-center">
+				<button id="speedx1" class="plyr__controls__item plyr__control" type="button" aria-pressed="false" title="Включить нормальную скорость">
+					<div class="flex-row flex-base-center flex-other-center" style="width: 30px; height: 30px;">
+						x1
+					</div>
+				</button>
+				<button id="speedx13" class="plyr__controls__item plyr__control" type="button" aria-pressed="false" title="Включить скорость 1.3">
+					<div class="flex-row flex-base-center flex-other-center" style="width: 30px; height: 30px;">
+						x1.3
+					</div>
+				</button>
+				<button id="speedx15" class="plyr__controls__item plyr__control" type="button" aria-pressed="false" title="Включить скорость 1.5">
+					<div class="flex-row flex-base-center flex-other-center" style="width: 30px; height: 30px;">
+						x1.5
+					</div>
+				</button>
+				<button id="speedx2" class="plyr__controls__item plyr__control" type="button" aria-pressed="false" title="Включить скорость 2">
+					<div class="flex-row flex-base-center flex-other-center" style="width: 30px; height: 30px;">
+						x2
+					</div>
+				</button>
 				<button id="toggleCropModeButton" class="plyr__controls__item plyr__control" type="button" aria-pressed="false" title="Переключить режим обрезки видео">
 					<div class="flex-row flex-base-center flex-other-center">
 						<img src='/static/icons/videoplayer/resize.svg' width=30 height=30 />
@@ -694,6 +712,9 @@
 							enabled: true,
 							fallback: true,
 							container: '.videoplayer-container'
+						},
+						speed: {
+							selected: 1
 						}
 					});
 					player.on('languagechange', () => {
@@ -781,6 +802,10 @@
 					nextSeriaButton.addEventListener('click', openNextSeria);
 					previousSeriaButton.addEventListener('click', openPreviousSeria);
 					toggleCropModeButton.addEventListener('click', toggleFitVideo);
+					document.getElementById('speedx1').addEventListener('click', () => { videoPlayer.speed = 1; });
+					document.getElementById('speedx2').addEventListener('click', () => videoPlayer.speed = 2);
+					document.getElementById('speedx13').addEventListener('click', () => videoPlayer.speed = 1.3);
+					document.getElementById('speedx15').addEventListener('click', () => videoPlayer.speed = 1.5);
 				});
 
 				return {
