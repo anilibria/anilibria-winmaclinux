@@ -119,67 +119,6 @@
 					<div v-if="settings.showReleasePoster && playListVisible" class="videoplayer-release-poster-container">
 						<img class="poster" :src="poster" />
 					</div>
-					<div v-if="playListVisible" class="videoplayer-release-control-panel-container flex-column" :style="{'left': isFullScreen ? '0px' : '40px'}">
-						<div class="flex-row flex-base-center gap-4">
-							<span>{{playerCurrentTime}}</span>
-							<span>из</span>
-							<span>{{playerAllTime}}</span>
-							<input
-								type="range"
-								min="0"
-								:max="playerDurationValue"
-								class="simple-range flex-1"
-								:value="playerTimeValue"
-								@input="event => updatePlayerCurrentTime(event.target.value)"
-								:style="{'--pct': (playerTimeValue / playerDurationValue) * 100 + '%'}"
-							/>
-						</div>
-						<div class="flex-row flex-base-center">
-							<div class="flex-row flex-base-center gap-4" style="margin-left: 8px;">
-								<div class="flex-row flex-base-center flex-other-center" @click="togglePlayerMute()">
-									<img :src="'/static/icons/videoplayer/muteo' + (playerMute ? 'n' : 'ff') + '.svg'" width="30" height="30" />
-								</div>
-								<input
-									type="range"
-									min="0"
-									:max="100"
-									class="simple-range"
-									:value="playerVolume"
-									@input="event => updateVolume(event.target.value)"
-									:style="{'--pct': (playerVolume / 100) * 100 + '%'}"
-									style="width: 100px;"
-								/>
-							</div>
-							<div class="flex-1 flex-row flex-all-center videoplayer-control-buttons-container" style="gap: 18px;">
-								<div class="flex-row flex-all-center" @click="leftJumpInVideoPlayer()">
-									<img :src="'/static/icons/videoplayer/leftjump.svg'" width="30" height="30" />
-								</div>
-								<div class="flex-row flex-all-center" @click="openPreviousSeria()">
-									<img :src="'/static/icons/videoplayer/previousseria.svg'" width="30" height="30" />
-								</div>
-								<div v-if="isPlaying" class="flex-row flex-all-center"  @click="pauseInVideoPlayer()">
-									<img :src="'/static/icons/videoplayer/pause.svg'" width="30" height="30" />
-								</div>
-								<div v-if="!isPlaying" class="flex-row flex-all-center" @click="playInVideoPlayer()">
-									<img :src="'/static/icons/videoplayer/play.svg'" width="30" height="30" />
-								</div>
-								<div class="flex-row flex-all-center" @click="openNextSeria()">
-									<img :src="'/static/icons/videoplayer/nextseria.svg'" width="30" height="30" />
-								</div>
-								<div class="flex-row flex-all-center" @click="rightJumpInVideoPlayer()">
-									<img :src="'/static/icons/videoplayer/rightjump.svg'" width="30" height="30" />
-								</div>
-							</div>
-							<div class="flex-row flex-base-center" style="margin-right: 8px;gap: 18px;">
-								<div class="flex-row flex-all-center" @click="toggleFitVideo()">
-									<img :src="'/static/icons/videoplayer/resize.svg'" width="30" height="30" />
-								</div>
-								<div class="flex-row flex-all-center" @click="toggleFullScreenInVideoPlayer()">
-									<img :src="'/static/icons/videoplayer/fullscreen.svg'" width="30" height="30" />
-								</div>
-							</div>
-						</div>
-					</div>
 					<div v-if="showOpening || showEnding" class="videoplayer-opening-ending-container" @click="skipOpeningOrEnding()">
 						<span v-if="showOpening">Пропустить опенинг</span>
 						<span v-if="showEnding">Пропустить эндинг</span>
@@ -576,20 +515,102 @@
 					adjustVideoSource(openEpisode(episode));
 				}
 
-                function customControls() {
-                    return `<div class="plyr__controls">
-					<div class="flex-row flex-base-center">
-	<div class="plyr__controls__item plyr__time--current plyr__time" aria-label="Current time" role="timer"></div>
-	<span>из</span>
-	<div class="plyr__controls__item plyr__time--duration plyr__time" aria-label="Duration" role="timer"></div>
-	<div class="plyr__controls__item plyr__progress__container">
-		<div class="plyr__progress"><input data-plyr="seek" type="range" min="0" max="100" step="0.01" value="0" autocomplete="off" role="slider" aria-label="Seek" aria-valuemin="0" aria-valuemax="1413.0785290000006" aria-valuenow="0" id="plyr-seek-9030" aria-valuetext="00:00 of 00:00" seek-value="82.09820764752307" style="--value: 0%;">
-			<progress class="plyr__progress__buffer" min="0" max="100" value="0" role="progressbar" aria-hidden="true">% буффера</progress>
-			<span class="plyr__tooltip" style="left: 86.1976%;"></span>
+				function customControls() {
+					return `
+<div class="plyr__controls">
+	<div class="flex-col full-width">
+		<div class="flex-row flex-base-center">
+			<div class="plyr__controls__item plyr__time--current plyr__time" aria-label="Current time" role="timer"></div>
+			<span>из</span>
+			<div class="plyr__controls__item plyr__time--duration plyr__time" aria-label="Duration" role="timer"></div>
+			<div class="plyr__controls__item plyr__progress__container">
+				<div class="plyr__progress"><input data-plyr="seek" type="range" min="0" max="100" step="0.01" value="0" autocomplete="off" role="slider" aria-label="Seek" aria-valuemin="0" aria-valuemax="1413.0785290000006" aria-valuenow="0" id="plyr-seek-9030" aria-valuetext="00:00 of 00:00" seek-value="82.09820764752307" style="--value: 0%;">
+					<progress class="plyr__progress__buffer" min="0" max="100" value="0" role="progressbar" aria-hidden="true">% буффера</progress>
+					<span class="plyr__tooltip" style="left: 86.1976%;"></span>
+				</div>
+			</div>
+		</div>
+		<div class="flex-row flex-base-center">
+			<div class="plyr__controls__item plyr__volume">
+				<button type="button" class="plyr__control" data-plyr="mute" aria-pressed="false">
+					<svg class="icon--pressed" aria-hidden="true" focusable="false">
+					<use xlink:href="#plyr-muted"></use>
+					</svg>
+					<svg class="icon--not-pressed" aria-hidden="true" focusable="false">
+					<use xlink:href="#plyr-volume"></use>
+					</svg>
+					<span class="label--pressed plyr__sr-only">Unmute</span>
+					<span class="label--not-pressed plyr__sr-only">Mute</span>
+				</button>
+				<input
+					data-plyr="volume"
+					type="range" min="0" max="1" step="0.05" value="1" autocomplete="off" role="slider"
+					aria-label="Громкость"
+					aria-valuemin="0" aria-valuemax="100" aria-valuenow="100" id="plyr-volume-9030"
+					aria-valuetext="100.0%" style="--value: 100%;"
+				>
+			</div>
+			<div class="flex-1 flex-row flex-base-center flex-other-center">
+				<div>
+					<button class="plyr__controls__item plyr__control" type="button" data-plyr="rewind" aria-pressed="false" title="Перемотать назад">
+						<div class="flex-row flex-base-center flex-other-center">
+							<img src='/static/icons/videoplayer/leftjump.svg' width=30 height=30 />
+						</div>
+					</button>
+					<button id="previousSeriaButton" class="plyr__controls__item plyr__control" type="button" aria-pressed="false" title="Перейти на предыдущую серию">
+						<div class="flex-row flex-base-center flex-other-center">
+							<img src='/static/icons/videoplayer/previousseria.svg' width=30 height=30 />
+						</div>
+					</button>
+					<button class="plyr__controls__item plyr__control" type="button" data-plyr="play" aria-pressed="false" aria-label="Play">
+						<div class="flex-row flex-base-center flex-other-center">
+							<img class="icon--pressed" src='/static/icons/videoplayer/pause.svg' width=30 height=30 />
+							<img class="icon--not-pressed" src='/static/icons/videoplayer/play.svg' width=30 height=30 />
+						</div>
+					</button>
+					<button id="nextSeriaButton" class="plyr__controls__item plyr__control" type="button" aria-pressed="false" title="Перейти на следующую серию">
+						<div class="flex-row flex-base-center flex-other-center">
+							<img src='/static/icons/videoplayer/nextseria.svg' width=30 height=30 />
+						</div>
+					</button>
+					<button class="plyr__controls__item plyr__control" type="button" aria-pressed="false" title="Перемотать вперед">
+						<div class="flex-row flex-base-center flex-other-center">
+							<img src='/static/icons/videoplayer/rightjump.svg' width=30 height=30 />
+						</div>
+					</button>
+				</div>
+			</div>
+			<div>
+				<button id="toggleCropModeButton" class="plyr__controls__item plyr__control" type="button" aria-pressed="false" title="Переключить режим обрезки видео">
+					<div class="flex-row flex-base-center flex-other-center">
+						<img src='/static/icons/videoplayer/resize.svg' width=30 height=30 />
+					</div>
+				</button>
+				<button class="plyr__controls__item plyr__control" type="button" data-plyr="captions" aria-pressed="false">
+					<svg class="icon--pressed" aria-hidden="true" focusable="false">
+						<use xlink:href="#plyr-captions-on"></use>
+					</svg>
+					<svg class="icon--not-pressed" aria-hidden="true" focusable="false">
+						<use xlink:href="#plyr-captions-off"></use>
+					</svg>
+				</button>
+				<button class="plyr__controls__item plyr__control" type="button" data-plyr="pip" aria-pressed="false">
+					<div class="flex-row flex-base-center flex-other-center">
+						<img src='/static/icons/videoplayer/pip.svg' width=30 height=30 />
+					</div>
+					<span class="plyr__sr-only">PIP</span>
+				</button>
+				<button class="plyr__controls__item plyr__control" type="button" data-plyr="fullscreen" aria-pressed="false" title="Полноэкранный режим">
+					<div class="flex-row flex-base-center flex-other-center">
+						<img class="icon--pressed" src='/static/icons/videoplayer/fullscreenexit.svg' width=30 height=30 />
+						<img class="icon--not-pressed" src='/static/icons/videoplayer/fullscreen.svg' width=30 height=30 />
+					</div>
+				</button>
+			</div>
 		</div>
 	</div>
 </div>
-					</div>`;
+						`;
 				}
 
 				function playInVideoPlayer() {
@@ -659,76 +680,6 @@
 					}
 				}
 
-				function humanizeSeconds(totalSeconds) {
-					totalSeconds = Math.max(0, Math.floor(totalSeconds));
-					const h = Math.floor(totalSeconds / 3600);
-					const allMinutes = Math.floor((totalSeconds % 3600) / 60);
-					const allSeconds = totalSeconds % 60;
-
-					const parts = [];
-					if (h) parts.push(`${h}:`);
-					if (allMinutes) {
-						parts.push(`${allMinutes < 10 ? '0' : ''}${allMinutes}:`);
-					} else {
-						parts.push(`00:`);
-					}
-					if (allSeconds || parts.length === 0) parts.push(`${allSeconds < 10 ? '0' : ''}${allSeconds}`);
-
-					return parts.join('');
-				}				
-
-				function updateTime(newTime) {
-					const trunced = Math.trunc(newTime);
-					if (lastPlayerTime === trunced) return; // time not changed
-
-					playerCurrentTime.value = humanizeSeconds(trunced);
-					playerTimeValue.value = trunced;
-				}
-
-				function updatePlayerCurrentTime($event) {
-					videoPlayer.currentTime = parseInt($event);
-				}
-
-				function updateVolume(newValue) {
-					videoPlayer.volume = parseInt(newValue) / 100;
-					playerVolume.value = newValue;
-				}
-
-				function togglePlayerMute() {
-					videoPlayer.muted = !videoPlayer.muted;
-					playerMute.value = videoPlayer.muted;
-				}
-
-				function leftJumpInVideoPlayer() {
-					videoPlayer.currentTime -= 30;
-				}
-
-				function rightJumpInVideoPlayer() {
-					videoPlayer.currentTime += 30;
-				}
-
-				let moveMouseTimer = 0;
-
-				function removeControlTimer() {
-					clearTimeout(moveMouseTimer);
-					moveMouseTimer = 0;
-				}
-
-				function addControlTimer() {
-					moveMouseTimer = setTimeout(() => {
-						playListVisible.value = false;
-					}, 5000);
-				}
-
-				function controlStartTimer() {
-					if (playListVisible.value) {
-						removeControlTimer();
-						return;
-					}
-					
-					addControlTimer();
-				}
-
 				onMounted(async () => {
 					if (!hlsSupported.value) {
 						//TODO: show message
@@ -750,9 +701,14 @@
 
 						setTimeout(() => hlsSource.value.subtitleTrack = player.currentTrack, 50);
 					});
-					player.on('ended', async () => {
-						isPlaying.value = false;
+					player.on('controlsshown', () => {
 						playListVisible.value = true;
+					});
+					player.on('controlshidden', () => {
+						playListVisible.value = false;
+					});
+					player.on('ended', async () => {
+
 						if (!seenMarks.value.includes(selectedEpisode.value.id)) {
 							seenMarks.value.push(selectedEpisode.value.id);
 							await addSeenMark([selectedEpisode.value.id]);
@@ -760,42 +716,21 @@
 						if (settings.value.autoNextOpen) window.vueApp.openNextSeria();
 					});
 					player.on('playing', () => {
-						isPlaying.value = true;
-						addControlTimer();
-						if (lastPlayerDuration === -1) {
-							lastPlayerDuration = videoPlayer.duration;
-							playerAllTime.value = humanizeSeconds(lastPlayerDuration);
-							playerDurationValue.value = lastPlayerDuration;
-						}
 						if (!watchRelease.value) return;
 
 						if (selectedEpisode.value.id === watchRelease.value.videoId && watchRelease.value.time > 0) {
+							console.log("watch release skip time" + watchRelease.value.time);
 							videoPlayer.currentTime = watchRelease.value.time;
 							watchRelease.value = null;
-						}						 
-					});
-					player.on('play', () => {
-						isPlaying.value = true;
-						addControlTimer();
-					});
-					player.on('pause', () => {
-						isPlaying.value = false;
-						removeControlTimer();
-						playListVisible.value = true;
-					});
-					player.on('controlsshown', () => {
-						playListVisible.value = true;
+						}
 					});
 					player.on('timeupdate', () => {
 						if (!window.vueApp.selectedEpisode) return;
-
-						const currentTime = videoPlayer.currentTime;
-
-						window.vueApp.updateTime(currentTime);
-
 						if (!window.vueApp.selectedEpisode.openingStart && !window.vueApp.selectedEpisode.endingStart) return;
+
 						const showOpening = window.vueApp.showOpening;
-						const showEnding = window.vueApp.showEnding;						
+						const showEnding = window.vueApp.showEnding;
+						const currentTime = videoPlayer.currentTime;
 						const selectedEpisode = window.vueApp.selectedEpisode;
 						const episodeId = selectedEpisode.id;
 						const inOpening = currentTime >= selectedEpisode.openingStart && currentTime <= selectedEpisode.openingEnd;
@@ -833,11 +768,19 @@
 							window.vueApp.watchVideoRelease(window.vueApp.selectedReleaseId, selectedEpisode.id, Math.round(currentTime));
 							window.vueApp.skipStepTimer = 0;
 						}
-					});					
+					});
+
 					videoPlayer = player;
-					videoPlayer.volume = playerVolume.value / 100;
+
 					const videoSource = openEpisode(selectedEpisode.value);
 					adjustVideoSource(videoSource);
+
+					const nextSeriaButton = document.getElementById('nextSeriaButton');
+					const previousSeriaButton = document.getElementById('previousSeriaButton');
+					const toggleCropModeButton = document.getElementById('toggleCropModeButton');
+					nextSeriaButton.addEventListener('click', openNextSeria);
+					previousSeriaButton.addEventListener('click', openPreviousSeria);
+					toggleCropModeButton.addEventListener('click', toggleFitVideo);
 				});
 
 				return {
@@ -877,17 +820,10 @@
 					openEpisodeFromGroupedList,
 					scrollToEpisodeInList,
 					openNextSeria,
-					updateTime,
-					updatePlayerCurrentTime,
 					playInVideoPlayer,
 					pauseInVideoPlayer,
 					toggleFullScreenInVideoPlayer,
-					openPreviousSeria,
-					updateVolume,
-					togglePlayerMute,
-					leftJumpInVideoPlayer,
-					rightJumpInVideoPlayer,
-					controlStartTimer
+					openPreviousSeria
 				}
 			}
 		});
